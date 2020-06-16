@@ -145,28 +145,28 @@
 
     
 <dl>
-<dt>object = "xcmsRaw"</dt><dd><p><code>profStep(object)</code></p></dd>
+<dt>object = "xcmsRaw"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/profStep-methods.html'>profStep(object)</a></code></p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsRaw-class.html'>xcmsRaw-class</a></code>,
-  <code><a href='profMethod-methods.html'>profMethod</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw-class</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/profMethod-methods.html'>profMethod</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>        <span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-                <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-                <span class='no'>cdfpath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
-                <span class='no'>cdffiles</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>cdfpath</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-                <span class='no'>xset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='xcmsRaw.html'>xcmsRaw</a></span>(<span class='no'>cdffiles</span>[<span class='fl'>1</span>])
+    <pre class="examples"><div class='input'>	if (FAL<span class='co'>if</span>) <span class='fl'>FALSE</span>
+		library(faahKO<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>
+		cdfpath <- sys<span class='kw'>cdfpath</span>e<span class='op'>&lt;-</span>c<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>e<span class='st'>"cdf"</span>aahKO")<span class='st'>"faahKO"</span>
+		cdffiles <- li<span class='kw'>cdffiles</span>(<span class='op'>&lt;-</span>f<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>r<span class='kw'>cdfpath</span>TRUE, full.nam<span class='fl'>TRUE</span> TRUE)<span class='fl'>TRUE</span>
+		xset <- xcmsRa<span class='kw'>xset</span>f<span class='op'>&lt;-</span>l<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span><span class='kw'>cdffiles</span><span class='fl'>1</span>
 
-                <span class='no'>xset</span>
-                <span class='fu'><a href='plotSurf-methods.html'>plotSurf</a></span>(<span class='no'>xset</span>, <span class='kw'>mass</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>,<span class='fl'>500</span>))
+		xset<span class='kw'>xset</span>
+		plotSurf(xset,<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotSurf-methods.html'>plotSurf</a></span>2<span class='kw'>xset</span>00))<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='fl'>200</span><span class='fl'>500</span>
 
-                <span class='fu'>profStep</span>(<span class='no'>xset</span>)<span class='kw'>&lt;-</span><span class='fl'>0.1</span> <span class='co'>## decrease the bin size to get better resolution</span>
-                <span class='fu'><a href='plotSurf-methods.html'>plotSurf</a></span>(<span class='no'>xset</span>, <span class='kw'>mass</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>, <span class='fl'>500</span>))
-                <span class='co'>##works nicer on high resolution data.</span>
-        }</div></pre>
+		profStep(xset)<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/profStep-methods.html'>profStep</a></span> <span class='kw'>xset</span>e<span class='op'>&lt;-</span><span class='fl'>0.1</span>h<span class='co'>## decrease the bin size to get better resolution</span>
+		plotSurf(xset,<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotSurf-methods.html'>plotSurf</a></span>2<span class='kw'>xset</span>500))<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='fl'>200</span><span class='fl'>500</span>
+		##works nicer <span class='co'>##works nicer on high resolution data.</span>
+	}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

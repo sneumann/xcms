@@ -159,52 +159,52 @@ The do_findChromPeaks_centWaveAddPredIsoROIs performs
     of these (if found by the centWave algorithm).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_findChromPeaks_centWaveWithPredIsoROIs</span>(
-  <span class='no'>mz</span>,
-  <span class='no'>int</span>,
-  <span class='no'>scantime</span>,
-  <span class='no'>valsPerSpect</span>,
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>25</span>,
-  <span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>prefilter</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
-  <span class='kw'>mzCenterFun</span> <span class='kw'>=</span> <span class='st'>"wMean"</span>,
-  <span class='kw'>integrate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> -<span class='fl'>0.001</span>,
-  <span class='kw'>fitgauss</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>verboseColumns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>roiList</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>firstBaselineCheck</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>roiScales</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>snthreshIsoROIs</span> <span class='kw'>=</span> <span class='fl'>6.25</span>,
-  <span class='kw'>maxCharge</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>maxIso</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>mzIntervalExtension</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>polarity</span> <span class='kw'>=</span> <span class='st'>"unknown"</span>,
-  <span class='kw'>extendLengthMSW</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a></span>(
+  <span class='kw'>mz</span>,
+  <span class='kw'>int</span>,
+  <span class='kw'>scantime</span>,
+  <span class='kw'>valsPerSpect</span>,
+  ppm = <span class='fl'>25</span>,
+  peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
+  snthresh = <span class='fl'>10</span>,
+  prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
+  mzCenterFun = <span class='st'>"wMean"</span>,
+  integrate = <span class='fl'>1</span>,
+  mzdiff = <span class='op'>-</span><span class='fl'>0.001</span>,
+  fitgauss = <span class='fl'>FALSE</span>,
+  noise = <span class='fl'>0</span>,
+  verboseColumns = <span class='fl'>FALSE</span>,
+  roiList = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  firstBaselineCheck = <span class='fl'>TRUE</span>,
+  roiScales = <span class='kw'>NULL</span>,
+  snthreshIsoROIs = <span class='fl'>6.25</span>,
+  maxCharge = <span class='fl'>3</span>,
+  maxIso = <span class='fl'>5</span>,
+  mzIntervalExtension = <span class='fl'>TRUE</span>,
+  polarity = <span class='st'>"unknown"</span>,
+  extendLengthMSW = <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>do_findChromPeaks_addPredIsoROIs</span>(
-  <span class='no'>mz</span>,
-  <span class='no'>int</span>,
-  <span class='no'>scantime</span>,
-  <span class='no'>valsPerSpect</span>,
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>25</span>,
-  <span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>6.25</span>,
-  <span class='kw'>prefilter</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
-  <span class='kw'>mzCenterFun</span> <span class='kw'>=</span> <span class='st'>"wMean"</span>,
-  <span class='kw'>integrate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> -<span class='fl'>0.001</span>,
-  <span class='kw'>fitgauss</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>verboseColumns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>peaks.</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>maxCharge</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>maxIso</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>mzIntervalExtension</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>polarity</span> <span class='kw'>=</span> <span class='st'>"unknown"</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_addPredIsoROIs</a></span>(
+  <span class='kw'>mz</span>,
+  <span class='kw'>int</span>,
+  <span class='kw'>scantime</span>,
+  <span class='kw'>valsPerSpect</span>,
+  ppm = <span class='fl'>25</span>,
+  peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
+  snthresh = <span class='fl'>6.25</span>,
+  prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
+  mzCenterFun = <span class='st'>"wMean"</span>,
+  integrate = <span class='fl'>1</span>,
+  mzdiff = <span class='op'>-</span><span class='fl'>0.001</span>,
+  fitgauss = <span class='fl'>FALSE</span>,
+  noise = <span class='fl'>0</span>,
+  verboseColumns = <span class='fl'>FALSE</span>,
+  peaks. = <span class='kw'>NULL</span>,
+  maxCharge = <span class='fl'>3</span>,
+  maxIso = <span class='fl'>5</span>,
+  mzIntervalExtension = <span class='fl'>TRUE</span>,
+  polarity = <span class='st'>"unknown"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -406,14 +406,14 @@ are: <code>"mz"</code>, <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"scmin
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>For more details on the centWave algorithm see
-    <code><a href='findChromPeaks-centWave.html'>centWave</a></code>.</p>
+    <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other core peak detection functions: 
-<code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
-<code><a href='do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
-<code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
-<code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Hendrik Treutler, Johannes Rainer</p>

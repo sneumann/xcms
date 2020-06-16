@@ -141,26 +141,26 @@ data range if rt and mz are not defined)." />
 
     <div class="ref-description">
     <p><strong>UPDATE</strong>: the <code>extractMsData</code> and <code>plotMsData</code> functions are deprecated
-and <code>as(x, "data.frame")</code> and <code><a href='https://rdrr.io/r/base/plot.html'>plot(x, type = "XIC")</a></code> (<code>x</code> being an
+and <code><a href='https://rdrr.io/pkg/MSnbase/man/mzRident2dfr.html'>as(x, "data.frame")</a></code> and <code><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot(x, type = "XIC")</a></code> (<code>x</code> being an
 <code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object) should be used instead. See examples
 below. Be aware that filtering the raw object might however drop the
 adjusted retention times. In such cases it is advisable to use the
-<code><a href='applyAdjustedRtime.html'>applyAdjustedRtime()</a></code> function prior to filtering.</p>
+<code><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime()</a></code> function prior to filtering.</p>
 <p>Extract a <code>data.frame</code> of retention time, mz and intensity
 values from each file/sample in the provided rt-mz range (or for the full
 data range if <code>rt</code> and <code>mz</code> are not defined).</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for OnDiskMSnExp</span>
-<span class='fu'>extractMsData</span>(<span class='no'>object</span>, <span class='no'>rt</span>, <span class='no'>mz</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/extractMsData-method.html'>extractMsData</a></span>(<span class='kw'>object</span>, <span class='kw'>rt</span>, <span class='kw'>mz</span>, msLevel = <span class='fl'>1L</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>extractMsData</span>(
-  <span class='no'>object</span>,
-  <span class='no'>rt</span>,
-  <span class='no'>mz</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>adjustedRtime</span> <span class='kw'>=</span> <span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/extractMsData-method.html'>extractMsData</a></span>(
+  <span class='kw'>object</span>,
+  <span class='kw'>rt</span>,
+  <span class='kw'>mz</span>,
+  msLevel = <span class='fl'>1L</span>,
+  adjustedRtime = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -211,21 +211,21 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the full MS data for a certain retention time range</span>
 <span class='co'>## as a data.frame</span>
-<span class='no'>tmp</span> <span class='kw'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2800</span>, <span class='fl'>2900</span>))
-<span class='no'>ms_all</span> <span class='kw'>&lt;-</span> <span class='fu'>as</span>(<span class='no'>tmp</span>, <span class='st'>"data.frame"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>ms_all</span>)</div><div class='output co'>#&gt;   file       rt    mz     i
+<span class='kw'>tmp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterRt</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2800</span>, <span class='fl'>2900</span>))
+<span class='kw'>ms_all</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/mzRident2dfr.html'>as</a></span>(<span class='kw'>tmp</span>, <span class='st'>"data.frame"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>ms_all</span>)</div><div class='output co'>#&gt;   file       rt    mz     i
 #&gt; 1    1 2800.284 200.1   968
 #&gt; 2    1 2800.284 201.0  1273
 #&gt; 3    1 2800.284 201.9  1729
 #&gt; 4    1 2800.284 203.0   859
 #&gt; 5    1 2800.284 205.0 24136
-#&gt; 6    1 2800.284 206.0  3913</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>ms_all</span>)</div><div class='output co'>#&gt; [1] 79960</div></pre>
+#&gt; 6    1 2800.284 206.0  3913</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>ms_all</span>)</div><div class='output co'>#&gt; [1] 79960</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

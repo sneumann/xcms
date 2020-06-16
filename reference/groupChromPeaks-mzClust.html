@@ -167,49 +167,49 @@ the <code>minFraction</code> slot of the object.</p>
 grouping for single spectrum metabolomics data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MzClustParam</span>(
-  <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>absMz</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>minFraction</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>minSamples</span> <span class='kw'>=</span> <span class='fl'>1</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>MzClustParam</a></span>(
+  sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  ppm = <span class='fl'>20</span>,
+  absMz = <span class='fl'>0</span>,
+  minFraction = <span class='fl'>0.5</span>,
+  minSamples = <span class='fl'>1</span>
 )
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+<span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'>absMz</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'>absMz</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minSamples</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minSamples</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minSamples</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minSamples</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,MzClustParam</span>
-<span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>object</span>, <span class='no'>param</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -247,9 +247,9 @@ considered a peak group (feature).</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>For <code>groupChromPeaks</code>: an <a href='XCMSnExp-class.html'>XCMSnExp</a> object containing the
+      <td><p>For <code>groupChromPeaks</code>: an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object containing the
 results from a previous chromatographic peak detection analysis (see
-<code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code>).</p><pre>For all other methods: a `MzClustParam` object.
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks()</a></code>).</p><pre>For all other methods: a `MzClustParam` object.
 </pre></td>
     </tr>
     <tr>
@@ -273,9 +273,9 @@ the peak grouping algorithm.</p></td>
     <p>The <code>MzClustParam</code> function returns a <code>MzClustParam</code> class instance with
 all of the settings specified for high resolution single spectra peak
 alignment.</p>
-<p>For <code>groupChromPeaks</code>: a <a href='XCMSnExp-class.html'>XCMSnExp</a> object with the results of the peak
+<p>For <code>groupChromPeaks</code>: a <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with the results of the peak
 grouping step (i.e. the features). These can be accessed with the
-<code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> method.</p>
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code> method.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
@@ -290,8 +290,8 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface which will eventually replace the
-<code><a href='group-methods.html'>group()</a></code> methods. All of the settings to the algorithm
-can be passed with a MzClustParam object.</p>
+<code><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group()</a></code> methods. All of the settings to the algorithm
+can be passed with a <a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>MzClustParam</a> object.</p>
 <p>Calling <code>groupChromPeaks</code> on an <code>XCMSnExp</code> object will cause
 all eventually present previous correspondence results to be dropped.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -302,31 +302,31 @@ development of a heuristic approach for metabolomics.<br /> Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust()</a></code> core API function and <code><a href='group.mzClust.html'>group.mzClust()</a></code> for
+    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust()</a></code> core API function and <code><a href='https://rdrr.io/pkg/xcms/man/group.mzClust.html'>group.mzClust()</a></code> for
 the old user interface.</p>
-<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access peak
+<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access peak
 grouping results (i.e. the features).</p>
-<p><a href='XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of
+<p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of
 the peak grouping.</p>
 <p>Other peak grouping methods: 
-<code><a href='groupChromPeaks-density.html'>groupChromPeaks-density</a></code>,
-<code><a href='groupChromPeaks-nearest.html'>groupChromPeaks-nearest</a></code>,
-<code><a href='groupChromPeaks.html'>groupChromPeaks</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>groupChromPeaks-density</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>groupChromPeaks-nearest</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Loading a small subset of direct injection, single spectrum files</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>msdata</span>)
-<span class='no'>fticrf</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"fticr"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"msdata"</span>),
-                    <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>fticr</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>fticrf</span>[<span class='fl'>1</span>:<span class='fl'>2</span>], <span class='kw'>msLevel.</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>msdata</span>)
+<span class='kw'>fticrf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"fticr"</span>, package = <span class='st'>"msdata"</span>),
+                    recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
+<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fticrf</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], msLevel. = <span class='fl'>1</span>, mode = <span class='st'>"onDisk"</span>)
 
 <span class='co'>## Perform the MSW peak detection on these:</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='findPeaks-MSW.html'>MSWParam</a></span>(<span class='kw'>scales</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), <span class='kw'>peakThr</span> <span class='kw'>=</span> <span class='fl'>80000</span>, <span class='kw'>ampTh</span> <span class='kw'>=</span> <span class='fl'>0.005</span>,
-             <span class='kw'>SNR.method</span> <span class='kw'>=</span> <span class='st'>"data.mean"</span>, <span class='kw'>winSize.noise</span> <span class='kw'>=</span> <span class='fl'>500</span>)
-<span class='no'>fticr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>fticr</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>p</span>)
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></span>(scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), peakThr = <span class='fl'>80000</span>, ampTh = <span class='fl'>0.005</span>,
+             SNR.method = <span class='st'>"data.mean"</span>, winSize.noise = <span class='fl'>500</span>)
+<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>fticr</span>, param = <span class='kw'>p</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>fticr</span>))</div><div class='output co'>#&gt;            mz    mzmin    mzmax rt rtmin rtmax    into     maxo        sn intf
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>fticr</span>))</div><div class='output co'>#&gt;            mz    mzmin    mzmax rt rtmin rtmax    into     maxo        sn intf
 #&gt; CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.975342   NA
 #&gt; CP02 409.1845 409.1755 409.1936 -1    -1    -1 4158404 310572.1 20.597978   NA
 #&gt; CP03 413.2677 413.2585 413.2769 -1    -1    -1 6099006 435462.6 27.217229   NA
@@ -342,11 +342,11 @@ the peak grouping.</p>
 #&gt; CP06 1124549.4      1</div><div class='input'>
 <span class='co'>## Now create the MzClustParam parameter object: we're assuming here that</span>
 <span class='co'>## both samples are from the same sample group.</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'>MzClustParam</span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>))
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>MzClustParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>))
 
-<span class='no'>fticr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>fticr</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>p</span>)</div><div class='output co'>#&gt; 8.00  16.00  24.00  28.00  32.00  40.00  48.00  52.00  56.00  60.00  64.00  72.00  80.00  84.00  88.00  96.00  100.00  </div><div class='input'>
+<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>fticr</span>, param = <span class='kw'>p</span>)</div><div class='output co'>#&gt; 8.00  16.00  24.00  28.00  32.00  40.00  48.00  52.00  56.00  60.00  64.00  72.00  80.00  84.00  88.00  96.00  100.00  </div><div class='input'>
 <span class='co'>## Get the definition of the features.</span>
-<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='no'>fticr</span>)</div><div class='output co'>#&gt; DataFrame with 17 rows and 9 columns
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>fticr</span>)</div><div class='output co'>#&gt; DataFrame with 17 rows and 9 columns
 #&gt;          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
 #&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; FT01   403.237   403.237   403.237        -1        -1        -1         2

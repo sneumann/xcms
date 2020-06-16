@@ -152,18 +152,18 @@ models are subsequently used to adjust the retention time for each
 spectrum in each sample.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_adjustRtime_peakGroups</span>(
-  <span class='no'>peaks</span>,
-  <span class='no'>peakIndex</span>,
-  <span class='no'>rtime</span>,
-  <span class='kw'>minFraction</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
-  <span class='kw'>extraPeaks</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>smooth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loess"</span>, <span class='st'>"linear"</span>),
-  <span class='kw'>span</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>family</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"symmetric"</span>),
-  <span class='kw'>peakGroupsMatrix</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>0</span>),
-  <span class='kw'>subset</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
-  <span class='kw'>subsetAdjust</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"average"</span>, <span class='st'>"previous"</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_adjustRtime_peakGroups.html'>do_adjustRtime_peakGroups</a></span>(
+  <span class='kw'>peaks</span>,
+  <span class='kw'>peakIndex</span>,
+  <span class='kw'>rtime</span>,
+  minFraction = <span class='fl'>0.9</span>,
+  extraPeaks = <span class='fl'>1</span>,
+  smooth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"loess"</span>, <span class='st'>"linear"</span>),
+  span = <span class='fl'>0.2</span>,
+  family = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"gaussian"</span>, <span class='st'>"symmetric"</span>),
+  peakGroupsMatrix = <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(ncol = <span class='fl'>0</span>, nrow = <span class='fl'>0</span>),
+  subset = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
+  subsetAdjust = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"average"</span>, <span class='st'>"previous"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>

@@ -137,11 +137,11 @@
     <div class="ref-description">
     <p>The MS2 and MSn data is stored in separate slots,
   and can not directly be used by e.g. findPeaks().
-  <code>msn2xcmsRaw()</code> will copy the MSn spectra
+  <code><a href='https://rdrr.io/pkg/xcms/man/msn2xcmsRaw.html'>msn2xcmsRaw()</a></code> will copy the MSn spectra
   into the "normal" <code>xcmsRaw</code> slots.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>msn2xcmsRaw</span>(<span class='no'>xmsn</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/msn2xcmsRaw.html'>msn2xcmsRaw</a></span>(<span class='kw'>xmsn</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -167,12 +167,12 @@
     <p>Steffen Neumann <a href='mailto:sneumann@ipb-halle.de'>sneumann@ipb-halle.de</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsRaw.html'>xcmsRaw</a></code>,</p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></code>,</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='no'>msnfile</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"microtofq/MSMSpos20_6.mzML"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"msdata"</span>)
- <span class='no'>xrmsn</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='xcmsRaw.html'>xcmsRaw</a></span>(<span class='no'>msnfile</span>, <span class='kw'>includeMSn</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'> <span class='no'>xr</span> <span class='kw'>&lt;-</span> <span class='fu'>msn2xcmsRaw</span>(<span class='no'>xrmsn</span>)
- <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='findPeaks-methods.html'>findPeaks</a></span>(<span class='no'>xr</span>, <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"centWave"</span>)</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 10 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 10 found.</span></div></pre>
+    <pre class="examples"><div class='input'> <span class='kw'>msnfile</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"microtofq/MSMSpos20_6.mzML"</span>, package = <span class='st'>"msdata"</span>)
+ <span class='kw'>xrmsn</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>msnfile</span>, includeMSn=<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'> <span class='kw'>xr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/msn2xcmsRaw.html'>msn2xcmsRaw</a></span>(<span class='kw'>xrmsn</span>)
+ <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></span>(<span class='kw'>xr</span>, method=<span class='st'>"centWave"</span>)</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 10 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 10 found.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

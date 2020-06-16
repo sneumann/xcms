@@ -171,13 +171,13 @@ from which the signal should be integrated.
     for the <code>ppm</code> slot of the object.</p>
 <p>Integrate signal in the mz-rt area of a feature (chromatographic
 peak group) for samples in which no chromatographic peak for this
-feature was identified and add it to the <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> matrix. Such
+feature was identified and add it to the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code> matrix. Such
 <em>filled-in</em> peaks are indicated with a <code>TRUE</code> in column <code>"is_filled"</code> in
-the result object's <code><a href='XCMSnExp-class.html'>chromPeakData()</a></code> data frame.</p>
+the result object's <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData()</a></code> data frame.</p>
 <p>Two different gap-filling approaches are implemented:</p><ul>
 <li><p><code>param = FillChromPeaksParam()</code>: the default of the original <code>xcms</code> code.
 Signal is integrated from the m/z and retention time range as defined in
-the <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> data frame, i.e. from the <code>"rtmin"</code>, <code>"rtmax"</code>,
+the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code> data frame, i.e. from the <code>"rtmin"</code>, <code>"rtmax"</code>,
 <code>"mzmin"</code> and <code>"mzmax"</code>. See details below for more information and
 settings for this method.</p></li>
 <li><p><code>param = ChromPeakAreaParam()</code>: the area from which the signal for a
@@ -197,54 +197,54 @@ from which the signal should be integrated.</p></li>
 
     </div>
 
-    <pre class="usage"><span class='fu'>FillChromPeaksParam</span>(
-  <span class='kw'>expandMz</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>expandRt</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>fixedMz</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>fixedRt</span> <span class='kw'>=</span> <span class='fl'>0</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>FillChromPeaksParam</a></span>(
+  expandMz = <span class='fl'>0</span>,
+  expandRt = <span class='fl'>0</span>,
+  ppm = <span class='fl'>0</span>,
+  fixedMz = <span class='fl'>0</span>,
+  fixedRt = <span class='fl'>0</span>
 )
 
-<span class='fu'>fixedRt</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fixedRt</a></span>(<span class='kw'>object</span>)
 
-<span class='fu'>fixedMz</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fixedMz</a></span>(<span class='kw'>object</span>)
 
-<span class='fu'>ChromPeakAreaParam</span>(
-  <span class='kw'>mzmin</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='no'>z</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fl'>0.25</span>),
-  <span class='kw'>mzmax</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='no'>z</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fl'>0.75</span>),
-  <span class='kw'>rtmin</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='no'>z</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fl'>0.25</span>),
-  <span class='kw'>rtmax</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='no'>z</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fl'>0.75</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>ChromPeakAreaParam</a></span>(
+  mzmin = <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='kw'>z</span>, probs = <span class='fl'>0.25</span>),
+  mzmax = <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='kw'>z</span>, probs = <span class='fl'>0.75</span>),
+  rtmin = <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='kw'>z</span>, probs = <span class='fl'>0.25</span>),
+  rtmax = <span class='fu'>function</span>(<span class='kw'>z</span>) <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='kw'>z</span>, probs = <span class='fl'>0.75</span>)
 )
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+<span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>expandMz</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>expandMz</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>expandMz</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>expandMz</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>expandRt</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>expandRt</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>expandRt</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>expandRt</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,FillChromPeaksParam</span>
-<span class='fu'>fillChromPeaks</span>(<span class='no'>object</span>, <span class='no'>param</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>())
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>, BPPARAM = <span class='fu'>bpparam</span>())
 
 <span class='co'># S4 method for XCMSnExp,ChromPeakAreaParam</span>
-<span class='fu'>fillChromPeaks</span>(<span class='no'>object</span>, <span class='no'>param</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>())
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>, BPPARAM = <span class='fu'>bpparam</span>())
 
 <span class='co'># S4 method for XCMSnExp,missing</span>
-<span class='fu'>fillChromPeaks</span>(<span class='no'>object</span>, <span class='no'>param</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>(), <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, BPPARAM = <span class='fu'>bpparam</span>(), msLevel = <span class='fl'>1L</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -356,7 +356,7 @@ result object) again with <code>msLevel = 2</code>.</p></td>
     <p>The <code>FillChromPeaksParam</code> function returns a
     <code>FillChromPeaksParam</code> object.</p>
 <p>A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
-features filled into its <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> matrix.</p>
+features filled into its <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code> matrix.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>After correspondence (i.e. grouping of chromatographic peaks across
@@ -377,7 +377,7 @@ which signal is to be integrated, either by a constant value (<code>fixedMz</cod
 (chromatographic) peaks, different internal functions are used to
 guarantee that the integrated peak signal matches as much as possible
 the peak signal integration used during the peak detection. For peaks
-identified with the <code><a href='findChromPeaks-matchedFilter.html'>matchedFilter()</a></code> method, signal
+identified with the <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter()</a></code> method, signal
 integration is performed on the <em>profile matrix</em> generated with
 the same settings used also during peak finding (using the same
 <code>bin</code> size for example). For direct injection data and peaks
@@ -401,10 +401,10 @@ signal within the area is used.</p>
 which the signal was integrated.
 Note that no peak is filled in if no signal was present in a file/sample
 in the respective mz-rt area. These samples will still show a <code>NA</code>
-in the matrix returned by the <code><a href='XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> method.</p>
+in the matrix returned by the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> method.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='groupChromPeaks.html'>groupChromPeaks()</a></code> for methods to perform the correspondence.</p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks()</a></code> for methods to perform the correspondence.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -412,25 +412,25 @@ in the matrix returned by the <code><a href='XCMSnExp-peak-grouping-results.html
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with identified chromatographic peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='no'>faahko_sub</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
 
 <span class='co'>## Perform the correspondence. We assign all samples to the same group.</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>res</span>,
-    <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>res</span>)))))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>,
+    param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>res</span>)))))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## For how many features do we lack an integrated peak signal?</span>
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div><div class='input'>
 <span class='co'>## Filling missing peak data using the peak area from identified</span>
 <span class='co'>## chromatographic peaks.</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>fillChromPeaks</span>(<span class='no'>res</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>ChromPeakAreaParam</span>())</div><div class='output co'>#&gt; <span class='message'>Defining peak areas for filling-in .</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'> OK</span>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>ChromPeakAreaParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Defining peak areas for filling-in .</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'> OK</span>
 #&gt; <span class='message'>Start integrating peak areas from original files</span></div><div class='input'>
 <span class='co'>## How many missing values do we have after peak filling?</span>
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
 <span class='co'>## Get the peaks that have been filled in:</span>
-<span class='no'>fp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>)[<span class='fu'><a href='XCMSnExp-class.html'>chromPeakData</a></span>(<span class='no'>res</span>)$<span class='no'>is_filled</span>, ]
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>fp</span>)</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into intb   maxo sn
+<span class='kw'>fp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData</a></span>(<span class='kw'>res</span>)<span class='op'>$</span><span class='kw'>is_filled</span>, ]
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>fp</span>)</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into intb   maxo sn
 #&gt; CP249 286.2 286.2 286.2 3252.556 3236.907 3274.857 1288521.3   NA  78048 NA
 #&gt; CP250 380.1 380.1 380.1 3172.743 3129.707 3173.526  677133.8   NA  27040 NA
 #&gt; CP251 447.2 447.2 447.2 3858.193 3828.068 3914.140 2156784.3   NA  61256 NA
@@ -446,44 +446,44 @@ in the matrix returned by the <code><a href='XCMSnExp-peak-grouping-results.html
 #&gt; CP254      1</div><div class='input'>
 <span class='co'>## Get the process history step along with the parameters used to perform</span>
 <span class='co'>## The peak filling:</span>
-<span class='no'>ph</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='no'>res</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"Missing peak filling"</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='no'>ph</span></div><div class='output co'>#&gt; Object of class "XProcessHistory"
+<span class='kw'>ph</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>, type = <span class='st'>"Missing peak filling"</span>)[[<span class='fl'>1</span>]]
+<span class='kw'>ph</span></div><div class='output co'>#&gt; Object of class "XProcessHistory"
 #&gt;  type: Missing peak filling 
-#&gt;  date: Mon Jun 15 14:27:57 2020 
+#&gt;  date: Tue Jun 16 07:56:36 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ChromPeakAreaParam 
 #&gt;  MS level(s) 1 </div><div class='input'>
 <span class='co'>## The parameter class:</span>
-<span class='no'>ph</span>@<span class='kw'>param</span></div><div class='output co'>#&gt; An object of class "ChromPeakAreaParam"
+<span class='kw'>ph</span><span class='op'>@</span>param</div><div class='output co'>#&gt; An object of class "ChromPeakAreaParam"
 #&gt; Slot "rtmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x7fc0f34ecda0&gt;
+#&gt; &lt;environment: 0x7fdb22e01580&gt;
 #&gt; 
 #&gt; Slot "rtmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x7fc0f34ecda0&gt;
+#&gt; &lt;environment: 0x7fdb22e01580&gt;
 #&gt; 
 #&gt; Slot "mzmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x7fc0f34ecda0&gt;
+#&gt; &lt;environment: 0x7fdb22e01580&gt;
 #&gt; 
 #&gt; Slot "mzmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x7fc0f34ecda0&gt;
+#&gt; &lt;environment: 0x7fdb22e01580&gt;
 #&gt; 
 #&gt; Slot ".__classVersion__":
 #&gt;   Param 
 #&gt; "0.0.1" 
 #&gt; </div><div class='input'>
 <span class='co'>## It is also possible to remove filled-in peaks:</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFilledChromPeaks</a></span>(<span class='no'>res</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropFilledChromPeaks</a></span>(<span class='kw'>res</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

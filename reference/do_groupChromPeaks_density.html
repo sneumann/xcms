@@ -142,15 +142,15 @@ grouping based on the density (distribution) of peaks, found in different
 samples, along the retention time axis in slices of overlapping mz ranges.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_groupChromPeaks_density</span>(
-  <span class='no'>peaks</span>,
-  <span class='no'>sampleGroups</span>,
-  <span class='kw'>bw</span> <span class='kw'>=</span> <span class='fl'>30</span>,
-  <span class='kw'>minFraction</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>minSamples</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.25</span>,
-  <span class='kw'>maxFeatures</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>sleep</span> <span class='kw'>=</span> <span class='fl'>0</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(
+  <span class='kw'>peaks</span>,
+  <span class='kw'>sampleGroups</span>,
+  bw = <span class='fl'>30</span>,
+  minFraction = <span class='fl'>0.5</span>,
+  minSamples = <span class='fl'>1</span>,
+  binSize = <span class='fl'>0.25</span>,
+  maxFeatures = <span class='fl'>50</span>,
+  sleep = <span class='fl'>0</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -245,26 +245,26 @@ Anal. Chem. 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other core peak grouping algorithms: 
-<code><a href='do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest</a>()</code>,
-<code><a href='do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Load the test data set</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko</span>)
 
 <span class='co'>## Extract the matrix with the identified peaks from the xcmsSet:</span>
-<span class='no'>fts</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='xcmsSet-class.html'>peaks</a></span>(<span class='no'>faahko</span>)
+<span class='kw'>fts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>peaks</a></span>(<span class='kw'>faahko</span>)
 
 <span class='co'>## Perform the peak grouping with default settings:</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>do_groupChromPeaks_density</span>(<span class='no'>fts</span>, <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span>(<span class='no'>faahko</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(<span class='kw'>fts</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>sampclass</a></span>(<span class='kw'>faahko</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The feature definitions:</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>res</span>$<span class='no'>featureDefinitions</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span><span class='op'>$</span><span class='kw'>featureDefinitions</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'>
 <span class='co'>## The assignment of peaks from the input matrix to the features</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>res</span>$<span class='no'>peakIndex</span>)</div><div class='output co'>#&gt; NULL</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span><span class='op'>$</span><span class='kw'>peakIndex</span>)</div><div class='output co'>#&gt; NULL</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

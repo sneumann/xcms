@@ -199,14 +199,14 @@ Note that this method will always return profile, not raw
 
     
 <dl>
-<dt>object = "xcmsRaw"</dt><dd><p><code>getEIC(object, mzrange, rtrange = NULL, step = 0.1)</code></p></dd>
-<dt>object = "xcmsSet"</dt><dd><p><code>getEIC(object, mzrange, rtrange = 200, groupidx,
-               sampleidx = sampnames(object), rt = c("corrected", "raw"))</code></p></dd>
+<dt>object = "xcmsRaw"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/getEIC-methods.html'>getEIC(object, mzrange, rtrange = NULL, step = 0.1)</a></code></p></dd>
+<dt>object = "xcmsSet"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/getEIC-methods.html'>getEIC(object, mzrange, rtrange = 200, groupidx,
+               sampleidx = sampnames(object), rt = c("corrected", "raw"))</a></code></p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In contrast to the <code><a href='rawEIC-methods.html'>rawEIC</a></code> method, that extracts the
+    <p>In contrast to the <code><a href='https://rdrr.io/pkg/xcms/man/rawEIC-methods.html'>rawEIC</a></code> method, that extracts the
   actual raw values, this method extracts them from the object's profile
   matrix (or if the provided <code>step</code> argument does not match the
   <code>profStep</code> of the <code>object</code> the profile matrix is calculated
@@ -216,10 +216,10 @@ Note that this method will always return profile, not raw
     <p>For <code>xcmsSet</code> and <code>xcmsRaw</code> objects, an <code>xcmsEIC</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsRaw-class.html'>xcmsRaw-class</a></code>,
-  <code><a href='xcmsSet-class.html'>xcmsSet-class</a></code>,
-  <code><a href='xcmsEIC-class.html'>xcmsEIC-class</a></code>,
-  <code><a href='rawEIC-methods.html'>rawEIC</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw-class</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet-class</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsEIC-class.html'>xcmsEIC-class</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/rawEIC-methods.html'>rawEIC</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

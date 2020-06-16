@@ -188,25 +188,25 @@ an <code>XCMSnExp</code> object. Which feature definitions should be kept can be
 specified with the <code>features</code> argument that can be a <code>logical</code>,
 <code>integer</code> or <code>character</code> vector. The function returns the
 <code>XCMSnExp</code> with the reduced <code>featureDefinitions</code> data frame.</p>
-<p>The <code>[</code> method allows to subset a <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
-object by spectra. Be aware that the <code>[</code> method removes all
+<p>The <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> method allows to subset a <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code>
+object by spectra. Be aware that the <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> method removes all
 preprocessing results, except adjusted retention times if
 <code>keepAdjustedRtime = TRUE</code> is passed to the method.</p>
-<p><code>[[</code> extracts a single <code>Spectrum</code>
+<p><code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> extracts a single <code>Spectrum</code>
 object from an <code>XCMSnExp</code>. The reported retention time is the
 adjusted retention time if alignment has been performed on <code>x</code>.</p>
-<p><code>filterMsLevel</code>: reduces the <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
+<p><code>filterMsLevel</code>: reduces the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code>
 object to spectra of the specified MS level(s). Chromatographic peaks
 and identified features are also subsetted to the respective MS level. See
 <code>filterMsLevel</code> documentation for details and
 examples.</p>
 <p>The methods listed on this page allow to filter and subset
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> objects. Most of them are inherited from the
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> objects. Most of them are inherited from the
 <code>OnDiskMSnExp</code> object and have been adapted for
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> to enable subsetting also on the preprocessing
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> to enable subsetting also on the preprocessing
 results.</p>
 <p><code>filterFile</code>: allows to reduce the
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> to data from only certain files. Identified
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> to data from only certain files. Identified
 chromatographic peaks for these files are retained while correspondence
 results (feature definitions) are removed by default. To force keeping
 feature definitions use <code>keepFeatures = TRUE</code>. Adjusted retention times
@@ -270,7 +270,7 @@ split(x, f, drop = FALSE, ...)</pre>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>For <code>[</code> and <code>[[</code>: an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
+      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: an <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
     </tr>
     <tr>
       <th>features</th>
@@ -281,13 +281,13 @@ or a <code>character</code> with the feature (row) names.</p></td>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>For <code>[</code>: <code>numeric</code> or <code>logical</code> vector specifying to
+      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>: <code>numeric</code> or <code>logical</code> vector specifying to
 which spectra the data set should be reduced.
-For <code>[[</code>: a single integer or character.</p></td>
+For <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: a single integer or character.</p></td>
     </tr>
     <tr>
       <th>j</th>
-      <td><p>For <code>[</code> and <code>[[</code>: not supported.</p></td>
+      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: not supported.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -295,11 +295,11 @@ For <code>[[</code>: a single integer or character.</p></td>
     </tr>
     <tr>
       <th>drop</th>
-      <td><p>For <code>[</code> and <code>[[</code>: not supported.</p></td>
+      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: not supported.</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>A <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
     </tr>
     <tr>
       <th>msLevel.</th>
@@ -311,7 +311,7 @@ for more details</p></td>
     <tr>
       <th>keepAdjustedRtime</th>
       <td><p>For <code>filterFile</code>, <code>filterMsLevel</code>,
-<code>[</code> <code>split</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> defining whether the adjusted
+<code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> <code>split</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> defining whether the adjusted
 retention times should be kept, even if e.g. features are being removed
 (and the retention time correction was performed on these features).</p></td>
     </tr>
@@ -357,7 +357,7 @@ a <code>factor</code>.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>All methods return an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p>
+    <p>All methods return an <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>All subsetting methods try to ensure that the returned data is
@@ -366,7 +366,7 @@ data set is sub-setted by file, since the correspondence results are
 dependent on the files on which correspondence was performed. This can be
 changed by setting <code>keepFeatures = TRUE</code>.
 For adjusted retention times, most subsetting methods
-support the argument <code>keepAdjustedRtime</code> (even the <code>[</code> method)
+support the argument <code>keepAdjustedRtime</code> (even the <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> method)
 that forces the adjusted retention times to be retained even if the
 default would be to drop them.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -377,14 +377,14 @@ the <code>fileIndex</code> attribute accordingly. Also, the method does not
 allow arbitrary ordering of the files or re-ordering of the files within
 the object.</p>
 <p>Note also that most of the filtering methods, and also the subsetting
-operations <code>[</code> drop all or selected preprocessing results. To
+operations <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> drop all or selected preprocessing results. To
 consolidate the alignment results, i.e. ensure that adjusted retention
-times are always preserved, use the <code><a href='applyAdjustedRtime.html'>applyAdjustedRtime</a></code>
+times are always preserved, use the <code><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></code>
 function on the object that contains the alignment results. This replaces
 the raw retention times with the adjusted ones.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.</p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -392,26 +392,26 @@ the raw retention times with the adjusted ones.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Loading a test data set with identified chromatographic peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset the dataset to the first and third file.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='no'>faahko_sub</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))
+<span class='kw'>xod_sub</span> <span class='op'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, file = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))
 
 <span class='co'>## The number of chromatographic peaks per file for the full object</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
 #&gt;   1   2   3 
 #&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## The number of chromatographic peaks per file for the subset</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
 #&gt;  1  2 
 #&gt; 87 61 </div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko16.CDF" "ko18.CDF"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko18.CDF"</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko16.CDF" "ko18.CDF"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko18.CDF"</div><div class='input'>
 <span class='co'>## Filter on mz values; chromatographic peaks and features within the</span>
 <span class='co'>## mz range are retained (as well as adjusted retention times).</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterMz</span>(<span class='no'>faahko_sub</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='kw'>xod_sub</span> <span class='op'>&lt;-</span> <span class='fu'>filterMz</span>(<span class='kw'>faahko_sub</span>, mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP002 302   302   302 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344   344   344 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
 #&gt; CP005 366   366   366 2679.783 2642.224 2718.907  3365174.0  3279468.3  79928
@@ -424,13 +424,13 @@ the raw retention times with the adjusted ones.</p>
 #&gt; CP005  49      1
 #&gt; CP006  87      1
 #&gt; CP007 111      1
-#&gt; CP009  44      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 89</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'>
+#&gt; CP009  44      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 89</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'>
 <span class='co'>## Filter on rt values. All chromatographic peaks and features within the</span>
 <span class='co'>## retention time range are retained. Filtering is performed by default on</span>
 <span class='co'>## adjusted retention times, if present.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>))
+<span class='kw'>xod_sub</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>))
 
-<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'>rtime</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 2700.127 2898.877</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'>rtime</span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 2700.127 2898.877</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP008 579.1 579.1 579.1 2786.200 2765.855 2806.544  1669436.8  1642951.6  87656
 #&gt; CP009 313.0 313.0 313.0 2783.070 2768.985 2806.544  1744615.5  1698756.0  74080
 #&gt; CP010 301.0 301.0 301.0 2786.200 2765.855 2809.674  3051847.8  2958809.7 118512
@@ -443,17 +443,17 @@ the raw retention times with the adjusted ones.</p>
 #&gt; CP010    62      1
 #&gt; CP011    45      1
 #&gt; CP012 17759      1
-#&gt; CP018 33983      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>)[, <span class='st'>"rt"</span>])</div><div class='output co'>#&gt; [1] 2701.693 2895.746</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 21</div><div class='input'>
+#&gt; CP018 33983      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>)[, <span class='st'>"rt"</span>])</div><div class='output co'>#&gt; [1] 2701.693 2895.746</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 21</div><div class='input'>
 <span class='co'>## Extract a single Spectrum</span>
-<span class='no'>faahko_sub</span><span class='kw'>[[</span><span class='fl'>4</span>]]</div><div class='output co'>#&gt; Object of class "Spectrum1"
+<span class='kw'>faahko_sub</span>[[<span class='fl'>4</span>]]</div><div class='output co'>#&gt; Object of class "Spectrum1"
 #&gt;  Retention time: 41:46 
 #&gt;  MSn level: 1 
 #&gt;  Total ion count: 427 
 #&gt;  Polarity: NA </div><div class='input'>
 <span class='co'>## Subsetting using [ removes all preprocessing results - using</span>
 <span class='co'>## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='no'>faahko_sub</span>[<span class='fu'>fromFile</span>(<span class='no'>faahko_sub</span>) <span class='kw'>==</span> <span class='fl'>1</span>]</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed preprocessing results</span></div><div class='input'><span class='no'>xod_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='kw'>xod_sub</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>[<span class='fu'>fromFile</span>(<span class='kw'>faahko_sub</span>) <span class='op'>==</span> <span class='fl'>1</span>]</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed preprocessing results</span></div><div class='input'><span class='kw'>xod_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.48 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
@@ -479,8 +479,8 @@ the raw retention times with the adjusted ones.</p>
 <span class='co'>## Using split does also remove preprocessing results, but it supports the</span>
 <span class='co'>## optional parameter keepAdjustedRtime.</span>
 <span class='co'>## Split the object into a list of XCMSnExp objects, one per file</span>
-<span class='no'>xod_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>f</span> <span class='kw'>=</span> <span class='fu'>fromFile</span>(<span class='no'>faahko_sub</span>))
-<span class='no'>xod_list</span></div><div class='output co'>#&gt; $`1`
+<span class='kw'>xod_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='kw'>faahko_sub</span>, f = <span class='fu'>fromFile</span>(<span class='kw'>faahko_sub</span>))
+<span class='kw'>xod_list</span></div><div class='output co'>#&gt; $`1`
 #&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.48 Mb
 #&gt; - - - Spectra data - - -

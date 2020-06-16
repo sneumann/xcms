@@ -192,8 +192,8 @@ index,index&amp;lt;-: getter and setter for the
     constructor.</p>
 <p>The <code>findChromPeaks,OnDiskMSnExp,MatchedFilterParam</code>
     method performs peak detection using the <em>matchedFilter</em> algorithm
-    on all samples from an <code>OnDiskMSnExp</code> object.
-    <code>OnDiskMSnExp</code> objects encapsule all experiment
+    on all samples from an <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object.
+    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -221,97 +221,97 @@ index,index&amp;lt;-: getter and setter for the
     <code>index</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MatchedFilterParam</span>(
-  <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>impute</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
-  <span class='kw'>baseValue</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>distance</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>fwhm</span> <span class='kw'>=</span> <span class='fl'>30</span>,
-  <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='no'>fwhm</span>/<span class='fl'>2.3548</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>steps</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> <span class='fl'>0.8</span> - <span class='no'>binSize</span> * <span class='no'>steps</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(
+  binSize = <span class='fl'>0.1</span>,
+  impute = <span class='st'>"none"</span>,
+  baseValue = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  distance = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  fwhm = <span class='fl'>30</span>,
+  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max = <span class='fl'>5</span>,
+  snthresh = <span class='fl'>10</span>,
+  steps = <span class='fl'>2</span>,
+  mzdiff = <span class='fl'>0.8</span> <span class='op'>-</span> <span class='kw'>binSize</span> <span class='op'>*</span> <span class='kw'>steps</span>,
+  index = <span class='fl'>FALSE</span>
 )
 
 <span class='co'># S4 method for OnDiskMSnExp,MatchedFilterParam</span>
-<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
-  <span class='no'>object</span>,
-  <span class='no'>param</span>,
-  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>(),
-  <span class='kw'>return.type</span> <span class='kw'>=</span> <span class='st'>"XCMSnExp"</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(
+  <span class='kw'>object</span>,
+  <span class='kw'>param</span>,
+  BPPARAM = <span class='fu'>bpparam</span>(),
+  return.type = <span class='st'>"XCMSnExp"</span>,
+  msLevel = <span class='fl'>1L</span>
 )
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+<span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>binSize</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>binSize</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>impute</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/impute-methods.html'>impute</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>impute</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/impute-methods.html'>impute</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>baseValue</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>baseValue</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>baseValue</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>baseValue</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>distance</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>distance</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>distance</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>distance</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>fwhm</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>fwhm</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>fwhm</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>fwhm</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>sigma</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>sigma</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>sigma</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>sigma</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='no'>x</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>steps</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>steps</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>steps</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>steps</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>index</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>index</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>index</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span></pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>index</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -327,7 +327,7 @@ bins/slices in m/z dimension.</p></td>
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
-<code>"intlin"</code>. See <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
+<code>"intlin"</code>. See <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
     </tr>
     <tr>
       <th>baseValue</th>
@@ -382,7 +382,7 @@ returned instead of values for m/z and retention times.</p></td>
     <tr>
       <th>object</th>
       <td><p>For <code>findChromPeaks</code>: an
-    <code>OnDiskMSnExp</code> object containing the MS- and all
+    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></td>
     </tr>
@@ -427,10 +427,10 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     specified for chromatographic detection by the <em>matchedFilter</em>
     method.</p>
 <p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
+    <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
-    If <code>return.type = "xcmsSet"</code> an <code><a href='xcmsSet-class.html'>xcmsSet</a></code> object
+    If <code>return.type = "xcmsSet"</code> an <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code> object
     with the results of the peak detection.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -439,7 +439,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     around the m/z values (i.e. the first bin includes all m/z values between
     <code>min(mz) - bin_size/2</code> and <code>min(mz) + bin_size/2</code>).</p>
 <p>For more details on binning and missing value imputation see
-    <code><a href='binYonX.html'>binYonX</a></code> and <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
+    <code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> and <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
@@ -459,7 +459,7 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
-    <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
+    <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
     detection on
     <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the matchedFilter
@@ -472,18 +472,18 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code> core API function
-and <code><a href='findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code> for the old user interface.</p>
-<p><code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a></code> for functions to perform matchedFilter
+    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code> core API function
+and <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code> for the old user interface.</p>
+<p><code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a></code> for functions to perform matchedFilter
 peak detection in purely chromatographic data.</p>
-<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the chromatographic peak detection.</p>
 <p>Other peak detection methods: 
-<code><a href='chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
-<code><a href='findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
-<code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
-<code><a href='findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
-<code><a href='findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin A Smith, Johannes Rainer</p>
@@ -492,10 +492,10 @@ peak detection in purely chromatographic data.</p>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a MatchedFilterParam object. Note that we use a unnecessarily large</span>
 <span class='co'>## binSize parameter to reduce the run-time of the example.</span>
-<span class='no'>mfp</span> <span class='kw'>&lt;-</span> <span class='fu'>MatchedFilterParam</span>(<span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>5</span>)
+<span class='kw'>mfp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(binSize = <span class='fl'>5</span>)
 <span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='no'>mfp</span>) <span class='kw'>&lt;-</span> <span class='fl'>15</span>
-<span class='no'>mfp</span></div><div class='output co'>#&gt; Object of class:  MatchedFilterParam 
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mfp</span>) <span class='op'>&lt;-</span> <span class='fl'>15</span>
+<span class='kw'>mfp</span></div><div class='output co'>#&gt; Object of class:  MatchedFilterParam 
 #&gt; Parameters:
 #&gt;  binSize: 5 
 #&gt;  impute: none 
@@ -511,16 +511,16 @@ peak detection in purely chromatographic data.</p>
 <span class='co'>## Perform the peak detection using matchecFilter on the files from the</span>
 <span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span>
 <span class='co'>## package</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>MSnbase</span>)
-<span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>), <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-           <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>raw_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='no'>fls</span>[<span class='fl'>1</span>:<span class='fl'>2</span>], <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the chromatographic peak detection using the settings defined</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://lgatto.github.io/MSnbase'>MSnbase</a></span>)
+<span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>), recursive = <span class='fl'>TRUE</span>,
+           full.names = <span class='fl'>TRUE</span>)
+<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the chromatographic peak detection using the settings defined</span>
 <span class='co'>## above. Note that we are also disabling parallel processing in this</span>
 <span class='co'>## example by registering a "SerialParam"</span>
 <span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>raw_data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>mfp</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into    intf  maxo
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>mfp</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into    intf  maxo
 #&gt; CP001 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3580020 84280
 #&gt; CP002 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3577971 84280
 #&gt; CP003 241.1460 241.1 241.2 3662.574 3646.924 3682.918 1465988.7 2234510 49728

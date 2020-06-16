@@ -137,14 +137,14 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z" />
 for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotQC</span>(<span class='no'>object</span>, <span class='no'>sampNames</span>, <span class='no'>sampColors</span>, <span class='no'>sampOrder</span>, <span class='no'>what</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>object</span>, <span class='kw'>sampNames</span>, <span class='kw'>sampColors</span>, <span class='kw'>sampOrder</span>, <span class='kw'>what</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>A grouped <code><a href='xcmsSet.html'>xcmsSet</a></code></p></td>
+      <td><p>A grouped <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code></p></td>
     </tr>
     <tr>
       <th>sampNames</th>
@@ -187,10 +187,9 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
     <p>Michael Wenk, Michael Wenk &lt;michael.wenk@student.uni-halle.de&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='no'>xsg</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span>(<span class='no'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"mzdevhist"</span>)</div><div class='img'><img src='plotQC-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"rtdevhist"</span>)</div><div class='img'><img src='plotQC-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"mzdevmass"</span>)</div><div class='img'><img src='plotQC-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"mzdevtime"</span>)</div><div class='img'><img src='plotQC-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"mzdevsample"</span>)</div><div class='img'><img src='plotQC-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='no'>xsg</span>, <span class='kw'>what</span><span class='kw'>=</span><span class='st'>"rtdevsample"</span>)</div><div class='img'><img src='plotQC-6.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='kw'>xsg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></span>(<span class='kw'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevhist"</span>)</div><div class='img'><img src='plotQC-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"rtdevhist"</span>)</div><div class='img'><img src='plotQC-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevmass"</span>)</div><div class='img'><img src='plotQC-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevtime"</span>)</div><div class='img'><img src='plotQC-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevsample"</span>)</div><div class='img'><img src='plotQC-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotQC.html'>plotQC</a></span>(<span class='kw'>xsg</span>, what=<span class='st'>"rtdevsample"</span>)</div><div class='img'><img src='plotQC-6.png' alt='' width='700' height='433' /></div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

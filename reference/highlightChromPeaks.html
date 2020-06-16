@@ -140,21 +140,21 @@ Chromatograms object." />
     <div class="ref-description">
     <p>The <code>highlightChromPeaks</code> function adds chromatographic
 peak definitions to an existing plot, such as one created by the
-<code>plot</code> method on a <code>Chromatogram</code> or
-<code>Chromatograms</code> object.</p>
+<code>plot</code> method on a <code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram</a></code> or
+<code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatograms-class.html'>Chromatograms</a></code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>highlightChromPeaks</span>(
-  <span class='no'>x</span>,
-  <span class='no'>rt</span>,
-  <span class='no'>mz</span>,
-  <span class='kw'>peakIds</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  <span class='kw'>border</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='st'>"00000040"</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>x</span>))),
-  <span class='kw'>lwd</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>col</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rect"</span>, <span class='st'>"point"</span>, <span class='st'>"polygon"</span>),
-  <span class='kw'>whichPeaks</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
-  <span class='no'>...</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(
+  <span class='kw'>x</span>,
+  <span class='kw'>rt</span>,
+  <span class='kw'>mz</span>,
+  peakIds = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  border = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='st'>"00000040"</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>x</span>))),
+  lwd = <span class='fl'>1</span>,
+  col = <span class='fl'>NA</span>,
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rect"</span>, <span class='st'>"point"</span>, <span class='st'>"polygon"</span>),
+  whichPeaks = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -198,7 +198,7 @@ rectangle (if <code>type = "rect"</code>) or the peak
     </tr>
     <tr>
       <th>type</th>
-      <td><p>the plotting type. See <code><a href='https://rdrr.io/r/base/plot.html'>plot</a></code> in base grapics for
+      <td><p>the plotting type. See <code><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></code> in base grapics for
 more details.
 For <code>highlightChromPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining how the peak
 should be highlighted: <code>type = "rect"</code> draws a rectangle
@@ -217,7 +217,7 @@ one of <code>"any"</code>, <code>"within"</code>, and <code>"apex_within"</code>
 peaks that are even partially overlapping the region, peaks that are
 completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the <code>type</code> argument of the
-<code><a href='XCMSnExp-class.html'>chromPeaks</a></code> function. See related documentation for more
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></code> function. See related documentation for more
 information and examples.</p></td>
     </tr>
     <tr>
@@ -234,23 +234,23 @@ function.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='no'>chrs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)
+<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/chromatogram-MSnExp-method.html'>chromatogram</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>chrs</span>)</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chrs</span>)</div><div class='input'>
 <span class='co'>## Extract chromatographic peaks for the mz/rt range (if any).</span>
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
 #&gt; CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</div><div class='input'>
 <span class='co'>## Highlight the chromatographic peaks in the area</span>
 <span class='co'>## Show the peak definition with a rectangle</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='input'>
 <span class='co'>## Color the actual peak</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>,
-    <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span>), <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"polygon"</span>)</div><div class='img'><img src='highlightChromPeaks-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>,
+    col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span>), type = <span class='st'>"polygon"</span>)</div><div class='img'><img src='highlightChromPeaks-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

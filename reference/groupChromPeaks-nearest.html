@@ -195,49 +195,49 @@ be disabled with <code>add = TRUE</code>, which will add newly defined features 
 already present feature definitions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>NearestPeaksParam</span>(
-  <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>mzVsRtBalance</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>absMz</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>absRt</span> <span class='kw'>=</span> <span class='fl'>15</span>,
-  <span class='kw'>kNN</span> <span class='kw'>=</span> <span class='fl'>10</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>NearestPeaksParam</a></span>(
+  sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  mzVsRtBalance = <span class='fl'>10</span>,
+  absMz = <span class='fl'>0.2</span>,
+  absRt = <span class='fl'>15</span>,
+  kNN = <span class='fl'>10</span>
 )
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+<span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>sampleGroups</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>mzVsRtBalance</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>mzVsRtBalance</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>mzVsRtBalance</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>mzVsRtBalance</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'><a href='groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'><a href='groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>absMz</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>absRt</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>absRt</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>absRt</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>absRt</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>kNN</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>kNN</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>kNN</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>kNN</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,NearestPeaksParam</span>
-<span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>object</span>, <span class='no'>param</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>, add = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -272,9 +272,9 @@ to check.</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>For <code>groupChromPeaks</code>: an <a href='XCMSnExp-class.html'>XCMSnExp</a> object containing the
+      <td><p>For <code>groupChromPeaks</code>: an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object containing the
 results from a previous chromatographic peak detection
-analysis (see <code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code>).</p><pre>For all other methods: a `NearestPeaksParam` object.
+analysis (see <code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks()</a></code>).</p><pre>For all other methods: a `NearestPeaksParam` object.
 </pre></td>
     </tr>
     <tr>
@@ -304,9 +304,9 @@ add features to the already present feature definitions.</p></td>
     <p>The <code>NearestPeaksParam</code> function returns a
     <code>NearestPeaksParam</code> class instance with all of the settings
     specified for peak alignment based on peak proximity.</p>
-<p>For <code>groupChromPeaks</code>: a <a href='XCMSnExp-class.html'>XCMSnExp</a> object with the results of the peak
+<p>For <code>groupChromPeaks</code>: a <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with the results of the peak
 grouping/correspondence step (i.e. the mz-rt features). These can be
-accessed with the <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> method.</p>
+accessed with the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code> method.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
@@ -329,21 +329,21 @@ processing and visualization of mass spectrometry based molecular profile
 data. Bioinformatics 2006, 22:634-636.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest()</a></code> core API function.</p>
-<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access
+    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest()</a></code> core API function.</p>
+<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access
 peak grouping results (i.e. the features).</p>
-<p><a href='XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of
+<p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of
 the peak grouping.</p>
 <p>Other peak grouping methods: 
-<code><a href='groupChromPeaks-density.html'>groupChromPeaks-density</a></code>,
-<code><a href='groupChromPeaks-mzClust.html'>groupChromPeaks-mzClust</a></code>,
-<code><a href='groupChromPeaks.html'>groupChromPeaks</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>groupChromPeaks-density</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-mzClust.html'>groupChromPeaks-mzClust</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a NearestPeaksParam object</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'>NearestPeaksParam</span>(<span class='kw'>kNN</span> <span class='kw'>=</span> <span class='fl'>3</span>)
-<span class='no'>p</span></div><div class='output co'>#&gt; Object of class:  NearestPeaksParam 
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>NearestPeaksParam</a></span>(kNN = <span class='fl'>3</span>)
+<span class='kw'>p</span></div><div class='output co'>#&gt; Object of class:  NearestPeaksParam 
 #&gt; Parameters:
 #&gt;  sampleGroups: numeric of length 0 
 #&gt;  mzVsRtBalance: 10 
@@ -356,18 +356,18 @@ the peak grouping.</p>
 <span class='co'>## Below we perform first a chromatographic peak detection (using the</span>
 <span class='co'>## matchedFilter method) on some of the test files from the faahKO package</span>
 <span class='co'>## followed by a peaks grouping using the "nearest" method.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>MSnbase</span>)
-<span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>), <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-           <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://lgatto.github.io/MSnbase'>MSnbase</a></span>)
+<span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>), recursive = <span class='fl'>TRUE</span>,
+           full.names = <span class='fl'>TRUE</span>)
 
 <span class='co'>## Reading 2 of the KO samples</span>
-<span class='no'>raw_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='no'>fls</span>[<span class='fl'>1</span>:<span class='fl'>2</span>], <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Perform the peak detection using the matchedFilter method.</span>
-<span class='no'>mfp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(<span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>raw_data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>mfp</span>)
+<span class='kw'>mfp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(snthresh = <span class='fl'>20</span>, binSize = <span class='fl'>1</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>mfp</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
 #&gt; CP001 205.0000   205 205.0 2784.635 2770.550 2800.284 1778568.9 3589494.1 84280
 #&gt; CP002 205.0000   205 205.0 2784.635 2770.550 2800.284 1778568.9 3589494.1 84280
 #&gt; CP003 207.0821   207 207.1 2712.647 2698.562 2726.731  380873.0  725545.6 18800
@@ -381,14 +381,14 @@ the peak grouping.</p>
 #&gt; CP004  39851.56 1 26.10968      1
 #&gt; CP005  41455.94 1 28.58299      1
 #&gt; CP006  41456.03 1 30.40953      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
 #&gt;   1   2 
 #&gt; 251 299 </div><div class='input'>
 <span class='co'>## Performing the peak grouping</span>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fu'>NearestPeaksParam</span>()
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>res</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>p</span>)</div><div class='output co'>#&gt; <span class='message'>Empty 'sampleGroups' in 'param', assuming all samples to be in the same group.</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-nearest.html'>NearestPeaksParam</a></span>()
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)</div><div class='output co'>#&gt; <span class='message'>Empty 'sampleGroups' in 'param', assuming all samples to be in the same group.</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The results from the peak grouping:</span>
-<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; DataFrame with 471 rows and 10 columns
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; DataFrame with 471 rows and 10 columns
 #&gt;           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
 #&gt;       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; FT001   200.100   200.100   200.100   2876.97   2876.97   2876.97         1
@@ -417,7 +417,7 @@ the peak grouping.</p>
 #&gt; FT471         1     251         1</div><div class='input'>
 <span class='co'>## Using the featureValues method to extract a matrix with the intensities of</span>
 <span class='co'>## the features per sample.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"into"</span>))</div><div class='output co'>#&gt;       ko15.CDF  ko16.CDF
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='kw'>res</span>, value = <span class='st'>"into"</span>))</div><div class='output co'>#&gt;       ko15.CDF  ko16.CDF
 #&gt; FT001       NA  451600.7
 #&gt; FT002       NA  272872.0
 #&gt; FT003       NA  272872.0
@@ -425,10 +425,10 @@ the peak grouping.</p>
 #&gt; FT005       NA 1567038.1
 #&gt; FT006   380873  449392.6</div><div class='input'>
 <span class='co'>## The process history:</span>
-<span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Mon Jun 15 14:29:27 2020 
+#&gt;  date: Tue Jun 16 07:58:07 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2 
 #&gt;  Parameter class: MatchedFilterParam 
@@ -437,7 +437,7 @@ the peak grouping.</p>
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Mon Jun 15 14:29:29 2020 
+#&gt;  date: Tue Jun 16 07:58:10 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2 
 #&gt;  Parameter class: NearestPeaksParam 

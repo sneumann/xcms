@@ -143,8 +143,8 @@ An apply-like function which uses Rmpi to distribute
   version if distributed processing is not available.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>xcmsPapply</span>(<span class='no'>arg_sets</span>, <span class='no'>papply_action</span>, <span class='kw'>papply_commondata</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-           <span class='kw'>show_errors</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>do_trace</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>also_trace</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>())</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsPapply.html'>xcmsPapply</a></span>(<span class='kw'>arg_sets</span>, <span class='kw'>papply_action</span>, papply_commondata = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+           show_errors = <span class='fl'>TRUE</span>, do_trace = <span class='fl'>FALSE</span>, also_trace = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,16 +208,16 @@ An apply-like function which uses Rmpi to distribute
   version</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>Rmpi</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>Rmpi</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
 
-<span class='no'>number_lists</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>,<span class='fl'>4</span>:<span class='fl'>40</span>,<span class='fl'>2</span>:<span class='fl'>27</span>)
+<span class='kw'>number_lists</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,<span class='fl'>4</span><span class='op'>:</span><span class='fl'>40</span>,<span class='fl'>2</span><span class='op'>:</span><span class='fl'>27</span>)
 
-<span class='fu'>mpi.spawn.Rslaves</span>(<span class='kw'>nslaves</span><span class='kw'>=</span><span class='fl'>2</span>)
+<span class='fu'>mpi.spawn.Rslaves</span>(nslaves=<span class='fl'>2</span>)
 
-<span class='no'>results</span> <span class='kw'>&lt;-</span> <span class='fu'>xcmsPapply</span>(<span class='no'>number_lists</span>,<span class='no'>sum</span>)
-<span class='no'>results</span>
+<span class='kw'>results</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsPapply.html'>xcmsPapply</a></span>(<span class='kw'>number_lists</span>,<span class='kw'>sum</span>)
+<span class='kw'>results</span>
 
 <span class='fu'>mpi.close.Rslaves</span>()
 

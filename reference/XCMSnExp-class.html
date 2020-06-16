@@ -301,13 +301,13 @@ and correspondence. These results can be accessed with the <code>chromPeaks</cod
 (after the Usage, Arguments, Value and Slots sections) for more details).
 Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
-can be extracted with the <code>processHistory</code> method.
+can be extracted with the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></code> method.
 <code>XCMSnExp</code> objects, by directly extending the
 <code>OnDiskMSnExp</code> object from the <code>MSnbase</code> package, inherit
 all of its functionality and allows thus an easy access to the full raw
 data at any stage of an analysis.
 To support interaction with packages requiring the <em>old</em> objects,
-<code>XCMSnExp</code> objects can be coerced into <code><a href='xcmsSet-class.html'>xcmsSet</a></code>
+<code>XCMSnExp</code> objects can be coerced into <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code>
 objects using the <code>as</code> method (see examples below). All
 preprocessing results will be passed along to the resulting
 <code>xcmsSet</code> object.</p>
@@ -322,7 +322,7 @@ correspondence results):</p>
     is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
     and m (columns) the retention time of the corresponding scans. Each cell
     contains the maximum intensity measured for the specific scan and m/z
-    values. See <code><a href='profMat-xcmsSet.html'>profMat</a></code> for more details and description of
+    values. See <code><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profMat</a></code> for more details and description of
     the various binning methods.</p>
 <p><code>hasAdjustedRtime</code>: whether the object provides adjusted
 retention times.</p>
@@ -335,7 +335,7 @@ chromatographic peaks.</p>
 <p><code>adjustedRtime</code>,<code>adjustedRtime&lt;-</code>:
 extract/set adjusted retention times. <code>adjustedRtime&lt;-</code> should not
 be called manually, it is called internally by the
-<code><a href='adjustRtime.html'>adjustRtime</a></code> methods. For <code>XCMSnExp</code> objects,
+<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></code> methods. For <code>XCMSnExp</code> objects,
 <code>adjustedRtime&lt;-</code> does also apply retention time adjustments to
 eventually present chromatographic peaks. The <code>bySample</code> parameter
 allows to specify whether the adjusted retention time should be grouped
@@ -347,7 +347,7 @@ specified m/z and/or rt ranges. The function supports also the parameter
 <code>type</code> that allows to specify which features to be returned if any
 of <code>rt</code> or <code>mz</code> is specified. For details see help of
 <code>chromPeaks</code>.
-See also <code><a href='featureSummary.html'>featureSummary</a></code> for a function to calculate simple
+See also <code><a href='https://rdrr.io/pkg/xcms/man/featureSummary.html'>featureSummary</a></code> for a function to calculate simple
 feature summaries.</p>
 <p><code>chromPeaks</code>, <code>chromPeaks&lt;-</code>: extract or set
 the matrix containing the information on identified chromatographic
@@ -369,7 +369,7 @@ peak) has to be within the region.
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the <code>chromPeaks&lt;-</code> method directly
 as detected chromatographic peaks are added to the object by the
-<code><a href='chromatographic-peak-detection.html'>findChromPeaks</a></code> method. Also, <code>chromPeaks&lt;-</code> will replace
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></code> method. Also, <code>chromPeaks&lt;-</code> will replace
 any existing <code>chromPeakData</code>.</p>
 <p><code>chromPeakData</code> and <code>chromPeakData&lt;-</code> allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
@@ -380,7 +380,7 @@ scan. The <code>bySample</code> parameter allows to return the values grouped
 by sample/file and <code>adjusted</code> whether adjusted or raw retention
 times should be returned. By default the method returns adjusted
 retention times, if they are available (i.e. if retention times were
-adjusted using the <code><a href='adjustRtime.html'>adjustRtime</a></code> method).</p>
+adjusted using the <code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></code> method).</p>
 <p><code>mz</code>: extracts the mz values from each scan of
 all files within an <code>XCMSnExp</code> object. These values are extracted
 from the original data files and eventual processing steps are applied
@@ -402,7 +402,7 @@ If the <code>XCMSnExp</code> object contains adjusted retention times, these
 are returned by default in the <code>Spectrum</code> objects (can be
 overwritten by setting <code>adjusted = FALSE</code>).</p>
 <p><code>processHistory</code>: returns a <code>list</code> of
-<code><a href='ProcessHistory-class.html'>ProcessHistory</a></code> objects (or objects inheriting from this
+<code><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>ProcessHistory</a></code> objects (or objects inheriting from this
 base class) representing the individual processing steps that have been
 performed, eventually along with their settings (<code>Param</code> parameter
 class). Optional arguments <code>fileIndex</code>, <code>type</code> and
@@ -422,7 +422,7 @@ time adjustment results, if these were performed after the last peak
 grouping (i.e. which base on the results from the peak grouping that are
 going to be removed). All related process history steps are
 removed too as well as eventually filled in peaks
-(by <code><a href='fillChromPeaks.html'>fillChromPeaks</a></code>). The parameter <code>keepAdjustedRtime</code>
+(by <code><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></code>). The parameter <code>keepAdjustedRtime</code>
 can be used to avoid removal of adjusted retention times.</p>
 <p><code>dropAdjustedRtime</code>: drops any retention time
 adjustment information and returns the object without adjusted retention
@@ -434,7 +434,7 @@ results if these were performed <em>after</em> the retention time
 adjustment. All related process history steps are removed too.</p>
 <p><code>findChromPeaks</code> performs chromatographic peak detection
 on the provided <code>XCMSnExp</code> objects. For more details see the method
-for <code>XCMSnExp</code>.
+for <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code>.
 Note that by default (with parameter <code>add = FALSE</code>) previous peak
 detection results are removed. Use <code>add = TRUE</code> to perform a second
 round of peak detection and add the newly identified peaks to the previous
@@ -442,9 +442,9 @@ peak detection results. Correspondence results (features) are always removed
 prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
-aligned using e.g. obiwarp (<code><a href='adjustRtime-obiwarp.html'>adjustRtime-obiwarp</a></code>).</p>
+aligned using e.g. obiwarp (<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>adjustRtime-obiwarp</a></code>).</p>
 <p><code>dropFilledChromPeaks</code>: drops any filled-in chromatographic
-peaks (filled in by the <code><a href='fillChromPeaks.html'>fillChromPeaks</a></code> method) and all
+peaks (filled in by the <code><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></code> method) and all
 related process history steps.</p>
 <p><code>spectrapply</code> applies the provided function to each
 <code>Spectrum</code> in the object and returns its
@@ -453,145 +453,145 @@ results. If no function is specified the function simply returns the
 <p><code>XCMSnExp</code> objects can be combined with the <code>c</code> function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.</p>
-<p><code>plot</code> plots the spectrum data (see <code><a href='https://rdrr.io/r/base/plot.html'>plot</a></code> for
+<p><code>plot</code> plots the spectrum data (see <code><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></code> for
 <code>MSnExp</code> objects in the <code>MSnbase</code> package for more details.
 For <code>type = "XIC"</code>, identified chromatographic peaks will be indicated
 as rectangles with border color <code>peakCol</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>processHistoryTypes</span>()
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistoryTypes</a></span>()
 
-<span class='fu'>hasFilledChromPeaks</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasFilledChromPeaks</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for OnDiskMSnExp</span>
-<span class='fu'><a href='profMat-xcmsSet.html'>profMat</a></span>(
-  <span class='no'>object</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"bin"</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>baselevel</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>basespace</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mzrange.</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>fileIndex</span>,
-  <span class='no'>...</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profMat</a></span>(
+  <span class='kw'>object</span>,
+  method = <span class='st'>"bin"</span>,
+  step = <span class='fl'>0.1</span>,
+  baselevel = <span class='kw'>NULL</span>,
+  basespace = <span class='kw'>NULL</span>,
+  mzrange. = <span class='kw'>NULL</span>,
+  <span class='kw'>fileIndex</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>show</span>(<span class='no'>object</span>)
+<span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>hasAdjustedRtime</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>hasFeatures</span>(<span class='no'>object</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasFeatures</a></span>(<span class='kw'>object</span>, msLevel = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>hasChromPeaks</span>(<span class='no'>object</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasChromPeaks</a></span>(<span class='kw'>object</span>, msLevel = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>hasFilledChromPeaks</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasFilledChromPeaks</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>adjustedRtime</span>(<span class='no'>object</span>, <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>adjustedRtime</a></span>(<span class='kw'>object</span>, bySample = <span class='fl'>FALSE</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>adjustedRtime</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>adjustedRtime</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>featureDefinitions</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></span>(
+  <span class='kw'>object</span>,
+  mz = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  rt = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  ppm = <span class='fl'>0</span>,
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
+  msLevel = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>featureDefinitions</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromPeaks</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
-  <span class='kw'>isFilledColumn</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(
+  <span class='kw'>object</span>,
+  bySample = <span class='fl'>FALSE</span>,
+  rt = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  mz = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
+  ppm = <span class='fl'>0</span>,
+  msLevel = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
+  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
+  isFilledColumn = <span class='fl'>FALSE</span>
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromPeaks</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>rtime</span>(<span class='no'>object</span>, <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>adjusted</span> <span class='kw'>=</span> <span class='fu'>hasAdjustedRtime</span>(<span class='no'>object</span>))
+<span class='fu'>rtime</span>(<span class='kw'>object</span>, bySample = <span class='fl'>FALSE</span>, adjusted = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>))
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>mz</span>(<span class='no'>object</span>, <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>())
+<span class='fu'>mz</span>(<span class='kw'>object</span>, bySample = <span class='fl'>FALSE</span>, BPPARAM = <span class='fu'>bpparam</span>())
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>intensity</span>(<span class='no'>object</span>, <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>())
+<span class='fu'>intensity</span>(<span class='kw'>object</span>, bySample = <span class='fl'>FALSE</span>, BPPARAM = <span class='fu'>bpparam</span>())
 
 <span class='co'># S4 method for XCMSnExp</span>
 <span class='fu'>spectra</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>adjusted</span> <span class='kw'>=</span> <span class='fu'>hasAdjustedRtime</span>(<span class='no'>object</span>),
-  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>()
+  <span class='kw'>object</span>,
+  bySample = <span class='fl'>FALSE</span>,
+  adjusted = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>),
+  BPPARAM = <span class='fu'>bpparam</span>()
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>processHistory</span>(<span class='no'>object</span>, <span class='no'>fileIndex</span>, <span class='no'>type</span>, <span class='no'>msLevel</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>object</span>, <span class='kw'>fileIndex</span>, <span class='kw'>type</span>, <span class='kw'>msLevel</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>dropChromPeaks</span>(<span class='no'>object</span>, <span class='kw'>keepAdjustedRtime</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropChromPeaks</a></span>(<span class='kw'>object</span>, keepAdjustedRtime = <span class='fl'>FALSE</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>dropFeatureDefinitions</span>(<span class='no'>object</span>, <span class='kw'>keepAdjustedRtime</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>dropLastN</span> <span class='kw'>=</span> -<span class='fl'>1</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropFeatureDefinitions</a></span>(<span class='kw'>object</span>, keepAdjustedRtime = <span class='fl'>FALSE</span>, dropLastN = <span class='op'>-</span><span class='fl'>1</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>dropAdjustedRtime</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropAdjustedRtime</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='profMat-xcmsSet.html'>profMat</a></span>(
-  <span class='no'>object</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"bin"</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>baselevel</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>basespace</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>mzrange.</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>fileIndex</span>,
-  <span class='no'>...</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profMat</a></span>(
+  <span class='kw'>object</span>,
+  method = <span class='st'>"bin"</span>,
+  step = <span class='fl'>0.1</span>,
+  baselevel = <span class='kw'>NULL</span>,
+  basespace = <span class='kw'>NULL</span>,
+  mzrange. = <span class='kw'>NULL</span>,
+  <span class='kw'>fileIndex</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S4 method for XCMSnExp,Param</span>
-<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
-  <span class='no'>object</span>,
-  <span class='no'>param</span>,
-  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>(),
-  <span class='kw'>return.type</span> <span class='kw'>=</span> <span class='st'>"XCMSnExp"</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>add</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(
+  <span class='kw'>object</span>,
+  <span class='kw'>param</span>,
+  BPPARAM = <span class='fu'>bpparam</span>(),
+  return.type = <span class='st'>"XCMSnExp"</span>,
+  msLevel = <span class='fl'>1L</span>,
+  add = <span class='fl'>FALSE</span>
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>dropFilledChromPeaks</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropFilledChromPeaks</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>spectrapply</span>(<span class='no'>object</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>(), <span class='no'>...</span>)
+<span class='fu'>spectrapply</span>(<span class='kw'>object</span>, FUN = <span class='kw'>NULL</span>, BPPARAM = <span class='fu'>bpparam</span>(), <span class='kw'>...</span>)
 
 <span class='co'># S3 method for XCMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>...</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromPeakData</span>(<span class='no'>object</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromPeakData</span>(<span class='no'>object</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,missing</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spectra"</span>, <span class='st'>"XIC"</span>), <span class='kw'>peakCol</span> <span class='kw'>=</span> <span class='st'>"#ff000060"</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"spectra"</span>, <span class='st'>"XIC"</span>), peakCol = <span class='st'>"#ff000060"</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -618,7 +618,7 @@ section for more information.</p></td>
       <td><p>numeric(1) representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if <code>method = "binlinbase"</code>. See
-<code>baseValue</code> parameter of <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for more
+<code>baseValue</code> parameter of <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for more
 details.</p></td>
     </tr>
     <tr>
@@ -629,9 +629,9 @@ be used between consecutive data points falling within
 <code>2 * basespace</code> to each other. Only considered if
 <code>method = "binlinbase"</code>. If not specified, it defaults to
 <code>0.075</code>. Internally this parameter is translated into the
-<code>distance</code> parameter of the <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code>
+<code>distance</code> parameter of the <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code>
 function by <code>distance = floor(basespace / step)</code>. See
-<code>distance</code> parameter of <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for more
+<code>distance</code> parameter of <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for more
 details.</p></td>
     </tr>
     <tr>
@@ -643,7 +643,7 @@ be used for binnind. If not provided, the whole mz value range is used.</p></td>
       <th>fileIndex</th>
       <td><p>For <code>processHistory</code>: optional <code>integer</code>
 specifying the index of the files/samples for which the
-<code><a href='ProcessHistory-class.html'>ProcessHistory</a></code> objects should be retrieved.</p></td>
+<code><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>ProcessHistory</a></code> objects should be retrieved.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -691,7 +691,7 @@ returned.</p></td>
     <tr>
       <th>type</th>
       <td><p>For <code>processHistory</code>: restrict returned
-<code><a href='ProcessHistory-class.html'>ProcessHistory</a></code> objects to analysis steps of a certain
+<code><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>ProcessHistory</a></code> objects to analysis steps of a certain
 type. Use the <code>processHistoryTypes</code> to list all supported values.
 For <code>chromPeaks</code>: <code>character</code> specifying which peaks to return
 if <code>rt</code> or <code>mz</code> are defined. For <code>type = "any"</code> all
@@ -735,9 +735,9 @@ recent peak grouping related process history step.</p></td>
     </tr>
     <tr>
       <th>param</th>
-      <td><p>A <code><a href='findChromPeaks-centWave.html'>CentWaveParam</a></code>, <code><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></code>,
-<code><a href='findChromPeaks-massifquant.html'>MassifquantParam</a></code>, <code><a href='findPeaks-MSW.html'>MSWParam</a></code> or
-<code><a href='findChromPeaks-centWaveWithPredIsoROIs.html'>CentWavePredIsoParam</a></code> object with the settings for the
+      <td><p>A <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>MassifquantParam</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></code> or
+<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>CentWavePredIsoParam</a></code> object with the settings for the
 chromatographic peak detection algorithm.</p></td>
     </tr>
     <tr>
@@ -778,7 +778,7 @@ identified chromatographic peaks (only in combination with
 
     <p>For <code>profMat</code>: a <code>list</code> with a the profile matrix
     <code>matrix</code> (or matrices if <code>fileIndex</code> was not specified or if
-    <code>length(fileIndex) &gt; 1</code>). See <code><a href='profMat-xcmsSet.html'>profile-matrix</a></code> for
+    <code>length(fileIndex) &gt; 1</code>). See <code><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profile-matrix</a></code> for
     general help and information about the profile matrix.</p>
 <p>For <code>adjustedRtime</code>: if <code>bySample = FALSE</code> a <code>numeric</code>
 vector with the adjusted retention for each spectrum of all files/samples
@@ -832,7 +832,7 @@ result is grouped by sample, i.e. as a <code>list</code> of <code>lists</code>, 
 element in the <em>outer</em> <code>list</code> being the <code>list</code> of spectra
 of the specific file.</p>
 <p>For <code>processHistory</code>: a <code>list</code> of
-<code><a href='ProcessHistory-class.html'>ProcessHistory</a></code> objects providing the details of the
+<code><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>ProcessHistory</a></code> objects providing the details of the
 individual data processing steps that have been performed.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
@@ -861,7 +861,7 @@ This object should not be manipulated directly.</p></dd>
 
 
 <p>Chromatographic peak data is added to an <code>XCMSnExp</code> object by the
-<code><a href='chromatographic-peak-detection.html'>findChromPeaks</a></code> function. Functions to access chromatographic
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></code> function. Functions to access chromatographic
 peak data are:</p>
 <ul>
 <li><p><code>hasChromPeaks</code> whether chromatographic peak data is available,
@@ -871,13 +871,13 @@ see below for help of the function.</p></li>
 help).</p></li>
 <li><p><code>dropFilledChromPeaks</code> remove filled-in peaks (see below for
 help).</p></li>
-<li><p><code><a href='fillChromPeaks.html'>fillChromPeaks</a></code> fill-in missing peaks (see respective
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></code> fill-in missing peaks (see respective
 help page).</p></li>
-<li><p><code><a href='plotChromPeaks.html'>plotChromPeaks</a></code> plot identified peaks for a file (see
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeaks</a></code> plot identified peaks for a file (see
 respective help page).</p></li>
-<li><p><code><a href='plotChromPeaks.html'>plotChromPeakImage</a></code> plot distribution of peaks along the
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeakImage</a></code> plot distribution of peaks along the
 retention time axis (see respective help page).</p></li>
-<li><p><code><a href='highlightChromPeaks.html'>highlightChromPeaks</a></code> add chromatographic peaks to an
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></code> add chromatographic peaks to an
 existing plot of a <code>Chromatogram</code> (see respective help page).</p></li>
 </ul>
 
@@ -889,18 +889,18 @@ existing plot of a <code>Chromatogram</code> (see respective help page).</p></li
 <p>Adjusted retention times are stored in an <code>XCMSnExp</code> object besides the
 original, raw, retention times, allowing to switch between raw and adjusted
 times. It is also possible to replace the raw retention times with the
-adjusted ones with the <code><a href='applyAdjustedRtime.html'>applyAdjustedRtime</a></code>. The adjusted
+adjusted ones with the <code><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></code>. The adjusted
 retention times are added to an <code>XCMSnExp</code> by the
-<code><a href='adjustRtime.html'>adjustRtime</a></code> function. All functions related to the access of
+<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></code> function. All functions related to the access of
  adjusted retention times are:</p>
 <ul>
 <li><p><code>hasAdjustedRtime</code> whether adjusted retention times are available
 (see below for help).</p></li>
 <li><p><code>dropAdjustedRtime</code> remove adjusted retention times (see below
 for help).</p></li>
-<li><p><code><a href='applyAdjustedRtime.html'>applyAdjustedRtime</a></code> replace the raw retention times with
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></code> replace the raw retention times with
 the adjusted ones (see respective help page).</p></li>
-<li><p><code><a href='plotAdjustedRtime.html'>plotAdjustedRtime</a></code> plot differences between adjusted and
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/plotAdjustedRtime.html'>plotAdjustedRtime</a></code> plot differences between adjusted and
 raw retention times (see respective help page).</p></li>
 </ul>
 
@@ -909,7 +909,7 @@ raw retention times (see respective help page).</p></li>
     
 
 
-<p>The correspondence analysis (<code><a href='groupChromPeaks.html'>groupChromPeaks</a></code>) adds the feature
+<p>The correspondence analysis (<code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></code>) adds the feature
 definitions to an <code>XCMSnExp</code> object. All functions related to these are
 listed below:</p>
 <ul>
@@ -919,11 +919,11 @@ below for help).</p></li>
 below for help).</p></li>
 <li><p><code>dropFeatureDefinitions</code> remove correspondence results (see below
 for help).</p></li>
-<li><p><code><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></code> access values for features (see respective
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></code> access values for features (see respective
 help page).</p></li>
-<li><p><code><a href='featureSummary.html'>featureSummary</a></code> perform a simple summary of the defined
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/featureSummary.html'>featureSummary</a></code> perform a simple summary of the defined
 features (see respective help page).</p></li>
-<li><p><code><a href='overlappingFeatures.html'>overlappingFeatures</a></code> identify features that are
+<li><p><code><a href='https://rdrr.io/pkg/xcms/man/overlappingFeatures.html'>overlappingFeatures</a></code> identify features that are
 overlapping or close in the m/z - rt space (see respective help page).</p></li>
 <li><p><code>quantify</code> extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
@@ -932,28 +932,28 @@ with feature definitions and phenodata information, into a
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsSet-class.html'>xcmsSet</a></code> for the old implementation.
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code> for the old implementation.
     <code>OnDiskMSnExp</code>, <code>MSnExp</code>
     and <code>pSet</code> for a complete list of inherited methods.</p>
-<p><code><a href='chromatographic-peak-detection.html'>findChromPeaks</a></code> for available peak detection methods
+<p><code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></code> for available peak detection methods
     returning a <code>XCMSnExp</code> object as a result.</p>
-<p><code><a href='groupChromPeaks.html'>groupChromPeaks</a></code> for available peak grouping
-    methods and <code>featureDefinitions</code> for the method to extract
+<p><code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></code> for available peak grouping
+    methods and <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></code> for the method to extract
     the feature definitions representing the peak grouping results.
-    <code><a href='adjustRtime.html'>adjustRtime</a></code> for retention time adjustment methods.</p>
-<p><code><a href='chromatogram-method.html'>chromatogram</a></code> to extract MS data as
+    <code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></code> for retention time adjustment methods.</p>
+<p><code><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></code> to extract MS data as
     <code>Chromatogram</code> objects.</p>
 <p><code>as</code> (<code>as(x, "data.frame")</code>) in the <code>MSnbase</code>
     package for the method to extract MS data as <code>data.frame</code>s.</p>
-<p><code><a href='featureSummary.html'>featureSummary</a></code> to calculate basic feature summaries.</p>
-<p><code><a href='featureChromatograms.html'>featureChromatograms</a></code> to extract chromatograms for each
+<p><code><a href='https://rdrr.io/pkg/xcms/man/featureSummary.html'>featureSummary</a></code> to calculate basic feature summaries.</p>
+<p><code><a href='https://rdrr.io/pkg/xcms/man/featureChromatograms.html'>featureChromatograms</a></code> to extract chromatograms for each
     feature.</p>
-<p><code><a href='chromPeakSpectra.html'>chromPeakSpectra</a></code> to extract MS2 spectra with the m/z of
+<p><code><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></code> to extract MS2 spectra with the m/z of
     the precursor ion within the m/z range of a peak and a retention time
     within its retention time range.</p>
-<p><code><a href='featureSpectra.html'>featureSpectra</a></code> to extract MS2 spectra associated with
+<p><code><a href='https://rdrr.io/pkg/xcms/man/featureSpectra.html'>featureSpectra</a></code> to extract MS2 spectra associated with
     identified features.</p>
-<p><code><a href='fillChromPeaks.html'>fillChromPeaks</a></code> for the method to fill-in eventually
+<p><code><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></code> for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -962,13 +962,13 @@ with feature definitions and phenodata information, into a
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## The results from the peak detection are now stored in the XCMSnExp</span>
 <span class='co'>## object</span>
-<span class='no'>faahko_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='kw'>faahko_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 1.23 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
@@ -997,7 +997,7 @@ with feature definitions and phenodata information, into a
 #&gt;  248 peaks identified in 3 samples.
 #&gt;  On average 82.7 chromatographic peaks per sample.</div><div class='input'>
 <span class='co'>## The detected peaks can be accessed with the chromPeaks method.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
@@ -1013,7 +1013,7 @@ with feature definitions and phenodata information, into a
 #&gt; CP006    87      1</div><div class='input'>
 <span class='co'>## The settings of the chromatographic peak detection can be accessed with</span>
 <span class='co'>## the processHistory method</span>
-<span class='fu'>processHistory</span>(<span class='no'>faahko_sub</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>faahko_sub</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
 #&gt;  date: Mon Jun 15 06:30:55 2020 
@@ -1023,7 +1023,7 @@ with feature definitions and phenodata information, into a
 #&gt;  MS level(s) 1 
 #&gt; </div><div class='input'>
 <span class='co'>## Also the parameter class for the peak detection can be accessed</span>
-<span class='fu'><a href='ProcessHistory-class.html'>processParam</a></span>(<span class='fu'>processHistory</span>(<span class='no'>faahko_sub</span>)<span class='kw'>[[</span><span class='fl'>1</span>]])</div><div class='output co'>#&gt; Object of class:  CentWaveParam 
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>processParam</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>faahko_sub</span>)[[<span class='fl'>1</span>]])</div><div class='output co'>#&gt; Object of class:  CentWaveParam 
 #&gt; Parameters:
 #&gt;  ppm: 25 
 #&gt;  peakwidth: 20, 50 
@@ -1042,7 +1042,7 @@ with feature definitions and phenodata information, into a
 <span class='co'>## defined in Bioconductor's MSnbase package. To access the (raw) retention</span>
 <span class='co'>## time for each spectrum we can use the rtime method. Setting bySample = TRUE</span>
 <span class='co'>## would cause the retention times to be grouped by sample</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>rtime</span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>rtime</span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
 #&gt; 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203 </div><div class='input'>
 <span class='co'>## Similarly it is possible to extract the mz values or the intensity values</span>
 <span class='co'>## using the mz and intensity method, respectively, also with the option to</span>
@@ -1051,8 +1051,8 @@ with feature definitions and phenodata information, into a
 <span class='co'>## spectra method which returns Spectrum objects containing all raw data.</span>
 <span class='co'>## Note that all these methods read the information from the original input</span>
 <span class='co'>## files and subsequently apply eventual data processing steps to them.</span>
-<span class='no'>mzs</span> <span class='kw'>&lt;-</span> <span class='fu'>mz</span>(<span class='no'>faahko_sub</span>, <span class='kw'>bySample</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>mzs</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='no'>mzs</span>)</div><div class='output co'>#&gt;      1      2      3 
+<span class='kw'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span>(<span class='kw'>faahko_sub</span>, bySample = <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>mzs</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)</div><div class='output co'>#&gt;      1      2      3 
 #&gt; 445769 440794 442516 </div><div class='input'>
 <span class='co'>## The full data could also be read using the spectra data, which returns</span>
 <span class='co'>## a list of Spectrum object containing the mz, intensity and rt values.</span>
@@ -1068,8 +1068,8 @@ with feature definitions and phenodata information, into a
 <span class='co'>## retention time correction and peak grouping results) will be dropped.</span>
 <span class='co'>## Below we filter the XCMSnExp object by file to extract the results for</span>
 <span class='co'>## only the second file.</span>
-<span class='no'>xod_2</span> <span class='kw'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='no'>faahko_sub</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fl'>2</span>)
-<span class='no'>xod_2</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='kw'>xod_2</span> <span class='op'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>2</span>)
+<span class='kw'>xod_2</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.49 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
@@ -1077,7 +1077,7 @@ with feature definitions and phenodata information, into a
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
 #&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
-#&gt; Filter: select file(s) 2. [Mon Jun 15 14:27:10 2020] 
+#&gt; Filter: select file(s) 2. [Tue Jun 16 07:55:48 2020] 
 #&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
@@ -1098,7 +1098,7 @@ with feature definitions and phenodata information, into a
 #&gt;  100 peaks identified in 1 samples.
 #&gt;  On average 100 chromatographic peaks per sample.</div><div class='input'>
 <span class='co'>## Now the objects contains only the idenfified peaks for the second file</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='no'>xod_2</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into        intb
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xod_2</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into        intb
 #&gt; CP088 384.1 384.1 384.1 2603.100 2592.145 2614.054   274906.3   274885.96
 #&gt; CP089 533.3 533.3 533.3 2686.042 2681.347 2689.172    70456.3    70450.04
 #&gt; CP090 344.0 344.0 344.0 2686.042 2648.483 2714.211  5700652.0  5574744.87
@@ -1116,7 +1116,7 @@ with feature definitions and phenodata information, into a
 <span class='co'>## Coercing to an xcmsSet object</span>
 <span class='co'>##</span>
 <span class='co'>## We can also coerce the XCMSnExp object into an xcmsSet object:</span>
-<span class='no'>xs</span> <span class='kw'>&lt;-</span> <span class='fu'>as</span>(<span class='no'>faahko_sub</span>, <span class='st'>"xcmsSet"</span>)</div><div class='output co'>#&gt; <span class='message'>Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='xcmsSet-class.html'>peaks</a></span>(<span class='no'>xs</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'>as</span>(<span class='kw'>faahko_sub</span>, <span class='st'>"xcmsSet"</span>)</div><div class='output co'>#&gt; <span class='message'>Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>peaks</a></span>(<span class='kw'>xs</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320

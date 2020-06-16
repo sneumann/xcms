@@ -133,18 +133,18 @@ on chromatographic data (i.e. with only intensities and retention time)." />
     </div>
 
     <div class="ref-description">
-    <p>The function performs peak detection using the <a href='findChromPeaks-matchedFilter.html'>matchedFilter</a> algorithm
+    <p>The function performs peak detection using the <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a> algorithm
 on chromatographic data (i.e. with only intensities and retention time).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>peaksWithMatchedFilter</span>(
-  <span class='no'>int</span>,
-  <span class='no'>rt</span>,
-  <span class='kw'>fwhm</span> <span class='kw'>=</span> <span class='fl'>30</span>,
-  <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='no'>fwhm</span>/<span class='fl'>2.3548</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='no'>...</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a></span>(
+  <span class='kw'>int</span>,
+  <span class='kw'>rt</span>,
+  fwhm = <span class='fl'>30</span>,
+  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max = <span class='fl'>20</span>,
+  snthresh = <span class='fl'>10</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -157,7 +157,7 @@ on chromatographic data (i.e. with only intensities and retention time).</p>
     <tr>
       <th>rt</th>
       <td><p><code>numeric</code> with the retention time for the intensities. Length has
-to be equal to <code><a href='https://rdrr.io/r/base/length.html'>length(int)</a></code>.</p></td>
+to be equal to <code><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length(int)</a></code>.</p></td>
     </tr>
     <tr>
       <th>fwhm</th>
@@ -202,10 +202,10 @@ columns:</p><ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='findChromPeaks-matchedFilter.html'>matchedFilter</a> for a detailed description of the peak detection
+    <div class='dont-index'><p><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a> for a detailed description of the peak detection
 method.</p>
 <p>Other peak detection functions for chromatographic data: 
-<code><a href='peaksWithCentWave.html'>peaksWithCentWave</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/peaksWithCentWave.html'>peaksWithCentWave</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -213,18 +213,18 @@ method.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Read one file from the faahKO package</span>
-<span class='no'>od</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-    <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
+    mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
-<span class='no'>chr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span>(<span class='no'>od</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.3</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.3</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
 
-<span class='no'>pks</span> <span class='kw'>&lt;-</span> <span class='fu'>peaksWithMatchedFilter</span>(<span class='fu'>intensity</span>(<span class='no'>chr</span>), <span class='fu'>rtime</span>(<span class='no'>chr</span>))
-<span class='no'>pks</span></div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intf  maxo     maxf       sn
+<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>))
+<span class='kw'>pks</span></div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intf  maxo     maxf       sn
 #&gt; [1,] 3119.535 3105.450 3133.619 332583.6 668444.1 16496 36129.38 23.51786
 #&gt; [2,] 2734.556 2720.472 2753.336 224307.8 353965.0  8907 17150.67 11.16396</div><div class='input'>
 <span class='co'>## Plotting the data</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='fu'>rtime</span>(<span class='no'>chr</span>), <span class='fu'>intensity</span>(<span class='no'>chr</span>), <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"h"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span>(<span class='kw'>xleft</span> <span class='kw'>=</span> <span class='no'>pks</span>[, <span class='st'>"rtmin"</span>], <span class='kw'>xright</span> <span class='kw'>=</span> <span class='no'>pks</span>[, <span class='st'>"rtmax"</span>], <span class='kw'>ybottom</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-    <span class='kw'>ytop</span> <span class='kw'>=</span> <span class='no'>pks</span>[, <span class='st'>"maxo"</span>], <span class='kw'>border</span> <span class='kw'>=</span> <span class='st'>"red"</span>)</div><div class='img'><img src='peaksWithMatchedFilter-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), type = <span class='st'>"h"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span>(xleft = <span class='kw'>pks</span>[, <span class='st'>"rtmin"</span>], xright = <span class='kw'>pks</span>[, <span class='st'>"rtmax"</span>], ybottom = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
+    ytop = <span class='kw'>pks</span>[, <span class='st'>"maxo"</span>], border = <span class='st'>"red"</span>)</div><div class='img'><img src='peaksWithMatchedFilter-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

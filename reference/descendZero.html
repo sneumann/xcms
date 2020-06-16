@@ -139,9 +139,9 @@
   a given value, or the bottom of the first valley on each side.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>descendZero</span>(<span class='no'>y</span>, <span class='kw'>istart</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='no'>y</span>))
-<span class='fu'>descendValue</span>(<span class='no'>y</span>, <span class='no'>value</span>, <span class='kw'>istart</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='no'>y</span>))
-<span class='fu'>descendMin</span>(<span class='no'>y</span>, <span class='kw'>istart</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='no'>y</span>))</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendZero</a></span>(<span class='kw'>y</span>, istart = <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='kw'>y</span>))
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendValue</a></span>(<span class='kw'>y</span>, <span class='kw'>value</span>, istart = <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='kw'>y</span>))
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendMin</a></span>(<span class='kw'>y</span>, istart = <span class='fu'><a href='https://rdrr.io/r/base/which.min.html'>which.max</a></span>(<span class='kw'>y</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,13 +169,13 @@
     <p>Colin A. Smith, <a href='mailto:csmith@scripps.edu'>csmith@scripps.edu</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>descendValue</code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendValue</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>normdist</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>dnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(-<span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>.1</span>)) - <span class='fl'>.1</span>
-<span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>descendZero</span>(<span class='no'>normdist</span>)</div><div class='output co'>#&gt; ilower iupper 
-#&gt;     25     57 </div><div class='input'><span class='no'>normdist</span>[<span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>descendZero</span>(<span class='no'>normdist</span>)]</div><div class='output co'>#&gt; [1] 0.01092083 0.01092083</div><div class='input'><span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>descendValue</span>(<span class='no'>normdist</span>, <span class='fl'>.15</span>)</div><div class='output co'>#&gt; ilower iupper 
-#&gt;     32     50 </div><div class='input'><span class='no'>normdist</span>[<span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>descendValue</span>(<span class='no'>normdist</span>, <span class='fl'>.15</span>)]</div><div class='output co'>#&gt; [1] 0.1660852 0.1660852</div><div class='input'><span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>descendMin</span>(<span class='no'>normdist</span>)</div><div class='output co'>#&gt; ilower iupper 
+    <pre class="examples"><div class='input'><span class='kw'>normdist</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>dnorm</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='op'>-</span><span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>.1</span>)) <span class='op'>-</span> <span class='fl'>.1</span>
+<span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendZero</a></span>(<span class='kw'>normdist</span>)</div><div class='output co'>#&gt; ilower iupper 
+#&gt;     25     57 </div><div class='input'><span class='kw'>normdist</span>[<span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendZero</a></span>(<span class='kw'>normdist</span>)]</div><div class='output co'>#&gt; [1] 0.01092083 0.01092083</div><div class='input'><span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendValue</a></span>(<span class='kw'>normdist</span>, <span class='fl'>.15</span>)</div><div class='output co'>#&gt; ilower iupper 
+#&gt;     32     50 </div><div class='input'><span class='kw'>normdist</span>[<span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendValue</a></span>(<span class='kw'>normdist</span>, <span class='fl'>.15</span>)]</div><div class='output co'>#&gt; [1] 0.1660852 0.1660852</div><div class='input'><span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/descendZero.html'>descendMin</a></span>(<span class='kw'>normdist</span>)</div><div class='output co'>#&gt; ilower iupper 
 #&gt;      1     81 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

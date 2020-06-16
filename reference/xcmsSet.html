@@ -139,12 +139,12 @@
   into different classes suitable for grouping.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>xcmsSet</span>(<span class='kw'>files</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>snames</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sclass</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>phenoData</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-        <span class='kw'>profmethod</span> <span class='kw'>=</span> <span class='st'>"bin"</span>, <span class='kw'>profparam</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-        <span class='kw'>polarity</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>lockMassFreq</span><span class='kw'>=</span><span class='fl'>FALSE</span>,
-        <span class='kw'>mslevel</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='kw'>nSlaves</span><span class='kw'>=</span><span class='fl'>0</span>, <span class='kw'>progressCallback</span><span class='kw'>=</span><span class='kw'>NULL</span>,
-        <span class='kw'>scanrange</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>(),
-        <span class='kw'>stopOnError</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></span>(files = <span class='kw'>NULL</span>, snames = <span class='kw'>NULL</span>, sclass = <span class='kw'>NULL</span>, phenoData = <span class='kw'>NULL</span>,
+        profmethod = <span class='st'>"bin"</span>, profparam = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+        polarity = <span class='kw'>NULL</span>, lockMassFreq=<span class='fl'>FALSE</span>,
+	mslevel=NULL, n<span class='kw'>NULL</span>es=0, prog<span class='fl'>0</span>essCallback=NULL,<span class='kw'>NULL</span>
+        scanrange = <span class='kw'>NULL</span>, BPPARAM = <span class='fu'>bpparam</span>(),
+        stopOnError = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,10 +174,10 @@
       <th>profmethod</th>
       <td><p>Method to use for profile generation. Supported
     values are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and
-    <code>"intlin"</code> (for methods <code><a href='profGenerate.html'>profBin</a></code>,
-    <code><a href='profGenerate.html'>profBinLin</a></code>, <code><a href='profGenerate.html'>profBinLinBase</a></code> and
-    <code><a href='profGenerate.html'>profIntLin</a></code>, respectively). See help on
-    <code><a href='profGenerate.html'>profBin</a></code> for a complete list of available methods and
+    <code>"intlin"</code> (for methods <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profBin</a></code>,
+    <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profBinLin</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profBinLinBase</a></code> and
+    <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profIntLin</a></code>, respectively). See help on
+    <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profBin</a></code> for a complete list of available methods and
     their supported parameters.</p></td>
     </tr>
     <tr>
@@ -243,9 +243,9 @@
 <p>If <code>phenoData</code> is provided, it is stored to the <code>phenoData</code>
   slot of the returned <code>xcmsSet</code> class. If that <code>data.frame</code>
   contains a column named &#8220;class&#8221;, its content will be returned
-  by the <code><a href='xcmsSet-class.html'>sampclass</a></code> method and thus be used for the
+  by the <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>sampclass</a></code> method and thus be used for the
   group/class assignment of the individual files (e.g. for peak grouping
-  etc.). For more details see the help of the <code><a href='xcmsSet-class.html'>xcmsSet-class</a></code>.</p>
+  etc.). For more details see the help of the <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet-class</a></code>.</p>
 <p>The step size (in m/z) to use for profile generation can be submitted
   either using the <code>profparam</code> argument
   (e.g. <code>profparam=list(step=0.1)</code>) or by submitting
@@ -253,7 +253,7 @@
   generation can be skipped.</p>
 <p>The feature/peak detection algorithm can be specified with the
   <code>method</code> argument which defaults to the <code>"matchFilter"</code>
-  method (<code><a href='findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code>). Possible values are
+  method (<code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code>). Possible values are
   returned by <code>getOption("BioC")$xcms$findPeaks.methods</code>.</p>
 <p>The lock mass correction allows for the lock mass scan to be added back in
   with the last working scan. This correction gives better reproducibility
@@ -268,16 +268,16 @@
 
     <p>The arguments <code>profmethod</code> and <code>profparam</code> have no influence
   on the feature/peak detection. The step size parameter <code>step</code> for
-  the profile generation in the <code><a href='findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code>
+  the profile generation in the <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></code>
   peak detection algorithm can be passed using the <code>...</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsSet-class.html'>xcmsSet-class</a></code>,
-  <code><a href='findPeaks-methods.html'>findPeaks</a></code>,
-  <code><a href='profStep-methods.html'>profStep</a></code>,
-  <code><a href='profMethod-methods.html'>profMethod</a></code>,
-  <code><a href='profGenerate.html'>profBin</a></code>,
-  <code><a href='xcmsPapply.html'>xcmsPapply</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet-class</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/profStep-methods.html'>profStep</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/profMethod-methods.html'>profMethod</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/profGenerate.html'>profBin</a></code>,
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsPapply.html'>xcmsPapply</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

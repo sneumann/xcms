@@ -139,14 +139,14 @@ data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>reconstructChromPeakSpectra</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>expandRt</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>diffRt</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>minCor</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>intensity</span> <span class='kw'>=</span> <span class='st'>"maxo"</span>,
-  <span class='kw'>peakId</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>object</span>, <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>)),
-  <span class='kw'>BPPARAM</span> <span class='kw'>=</span> <span class='fu'>bpparam</span>()
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/reconstructChromPeakSpectra.html'>reconstructChromPeakSpectra</a></span>(
+  <span class='kw'>object</span>,
+  expandRt = <span class='fl'>0</span>,
+  diffRt = <span class='fl'>2</span>,
+  minCor = <span class='fl'>0.8</span>,
+  intensity = <span class='st'>"maxo"</span>,
+  peakId = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>object</span>, msLevel = <span class='fl'>1L</span>)),
+  BPPARAM = <span class='fu'>bpparam</span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -160,7 +160,8 @@ data independent acquisition (DIA) data (such as SWATH). See the
       <th>expandRt</th>
       <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> allowing to expand the retention time range
 for extracted ion chromatograms by a constant value (for the peak
-shape correlation).</p></td>
+shape correlation). Defaults to <code>expandRt = 0</code> hence correlates only
+the signal included in the identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>diffRt</th>
@@ -196,15 +197,17 @@ information.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>Spectra()</code> with the reconstructed MS2 spectra for all MS1 peaks
-in <code>object</code>. Contains empty Spectrum2 objects for MS1 peaks for
+    <p><code><a href='https://rdrr.io/pkg/MSnbase/man/Spectra.html'>Spectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
+in <code>object</code>. Contains empty <a href='https://rdrr.io/pkg/MSnbase/man/Spectrum2-class.html'>Spectrum2</a> objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
 chromatographic peak was below threshold <code>minCor</code>. <code>Spectra</code> metadata
 columns <code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code>CharacterList()</code>
 and <code>NumericList()</code> with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
-MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.</p>
+MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+As retention time the median retention times of all MS2 chromatographic
+peaks used for the spectrum reconstruction is reported.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In detail, the function performs for each MS1 chromatographic peak:</p><ul>
@@ -225,11 +228,11 @@ one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
 chromatographic peaks for each spectrum as well as their correlation value.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='findChromPeaksIsolationWindow.html'>findChromPeaksIsolationWindow()</a></code> for the function to perform MS2
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaksIsolationWindow.html'>findChromPeaksIsolationWindow()</a></code> for the function to perform MS2
 peak detection in DIA isolation windows and for examples.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Johannes Rainer, Micheal Witting</p>
+    <p>Johannes Rainer, Michael Witting</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

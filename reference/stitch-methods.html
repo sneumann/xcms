@@ -147,7 +147,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>An <code><a href='xcmsRaw-class.html'>xcmsRaw-class</a></code> object</p></td>
+      <td><p>An <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw-class</a></code> object</p></td>
     </tr>
     <tr>
       <th>lockMass</th>
@@ -166,14 +166,14 @@
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     <p></p><dl>
-	<dt>object = "xcmsRaw"</dt><dd><p><code>
+	<dt>object = "xcmsRaw"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/stitch-methods.html'>
 		stitch(object, lockMass=numeric())
-		</code></p></dd>
+		</a></code></p></dd>
 	
 </dl><p></p><dl>
-	<dt>object = "xcmsRaw"</dt><dd><p><code>
+	<dt>object = "xcmsRaw"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/stitch-methods.html'>
 	makeacqNum(object, freq=numeric(), start=1)
-		</code></p></dd>
+		</a></code></p></dd>
 	
 </dl>
 
@@ -191,13 +191,13 @@
     <p>Paul Benton, <a href='mailto:hpaul.benton08@imperial.ac.uk'>hpaul.benton08@imperial.ac.uk</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
+    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
     <span class='co'>## These files do not have this problem to correct for but just</span>
     <span class='co'>## for an example</span>
-    <span class='no'>cdfpath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
-    <span class='no'>cdffiles</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>cdfpath</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-    <span class='no'>xr</span><span class='kw'>&lt;-</span><span class='fu'><a href='xcmsRaw.html'>xcmsRaw</a></span>(<span class='no'>cdffiles</span>[<span class='fl'>1</span>])</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>    <span class='no'>xr</span></div><div class='output co'>#&gt; An "xcmsRaw" object with 1278 mass spectra
+    <span class='kw'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>)
+    <span class='kw'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>cdfpath</span>, recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
+    <span class='kw'>xr</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>cdffiles</span>[<span class='fl'>1</span>])</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>    <span class='kw'>xr</span></div><div class='output co'>#&gt; An "xcmsRaw" object with 1278 mass spectra
 #&gt; 
 #&gt; Time range: 2501.4-4499.8 seconds (41.7-75 minutes)
 #&gt; Mass range: 200-600 m/z
@@ -209,11 +209,11 @@
 #&gt; Profile step: 1 m/z (401 grid points from 200 to 600 m/z)
 #&gt; 
 #&gt; Memory usage: 10.7 MB</div><div class='input'>    <span class='co'>##Lets assume that the lockmass starts at 1 and is every 100 scans</span>
-    <span class='no'>lockMass</span><span class='kw'>&lt;-</span><span class='kw pkg'>xcms</span><span class='kw ns'>:::</span><span class='fu'>makeacqNum</span>(<span class='no'>xr</span>, <span class='kw'>freq</span><span class='kw'>=</span><span class='fl'>100</span>, <span class='kw'>start</span><span class='kw'>=</span><span class='fl'>1</span>)
+    <span class='kw'>lockMass</span><span class='op'>&lt;-</span><span class='kw'>xcms</span>:::<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/stitch-methods.html'>makeacqNum</a></span>(<span class='kw'>xr</span>, freq=<span class='fl'>100</span>, start=<span class='fl'>1</span>)
     <span class='co'>## these are equcal</span>
-    <span class='no'>lockmass</span><span class='kw'>&lt;-</span><span class='fu'><a href='AutoLockMass-methods.html'>AutoLockMass</a></span>(<span class='no'>xr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: </span>
-#&gt; <span class='warning'>Lock mass frequency wasn't detected</span></div><div class='input'>    <span class='no'>ob</span><span class='kw'>&lt;-</span><span class='fu'>stitch</span>(<span class='no'>xr</span>, <span class='no'>lockMass</span>)
-    <span class='no'>ob</span></div><div class='output co'>#&gt; An "xcmsRaw" object with 1304 mass spectra
+    <span class='kw'>lockmass</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/AutoLockMass-methods.html'>AutoLockMass</a></span>(<span class='kw'>xr</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: </span>
+#&gt; <span class='warning'>Lock mass frequency wasn't detected</span></div><div class='input'>    <span class='kw'>ob</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/stitch-methods.html'>stitch</a></span>(<span class='kw'>xr</span>, <span class='kw'>lockMass</span>)
+    <span class='kw'>ob</span></div><div class='output co'>#&gt; An "xcmsRaw" object with 1304 mass spectra
 #&gt; 
 #&gt; Time range: 1.6-2040.7 seconds (0-34 minutes)
 #&gt; Mass range: 200-600 m/z
@@ -226,12 +226,11 @@
 #&gt; 
 #&gt; Memory usage: 6.96 MB</div><div class='input'>
     <span class='co'>## plot the old data before correction</span>
-    <span class='no'>foo</span><span class='kw'>&lt;-</span><span class='fu'><a href='rawEIC-methods.html'>rawEIC</a></span>(<span class='no'>xr</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>,<span class='fl'>210</span>), <span class='kw'>scan</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>80</span>,<span class='fl'>140</span>))
-    <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>foo</span>$<span class='no'>scan</span>, <span class='no'>foo</span>$<span class='no'>intensity</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"h"</span>)</div><div class='img'><img src='stitch-methods-1.png' alt='' width='700' height='433' /></div><div class='input'>
+    <span class='kw'>foo</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/rawEIC-methods.html'>rawEIC</a></span>(<span class='kw'>xr</span>, m=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>,<span class='fl'>210</span>), scan=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>80</span>,<span class='fl'>140</span>))
+    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>foo</span><span class='op'>$</span><span class='kw'>scan</span>, <span class='kw'>foo</span><span class='op'>$</span><span class='kw'>intensity</span>, type=<span class='st'>"h"</span>)</div><div class='img'><img src='stitch-methods-1.png' alt='' width='700' height='433' /></div><div class='input'>
     <span class='co'>## plot the new corrected data to see what changed</span>
-    <span class='no'>foo</span><span class='kw'>&lt;-</span><span class='fu'><a href='rawEIC-methods.html'>rawEIC</a></span>(<span class='no'>ob</span>, <span class='kw'>m</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>,<span class='fl'>210</span>), <span class='kw'>scan</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>80</span>,<span class='fl'>140</span>))
-    <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>foo</span>$<span class='no'>scan</span>, <span class='no'>foo</span>$<span class='no'>intensity</span>, <span class='kw'>type</span><span class='kw'>=</span><span class='st'>"h"</span>)</div><div class='img'><img src='stitch-methods-2.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <span class='kw'>foo</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/rawEIC-methods.html'>rawEIC</a></span>(<span class='kw'>ob</span>, m=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>,<span class='fl'>210</span>), scan=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>80</span>,<span class='fl'>140</span>))
+    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>foo</span><span class='op'>$</span><span class='kw'>scan</span>, <span class='kw'>foo</span><span class='op'>$</span><span class='kw'>intensity</span>, type=<span class='st'>"h"</span>)</div><div class='img'><img src='stitch-methods-2.png' alt='' width='700' height='433' /></div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

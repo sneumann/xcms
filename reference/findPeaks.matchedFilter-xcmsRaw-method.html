@@ -136,22 +136,22 @@
     <div class="ref-description">
     <p>Find peaks in the chromatographic time domain of the
     profile matrix. For more details see
-    <code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code>.</p>
+    <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for xcmsRaw</span>
-<span class='fu'>findPeaks.matchedFilter</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>fwhm</span> <span class='kw'>=</span> <span class='fl'>30</span>,
-  <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='no'>fwhm</span>/<span class='fl'>2.3548</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>step</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>steps</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> <span class='fl'>0.8</span> - <span class='no'>step</span> * <span class='no'>steps</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>sleep</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>scanrange</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>()
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks.matchedFilter-xcmsRaw-method.html'>findPeaks.matchedFilter</a></span>(
+  <span class='kw'>object</span>,
+  fwhm = <span class='fl'>30</span>,
+  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max = <span class='fl'>5</span>,
+  snthresh = <span class='fl'>10</span>,
+  step = <span class='fl'>0.1</span>,
+  steps = <span class='fl'>2</span>,
+  mzdiff = <span class='fl'>0.8</span> <span class='op'>-</span> <span class='kw'>step</span> <span class='op'>*</span> <span class='kw'>steps</span>,
+  index = <span class='fl'>FALSE</span>,
+  sleep = <span class='fl'>0</span>,
+  scanrange = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -159,7 +159,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>The <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code> object on which peak detection
+      <td><p>The <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code> object on which peak detection
 should be performed.</p></td>
     </tr>
     <tr>
@@ -246,9 +246,9 @@ original <code>object</code> should be sub-setted before peak detection.</p></td
     @family Old peak detection methods</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the new user interface.
-    <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code>,
-    <code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code> for the core function
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the new user interface.
+    <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code>,
+    <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></code> for the core function
     performing the peak detection.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

@@ -147,7 +147,7 @@
 
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
 
-    <p>Objects can be created with the <code><a href='xcmsSet.html'>xcmsSet</a></code> constructor
+    <p>Objects can be created with the <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code> constructor
   which gathers peaks from a set NetCDF files. Objects can also be
   created by calls of the form <code>new("xcmsSet", ...)</code>.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
@@ -155,7 +155,7 @@
     <p></p><dl>
     <dt>peaks</dt><dd><p><code>matrix</code> containing peak data.</p></dd>
     <dt>filled</dt><dd><p>A vector with peak indices of peaks which have been added by a
-      <code><a href='fillPeaks-methods.html'>fillPeaks</a></code> method.</p></dd>
+      <code><a href='https://rdrr.io/pkg/xcms/man/fillPeaks-methods.html'>fillPeaks</a></code> method.</p></dd>
     <dt>groups</dt><dd><p>Matrix containing statistics about peak groups.</p></dd>
     <dt>groupidx</dt><dd><p>List containing indices of peaks in each group.</p></dd>
     <dt>phenoData</dt><dd><p>A <code>data.frame</code> containing the experimental design factors.</p></dd>
@@ -186,40 +186,40 @@
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     <p></p><dl>
-    <dt><a href='c.xcmsSet.html'>c</a></dt><dd><p><code>signature("xcmsSet")</code>: combine objects together</p></dd>
+    <dt><a href='https://rdrr.io/pkg/xcms/man/c.xcmsSet.html'>c</a></dt><dd><p><code>signature("xcmsSet")</code>: combine objects together</p></dd>
     <dt>filepaths&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>filepaths</code> slot</p></dd>
     <dt>filepaths</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>filepaths</code> slot</p></dd>
-    <dt><a href='diffreport-methods.html'>diffreport</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: create report of
+    <dt><a href='https://rdrr.io/pkg/xcms/man/diffreport-methods.html'>diffreport</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: create report of
       differentially regulated ions including EICs</p></dd>
-    <dt><a href='fillPeaks-methods.html'>fillPeaks</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: fill in peak data for
+    <dt><a href='https://rdrr.io/pkg/xcms/man/fillPeaks-methods.html'>fillPeaks</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: fill in peak data for
       groups with missing peaks</p></dd>
-    <dt><a href='getEIC-methods.html'>getEIC</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get list of EICs for
+    <dt><a href='https://rdrr.io/pkg/xcms/man/getEIC-methods.html'>getEIC</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get list of EICs for
       each sample in the set</p></dd>
-    <dt><a href='getXcmsRaw-methods.html'>getXcmsRaw</a></dt><dd><p><code>signature(object = "xcmsSet", sampleidx = 1,
+    <dt><a href='https://rdrr.io/pkg/xcms/man/getXcmsRaw-methods.html'>getXcmsRaw</a></dt><dd><p><code>signature(object = "xcmsSet", sampleidx = 1,
 	profmethod = profMethod(object), profstep = profStep(object),
 	profparam=profinfo(object), mslevel = NULL, scanrange = NULL,
 	rt=c("corrected", "raw"), BPPARAM = bpparam())</code>: read the raw
       data for one or more files in the <code>xcmsSet</code> and return
       it. The default parameters will apply all settings used in the
-      original <code><a href='xcmsSet.html'>xcmsSet</a></code> call to generate the <code>xcmsSet</code>
+      original <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code> call to generate the <code>xcmsSet</code>
       object to be applied also to the raw data. Parameter
       <code>sampleidx</code> allows to specify which raw file(s) should be
       loaded. Argument <code>BPPARAM</code> allows to setup parallel
       processing.</p></dd>
     <dt>groupidx&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>groupidx</code> slot</p></dd>
     <dt>groupidx</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>groupidx</code> slot</p></dd>
-    <dt><a href='groupnames-methods.html'>groupnames</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get textual names for
+    <dt><a href='https://rdrr.io/pkg/xcms/man/groupnames-methods.html'>groupnames</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get textual names for
       peak groups</p></dd>
     <dt>groups&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>groups</code> slot</p></dd>
     <dt>groups</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>groups</code> slot</p></dd>
-    <dt><a href='groupval-methods.html'>groupval</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get matrix of values
+    <dt><a href='https://rdrr.io/pkg/xcms/man/groupval-methods.html'>groupval</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get matrix of values
       from peak data with a row for each peak group</p></dd>
-    <dt><a href='group-methods.html'>group</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: find groups of peaks
+    <dt><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: find groups of peaks
       across samples that share similar m/z and retention times</p></dd>
     <dt>mslevel</dt><dd><p>Getter method for the <code>mslevel</code> slot.</p></dd>
     <dt>peaks&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>peaks</code> slot</p></dd>
     <dt>peaks</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>peaks</code> slot</p></dd>
-    <dt><a href='plotrt-methods.html'>plotrt</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: plot retention time
+    <dt><a href='https://rdrr.io/pkg/xcms/man/plotrt-methods.html'>plotrt</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: plot retention time
       deviation profiles</p></dd>
     <dt>profinfo&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>profinfo</code> slot</p></dd>
     <dt>profinfo</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>profinfo</code> slot</p></dd>
@@ -227,7 +227,7 @@
       generate the profile matrix.</p></dd>
     <dt>profStep</dt><dd><p><code>signature(object = "xcmsSet")</code>: extract the profile step
       used for the generation of the profile matrix.</p></dd>
-    <dt><a href='retcor-methods.html'>retcor</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: use initial grouping
+    <dt><a href='https://rdrr.io/pkg/xcms/man/retcor-methods.html'>retcor</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: use initial grouping
       of peaks to do nonlinear loess retention time correction</p></dd>
     <dt>sampclass&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: Replaces the column
       &#8220;class&#8221; in the <code>phenoData</code> slot. See details for more information.</p></dd>
@@ -244,9 +244,9 @@
       description above for more details.</p></dd>
     <dt>sampnames&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set rownames in the
       <code>phenoData</code> slot</p></dd>
-    <dt><a href='sampnames-methods.html'>sampnames</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get rownames in the
+    <dt><a href='https://rdrr.io/pkg/xcms/man/sampnames-methods.html'>sampnames</a></dt><dd><p><code>signature(object = "xcmsSet")</code>: get rownames in the
       <code>phenoData</code> slot</p></dd>
-    <dt><a href='split.xcmsSet.html'>split</a></dt><dd><p><code>signature("xcmsSet")</code>: divide the xcmsSet into a list of
+    <dt><a href='https://rdrr.io/pkg/xcms/man/split.xcmsSet.html'>split</a></dt><dd><p><code>signature("xcmsSet")</code>: divide the xcmsSet into a list of
       xcmsSet objects depending on the provided factor. Note that only
       peak data will be preserved, i.e. eventual peak grouping information
       will be lost.</p></dd>
@@ -262,18 +262,18 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The <code>phenoData</code> slot (and <code>phenoData</code> parameter in the
-  <code><a href='xcmsSet.html'>xcmsSet</a></code> function) is intended to contain a <code>data.frame</code> describing
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code> function) is intended to contain a <code>data.frame</code> describing
   all experimental factors, i.e. the samples along with their
   properties. If this <code>data.frame</code> contains a column named
   &#8220;class&#8221;, this will be returned by the <code>sampclass</code> method
   and will thus be used by all methods to determine the sample
   grouping/class assignment (e.g. to define the colors in various plots
-  or for the <code><a href='group-methods.html'>group</a></code> method).</p>
+  or for the <code><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></code> method).</p>
 <p>The <code>sampclass&lt;-</code> method adds or replaces the &#8220;class&#8221;
   column in the <code>phenoData</code> slot. If a <code>data.frame</code> is
   submitted to this method, the interaction of its columns will be
   stored into the &#8220;class&#8221; column.</p>
-<p>Also, similar to other classes in Bioconductor, the <code>$</code> method
+<p>Also, similar to other classes in Bioconductor, the <code><a href='https://rdrr.io/r/base/Extract.html'>$</a></code> method
   can be used to directly access all columns in the <code>phenoData</code>
   slot (e.g. use <code>xset$name</code> on a <code>xcmsSet</code> object called
   &#8220;xset&#8221; to extract the values from a column named &#8220;name&#8221; in the <code>phenoData</code> slot).</p>
@@ -282,7 +282,7 @@
     <p>Colin A. Smith, <a href='mailto:csmith@scripps.edu'>csmith@scripps.edu</a>, Johannes Rainer <a href='mailto:johannes.rainer@eurac.edu'>johannes.rainer@eurac.edu</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='xcmsSet.html'>xcmsSet</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

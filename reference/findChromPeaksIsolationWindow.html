@@ -151,26 +151,26 @@ findChromPeaks() for more information)." />
 chromatographic peak detection in MS level &gt; 1 spectra of certain isolation
 windows (e.g. SWATH pockets). The function performs a peak detection,
 separately for all spectra belonging to the same isolation window and adds
-them to the <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> matrix of the result object, information about
-the isolation window they were detected in is added to <code><a href='XCMSnExp-class.html'>chromPeakData()</a></code>.
+them to the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code> matrix of the result object, information about
+the isolation window they were detected in is added to <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData()</a></code>.
 Note that peak detection with this method does not remove previously
 identified chromatographic peaks (e.g. on MS1 level using the
-<code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code> function but adds newly identified peaks to the existing
-<code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> matrix.</p>
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks()</a></code> function but adds newly identified peaks to the existing
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code> matrix.</p>
 <p>Isolation windows can be defined with the <code>isolationWindow</code> parameter, that
-by default uses the definition of <code><a href='isolationWindowTargetMz-OnDiskMSnExp-method.html'>isolationWindowTargetMz()</a></code>, i.e.
+by default uses the definition of <code><a href='https://rdrr.io/pkg/xcms/man/isolationWindowTargetMz-OnDiskMSnExp-method.html'>isolationWindowTargetMz()</a></code>, i.e.
 chromatographic peak detection is performed for all spectra with the same
 isolation window target m/z (seprarately for each file). The parameter
 <code>param</code> allows to define and configure the peak detection algorithm (see
-<code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code> for more information).</p>
+<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks()</a></code> for more information).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>findChromPeaksIsolationWindow</span>(
-  <span class='no'>object</span>,
-  <span class='no'>param</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
-  <span class='kw'>isolationWindow</span> <span class='kw'>=</span> <span class='fu'><a href='isolationWindowTargetMz-OnDiskMSnExp-method.html'>isolationWindowTargetMz</a></span>(<span class='no'>object</span>),
-  <span class='no'>...</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaksIsolationWindow.html'>findChromPeaksIsolationWindow</a></span>(
+  <span class='kw'>object</span>,
+  <span class='kw'>param</span>,
+  msLevel = <span class='fl'>2L</span>,
+  isolationWindow = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/isolationWindowTargetMz-OnDiskMSnExp-method.html'>isolationWindowTargetMz</a></span>(<span class='kw'>object</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -183,9 +183,9 @@ isolation window target m/z (seprarately for each file). The parameter
     <tr>
       <th>param</th>
       <td><p>Peak detection parameter object, such as a
-<a href='findChromPeaks-centWave.html'>CentWaveParam</a> object defining and configuring the chromographic
+<a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a> object defining and configuring the chromographic
 peak detection algorithm.
-See also <code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code> for more details.</p></td>
+See also <code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks()</a></code> for more details.</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
@@ -209,10 +209,10 @@ number of spectra in <code>object</code>.</p></td>
     <p>An <code>XCMSnExp</code> object with the chromatographic peaks identified in spectra of
 each isolation window from each file added to the <code>chromPeaks</code> matrix.
 Isolation window definition for each identified peak are stored as additional
-columns in <code><a href='XCMSnExp-class.html'>chromPeakData()</a></code>.</p>
+columns in <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeakData()</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='reconstructChromPeakSpectra.html'>reconstructChromPeakSpectra()</a></code> for the function to reconstruct
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/reconstructChromPeakSpectra.html'>reconstructChromPeakSpectra()</a></code> for the function to reconstruct
 MS2 spectra for each MS1 chromatographic peak.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

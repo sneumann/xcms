@@ -151,13 +151,13 @@ When using the method <code>method = "from_to"</code>, random numbers between 2 
 will be generated.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>imputeRowMinRand</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean_sd"</span>, <span class='st'>"from_to"</span>),
-  <span class='kw'>min_fraction</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>2</span>,
-  <span class='kw'>min_fraction_from</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fl'>1000</span>,
-  <span class='kw'>sd_fraction</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>abs</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMinRand.html'>imputeRowMinRand</a></span>(
+  <span class='kw'>x</span>,
+  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mean_sd"</span>, <span class='st'>"from_to"</span>),
+  min_fraction = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>,
+  min_fraction_from = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>1000</span>,
+  sd_fraction = <span class='fl'>1</span>,
+  abs = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -217,27 +217,27 @@ fractions of the row minimum.</p>
 
     <div class='dont-index'><p><code>imputeLCMD</code> package for more left censored imputation functions.</p>
 <p>Other imputation functions: 
-<code><a href='imputeRowMin.html'>imputeRowMin</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/imputeRowMin.html'>imputeRowMin</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"faahko"</span>)
 
-<span class='no'>xset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span>(<span class='no'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupval-methods.html'>groupval</a></span>(<span class='no'>xset</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"into"</span>)
+<span class='kw'>xset</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></span>(<span class='kw'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='kw'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupval-methods.html'>groupval</a></span>(<span class='kw'>xset</span>, value = <span class='st'>"into"</span>)
 
 <span class='co'>## Estimate the relationship between row sd and mean. The standard deviation</span>
 <span class='co'>## of the random distribution is estimated on this relationship.</span>
-<span class='no'>mns</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowMeans</a></span>(<span class='no'>mat</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>sds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='no'>mat</span>, <span class='kw'>MARGIN</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>sd</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>mns</span>, <span class='no'>sds</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='no'>sds</span> ~ <span class='no'>mns</span>))</div><div class='img'><img src='imputeRowMinRand-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='no'>mat_imp_meansd</span> <span class='kw'>&lt;-</span> <span class='fu'>imputeRowMinRand</span>(<span class='no'>mat</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"mean_sd"</span>)
-<span class='no'>mat_imp_fromto</span> <span class='kw'>&lt;-</span> <span class='fu'>imputeRowMinRand</span>(<span class='no'>mat</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"from_to"</span>)
+<span class='kw'>mns</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/colSums.html'>rowMeans</a></span>(<span class='kw'>mat</span>, na.rm = <span class='fl'>TRUE</span>)
+<span class='kw'>sds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='kw'>mat</span>, MARGIN = <span class='fl'>1</span>, <span class='kw'>sd</span>, na.rm = <span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>mns</span>, <span class='kw'>sds</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='kw'>sds</span> <span class='op'>~</span> <span class='kw'>mns</span>))</div><div class='img'><img src='imputeRowMinRand-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>mat_imp_meansd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMinRand.html'>imputeRowMinRand</a></span>(<span class='kw'>mat</span>, method = <span class='st'>"mean_sd"</span>)
+<span class='kw'>mat_imp_fromto</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMinRand.html'>imputeRowMinRand</a></span>(<span class='kw'>mat</span>, method = <span class='st'>"from_to"</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mat</span>)</div><div class='output co'>#&gt;                 ko15      ko16       ko18      ko19       ko21      ko22
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mat</span>)</div><div class='output co'>#&gt;                 ko15      ko16       ko18      ko19       ko21      ko22
 #&gt; 200.1/2926  147887.5  451600.7   65290.38        NA   91635.45  162012.4
 #&gt; 205/2791   1778568.9 1567038.1 1482796.38 1039129.8 1223132.35 1072037.7
 #&gt; 206/2790    237993.6  269714.0  201393.42  150107.3  176989.65  156797.0
@@ -250,7 +250,7 @@ fractions of the row minimum.</p>
 #&gt; 206/2790    276541.8  222366.15  211717.71  186850.88  188285.9  172348.76
 #&gt; 207.1/2719  417169.6  324892.46  277990.70  220972.35  252874.0  236728.16
 #&gt; 219.1/2525  244584.5  161184.05   72029.38         NA  238194.4  173829.95
-#&gt; 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mat_imp_meansd</span>)</div><div class='output co'>#&gt;                  ko15      ko16       ko18       ko19       ko21       ko22
+#&gt; 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mat_imp_meansd</span>)</div><div class='output co'>#&gt;                  ko15      ko16       ko18       ko19       ko21       ko22
 #&gt; 200.1/2926  147887.53  451600.7   65290.38   32951.06   91635.45  162012.44
 #&gt; 205/2791   1778568.94 1567038.1 1482796.38 1039129.82 1223132.35 1072037.70
 #&gt; 206/2790    237993.62  269714.0  201393.42  150107.31  176989.65  156797.04
@@ -263,7 +263,7 @@ fractions of the row minimum.</p>
 #&gt; 206/2790    276541.8  222366.15  211717.71  186850.88  188285.9  172348.76
 #&gt; 207.1/2719  417169.6  324892.46  277990.70  220972.35  252874.0  236728.16
 #&gt; 219.1/2525  244584.5  161184.05   72029.38   31891.26  238194.4  173829.95
-#&gt; 231/2517    121396.7   82726.22   56232.10  240261.21  201316.2  179437.72</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mat_imp_fromto</span>)</div><div class='output co'>#&gt;                  ko15       ko16        ko18       ko19       ko21       ko22
+#&gt; 231/2517    121396.7   82726.22   56232.10  240261.21  201316.2  179437.72</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mat_imp_fromto</span>)</div><div class='output co'>#&gt;                  ko15       ko16        ko18       ko19       ko21       ko22
 #&gt; 200.1/2926  147887.53  451600.71   65290.385   31707.87   91635.45  162012.44
 #&gt; 205/2791   1778568.94 1567038.14 1482796.385 1039129.82 1223132.35 1072037.70
 #&gt; 206/2790    237993.62  269713.98  201393.415  150107.31  176989.65  156797.04

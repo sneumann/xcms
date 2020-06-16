@@ -140,13 +140,13 @@ the exported spectra.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp,character</span>
-<span class='fu'>writeMSData</span>(
-  <span class='no'>object</span>,
-  <span class='no'>file</span>,
-  <span class='kw'>outformat</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mzml"</span>, <span class='st'>"mzxml"</span>),
-  <span class='kw'>copy</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>software_processing</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData</a></span>(
+  <span class='kw'>object</span>,
+  <span class='kw'>file</span>,
+  outformat = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mzml"</span>, <span class='st'>"mzxml"</span>),
+  copy = <span class='fl'>FALSE</span>,
+  software_processing = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -154,7 +154,7 @@ the exported spectra.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with the mass spectrometry data.</p></td>
+      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with the mass spectrometry data.</p></td>
     </tr>
     <tr>
       <th>file</th>
@@ -179,7 +179,7 @@ See documentation of the <code>software_processing</code> parameter of
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional parameters to pass down to the <code>writeMSData()</code>
+      <td><p>Additional parameters to pass down to the <code><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData()</a></code>
 function in the <code>MSnbase</code> package, such as <code>outformat</code> to specify the
 output format (<code>"mzml"</code> or <code>"mzxml"</code>) or <code>copy</code> to specify whether
 general information from the original MS data files (such as data
@@ -189,7 +189,7 @@ processing, software etc) should be copied to the new files.</p></td>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code>writeMSData()</code> function in the <code>MSnbase</code> package.</p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData()</a></code> function in the <code>MSnbase</code> package.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>

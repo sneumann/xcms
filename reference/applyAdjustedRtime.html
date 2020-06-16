@@ -137,14 +137,14 @@ time or returns the object unchanged if none are present." />
 time or returns the object unchanged if none are present.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>applyAdjustedRtime</span>(<span class='no'>object</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></span>(<span class='kw'>object</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>An <a href='XCMSnExp-class.html'>XCMSnExp</a> object.</p></td>
+      <td><p>An <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object.</p></td>
     </tr>
     </table>
 
@@ -162,13 +162,13 @@ with the adjusted retention times.</p>
 
     <p>Replacing the raw retention times with adjusted retention times
 disables the possibility to restore raw retention times using the
-<code><a href='XCMSnExp-class.html'>dropAdjustedRtime()</a></code> method. This function does <strong>not</strong> remove the
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>dropAdjustedRtime()</a></code> method. This function does <strong>not</strong> remove the
 retention time processing step with the settings of the alignment from
-the <code><a href='XCMSnExp-class.html'>processHistory()</a></code> of the <code>object</code> to ensure that the processing
+the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory()</a></code> of the <code>object</code> to ensure that the processing
 history is preserved.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='adjustRtime.html'>adjustRtime()</a></code> for the function to perform the alignment (retention
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime()</a></code> for the function to perform the alignment (retention
 time correction).</p><pre>[adjustedRtime()] for the method to extract adjusted retention times from
 an [XCMSnExp] object.
 
@@ -183,22 +183,22 @@ restore the raw retention times.
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
-<span class='no'>xod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='no'>xod</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='kw'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## Replace raw retention times with adjusted retention times.</span>
-<span class='no'>xod</span> <span class='kw'>&lt;-</span> <span class='fu'>applyAdjustedRtime</span>(<span class='no'>xod</span>)
+<span class='kw'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></span>(<span class='kw'>xod</span>)
 
 <span class='co'>## No adjusted retention times present</span>
-<span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='no'>xod</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 <span class='co'>## Raw retention times have been replaced with adjusted retention times</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'>rtime</span>(<span class='no'>faahko_sub</span>), <span class='fu'>fromFile</span>(<span class='no'>faahko_sub</span>))<span class='kw'>[[</span><span class='fl'>1</span>]] -
-    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'>rtime</span>(<span class='no'>xod</span>), <span class='fu'>fromFile</span>(<span class='no'>xod</span>))<span class='kw'>[[</span><span class='fl'>1</span>]], <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"l"</span>)</div><div class='img'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>faahko_sub</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>fromFile</a></span>(<span class='kw'>faahko_sub</span>))[[<span class='fl'>1</span>]] <span class='op'>-</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>xod</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>fromFile</a></span>(<span class='kw'>xod</span>))[[<span class='fl'>1</span>]], type = <span class='st'>"l"</span>)</div><div class='img'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## And the process history still contains the settings for the alignment</span>
-<span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='no'>xod</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
 #&gt;  date: Mon Jun 15 06:30:55 2020 
@@ -210,7 +210,7 @@ restore the raw retention times.
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Retention time correction 
-#&gt;  date: Mon Jun 15 14:27:24 2020 
+#&gt;  date: Tue Jun 16 07:56:04 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ObiwarpParam 

@@ -162,12 +162,12 @@ examples." />
     </div>
 
     <div class="ref-description">
-    <p>The methods listed on this page are <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
+    <p>The methods listed on this page are <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code>
 methods inherited from its parent, the
 <code>OnDiskMSnExp</code> class from the <code>MSnbase</code>
 package, that alter the raw data or are related to data subsetting. Thus
 calling any of these methods causes all <code>xcms</code> pre-processing
-results to be removed from the <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object to ensure
+results to be removed from the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object to ensure
 its data integrity.</p>
 <p><code>bin</code>: allows to <em>bin</em> spectra. See
 <code>bin</code> documentation in the <code>MSnbase</code> package for more
@@ -176,7 +176,7 @@ details and examples.</p>
 points. See <code>clean</code> documentation in the <code>MSnbase</code> package
 for details and examples.</p>
 <p><code>filterAcquisitionNum</code>: filters the
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object keeping only spectra with the provided
+<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object keeping only spectra with the provided
 acquisition numbers. See <code>filterAcquisitionNum</code> for
 details and examples.</p>
 <p>The <code>normalize</code> method performs basic normalization of
@@ -191,41 +191,41 @@ analyzed in a metabolomics experiment! See
 <code>removePeaks</code> documentation for details and
 examples.</p>
 <p>The <code>smooth</code> method smooths spectra. See
-<code><a href='adjustRtime-peakGroups.html'>smooth</a></code> documentation in <code>MSnbase</code> for details and
+<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></code> documentation in <code>MSnbase</code> for details and
 examples.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>bin</span>(<span class='no'>object</span>, <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='no'>msLevel.</span>)
+<span class='fu'>bin</span>(<span class='kw'>object</span>, binSize = <span class='fl'>1L</span>, <span class='kw'>msLevel.</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>clean</span>(<span class='no'>object</span>, <span class='kw'>all</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>msLevel.</span>)
+<span class='fu'>clean</span>(<span class='kw'>object</span>, all = <span class='fl'>FALSE</span>, verbose = <span class='fl'>FALSE</span>, <span class='kw'>msLevel.</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>filterAcquisitionNum</span>(<span class='no'>object</span>, <span class='no'>n</span>, <span class='no'>file</span>)
+<span class='fu'>filterAcquisitionNum</span>(<span class='kw'>object</span>, <span class='kw'>n</span>, <span class='kw'>file</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>normalize</span>(<span class='no'>object</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"max"</span>, <span class='st'>"sum"</span>), <span class='no'>...</span>)
+<span class='fu'>normalize</span>(<span class='kw'>object</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"max"</span>, <span class='st'>"sum"</span>), <span class='kw'>...</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
 <span class='fu'>pickPeaks</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>halfWindowSize</span> <span class='kw'>=</span> <span class='fl'>3L</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MAD"</span>, <span class='st'>"SuperSmoother"</span>),
-  <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>0L</span>,
-  <span class='no'>...</span>
+  <span class='kw'>object</span>,
+  halfWindowSize = <span class='fl'>3L</span>,
+  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MAD"</span>, <span class='st'>"SuperSmoother"</span>),
+  SNR = <span class='fl'>0L</span>,
+  <span class='kw'>...</span>
 )
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>removePeaks</span>(<span class='no'>object</span>, <span class='kw'>t</span> <span class='kw'>=</span> <span class='st'>"min"</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>msLevel.</span>)
+<span class='fu'>removePeaks</span>(<span class='kw'>object</span>, t = <span class='st'>"min"</span>, verbose = <span class='fl'>FALSE</span>, <span class='kw'>msLevel.</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='adjustRtime-peakGroups.html'>smooth</a></span>(
-  <span class='no'>x</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"SavitzkyGolay"</span>, <span class='st'>"MovingAverage"</span>),
-  <span class='kw'>halfWindowSize</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></span>(
+  <span class='kw'>x</span>,
+  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"SavitzkyGolay"</span>, <span class='st'>"MovingAverage"</span>),
+  halfWindowSize = <span class='fl'>2L</span>,
+  verbose = <span class='fl'>FALSE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -233,7 +233,7 @@ examples.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
+      <td><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
 object.</p></td>
     </tr>
     <tr>
@@ -277,7 +277,7 @@ package for details.
 For <code>pickPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the method. See
 <code>pickPeaks</code> for options. For <code>smooth</code>:
 <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the method. See
-<code><a href='adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code> package for options and
+<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code> package for options and
 details.</p></td>
     </tr>
     <tr>
@@ -288,7 +288,7 @@ details.</p></td>
       <th>halfWindowSize</th>
       <td><p>For <code>pickPeaks</code> and <code>smooth</code>:
 <code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the window size for the peak picking. See
-<code>pickPeaks</code> and <code><a href='adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code>
+<code>pickPeaks</code> and <code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code>
 package for details and options.</p></td>
     </tr>
     <tr>
@@ -305,7 +305,7 @@ defining the threshold (method) to be used. See
     </tr>
     <tr>
       <th>x</th>
-      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
+      <td><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
 object.</p></td>
     </tr>
     </table>
@@ -315,9 +315,9 @@ object.</p></td>
     <p>For all methods: a <code>XCMSnExp</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='XCMSnExp-filter-methods.html'>XCMSnExp-filter</a></code> for methods to filter and subset
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-filter-methods.html'>XCMSnExp-filter</a></code> for methods to filter and subset
     <code>XCMSnExp</code> objects.
-    <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.
+    <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.
     <code>OnDiskMSnExp</code> for the documentation of the
     parent class.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>

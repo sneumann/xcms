@@ -137,10 +137,10 @@ provided maximal acceptable width (maxPeakwidth)." />
 provided maximal acceptable width (<code>maxPeakwidth</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CleanPeaksParam</span>(<span class='kw'>maxPeakwidth</span> <span class='kw'>=</span> <span class='fl'>10</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>CleanPeaksParam</a></span>(maxPeakwidth = <span class='fl'>10</span>)
 
 <span class='co'># S4 method for XCMSnExp,CleanPeaksParam</span>
-<span class='fu'>refineChromPeaks</span>(<span class='no'>object</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>CleanPeaksParam</span>(), <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>refineChromPeaks</a></span>(<span class='kw'>object</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>CleanPeaksParam</a></span>(), msLevel = <span class='fl'>1L</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,7 +152,7 @@ allowed peak width (in retention time).</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
+      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>param</th>
@@ -177,7 +177,7 @@ which may be part of features.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other chromatographic peak refinement methods: 
-<code><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -185,16 +185,16 @@ which may be part of features.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Perform chromatographic peak detection on a test file.</span>
-<span class='no'>fl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"microtofq/MM14.mzML"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"msdata"</span>)
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>fl</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)
+<span class='kw'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"microtofq/MM14.mzML"</span>, package = <span class='st'>"msdata"</span>)
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fl</span>, mode = <span class='st'>"onDisk"</span>)
 
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(<span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>8</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 523 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 174 found.</span></div><div class='input'>
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>data</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>8</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 523 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 174 found.</span></div><div class='input'>
 <span class='co'>## Distribution of chromatographic peak widths</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>data</span>)[, <span class='st'>"rtmax"</span>] - <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>data</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;     0%    25%    50%    75%   100% 
+<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmax"</span>] <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;     0%    25%    50%    75%   100% 
 #&gt; 1.3460 3.0270 4.7085 5.3810 7.0690 </div><div class='input'>
 <span class='co'>## Remove all chromatographic peaks with a width larger 5 seconds</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>refineChromPeaks</span>(<span class='no'>data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'>CleanPeaksParam</span>(<span class='fl'>5</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 69 of 174 chromatographic peaks.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>data</span>)[, <span class='st'>"rtmax"</span>] - <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>data</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;    0%   25%   50%   75%  100% 
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>refineChromPeaks</a></span>(<span class='kw'>data</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>CleanPeaksParam</a></span>(<span class='fl'>5</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 69 of 174 chromatographic peaks.</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmax"</span>] <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;    0%   25%   50%   75%  100% 
 #&gt; 1.346 2.355 3.363 4.037 4.710 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

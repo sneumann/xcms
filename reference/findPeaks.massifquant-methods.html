@@ -181,13 +181,13 @@
 
     
 <dl>
-<dt>object = "xcmsRaw"</dt><dd><p><code>
+<dt>object = "xcmsRaw"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.massifquant-methods.html'>
 findPeaks.massifquant(object, ppm=10, peakwidth=c(20,50), snthresh=10,
      prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
      fitgauss=FALSE, scanrange= numeric(), noise=0,
      sleep=0, verbose.columns=FALSE, criticalValue = 1.125, consecMissedLimit = 2,
      unions = 1, checkBack = 0, withWave = 0)
-</code></p></dd>
+</a></code></p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -213,32 +213,32 @@ if centWave feature is used also (withWave = 1), or Massifquant is called throug
     <p>Submitted for review. Christopher Conley, Ralf J .O Torgrip. Ryan Taylor, and John T. Prince.  "Massifquant: open-source Kalman filter based XC-MS feature detection". August 2013.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='findChromPeaks-centWave.html'>centWave</a></code> for the new user interface.
-  <code><a href='findPeaks-methods.html'>findPeaks-methods</a></code>
-  <code><a href='xcmsSet.html'>xcmsSet</a></code>
-  <code><a href='xcmsRaw.html'>xcmsRaw</a></code>
-  <code><a href='xcmsRaw-class.html'>xcmsRaw-class</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a></code> for the new user interface.
+  <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks-methods</a></code>
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></code>
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></code>
+  <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw-class</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
 <span class='co'>#load all the wild type and Knock out samples</span>
-<span class='no'>cdfpath</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+<span class='kw'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>)
 <span class='co'>## Subset to only the first 2 files.</span>
-<span class='no'>cdffiles</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='no'>cdfpath</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>:<span class='fl'>2</span>]
+<span class='kw'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>cdfpath</span>, recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>]
 
 <span class='co'>## Run the massifquant analysis. Setting the noise level to 10000 to speed up</span>
 <span class='co'>## execution of the examples - in a real use case it should be set to a reasoable</span>
 <span class='co'>## value.</span>
-<span class='no'>xset</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span>(<span class='no'>cdffiles</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"massifquant"</span>,
-                <span class='kw'>consecMissedLimit</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-                <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-                <span class='kw'>criticalValue</span> <span class='kw'>=</span> <span class='fl'>1.73</span>,
-                <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-                <span class='kw'>peakwidth</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>, <span class='fl'>60</span>),
-                <span class='kw'>prefilter</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3000</span>),
-                <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>10000</span>,
-                <span class='kw'>withWave</span> <span class='kw'>=</span> <span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+<span class='kw'>xset</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></span>(<span class='kw'>cdffiles</span>, method = <span class='st'>"massifquant"</span>,
+                consecMissedLimit = <span class='fl'>1</span>,
+                snthresh = <span class='fl'>10</span>,
+                criticalValue = <span class='fl'>1.73</span>,
+                ppm = <span class='fl'>10</span>,
+                peakwidth= <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>, <span class='fl'>60</span>),
+                prefilter= <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>3000</span>),
+                noise = <span class='fl'>10000</span>,
+                withWave = <span class='fl'>0</span>)</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Detecting  mass traces at 10ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 242 Peaks.</span></div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>

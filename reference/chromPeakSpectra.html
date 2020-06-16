@@ -139,7 +139,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
     </div>
 
     <div class="ref-description">
-    <p>Extract (MS2) spectra from an <a href='XCMSnExp-class.html'>XCMSnExp</a> object that represent ions within
+    <p>Extract (MS2) spectra from an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object that represent ions within
 the rt and m/z range of each chromatographic peak (in the same file
 /sample in which the peak was detected). All MS2 spectra are returned for
 chromatographic peak <code>i</code> for which the precursor m/z is
@@ -149,15 +149,15 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
 <p>See also the <em>LC-MS/MS data analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>chromPeakSpectra</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>msLevel</span> <span class='kw'>=</span> <span class='fl'>2L</span>,
-  <span class='kw'>expandRt</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>expandMz</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>ppm</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span>),
-  <span class='kw'>skipFilled</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>return.type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Spectra"</span>, <span class='st'>"list"</span>)
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></span>(
+  <span class='kw'>x</span>,
+  msLevel = <span class='fl'>2L</span>,
+  expandRt = <span class='fl'>0</span>,
+  expandMz = <span class='fl'>0</span>,
+  ppm = <span class='fl'>0</span>,
+  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span>),
+  skipFilled = <span class='fl'>FALSE</span>,
+  return.type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Spectra"</span>, <span class='st'>"list"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -165,7 +165,7 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
+      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
@@ -206,19 +206,19 @@ be reported.</p></td>
     <tr>
       <th>return.type</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining whether the result should be a
-Spectra object or a simple <code>list</code>. See below for more information.</p></td>
+<a href='https://rdrr.io/pkg/MSnbase/man/Spectra.html'>Spectra</a> object or a simple <code>list</code>. See below for more information.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Which object is returned depends on the value of <code>return.type</code>:</p><ul>
-<li><p>For <code>return.type = "Spectra"</code>: a Spectra object with elements being
-Spectrum objects. The result objects contains all spectra
+<li><p>For <code>return.type = "Spectra"</code>: a <a href='https://rdrr.io/pkg/MSnbase/man/Spectra.html'>Spectra</a> object with elements being
+<a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>Spectrum</a> objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
-respective peak (i.e. its rowname in <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
+respective peak (i.e. its rowname in <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
 <li><p>If <code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
-0 or contain Spectrum2 object(s) within the m/z-rt range. The
+0 or contain <a href='https://rdrr.io/pkg/MSnbase/man/Spectrum2-class.html'>Spectrum2</a> object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.</p></li>
 </ul>
 
@@ -229,12 +229,12 @@ length of the list matches the number of peaks.</p></li>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Read a file with DDA LC-MS/MS data</span>
-<span class='no'>fl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"msdata"</span>)
-<span class='no'>dda</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>fl</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)
+<span class='kw'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package = <span class='st'>"msdata"</span>)
+<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fl</span>, mode = <span class='st'>"onDisk"</span>)
 
 <span class='co'>## Perform MS1 peak detection</span>
-<span class='no'>dda</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>dda</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(<span class='kw'>peakwidth</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 108 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 112 found.</span></div><div class='input'><span class='no'>ms2_sps</span> <span class='kw'>&lt;-</span> <span class='fu'>chromPeakSpectra</span>(<span class='no'>dda</span>)
-<span class='no'>ms2_sps</span></div><div class='output co'>#&gt; Spectra with 258 spectra and 1 metadata column(s):
+<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>dda</span>, <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 108 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 112 found.</span></div><div class='input'><span class='kw'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></span>(<span class='kw'>dda</span>)
+<span class='kw'>ms2_sps</span></div><div class='output co'>#&gt; Spectra with 258 spectra and 1 metadata column(s):
 #&gt;                    msLevel     rtime peaksCount |     peak_id
 #&gt;                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 #&gt;   CP001.F1.S0744         2    97.140         25 |       CP001

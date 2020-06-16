@@ -157,23 +157,23 @@
     and illustrations see [Smith 2006].</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_findChromPeaks_matchedFilter</span>(
-  <span class='no'>mz</span>,
-  <span class='no'>int</span>,
-  <span class='no'>scantime</span>,
-  <span class='no'>valsPerSpect</span>,
-  <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>impute</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
-  <span class='no'>baseValue</span>,
-  <span class='no'>distance</span>,
-  <span class='kw'>fwhm</span> <span class='kw'>=</span> <span class='fl'>30</span>,
-  <span class='kw'>sigma</span> <span class='kw'>=</span> <span class='no'>fwhm</span>/<span class='fl'>2.3548</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>steps</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>mzdiff</span> <span class='kw'>=</span> <span class='fl'>0.8</span> - <span class='no'>binSize</span> * <span class='no'>steps</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>sleep</span> <span class='kw'>=</span> <span class='fl'>0</span>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></span>(
+  <span class='kw'>mz</span>,
+  <span class='kw'>int</span>,
+  <span class='kw'>scantime</span>,
+  <span class='kw'>valsPerSpect</span>,
+  binSize = <span class='fl'>0.1</span>,
+  impute = <span class='st'>"none"</span>,
+  <span class='kw'>baseValue</span>,
+  <span class='kw'>distance</span>,
+  fwhm = <span class='fl'>30</span>,
+  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max = <span class='fl'>5</span>,
+  snthresh = <span class='fl'>10</span>,
+  steps = <span class='fl'>2</span>,
+  mzdiff = <span class='fl'>0.8</span> <span class='op'>-</span> <span class='kw'>binSize</span> <span class='op'>*</span> <span class='kw'>steps</span>,
+  index = <span class='fl'>FALSE</span>,
+  sleep = <span class='fl'>0</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -210,7 +210,7 @@ bins/slices in m/z dimension.</p></td>
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
-<code>"intlin"</code>. See <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
+<code>"intlin"</code>. See <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
     </tr>
     <tr>
       <th>baseValue</th>
@@ -300,7 +300,7 @@ future.</p></td>
     around the m/z values (i.e. the first bin includes all m/z values between
     <code>min(mz) - bin_size/2</code> and <code>min(mz) + bin_size/2</code>).</p>
 <p>For more details on binning and missing value imputation see
-    <code><a href='binYonX.html'>binYonX</a></code> and <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
+    <code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> and <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>This function exposes core peak detection functionality of
@@ -316,32 +316,32 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='binYonX.html'>binYonX</a></code> for a binning function,
-    <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for the interpolation of missing values.
-    <code><a href='findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the standard user interface method.</p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> for a binning function,
+    <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for the interpolation of missing values.
+    <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
-<code><a href='do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
-<code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
-<code><a href='do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
-<code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
+<code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin A Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Load the test file</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='no'>fs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko15.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
-<span class='no'>xr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='xcmsRaw.html'>xcmsRaw</a></span>(<span class='no'>fs</span>)</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
+<span class='kw'>fs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko15.CDF'</span>, package = <span class='st'>"faahKO"</span>)
+<span class='kw'>xr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>fs</span>)</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave</span>
-<span class='no'>mzVals</span> <span class='kw'>&lt;-</span> <span class='no'>xr</span>@<span class='kw'>env</span>$<span class='no'>mz</span>
-<span class='no'>intVals</span> <span class='kw'>&lt;-</span> <span class='no'>xr</span>@<span class='kw'>env</span>$<span class='no'>intensity</span>
+<span class='kw'>mzVals</span> <span class='op'>&lt;-</span> <span class='kw'>xr</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>mz</span>
+<span class='kw'>intVals</span> <span class='op'>&lt;-</span> <span class='kw'>xr</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>intensity</span>
 <span class='co'>## Define the values per spectrum:</span>
-<span class='no'>valsPerSpect</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>xr</span>@<span class='kw'>scanindex</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>mzVals</span>)))
+<span class='kw'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>xr</span><span class='op'>@</span>scanindex, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>mzVals</span>)))
 
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span>(<span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzVals</span>, <span class='kw'>int</span> <span class='kw'>=</span> <span class='no'>intVals</span>,
-<span class='kw'>scantime</span> <span class='kw'>=</span> <span class='no'>xr</span>@<span class='kw'>scantime</span>, <span class='kw'>valsPerSpect</span> <span class='kw'>=</span> <span class='no'>valsPerSpect</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt;            mz mzmin mzmax       rt    rtmin    rtmax       into      intf  maxo
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></span>(mz = <span class='kw'>mzVals</span>, int = <span class='kw'>intVals</span>,
+scantime = <span class='kw'>xr</span><span class='op'>@</span>scantime, valsPerSpect = <span class='kw'>valsPerSpect</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;            mz mzmin mzmax       rt    rtmin    rtmax       into      intf  maxo
 #&gt; [1,] 200.1000 200.1 200.1 2928.610 2912.961 2942.695  147887.53  290506.9  9687
 #&gt; [2,] 201.0638 201.0 201.1 2531.112 2515.463 2549.892  204572.42  280386.0  7726
 #&gt; [3,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.94 3610059.7 84280
