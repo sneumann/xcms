@@ -2514,7 +2514,8 @@ findChromPeaksIsolationWindow <-
 #'
 #' @param expandRt `numeric(1)` allowing to expand the retention time range
 #'     for extracted ion chromatograms by a constant value (for the peak
-#'     shape correlation).
+#'     shape correlation). Defaults to `expandRt = 0` hence correlates only
+#'     the signal included in the identified chromatographic peaks.
 #'
 #' @param diffRt `numeric(1)` defining the maximal allowed difference between
 #'     the retention time of the chromatographic peak (apex) and the retention
@@ -2545,14 +2546,16 @@ findChromPeaksIsolationWindow <-
 #'     and [NumericList()] with length equal to the number of peaks per
 #'     reconstructed MS2 spectrum) providing the IDs and the correlation of the
 #'     MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+#'     As retention time the median retention times of all MS2 chromatographic
+#'     peaks used for the spectrum reconstruction is reported.
 #'
-#' @author Johannes Rainer, Micheal Witting
+#' @author Johannes Rainer, Michael Witting
 #'
 #' @md
 #'
 #' @seealso [findChromPeaksIsolationWindow()] for the function to perform MS2
 #'     peak detection in DIA isolation windows and for examples.
-reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
+reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                         minCor = 0.8, intensity = "maxo",
                                         peakId = rownames(
                                             chromPeaks(object, msLevel = 1L)),

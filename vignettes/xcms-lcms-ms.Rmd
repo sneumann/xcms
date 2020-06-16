@@ -405,22 +405,17 @@ fenamiphos_ms2_peak <- chromPeaks(swath_data)[which(keep), ]
 
 In total `r sum(keep, na.rm = TRUE)` MS2 chromatographic peaks match all the
 above condition. Next we extract their corresponding ion chromatograms, as well
-as the ion chromatogram of the MS1 peak. Note that we extend the retention time
-range by 1 seconds on both sides. In addition we have to filter the object
-first by isolation window, keeping only spectra that were measured in that
-specific window and to specify to extract the chromatographic data from MS2
+as the ion chromatogram of the MS1 peak. In addition we have to filter the
+object first by isolation window, keeping only spectra that were measured in
+that specific window and to specify to extract the chromatographic data from MS2
 spectra (with `msLevel = 2L`).
 
 ```{r fena-eic-extract, warning = FALSE}
 rtr <- fenamiphos_ms1_peak[, c("rtmin", "rtmax")]
-rtr[1] <- rtr[1] - 1
-rtr[2] <- rtr[2] + 1
 mzr <- fenamiphos_ms1_peak[, c("mzmin", "mzmax")]
 fenamiphos_ms1_chr <- chromatogram(swath_data, rt = rtr, mz = mzr)
 
 rtr <- fenamiphos_ms2_peak[, c("rtmin", "rtmax")]
-rtr[, 1] <- rtr[, 1] - 1
-rtr[, 2] <- rtr[, 2] + 1
 mzr <- fenamiphos_ms2_peak[, c("mzmin", "mzmax")]
 fenamiphos_ms2_chr <- chromatogram(
     filterIsolationWindow(swath_data, mz = fenamiphos_mz),
@@ -522,8 +517,6 @@ because `chromatogram` extracts by default only data from MS1 spectra.
 
 ```{r}
 rt_range <- chromPeaks(swath_data)[pk_ids, c("rtmin", "rtmax")]
-rt_range[, 1] <- rt_range[, 1] - 1
-rt_range[, 2] <- rt_range[, 2] + 1
 mz_range <- chromPeaks(swath_data)[pk_ids, c("mzmin", "mzmax")]
 
 pmz <- precursorMz(fenamiphos_swath_spectrum)[1]
