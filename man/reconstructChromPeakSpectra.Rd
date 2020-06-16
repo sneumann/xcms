@@ -33,7 +33,8 @@ spectrum reconstruction.}
 
 \item{intensity}{\code{character(1)} defining the column in the \code{chromPeaks}
 matrix that should be used for the intensities of the reconstructed
-spectra's peaks.}
+spectra's peaks. The same value from the MS1 chromatographic peaks will
+be used as \code{precursorIntensity} of the resulting spectra.}
 
 \item{peakId}{optional \code{character} vector with peak IDs (i.e. rownames of
 \code{chromPeaks}) of MS1 peaks for which MS2 spectra should be reconstructed.
@@ -53,7 +54,9 @@ and \code{\link[=NumericList]{NumericList()}} with length equal to the number of
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic
-peaks used for the spectrum reconstruction is reported.
+peaks used for the spectrum reconstruction is reported. The MS1
+chromatographic peak intensity is reported as the reconstructed
+spectrum's \code{precursorIntensity} value (see parameter \code{intensity} above).
 }
 \description{
 Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for

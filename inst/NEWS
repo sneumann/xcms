@@ -1,5 +1,6 @@
 Changes in version 3.11.3
 
+- `reconstructChromPeakSpectra`: report also polarity and `precusorIntensity`.
 - `reconstructChromPeakSpectra`: ensure a retention time is reported for
   reconstructed MS2 spectra (issue #485).
 - Change default for `expandRt` to `0` in `reconstructChromPeakSpectra`.

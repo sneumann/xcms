@@ -143,7 +143,8 @@
     od_object <- filterIsolationWindow(as(object, "OnDiskMSnExp"), mz = x["mz"])
     if (!length(idx) | !length(od_object))
         return(Spectra(
-            new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol),
+            new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol,
+                precursorIntensity = x[column]),
             elementMetadata = DataFrame(
                 ms2_peak_id = CharacterList(character()),
                 ms2_peak_cor = NumericList(numeric()))))
@@ -163,7 +164,8 @@
         chr_2 <- Chromatograms(list(chr_2))
     if (!length(chr_2))
         return(Spectra(
-            new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol),
+            new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol,
+                precursorIntensity = x[column]),
             elementMetadata = DataFrame(
                 ms2_peak_id = CharacterList(character()),
                 ms2_peak_cor = NumericList(numeric()))))
@@ -174,7 +176,7 @@
         sp <- new("Spectrum2", fromFile = fromFile, centroided = TRUE,
                   mz = pks[, "mz"], intensity = pks[, column],
                   precursorMz = x["mz"], rt = median(pks[, "rt"]),
-                  polarity = pol)
+                  polarity = pol, precursorIntensity = x[column])
         df <- DataFrame(matrix(ncol = 0, nrow = 1))
         df$ms2_peak_id <- CharacterList(rownames(pks), compress = FALSE)
         df$ms2_peak_cor <- NumericList(cors[cors >= minCor], compress = FALSE)
@@ -182,7 +184,7 @@
     } else {
         Spectra(
             new("Spectrum2", fromFile = fromFile, rt = x["rt"],
-                polarity = pol),
+                polarity = pol, precursorIntensity = x[column]),
             elementMetadata = DataFrame(
                 ms2_peak_id = CharacterList(character()),
                 ms2_peak_cor = NumericList(numeric())))
