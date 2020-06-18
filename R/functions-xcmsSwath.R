@@ -59,7 +59,7 @@
 #' Reconstruct MS2 spectra for all MS1 chromatographic peaks of one file.
 #' See `.reconstruct_ms2_for_chrom_peak` for details and parameters.
 #'
-#' @return `Spectra` with the reconstructed MS2 spectra (emtpy `Spectra` if
+#' @return `MSpectra` with the reconstructed MS2 spectra (emtpy `MSpectra` if
 #'     no spectrum was reconstructed for any peak or if no MS1 chromatographic
 #'     peaks are present).
 #'
@@ -76,7 +76,7 @@
     idx <- match(peakId, rownames(chromPeaks(object)))
     idx <- idx[!is.na(idx)]
     if (!length(idx)) {
-        return(Spectra(elementMetadata = DataFrame(
+        return(MSpectra(elementMetadata = DataFrame(
                            peak_id = character(),
                            ms2_peak_id = CharacterList(),
                            ms2_peak_cor = NumericList())))
@@ -115,9 +115,9 @@
 #'     from which the intensity values for the reconstructed spectrum should be
 #'     taken (recommended, either `"maxo"` or `"into"`).
 #'
-#' @return [Spectra] object with the reconstructed MS2 spectrum. The spectrum
+#' @return [MSpectra] object with the reconstructed MS2 spectrum. The spectrum
 #'     is empty if no MS2 chromatographic peak with a good enough correlation
-#'     was found for the MS1 chromatographic peak. The `Spectra` contains
+#'     was found for the MS1 chromatographic peak. The `MSpectra` contains
 #'     metadata columns `"ms2_peak_id"` and `"ms2_peak_cor"` of type
 #'     [CharacterList()] and [NumericList()] (length equal to number of peaks
 #'     per spectrum) providing the IDs and the correlation of the MS2
@@ -142,7 +142,7 @@
     ## Only look into the peaks/spectra of the correct isolation window
     od_object <- filterIsolationWindow(as(object, "OnDiskMSnExp"), mz = x["mz"])
     if (!length(idx) | !length(od_object))
-        return(Spectra(
+        return(MSpectra(
             new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol,
                 precursorIntensity = x[column]),
             elementMetadata = DataFrame(
@@ -161,9 +161,9 @@
     chr_2 <- chr_2[vapply(chr_2, function(z) sum(!is.na(z@intensity)),
                           integer(1)) > 2, ]
     if (is(chr_2, "Chromatogram"))
-        chr_2 <- Chromatograms(list(chr_2))
+        chr_2 <- MChromatograms(list(chr_2))
     if (!length(chr_2))
-        return(Spectra(
+        return(MSpectra(
             new("Spectrum2", fromFile = fromFile, rt = x["rt"], polarity = pol,
                 precursorIntensity = x[column]),
             elementMetadata = DataFrame(
@@ -180,9 +180,9 @@
         df <- DataFrame(matrix(ncol = 0, nrow = 1))
         df$ms2_peak_id <- CharacterList(rownames(pks), compress = FALSE)
         df$ms2_peak_cor <- NumericList(cors[cors >= minCor], compress = FALSE)
-        Spectra(sp, elementMetadata = df)
+        MSpectra(sp, elementMetadata = df)
     } else {
-        Spectra(
+        MSpectra(
             new("Spectrum2", fromFile = fromFile, rt = x["rt"],
                 polarity = pol, precursorIntensity = x[column]),
             elementMetadata = DataFrame(

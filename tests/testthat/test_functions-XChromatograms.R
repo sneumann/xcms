@@ -6,7 +6,7 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
     chr4 <- Chromatogram(rtime = 1:3, intensity = c(3, 4, 1))
     chr5 <- Chromatogram(rtime = 1:6, intensity = c(3, 4, 6, 7, 2, 4))
     chr6 <- Chromatogram(rtime = 2:5, intensity = c(3, 65, 43, 12))
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), nrow = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), nrow = 2)
 
     expect_error(new("XChromatograms", matrix(list(chr1, chr2), nrow = 1)))
 

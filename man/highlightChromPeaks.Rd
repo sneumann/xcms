@@ -68,7 +68,7 @@ function.}
 The \code{highlightChromPeaks} function adds chromatographic
 peak definitions to an existing plot, such as one created by the
 \code{plot} method on a \code{\link{Chromatogram}} or
-\code{\link{Chromatograms}} object.
+\code{\link{MChromatograms}} object.
 }
 \examples{
 

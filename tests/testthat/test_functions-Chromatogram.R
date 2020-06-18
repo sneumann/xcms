@@ -65,7 +65,7 @@ test_that(".align_chromatogram works", {
                  "should be one of")
 })
 
-test_that("align,Chromatogram,Chromatograms works", {
+test_that("align,Chromatogram,MChromatograms works", {
     library(testthat)
     chr1 <- Chromatogram(rtime = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                          intensity = c(3, 5, 14, 30, 24, 6, 2, 1, 1, 0))
@@ -76,14 +76,14 @@ test_that("align,Chromatogram,Chromatograms works", {
     chr4 <- Chromatogram(rtime = c(7, 8, 9, 10),
                          intensity = c(3, 5, 7, 8))
 
-    chrs <- Chromatograms(list(chr2, chr3, chr4))
+    chrs <- MChromatograms(list(chr2, chr3, chr4))
     res <- align(chrs, chr1)
     expect_equal(dimnames(res), dimnames(chrs))
     expect_equal(res[1, 1], align(chr2, chr1))
     expect_equal(res[2, 1], align(chr3, chr1))
     expect_equal(res[3, 1], align(chr4, chr1))
 
-    chrs <- Chromatograms(list(chr2, chr3, chr4, chr2), nrow = 2)
+    chrs <- MChromatograms(list(chr2, chr3, chr4, chr2), nrow = 2)
     res <- align(chrs, chr1, method = "approx")
     expect_equal(dimnames(res), dimnames(chrs))
     expect_equal(res[1, 1], align(chr2, chr1, method = "approx"))

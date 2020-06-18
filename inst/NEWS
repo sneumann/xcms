@@ -1,3 +1,9 @@
+Changes in version 3.11.4
+
+- Change from `Spectra` and `Chromatograms` to `MSpectra` and `MChromatograms`
+  from MSnbase version >= 2.15.3.
+
+
 Changes in version 3.11.3
 
 - `reconstructChromPeakSpectra`: report also polarity and `precusorIntensity`.

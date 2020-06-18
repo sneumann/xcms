@@ -51,7 +51,7 @@ depend on the architecture. Default is
 \item{adjustedRtime}{For \verb{chromatogram,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-in the resulting \link{Chromatograms} object. Adjusted
+in the resulting \link{MChromatograms} object. Adjusted
 retention times are used by default if available.}
 
 \item{filled}{\code{logical(1)} whether filled-in peaks should also be
@@ -141,7 +141,7 @@ plot(chrs[1, , drop = FALSE])
 \link{Chromatogram} for the object representing chromatographic data.\preformatted{[XChromatograms] for the object allowing to arrange
 multiple [XChromatogram] objects.
 
-[plot] to plot a [XChromatogram] or [Chromatograms] objects.
+[plot] to plot a [XChromatogram] or [MChromatograms] objects.
 
 `as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
 the MS data as `data.frame`.

@@ -1,6 +1,6 @@
-#' @include methods-Chromatograms.R
+#' @include methods-MChromatograms.R
 
-setAs("Chromatograms", "XChromatograms", function(from) {
+setAs("MChromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
     res@.Data <- matrix(lapply(from, function(z) {
         if (is(z, "Chromatogram"))
@@ -187,7 +187,7 @@ setMethod("plot", "XChromatograms", function(x, col = "#00000060", lty = 1,
     for (i in seq_len(nr)) {
         x_sub <- x[i, , drop = FALSE]
         plot(as(x_sub, ifelse(is(x_sub, "XChromatograms"),
-                              "Chromatograms", "Chromatogram")),
+                              "MChromatograms", "Chromatogram")),
              col = col, lty = lty, type = type,
              xlab = xlab, ylab = ylab, main = main, ...)
         idx <- which(pks_all[, "row"] == i)
@@ -577,7 +577,7 @@ setMethod("refineChromPeaks", c(object = "XChromatograms",
               object
           })
 
-#' @rdname filter-Chromatograms
+#' @rdname filter-MChromatograms
 setMethod("filterColumnsIntensityAbove", "XChromatograms",
           function(object, threshold = 0,
                    value = c("bpi", "tic", "maxo", "into"),
@@ -606,7 +606,7 @@ setMethod("filterColumnsIntensityAbove", "XChromatograms",
                                  which = which)
           })
 
-#' @rdname filter-Chromatograms
+#' @rdname filter-MChromatograms
 setMethod("filterColumnsKeepTop", "XChromatograms",
           function(object, n = 1L, sortBy = c("bpi", "tic", "maxo", "into"),
                    aggregationFun = sum) {

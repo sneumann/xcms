@@ -156,7 +156,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                 chromPeakData(z) <- pkd
         })
     }
-    object <- Chromatograms(data = data, phenoData = phenoData,
+    object <- MChromatograms(data = data, phenoData = phenoData,
                             featureData = featureData, ...)
     object <- as(object, "XChromatograms")
     if (validObject(object)) object

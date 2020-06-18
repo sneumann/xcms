@@ -30,7 +30,7 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
     res <- xcms:::.reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 0.8)
-    expect_true(is(res, "Spectra"))
+    expect_true(is(res, "MSpectra"))
     expect_equal(unname(fromFile(res)), 7L)
     expect_true(!is.na(rtime(res)))
     expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 14)
@@ -40,7 +40,7 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
     res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 1)
-    expect_true(is(res, "Spectra"))
+    expect_true(is(res, "MSpectra"))
     expect_equal(unname(fromFile(res)), 7L)
     expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 0)
     expect_true(all(isEmpty(res)))

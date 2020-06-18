@@ -141,7 +141,7 @@ test_that("plot,XChromatogram works", {
     xchr_rt <- chromatogram(xod_chr, mz = mzr)
 
     cols_smple <- c("#ff000060", "#00ff0060", "#0000ff60")
-    plot(as(xchr_rt[1, ], "Chromatograms"), col = cols_smple)
+    plot(as(xchr_rt[1, ], "MChromatograms"), col = cols_smple)
     ## Plotting the data is fine, just as above.
     ## Then we have to loop over each chromatogram...
     x <- xchr_rt[1, ]
@@ -155,7 +155,7 @@ test_that("plot,XChromatogram works", {
                             col = cols_smple[pks[, "sample"]])
     x <- xchr_rt[2, ]
     pks <- chromPeaks(x)
-    plot(as(x, "Chromatograms"), col = cols_smple, lwd = 2)
+    plot(as(x, "MChromatograms"), col = cols_smple, lwd = 2)
     .add_chromatogram_peaks(x, pks, type = "rectangle", bg = rep(NA, nrow(pks)),
                             col = cols_smple[pks[, "sample"]])
     .add_chromatogram_peaks(x, pks, type = "point", bg = rep(NA, nrow(pks)),
@@ -216,7 +216,7 @@ test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
     expect_true(nrow(res@featureDefinitions) == 1)
 
     ## The same on artificial data.
-    chrs <- as(xchrs, "Chromatograms")
+    chrs <- as(xchrs, "MChromatograms")
     res <- findChromPeaks(chrs, param = CentWaveParam(snthresh = 1))
     expect_equal(nrow(chromPeaks(res)), 31)
     res <- groupChromPeaks(res, param = param)
