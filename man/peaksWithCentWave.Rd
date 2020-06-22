@@ -110,7 +110,7 @@ od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 
 ## Extract chromatographic data for a small m/z range
 mzr <- c(272.1, 272.2)
-chr <- chromatogram(od, mz = mzr)[1, 1]
+chr <- chromatogram(od, mz = mzr, rt = c(3000, 3300))[1, 1]
 
 int <- intensity(chr)
 rt <- rtime(chr)

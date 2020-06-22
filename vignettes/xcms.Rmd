@@ -32,7 +32,7 @@ BiocStyle::markdown()
 **Modified**: `r file.info("xcms.Rmd")$mtime`<br />
 **Compiled**: `r date()`
 
-```{r init, message = FALSE, echo = FALSE, results = "hide" }
+```{r init, message = FALSE, echo = FALSE, results = "hide"}
 ## Silently loading all packages
 library(BiocStyle)
 library(xcms)
@@ -73,7 +73,9 @@ knocking out the fatty acid amide hydrolase (FAAH) gene in mice was
 investigated. The raw data files (in NetCDF format) are provided with the
 `faahKO` data package. The data set consists of samples from the spinal cords of
 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode
-acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds.
+acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed
+up processing of this vignette we will restrict the analysis to only 8 files and
+to the retention time range from 2500 to 3500 seconds.
 
 Below we load all required packages, locate the raw CDF files within the `faahKO`
 package and build a *phenodata* data frame describing the experimental setup.
@@ -89,11 +91,11 @@ library(SummarizedExperiment)
 
 ## Get the full path to the CDF files
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
-            recursive = TRUE)
+            recursive = TRUE)[c(1, 2, 5, 6, 7, 8, 11, 12)]
 ## Create a phenodata data.frame
 pd <- data.frame(sample_name = sub(basename(cdfs), pattern = ".CDF",
                                    replacement = "", fixed = TRUE),
-                 sample_group = c(rep("KO", 6), rep("WT", 6)),
+                 sample_group = c(rep("KO", 4), rep("WT", 4)),
                  stringsAsFactors = FALSE)
 ```
 
@@ -108,8 +110,11 @@ raw_data <- readMSData(files = cdfs, pdata = new("NAnnotatedDataFrame", pd),
                        mode = "onDisk")
 ```
 
-```{r silent-subsetting, message = FALSE, echo = FALSE}
-raw_data <- filterRt(raw_data, c(2500, 4000))
+We next restrict the data set to the retention time range from 2500 to 3500
+seconds. This is merely to reduce the processing time of this vignette.
+
+```{r subsetting, message = FALSE, echo = TRUE}
+raw_data <- filterRt(raw_data, c(2500, 3500))
 ```
 
 The resulting `OnDiskMSnExp` object contains general information about the
@@ -228,9 +233,7 @@ pheatmap(cormat, annotation = ann,
 ```
 
 The samples cluster in a pairwise manner, the KO and WT samples for the sample
-index having the most similar BPC. In addition, 3 larger clusters are present
-grouping KO and WT samples 21 and 22 together as well as 18 and 19. KO and WT
-samples 15 and 16 separate from these two clusters.
+index having the most similar BPC.
 
 # Chromatographic peak detection
 
@@ -587,15 +590,18 @@ aligned data with `rtime(xdata, adjusted = FALSE)`.
 
 To evaluate the impact of the alignment we plot the BPC on the adjusted data. In
 addition we plot the differences of the adjusted- to the raw retention times per
-sample using the `plotAdjustedRtime` function. Note that we **don't** want to
-highlight any chromatographic peaks (because there would simply be too many) and
-set thus `peakType = "none"` in the `plot` call.
+sample using the `plotAdjustedRtime` function. For a base peak chromatogram it
+makes no sense to also extract identified chromatographic peaks from the result
+object. We thus use parameter `include = "none"` in the `chromatogram` call to
+not include chromatographic peaks in the returned object. Note that
+alternatively it would also be possible to simply avoid plotting them by setting
+`peakType = "none"` in the `plot` call.
 
 ```{r alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
 ## Get the base peak chromatograms.
-bpis_adj <- chromatogram(xdata, aggregationFun = "max")
+bpis_adj <- chromatogram(xdata, aggregationFun = "max", include = "none")
 par(mfrow = c(2, 1), mar = c(4.5, 4.2, 1, 0.5))
-plot(bpis_adj, col = group_colors[bpis_adj$sample_group], peakType = "none")
+plot(bpis_adj, col = group_colors[bpis_adj$sample_group])
 ## Plot also the difference of adjusted to raw retention time.
 plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group])
 ```
@@ -603,70 +609,11 @@ plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group])
 Too large differences between adjusted and raw retention times could indicate
 poorly performing samples or alignment.
 
-Alternatively to *obiwarp* we could use the *peak groups* alignment method that
-adjusts the retention time by aligning previously identified *hook peaks*
-(chromatographic peaks present in most/all samples). Ideally, these hook peaks
-should span most part of the retention time range. Below we first restore the
-raw retention times (also of the identified peaks) using the `dropAdjustedRtime`
-methods. Note that a `drop*` method is available for each preprocessing step
-allowing to remove the respective results from the `XCMSnExp` object.
-
-```{r alignment-drop, message = FALSE }
-## Does the object have adjusted retention times?
-hasAdjustedRtime(xdata)
-
-## Drop the alignment results.
-xdata <- dropAdjustedRtime(xdata)
-
-## Does the object have adjusted retention times?
-hasAdjustedRtime(xdata)
-```
-
 **Note**: `XCMSnExp` objects hold the raw along with the adjusted retention
 times and subsetting will in most cases drop the adjusted retention
 times. Sometimes it might thus be useful to **replace** the raw retention times
 with the adjusted retention times. This can be done with the
 `applyAdjustedRtime`.
-
-As noted above the *peak groups* method requires peak groups (features) present
-in most samples to perform the alignment. We thus have to perform a first
-correspondence run to identify such peaks (details about the algorithm used are
-presented in the next section). We use here again default settings, but it is
-strongly advised to adapt the parameters for each data set. The definition of
-the sample groups (i.e. assignment of individual samples to the sample groups in
-the experiment) is mandatory for the `PeakDensityParam`. If there are no sample
-groups in the experiment `sampleGroups` should be set to a single value for each
-file (e.g. `rep(1, length(fileNames(xdata))`).
-
-```{r alignment-peak-groups, message = FALSE, warning = FALSE}
-## Correspondence: group peaks across samples.
-pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-                        minFraction = 0.8)
-xdata <- groupChromPeaks(xdata, param = pdp)
-
-## Now the retention time correction.
-pgp <- PeakGroupsParam(minFraction = 0.85)
-
-## Get the peak groups that would be used for alignment.
-xdata <- adjustRtime(xdata, param = pgp)
-```
-
-Note also that we could use the `adjustRtimePeakGroups` method on the object
-before alignment to evaluate on which features (peak groups) the alignment would
-be performed. This can be useful to test different settings for the peak groups
-algorithm. Also, it is possible to manually select or define certain peak groups
-(i.e. their retention times per sample) and provide this matrix to the
-`PeakGroupsParam` class with the `peakGroupsMatrix` argument.
-
-Below plot the difference between raw and adjusted retention times using the
-`plotAdjustedRtime` function, which, if the *peak groups* method is used for
-alignment, also highlights the peak groups used in the adjustment.
-
-```{r alignment-peak-groups-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak groups aligned data." }
-## Plot the difference of adjusted to raw retention time.
-plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group],
-                  peakGroupsCol = "grey", peakGroupsPch = 1)
-```
 
 At last we evaluate the impact of the alignment on the test peak.
 
@@ -721,66 +668,70 @@ be adjusted. There are currently two options available:
 Both cases require a meaningful/correct ordering of the samples within the
 object (e.g. ordering by injection index).
 
-The examples below aim to illustrate the effect of these alignment options.
-First we assume samples 1, 6 and 11 in the *faahKO* data set to be QC samples
-(sample pools). We thus want to perform the alignment based on these samples and
-subsequently adjust the retention times of the left-out samples (2, 3, 4, 5, 7,
-8, 9, 10 and 12) based on interpolation of the results from the neighboring
-*subset* samples. After initial peak grouping we perform below the alignment
-with the *peak groups* method passing the indices of the samples on which we
-want the alignment to be based with the `subset` argument and specify
-`subsetAdjust = "average"` to adjust the study samples based on interpolation
-of the alignment results from neighboring subset/QC samples.
+The examples below aim to illustrate the effect of these alignment options.  We
+assume that samples 1, 4 and 7 in the *faahKO* data set are QC samples (sample
+pools). We thus want to perform the alignment based on these samples and
+subsequently adjust the retention times of the left-out samples (2, 3, 5, 6 and
+8) based on interpolation of the results from the neighboring *subset* (QC)
+samples. After initial peak grouping we perform below the alignment with the
+*peak groups* method passing the indices of the samples on which we want the
+alignment to be based on with the `subset` argument and specify `subsetAdjust =
+"average"` to adjust the study samples based on interpolation of the alignment
+results from neighboring subset/QC samples.
 
 Note that for any subset-alignment all parameters such as `minFraction` are
 relative to the `subset`, not the full experiment!
 
-```{r alignment-subset, message = FALSE, warning = FALSE}
-xdata_subs <- dropAdjustedRtime(xdata)
-## Define the experimental layout
-xdata_subs$sample_type <- "study"
-xdata_subs$sample_type[c(1, 6, 11)] <- "QC"
+To re-perform an alignment we can first remove previous alignment results with
+the `dropAdjustedRtime` function.
 
+```{r subset-define, message = FALSE, warning = FALSE}
+xdata <- dropAdjustedRtime(xdata)
+
+## Define the experimental layout
+xdata$sample_type <- "study"
+xdata$sample_type[c(1, 4, 7)] <- "QC"
+```
+
+We next have to perform an initial correspondence analysis because the *peak
+groups* alignment method adjusts the retention time by aligning previously
+identified *hook peaks* (chromatographic peaks present in most/all samples;
+details about the algorithm used are presented in the next section). We use here
+the default settings, but it is strongly advised to adapt the parameters for
+each data set. The definition of the sample groups (i.e. assignment of
+individual samples to the sample groups in the experiment) is mandatory for the
+`PeakDensityParam`. If there are no sample groups in the experiment
+`sampleGroups` should be set to a single value for each file (e.g. `rep(1,
+length(fileNames(xdata))`).
+
+```{r alignment-subset, message = FALSE, warning = FALSE}
 ## Initial peak grouping. Use sample_type as grouping variable
-pdp_subs <- PeakDensityParam(sampleGroups = xdata_subs$sample_type,
+pdp_subs <- PeakDensityParam(sampleGroups = xdata$sample_type,
                              minFraction = 0.9)
-xdata_subs <- groupChromPeaks(xdata_subs, param = pdp_subs)
+xdata <- groupChromPeaks(xdata, param = pdp_subs)
 
 ## Define subset-alignment options and perform the alignment
 pgp_subs <- PeakGroupsParam(minFraction = 0.85,
-                            subset = which(xdata_subs$sample_type == "QC"),
+                            subset = which(xdata$sample_type == "QC"),
                             subsetAdjust = "average", span = 0.4)
-xdata_subs <- adjustRtime(xdata_subs, param = pgp_subs)
+xdata <- adjustRtime(xdata, param = pgp_subs)
 ```
 
-To illustrate the alignment results we plot the results only for samples 1 to 6
-(1 and 6 being QC samples and 2 to 5 study samples that were adjusted based on
-the QC samples). This nicely shows how the interpolation of
-the `subsetAdjust = "average"` works: retention times of sample 2 are adjusted
-based on those from subset sample 1 and 6, giving however more weight to the
-closer subset sample 1 which results in the adjusted retention times of 2 being
-more similar to those of sample 1. Sample 5 on the other hand gets adjusted
-giving more weight to the second subset sample (6).
-
-```{r alignment-subset-plot-1, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 5, fig.cap = "Alignment results for samples 1 to 6."}
-clrs <- rep(NA, 12)
-clrs[1:6] <- paste0(brewer.pal(6, "Dark2"), 80)
-
-plotAdjustedRtime(xdata_subs, col = clrs, lwd = 2, peakGroupsCol = NA)
-legend("topleft", legend = 1:6, col = brewer.pal(6, "Dark2"), lwd = 2)
-
-```
-
-We also plot the full alignment results, drawing the `subset` samples as green
-and study samples as grey lines.
+Below we plot the results of the alignment labeling the samples being part of
+the *subset* in green and the others in grey. This nicely shows how the
+interpolation of the `subsetAdjust = "average"` works: retention times of sample
+2 are adjusted based on those from subset sample 1 and 4, giving however more
+weight to the closer subset sample 1 which results in the adjusted retention
+times of 2 being more similar to those of sample 1. Sample 3 on the other hand
+gets adjusted giving more weight to the second subset sample (4).
 
 ```{r alignment-subset-plot-2, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are shown in green, study samples in grey." }
-clrs <- rep("#00000040", 12)
-clrs[xdata_subs$sample_type == "QC"] <- c("#00ce0080")
+clrs <- rep("#00000040", 8)
+clrs[xdata$sample_type == "QC"] <- c("#00ce0080")
 par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
-plot(chromatogram(xdata_subs, aggregationFun = "sum"),
+plot(chromatogram(xdata, aggregationFun = "sum"),
      col = clrs, peakType = "none")
-plotAdjustedRtime(xdata_subs, col = clrs, peakGroupsPch = 1,
+plotAdjustedRtime(xdata, col = clrs, peakGroupsPch = 1,
                   peakGroupsCol = "#00ce0040")
 ```
 
@@ -789,26 +740,6 @@ sample based on a single subset sample (the previous), which results in most
 cases in the adjusted retention times of the non-subset sample being highly
 similar to those of the subset sample which was used for adjustment.
 
-Also obiwarp alignment supports the same types of subset-alignment as shown
-below.
-
-```{r alignment-subset-obiwarp}
-xdata_subs <- dropAdjustedRtime(xdata_subs)
-prm <- ObiwarpParam(subset = which(xdata_subs$sample_type == "QC"),
-                    subsetAdjust = "average")
-xdata_subs <- adjustRtime(xdata_subs, param = prm)
-```
-
-We again plot the results.
-
-```{r alignment-subset-obiwarp-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are shown in green, study samples in grey." }
-clrs <- rep("#00000040", 12)
-clrs[which(xdata_subs$sample_type == "QC")] <- "#00ce0080"
-par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
-plot(chromatogram(xdata_subs, aggregationFun = "sum"),
-     col = clrs, peakType = "none")
-plotAdjustedRtime(xdata_subs, col = clrs, peakGroupsPch = 1)
-```
 
 # Correspondence
 
@@ -825,27 +756,20 @@ hence only chromatographic peaks present in at least 40% of the samples per
 sample group are grouped into a feature. The sample group assignment is
 specified with the `sampleGroups` argument.
 
-```{r correspondence-example-slice, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." }
+```{r correspondence-example-slice, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." }
 ## Define the mz slice.
 mzr <- c(305.05, 305.15)
 
 ## Extract and plot the chromatograms
-chr_mzr <- chromatogram(xdata, mz = mzr, rt = c(2500, 4000))
-par(mfrow = c(3, 1), mar = c(1, 4, 1, 0.5))
-cols <- group_colors[chr_mzr$sample_group]
-plot(chr_mzr, col = cols, xaxt = "n", xlab = "",
-     peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]])
+chr_mzr <- chromatogram(xdata, mz = mzr)
 ## Define the parameters for the peak density method
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
                         minFraction = 0.4, bw = 30)
-par(mar = c(4, 4, 1, 0.5))
-plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
-                     pch = 16, xlim = c(2500, 4000))
-## Use a different bw
-pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-                        minFraction = 0.4, bw = 20)
-plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
-                     pch = 16, xlim = c(2500, 4000))
+plotChromPeakDensity(chr_mzr, col = sample_colors, param = pdp,
+                     peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]],
+                     peakCol = sample_colors[chromPeaks(chr_mzr)[, "sample"]],
+                     peakPch = 16)
+
 ```
 
 The upper panel in the plot above shows the extracted ion chromatogram for each
@@ -853,18 +777,16 @@ sample with the detected peaks highlighted. The middle and lower plot shows the
 retention time for each detected peak within the different samples. The black
 solid line represents the density distribution of detected peaks along the
 retention times. Peaks combined into *features* (peak groups) are indicated with
-grey rectangles. Different values for the `bw` parameter of the
-`PeakDensityParam` were used:`bw = 30` in the middle and `bw = 20` in the lower
-panel. With the default value for the parameter `bw` the two neighboring
-chromatographic peaks would be grouped into the same feature, while with a `bw`
-of 20 they would be grouped into separate features.  This grouping depends on
-the parameters for the density function and other parameters passed to the
-algorithm with the `PeakDensityParam`.
+grey rectangles. This type of visualization is ideal to test correspondence
+settings on example m/z slices before applying them to the full data set.
+
+Below we perform the correspondence analysis with the defined settings on the
+full data set.
 
 ```{r correspondence, message = FALSE }
 ## Perform the correspondence
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-                        minFraction = 0.4, bw = 20)
+                        minFraction = 0.4, bw = 30)
 xdata <- groupChromPeaks(xdata, param = pdp)
 ```
 
@@ -907,7 +829,7 @@ head(assay(res))
 
 In addition it is possible to extract the results from the correspondence
 analysis individually using the `featureDefinitions` and `featureValues`
-methods, that former returning a `DataFrame` with the definition of the features
+methods, the former returning a `DataFrame` with the definition of the features
 (i.e. the mz and rt ranges and, in column `peakidx`, the index of the
 chromatographic peaks in the `chromPeaks` matrix for each feature), the latter
 the feature abundances.
@@ -919,12 +841,10 @@ featureDefinitions(xdata)
 
 The `featureValues` method returns a `matrix` with rows being features and
 columns samples. The content of this matrix can be defined using the `value`
-argument. The default is`value = "index"` which simply returns the index of the
-peak (in the `chromPeaks` matrix) assigned to a feature in a sample. Setting
-`value = "into"` returns a matrix with the integrated signal of the peaks
-corresponding to a feature in a sample. Any column name of the `chromPeaks`
-matrix can be passed to the argument `value`. Below we extract the integrated
-peak intensity per feature/sample.
+argument. The default `value = "into"` returns a matrix with the integrated
+signal of the peaks corresponding to a feature in a sample. Any column name of
+the `chromPeaks` matrix can be passed to the argument `value`. Below we extract
+the integrated peak intensity per feature/sample.
 
 ```{r correspondence-feature-values, message = FALSE }
 ## Extract the into column for each feature.
@@ -993,6 +913,24 @@ group.
 head(featureSummary(xdata, group = xdata$sample_group))
 ```
 
+We can add the feature value matrix with the filled-in data for missing peaks
+also to our `SummarizedExperiment` object `res` as an additional *assay*:
+
+```{r}
+assays(res)$raw_filled <- featureValues(xdata, filled = TRUE)
+```
+
+We have now two matrices (assays) available, the matrix with the detected and
+the matrix with the detected and filled-in values, each can be accessed by their
+name.
+
+```{r}
+assayNames(res)
+
+head(assay(res, "raw"))
+head(assay(res, "raw_filled"))
+```
+
 The performance of peak detection, alignment and correspondence should always be
 evaluated by inspecting extracted ion chromatograms e.g. of known compounds,
 internal standards or identified features in general. The `featureChromatograms`
@@ -1015,13 +953,14 @@ identified peak to fill the area.
 plot(feature_chroms, col = sample_colors,
      peakBg = sample_colors[chromPeaks(feature_chroms)[, "sample"]])
 
-third <- feature_chroms[3, ]
-plot(third)
-chromPeaks(third)
+```
 
+To access the EICs of the second feature we can simply subset the
+`feature_chroms` object.
 
-plot(feature_chroms[3, ], col = group_colors[feature_chroms$sample_group])
-plot(feature_chroms[4, ], col = group_colors[feature_chroms$sample_group])
+```{r}
+eic_2 <- feature_chroms[2, ]
+chromPeaks(eic_2)
 ```
 
 At last we perform a principal component analysis to evaluate the grouping of
@@ -1031,7 +970,7 @@ technical biases.
 
 ```{r final-pca, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "PCA for the faahKO data set, un-normalized intensities." }
 ## Extract the features and log2 transform them
-ft_ints <- log2(featureValues(xdata, value = "into"))
+ft_ints <- log2(assay(res, "raw_filled"))
 
 ## Perform the PCA omitting all features with an NA in any of the
 ## samples. Also, the intensities are mean centered.
@@ -1124,7 +1063,8 @@ features) are removed if the object is subsetted to contain only data from
 selected files (using the `filterFile` method). This is because the
 correspondence results depend on the files on which the analysis was performed -
 running a correspondence on a subset of the files would lead to different
-results.
+results. Note that with `keepFeatures = TRUE` it would be possible to overwrite
+this and keep also correspondence results for the specified files.
 
 As an exception, it is possible to force keeping adjusted retention times in the
 subsetted object setting the `keepAdjustedRtime` argument to `TRUE` in any of
@@ -1155,7 +1095,7 @@ hasAdjustedRtime(subs)
 ```
 
 We can however use the `keepAdjustedRtime` argument to force keeping the
-adjusted retention times.
+adjusted retention times, `keepFeatures` would even keep correspondence results.
 
 ```{r subset-filterFile-3, message = FALSE }
 subs <- filterFile(xdata, keepAdjustedRtime = TRUE)
@@ -1202,7 +1142,7 @@ one_file <- filterFile(xdata, file = 3)
 one_file_2 <- xdata[fromFile(xdata) == 3]
 
 ## Is the content the same?
-all.equal(spectra(one_file), spectra(one_file_2))
+all.equal(one_file[[2]], one_file_2[[2]])
 ```
 
 While the spectra-content is the same in both objects, `one_file` contains also

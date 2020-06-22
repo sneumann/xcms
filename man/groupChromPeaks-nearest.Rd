@@ -163,23 +163,11 @@ can be passed with a \code{NearestPeaksParam} object.
 p <- NearestPeaksParam(kNN = 3)
 p
 
-##############################
-## Chromatographic peak detection and grouping.
-##
-## Below we perform first a chromatographic peak detection (using the
-## matchedFilter method) on some of the test files from the faahKO package
-## followed by a peaks grouping using the "nearest" method.
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
-
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+res <- faahko_sub
 
 head(chromPeaks(res))
 ## The number of peaks identified per sample:

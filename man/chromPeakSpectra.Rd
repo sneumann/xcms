@@ -75,7 +75,7 @@ fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
 dda <- readMSData(fl, mode = "onDisk")
 
 ## Perform MS1 peak detection
-dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15)))
+dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
 ms2_sps <- chromPeakSpectra(dda)
 ms2_sps
 

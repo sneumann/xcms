@@ -180,21 +180,26 @@ The \emph{centWave} was designed to work on centroided mode, thus it
 }
 \examples{
 ## Load the test file
-library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xr <- xcmsRaw(fs, profstep = 0)
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-mzVals <- xr@env$mz
-intVals <- xr@env$intensity
+## Subset to one file and restrict to a certain retention time range
+data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+
+## Get m/z and intensity values
+mzs <- mz(data)
+ints <- intensity(data)
+
 ## Define the values per spectrum:
-valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+valsPerSpect <- lengths(mzs)
 
-## Calling the function. We're using a large value for noise to speed up
-## the call in the example performance - in a real use case we would either
+## Calling the function. We're using a large value for noise and prefilter
+## to speed up the call in the example - in a real use case we would either
 ## set the value to a reasonable value or use the default value.
-res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
-scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
+res <- do_findChromPeaks_centWave(mz = unlist(mzs), int = unlist(ints),
+    scantime = rtime(data), valsPerSpect = valsPerSpect, noise = 10000,
+    prefilter = c(3, 10000))
 head(res)
 }
 \references{

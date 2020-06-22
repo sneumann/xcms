@@ -1425,7 +1425,7 @@ applyAdjustedRtime <- function(object) {
     ## Copy the data
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
-    newFd <- dropAdjustedRtime(newFd)
+    rm(list = "adjustedRtime", envir = newFd)
     object@msFeatureData <- newFd
     object
 }
@@ -1977,7 +1977,7 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #' dda <- readMSData(fl, mode = "onDisk")
 #'
 #' ## Perform MS1 peak detection
-#' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15)))
+#' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
 #' ms2_sps <- chromPeakSpectra(dda)
 #' ms2_sps
 #'
@@ -2196,7 +2196,6 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' ## Subset the object to a smaller retention time range
 #' xdata <- faahko_sub
 #'
-#' xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
 #' xdata <- groupChromPeaks(xdata,
 #'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 #'
@@ -2899,27 +2898,15 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     ## Error checking - seems that's not performed downstream.
     if (!all(file %in% seq_along(fileNames(object))))
         stop("'file' has to be within 1 and the number of files in object.")
-    ## Drop features
     has_features <- hasFeatures(object)
     has_chrom_peaks <- hasChromPeaks(object)
     has_adj_rt <- hasAdjustedRtime(object)
+    ph <- processHistory(object)
     if (has_features && !keepFeatures) {
-        if (keepFeatures)
-            warning("Peak counts in featureDefinitions are no longer",
-                    " valid after subsetting")
-        else {
-            message("Correspondence results (features) removed.")
-            object <- dropFeatureDefinitions(
-                object, keepAdjustedRtime = keepAdjustedRtime)
-            has_features <- FALSE
-        }
-    }
-    if (has_adj_rt && !keepAdjustedRtime){
-        object <- dropAdjustedRtime(object)
-        has_adj_rt <- FALSE
+        has_features <- FALSE
+        ph <- dropProcessHistoriesList(ph, .PROCSTEP.PEAK.GROUPING, num = 1)
     }
     ## Extracting all the XCMSnExp data from the object.
-    ph <- processHistory(object)
     newFd <- new("MsFeatureData")
     ## Subset original data:
     nobject <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
@@ -2940,19 +2927,22 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         chromPeaks(newFd) <- pks
         chromPeakData(newFd) <- extractROWS(chromPeakData(object), idx)
     }
+    if (hasAdjustedRtime(newFd) && !keepAdjustedRtime)
+        newFd <- dropAdjustedRtime(newFd, rtime(nobject, bySample = TRUE,
+                                                adjusted = FALSE))
     ## Remove ProcessHistory not related to any of the files.
-    if (length(ph)) {
-        kp <- unlist(lapply(ph, function(z) {
-            any(fileIndex(z) %in% file)
-        }))
-        ph <- ph[kp]
-    }
-    ## Update file index in process histories.
-    if (length(ph)) {
-        ph <- lapply(ph, function(z) {
-            updateFileIndex(z, old = file, new = 1:length(file))
-        })
-    }
+    ## if (length(ph)) {
+    ##     kp <- unlist(lapply(ph, function(z) {
+    ##         any(fileIndex(z) %in% file)
+    ##     }))
+    ##     ph <- ph[kp]
+    ## }
+    ## ## Update file index in process histories.
+    ## if (length(ph)) {
+    ##     ph <- lapply(ph, function(z) {
+    ##         updateFileIndex(z, old = file, new = 1:length(file))
+    ##     })
+    ## }
     lockEnvironment(newFd, bindings = TRUE)
     nobject@msFeatureData <- newFd
     nobject@.processHistory <- ph

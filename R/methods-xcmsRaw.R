@@ -2160,7 +2160,7 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 #' @examples
 #' ## Load a test file
 #' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-#' xraw <- xcmsRaw(file)
+#' xraw <- xcmsRaw(file, profstep = 0)
 #' ## The number of scans/spectra:
 #' length(xraw@scantime)
 #'

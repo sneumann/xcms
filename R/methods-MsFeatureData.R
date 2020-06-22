@@ -75,8 +75,17 @@ setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
+setMethod("dropAdjustedRtime", "MsFeatureData", function(object, rtraw) {
     if (hasAdjustedRtime(object)) {
+        if (hasChromPeaks(object)) {
+            message("Reverting retention times of identified peaks to ",
+                    "original values ... ", appendLF = FALSE)
+            fts <- .applyRtAdjToChromPeaks(
+                chromPeaks(object), rtraw = adjustedRtime(object),
+                rtadj = rtraw)
+            chromPeaks(object) <- fts
+            message("OK")
+        }
         rm(list = "adjustedRtime", envir = object)
     }
     return(object)
@@ -108,10 +117,24 @@ setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("dropFeatureDefinitions", "MsFeatureData", function(object) {
-    if (hasFeatures(object))
-        rm(list = "featureDefinitions", envir = object)
-    object
+setMethod("dropFeatureDefinitions", "MsFeatureData",
+          function(object, dropAdjustedRtime = FALSE) {
+              if (hasFeatures(object)) {
+                  if (.hasFilledPeaks(object)) {
+                      ## Remove filled in peaks
+                      chromPeaks(object) <- chromPeaks(
+                          object)[!chromPeakData(object)$is_filled, , drop = FALSE]
+                      chromPeakData(object) <- extractROWS(
+                          chromPeakData(object), which(!chromPeakData(object)$is_filled))
+                  }
+                  if (dropAdjustedRtime) {
+                      ## This will ensure that the retention times of the peaks
+                      ## are restored.
+                      object <- dropAdjustedRtime(object)
+                  }
+                  rm(list = "featureDefinitions", envir = object)
+              }
+              object
 })
 
 #' @noRd

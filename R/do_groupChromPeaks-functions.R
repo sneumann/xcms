@@ -62,21 +62,19 @@
 #' @md
 #'
 #' @examples
-#' ## Load the test data set
-#' library(faahKO)
-#' data(faahko)
+#' ## Load the test file
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Extract the matrix with the identified peaks from the xcmsSet:
-#' fts <- peaks(faahko)
+#' pks <- chromPeaks(faahko_sub)
 #'
 #' ## Perform the peak grouping with default settings:
-#' res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
+#' res <- do_groupChromPeaks_density(pks, sampleGroups = rep(1, 3))
 #'
 #' ## The feature definitions:
-#' head(res$featureDefinitions)
-#'
-#' ## The assignment of peaks from the input matrix to the features
-#' head(res$peakIndex)
+#' head(res)
 do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                        bw = 30, minFraction = 0.5, minSamples = 1,
                                        binSize = 0.25, maxFeatures = 50,
@@ -164,141 +162,6 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     }
     res
 }
-
-## do_groupChromPeaks_density_old <- function(peaks, sampleGroups,
-##                                            bw = 30, minFraction = 0.5,
-##                                            minSamples = 1,
-##                                            binSize = 0.25, maxFeatures = 50,
-##                                            sleep = 0) {
-##     if (missing(sampleGroups))
-##         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
-##              "length equal to the number of samples specifying the group ",
-##              "assignment of the samples.")
-##     if (missing(peaks))
-##         stop("Parameter 'peaks' is missing!")
-##     if (!is.matrix(peaks) | is.data.frame(peaks))
-##         stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
-##     ## Check that we've got all required columns
-##     .reqCols <- c("mz", "rt", "sample")
-##     if (sleep > 0)
-##         .reqCols <- c(.reqCols, "into")
-##     if (!all(.reqCols %in% colnames(peaks)))
-##         stop("Required columns ",
-##              paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
-##                     collapse = ", "), " not found in 'peaks' parameter")
-
-##     sampleGroups <- as.character(sampleGroups)
-##     sampleGroupNames <- unique(sampleGroups)
-##     sampleGroupTable <- table(sampleGroups)
-##     nSampleGroups <- length(sampleGroupTable)
-
-##     ## Check that sample groups matches with sample column.
-##     if (max(peaks[, "sample"]) > length(sampleGroups))
-##         stop("Sample indices in 'peaks' are larger than there are sample",
-##              " groups specified with 'sampleGroups'!")
-
-##     ## Order peaks matrix by mz
-##     peakOrder <- order(peaks[, "mz"])
-##     peaks <- peaks[peakOrder, .reqCols, drop = FALSE]
-##     rownames(peaks) <- NULL
-##     rtRange <- range(peaks[, "rt"])
-
-##     ## Define the mass slices and the index in the peaks matrix with an mz
-##     ## value >= mass[i].
-##     mass <- seq(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
-##                 by = binSize / 2)
-##     masspos <- findEqualGreaterM(peaks[,"mz"], mass)
-
-##     groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
-##     groupindex <- vector("list", 512)
-
-##     densFrom <- rtRange[1] - 3 * bw
-##     densTo <- rtRange[2] + 3 * bw
-##     ## Increase the number of sampling points for the density distribution.
-##     densN <- max(512, 2 * 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
-##     endIdx <- 0
-##     num <- 0
-##     gcount <- integer(nSampleGroups)
-##     message("Processing ", length(mass) - 1, " mz slices ... ", appendLF = FALSE)
-##     for (i in seq_len(length(mass)-2)) {
-##         ## That's identifying overlapping mz slices.
-##         startIdx <- masspos[i]
-##         endIdx <- masspos[i + 2] - 1
-##         if (endIdx - startIdx < 0)
-##             next
-##         curMat <- peaks[startIdx:endIdx, , drop = FALSE]
-##         den <- density(curMat[, "rt"], bw = bw, from = densFrom, to = densTo,
-##                        n = densN)
-##         maxden <- max(den$y)
-##         deny <- den$y
-##         ## gmat <- matrix(nrow = 5, ncol = 2 + gcount)
-##         snum <- 0
-##         ## What's that 20 there?
-##         while (deny[maxy <- which.max(deny)] > maxden / 20 && snum < maxFeatures) {
-##             grange <- descendMin(deny, maxy)
-##             deny[grange[1]:grange[2]] <- 0
-##             gidx <- which(curMat[,"rt"] >= den$x[grange[1]] &
-##                           curMat[,"rt"] <= den$x[grange[2]])
-##             ## Determine the sample group of the samples in which the peaks
-##             ## were detected and check if they correspond to the required limits.
-##             tt <- table(sampleGroups[unique(curMat[gidx, "sample"])])
-##             if (!any(tt / sampleGroupTable[names(tt)] >= minFraction &
-##                      tt >= minSamples))
-##                 next
-##             snum <- snum + 1
-##             num <- num + 1
-##             ## Double the size of the output containers if they're full
-##             if (num > nrow(groupmat)) {
-##                 groupmat <- rbind(groupmat,
-##                                   matrix(nrow = nrow(groupmat),
-##                                          ncol = ncol(groupmat)))
-##                 groupindex <- c(groupindex, vector("list", length(groupindex)))
-##             }
-##             gcount <- rep(0, length(sampleGroupNames))
-##             names(gcount) <- sampleGroupNames
-##             gcount[names(tt)] <- as.numeric(tt)
-##             groupmat[num, 1] <- median(curMat[gidx, "mz"])
-##             groupmat[num, 2:3] <- range(curMat[gidx, "mz"])
-##             groupmat[num, 4] <- median(curMat[gidx, "rt"])
-##             groupmat[num, 5:6] <- range(curMat[gidx, "rt"])
-##             groupmat[num, 7] <- length(gidx)
-##             groupmat[num, 7 + seq(along = gcount)] <- gcount
-##             groupindex[[num]] <- sort(peakOrder[(startIdx:endIdx)[gidx]])
-##         }
-##         if (sleep > 0) {
-##             ## Plot the density
-##             plot(den, main = paste(round(min(curMat[,"mz"]), 2), "-",
-##                                    round(max(curMat[,"mz"]), 2)))
-##             ## Highlight peaks per sample group.
-##             for (j in 1:nSampleGroups) {
-##                 ## Which peaks belong to this sample group.
-##                 cur_group_samples <- which(sampleGroups == sampleGroupNames[j])
-##                 idx <- curMat[, "sample"] %in% cur_group_samples
-##                 points(curMat[idx, "rt"], curMat[idx, "into"] /
-##                                           max(curMat[, "into"]) * maxden,
-##                        col = j, pch=20)
-##             }
-##             for (j in seq(length = snum))
-##                 abline(v = groupmat[num - snum + j, 5:6], lty = "dashed", col = j)
-##             Sys.sleep(sleep)
-##         }
-##     }
-##     message("OK")
-##     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
-##                             "npeaks", sampleGroupNames)
-##     groupmat <- groupmat[seq_len(num), , drop = FALSE]
-##     groupindex <- groupindex[seq_len(num)]
-##     ## Remove groups that overlap with more "well-behaved" groups
-##     numsamp <- rowSums(groupmat[, (match("npeaks",
-##                                          colnames(groupmat))+1):ncol(groupmat),
-##                                 drop = FALSE])
-##     uorder <- order(-numsamp, groupmat[, "npeaks"])
-##     uindex <- rectUnique(groupmat[, c("mzmin","mzmax","rtmin","rtmax"),
-##                                   drop = FALSE],
-##                          uorder)
-##     return(list(featureDefinitions = groupmat[uindex, , drop = FALSE],
-##                 peakIndex = groupindex[uindex]))
-## }
 
 #' @title Core API function for peak grouping using mzClust
 #'

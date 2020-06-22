@@ -177,12 +177,12 @@ validateMsFeatureData <- function(x) {
         return(new_e)
     pks <- chromPeaks(x)
     idx <- sort(idx)
-    if (!all(idx %in% 1:nrow(pks)))
-        stop("All indices in 'idx' have to be within 1 and nrow of the peak",
-             " matrix.")
+    ## if (!all(idx %in% 1:nrow(pks)))
+    ##     stop("All indices in 'idx' have to be within 1 and nrow of the peak",
+    ##          " matrix.")
     chromPeaks(new_e) <- pks[idx, , drop = FALSE]
     if (.has_chrom_peak_data(x))
-        chromPeakData(new_e) <- chromPeakData(x)[idx, , drop = FALSE]
+        chromPeakData(new_e) <- extractROWS(chromPeakData(x), idx)
     if (hasFeatures(x)) {
         if (nrow(chromPeaks(new_e)) != nrow(chromPeaks(x)))
             featureDefinitions(new_e) <- .update_feature_definitions(

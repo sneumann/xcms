@@ -38,17 +38,16 @@ which may be part of features.
 }
 \examples{
 
-## Perform chromatographic peak detection on a test file.
-fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-data <- readMSData(fl, mode = "onDisk")
-
-data <- findChromPeaks(data, param = CentWaveParam(peakwidth = c(2, 8)))
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Distribution of chromatographic peak widths
-quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+quantile(chromPeaks(faahko_sub)[, "rtmax"] - chromPeaks(faahko_sub)[, "rtmin"])
 
-## Remove all chromatographic peaks with a width larger 5 seconds
-data <- refineChromPeaks(data, param = CleanPeaksParam(5))
+## Remove all chromatographic peaks with a width larger 60 seconds
+data <- refineChromPeaks(faahko_sub, param = CleanPeaksParam(60))
 
 quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 }

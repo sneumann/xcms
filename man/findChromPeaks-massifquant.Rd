@@ -381,8 +381,9 @@ These methods and classes are part of the updated and modernized
 
 ## Create a MassifquantParam object.
 mqp <- MassifquantParam()
-## Change snthresh parameter
+## Change snthresh prefilter parameters
 snthresh(mqp) <- 30
+prefilter(mqp) <- c(6, 10000)
 mqp
 
 ## Perform the peak detection using massifquant on the files from the
@@ -392,7 +393,7 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = mqp)
 head(chromPeaks(res))

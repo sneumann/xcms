@@ -284,9 +284,6 @@ re-adjusts adjusted retention times to ensure them being in the same
 order than the raw (original) retention times.
 }
 \examples{
-##############################
-## Chromatographic peak detection and grouping.
-##
 ## Load a test data set with detected peaks
 data(faahko_sub)
 ## Update the path to the files for the local system
