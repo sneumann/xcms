@@ -115,7 +115,7 @@ index,index&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -515,10 +515,9 @@ peak detection in purely chromatographic data.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://lgatto.github.io/MSnbase'>MSnbase</a></span>)
 <span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>), recursive = <span class='fl'>TRUE</span>,
            full.names = <span class='fl'>TRUE</span>)
-<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the chromatographic peak detection using the settings defined</span>
+<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the chromatographic peak detection using the settings defined</span>
 <span class='co'>## above. Note that we are also disabling parallel processing in this</span>
 <span class='co'>## example by registering a "SerialParam"</span>
-<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>mfp</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into    intf  maxo
 #&gt; CP001 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3580020 84280

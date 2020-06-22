@@ -80,7 +80,7 @@ data range if rt and mz are not defined)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@ data range if rt and mz are not defined)." />
 
     <div class="ref-description">
     <p><strong>UPDATE</strong>: the <code>extractMsData</code> and <code>plotMsData</code> functions are deprecated
-and <code><a href='https://rdrr.io/pkg/MSnbase/man/mzRident2dfr.html'>as(x, "data.frame")</a></code> and <code><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot(x, type = "XIC")</a></code> (<code>x</code> being an
+and <code>as(x, "data.frame")</code> and <code><a href='https://rdrr.io/r/graphics/plot.default.html'>plot(x, type = "XIC")</a></code> (<code>x</code> being an
 <code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object) should be used instead. See examples
 below. Be aware that filtering the raw object might however drop the
 adjusted retention times. In such cases it is advisable to use the
@@ -217,8 +217,8 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
 
 <span class='co'>## Extract the full MS data for a certain retention time range</span>
 <span class='co'>## as a data.frame</span>
-<span class='kw'>tmp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterRt</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2800</span>, <span class='fl'>2900</span>))
-<span class='kw'>ms_all</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/mzRident2dfr.html'>as</a></span>(<span class='kw'>tmp</span>, <span class='st'>"data.frame"</span>)
+<span class='kw'>tmp</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2800</span>, <span class='fl'>2900</span>))
+<span class='kw'>ms_all</span> <span class='op'>&lt;-</span> <span class='fu'>as</span>(<span class='kw'>tmp</span>, <span class='st'>"data.frame"</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>ms_all</span>)</div><div class='output co'>#&gt;   file       rt    mz     i
 #&gt; 1    1 2800.284 200.1   968
 #&gt; 2    1 2800.284 201.0  1273

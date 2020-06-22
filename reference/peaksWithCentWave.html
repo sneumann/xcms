@@ -74,7 +74,7 @@ without m/z values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -276,7 +276,7 @@ method.</p>
     mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
 <span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.2</span>)
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='kw'>mzr</span>)[<span class='fl'>1</span>, <span class='fl'>1</span>]
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3000</span>, <span class='fl'>3300</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
 
 <span class='kw'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>)
 <span class='kw'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>)
@@ -286,8 +286,7 @@ method.</p>
 <span class='co'>## Identify peaks in the chromatographic data</span>
 <span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/peaksWithCentWave.html'>peaksWithCentWave</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>))
 <span class='kw'>pks</span></div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intb  maxo sn
-#&gt; [1,] 2734.556 2711.082 2768.985 219688.7 207188.3  8907 17
-#&gt; [2,] 3119.535 3097.625 3127.359 247211.6 236588.1 16496 32</div><div class='input'>
+#&gt; [1,] 3119.535 3097.625 3127.359 247211.6 227217.9 16496 24</div><div class='input'>
 <span class='co'>## Highlight the peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span>(xleft = <span class='kw'>pks</span>[, <span class='st'>"rtmin"</span>], xright = <span class='kw'>pks</span>[, <span class='st'>"rtmax"</span>],
     ybottom = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pks</span>)), ytop = <span class='kw'>pks</span>[, <span class='st'>"maxo"</span>], col = <span class='st'>"#ff000040"</span>,

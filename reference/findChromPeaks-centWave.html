@@ -110,7 +110,7 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -178,8 +178,8 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
     should be created with the <code>CentWaveParam</code> constructor.</p>
 <p>The <code>detectChromPeaks,OnDiskMSnExp,CentWaveParam</code> method
     performs chromatographic peak detection using the <em>centWave</em>
-    algorithm on all samples from an <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
-    object. <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all
+    algorithm on all samples from an <code>OnDiskMSnExp</code>
+    object. <code>OnDiskMSnExp</code> objects encapsule all
     experiment specific data and load the spectra data (mz and intensity
     values) on the fly from the original files applying also all eventual
     data manipulations.</p>
@@ -422,7 +422,7 @@ https://github.com/sneumann/xcms/issues/445 for more information.</p></td>
     <tr>
       <th>object</th>
       <td><p>For <code>findChromPeaks</code>: an
-    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>  object containing the MS- and all
+    <code>OnDiskMSnExp</code>  object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></td>
     </tr>
@@ -506,7 +506,7 @@ the version from the class. Slots values should exclusively be accessed
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
     <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code> methods. It supports peak detection on
-    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects (defined in the <code>MSnbase</code>
+    <code>OnDiskMSnExp</code> objects (defined in the <code>MSnbase</code>
     package). All of the settings to the centWave algorithm can be passed
     with a <code>CentWaveParam</code> object.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -562,10 +562,9 @@ detection in purely chromatographic data.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
 <span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>), recursive = <span class='fl'>TRUE</span>,
            full.names = <span class='fl'>TRUE</span>)
-<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='kw'>fls</span>[<span class='fl'>1</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Perform the peak detection using the settings defined above.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>cwp</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>cwp</span>)</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 20 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 937 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 120 found.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982 1007409.0 1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659  687146.6  671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517 5210015.9 5135916.9 152320

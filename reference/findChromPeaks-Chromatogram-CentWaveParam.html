@@ -81,7 +81,7 @@ detection artifacts." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@ detection artifacts." />
     </div>
 
     <div class="ref-description">
-    <p><code>findChromPeaks</code> on a <a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram</a> or <a href='https://rdrr.io/pkg/MSnbase/man/Chromatograms-class.html'>Chromatograms</a> object with a
+    <p><code>findChromPeaks</code> on a Chromatogram or Chromatograms object with a
 <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a> parameter object performs centWave-based peak detection
 on purely chromatographic data. See <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a> for details on the method
 and <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a> for details on the parameter class.
@@ -167,7 +167,7 @@ detection artifacts.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>a <a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram</a> or <a href='https://rdrr.io/pkg/MSnbase/man/Chromatograms-class.html'>Chromatograms</a> object.</p></td>
+      <td><p>a Chromatogram or Chromatograms object.</p></td>
     </tr>
     <tr>
       <th>param</th>
@@ -202,7 +202,7 @@ for details on the method.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
+<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
 <span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.3</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
@@ -225,7 +225,7 @@ for details on the method.</p></div>
 #&gt;  3432.525	3385.577	3452.87	93413.6386744181	2013	16
 #&gt;  3487.299	3457.565	3509.208	93049.7314242425	2651	30</div><div class='input'>
 <span class='co'>## Plot data and identified peaks.</span>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Modify the settings</span>
 <span class='kw'>cwp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></span>(snthresh = <span class='fl'>5</span>, peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>10</span>, <span class='fl'>60</span>))
 <span class='kw'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chr</span>, <span class='kw'>cwp</span>)
@@ -265,9 +265,9 @@ for details on the method.</p></div>
 #&gt;  3484.169	3457.565	3510.773	93899.6004705884	2651	2650
 #&gt;  3429.395	3388.707	3452.87	92153.7175121951	2013	2012
 #&gt;  3538.942	3531.117	3546.767	18080.4449999996	1376	1332</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Perform peak detection on an Chromatograms object</span>
-<span class='kw'>od3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
+<span class='kw'>od3</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko16.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko18.CDF"</span>, package = <span class='st'>"faahKO"</span>)),
     mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
@@ -293,7 +293,7 @@ for details on the method.</p></div>
 #&gt; [4,] 2686.042 2648.483 2714.211 5700652.0 5587464.2 151744 45   1      2
 #&gt; [5,] 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28   1      3</div><div class='input'>
 <span class='co'>## plot the result</span>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>xchrs</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-3.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchrs</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

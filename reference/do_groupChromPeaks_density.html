@@ -76,7 +76,7 @@ samples, along the retention time axis in slices of overlapping mz ranges." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -252,19 +252,24 @@ Anal. Chem. 2006, 78:779-787.</p>
     <p>Colin Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Load the test data set</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko</span>)
+    <pre class="examples"><div class='input'><span class='co'>## Load the test file</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the matrix with the identified peaks from the xcmsSet:</span>
-<span class='kw'>fts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>peaks</a></span>(<span class='kw'>faahko</span>)
+<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)
 
 <span class='co'>## Perform the peak grouping with default settings:</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(<span class='kw'>fts</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>sampclass</a></span>(<span class='kw'>faahko</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(<span class='kw'>pks</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The feature definitions:</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span><span class='op'>$</span><span class='kw'>featureDefinitions</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='co'>## The assignment of peaks from the input matrix to the features</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span><span class='op'>$</span><span class='kw'>peakIndex</span>)</div><div class='output co'>#&gt; NULL</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;   mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks 1           peakidx
+#&gt; 1 279.0 279.0 279.0 2787.765 2787.765 2787.766      2 2           11, 199
+#&gt; 2 286.2 286.2 286.2 3254.904 3250.992 3258.815      2 2          115, 205
+#&gt; 3 300.2 300.2 300.2 3387.143 3379.317 3390.271      4 3 35, 125, 210, 212
+#&gt; 4 301.0 301.0 301.0 2787.766 2786.200 2792.459      3 3       10, 97, 198
+#&gt; 5 305.1 305.1 305.1 2994.338 2994.338 2994.339      2 2           15, 203
+#&gt; 6 305.1 305.1 305.1 2923.917 2923.916 2923.917      2 2           14, 202</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

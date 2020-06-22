@@ -110,7 +110,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -480,7 +480,7 @@ setter methods listed above.</p></dd>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>msdata</span>)
 <span class='kw'>fticrf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"fticr"</span>, package = <span class='st'>"msdata"</span>),
                     recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
-<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fticrf</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>], msLevel. = <span class='fl'>1</span>, mode = <span class='st'>"onDisk"</span>)
+<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fticrf</span>[<span class='fl'>1</span>], msLevel. = <span class='fl'>1</span>, mode = <span class='st'>"onDisk"</span>)
 
 <span class='co'>## Perform the MSW peak detection on these:</span>
 <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></span>(scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), peakThr = <span class='fl'>80000</span>, ampTh = <span class='fl'>0.005</span>,

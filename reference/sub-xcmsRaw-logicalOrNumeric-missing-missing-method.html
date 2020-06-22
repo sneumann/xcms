@@ -76,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -187,10 +187,12 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Load a test file</span>
 <span class='kw'>file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko15.CDF'</span>, package = <span class='st'>"faahKO"</span>)
-<span class='kw'>xraw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>file</span>)</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='co'>## The number of scans/spectra:</span>
+<span class='kw'>xraw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>file</span>, profstep = <span class='fl'>0</span>)
+<span class='co'>## The number of scans/spectra:</span>
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>xraw</span><span class='op'>@</span>scantime)</div><div class='output co'>#&gt; [1] 1278</div><div class='input'>
 <span class='co'>## Subset the object to scans with a scan time from 3500 to 4000.</span>
-<span class='kw'>xsub</span> <span class='op'>&lt;-</span> <span class='kw'>xraw</span>[<span class='kw'>xraw</span><span class='op'>@</span>scantime <span class='op'>&gt;=</span> <span class='fl'>3500</span> <span class='op'>&amp;</span> <span class='kw'>xraw</span><span class='op'>@</span>scantime <span class='op'>&lt;=</span> <span class='fl'>4000</span>]</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='kw'>xsub</span><span class='op'>@</span>scantime)</div><div class='output co'>#&gt; [1] 3501.383 3999.039</div><div class='input'><span class='co'>## The number of scans:</span>
+<span class='kw'>xsub</span> <span class='op'>&lt;-</span> <span class='kw'>xraw</span>[<span class='kw'>xraw</span><span class='op'>@</span>scantime <span class='op'>&gt;=</span> <span class='fl'>3500</span> <span class='op'>&amp;</span> <span class='kw'>xraw</span><span class='op'>@</span>scantime <span class='op'>&lt;=</span> <span class='fl'>4000</span>]
+<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='kw'>xsub</span><span class='op'>@</span>scantime)</div><div class='output co'>#&gt; [1] 3501.383 3999.039</div><div class='input'><span class='co'>## The number of scans:</span>
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>xsub</span><span class='op'>@</span>scantime)</div><div class='output co'>#&gt; [1] 319</div><div class='input'><span class='co'>## The number of values of the subset:</span>
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>xsub</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>mz</span>)</div><div class='output co'>#&gt; [1] 130569</div></pre>
   </div>

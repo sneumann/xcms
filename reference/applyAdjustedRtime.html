@@ -73,7 +73,7 @@ time or returns the object unchanged if none are present." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -195,8 +195,8 @@ restore the raw retention times.
 <span class='co'>## No adjusted retention times present</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 <span class='co'>## Raw retention times have been replaced with adjusted retention times</span>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>faahko_sub</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>fromFile</a></span>(<span class='kw'>faahko_sub</span>))[[<span class='fl'>1</span>]] <span class='op'>-</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>xod</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>fromFile</a></span>(<span class='kw'>xod</span>))[[<span class='fl'>1</span>]], type = <span class='st'>"l"</span>)</div><div class='img'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'>rtime</span>(<span class='kw'>faahko_sub</span>), <span class='fu'>fromFile</span>(<span class='kw'>faahko_sub</span>))[[<span class='fl'>1</span>]] <span class='op'>-</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='fu'>rtime</span>(<span class='kw'>xod</span>), <span class='fu'>fromFile</span>(<span class='kw'>xod</span>))[[<span class='fl'>1</span>]], type = <span class='st'>"l"</span>)</div><div class='img'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## And the process history still contains the settings for the alignment</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
@@ -210,7 +210,7 @@ restore the raw retention times.
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Retention time correction 
-#&gt;  date: Tue Jun 16 13:08:26 2020 
+#&gt;  date: Mon Jun 22 06:49:44 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ObiwarpParam 

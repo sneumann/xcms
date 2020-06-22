@@ -76,7 +76,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
       </span>
     </div>
 
@@ -363,29 +363,35 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <p>Christopher Conley</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
-<span class='kw'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>)
-<span class='kw'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>cdfpath</span>, recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'>
+<span class='co'>## Load the test file</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
-<span class='co'>## Read the first file</span>
-<span class='kw'>xraw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>cdffiles</span>[<span class='fl'>1</span>])</div><div class='output co'>#&gt; <span class='message'>Create profile matrix with method 'bin' and step 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='co'>## Extract the required data</span>
-<span class='kw'>mzVals</span> <span class='op'>&lt;-</span> <span class='kw'>xraw</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>mz</span>
-<span class='kw'>intVals</span> <span class='op'>&lt;-</span> <span class='kw'>xraw</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>intensity</span>
+<span class='co'>## Subset to one file and restrict to a certain retention time range</span>
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3000</span>))
+
+<span class='co'>## Get m/z and intensity values</span>
+<span class='kw'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span>(<span class='kw'>data</span>)
+<span class='kw'>ints</span> <span class='op'>&lt;-</span> <span class='fu'>intensity</span>(<span class='kw'>data</span>)
+
 <span class='co'>## Define the values per spectrum:</span>
-<span class='kw'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>xraw</span><span class='op'>@</span>scanindex, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>mzVals</span>)))
+<span class='kw'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)
 
-<span class='co'>## Perform the peak detection using massifquant</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></span>(mz = <span class='kw'>mzVals</span>, int = <span class='kw'>intVals</span>,
-scantime = <span class='kw'>xraw</span><span class='op'>@</span>scantime, valsPerSpect = <span class='kw'>valsPerSpect</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+<span class='co'>## Perform the peak detection using massifquant - setting prefilter to</span>
+<span class='co'>## a high value to speed up the call for the example</span>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
+    scantime = <span class='fu'>rtime</span>(<span class='kw'>data</span>), valsPerSpect = <span class='kw'>valsPerSpect</span>,
+    prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10000</span>))</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Detecting  mass traces at 10ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 1542 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;         mz mzmin mzmax    rtmin    rtmax       rt  into maxo
-#&gt; [1,] 400.2 400.2 400.2 4227.522 4263.516 4241.606 24442 2285
-#&gt; [2,] 566.4 566.4 566.4 4128.930 4163.359 4143.014 17955 2348
-#&gt; [3,] 565.4 565.4 565.4 4124.235 4157.099 4139.884 39837 5717
-#&gt; [4,] 524.3 524.3 524.3 4114.845 4144.579 4128.930 27280 1890
-#&gt; [5,] 523.3 523.3 523.3 4108.585 4153.969 4127.365 50588 3707
-#&gt; [6,] 385.2 385.2 385.2 4105.455 4155.534 4128.930 68456 5340</div></pre>
+#&gt; <span class='message'> Detecting  mass traces at 10ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 69 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;         mz mzmin mzmax    rtmin    rtmax       rt    into  maxo
+#&gt; [1,] 426.1 426.1 426.1 2963.039 2999.033 2977.124  129958 29408
+#&gt; [2,] 590.3 590.3 590.3 2963.039 2999.033 2978.689  255317 19072
+#&gt; [3,] 454.1 454.1 454.1 2934.870 2975.559 2953.650  372685 20432
+#&gt; [4,] 309.1 309.1 309.1 2905.136 2967.734 2936.435  652140 38888
+#&gt; [5,] 475.2 475.2 475.2 2880.097 2999.033 2934.870 2415224 37160
+#&gt; [6,] 532.2 532.2 532.2 2853.493 2906.701 2878.532  232493 16480</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
