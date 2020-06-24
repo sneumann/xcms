@@ -159,7 +159,7 @@ test_that("removeIntensity,XChromatogram(s) works", {
                          intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
     chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
                          intensity = c(53, 80, 130, 15, 5, 3, 2))
-    chrs <- Chromatograms(list(chr1, chr2, chr3))
+    chrs <- MChromatograms(list(chr1, chr2, chr3))
     chrs <- as(chrs, "XChromatograms")
 
     res <- removeIntensity(chrs)

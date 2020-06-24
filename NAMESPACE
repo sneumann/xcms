@@ -33,6 +33,8 @@ importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
 
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 
+importFrom("MsCoreUtils", "rbindFill")
+
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
            "identify", "layout", "legend", "lines", "par", "plot.new",
@@ -57,7 +59,7 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
-                  "Chromatograms", "Spectra")
+                  "MChromatograms", "MSpectra")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
@@ -68,7 +70,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "plot", "fData", "fData<-", "writeMSData",
                   "filterIsolationWindow", "quantify")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
-    "Chromatograms", "Spectra", "requiredFvarLabels", "selectFeatureData")
+    "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
 export(
     "etg",

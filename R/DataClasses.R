@@ -2660,7 +2660,7 @@ setClass("XChromatograms",
                    featureDefinitions = "DataFrame"),
          prototype = prototype(.processHistory = list(),
                                featureDefinitions = DataFrame()),
-         contains = "Chromatograms",
+         contains = "MChromatograms",
          validity = .validXChromatograms)
 
 #' @aliases mz,CalibrantMassParam

@@ -1,4 +1,4 @@
-test_that("findChromPeaks,Chromatograms works", {
+test_that("findChromPeaks,MChromatograms works", {
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- chromatogram(od_x, mz = mzr)
     res <- findChromPeaks(chrs, param = CentWaveParam())
@@ -36,10 +36,10 @@ test_that(".correlate_chromatograms_self works", {
     expect_true(res[1, 3] > 0.9)
     expect_true(res[1, 2] < 0.5)
 
-    chrs <- Chromatograms(list(chr1, chr2, chr3))
+    chrs <- MChromatograms(list(chr1, chr2, chr3))
     expect_equal(.correlate_chromatograms_self(chrs), res)
 
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
     expect_error(.correlate_chromatograms_self(chrs), "single column")
 })
 
@@ -81,12 +81,12 @@ test_that(".correlate_chromatograms works", {
                                     list(chr1, chr2),
                                     full = FALSE)
 
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
     expect_error(.correlate_chromatograms(chrs, list(chr1, chr2)), "single column")
     expect_error(.correlate_chromatograms(list(chr1, chr2), chrs), "single column")
 })
 
-test_that("correlate,Chromatograms works", {
+test_that("correlate,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -94,7 +94,7 @@ test_that("correlate,Chromatograms works", {
                          intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
     chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
                          intensity = c(53, 80, 130, 15, 5, 3, 2))
-    chrs <- Chromatograms(list(chr1, chr2, chr3))
+    chrs <- MChromatograms(list(chr1, chr2, chr3))
 
     res <- correlate(chrs)
     expect_true(nrow(res) == 3)
@@ -111,7 +111,7 @@ test_that("correlate,Chromatograms works", {
 
 })
 
-test_that("removeIntensity,Chromatograms works", {
+test_that("removeIntensity,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -119,7 +119,7 @@ test_that("removeIntensity,Chromatograms works", {
                          intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
     chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
                          intensity = c(53, 80, 130, 15, 5, 3, 2))
-    chrs <- Chromatograms(list(chr1, chr2, chr3))
+    chrs <- MChromatograms(list(chr1, chr2, chr3))
 
     res <- removeIntensity(chrs)
     expect_equal(res, chrs)
@@ -131,13 +131,13 @@ test_that("removeIntensity,Chromatograms works", {
     expect_equal(intensity(res[3, 1]), c(53, 80, 130, NA_real_, NA_real_,
                                          NA_real_, NA_real_))
 
-    chrs <- Chromatograms(list(chr1, chr2, chr2, chr3), ncol = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr2, chr3), ncol = 2)
     res <- removeIntensity(chrs, threshold = 20)
     expect_equal(intensity(res[2, 2]), c(53, 80, 130, NA_real_, NA_real_,
                                          NA_real_, NA_real_))
 })
 
-test_that("filterColumnsIntensityAbove,Chromatograms works", {
+test_that("filterColumnsIntensityAbove,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -145,7 +145,7 @@ test_that("filterColumnsIntensityAbove,Chromatograms works", {
                          intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
     chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
                          intensity = c(53, 80, 130, 15, 5, 3, 2))
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr1, chr2, chr3), ncol = 3)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1, chr2, chr3), ncol = 3)
 
     expect_error(filterColumnsIntensityAbove(chrs, threshold = c(1.1, 1.4)),
                  "should be")
@@ -170,7 +170,7 @@ test_that("filterColumnsIntensityAbove,Chromatograms works", {
     expect_equal(res, chrs[, 2])
 })
 
-test_that("filterChromatogramsKeepTop,Chromatograms works", {
+test_that("filterChromatogramsKeepTop,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -184,7 +184,7 @@ test_that("filterChromatogramsKeepTop,Chromatograms works", {
     chr6 <- Chromatogram(rtime = 1:3, intensity = c(400, 244, 133))
 
 
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), ncol = 3)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), ncol = 3)
 
     expect_error(filterColumnsKeepTop(chrs, n = c(1, 2)), "of length 1")
     expect_error(filterColumnsKeepTop(chrs, n = "b"), "of length 1")
@@ -212,7 +212,7 @@ test_that("filterChromatogramsKeepTop,Chromatograms works", {
     expect_equal(res, chrs[, 3])
 })
 
-test_that("normalize,Chromatograms works", {
+test_that("normalize,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -222,7 +222,7 @@ test_that("normalize,Chromatograms works", {
                          intensity = c(53, 80, 130, 15, 5, 3, 2))
     chr4 <- Chromatogram(rtime = 1:10,
                          intensity = c(NA, NA, 4, NA, NA, 9, NA, 10, 9, 1))
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr4), ncol = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr4), ncol = 2)
     res <- normalize(chrs)
 
     expect_true(ncol(res) == ncol(chrs))

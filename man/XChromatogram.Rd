@@ -7,7 +7,7 @@
 \alias{XChromatogram}
 \alias{XChromatogram-class}
 \alias{XChromatograms-class}
-\alias{coerce,Chromatograms,XChromatograms-method}
+\alias{coerce,MChromatograms,XChromatograms-method}
 \alias{show,XChromatogram-method}
 \alias{chromPeaks,XChromatogram-method}
 \alias{chromPeaks<-,XChromatogram-method}
@@ -361,7 +361,7 @@ within that data. The object inherits all functions from the \code{\link[=Chroma
 object in the \code{MSnbase} package.
 
 Multiple \code{XChromatogram} objects can be stored in a \code{XChromatograms} object.
-This class extends \code{\link[=Chromatograms]{Chromatograms()}} from the \code{MSnbase} package and allows
+This class extends \code{\link[=MChromatograms]{MChromatograms()}} from the \code{MSnbase} package and allows
 thus to arrange chromatograms in a matrix-like structure, columns
 representing samples and rows m/z-retention time ranges.
 
@@ -382,7 +382,7 @@ used to extract the chromatogram was larger than the peak's m/z.
 
 Objects can be created with the contructor function \code{XChromatogram} and
 \code{XChromatograms}, respectively. Also, they can be coerced from
-\link{Chromatogram} or \code{\link[=Chromatograms]{Chromatograms()}} objects using
+\link{Chromatogram} or \code{\link[=MChromatograms]{MChromatograms()}} objects using
 \code{as(object, "XChromatogram")} or \code{as(object, "XChromatograms")}.
 }
 
@@ -390,7 +390,7 @@ Objects can be created with the contructor function \code{XChromatogram} and
 
 
 Besides classical subsetting with \code{[} specific filter operations on
-\code{\link[=Chromatograms]{Chromatograms()}} and \code{XChromatograms} objects are available. See
+\code{\link[=MChromatograms]{MChromatograms()}} and \code{XChromatograms} objects are available. See
 \code{\link[=filterColumnsIntensityAbove]{filterColumnsIntensityAbove()}} for more details.
 
 
@@ -691,7 +691,7 @@ plot(xchr_sub)
 }
 \seealso{
 \link[=findChromPeaks-Chromatogram-CentWaveParam]{findChromPeaks-centWave} for peak
-detection on \code{\link[=Chromatograms]{Chromatograms()}} objects.
+detection on \code{\link[=MChromatograms]{MChromatograms()}} objects.
 }
 \author{
 Johannes Rainer

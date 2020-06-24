@@ -4,7 +4,7 @@
 #'
 #' @examples
 #'
-#' ## Perform peak detection on an Chromatograms object
+#' ## Perform peak detection on an MChromatograms object
 #' od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
 #'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
@@ -22,7 +22,7 @@
 #'
 #' ## plot the result
 #' plot(xchrs)
-setMethod("findChromPeaks", signature(object = "Chromatograms",
+setMethod("findChromPeaks", signature(object = "MChromatograms",
                                       param = "CentWaveParam"),
           function(object, param, BPPARAM = bpparam(), ...) {
               .findChromPeaks_XChromatograms(object = object, param = param,
@@ -30,7 +30,7 @@ setMethod("findChromPeaks", signature(object = "Chromatograms",
           })
 
 #' @rdname findChromPeaks-Chromatogram-CentWaveParam
-setMethod("findChromPeaks", signature(object = "Chromatograms",
+setMethod("findChromPeaks", signature(object = "MChromatograms",
                                       param = "MatchedFilterParam"),
           function(object, param, BPPARAM = BPPARAM, ...) {
               .findChromPeaks_XChromatograms(object = object,
@@ -60,7 +60,7 @@ setMethod("findChromPeaks", signature(object = "Chromatograms",
 }
 
 #' @rdname align-Chromatogram
-setMethod("align", signature = c(x = "Chromatograms", y = "Chromatogram"),
+setMethod("align", signature = c(x = "MChromatograms", y = "Chromatogram"),
           function(x, y, method = c("matchRtime", "approx"), ...) {
               x@.Data <- matrix(lapply(x@.Data, .align_chromatogram, y = y,
                                        method = method, ...),
@@ -70,7 +70,7 @@ setMethod("align", signature = c(x = "Chromatograms", y = "Chromatogram"),
           })
 
 #' @rdname correlate-Chromatogram
-setMethod("correlate", signature = c(x = "Chromatograms", y = "missing"),
+setMethod("correlate", signature = c(x = "MChromatograms", y = "missing"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("matchRtime", "approx"), full = TRUE, ...) {
@@ -79,7 +79,7 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "missing"),
           })
 
 #' @rdname correlate-Chromatogram
-setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
+setMethod("correlate", signature = c(x = "MChromatograms", y = "MChromatograms"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("matchRtime", "approx"), ...) {
@@ -87,18 +87,18 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
                                        align = align, ...)
           })
 
-#' @title Correlate chromatograms within an `Chromatograms` with each other
+#' @title Correlate chromatograms within an `MChromatograms` with each other
 #'
 #' @description
 #'
 #' The `correlate_chromatograms_self` function correlates each chromatogram
-#' in an (single column) [Chromatograms()] object with each other.
+#' in an (single column) [MChromatograms()] object with each other.
 #'
 #' @note
 #'
 #' This is an optimized version that does not calculate the lower triangular
 #' part of the correlation matrix - but might thus also not be correct,
-#' @param x `Chromatograms` object or a `list` of [Chromatogram] objects.
+#' @param x `MChromatograms` object or a `list` of [Chromatogram] objects.
 #'
 #' @param ... Additional arguments to be passed down to the [correlate()]
 #'     function.
@@ -124,12 +124,12 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
 #'
 #' correlate_chromatograms_self(list(chr1, chr2, chr3))
 #'
-#' chrs <- Chromatograms(list(chr1, chr2, chr3))
+#' chrs <- MChromatograms(list(chr1, chr2, chr3))
 #' correlate_chromatograms_self(chrs)
 .correlate_chromatograms_self <- function(x, ...) {
-    if (inherits(x, "Chromatograms")) {
+    if (inherits(x, "MChromatograms")) {
         if (ncol(x) > 1)
-            stop("Currently only single column Chromatograms are supported.")
+            stop("Currently only single column MChromatograms are supported.")
         x <- unlist(x)
     }
     nx <- length(x)
@@ -148,14 +148,14 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
 }
 
 .correlate_chromatograms <- function(x, y, full = TRUE, ...) {
-    if (inherits(x, "Chromatograms")) {
+    if (inherits(x, "MChromatograms")) {
         if (ncol(x) > 1)
-            stop("Currently only single column Chromatograms are supported.")
+            stop("Currently only single column MChromatograms are supported.")
         x <- unlist(x)
     }
-    if (inherits(y, "Chromatograms")) {
+    if (inherits(y, "MChromatograms")) {
         if (ncol(y) > 1)
-            stop("Currently only single column Chromatograms are supported.")
+            stop("Currently only single column MChromatograms are supported.")
         y <- unlist(y)
     }
     nx <- length(x)
@@ -174,7 +174,7 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
 }
 
 #' @rdname removeIntensity-Chromatogram
-setMethod("removeIntensity", "Chromatograms",
+setMethod("removeIntensity", "MChromatograms",
           function(object, which = "below_threshold", threshold = 0) {
               object@.Data <- matrix(lapply(c(object@.Data),
                                             FUN = removeIntensity,
@@ -189,16 +189,16 @@ setMethod("removeIntensity", "Chromatograms",
 #'
 #' @aliases filterColumnsIntensityAbove filterColumnsKeepTop
 #'
-#' @rdname filter-Chromatograms
+#' @rdname filter-MChromatograms
 #'
 #' @description
 #'
-#' These functions allow to filter (subset) [Chromatograms()] or
+#' These functions allow to filter (subset) [MChromatograms()] or
 #' [XChromatograms()] objects, i.e. sets of chromatographic data, without
 #' changing the data (intensity and retention times) within the individual
 #' chromatograms ([Chromatogram()] objects).
 #'
-#' - `filterColumnsIntensityAbove`: subsets a `Chromatograms` objects keeping
+#' - `filterColumnsIntensityAbove`: subsets a `MChromatograms` objects keeping
 #'   only columns (samples) for which `value` is larger than the provided
 #'   `threshold` in `which` rows (i.e. if `which = "any"` a
 #'   column is kept if **any** of the chromatograms in that column have a
@@ -212,7 +212,7 @@ setMethod("removeIntensity", "Chromatograms",
 #'   largest intensity of all identified chromatographic peaks in the
 #'   chromatogram with `threshold`, or the integrated peak area, respectively.
 #'
-#' - `filterColumnsKeepTop`: subsets a `Chromatograms` object keeping the top
+#' - `filterColumnsKeepTop`: subsets a `MChromatograms` object keeping the top
 #'   `n` columns sorted by the value specified with `sortBy`. In detail, for
 #'   each column the value defined by `sortBy` is extracted from each
 #'   chromatogram and aggregated using the `aggregationFun`. Thus, by default,
@@ -220,7 +220,7 @@ setMethod("removeIntensity", "Chromatograms",
 #'   (`sortBy = "bpi"`) and these values are summed up for chromatograms in the
 #'   same column (`aggregationFun = sum`). The columns are then sorted by these
 #'   values and the top `n` columns are retained in the returned
-#'   `Chromatograms`. Similar to the `filterColumnsIntensityAbove` function,
+#'   `MChromatograms`. Similar to the `filterColumnsIntensityAbove` function,
 #'   this function allows to use for `XChromatograms` objects to sort the
 #'   columns by column `sortBy = "maxo"` or `sortBy = "into"` of the
 #'   `chromPeaks` matrix.
@@ -235,7 +235,7 @@ setMethod("removeIntensity", "Chromatograms",
 #'     columns that should be returned. `n` will be rounded to the closest
 #'     (larger) integer value.
 #'
-#' @param object [Chromatograms()] or [XChromatograms()] object.
+#' @param object [MChromatograms()] or [XChromatograms()] object.
 #'
 #' @param sortBy for `filterColumnsKeepTop`: the value by which columns should
 #'     be ordered to determine the top n columns. Can be either `sortBy = "bpi"`
@@ -262,7 +262,7 @@ setMethod("removeIntensity", "Chromatograms",
 #'     chromatograms in a column have to fulfill the criteria for the column
 #'     to be kept.
 #'
-#' @return a filtered `Chromatograms` (or `XChromatograms`) object with the
+#' @return a filtered `MChromatograms` (or `XChromatograms`) object with the
 #'     same number of rows (EICs) but eventually a lower number of columns
 #'     (samples).
 #'
@@ -279,7 +279,7 @@ setMethod("removeIntensity", "Chromatograms",
 #' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
 #'     intensity = c(53, 80, 130, 15, 5, 3, 2))
 #'
-#' chrs <- Chromatograms(list(chr1, chr2, chr1, chr3, chr2, chr3),
+#' chrs <- MChromatograms(list(chr1, chr2, chr1, chr3, chr2, chr3),
 #'     ncol = 3, byrow = FALSE)
 #' chrs
 #'
@@ -308,7 +308,7 @@ setMethod("removeIntensity", "Chromatograms",
 #' ## Keep the 50 percent of columns with the highest total sum of signal. Note
 #' ## that n will be rounded to the next larger integer value
 #' filterColumnsKeepTop(chrs, n = 0.5 * ncol(chrs), sortBy = "tic")
-setMethod("filterColumnsIntensityAbove", "Chromatograms",
+setMethod("filterColumnsIntensityAbove", "MChromatograms",
           function(object, threshold = 0, value = c("bpi", "tic"),
                    which = c("any", "all")) {
               value <- match.arg(value)
@@ -330,8 +330,8 @@ setMethod("filterColumnsIntensityAbove", "Chromatograms",
               object[, keep]
           })
 
-#' @rdname filter-Chromatograms
-setMethod("filterColumnsKeepTop", "Chromatograms",
+#' @rdname filter-MChromatograms
+setMethod("filterColumnsKeepTop", "MChromatograms",
           function(object, n = 1L, sortBy = c("bpi", "tic"),
                    aggregationFun = sum) {
               sortBy <- match.arg(sortBy)
@@ -361,7 +361,7 @@ setMethod("filterColumnsKeepTop", "Chromatograms",
           })
 
 #' @rdname normalize-Chromatogram
-setMethod("normalize", "Chromatograms",
+setMethod("normalize", "MChromatograms",
           function(object, method = c("max", "sum")) {
               method <- match.arg(method)
               object@.Data <- matrix(lapply(c(object@.Data),

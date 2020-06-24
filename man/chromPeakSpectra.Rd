@@ -12,7 +12,7 @@ chromPeakSpectra(
   ppm = 0,
   method = c("all", "closest_rt", "closest_mz", "signal"),
   skipFilled = FALSE,
-  return.type = c("Spectra", "list")
+  return.type = c("MSpectra", "list")
 )
 }
 \arguments{
@@ -43,12 +43,12 @@ chromatographic peak's maximal signal (\code{"maxo"}).}
 be reported.}
 
 \item{return.type}{\code{character(1)} defining whether the result should be a
-\link{Spectra} object or a simple \code{list}. See below for more information.}
+\link{MSpectra} object or a simple \code{list}. See below for more information.}
 }
 \value{
 Which object is returned depends on the value of \code{return.type}:
 \itemize{
-\item For \code{return.type = "Spectra"}: a \link{Spectra} object with elements being
+\item For \code{return.type = "MSpectra"}: a \link{MSpectra} object with elements being
 \linkS4class{Spectrum} objects. The result objects contains all spectra
 for all peaks. Metadata column \code{"peak_id"} provides the ID of the
 respective peak (i.e. its rowname in \code{\link[=chromPeaks]{chromPeaks()}}).

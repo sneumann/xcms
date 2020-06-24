@@ -28,12 +28,10 @@
 
     \item{\code{plotChromatogram}}: replaced by \code{plot} method for
     \code{\link{Chromatogram}} or
-    \code{\link{Chromatograms}} objects.
+    \code{\link{MChromatograms}} objects.
 
     \item{\code{extractMsData}}: replaced by \code{as(x, "data.frame")}.
 
     \item{\code{plotMsData}}: replaced by \code{plot(x, type = "XIC")}.
   }
 }
-
-

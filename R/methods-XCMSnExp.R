@@ -2282,7 +2282,7 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #' @param adjustedRtime For `chromatogram,XCMSnExp`: whether the
 #'     adjusted (`adjustedRtime = TRUE`) or raw retention times
 #'     (`adjustedRtime = FALSE`) should be used for filtering and returned
-#'     in the resulting [Chromatograms] object. Adjusted
+#'     in the resulting [MChromatograms] object. Adjusted
 #'     retention times are used by default if available.
 #'
 #' @param aggregationFun `character(1)` specifying the function to be used to
@@ -2332,7 +2332,7 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #'     [XChromatograms] for the object allowing to arrange
 #'     multiple [XChromatogram] objects.
 #'
-#'     [plot] to plot a [XChromatogram] or [Chromatograms] objects.
+#'     [plot] to plot a [XChromatogram] or [MChromatograms] objects.
 #'
 #'     `as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
 #'     the MS data as `data.frame`.

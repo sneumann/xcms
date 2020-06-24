@@ -148,7 +148,7 @@ setMethod("show", "XChromatogram", function(object) {
 #' @seealso
 #'
 #' [findChromPeaks-centWave][findChromPeaks-Chromatogram-CentWaveParam] for peak
-#' detection on [Chromatograms()] objects.
+#' detection on [MChromatograms()] objects.
 #'
 #' @examples
 #'

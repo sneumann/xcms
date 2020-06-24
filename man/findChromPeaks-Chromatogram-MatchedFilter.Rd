@@ -7,7 +7,7 @@
 \S4method{findChromPeaks}{Chromatogram,MatchedFilterParam}(object, param, ...)
 }
 \arguments{
-\item{object}{a \link{Chromatogram} or \link{Chromatograms} object.}
+\item{object}{a \link{Chromatogram} or \link{MChromatograms} object.}
 
 \item{param}{a \link{MatchedFilterParam} object specifying the settings for the
 peak detection. See \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for the description of
@@ -21,7 +21,7 @@ the identified peaks. See \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedF
 matrix content.
 }
 \description{
-\code{findChromPeaks} on a \link{Chromatogram} or \link{Chromatograms} object with a
+\code{findChromPeaks} on a \link{Chromatogram} or \link{MChromatograms} object with a
 \link{MatchedFilterParam} parameter object performs matchedFilter-based peak
 detection on purely chromatographic data. See \link{matchedFilter} for details
 on the method and \link{MatchedFilterParam} for details on the parameter class.

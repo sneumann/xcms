@@ -1012,7 +1012,7 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
 #' The \code{highlightChromPeaks} function adds chromatographic
 #' peak definitions to an existing plot, such as one created by the
 #' \code{plot} method on a \code{\link{Chromatogram}} or
-#' \code{\link{Chromatograms}} object.
+#' \code{\link{MChromatograms}} object.
 #'
 #' @param x For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
 #'     detected peaks.
@@ -1952,13 +1952,13 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #'     be reported.
 #'
 #' @param return.type `character(1)` defining whether the result should be a
-#'     [Spectra] object or a simple `list`. See below for more information.
+#'     [MSpectra] object or a simple `list`. See below for more information.
 #'
 #' @return
 #'
 #' Which object is returned depends on the value of `return.type`:
 #'
-#' - For `return.type = "Spectra"`: a [Spectra] object with elements being
+#' - For `return.type = "MSpectra"`: a [MSpectra] object with elements being
 #'   [Spectrum-class] objects. The result objects contains all spectra
 #'   for all peaks. Metadata column `"peak_id"` provides the ID of the
 #'   respective peak (i.e. its rowname in [chromPeaks()]).
@@ -1987,7 +1987,7 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                              ppm = 0, method = c("all", "closest_rt",
                                                  "closest_mz", "signal"),
                              skipFilled = FALSE,
-                             return.type = c("Spectra", "list")) {
+                             return.type = c("MSpectra", "list")) {
     method <- match.arg(method)
     return.type <- match.arg(return.type)
     if (!is(x, "XCMSnExp"))
@@ -2008,12 +2008,12 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                                          ppm = ppm, method = method,
                                          skipFilled = skipFilled)
     }
-    if (return.type == "Spectra") {
+    if (return.type == "MSpectra") {
         pids <- rep(names(res), lengths(res))
         res <- res[lengths(res) > 0]
         if (length(res))
             res <- unlist(res)
-        res <- Spectra(res, elementMetadata = DataFrame(peak_id = pids))
+        res <- MSpectra(res, elementMetadata = DataFrame(peak_id = pids))
     }
     res
 }
@@ -2063,7 +2063,7 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #'
 #' Which object is returned depends on the value of `return.type`:
 #'
-#' - For `return.type = "Spectra"` (the default): a [Spectra] object with data
+#' - For `return.type = "MSpectra"` (the default): a [MSpectra] object with data
 #'   only for features for which a [Spectrum2-class] was found. The
 #'   ID of the feature and of the chromatographic peak to which the
 #'   spectrum is associated are provided with the `"feature_id"` and
@@ -2079,7 +2079,7 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' @md
 featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
                            ppm = 0, skipFilled = FALSE,
-                           return.type = c("Spectra", "list"), ...) {
+                           return.type = c("MSpectra", "list"), ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an 'XCMSnExp' object.")
     return.type <- match.arg(return.type)
@@ -2099,7 +2099,7 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
                                         ppm = ppm, skipFilled = skipFilled,
                                         ...)
     }
-    if (return.type == "Spectra") {
+    if (return.type == "MSpectra") {
         fids <- rep(names(res), lengths(res))
         res <- res[lengths(res) > 0]
         if (length(res)) {
@@ -2109,7 +2109,7 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
         } else {
             pids <- character()
         }
-        res <- Spectra(res, elementMetadata = DataFrame(feature_id = fids,
+        res <- MSpectra(res, elementMetadata = DataFrame(feature_id = fids,
                                                         peak_id = pids))
     }
     res
@@ -2238,7 +2238,7 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
             stop("'features' are out of range")
     } else features <- seq_len(nrow(featureDefinitions(x)))
     if (!length(features))
-        return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
+        return(MChromatograms(ncol = length(fileNames(x)), nrow = 0))
     ## If we want to get chromatograms only in a reduced number of samples
     n <- ceiling(n[1])
     if (n != length(fileNames(x))) {
@@ -2262,7 +2262,7 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
             warning(length(fids) - length(features), " of ", length(fids),
                     " features not present in the selected samples")
         if (!length(features))
-            return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
+            return(MChromatograms(ncol = length(fileNames(x)), nrow = 0))
     }
     pks <- chromPeaks(x)
     if (length(unique(rownames(pks))) != nrow(pks)) {
@@ -2506,7 +2506,7 @@ findChromPeaksIsolationWindow <-
 #'   Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 #'   one **mass peak** in the reconstructed spectrum.
 #'
-#' The resulting `Spectra` object provides also the peak IDs of the MS2
+#' The resulting `MSpectra` object provides also the peak IDs of the MS2
 #' chromatographic peaks for each spectrum as well as their correlation value.
 #'
 #' @param object `XCMSnExp` with identified chromatographic peaks.
@@ -2537,11 +2537,11 @@ findChromPeaksIsolationWindow <-
 #' @param BPPARAM parallel processing setup. See [bpparam()] for more
 #'     information.
 #'
-#' @return [Spectra()] with the reconstructed MS2 spectra for all MS1 peaks
+#' @return [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
 #'     in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
 #'     which reconstruction was not possible (either no MS2 signal was recorded
 #'     or the correlation of the MS2 chromatographic peaks with the MS1
-#'     chromatographic peak was below threshold `minCor`. `Spectra` metadata
+#'     chromatographic peak was below threshold `minCor`. `MSpectra` metadata
 #'     columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
 #'     and [NumericList()] with length equal to the number of peaks per
 #'     reconstructed MS2 spectrum) providing the IDs and the correlation of the

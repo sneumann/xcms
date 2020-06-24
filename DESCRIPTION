@@ -42,7 +42,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.9.3)
+    MSnbase (>= 2.15.3)
 Imports:
     mzR (>= 2.19.5),
     BiocGenerics,
@@ -55,7 +55,8 @@ Imports:
     S4Vectors,
     robustbase,
     IRanges,
-    SummarizedExperiment
+    SummarizedExperiment,
+    MsCoreUtils
 Suggests:
     BiocStyle,
     caTools,
@@ -118,8 +119,8 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'
-    'methods-Chromatograms.R'
     'methods-IO.R'
+    'methods-MChromatograms.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'
     'methods-Params.R'
@@ -138,7 +139,6 @@ Collate:
     'netCDF.R'
     'plotQC.R'
     'ramp.R'
-    'remove-MsCoreUtils-function.R'
     'specDist.R'
     'write.mzquantML.R'
     'writemzdata.R'

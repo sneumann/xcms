@@ -4,7 +4,7 @@
 #'
 #' @description
 #'
-#' `findChromPeaks` on a [Chromatogram] or [Chromatograms] object with a
+#' `findChromPeaks` on a [Chromatogram] or [MChromatograms] object with a
 #' [CentWaveParam] parameter object performs centWave-based peak detection
 #' on purely chromatographic data. See [centWave] for details on the method
 #' and [CentWaveParam] for details on the parameter class.
@@ -16,7 +16,7 @@
 #' with the [refineChromPeaks()] method, which can help to reduce peak
 #' detection artifacts.
 #'
-#' @param object a [Chromatogram] or [Chromatograms] object.
+#' @param object a [Chromatogram] or [MChromatograms] object.
 #'
 #' @param param a [CentWaveParam] object specifying the settings for the
 #'     peak detection. See [peaksWithCentWave()] for the description of
@@ -80,7 +80,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
-#' `findChromPeaks` on a [Chromatogram] or [Chromatograms] object with a
+#' `findChromPeaks` on a [Chromatogram] or [MChromatograms] object with a
 #' [MatchedFilterParam] parameter object performs matchedFilter-based peak
 #' detection on purely chromatographic data. See [matchedFilter] for details
 #' on the method and [MatchedFilterParam] for details on the parameter class.
@@ -88,7 +88,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' See [peaksWithMatchedFilter()] for the arguments used for peak detection
 #' on purely chromatographic data.
 #'
-#' @param object a [Chromatogram] or [Chromatograms] object.
+#' @param object a [Chromatogram] or [MChromatograms] object.
 #'
 #' @param param a [MatchedFilterParam] object specifying the settings for the
 #'     peak detection. See [peaksWithMatchedFilter()] for the description of
@@ -153,7 +153,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' Align chromatogram `x` against chromatogram `y`. The resulting chromatogram
 #' has the same length (number of data points) than `y` and the same retention
 #' times thus allowing to perform any pair-wise comparisons between the
-#' chromatograms. If `x` is a [Chromatograms()] object, each `Chromatogram` in
+#' chromatograms. If `x` is a [MChromatograms()] object, each `Chromatogram` in
 #' it is aligned against `y`.
 #'
 #' Parameter `method` allows to specify which alignment method
@@ -172,7 +172,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'   measured in the same measurement run (e.g. MS1 and corresponding MS2
 #'   chromatograms from SWATH experiments).
 #'
-#' @param x [Chromatogram()] or [Chromatograms()] to be aligned against `y`.
+#' @param x [Chromatogram()] or [MChromatograms()] to be aligned against `y`.
 #'
 #' @param y [Chromatogram()] to which `x` should be aligned to.
 #'
@@ -181,7 +181,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' @param ... additional parameters to be passed along to the alignment
 #'     functions.
 #'
-#' @return `Chromatogram` (or `Chromatograms`) representing `x` aligned
+#' @return `Chromatogram` (or `MChromatograms`) representing `x` aligned
 #'     against `y`.
 #'
 #' @author Johannes Rainer, Michael Witting
@@ -229,7 +229,7 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' *aligned* to match data points in the first to data points in the second
 #' chromatogram. See [align()] for more details.
 #'
-#' If `correlate` is called on a single [Chromatograms()] object a pairwise
+#' If `correlate` is called on a single [MChromatograms()] object a pairwise
 #' correlation of each chromatogram with each other is performed and a `matrix`
 #' with the correlation coefficients is returned.
 #'
@@ -238,13 +238,13 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' `correlate(chr2, chr1)`. The lower and upper triangular part of the
 #' correlation matrix might thus be different.
 #'
-#' For correlating elements of a `Chromatograms` with each other it might be
+#' For correlating elements of a `MChromatograms` with each other it might be
 #' sufficient to calculate just the upper triangular matrix. This can be done
 #' by setting `full = FALSE`.
 #'
-#' @param x [Chromatogram()] or [Chromatograms()] object.
+#' @param x [Chromatogram()] or [MChromatograms()] object.
 #'
-#' @param y [Chromatogram()] or [Chromatograms()] object.
+#' @param y [Chromatogram()] or [MChromatograms()] object.
 #'
 #' @param use `character(1)` passed to the `cor` function. See [cor()] for
 #'     details.
@@ -256,13 +256,13 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #'     [align()] for details. The value of this parameter is passed to the
 #'     `method` parameter of `align`.
 #'
-#' @param full `logical(1)` for `correlate` on a single `Chromatograms` object:
+#' @param full `logical(1)` for `correlate` on a single `MChromatograms` object:
 #'     whether the *full* correlation matrix should be calculated (default) or
 #'     just the upper triangular matrix (and diagonal).
 #'
 #' @param ... optional parameters passed along to the `align` method.
 #'
-#' @return `numeric(1)` or `matrix` (if called on `Chromatograms` objects)
+#' @return `numeric(1)` or `matrix` (if called on `MChromatograms` objects)
 #'     with the correlation coefficient. If a `matrix` is returned, the rows
 #'     represent the chromatograms in `x` and the columns the chromatograms in
 #'     `y`.
@@ -280,7 +280,7 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
 #'     intensity = c(53, 80, 130, 15, 5, 3, 2))
 #'
-#' chrs <- Chromatograms(list(chr1, chr2, chr3))
+#' chrs <- MChromatograms(list(chr1, chr2, chr3))
 #'
 #' correlate(chr1, chr2)
 #' correlate(chr2, chr1)
@@ -317,7 +317,7 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' peak(s) in the chromatographic data.
 #'
 #' @param object an object representing chromatographic data. Can be a
-#'     [Chromatogram()], [Chromatograms()], [XChromatogram()] or
+#'     [Chromatogram()], [MChromatograms()], [XChromatogram()] or
 #'     [XChromatograms()] object.
 #'
 #' @param which `character(1)` defining the condition to remove intensities.
@@ -360,7 +360,7 @@ setMethod("removeIntensity", "Chromatogram",
 #' either by the maximum intensity (`method = "max"`) or total intensity
 #' (`method = "sum"`) of the chromatogram.
 #'
-#' @param object [Chromatogram()] or [Chromatograms()] object.
+#' @param object [Chromatogram()] or [MChromatograms()] object.
 #'
 #' @param method `character(1)` defining whether each chromatogram should be
 #'     normalized to its maximum signal or total signal.

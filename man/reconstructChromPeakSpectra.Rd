@@ -44,11 +44,11 @@ By default they are reconstructed for all MS1 chromatographic peaks.}
 information.}
 }
 \value{
-\code{\link[=Spectra]{Spectra()}} with the reconstructed MS2 spectra for all MS1 peaks
+\code{\link[=MSpectra]{MSpectra()}} with the reconstructed MS2 spectra for all MS1 peaks
 in \code{object}. Contains empty \linkS4class{Spectrum2} objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
-chromatographic peak was below threshold \code{minCor}. \code{Spectra} metadata
+chromatographic peak was below threshold \code{minCor}. \code{MSpectra} metadata
 columns \code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=CharacterList]{CharacterList()}}
 and \code{\link[=NumericList]{NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
@@ -79,7 +79,7 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one \strong{mass peak} in the reconstructed spectrum.
 }
 
-The resulting \code{Spectra} object provides also the peak IDs of the MS2
+The resulting \code{MSpectra} object provides also the peak IDs of the MS2
 chromatographic peaks for each spectrum as well as their correlation value.
 }
 \seealso{

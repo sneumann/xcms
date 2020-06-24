@@ -11,7 +11,7 @@ featureSpectra(
   expandMz = 0,
   ppm = 0,
   skipFilled = FALSE,
-  return.type = c("Spectra", "list"),
+  return.type = c("MSpectra", "list"),
   ...
 )
 }
@@ -34,7 +34,7 @@ by a value dependent on the peak's m/z.}
 be reported.}
 
 \item{return.type}{\code{character(1)} defining whether the result should be a
-\link{Spectra} object or a simple \code{list}. See below for more information.}
+\link{MSpectra} object or a simple \code{list}. See below for more information.}
 
 \item{...}{additional arguments to be passed along to \code{\link[=chromPeakSpectra]{chromPeakSpectra()}},
 such as \code{method}.}
@@ -42,7 +42,7 @@ such as \code{method}.}
 \value{
 Which object is returned depends on the value of \code{return.type}:
 \itemize{
-\item For \code{return.type = "Spectra"} (the default): a \link{Spectra} object with data
+\item For \code{return.type = "MSpectra"} (the default): a \link{MSpectra} object with data
 only for features for which a \linkS4class{Spectrum2} was found. The
 ID of the feature and of the chromatographic peak to which the
 spectrum is associated are provided with the \code{"feature_id"} and

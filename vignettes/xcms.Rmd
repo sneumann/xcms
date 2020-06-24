@@ -173,7 +173,7 @@ names(group_colors) <- c("KO", "WT")
 plot(bpis, col = group_colors[raw_data$sample_group])
 ```
 
-The `chromatogram` method returned a `Chromatograms` object that organizes
+The `chromatogram` method returned a `MChromatograms` object that organizes
 individual `Chromatogram` objects (which in fact contain the chromatographic
 data) in a two-dimensional array: columns represent samples and rows
 (optionally) m/z and/or retention time ranges. Below we extract the chromatogram
@@ -935,7 +935,7 @@ The performance of peak detection, alignment and correspondence should always be
 evaluated by inspecting extracted ion chromatograms e.g. of known compounds,
 internal standards or identified features in general. The `featureChromatograms`
 function allows to extract chromatograms for each feature present in
-`featureDefinitions`. The returned `Chromatograms` object contains an ion
+`featureDefinitions`. The returned `MChromatograms` object contains an ion
 chromatogram for each feature (each row containing the data for one feature) and
 sample (each column representing containing data for one sample). Below we
 extract the chromatograms for the first 4 features.

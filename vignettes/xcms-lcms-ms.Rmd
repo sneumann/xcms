@@ -115,7 +115,7 @@ corresponding MS2 spectra measured. Thus, for some of the ions (identified as
 MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the
 annotation of the respective MS1 chromatographic peaks (or MS1 features after a
 correspondence analysis). MS2 spectra for identified chromatographic peaks can
-be extracted with the `chromPeakSpectra` method which returns a `Spectra` object
+be extracted with the `chromPeakSpectra` method which returns a `MSpectra` object
 of MS2 spectra associated with a chromatographic peak (i.e. with their retention
 time within the retention time window of a chromatographic peak and their
 precursor m/z within the m/z range of the same chromatographic peak.

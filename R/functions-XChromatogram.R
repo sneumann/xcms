@@ -38,7 +38,7 @@
 
 #' @title Containers for chromatographic and peak detection data
 #'
-#' @aliases XChromatogram-class XChromatograms-class coerce,Chromatograms,XChromatograms-method
+#' @aliases XChromatogram-class XChromatograms-class coerce,MChromatograms,XChromatograms-method
 #'
 #' @description
 #'
@@ -48,7 +48,7 @@
 #' object in the `MSnbase` package.
 #'
 #' Multiple `XChromatogram` objects can be stored in a `XChromatograms` object.
-#' This class extends [Chromatograms()] from the `MSnbase` package and allows
+#' This class extends [MChromatograms()] from the `MSnbase` package and allows
 #' thus to arrange chromatograms in a matrix-like structure, columns
 #' representing samples and rows m/z-retention time ranges.
 #'
@@ -59,13 +59,13 @@
 #'
 #' Objects can be created with the contructor function `XChromatogram` and
 #' `XChromatograms`, respectively. Also, they can be coerced from
-#' [Chromatogram] or [Chromatograms()] objects using
+#' [Chromatogram] or [MChromatograms()] objects using
 #' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
 #'
 #' @section Filtering and subsetting:
 #'
 #' Besides classical subsetting with `[` specific filter operations on
-#' [Chromatograms()] and `XChromatograms` objects are available. See
+#' [MChromatograms()] and `XChromatograms` objects are available. See
 #' [filterColumnsIntensityAbove()] for more details.
 #'
 #' @param rtime For `XChromatogram`: `numeric` with the retention times
