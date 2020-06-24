@@ -565,7 +565,7 @@ NULL
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
@@ -789,11 +789,10 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"
-#' register(SerialParam())
 #' res <- findChromPeaks(raw_data, param = mfp)
 #' head(chromPeaks(res))
 setClass("MatchedFilterParam",
@@ -989,8 +988,9 @@ NULL
 #'
 #' ## Create a MassifquantParam object.
 #' mqp <- MassifquantParam()
-#' ## Change snthresh parameter
+#' ## Change snthresh prefilter parameters
 #' snthresh(mqp) <- 30
+#' prefilter(mqp) <- c(6, 10000)
 #' mqp
 #'
 #' ## Perform the peak detection using massifquant on the files from the
@@ -1000,7 +1000,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = mqp)
 #' head(chromPeaks(res))
@@ -1157,7 +1157,7 @@ NULL
 #' library(msdata)
 #' fticrf <- list.files(system.file("fticr", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+#' fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1735,23 +1735,11 @@ NULL
 #' p <- NearestPeaksParam(kNN = 3)
 #' p
 #'
-#' ##############################
-#' ## Chromatographic peak detection and grouping.
-#' ##
-#' ## Below we perform first a chromatographic peak detection (using the
-#' ## matchedFilter method) on some of the test files from the faahKO package
-#' ## followed by a peaks grouping using the "nearest" method.
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
-#'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' res <- faahko_sub
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
@@ -1964,9 +1952,6 @@ NULL
 #' @rdname adjustRtime-peakGroups
 #'
 #' @examples
-#' ##############################
-#' ## Chromatographic peak detection and grouping.
-#' ##
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
@@ -2182,16 +2167,14 @@ NULL
 #' @rdname adjustRtime-obiwarp
 #'
 #' @examples
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Perform retention time correction on the OnDiskMSnExp:
-#' res <- adjustRtime(raw_data, param = ObiwarpParam())
+#' ## Perform retention time correction:
+#' res <- adjustRtime(faahko_sub, param = ObiwarpParam())
 #'
 #' ## As a result we get a numeric vector with the adjusted retention times for
 #' ## all spectra.
@@ -2199,7 +2182,7 @@ NULL
 #'
 #' ## We can split this by file to get the adjusted retention times for each
 #' ## file
-#' resL <- split(res, fromFile(raw_data))
+#' resL <- split(res, fromFile(res))
 #'
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",

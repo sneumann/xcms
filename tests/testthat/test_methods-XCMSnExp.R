@@ -208,10 +208,11 @@ test_that("XCMSnExp accessors work", {
 
 test_that("findChromPeaks,XCMSnExp works", {
     ## Call findChromPeaks on an XCMSnExp
-    tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
-                                                       snthresh = 40,
-                                                       prefilter = c(3, 10000)))
-    expect_equal(chromPeaks(tmp), chromPeaks(xod_x))
+    tmp <- findChromPeaks(filterFile(xod_x, 1),
+                          param = CentWaveParam(noise = 10000,
+                                                snthresh = 40,
+                                                prefilter = c(3, 10000)))
+    expect_equal(unname(chromPeaks(tmp)), unname(chromPeaks(filterFile(xod_x, 1))))
     ## Check that it works also on adjusted retention times:
     tmp <- findChromPeaks(xod_r, param = CentWaveParam(noise = 10000,
                                                        snthresh = 40,
@@ -236,31 +237,6 @@ test_that("findChromPeaks,XCMSnExp works", {
     pks <- chromPeaks(tmp)
     rownames(pks) <- NULL
     pks <- pks[pks[, "sample"] == 1, colnames(res_2)]
-    expect_equal(res_2, pks)
-    ## Second try:
-    tmp <- findChromPeaks(
-        xod_xgrg, param = CentWaveParam(noise = 10000, snthresh = 40,
-                                        prefilter = c(3, 10000)))
-    expect_true(hasAdjustedRtime(tmp))
-    expect_equal(
-        length(processHistory(tmp, type = .PROCSTEP.RTIME.CORRECTION)),1)
-    expect_true(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
-                ncol(chromPeaks(tmp)))
-    tmp_sub <- filterFile(xod_xgrg, file = 3, keepAdjustedRtime = TRUE)
-    expect_equal(unname(rtime(tmp_sub, adjusted = TRUE)),
-                 unname(rtime(xod_xgrg, bySample = TRUE, adjusted = TRUE)[[3]]))
-    spctr <- spectra(tmp_sub)
-    mz_values <- lapply(spctr, mz)
-    int_values <- unlist(lapply(spctr, intensity))
-    res_2 <- do_findChromPeaks_centWave(mz = unlist(mz_values),
-                                        int = int_values,
-                                        scantime = rtime(tmp_sub,
-                                                         adjusted = TRUE),
-                                        valsPerSpect = lengths(mz_values),
-                                        noise = 10000, snthresh = 40)
-    pks <- chromPeaks(tmp)
-    rownames(pks) <- NULL
-    pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
     expect_equal(res_2, pks)
 
     ## Adding peak detection results
@@ -293,131 +269,76 @@ test_that("processHistory,XCMSnExp works", {
     expect_true(validObject(xod))
 })
 
-test_that("XCMSnExp droppers work", {
-    ## How are the drop functions expected to work?
-    type_feat_det <- .PROCSTEP.PEAK.DETECTION
-    type_feat_algn <- .PROCSTEP.PEAK.GROUPING
-    type_rt_adj <- .PROCSTEP.RTIME.CORRECTION
-    ## Perform alignment.
-    ## xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
-    expect_true(hasFeatures(xod_xg))
-    expect_true(hasChromPeaks(xod_x))
-    expect_true(hasChromPeaks(xod_xg))
-    expect_true(!hasAdjustedRtime(xod_xg))
-    expect_true(length(processHistory(xod_xg, type = type_feat_algn)) == 1)
-    ## Retention time adjustment.
-    ## xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 1))
-    expect_true(hasChromPeaks(xod_xgr))
-    expect_true(length(processHistory(xod_xgr, type = type_feat_det)) == 1)
-    expect_true(!hasFeatures(xod_xgr))  ## These should have been removed
-    expect_true(length(processHistory(xod_xgr, type = type_feat_algn)) == 1)
-    expect_true(hasAdjustedRtime(xod_xgr))
-    expect_true(length(processHistory(xod_xgr, type = type_rt_adj)) == 1)
-    ## Most of the retention times are different
-    expect_true(sum(chromPeaks(xod_xgr)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
-                nrow(chromPeaks(xod_x)) / 2)
-    expect_true(sum(rtime(xod_xgr) == rtime(xod_xg)) < length(rtime(xod_xg) / 2))
-    ## Alignment after retention time adjustment.
-    ## xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
-    expect_true(hasChromPeaks(xod_xgrg))
-    expect_equal(chromPeaks(xod_xgrg), chromPeaks(xod_xgr))
-    expect_true(hasAdjustedRtime(xod_xgrg))
-    expect_equal(rtime(xod_xgrg), rtime(xod_xgr))
-    expect_equal(rtime(xod_xgrg, adjusted = FALSE), rtime(od_x))
-    expect_true(length(processHistory(xod_xgr, type = type_feat_algn)) == 1)
-    expect_true(hasFeatures(xod_xgrg))
-    expect_true(length(processHistory(xod_xgrg, type = type_feat_algn)) == 2)
-
+test_that("dropChromPeaks,XCMSnExp works", {
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropChromPeaks(xod_x)
     expect_true(!hasChromPeaks(res))
     expect_true(.has_chrom_peak_data(xod_x@msFeatureData))
     expect_false(.has_chrom_peak_data(res@msFeatureData))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
-    expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
-    expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
-    expect_equal(rtime(res), rtime(od_x))
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     ##
     res <- dropChromPeaks(xod_xg)
     expect_true(!hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
-    expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
-    expect_equal(rtime(res), rtime(od_x))
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
     ##
     res <- dropChromPeaks(xod_xgr)
     expect_true(!hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
     expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 0)
     expect_equal(rtime(res), rtime(od_x))
     res <- dropChromPeaks(xod_xgr, keepAdjustedRtime = TRUE)
-    expect_true(hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 1)
-    expect_equal(rtime(res), rtime(xod_xgr))
     expect_true(!hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
+    expect_true(hasAdjustedRtime(res))
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 1)
+    expect_equal(rtime(res), rtime(xod_xgr))
     ##
     res <- dropChromPeaks(xod_xgrg)
     expect_true(!hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.FEATURE.GROUPING)) == 0)
     expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 0)
     expect_equal(rtime(res), rtime(od_x))
     res <- dropChromPeaks(xod_xgrg, keepAdjustedRtime = TRUE)
-    expect_true(hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 1)
-    expect_equal(rtime(res), rtime(xod_xgr))
     expect_true(!hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
+    expect_true(hasAdjustedRtime(res))
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 1)
+    expect_equal(rtime(res), rtime(xod_xgrg))
+})
 
+test_that("dropFeatureDefinitions,XCMSnExp works", {
     ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history
     ##    b) if retention time correction was performed AFTER the latest feature
     ##       grouping, drop also the retention time correction and all related
     ##       process histories.
+    res <- dropFeatureDefinitions(xod_x)
+    expect_equal(res, xod_x)
     res <- dropFeatureDefinitions(xod_xg)
     expect_equal(res, xod_x)
-    expect_true(hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 1)
-    expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
-    expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
-    expect_equal(rtime(res), rtime(od_x))
-    ## No feature groups - so there is nothing that this function does here.
-    res <- dropFeatureDefinitions(xod_xgr)
-    expect_equal(res, xod_xgr)
-    expect_true(hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 1)
-    expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 1)
-    expect_true(hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 1)
     ## Remove the latest ones.
     res <- dropFeatureDefinitions(xod_xgrg)
     expect_equal(res, xod_xgr)
-    expect_true(hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 1)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 1)
     expect_true(hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 1)
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 1)
     expect_equal(rtime(res, adjusted = FALSE), rtime(od_x))
     expect_equal(rtime(res, adjusted = TRUE), rtime(xod_xgr))
+})
 
+test_that("dropAdjustedRtime,XCMSnExp works", {
     ## 3) dropAdjustedRtime:
     ##    a) drop the retention time adjustment and related process histories
     ##    b) if grouping has been performed AFTER retention time correction,
@@ -429,32 +350,30 @@ test_that("XCMSnExp droppers work", {
     ## This drops also the process history for alignment.
     res <- dropAdjustedRtime(xod_xgr)
     expect_true(hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 1)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 0)
     expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
     expect_equal(chromPeaks(res), chromPeaks(xod_x))
-    expect_equal(res, xod_x)
-    expect_equal(rtime(res), rtime(xod_x))
     expect_equal(rtime(res), rtime(xod_xgr, adjusted = FALSE))
+    ## expect_equal(res, xod_x)
     ## This drops also the feature alignment performed later.
     res <- dropAdjustedRtime(xod_xgrg)
     expect_true(hasChromPeaks(res))
-    expect_true(length(processHistory(res, type = type_feat_det)) == 1)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.DETECTION)) == 1)
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.PEAK.GROUPING)) == 0)
     expect_true(!hasAdjustedRtime(res))
-    expect_true(length(processHistory(res, type = type_rt_adj)) == 0)
+    expect_true(length(processHistory(res, type = .PROCSTEP.RTIME.CORRECTION)) == 0)
     expect_equal(chromPeaks(res), chromPeaks(xod_x))
-    expect_equal(res, xod_x)
+    ## expect_equal(res, xod_x)
     expect_equal(rtime(res), rtime(xod_xgrg, adjusted = FALSE))
 })
 
 test_that("XCMSnExp inherited methods work", {
     ## [
     tmp_1 <- faahko_od[1:10]
-    expect_warning(tmp_2 <- xod_x[1:10])
+    tmp_2 <- xod_x[1:10]
     expect_true(length(processHistory(tmp_2)) == 0)
     expect_true(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
@@ -470,15 +389,16 @@ test_that("XCMSnExp inherited methods work", {
     tmp <- xod_r[idxs, keepAdjustedRtime = TRUE]
     expect_true(hasAdjustedRtime(tmp))
     expect_equal(rtime(xod_r)[idxs], rtime(tmp))
+    expect_true(length(processHistory(tmp, type = .PROCSTEP.RTIME.CORRECTION)) == 0)
     ## Same with object containing also peaks and features
-    expect_warning(tmp <- xod_xgrg[idxs])
+    tmp <- xod_xgrg[idxs]
     expect_true(!hasAdjustedRtime(tmp))
     expect_true(!hasChromPeaks(tmp))
     expect_true(!hasFeatures(tmp))
-    expect_warning(tmp <- xod_xgrg[idxs, keepAdjusted = TRUE])
+    tmp <- xod_xgrg[idxs, keepAdjusted = TRUE]
     expect_true(hasAdjustedRtime(tmp))
     expect_equal(rtime(xod_xgrg)[idxs], rtime(tmp))
-    expect_true(length(processHistory(tmp)) == 1)
+    expect_true(length(processHistory(tmp)) == 0)
 
     ## [[
     spct <- xod_x[[13]]
@@ -492,8 +412,8 @@ test_that("XCMSnExp inherited methods work", {
     expect_true(rtime(spct) != rtime(xod_r, adjusted = FALSE)[13])
 
     ## bin
-    tmp_1 <- bin(faahko_od)
-    expect_warning(tmp_2 <- bin(xod_x))
+    tmp_1 <- bin(faahko_od, binSize = 20)
+    expect_warning(tmp_2 <- bin(xod_x, binSize = 20))
     expect_true(length(processHistory(tmp_2)) == 0)
     expect_true(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
@@ -573,7 +493,8 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     expect_equal(chromPeaks(tmp)[, colnames(chromPeaks(tmp)) != "sample"],
                  chromPeaks(xod_x)[chromPeaks(xod_x)[, "sample"] == 2,
                                    colnames(chromPeaks(xod_x)) != "sample"])
-    expect_equal(fileIndex(processHistory(tmp)[[1]]), 1)
+    expect_true(length(processHistory(tmp)) == 1)
+    ## expect_equal(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(xod_x, file = c(1, 3))
     expect_true(length(tmp[[1]]) == 1)
@@ -584,7 +505,8 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     b <- chromPeaks(xod_x)
     expect_equal(a[, colnames(a) != "sample"],
                  b[b[, "sample"] %in% c(1, 3), colnames(b) != "sample"])
-    expect_equal(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
+    expect_true(length(processHistory(tmp)) == 1)
+    ## expect_equal(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
 
     ## Errors
     expect_error(filterFile(xod_x, file = 5))
@@ -593,23 +515,19 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     ## Little mockup to check correctness of Process history.
     od_2 <- xod_x
     od_2 <- addProcessHistory(
-        od_2,
-        ProcessHistory(
-            type = .PROCSTEP.RTIME.CORRECTION))
+        od_2, ProcessHistory(type = .PROCSTEP.RTIME.CORRECTION))
     od_2 <- addProcessHistory(
-        od_2,
-        ProcessHistory(type = .PROCSTEP.UNKNOWN,
-                       fileIndex = 2,
-                       info. = "I should be here"))
+        od_2, ProcessHistory(type = .PROCSTEP.UNKNOWN,
+                                    fileIndex = 2,
+                                    info. = "I should be here"))
     od_2 <- addProcessHistory(
-        od_2,
-        ProcessHistory(type = .PROCSTEP.UNKNOWN,
-                       fileIndex = 1, info. = "EEEEEE"))
+        od_2, ProcessHistory(type = .PROCSTEP.UNKNOWN,
+                                    fileIndex = 1, info. = "EEEEEE"))
 
     tmp <- filterFile(od_2, file = 2)
     ph <- processHistory(tmp)
-    expect_true(length(ph) == 2)
-    expect_equal(processType(ph[[2]]), .PROCSTEP.UNKNOWN)
+    expect_true(length(ph) == 4)
+    expect_equal(processType(ph[[3]]), .PROCSTEP.UNKNOWN)
     b <- unlist(lapply(ph, function(z) {
         processInfo(z) == "I should be here"
     }))
@@ -617,7 +535,7 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     b <- unlist(lapply(ph, function(z) {
         processInfo(z) == "EEEEEE"
     }))
-    expect_true(!any(b))
+    ## expect_true(!any(b))
     ## Do filterFile on xod_xg
     res <- filterFile(xod_xg, file = 2)
     expect_true(hasChromPeaks(res))
@@ -647,7 +565,7 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     expect_equal(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res)) == 1)
+    expect_true(length(processHistory(res)) == 3)
     expect_equal(processType(processHistory(res)[[1]]), "Peak detection")
     ## The same but keep the adjusted retention times.
     res <- .filter_file_XCMSnExp(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
@@ -683,7 +601,7 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
                  unname(rtime(xod_xg, bySample = TRUE)[c(1, 3)]))
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
-    expect_true(length(processHistory(res)) == 1)
+    expect_true(length(processHistory(res)) == 3)
     expect_equal(processType(processHistory(res)[[1]]), "Peak detection")
     ## keep adjusted rtime
     res <- filterFile(xod_xgrg, file = c(1, 3), keepAdjustedRtime = TRUE)
@@ -1906,7 +1824,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res <- fillChromPeaks(xod_xg)
     expect_true(.hasFilledPeaks(res))
     expect_true(hasFilledChromPeaks(res))
-    ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
+    ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
     ## Check parameter filled in featureValues (issue #157)
@@ -1924,25 +1842,6 @@ test_that("fillChromPeaks,XCMSnExp works", {
         into <- sum(intensity(chr), na.rm = TRUE) *
             (cfp[1, "rtmax"] - cfp[1, "rtmin"]) / (length(chr) - 1)
         expect_equal(unname(into), unname(cfp[1, "into"]))
-    }
-    ## Plot the data for some...
-    if (FALSE) {
-        pk_idx <- featureValues(res)[1, ]
-        pks <- chromPeaks(res)[pk_idx, ]
-        rtr <- c(min(pks[, "rtmin"]), max(pks[, "rtmax"]))
-        rtr[1] <- rtr[1] - 10
-        rtr[2] <- rtr[2] + 10
-        chrs <- chromatogram(res, rt = rtr, mz = c(min(pks[, "mzmin"]),
-                                                   max(pks[, "mzmax"])))[1, ]
-        plot(3, 3, pch = NA, xlim = range(lapply(chrs, rtime), na.rm = TRUE),
-             ylim = range(lapply(chrs, intensity), na.rm = TRUE), xlab = "rt",
-             ylab = "int")
-        for (i in 1:length(chrs)) {
-            points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l",
-                   col = ifelse(pks[i, "is_filled"], yes = "red", no = "black"))
-            abline(v = pks[i, c("rtmin", "rtmax")],
-                   col = ifelse(pks[i, "is_filled"], yes = "red", no = "black"))
-        }
     }
 
     ## Check if the results are similar that we get with findChromPeaks
@@ -2185,16 +2084,8 @@ test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
 })
 
 test_that("writeMSData,XCMSnExp works", {
-    ## Writing plain MS data to mzML
-    tmp_path <- tempdir()
-    nfls <- paste0(tmp_path, "/",
-                   sub(".CDF$", "_1.mzML", basename(fileNames(xod_x))))
-    tmp <- filterRt(xod_x, rt = c(2500, 2700))
-    writeMSData(tmp, file = nfls)
-    data_in <- readMSData(nfls, mode = "onDisk")
-    expect_equal(unname(rtime(data_in)), unname(rtime(tmp)))
-
     ## Write adjusted retention times
+    tmp_path <- tempdir()
     nfls <- paste0(tmp_path, "/",
                    sub(".CDF$", "_2.mzML", basename(fileNames(xod_xgr))))
     tmp <- filterRt(xod_xgr, rt = c(2500, 2700))
@@ -2243,12 +2134,10 @@ test_that("updateObject,XCMSnExp works", {
 })
 
 test_that("filterMsLevel works with MS>1", {
-    ms2_fl <- proteomics("TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz",
-                         full.names = TRUE)
-    ms2 <- readMSData(ms2_fl, mode = "onDisk")
-    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(
-                                                  prefilter = c(3, 10000)),
-                                         msLevel = 1))
+    ms2 <- filterRt(as(pest_dda, "OnDiskMSnExp"), rt = c(200, 600))
+    res <- findChromPeaks(ms2, param = CentWaveParam(
+                                   prefilter = c(3, 1000)),
+                          msLevel = 1)
     res_1 <- filterMsLevel(res, msLevel = 1)
     res_2 <- filterMsLevel(res, msLevel = 2)
     expect_true(all(msLevel(res_1) == 1))

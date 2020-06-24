@@ -678,26 +678,22 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
     if (hasChromPeaks(object)) {
         phTypes <- unlist(lapply(processHistory(object), function(z)
             processType(z)))
-        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.DETECTION)
-        ## Make sure we delete all related process history steps
-        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING)
-        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
-        object <- dropProcessHistories(object, type = .PROCSTEP.CALIBRATION)
+        object <- dropProcessHistories(
+            object, type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+                             .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+                             .PROCSTEP.PEAK.REFINEMENT))
         newFd <- new("MsFeatureData")
-        newFd@.xData <- .copy_env(object@msFeatureData)
-        newFd <- dropChromPeaks(newFd)
-        if (hasFeatures(newFd))
-            newFd <- dropFeatureDefinitions(newFd)
-        ## Drop adjusted retention times if performed AFTER peak detection.
-        if (hasAdjustedRtime(newFd) & !keepAdjustedRtime) {
+        if (hasAdjustedRtime(object)) {
             idx_rt_adj <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
             idx_pk_det <- which(phTypes == .PROCSTEP.PEAK.DETECTION)
             if (length(idx_rt_adj) && length(idx_pk_det) &&
-                max(idx_rt_adj) > max(idx_pk_det)) {
+                max(idx_rt_adj) > max(idx_pk_det) && !keepAdjustedRtime) {
                 object <- dropProcessHistories(
                     object, type = .PROCSTEP.RTIME.CORRECTION)
-                newFd <- dropAdjustedRtime(newFd)
-            }
+            } else
+                keepAdjustedRtime <- TRUE
+            if (keepAdjustedRtime)
+                adjustedRtime(newFd) <- adjustedRtime(object@msFeatureData)
         }
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
@@ -747,43 +743,29 @@ setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
         if (length(idx_fal) == 0)
             idx_fal <- -1L
         ## 1) drop last related process history step and results
-        object <- dropProcessHistories(object,
-                                       type = .PROCSTEP.PEAK.GROUPING,
-                                       num = 1)
+        object <- dropProcessHistories(
+            object, type = .PROCSTEP.PEAK.GROUPING, num = 1)
         ## Drop also eventual filterFeatureDefinitions
-        object <- dropGenericProcessHistory(object,
-                                            fun = "filterFeatureDefinitions")
+        object <- dropGenericProcessHistory(
+            object, fun = "filterFeatureDefinitions")
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
-        newFd <- dropFeatureDefinitions(newFd)
-        if (.hasFilledPeaks(object)) {
-            ## Remove filled in peaks
-            chromPeaks(newFd) <- chromPeaks(
-                newFd)[!chromPeakData(newFd)$is_filled, , drop = FALSE]
-            chromPeakData(newFd) <- chromPeakData(
-                newFd)[!chromPeakData(newFd)$is_filled, , drop = FALSE]
-            object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
+        drop_proc_hist <- character()
+        dropAdjustedRtime <- FALSE
+        if (max(idx_art) > max(idx_fal) & !keepAdjustedRtime) {
+            drop_proc_hist <- .PROCSTEP.PEAK.GROUPING
+            dropAdjustedRtime <- TRUE
         }
+        newFd <- dropFeatureDefinitions(newFd, dropAdjustedRtime)
+        if (.hasFilledPeaks(object))
+            drop_proc_hist <- c(drop_proc_hist, .PROCSTEP.PEAK.FILLING)
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
-        ## 2) If retention time correction was performed after the latest peak
-        ##    alignment, drop also the retention time correction and all related
-        ##    process history steps.
-        ##    Otherwise (grouping performed after retention time adjustment) do
-        ##    nothing - this keeps eventual alignment related process history
-        ##    steps performed before retention time correction.
-        if (hasAdjustedRtime(object)) {
-            if (max(idx_art) > max(idx_fal) & !keepAdjustedRtime) {
-                object <- dropProcessHistories(object,
-                                               type = .PROCSTEP.PEAK.GROUPING)
-                ## This will ensure that the retention times of the peaks
-                ## are restored.
-                object <- dropAdjustedRtime(object)
-                warning("Removed also correspondence (peak grouping) results as",
-                        " these based on the retention time correction results",
-                        " that were dropped.")
-            }
-        }
+        if (!hasChromPeaks(object))
+            drop_proc_hist <- c(drop_proc_hist, .PROCSTEP.PEAK.DETECTION,
+                                .PROCSTEP.PEAK.REFINEMENT)
+        if (length(drop_proc_hist))
+            object <- dropProcessHistories(object, drop_proc_hist)
     }
     if (validObject(object))
         return(object)
@@ -818,45 +800,26 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
         ## Copy the content of the object
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
-        ## Revert applied adjustments in peaks:
-        if (hasChromPeaks(newFd)) {
-            message("Reverting retention times of identified peaks to ",
-                    "original values ... ", appendLF = FALSE)
-            fts <- .applyRtAdjToChromPeaks(chromPeaks(newFd),
-                                           rtraw = adjustedRtime(object,
-                                                                 bySample = TRUE),
-                                           rtadj = rtime(object,
-                                                         bySample = TRUE,
-                                                         adjusted = FALSE))
-            ## Replacing peaks in MsFeatureData, not in XCMSnExp to avoid
-            ## all results being removed.
-            chromPeaks(newFd) <- fts
-            message("OK")
-        }
-        ## 1) Drop the retention time adjustment and (the latest) related process
-        ##    history
-        object <- dropProcessHistories(object,
-                                       type = .PROCSTEP.RTIME.CORRECTION,
-                                       num = 1)
-        newFd <- dropAdjustedRtime(newFd)
-        object@msFeatureData <- newFd
-        lockEnvironment(newFd, bindings = TRUE)
+        object <- dropProcessHistories(
+            object, type = .PROCSTEP.RTIME.CORRECTION, num = 1)
+        newFd <- dropAdjustedRtime(
+            newFd, rtime(object, bySample = TRUE, adjusted = FALSE))
         ## 2) If grouping has been performed AFTER retention time correction it
         ##    has to be dropped too, including ALL related process histories.
         if (hasFeatures(object)) {
             if (max(idx_fal) > max(idx_art)) {
-                object <- dropFeatureDefinitions(object)
-                object <- dropProcessHistories(object,
-                                               type = .PROCSTEP.PEAK.GROUPING,
-                                               num = -1)
+                newFd <- dropFeatureDefinitions(newFd)
+                object <- dropProcessHistories(
+                    object, type = .PROCSTEP.PEAK.GROUPING, num = -1)
             }
-        } else {
+        }  else {
             ## If there is any peak alignment related process history, but no
             ## peak alignment results, drop them.
-            object <- dropProcessHistories(object,
-                                           type = .PROCSTEP.PEAK.GROUPING,
-                                           num = -1)
+            object <- dropProcessHistories(
+                object, type = .PROCSTEP.PEAK.GROUPING, num = -1)
         }
+        object@msFeatureData <- newFd
+        lockEnvironment(newFd, bindings = TRUE)
     }
     if (validObject(object))
         return(object)
@@ -888,34 +851,26 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
         return(x)
     else if (!(is.numeric(i) | is.logical(i)))
         stop("'i' has to be either numeric or logical")
+    ## Only result we might eventually keep is adjusted rtimes...
+    newFd <- new("MsFeatureData")
+    ph <- list()
     ## Check if we have keepAdjustedRtime as an additional parameter
     ## in ...
     keepAdjustedRtime <- list(...)$ke
     if (is.null(keepAdjustedRtime))
         keepAdjustedRtime <- FALSE
-    if (hasFeatures(x) | hasChromPeaks(x)) {
-        suppressMessages(
-            x <- dropFeatureDefinitions(x, keepAdjustedRtime =
-                                               keepAdjustedRtime))
-        suppressMessages(
-            x <- dropChromPeaks(x, keepAdjustedRtime =
-                                       keepAdjustedRtime))
+    if ((hasFeatures(x) || hasChromPeaks(x)) && length(i) > 30)
         warning("Removed preprocessing results")
+    if (hasAdjustedRtime(x) && keepAdjustedRtime) {
+        new_adj <- rtime(x, adjusted = TRUE)[i]
+        adjustedRtime(newFd) <-
+            unname(split(new_adj, f = fromFile(x)[i]))
+        p <- processHistory(x, type = .PROCSTEP.RTIME.CORRECTION)
+        ph <- p[length(ph)]
     }
-    if (hasAdjustedRtime(x)) {
-        if (keepAdjustedRtime) {
-            ## Subset the adjusted rtime
-            new_adj <- rtime(x, adjusted = TRUE)[i]
-            newFd <- new("MsFeatureData")
-            newFd@.xData <- .copy_env(x@msFeatureData)
-            adjustedRtime(newFd) <-
-                unname(split(new_adj, f = fromFile(x)[i]))
-            lockEnvironment(newFd, bindings = TRUE)
-            x@msFeatureData <- newFd
-        } else {
-            suppressMessages(x <- dropAdjustedRtime(x))
-        }
-    }
+    lockEnvironment(newFd, bindings = TRUE)
+    x@msFeatureData <- newFd
+    x@.processHistory <- ph
     callNextMethod()
 })
 
@@ -1393,7 +1348,6 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     lockEnvironment(newMfd, bindings = TRUE)
     object@msFeatureData <- newMfd
     object@.processHistory <- ph
-    validObject(object)
     object
 })
 
@@ -1418,9 +1372,8 @@ setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
                                             ...) {
     if (hasAdjustedRtime(object) | hasFeatures(object) |
         hasChromPeaks(object)) {
-        object <- dropAdjustedRtime(object)
-        object <- dropFeatureDefinitions(object)
-        object <- dropChromPeaks(object)
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1448,9 +1401,8 @@ setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
                                             SNR = 0L, ...) {
     if (hasAdjustedRtime(object) | hasFeatures(object) |
         hasChromPeaks(object)) {
-        object <- dropAdjustedRtime(object)
-        object <- dropFeatureDefinitions(object)
-        object <- dropChromPeaks(object)
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1474,9 +1426,8 @@ setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE
                                               msLevel.) {
     if (hasAdjustedRtime(object) | hasFeatures(object) |
         hasChromPeaks(object)) {
-        object <- dropAdjustedRtime(object)
-        object <- dropFeatureDefinitions(object)
-        object <- dropChromPeaks(object)
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1495,9 +1446,8 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
                                          ...) {
     if (hasAdjustedRtime(x) | hasFeatures(x) |
         hasChromPeaks(x)) {
-        x <- dropAdjustedRtime(x)
-        x <- dropFeatureDefinitions(x)
-        x <- dropChromPeaks(x)
+        x@.processHistory <- list()
+        x@msFeatureData <- new("MsFeatureData")
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -2471,7 +2421,7 @@ setMethod(
                 pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
                 if (!filled) {
                     pks <- pks[!pkd$is_filled, , drop = FALSE]
-                    pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+                    pkd <- extractROWS(pkd, which(!pkd$is_filled))
                 }
                 smpls <- factor(pks[, "sample"], levels = lvls)
                 pk_list[[i]] <- split.data.frame(pks, smpls)
@@ -2487,7 +2437,7 @@ setMethod(
             pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
             if (!filled) {
                 pks <- pks[!pkd$is_filled, , drop = FALSE]
-                pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+                pkd <- extractROWS(pkd, which(!pkd$is_filled))
             }
             smpls <- factor(pks[, "sample"], levels = lvls)
             pks <- split.data.frame(pks, smpls)
@@ -3005,7 +2955,7 @@ setMethod("fillChromPeaks",
                   (maxId + 1L):toId)
               chromPeaks(newFd) <- rbind(chromPeaks(newFd),
                                          res[, -ncol(res)])
-              cpd <- chromPeakData(newFd)[rep(1L, nrow(res)), , drop = FALSE]
+              cpd <- extractROWS(chromPeakData(newFd), rep(1L, nrow(res)))
               cpd[,] <- NA
               cpd$ms_level <- as.integer(msLevel)
               cpd$is_filled <- TRUE
@@ -3190,7 +3140,7 @@ setMethod("fillChromPeaks",
                   (maxId + 1L):toId)
               chromPeaks(newFd) <- rbind(chromPeaks(newFd),
                                          res[, -ncol(res)])
-              cpd <- chromPeakData(newFd)[rep(1L, nrow(res)), , drop = FALSE]
+              cpd <- extractROWS(chromPeakData(newFd), rep(1L, nrow(res)))
               cpd[,] <- NA
               cpd$ms_level <- as.integer(msLevel)
               cpd$is_filled <- TRUE
@@ -3810,17 +3760,16 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #'
 #' @examples
 #'
-#' ## Perform chromatographic peak detection on a test file.
-#' fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-#' data <- readMSData(fl, mode = "onDisk")
-#'
-#' data <- findChromPeaks(data, param = CentWaveParam(peakwidth = c(2, 8)))
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Distribution of chromatographic peak widths
-#' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+#' quantile(chromPeaks(faahko_sub)[, "rtmax"] - chromPeaks(faahko_sub)[, "rtmin"])
 #'
-#' ## Remove all chromatographic peaks with a width larger 5 seconds
-#' data <- refineChromPeaks(data, param = CleanPeaksParam(5))
+#' ## Remove all chromatographic peaks with a width larger 60 seconds
+#' data <- refineChromPeaks(faahko_sub, param = CleanPeaksParam(60))
 #'
 #' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
@@ -4027,7 +3976,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               other_msl <- !(chromPeakData(object)$ms_level %in% msLevel)
               if (any(other_msl)) {
                   pks <- rbind(pks, chromPeaks(object)[other_msl, , drop = FALSE])
-                  pkd <- rbind(pkd, chromPeakData(object)[other_msl, ])
+                  pkd <- rbind(pkd, extractROWS(chromPeakData(object), which(other_msl)))
               }
               which_new <- is.na(rownames(pks))
               pkd$merged <- which_new

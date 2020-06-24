@@ -313,16 +313,14 @@ all peak grouping (correspondence) results and any previous retention
 time adjustment results to be dropped.
 }
 \examples{
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Perform retention time correction on the OnDiskMSnExp:
-res <- adjustRtime(raw_data, param = ObiwarpParam())
+## Perform retention time correction:
+res <- adjustRtime(faahko_sub, param = ObiwarpParam())
 
 ## As a result we get a numeric vector with the adjusted retention times for
 ## all spectra.
@@ -330,7 +328,7 @@ head(res)
 
 ## We can split this by file to get the adjusted retention times for each
 ## file
-resL <- split(res, fromFile(raw_data))
+resL <- split(res, fromFile(res))
 
 }
 \references{

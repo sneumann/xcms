@@ -111,21 +111,26 @@
 #'
 #' @examples
 #' ## Load the test file
-#' library(faahKO)
-#' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-#' xr <- xcmsRaw(fs, profstep = 0)
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-#' mzVals <- xr@env$mz
-#' intVals <- xr@env$intensity
+#' ## Subset to one file and restrict to a certain retention time range
+#' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+#'
+#' ## Get m/z and intensity values
+#' mzs <- mz(data)
+#' ints <- intensity(data)
+#'
 #' ## Define the values per spectrum:
-#' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+#' valsPerSpect <- lengths(mzs)
 #'
-#' ## Calling the function. We're using a large value for noise to speed up
-#' ## the call in the example performance - in a real use case we would either
+#' ## Calling the function. We're using a large value for noise and prefilter
+#' ## to speed up the call in the example - in a real use case we would either
 #' ## set the value to a reasonable value or use the default value.
-#' res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
-#' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
+#' res <- do_findChromPeaks_centWave(mz = unlist(mzs), int = unlist(ints),
+#'     scantime = rtime(data), valsPerSpect = valsPerSpect, noise = 10000,
+#'     prefilter = c(3, 10000))
 #' head(res)
 do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
@@ -420,7 +425,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next
-        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh', 
+        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh',
                           extendLengthMSW = extendLengthMSW)
         if (!(!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)))
             next
@@ -1280,22 +1285,27 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 #' @author Christopher Conley
 #'
 #' @examples
-#' library(faahKO)
-#' library(xcms)
-#' cdfpath <- system.file("cdf", package = "faahKO")
-#' cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
 #'
-#' ## Read the first file
-#' xraw <- xcmsRaw(cdffiles[1])
-#' ## Extract the required data
-#' mzVals <- xraw@env$mz
-#' intVals <- xraw@env$intensity
+#' ## Load the test file
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Subset to one file and restrict to a certain retention time range
+#' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+#'
+#' ## Get m/z and intensity values
+#' mzs <- mz(data)
+#' ints <- intensity(data)
+#'
 #' ## Define the values per spectrum:
-#' valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
+#' valsPerSpect <- lengths(mzs)
 #'
-#' ## Perform the peak detection using massifquant
-#' res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
-#' scantime = xraw@scantime, valsPerSpect = valsPerSpect)
+#' ## Perform the peak detection using massifquant - setting prefilter to
+#' ## a high value to speed up the call for the example
+#' res <- do_findChromPeaks_massifquant(mz = unlist(mzs), int = unlist(ints),
+#'     scantime = rtime(data), valsPerSpect = valsPerSpect,
+#'     prefilter = c(3, 10000))
 #' head(res)
 do_findChromPeaks_massifquant <- function(mz,
                                           int,
@@ -1512,19 +1522,24 @@ do_findChromPeaks_massifquant <- function(mz,
 #'     \code{\link{matchedFilter}} for the standard user interface method.
 #'
 #' @examples
+#'
 #' ## Load the test file
-#' library(faahKO)
-#' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-#' xr <- xcmsRaw(fs)
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-#' mzVals <- xr@env$mz
-#' intVals <- xr@env$intensity
+#' ## Subset to one file and restrict to a certain retention time range
+#' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+#'
+#' ## Get m/z and intensity values
+#' mzs <- mz(data)
+#' ints <- intensity(data)
+#'
 #' ## Define the values per spectrum:
-#' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+#' valsPerSpect <- lengths(mzs)
 #'
-#' res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
-#' scantime = xr@scantime, valsPerSpect = valsPerSpect)
+#' res <- do_findChromPeaks_matchedFilter(mz = unlist(mzs), int = unlist(ints),
+#'     scantime = rtime(data), valsPerSpect = valsPerSpect)
 #' head(res)
 do_findChromPeaks_matchedFilter <- function(mz,
                                             int,
@@ -3037,12 +3052,16 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #'
 #' @examples
 #'
-#' ## Read one file from the faahKO package
-#' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'     mode = "onDisk")
+#' ## Load the test file
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Subset to one file and drop identified chromatographic peaks
+#' data <- dropChromPeaks(filterFile(faahko_sub, 1))
 #'
 #' ## Extract chromatographic data for a small m/z range
-#' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
+#' chr <- chromatogram(data, mz = c(272.1, 272.3), rt = c(3000, 3200))[1, 1]
 #'
 #' pks <- peaksWithMatchedFilter(intensity(chr), rtime(chr))
 #' pks
@@ -3161,7 +3180,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
 #'     regions of interest is checked to be above the first baseline.
-#'     
+#'
 #' @param extendLengthMSW `logical(1)`. If `TRUE` the "open" method of EIC
 #'     extension is used, rather than the default "reflect" method.
 #'
@@ -3212,7 +3231,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' ## Extract chromatographic data for a small m/z range
 #' mzr <- c(272.1, 272.2)
-#' chr <- chromatogram(od, mz = mzr)[1, 1]
+#' chr <- chromatogram(od, mz = mzr, rt = c(3000, 3300))[1, 1]
 #'
 #' int <- intensity(chr)
 #' rt <- rtime(chr)
@@ -3347,7 +3366,7 @@ peaksWithCentWave <- function(int, rt,
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next
-        wCoefs <- xcms:::MSW.cwt(d, scales = scales, wavelet = 'mexh', 
+        wCoefs <- xcms:::MSW.cwt(d, scales = scales, wavelet = 'mexh',
                                  extendLengthMSW = extendLengthMSW)
         if (!(!is.null(dim(wCoefs)) && any((wCoefs - baseline) >= sdthr)))
             next

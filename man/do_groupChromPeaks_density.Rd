@@ -86,21 +86,19 @@ especially the \code{bw} and \code{binSize} parameter should be adjusted
 accordingly.
 }
 \examples{
-## Load the test data set
-library(faahKO)
-data(faahko)
+## Load the test file
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Extract the matrix with the identified peaks from the xcmsSet:
-fts <- peaks(faahko)
+pks <- chromPeaks(faahko_sub)
 
 ## Perform the peak grouping with default settings:
-res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
+res <- do_groupChromPeaks_density(pks, sampleGroups = rep(1, 3))
 
 ## The feature definitions:
-head(res$featureDefinitions)
-
-## The assignment of peaks from the input matrix to the features
-head(res$peakIndex)
+head(res)
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and

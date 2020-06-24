@@ -134,19 +134,24 @@ This function exposes core peak detection functionality of
     method).
 }
 \examples{
+
 ## Load the test file
-library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xr <- xcmsRaw(fs)
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-mzVals <- xr@env$mz
-intVals <- xr@env$intensity
+## Subset to one file and restrict to a certain retention time range
+data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+
+## Get m/z and intensity values
+mzs <- mz(data)
+ints <- intensity(data)
+
 ## Define the values per spectrum:
-valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+valsPerSpect <- lengths(mzs)
 
-res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
-scantime = xr@scantime, valsPerSpect = valsPerSpect)
+res <- do_findChromPeaks_matchedFilter(mz = unlist(mzs), int = unlist(ints),
+    scantime = rtime(data), valsPerSpect = valsPerSpect)
 head(res)
 }
 \references{

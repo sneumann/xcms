@@ -65,6 +65,7 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
           remotes::install_github("RforMassSpectrometry/MsCoreUtils")
+          BiocManager::install("faahKO")
         shell: Rscript {0}
 
       - name: Check

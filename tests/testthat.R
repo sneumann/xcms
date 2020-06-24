@@ -50,7 +50,7 @@ fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
 fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
 pest_swth <- readMSData(fl, mode = "onDisk")
 cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                     peakwidth = c(3, 20))
+                     peakwidth = c(3, 20), prefilter = c(3, 1000))
 pest_swth <- findChromPeaks(pest_swth, param = cwp)
 pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp)
 

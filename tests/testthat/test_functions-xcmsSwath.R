@@ -27,15 +27,15 @@ test_that(".which_chrom_peak_diff_rt works", {
 test_that(".reconstruct_ms2_for_chrom_peak works", {
     ## Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
     pk <- chromPeaks(pest_swth, mz = 382.972706, ppm = 10)
-    res <- xcms:::.reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
+    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 0.8)
     expect_true(is(res, "MSpectra"))
     expect_equal(unname(fromFile(res)), 7L)
     expect_true(!is.na(rtime(res)))
-    expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 14)
+    expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 1)
     expect_true(all(mcols(res)$ms2_peak_cor[[1]] > 0.8))
-    expect_equal(length(intensity(res[[1]])), 14)
+    expect_equal(length(intensity(res[[1]])), 1)
 
     res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
@@ -56,23 +56,25 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
 
     pk <- chromPeaks(pest_swth, msLevel = 1)[3, ]
     res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth)
-    expect_equal(length(intensity(res[[1]])), 8)
-    expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 8)
-    expect_equal(length(mcols(res)$ms2_peak_cor[[1]]), 8)
+    expect_equal(length(intensity(res[[1]])), 0)
+    expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 0)
+    expect_equal(length(mcols(res)$ms2_peak_cor[[1]]), 0)
 })
 
 test_that(".reconstruct_ms2_for_peaks_file works", {
     ## No MS2 level peaks: expect empty.
-    res <- .reconstruct_ms2_for_peaks_file(filterFile(xod_x, 1))
+    res <- .reconstruct_ms2_for_peaks_file(
+                      filterRt(filterFile(xod_x, 1), rt = c(2500, 3000)))
     expect_true(all(isEmpty(res)))
     expect_true(is(mcols(res)$ms2_peak_id, "CharacterList"))
     expect_true(is(mcols(res)$ms2_peak_cor, "NumericList"))
-    expect_identical(rownames(chromPeaks(filterFile(xod_x, 1))),
+    expect_identical(rownames(chromPeaks(filterRt(filterFile(xod_x, 1),
+                                                  rt = c(2500, 3000)))),
                      mcols(res)$peak_id)
 
     res <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
     expect_true(isEmpty(res)[1])
-    expect_true(length(intensity(res[[3]])) == 8)
+    expect_true(length(intensity(res[[7]])) == 5)
     expect_true(all(fromFile(res) == 2L))
 
     res_3 <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,

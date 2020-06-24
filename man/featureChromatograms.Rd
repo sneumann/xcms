@@ -88,7 +88,6 @@ dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 ## Subset the object to a smaller retention time range
 xdata <- faahko_sub
 
-xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
 xdata <- groupChromPeaks(xdata,
     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 

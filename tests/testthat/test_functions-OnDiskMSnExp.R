@@ -48,8 +48,8 @@ test_that(".obiwarp works", {
 })
 
 test_that(".concatenate_OnDiskMSnExp works", {
-    od1 <- readMSData(faahko_3_files[1], mode = "onDisk")
-    od2 <- readMSData(faahko_3_files[2:3], mode = "onDisk")
+    od1 <- filterFile(od_x, 1)
+    od2 <- filterFile(od_x, 2:3)
     res <- .concatenate_OnDiskMSnExp(od1, od2)
     expect_equal(fileNames(faahko_od), fileNames(res))
     expect_equal(experimentData(faahko_od), experimentData(res))

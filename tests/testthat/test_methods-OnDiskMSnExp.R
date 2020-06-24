@@ -1,7 +1,7 @@
 test_that("profMat,OnDiskMSnExp works", {
     ## Get it from all 3 files in one go.
-    res <- profMat(faahko_od, step = 2)
-    res_2 <- profMat(faahko_xod, step = 2)
+    res <- profMat(filterRt(faahko_od, c(2500, 3000)), step = 2)
+    res_2 <- profMat(filterRt(faahko_xod, c(2500, 3000)), step = 2)
     expect_equal(res, res_2)
 
     ## Simulating issue #312
@@ -9,20 +9,6 @@ test_that("profMat,OnDiskMSnExp works", {
     od_1_clnd <- clean(removePeaks(od_1, t = 1800))
     res_clnd <- profMat(od_1_clnd)
 })
-
-test_that(
-    "findChromPeaks,OnDiskMSnExp,CentWaveParam works with multiple MS levels", {
-        msn_file <- system.file(
-            package = "msdata",
-            "proteomics/MS3TMT10_01022016_32917-33481.mzML.gz")
-        msn_file <- system.file(
-            package = "msdata",
-            "proteomics/TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz")
-        msn_data <- readMSData(msn_file, mode = "onDisk")
-        msn_xdata <- findChromPeaks(pickPeaks(msn_data),
-                                    param = CentWaveParam(prefilter = c(3, 5000)))
-        expect_equal(msLevel(msn_data), msLevel(msn_xdata))
-    })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## Reproduce with msdata files:
@@ -113,16 +99,6 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
 
     expect_error(findChromPeaks(onDisk, param = cwp, msLevel = 2))
 
-    ## returning an xcmsSet
-    res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
-    expect_true(nrow(peaks(res)) == 6)
-    expect_true(is(res, "xcmsSet"))
-
-    ## Return type XCMSnExp
-    res <- findChromPeaks(onDisk, param = cwp)
-    expect_true(hasChromPeaks(res))
-    expect_true(!hasAdjustedRtime(res))
-    expect_true(!hasFeatures(res))
     pks <- chromPeaks(res)
 
     ## check that rownames are set
@@ -135,9 +111,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
     ## OnDiskMSnExp
     onDisk <- filterFile(faahko_od, file = 1)
     cwp <- CentWavePredIsoParam(snthresh = 20, noise = 2500,
-                                snthreshIsoROIs = 5)
-    res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
-    expect_true(is.list(res))
+                                snthreshIsoROIs = 5, prefilter = c(5, 10000))
     expect_error(findChromPeaks(onDisk, param = cwp, msLevel = 2))
 
     ## Return an XCMSnExp
@@ -146,15 +120,13 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
     pks <- chromPeaks(res)
-    expect_true(nrow(pks) == 275)
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
     onDisk <- filterFile(microtofq_od, 1)
-    res_o <- findChromPeaks(onDisk, param = MassifquantParam(),
-                            return.type = "xcmsSet")
-    expect_true(is(res_o, "xcmsSet"))
-    expect_equal(nrow(peaks(res_o)), 113)
+    res_o <- findChromPeaks(onDisk, param = MassifquantParam(prefilter = c(5, 5000)))
+    expect_true(hasChromPeaks(res_o))
+    expect_equal(nrow(chromPeaks(res_o)), 15)
 
     expect_error(findChromPeaks(onDisk, param = mqp, msLevel = 2))
 })
