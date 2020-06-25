@@ -208,6 +208,8 @@ jobs:
           BiocManager::install("BiocCheck")
 
           ## Install additional packages ensuring that they are installed
+	  ## and of course, faahKO requires xcms which needs again faahKO...
+	  BiocManager::install("sneumann/xcms")
           BiocManager::install("faahKO")
         shell: Rscript {0}
 
