@@ -206,6 +206,9 @@ jobs:
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
           BiocManager::install("BiocCheck")
+
+          ## Install additional packages ensuring that they are installed
+          BiocManager::install("faahKO")
         shell: Rscript {0}
 
       - name: Session info
