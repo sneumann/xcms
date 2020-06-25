@@ -74,7 +74,7 @@ LC-MS/MS analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -198,11 +198,11 @@ information.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://rdrr.io/pkg/MSnbase/man/Spectra.html'>Spectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
+    <p><code><a href='https://rdrr.io/pkg/MSnbase/man/MSpectra.html'>MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
 in <code>object</code>. Contains empty <a href='https://rdrr.io/pkg/MSnbase/man/Spectrum2-class.html'>Spectrum2</a> objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
-chromatographic peak was below threshold <code>minCor</code>. <code>Spectra</code> metadata
+chromatographic peak was below threshold <code>minCor</code>. <code>MSpectra</code> metadata
 columns <code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code>CharacterList()</code>
 and <code>NumericList()</code> with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
@@ -227,7 +227,7 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
 </ul>
 
-<p>The resulting <code>Spectra</code> object provides also the peak IDs of the MS2
+<p>The resulting <code>MSpectra</code> object provides also the peak IDs of the MS2
 chromatographic peaks for each spectrum as well as their correlation value.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 

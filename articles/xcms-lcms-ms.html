@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.11/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2020-06-22 06:43:47<br><strong>Compiled</strong>: Mon Jun 22 06:52:23 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2020-06-25 13:20:34<br><strong>Compiled</strong>: Thu Jun 25 14:19:44 2020</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="analysis-of-dda-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#analysis-of-dda-data" class="anchor"></a>Analysis of DDA data</h1>
-<p>Below we load the example DDA data set using the <code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.11/MSnbase">MSnbase</a></em> package.</p>
+<p>Below we load the example DDA data set using the <code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.12/MSnbase">MSnbase</a></em> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/sneumann/xcms">xcms</a></span>)
 
@@ -139,12 +139,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="kw">dda_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span>(<span class="kw">dda_data</span>, param = <span class="kw">cwp</span>)
 </pre></div>
 <p>In total 112 peaks were identified in the present data set.</p>
-<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). MS2 spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method which returns a <code>Spectra</code> object of MS2 spectra associated with a chromatographic peak (i.e. with their retention time within the retention time window of a chromatographic peak and their precursor m/z within the m/z range of the same chromatographic peak.</p>
+<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). MS2 spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method which returns a <code>MSpectra</code> object of MS2 spectra associated with a chromatographic peak (i.e. with their retention time within the retention time window of a chromatographic peak and their precursor m/z within the m/z range of the same chromatographic peak.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="kw">dda_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromPeakSpectra.html">chromPeakSpectra</a></span>(<span class="kw">dda_data</span>)
 <span class="kw">dda_spectra</span>
 </pre></div>
-<pre><code>## Spectra with 150 spectra and 1 metadata column(s):
+<pre><code>## MSpectra with 150 spectra and 1 metadata column(s):
 ##                    msLevel     rtime peaksCount |     peak_id
 ##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 ##   CP004.F1.S1812         2   237.869       1489 |       CP004
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="kw">ex_spectra</span> <span class="op">&lt;-</span> <span class="kw">dda_spectra</span>[<span class="fu">mcols</span>(<span class="kw">dda_spectra</span>)<span class="op">$</span><span class="kw">peak_id</span> <span class="op">==</span> <span class="kw">ex_id</span>]
 <span class="kw">ex_spectra</span>
 </pre></div>
-<pre><code>## Spectra with 5 spectra and 1 metadata column(s):
+<pre><code>## MSpectra with 5 spectra and 1 metadata column(s):
 ##                    msLevel     rtime peaksCount |     peak_id
 ##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 ##   CP057.F1.S3505         2   418.926         10 |       CP057
@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
                               intensityFun = <span class="kw">median</span>, mzFun = <span class="kw">median</span>)
 <span class="kw">ex_spectrum</span>
 </pre></div>
-<pre><code>## Spectra with 1 spectra and 1 metadata column(s):
+<pre><code>## MSpectra with 1 spectra and 1 metadata column(s):
 ##                    msLevel     rtime peaksCount |     peak_id
 ##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 ##   CP057.F1.S3505         2   418.926         24 |       CP057</code></pre>
@@ -420,7 +420,7 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 <span class="kw">swath_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reconstructChromPeakSpectra.html">reconstructChromPeakSpectra</a></span>(<span class="kw">swath_data</span>, minCor = <span class="fl">0.9</span>)
 <span class="kw">swath_spectra</span>
 </pre></div>
-<pre><code>## Spectra with 62 spectra and 3 metadata column(s):
+<pre><code>## MSpectra with 62 spectra and 3 metadata column(s):
 ##       msLevel     rtime peaksCount |     ms2_peak_id      ms2_peak_cor
 ##     &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;CharacterList&gt;     &lt;NumericList&gt;
 ##   1         2   239.458          0 |                                  
@@ -519,7 +519,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel
     <span class="fu">mcols</span>(<span class="kw">dda_spectra</span>)<span class="op">$</span><span class="kw">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">prochloraz_dda_peak</span>)]
 <span class="kw">prochloraz_dda_spectra</span>
 </pre></div>
-<pre><code>## Spectra with 5 spectra and 1 metadata column(s):
+<pre><code>## MSpectra with 5 spectra and 1 metadata column(s):
 ##                    msLevel     rtime peaksCount |     peak_id
 ##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 ##   CP034.F1.S3253         2   401.438         84 |       CP034
@@ -577,66 +577,70 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <div class="sourceCode" id="cb63"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 </pre></div>
-<pre><code>## R version 4.0.1 (2020-06-06)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.5
+<pre><code>## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.4 LTS
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] pander_0.6.3        xcms_3.11.4         MSnbase_2.14.2     
-##  [4] ProtGenerics_1.20.0 S4Vectors_0.26.1    mzR_2.22.0         
-##  [7] Rcpp_1.0.4.6        BiocParallel_1.22.0 Biobase_2.48.0     
-## [10] BiocGenerics_0.34.0 BiocStyle_2.16.0   
+##  [1] pander_0.6.3        xcms_3.11.5         MSnbase_2.15.3     
+##  [4] ProtGenerics_1.21.0 S4Vectors_0.27.12   mzR_2.23.0         
+##  [7] Rcpp_1.0.4.6        BiocParallel_1.23.0 Biobase_2.49.0     
+## [10] BiocGenerics_0.35.4 BiocStyle_2.17.0   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] vsn_3.56.0                  foreach_1.5.0              
+##  [1] vsn_3.57.0                  foreach_1.5.0              
 ##  [3] assertthat_0.2.1            highr_0.8                  
-##  [5] BiocManager_1.30.10         affy_1.66.0                
+##  [5] BiocManager_1.30.10         affy_1.67.0                
 ##  [7] GenomeInfoDbData_1.2.3      yaml_2.2.1                 
-##  [9] robustbase_0.93-6           impute_1.62.0              
+##  [9] robustbase_0.93-6           impute_1.63.0              
 ## [11] pillar_1.4.4                backports_1.1.8            
 ## [13] lattice_0.20-41             glue_1.4.1                 
-## [15] limma_3.44.3                digest_0.6.25              
-## [17] GenomicRanges_1.40.0        RColorBrewer_1.1-2         
-## [19] XVector_0.28.0              colorspace_1.4-1           
-## [21] htmltools_0.5.0             preprocessCore_1.50.0      
+## [15] limma_3.45.7                digest_0.6.25              
+## [17] GenomicRanges_1.41.5        RColorBrewer_1.1-2         
+## [19] XVector_0.29.2              colorspace_1.4-1           
+## [21] htmltools_0.5.0             preprocessCore_1.51.0      
 ## [23] Matrix_1.2-18               plyr_1.8.6                 
 ## [25] MALDIquant_1.19.3           XML_3.99-0.3               
 ## [27] pkgconfig_2.0.3             bookdown_0.19              
-## [29] zlibbioc_1.34.0             scales_1.1.1               
-## [31] RANN_2.6.1                  affyio_1.58.0              
+## [29] zlibbioc_1.35.0             scales_1.1.1               
+## [31] RANN_2.6.1                  affyio_1.59.0              
 ## [33] tibble_3.0.1                farver_2.0.3               
-## [35] IRanges_2.22.2              ggplot2_3.3.2              
-## [37] ellipsis_0.3.1              SummarizedExperiment_1.18.1
-## [39] MassSpecWavelet_1.54.0      magrittr_1.5               
+## [35] IRanges_2.23.10             ggplot2_3.3.2              
+## [37] ellipsis_0.3.1              SummarizedExperiment_1.19.5
+## [39] MassSpecWavelet_1.55.0      magrittr_1.5               
 ## [41] crayon_1.3.4                memoise_1.1.0              
 ## [43] evaluate_0.14               fs_1.4.1                   
 ## [45] ncdf4_1.17                  doParallel_1.0.15          
-## [47] MASS_7.3-51.6               tools_4.0.1                
+## [47] MASS_7.3-51.5               tools_4.0.0                
 ## [49] lifecycle_0.2.0             matrixStats_0.56.0         
 ## [51] stringr_1.4.0               munsell_0.5.0              
-## [53] DelayedArray_0.14.0         pcaMethods_1.80.0          
-## [55] compiler_4.0.1              pkgdown_1.5.1.9000         
-## [57] GenomeInfoDb_1.24.2         mzID_1.26.0                
-## [59] rlang_0.4.6                 grid_4.0.1                 
+## [53] DelayedArray_0.15.5         pcaMethods_1.81.0          
+## [55] compiler_4.0.0              pkgdown_1.5.1.9000         
+## [57] GenomeInfoDb_1.25.3         mzID_1.27.0                
+## [59] rlang_0.4.6                 grid_4.0.0                 
 ## [61] RCurl_1.98-1.2              iterators_1.0.12           
-## [63] labeling_0.3                bitops_1.0-6               
-## [65] rmarkdown_2.3.1             gtable_0.3.0               
-## [67] codetools_0.2-16            R6_2.4.1                   
-## [69] knitr_1.28                  rprojroot_1.3-2            
-## [71] desc_1.2.0                  stringi_1.4.6              
-## [73] vctrs_0.3.1                 DEoptimR_1.0-8             
-## [75] xfun_0.15</code></pre>
+## [63] MsCoreUtils_1.1.2           labeling_0.3               
+## [65] bitops_1.0-6                rmarkdown_2.3.1            
+## [67] gtable_0.3.0                codetools_0.2-16           
+## [69] R6_2.4.1                    knitr_1.28                 
+## [71] rprojroot_1.3-2             desc_1.2.0                 
+## [73] stringi_1.4.6               vctrs_0.3.1                
+## [75] DEoptimR_1.0-8              xfun_0.15</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">

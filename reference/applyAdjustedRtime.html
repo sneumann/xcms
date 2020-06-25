@@ -73,7 +73,7 @@ time or returns the object unchanged if none are present." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -187,7 +187,7 @@ restore the raw retention times.
 <span class='co'>## Update the path to the files for the local system</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
-<span class='kw'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko15.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko18.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>xod</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## Replace raw retention times with adjusted retention times.</span>
 <span class='kw'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime</a></span>(<span class='kw'>xod</span>)
@@ -210,7 +210,7 @@ restore the raw retention times.
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Retention time correction 
-#&gt;  date: Mon Jun 22 06:49:44 2020 
+#&gt;  date: Thu Jun 25 14:17:09 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ObiwarpParam 

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.11/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-06-22 06:43:47<br><strong>Compiled</strong>: Mon Jun 22 06:53:13 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-06-25 13:20:34<br><strong>Compiled</strong>: Thu Jun 25 14:20:31 2020</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="data-import" class="section level1">
 <h1 class="hasAnchor">
 <a href="#data-import" class="anchor"></a>Data import</h1>
-<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.11/mzR">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
+<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.12/mzR">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
 <p>Below we load all required packages, locate the raw CDF files within the <code>faahKO</code> package and build a <em>phenodata</em> data frame describing the experimental setup.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/sneumann/xcms">xcms</a></span>)
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
                  sample_group = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"KO"</span>, <span class="fl">4</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"WT"</span>, <span class="fl">4</span>)),
                  stringsAsFactors = <span class="fl">FALSE</span>)
 </pre></div>
-<p>Subsequently we load the raw data as an <code>OnDiskMSnExp</code> object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.11/MSnbase">MSnbase</a></em> package. The <code>MSnbase</code> provides based structures and infrastructure for the processing of mass spectrometry data. Also, <code>MSnbase</code> can be used to <em>centroid</em> profile-mode MS data (see the corresponding vignette in the <code>MSnbase</code> package).</p>
+<p>Subsequently we load the raw data as an <code>OnDiskMSnExp</code> object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.12/MSnbase">MSnbase</a></em> package. The <code>MSnbase</code> provides based structures and infrastructure for the processing of mass spectrometry data. Also, <code>MSnbase</code> can be used to <em>centroid</em> profile-mode MS data (see the corresponding vignette in the <code>MSnbase</code> package).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="kw">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MSnbase/man/readMSData.html">readMSData</a></span>(files = <span class="kw">cdfs</span>, pdata = <span class="fu">new</span>(<span class="st">"NAnnotatedDataFrame"</span>, <span class="kw">pd</span>),
                        mode = <span class="st">"onDisk"</span>)
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="fu"><a href="https://rdrr.io/pkg/MSnbase/man/plot-methods.html">plot</a></span>(<span class="kw">bpis</span>, col = <span class="kw">group_colors</span>[<span class="kw">raw_data</span><span class="op">$</span><span class="kw">sample_group</span>])
 </pre></div>
 <p><img src="xcms_files/figure-html/data-inspection-bpc-1.png" width="1152" style="display: block; margin: auto;"></p>
-<p>The <code>chromatogram</code> method returned a <code>Chromatograms</code> object that organizes individual <code>Chromatogram</code> objects (which in fact contain the chromatographic data) in a two-dimensional array: columns represent samples and rows (optionally) m/z and/or retention time ranges. Below we extract the chromatogram of the first sample and access its retention time and intensity values.</p>
+<p>The <code>chromatogram</code> method returned a <code>MChromatograms</code> object that organizes individual <code>Chromatogram</code> objects (which in fact contain the chromatographic data) in a two-dimensional array: columns represent samples and rows (optionally) m/z and/or retention time ranges. Below we extract the chromatogram of the first sample and access its retention time and intensity values.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">bpi_1</span> <span class="op">&lt;-</span> <span class="kw">bpis</span>[<span class="fl">1</span>, <span class="fl">1</span>]
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html">rtime</a></span>(<span class="kw">bpi_1</span>))
@@ -853,7 +853,7 @@ Example for peak density correspondence. Upper panel: chromatogram for an mz sli
                         minFraction = <span class="fl">0.4</span>, bw = <span class="fl">30</span>)
 <span class="kw">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">groupChromPeaks</a></span>(<span class="kw">xdata</span>, param = <span class="kw">pdp</span>)
 </pre></div>
-<p>Results from the xcms-based preprocessing can be summarized into a <code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.11/SummarizedExperiment">SummarizedExperiment</a></em> package with the <code>quantify</code> method. This object will contain the feature abundances as the <em>assay matrix</em>, the feature definition (their m/z, retention time and other metadata) as <code>rowData</code> (i.e. row annotations) and the sample/phenotype information as <code>colData</code> (i.e. column annotations). All the processing history will be put into the object’s <code>metadata</code>. This object can then be used for any further (<code>xcms</code>-independent) processing and analysis.</p>
+<p>Results from the xcms-based preprocessing can be summarized into a <code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.12/SummarizedExperiment">SummarizedExperiment</a></em> package with the <code>quantify</code> method. This object will contain the feature abundances as the <em>assay matrix</em>, the feature definition (their m/z, retention time and other metadata) as <code>rowData</code> (i.e. row annotations) and the sample/phenotype information as <code>colData</code> (i.e. column annotations). All the processing history will be put into the object’s <code>metadata</code>. This object can then be used for any further (<code>xcms</code>-independent) processing and analysis.</p>
 <p>Below we use <code>quantify</code> to generate the result object for the present analysis. The parameters <code>value</code> and any other additional parameters are passed along to the <code>featureValues</code> method that is used internally to create the feature abundance matrix.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit">
 <span class="kw">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MSnbase/man/quantify-methods.html">quantify</a></span>(<span class="kw">xdata</span>, value = <span class="st">"into"</span>)
@@ -1079,7 +1079,7 @@ Example for peak density correspondence. Upper panel: chromatogram for an mz sli
 ## FT004  221937.53
 ## FT005   84772.92
 ## FT006  271128.02</code></pre>
-<p>The performance of peak detection, alignment and correspondence should always be evaluated by inspecting extracted ion chromatograms e.g. of known compounds, internal standards or identified features in general. The <code>featureChromatograms</code> function allows to extract chromatograms for each feature present in <code>featureDefinitions</code>. The returned <code>Chromatograms</code> object contains an ion chromatogram for each feature (each row containing the data for one feature) and sample (each column representing containing data for one sample). Below we extract the chromatograms for the first 4 features.</p>
+<p>The performance of peak detection, alignment and correspondence should always be evaluated by inspecting extracted ion chromatograms e.g. of known compounds, internal standards or identified features in general. The <code>featureChromatograms</code> function allows to extract chromatograms for each feature present in <code>featureDefinitions</code>. The returned <code>MChromatograms</code> object contains an ion chromatogram for each feature (each row containing the data for one feature) and sample (each column representing containing data for one sample). Below we extract the chromatograms for the first 4 features.</p>
 <div class="sourceCode" id="cb82"><pre class="downlit">
 <span class="kw">feature_chroms</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span>(<span class="kw">xdata</span>, features = <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>)
 
@@ -1187,7 +1187,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Peak detection 
-##  date: Mon Jun 22 06:53:40 2020 
+##  date: Thu Jun 25 14:20:55 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: CentWaveParam 
@@ -1196,7 +1196,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[2]]
 ## Object of class "XProcessHistory"
 ##  type: Peak refinement 
-##  date: Mon Jun 22 06:54:03 2020 
+##  date: Thu Jun 25 14:21:16 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1205,7 +1205,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[3]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Mon Jun 22 06:54:19 2020 
+##  date: Thu Jun 25 14:21:29 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1214,7 +1214,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[4]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Mon Jun 22 06:54:19 2020 
+##  date: Thu Jun 25 14:21:30 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1223,7 +1223,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[5]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Mon Jun 22 06:54:27 2020 
+##  date: Thu Jun 25 14:21:37 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1232,7 +1232,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[6]]
 ## Object of class "XProcessHistory"
 ##  type: Missing peak filling 
-##  date: Mon Jun 22 06:54:28 2020 
+##  date: Thu Jun 25 14:21:38 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: ChromPeakAreaParam 
@@ -1246,7 +1246,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Mon Jun 22 06:54:19 2020 
+##  date: Thu Jun 25 14:21:30 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 

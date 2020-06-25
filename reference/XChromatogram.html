@@ -45,7 +45,7 @@ an extracted ion chromatogram) along with identified chromatographic peaks
 within that data. The object inherits all functions from the Chromatogram()
 object in the MSnbase package.
 Multiple XChromatogram objects can be stored in a XChromatograms object.
-This class extends Chromatograms() from the MSnbase package and allows
+This class extends MChromatograms() from the MSnbase package and allows
 thus to arrange chromatograms in a matrix-like structure, columns
 representing samples and rows m/z-retention time ranges.
 All functions are described (grouped into topic-related sections) after the
@@ -81,7 +81,7 @@ Arguments section." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -146,7 +146,7 @@ an extracted ion chromatogram) along with identified chromatographic peaks
 within that data. The object inherits all functions from the <code>Chromatogram()</code>
 object in the <code>MSnbase</code> package.</p>
 <p>Multiple <code>XChromatogram</code> objects can be stored in a <code>XChromatograms</code> object.
-This class extends <code>Chromatograms()</code> from the <code>MSnbase</code> package and allows
+This class extends <code>MChromatograms()</code> from the <code>MSnbase</code> package and allows
 thus to arrange chromatograms in a matrix-like structure, columns
 representing samples and rows m/z-retention time ranges.</p>
 <p>All functions are described (grouped into topic-related sections) after the
@@ -593,7 +593,7 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
 
 <p>Objects can be created with the contructor function <code>XChromatogram</code> and
 <code>XChromatograms</code>, respectively. Also, they can be coerced from
-Chromatogram or <code>Chromatograms()</code> objects using
+Chromatogram or <code>MChromatograms()</code> objects using
 <code>as(object, "XChromatogram")</code> or <code>as(object, "XChromatograms")</code>.</p>
     <h2 class="hasAnchor" id="filtering-and-subsetting"><a class="anchor" href="#filtering-and-subsetting"></a>Filtering and subsetting</h2>
 
@@ -601,8 +601,8 @@ Chromatogram or <code>Chromatograms()</code> objects using
 
 
 <p>Besides classical subsetting with <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> specific filter operations on
-<code>Chromatograms()</code> and <code>XChromatograms</code> objects are available. See
-<code><a href='https://rdrr.io/pkg/xcms/man/filter-Chromatograms.html'>filterColumnsIntensityAbove()</a></code> for more details.</p>
+<code>MChromatograms()</code> and <code>XChromatograms</code> objects are available. See
+<code><a href='https://rdrr.io/pkg/xcms/man/filter-MChromatograms.html'>filterColumnsIntensityAbove()</a></code> for more details.</p>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> allows to subset a <code>XChromatograms</code> object by row (<code>i</code>) and column
@@ -757,7 +757,7 @@ being samples and rows features.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-Chromatogram-CentWaveParam.html'>findChromPeaks-centWave</a> for peak
-detection on <code>Chromatograms()</code> objects.</p></div>
+detection on <code>MChromatograms()</code> objects.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -794,7 +794,7 @@ detection on <code>Chromatograms()</code> objects.</p></div>
     mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatograms for a m/z - retention time slice</span>
 <span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='fl'>344</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3500</span>))
-<span class='kw'>chrs</span></div><div class='output co'>#&gt; Chromatograms with 1 row and 3 columns
+<span class='kw'>chrs</span></div><div class='output co'>#&gt; MChromatograms with 1 row and 3 columns
 #&gt;            ko15.CDF       ko16.CDF       ko18.CDF
 #&gt;      &lt;Chromatogram&gt; &lt;Chromatogram&gt; &lt;Chromatogram&gt;
 #&gt; [1,]    length: 639    length: 639    length: 639
@@ -821,7 +821,7 @@ detection on <code>Chromatograms()</code> objects.</p></div>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>xchrs</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Mon Jun 22 06:49:36 2020 
+#&gt;  date: Thu Jun 25 14:17:02 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: CentWaveParam 

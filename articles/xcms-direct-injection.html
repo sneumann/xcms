@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -111,12 +111,12 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.11/xcms">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
 </div>
 <div id="peak-detection" class="section level1">
 <h1 class="hasAnchor">
 <a href="#peak-detection" class="anchor"></a>Peak detection</h1>
-<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.11/xcms">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
+<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
 <p>Below we load the required packages. For information on the parallel processing setup please see the <code>BiocParallel</code> vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/sneumann/xcms">xcms</a></span>)
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <span class="fu">register</span>(<span class="fu">SerialParam</span>())
 </pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.11/msdata">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.11/msdata">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.12/msdata">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.12/msdata">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="kw">mzdata_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"fticr"</span>, package = <span class="st">"msdata"</span>)
 <span class="kw">mzdata_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw">mzdata_path</span>, recursive = <span class="fl">TRUE</span>, full.names = <span class="fl">TRUE</span>)
@@ -225,8 +225,8 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  Number of spectra: 4 
 ##  MSn retention times: 0:1 - 0:1 minutes
 ## - - - Processing information - - -
-## Data loaded [Mon Jun 22 06:52:12 2020] 
-##  MSnbase version: 2.14.2 
+## Data loaded [Thu Jun 25 14:19:35 2020] 
+##  MSnbase version: 2.15.3 
 ## - - - Meta data  - - -
 ## phenoData
 ##   rowNames: 1 2 3 4
@@ -379,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="further-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#further-analysis" class="anchor"></a>Further analysis</h1>
-<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.11/limma">limma</a></em>.</p>
+<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.12/limma">limma</a></em>.</p>
 </div>
   </div>
 

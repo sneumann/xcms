@@ -83,7 +83,7 @@ peak(s) in the chromatographic data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@ peak(s) in the chromatographic data." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Remove intensities from chromatographic data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatograms.R'><code>R/methods-Chromatograms.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-XChromatogram.R'><code>R/methods-XChromatogram.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-MChromatograms.R'><code>R/methods-MChromatograms.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-XChromatogram.R'><code>R/methods-XChromatogram.R</code></a></small>
     <div class="hidden name"><code>removeIntensity-Chromatogram.Rd</code></div>
     </div>
 
@@ -160,7 +160,7 @@ peak(s) in the chromatographic data.</p>
     <pre class="usage"><span class='co'># S4 method for Chromatogram</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
 
-<span class='co'># S4 method for Chromatograms</span>
+<span class='co'># S4 method for MChromatograms</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
 
 <span class='co'># S4 method for XChromatogram</span>
@@ -176,7 +176,7 @@ peak(s) in the chromatographic data.</p>
     <tr>
       <th>object</th>
       <td><p>an object representing chromatographic data. Can be a
-<code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram()</a></code>, <code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatograms-class.html'>Chromatograms()</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatogram()</a></code> or
+<code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram()</a></code>, <code><a href='https://rdrr.io/pkg/MSnbase/man/MChromatograms-class.html'>MChromatograms()</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatogram()</a></code> or
 <code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatograms()</a></code> object.</p></td>
     </tr>
     <tr>

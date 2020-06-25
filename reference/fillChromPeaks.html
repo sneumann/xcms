@@ -103,7 +103,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -425,7 +425,7 @@ in the matrix returned by the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnE
 <span class='co'>## Filling missing peak data using the peak area from identified</span>
 <span class='co'>## chromatographic peaks.</span>
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>ChromPeakAreaParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Defining peak areas for filling-in .</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'> OK</span>
-#&gt; <span class='message'>Start integrating peak areas from original files</span></div><div class='input'>
+#&gt; <span class='message'>Start integrating peak areas from original files</span></div><div class='output co'>#&gt; <span class='message'>Requesting 8 peaks from ko15.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 7.</span></div><div class='output co'>#&gt; <span class='message'>Requesting 10 peaks from ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 10.</span></div><div class='output co'>#&gt; <span class='message'>Requesting 8 peaks from ko18.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 6.</span></div><div class='input'>
 <span class='co'>## How many missing values do we have after peak filling?</span>
 <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
 <span class='co'>## Get the peaks that have been filled in:</span>
@@ -449,7 +449,7 @@ in the matrix returned by the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnE
 <span class='kw'>ph</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>, type = <span class='st'>"Missing peak filling"</span>)[[<span class='fl'>1</span>]]
 <span class='kw'>ph</span></div><div class='output co'>#&gt; Object of class "XProcessHistory"
 #&gt;  type: Missing peak filling 
-#&gt;  date: Mon Jun 22 06:50:06 2020 
+#&gt;  date: Thu Jun 25 14:17:29 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ChromPeakAreaParam 
@@ -459,22 +459,22 @@ in the matrix returned by the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnE
 #&gt; Slot "rtmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x7f9cfb943f68&gt;
+#&gt; &lt;environment: 0x560d51c49130&gt;
 #&gt; 
 #&gt; Slot "rtmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x7f9cfb943f68&gt;
+#&gt; &lt;environment: 0x560d51c49130&gt;
 #&gt; 
 #&gt; Slot "mzmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x7f9cfb943f68&gt;
+#&gt; &lt;environment: 0x560d51c49130&gt;
 #&gt; 
 #&gt; Slot "mzmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x7f9cfb943f68&gt;
+#&gt; &lt;environment: 0x560d51c49130&gt;
 #&gt; 
 #&gt; Slot ".__classVersion__":
 #&gt;   Param 

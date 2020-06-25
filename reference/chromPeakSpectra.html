@@ -79,7 +79,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -157,7 +157,7 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
   ppm = <span class='fl'>0</span>,
   method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span>),
   skipFilled = <span class='fl'>FALSE</span>,
-  return.type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Spectra"</span>, <span class='st'>"list"</span>)
+  return.type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MSpectra"</span>, <span class='st'>"list"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -206,14 +206,14 @@ be reported.</p></td>
     <tr>
       <th>return.type</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining whether the result should be a
-Spectra object or a simple <code>list</code>. See below for more information.</p></td>
+MSpectra object or a simple <code>list</code>. See below for more information.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Which object is returned depends on the value of <code>return.type</code>:</p><ul>
-<li><p>For <code>return.type = "Spectra"</code>: a Spectra object with elements being
+<li><p>For <code>return.type = "MSpectra"</code>: a MSpectra object with elements being
 Spectrum objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
 respective peak (i.e. its rowname in <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
@@ -234,7 +234,7 @@ length of the list matches the number of peaks.</p></li>
 
 <span class='co'>## Perform MS1 peak detection</span>
 <span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>dda</span>, <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>), prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1000</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 23 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 27 found.</span></div><div class='input'><span class='kw'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></span>(<span class='kw'>dda</span>)
-<span class='kw'>ms2_sps</span></div><div class='output co'>#&gt; Spectra with 93 spectra and 1 metadata column(s):
+<span class='kw'>ms2_sps</span></div><div class='output co'>#&gt; MSpectra with 93 spectra and 1 metadata column(s):
 #&gt;                   msLevel     rtime peaksCount |     peak_id
 #&gt;                 &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
 #&gt;   CP01.F1.S1810         2   237.460        437 |        CP01

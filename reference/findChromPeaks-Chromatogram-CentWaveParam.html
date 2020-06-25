@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="centWave-based peak detection in purely chromatographic data — findChromPeaks,Chromatogram,CentWaveParam-method" />
-<meta property="og:description" content="findChromPeaks on a Chromatogram or Chromatograms object with a
+<meta property="og:description" content="findChromPeaks on a Chromatogram or MChromatograms object with a
 CentWaveParam parameter object performs centWave-based peak detection
 on purely chromatographic data. See centWave for details on the method
 and CentWaveParam for details on the parameter class.
@@ -81,7 +81,7 @@ detection artifacts." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -136,12 +136,12 @@ detection artifacts." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>centWave-based peak detection in purely chromatographic data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatograms.R'><code>R/methods-Chromatograms.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-MChromatograms.R'><code>R/methods-MChromatograms.R</code></a></small>
     <div class="hidden name"><code>findChromPeaks-Chromatogram-CentWaveParam.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>findChromPeaks</code> on a Chromatogram or Chromatograms object with a
+    <p><code>findChromPeaks</code> on a Chromatogram or MChromatograms object with a
 <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a> parameter object performs centWave-based peak detection
 on purely chromatographic data. See <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a> for details on the method
 and <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a> for details on the parameter class.
@@ -156,10 +156,10 @@ detection artifacts.</p>
     <pre class="usage"><span class='co'># S4 method for Chromatogram,CentWaveParam</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, <span class='kw'>...</span>)
 
-<span class='co'># S4 method for Chromatograms,CentWaveParam</span>
+<span class='co'># S4 method for MChromatograms,CentWaveParam</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, BPPARAM = <span class='fu'>bpparam</span>(), <span class='kw'>...</span>)
 
-<span class='co'># S4 method for Chromatograms,MatchedFilterParam</span>
+<span class='co'># S4 method for MChromatograms,MatchedFilterParam</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, BPPARAM = <span class='kw'>BPPARAM</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -167,7 +167,7 @@ detection artifacts.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>a Chromatogram or Chromatograms object.</p></td>
+      <td><p>a Chromatogram or MChromatograms object.</p></td>
     </tr>
     <tr>
       <th>param</th>
@@ -266,7 +266,7 @@ for details on the method.</p></div>
 #&gt;  3429.395	3388.707	3452.87	92153.7175121951	2013	2012
 #&gt;  3538.942	3531.117	3546.767	18080.4449999996	1376	1332</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## Perform peak detection on an Chromatograms object</span>
+<span class='co'>## Perform peak detection on an MChromatograms object</span>
 <span class='kw'>od3</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko16.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko18.CDF"</span>, package = <span class='st'>"faahKO"</span>)),

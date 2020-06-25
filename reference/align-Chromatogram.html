@@ -43,7 +43,7 @@
 <meta property="og:description" content="Align chromatogram x against chromatogram y. The resulting chromatogram
 has the same length (number of data points) than y and the same retention
 times thus allowing to perform any pair-wise comparisons between the
-chromatograms. If x is a Chromatograms() object, each Chromatogram in
+chromatograms. If x is a MChromatograms() object, each Chromatogram in
 it is aligned against y.
 Parameter method allows to specify which alignment method
 should be used. Currently there are the following options:
@@ -91,7 +91,7 @@ chromatograms from SWATH experiments).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.5</span>
       </span>
     </div>
 
@@ -146,7 +146,7 @@ chromatograms from SWATH experiments).
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Aligning chromatographic data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatograms.R'><code>R/methods-Chromatograms.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/methods-Chromatogram.R'><code>R/methods-Chromatogram.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-MChromatograms.R'><code>R/methods-MChromatograms.R</code></a></small>
     <div class="hidden name"><code>align-Chromatogram.Rd</code></div>
     </div>
 
@@ -154,7 +154,7 @@ chromatograms from SWATH experiments).
     <p>Align chromatogram <code>x</code> against chromatogram <code>y</code>. The resulting chromatogram
 has the same length (number of data points) than <code>y</code> and the same retention
 times thus allowing to perform any pair-wise comparisons between the
-chromatograms. If <code>x</code> is a <code>Chromatograms()</code> object, each <code>Chromatogram</code> in
+chromatograms. If <code>x</code> is a <code>MChromatograms()</code> object, each <code>Chromatogram</code> in
 it is aligned against <code>y</code>.</p>
 <p>Parameter <code>method</code> allows to specify which alignment method
 should be used. Currently there are the following options:</p><ul>
@@ -176,7 +176,7 @@ chromatograms from SWATH experiments).</p></li>
     <pre class="usage"><span class='co'># S4 method for Chromatogram,Chromatogram</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)
 
-<span class='co'># S4 method for Chromatograms,Chromatogram</span>
+<span class='co'># S4 method for MChromatograms,Chromatogram</span>
 <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -184,7 +184,7 @@ chromatograms from SWATH experiments).</p></li>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><code>Chromatogram()</code> or <code>Chromatograms()</code> to be aligned against <code>y</code>.</p></td>
+      <td><p><code>Chromatogram()</code> or <code>MChromatograms()</code> to be aligned against <code>y</code>.</p></td>
     </tr>
     <tr>
       <th>y</th>
@@ -203,7 +203,7 @@ functions.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>Chromatogram</code> (or <code>Chromatograms</code>) representing <code>x</code> aligned
+    <p><code>Chromatogram</code> (or <code>MChromatograms</code>) representing <code>x</code> aligned
 against <code>y</code>.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
