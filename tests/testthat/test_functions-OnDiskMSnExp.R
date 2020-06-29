@@ -99,3 +99,23 @@ test_that(".split_by_file works", {
     expect_equal(chromPeaks(a), chromPeaks(b[[2]]))
     expect_equal(chromPeakData(a), chromPeakData(b[[2]]))
 })
+
+test_that(".estimate_prec_intensity works", {
+    tmp <- filterRt(as(pest_dda, "OnDiskMSnExp"), c(300, 400))
+    res <- .estimate_prec_intensity(tmp, method = "previous")
+    expect_true(length(res) == length(tmp))
+    expect_true(all(is.na(res[msLevel(tmp) == 1L])))
+
+    res <- .estimate_prec_intensity(tmp, method = "interpolation")
+    expect_true(length(res) == length(tmp))
+    expect_true(all(is.na(res[msLevel(tmp) == 1L])))
+})
+
+test_that("estimatePrecursorIntensity,OnDiskMSnExp works", {
+    tmp <- filterRt(pest_dda, c(300, 400))
+    res <- estimatePrecursorIntensity(tmp, BPPARAM = SerialParam())
+    expect_true(length(res) == length(tmp))
+    expect_true(all(is.na(res[msLevel(tmp) == 1L])))
+
+    expect_error(estimatePrecursorIntensity(od_x))
+})

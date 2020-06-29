@@ -1,3 +1,9 @@
+Changes in version 3.11.6
+
+- Add `estimatePrecursorIntensity` function to determine the precursor intensity
+  for MS2 spectra from the neighboring MS1 spectra.
+
+
 Changes in version 3.11.4
 
 - Change from `Spectra` and `Chromatograms` to `MSpectra` and `MChromatograms`

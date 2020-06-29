@@ -594,3 +594,159 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
     validObject(path)
     path
 })
+
+#' @description
+#'
+#' Estimate the precursor intensity for an MS2 spectrum based on interpolation
+#' using the intensity of the respective m/z peak from the previous and
+#' following MS1 spectrum.
+#'
+#' @param x `OnDiskMSnExp` for a single file
+#'
+#' @param ppm `numeric(1)` with acceptable difference to MS1 m/z.
+#'
+#' @param method `character(1)` specifying how the precursor intensity should
+#'     be estimated, either based on the previous MS1 scan
+#'     (`method = "previous"`, the default) or using an interpolation between
+#'     the previous and the subsequent MS1 scan (`method = "interpolation"`)
+#'     considering also their retention time.
+#'
+#' @return `numeric` same length than `x` with the estimated precursor intensity
+#'     or `NA` for MS1 spectra.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+#' pest_dda <- readMSData(fl, mode = "onDisk")
+#' res <- .estimate_prec_intensity(pest_dda)
+#' fData(pest_dda)$precursorIntensity <- res
+#'
+#' ms2 <- filterMsLevel(pest_dda, msLevel = 2)
+#' tic <- vapply(intensity(ms2), function(z) sum(z, na.rm = TRUE), numeric(1))
+#' plot(tic, precursorIntensity(ms2))  # not that nice...
+#'
+#' fl <- proteomics(full.names = TRUE)[4]
+#' tmt <- readMSData(fl, mode = "onDisk")
+#'
+#' res <- .estimate_prec_intensity(tmt, method = "interpolation")
+#' res_2 <- .estimate_prec_intensity(tmt, method = "previous")
+#'
+#' par(mfrow = c(1, 2))
+#' plot(res, precursorIntensity(tmt))
+#' plot(res_2, precursorIntensity(tmt))
+.estimate_prec_intensity <- function(x, ppm = 10,
+                                     method = c("previous", "interpolation")) {
+    method <- match.arg(method)
+    pmz <- precursorMz(x)
+    pmi <- rep(NA_real_, length(pmz))
+    idx <- which(!is.na(pmz))
+    x_ms1 <- filterMsLevel(x, msLevel = 1L)
+    ms1_rt <- rtime(x_ms1)
+    sps <- spectra(x_ms1)
+    if (method == "previous") {
+        for (i in idx) {
+            ms2_rt <- fData(x)$retentionTime[i]
+            ## Find the closest rtime before and the closest rtime after.
+            before_idx <- which(ms1_rt < ms2_rt)
+            before_int <- numeric()
+            if (length(before_idx)) {
+                sp <- sps[[before_idx[length(before_idx)]]]
+                before_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                      duplicates = "closest")
+                if (!is.na(before_idx)) {
+                    before_rt <- sp@rt
+                    before_int <- sp@intensity[before_idx]
+                    before_int <- before_int[!is.na(before_int)]
+                }
+            }
+            if (length(before_int))
+                pmi[i] <- before_int
+        }
+    } else {
+        for (i in idx) {
+            ms2_rt <- fData(x)$retentionTime[i]
+            ## Find the closest rtime before and the closest rtime after.
+            before_idx <- which(ms1_rt < ms2_rt)
+            before_int <- numeric()
+            if (length(before_idx)) {
+                sp <- sps[[before_idx[length(before_idx)]]]
+                before_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                      duplicates = "closest")
+                if (!is.na(before_idx)) {
+                    before_rt <- sp@rt
+                    before_int <- sp@intensity[before_idx]
+                    before_int <- before_int[!is.na(before_int)]
+                }
+            }
+            after_idx <- which(ms1_rt > ms2_rt)
+            after_int <- numeric()
+            if (length(after_idx)) {
+                sp <- sps[[after_idx[1L]]]
+                after_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                     duplicates = "closest")
+                if (!is.na(after_idx)) {
+                    after_rt <- sp@rt
+                    after_int <- sp@intensity[after_idx]
+                    after_int <- after_int[!is.na(after_int)]
+                }
+            }
+            ## Check if we have before and after value
+            if (length(before_int) && length(after_int)) {
+                pmi[i] <- approx(c(before_rt, after_rt),
+                                 c(before_int, after_int),
+                                 xout = ms2_rt)$y
+            } else {
+                if (length(before_int))
+                    pmi[i] <- before_int
+                if (length(after_int))
+                    pmi[i] <- after_int
+            }
+        }
+    }
+    pmi
+}
+
+#' @title Estimate precursor intensity for MS level 2 spectra
+#'
+#' @description
+#'
+#' `estimatePrecursorIntensity` determines the precursor intensity for a MS 2
+#' spectrum based on the intensity of the respective signal from the
+#' neighboring MS 1 spectra (i.e. based on the peak with the m/z matching the
+#' precursor m/z of the MS 2 spectrum). Based on parameter `method` either the
+#' intensity of the peak from the previous MS 1 scan is used
+#' (`method = "previous"`) or an interpolation between the intensity from the
+#' previous and subsequent MS1 scan is used (`method = "interpolation"`, which
+#' considers also the retention times of the two MS1 scans and the retention
+#' time of the MS2 spectrum).
+#'
+#' @param x `OnDiskMSnExp` or `XCMSnExp` object.
+#'
+#' @param ppm `numeric(1)` defining the maximal acceptable difference (in ppm)
+#'     of the precursor m/z and the m/z of the corresponding peak in the MS 1
+#'     scan.
+#'
+#' @param method `character(1)` defining the method how the precursor intensity
+#'     should be determined (see description above for details). Defaults to
+#'     `method = "previous"`.
+#'
+#' @param BPPARAM parallel processing setup. See [bppara()] for details.
+#'
+#' @return `numeric` with length equal to the number of spectra in `x`. `NA` is
+#'     returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
+#'     found for an MS 2 spectrum
+#'
+#' @author Johannes Rainer
+#'
+estimatePrecursorIntensity <- function(x, ppm = 10,
+                                       method = c("previous", "interpolation"),
+                                       BPPARAM = bpparam()) {
+    method <- match.arg(method)
+    unlist(bplapply(.split_by_file(x, subsetFeatureData = FALSE),
+                    .estimate_prec_intensity, ppm = ppm, method = method,
+                    BPPARAM = BPPARAM), use.names = FALSE)
+}
