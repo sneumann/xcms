@@ -321,8 +321,9 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
-      BIOCVERSIONNUM: ${{ needs.R-CMD-check-bioc.outputs.biocversionnum }}
+      BIOCVERSIONNUM: ${{ needs.define-docker-info.outputs.biocversion }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      ## BIOCVERSIONNUM: ${{ needs.R-CMD-check-bioc.outputs.biocversionnum }}
 
     steps:
       - uses: actions/checkout@v2
@@ -383,7 +384,7 @@ jobs:
 
       - name: Set BiocVersion
         run: |
-          BiocManager::install(version = Sys.getenv('BIOCVERSIONNUM'), ask = FALSE)
+          BiocManager::install(version = Sys.getenv('BIOCVERSIONNUM', unset = 'devel'), ask = FALSE)
         shell: Rscript {0}
 
       - name: Install dependencies

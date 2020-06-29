@@ -33,7 +33,7 @@ importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
 
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 
-importFrom("MsCoreUtils", "rbindFill")
+importFrom("MsCoreUtils", "rbindFill", "closest")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -255,7 +255,8 @@ export(
     "hasFilledChromPeaks",
     "findChromPeaksIsolationWindow",
     "reconstructChromPeakSpectra",
-    "groupOverlaps"
+    "groupOverlaps",
+    "estimatePrecursorIntensity"
 )
 
 ## New analysis methods
