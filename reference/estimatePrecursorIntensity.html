@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>a Distance function based on matching peaks — specDist.meanMZmatch • xcms</title>
+<title>Estimate precursor intensity for MS level 2 spectra — estimatePrecursorIntensity • xcms</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,16 @@
 
 
 
-<meta property="og:title" content="a Distance function based on matching peaks — specDist.meanMZmatch" />
-<meta property="og:description" content="This method calculates the distance of two sets of peaks." />
+<meta property="og:title" content="Estimate precursor intensity for MS level 2 spectra — estimatePrecursorIntensity" />
+<meta property="og:description" content="`estimatePrecursorIntensity` determines the precursor intensity for a MS 2
+spectrum based on the intensity of the respective signal from the
+neighboring MS 1 spectra (i.e. based on the peak with the m/z matching the
+precursor m/z of the MS 2 spectrum). Based on parameter `method` either the
+intensity of the peak from the previous MS 1 scan is used
+(`method = &quot;previous&quot;`) or an interpolation between the intensity from the
+previous and subsequent MS1 scan is used (`method = &quot;interpolation&quot;`, which
+considers also the retention times of the two MS1 scans and the retention
+time of the MS2 spectrum)." />
 
 
 
@@ -126,73 +134,63 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>a Distance function based on matching peaks</h1>
-    
-    <div class="hidden name"><code>specDist.meanMZmatch-methods.Rd</code></div>
+    <h1>Estimate precursor intensity for MS level 2 spectra</h1>
+    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/functions-OnDiskMSnExp.R'><code>R/functions-OnDiskMSnExp.R</code></a></small>
+    <div class="hidden name"><code>estimatePrecursorIntensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This method calculates the distance of two sets of peaks.</p>
+    <p>`estimatePrecursorIntensity` determines the precursor intensity for a MS 2
+spectrum based on the intensity of the respective signal from the
+neighboring MS 1 spectra (i.e. based on the peak with the m/z matching the
+precursor m/z of the MS 2 spectrum). Based on parameter `method` either the
+intensity of the peak from the previous MS 1 scan is used
+(`method = "previous"`) or an interpolation between the intensity from the
+previous and subsequent MS1 scan is used (`method = "interpolation"`, which
+considers also the retention times of the two MS1 scans and the retention
+time of the MS2 spectrum).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/specDist.meanMZmatch-methods.html'>specDist.meanMZmatch</a></span>(<span class='kw'>peakTable1</span>, <span class='kw'>peakTable2</span>, matchdist=<span class='fl'>1</span>, matchrate=<span class='fl'>1</span>,
-                     mzabs=<span class='fl'>0.001</span>, mzppm=<span class='fl'>10</span>, symmetric=<span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/estimatePrecursorIntensity.html'>estimatePrecursorIntensity</a></span>(
+  <span class='kw'>x</span>,
+  ppm = <span class='fl'>10</span>,
+  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"previous"</span>, <span class='st'>"interpolation"</span>),
+  BPPARAM = <span class='fu'>bpparam</span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>peakTable1</th>
-      <td><p>a Matrix containing at least m/z-values,
-	row must be called "mz"</p></td>
+      <th>x</th>
+      <td><p>`OnDiskMSnExp` or `XCMSnExp` object.</p></td>
     </tr>
     <tr>
-      <th>peakTable2</th>
-      <td><p>the matrix for the other mz-values</p></td>
+      <th>ppm</th>
+      <td><p>`numeric(1)` defining the maximal acceptable difference (in ppm)
+of the precursor m/z and the m/z of the corresponding peak in the MS 1
+scan.</p></td>
     </tr>
     <tr>
-      <th>mzabs</th>
-      <td><p>maximum absolute deviation for two matching peaks</p></td>
+      <th>method</th>
+      <td><p>`character(1)` defining the method how the precursor intensity
+should be determined (see description above for details). Defaults to
+`method = "previous"`.</p></td>
     </tr>
     <tr>
-      <th>mzppm</th>
-      <td><p>relative deviations in ppm for two matching peaks</p></td>
-    </tr>
-    <tr>
-      <th>symmetric</th>
-      <td><p>use symmetric pairwise m/z-matches only, or each match</p></td>
-    </tr>
-    <tr>
-      <th>matchdist</th>
-      <td><p>the weight for value one (see details)</p></td>
-    </tr>
-    <tr>
-      <th>matchrate</th>
-      <td><p>the weight for value two</p></td>
+      <th>BPPARAM</th>
+      <td><p>parallel processing setup. See [bppara()] for details.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-<dl>
-<dt>peakTable1 = "matrix", peakTable2 = "matrix"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/specDist.meanMZmatch-methods.html'>
-    specDist.meanMZmatch(peakTable1, peakTable2,
-    matchdist=1, matchrate=1,
-    mzabs=0.001, mzppm=10, symmetric=TRUE)
-    </a></code></p></dd>
-
-</dl>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The result of the calculation is a weighted sum of two values.
-Value one is the mean absolute difference of the matching peaks,
-value two is the relation of matching peaks and non matching peaks.
-if no distance is calculated (for example because no matching peaks
-were found) the return-value is NA.</p>
+    <p>`numeric` with length equal to the number of spectra in `x`. `NA` is
+    returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
+    found for an MS 2 spectrum</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Joachim Kutzera, <a href='mailto:jkutzer@ipb-halle.de'>jkutzer@ipb-halle.de</a></p>
+    <p>Johannes Rainer</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
