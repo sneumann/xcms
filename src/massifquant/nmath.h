@@ -74,7 +74,7 @@ void R_CheckUserInterrupt(void);
 #include <libintl.h>
 #define _(String) gettext (String)
 #else
-#define _(String) (String)
+#define _(String) (char *)(String)
 #endif
 
 #else

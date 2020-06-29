@@ -1,4 +1,4 @@
-[![R-CMD-check](https://github.com/sneumann/xcms/workflows/R-CMD-check/badge.svg)](https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check)
+[![R-CMD-check-bioc](https://github.com/sneumann/xcms/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check-bioc)
 [![codecov.io](https://codecov.io/github/sneumann/xcms/coverage.svg?branch=master)](https://codecov.io/github/sneumann/xcms?branch=master)
 [![Years in Bioconductor](http://www.bioconductor.org/shields/years-in-bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
 [![Bioconductor release build status](http://www.bioconductor.org/shields/build/release/bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
