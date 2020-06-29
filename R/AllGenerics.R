@@ -82,8 +82,6 @@ setGeneric("extraPeaks", function(object, ...)
     standardGeneric("extraPeaks"))
 setGeneric("extraPeaks<-", function(object, value)
     standardGeneric("extraPeaks<-"))
-setGeneric("extractChromatograms", function(object, ...)
-    standardGeneric("extractChromatograms"))
 setGeneric("extractMsData", function(object, ...)
     standardGeneric("extractMsData"))
 

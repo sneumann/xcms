@@ -573,11 +573,15 @@ xchrs <- XChromatograms(dta, nrow = 1)
 
 hasChromPeaks(xchrs)
 
-## Load test files and extract chromatograms for a data slice
-od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-    system.file("cdf/KO/ko16.CDF", package = "faahKO"),
-    system.file("cdf/KO/ko18.CDF", package = "faahKO")),
-    mode = "onDisk")
+## Loading a test data set with identified chromatographic peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Subset the dataset to the first and third file.
+xod_sub <- filterFile(faahko_sub, file = c(1, 3))
+
+od <- as(xod_sub, "OnDiskMSnExp")
 
 ## Extract chromatograms for a m/z - retention time slice
 chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
@@ -619,7 +623,7 @@ plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
 ##       Correspondence analysis                       ##
 ## --------------------------------------------------- ##
 ## Group chromatographic peaks across samples
-prm <- PeakDensityParam(sampleGroup = rep(1, 3))
+prm <- PeakDensityParam(sampleGroup = rep(1, 2))
 res <- groupChromPeaks(xchrs, param = prm)
 
 hasFeatures(res)

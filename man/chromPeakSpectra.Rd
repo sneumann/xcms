@@ -74,6 +74,9 @@ See also the \emph{LC-MS/MS data analysis} vignette for more details and example
 fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
 dda <- readMSData(fl, mode = "onDisk")
 
+## Subset the object to reduce runtime of the example
+dda <- filterRt(dda, c(200, 400))
+
 ## Perform MS1 peak detection
 dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
 ms2_sps <- chromPeakSpectra(dda)

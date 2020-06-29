@@ -85,7 +85,6 @@ export(
     "xcmsRaw",
     "xcmsSet",
     "xcmsFragments",
-    "xcmsPapply",
     "phenoDataFromPaths"
 )
 
@@ -230,7 +229,6 @@ export(
     "processHistoryTypes",
     "adjustRtimePeakGroups",
     "plotAdjustedRtime",
-    "plotChromatogram",
     "highlightChromPeaks",
     "plotChromPeaks",
     "plotChromPeakImage",
@@ -503,7 +501,6 @@ exportMethods("hasChromPeaks",
               "rtime",
               "mz",
               "intensity",
-              "extractChromatograms",
               "fillChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",

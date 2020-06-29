@@ -198,111 +198,6 @@ dropGenericProcessHistory <- function(x, fun) {
     return(res)
 }
 
-
-## #' @description Integrates the intensities for chromatograpic peak(s). This is
-## #'     supposed to be called by the fillChromPeaks method.
-## #'
-## #' @note This reads the full data first and does the subsetting later in R.
-## #'
-## #' @param object An \code{XCMSnExp} object representing a single sample.
-## #'
-## #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-## #'     \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
-## #'
-## #' @noRd
-## .getPeakInt2 <- function(object, peakArea) {
-##     if (length(fileNames(object)) != 1)
-##         stop("'object' should be an XCMSnExp for a single file!")
-##     res <- numeric(nrow(peakArea))
-##     spctr <- spectra(object, BPPARAM = SerialParam())
-##     mzs <- lapply(spctr, mz)
-##     valsPerSpect <- lengths(mzs)
-##     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
-##     rm(spctr)
-##     mzs <- unlist(mzs, use.names = FALSE)
-##     rtim <- rtime(object)
-##     for (i in 1:length(res)) {
-##         rtr <- peakArea[i, c("rtmin", "rtmax")]
-##         mtx <- .rawMat(mz = mzs, int = ints, scantime = rtim,
-##                        valsPerSpect = valsPerSpect, rtrange = rtr,
-##                        mzrange = peakArea[i, c("mzmin", "mzmax")])
-##         if (length(mtx)) {
-##             if (!all(is.na(mtx[, 3]))) {
-##                 ## How to calculate the area: (1)sum of all intensities / (2)by
-##                 ## the number of data points (REAL ones, considering also NAs)
-##                 ## and multiplied with the (3)rt width.
-##                 ## (1) sum(mtx[, 3], na.rm = TRUE)
-##                 ## (2) sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1 ; if we used
-##                 ## nrow(mtx) here, which would correspond to the non-NA
-##                 ## intensities within the rt range we don't get the same results
-##                 ## as e.g. centWave.
-##                 ## (3) rtr[2] - rtr[1]
-##                 res[i] <- sum(mtx[, 3], na.rm = TRUE) *
-##                     ((rtr[2] - rtr[1]) /
-##                      (sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1))
-##             } else {
-##                 res[i] <- NA_real_
-##             }
-##         } else {
-##             res[i] <- NA_real_
-##         }
-##     }
-##     return(unname(res))
-## }
-
-## #' @description Integrates the intensities for chromatograpic peak(s). This is
-## #'     supposed to be called by the fillChromPeaks method.
-## #'
-## #' @note This reads the full data first and does the subsetting later in R. This
-## #'     function uses the C getEIC function.
-## #'
-## #' @param object An \code{XCMSnExp} object representing a single sample.
-## #'
-## #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-## #'     \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
-## #'
-## #' @noRd
-## .getPeakInt3 <- function(object, peakArea) {
-##     if (length(fileNames(object)) != 1)
-##         stop("'object' should be an XCMSnExp for a single file!")
-##     if (nrow(peakArea) == 0) {
-##         return(numeric())
-##     }
-##     res <- matrix(ncol = 4, nrow = nrow(peakArea))
-##     res <- numeric(nrow(peakArea))
-##     spctr <- spectra(object, BPPARAM = SerialParam())
-##     mzs <- lapply(spctr, mz)
-##     valsPerSpect <- lengths(mzs)
-##     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Index vector for C calls
-##     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
-##     rm(spctr)
-##     mzs <- unlist(mzs, use.names = FALSE)
-##     rtim <- rtime(object)
-##     for (i in 1:length(res)) {
-##         rtr <- peakArea[i, c("rtmin", "rtmax")]
-##         sr <- c(min(which(rtim >= rtr[1])), max(which(rtim <= rtr[2])))
-##         eic <- .Call("getEIC", mzs, ints, scanindex,
-##                      as.double(peakArea[i, c("mzmin", "mzmax")]),
-##                      as.integer(sr), as.integer(length(scanindex)),
-##                      PACKAGE = "xcms")
-##         if (length(eic$intensity)) {
-##             ## How to calculate the area: (1)sum of all intensities / (2)by
-##             ## the number of data points (REAL ones, considering also NAs)
-##             ## and multiplied with the (3)rt width.
-##             if (!all(is.na(eic$intensity)) && !all(eic$intensity == 0)) {
-##                 res[i] <- sum(eic$intensity, na.rm = TRUE) *
-##                     ((rtr[2] - rtr[1]) / (length(eic$intensity) - 1))
-##             } else {
-##                 res[i] <- NA_real_
-##             }
-##         } else {
-##             res[i] <- NA_real_
-##         }
-##     }
-##     return(unname(res))
-## }
-
-
 #' @description
 #'
 #' Integrates the intensities for chromatograpic peak(s). This is
@@ -775,13 +670,8 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' fgp <- PeakGroupsParam(minFraction = 1)
 #' res <- adjustRtime(res, param = fgp)
 #'
-#' ## Visualize the impact of the alignment. We show both versions of the plot,
-#' ## with the raw retention times on the x-axis (top) and with the adjusted
-#' ## retention times (bottom).
-#' par(mfrow = c(2, 1))
+#' ## Visualize the impact of the alignment.
 #' plotAdjustedRtime(res, adjusted = FALSE)
-#' grid()
-#' plotAdjustedRtime(res)
 #' grid()
 plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
                               type = "l", adjustedRtime = TRUE,
@@ -1976,6 +1866,9 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #' fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
 #' dda <- readMSData(fl, mode = "onDisk")
 #'
+#' ## Subset the object to reduce runtime of the example
+#' dda <- filterRt(dda, c(200, 400))
+#'
 #' ## Perform MS1 peak detection
 #' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
 #' ms2_sps <- chromPeakSpectra(dda)
@@ -2194,7 +2087,7 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Subset the object to a smaller retention time range
-#' xdata <- faahko_sub
+#' xdata <- filterRt(faahko_sub, c(2500, 3500))
 #'
 #' xdata <- groupChromPeaks(xdata,
 #'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
@@ -2207,7 +2100,6 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' chrs <- featureChromatograms(xdata, features = 1:3)
 #'
 #' ## Plot the XIC for the first feature using different colors for each file
-#' par(mfrow = c(1, 2))
 #' plot(chrs[1, ], col = c("red", "green", "blue"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
                                  features,

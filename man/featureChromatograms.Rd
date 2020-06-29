@@ -86,7 +86,7 @@ data(faahko_sub)
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Subset the object to a smaller retention time range
-xdata <- faahko_sub
+xdata <- filterRt(faahko_sub, c(2500, 3500))
 
 xdata <- groupChromPeaks(xdata,
     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
@@ -99,7 +99,6 @@ featureDefinitions(xdata)
 chrs <- featureChromatograms(xdata, features = 1:3)
 
 ## Plot the XIC for the first feature using different colors for each file
-par(mfrow = c(1, 2))
 plot(chrs[1, ], col = c("red", "green", "blue"))
 }
 \seealso{

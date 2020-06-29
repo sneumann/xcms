@@ -3640,15 +3640,6 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #' plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
 #'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 #'
-#' ## Use a larger bandwidth
-#' plotChromPeakDensity(faahko_sub, mz = mzr, param = PeakDensityParam(bw = 60,
-#'     sampleGroups = rep(1, length(fileNames(faahko_sub)))), pch = 16)
-#' ## Neighboring peaks are now fused into one.
-#'
-#' ## Require the chromatographic peak to be present in all samples of a group
-#' plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
-#'     param = PeakDensityParam(minFraction = 1,
-#'     sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 setMethod("plotChromPeakDensity", "XCMSnExp", .plotChromPeakDensity)
 
 setMethod("updateObject", "XCMSnExp", function(object) {

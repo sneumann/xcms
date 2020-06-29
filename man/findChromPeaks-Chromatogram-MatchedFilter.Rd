@@ -31,8 +31,14 @@ on purely chromatographic data.
 }
 \examples{
 
-od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-    mode = "onDisk")
+## Loading a test data set with identified chromatographic peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+faahko_sub <- filterRt(faahko_sub, c(2500, 3700))
+
+##
+od <- as(filterFile(faahko_sub, 1L), "OnDiskMSnExp")
 
 ## Extract chromatographic data for a small m/z range
 chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
@@ -41,12 +47,6 @@ chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
 xchr <- findChromPeaks(chr, MatchedFilterParam())
 
 ## Plot the identified peaks
-plot(xchr)
-
-## Modify the settings
-mfp <- MatchedFilterParam(fwhm = 60)
-xchr <- findChromPeaks(chr, mfp)
-
 plot(xchr)
 }
 \seealso{
