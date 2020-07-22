@@ -384,14 +384,17 @@ chromPeakData(xdata)
 Peak detection will not always work perfectly leading to peak detection
 artifacts, such as overlapping peaks or artificially split peaks. The
 `refineChromPeaks` function allows to *refine* peak detection results by either
-or removing identified peaks exceeding a maximal allower rt width or by merging
-artificially split chromatographic peaks. For the former a `CleanPeaksParam`
-parameter object can be submitted to the function while the latter can be
-configured with the `MergeNeighboringPeaksParam` object. Below we post-process
-the peak detection results merging peaks overlapping in a 4 second window per
-file if the signal between in between them is lower than 75% of the smaller
-peak's maximal intensity. See the `MergeNeighboringPeaksParam` help page for a
-detailed description of the settings and the approach.
+removing identified peaks not passing a certain criteria or by merging
+artificially split chromatographic peaks. With parameter objects
+`CleanPeaksParam` and `FilterIntensityParam` it is possible to remove peaks with
+a retention time range or intensities below a threshold, respectively (see their
+respective help pages for more details and examples). With
+`MergeNeighboringPeaksParam` it is possible to merge chromatographic
+peaks. Below we post-process the peak detection results merging peaks
+overlapping in a 4 second window per file if the signal between in between them
+is lower than 75% of the smaller peak's maximal intensity. See the
+`MergeNeighboringPeaksParam` help page for a detailed description of the
+settings and the approach.
 
 ```{r peak-postprocessing, message = FALSE}
 mpp <- MergeNeighboringPeaksParam(expandRt = 4)

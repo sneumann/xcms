@@ -2873,3 +2873,36 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     }
     cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
 }
+
+#' @param x `XCMSnExp` object of a single file.
+#'
+#' @param nValues `integer(1)` defining the number of values that have to be above
+#'     threshold.
+#'
+#' @param threshold `numeric(1)` with the threshold value.
+#'
+#' @param msLevel `integer(1)` with the MS level.
+#'
+#' @return `integer` with the index of the peaks that should be retained.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.chrom_peaks_above_threshold <- function(x, nValues = 1L, threshold = 0,
+                                         msLevel = 1L) {
+    if (length(msLevel) > 1)
+        stop("Currently only filtering of a single MS level at a ",
+             "time is supported")
+    x <- applyAdjustedRtime(x)
+    chrs <- chromatogram(
+        filterMsLevel(as(x, "OnDiskMSnExp"), msLevel = msLevel),
+        rt = chromPeaks(x, msLevel = msLevel)[, c("rtmin", "rtmax")],
+        mz = chromPeaks(x, msLevel = msLevel)[, c("mzmin", "mzmax")],
+        msLevel = msLevel)
+    keep <- vapply(chrs@.Data, function(z) {
+        sum(z@intensity >= threshold, na.rm = TRUE) >= nValues
+    }, logical(1))
+    keep_all <- rep(TRUE, nrow(chromPeaks(x)))
+    keep_all[chromPeakData(x)$ms_level == msLevel] <- keep
+    keep_all
+}

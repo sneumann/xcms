@@ -941,3 +941,26 @@ test_that("ChromPeakAreaParam works", {
     res <- ChromPeakAreaParam(mzmin = median)
     expect_true(validObject(res))
 })
+
+test_that("FilterIntensityParam works", {
+    res <- FilterIntensityParam()
+    expect_true(is(res, "FilterIntensityParam"))
+    res <- FilterIntensityParam(threshold = 100)
+    expect_equal(res@threshold, 100)
+    expect_equal(res@nValues, 1)
+    expect_equal(res@value, "maxo")
+
+    res <- new("FilterIntensityParam")
+    res@nValues <- 0L
+    expect_error(validObject(res), "positive number")
+    res@nValues <- c(1L, 1L)
+    expect_error(validObject(res), "positive number")
+    res@nValues <- 1L
+    res@value <- c("a", "b")
+    expect_error(validObject(res), "length 1")
+    res@value <- "b"
+    res@threshold <- -10
+    expect_error(validObject(res), "length 1")
+    res@threshold <- c(10, 20)
+    expect_error(validObject(res), "length 1")
+})

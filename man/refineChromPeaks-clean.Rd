@@ -53,6 +53,7 @@ quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 }
 \seealso{
 Other chromatographic peak refinement methods: 
+\code{\link{FilterIntensityParam}},
 \code{\link{MergeNeighboringPeaksParam}}
 }
 \author{
