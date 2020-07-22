@@ -211,7 +211,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
     <code>MassSpecWavelet</code> package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></span>(
+    <pre class="usage"><span class='fu'>MSWParam</span>(
   snthresh = <span class='fl'>3</span>,
   verboseColumns = <span class='fl'>FALSE</span>,
   scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>2</span>, <span class='fl'>30</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>32</span>, <span class='fl'>64</span>, <span class='fl'>4</span>)),
@@ -226,7 +226,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
 )
 
 <span class='co'># S4 method for OnDiskMSnExp,MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
   <span class='kw'>object</span>,
   <span class='kw'>param</span>,
   BPPARAM = <span class='fu'>bpparam</span>(),
@@ -238,70 +238,70 @@ addParams,addParams&amp;lt;-: getter and setter for the
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>scales</a></span>(<span class='kw'>object</span>)
+<span class='fu'>scales</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>scales</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>scales</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>nearbyPeak</a></span>(<span class='kw'>object</span>)
+<span class='fu'>nearbyPeak</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>nearbyPeak</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>nearbyPeak</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>peakScaleRange</a></span>(<span class='kw'>object</span>)
+<span class='fu'>peakScaleRange</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>peakScaleRange</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakScaleRange</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>ampTh</a></span>(<span class='kw'>object</span>)
+<span class='fu'>ampTh</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>ampTh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>ampTh</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>minNoiseLevel</a></span>(<span class='kw'>object</span>)
+<span class='fu'>minNoiseLevel</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>minNoiseLevel</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>minNoiseLevel</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>ridgeLength</a></span>(<span class='kw'>object</span>)
+<span class='fu'>ridgeLength</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>ridgeLength</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>ridgeLength</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>peakThr</a></span>(<span class='kw'>object</span>)
+<span class='fu'>peakThr</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>peakThr</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakThr</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>tuneIn</a></span>(<span class='kw'>object</span>)
+<span class='fu'>tuneIn</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>tuneIn</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>tuneIn</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>addParams</a></span>(<span class='kw'>object</span>)
+<span class='fu'>addParams</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>addParams</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>addParams</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -407,10 +407,10 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     class instance with all of the settings specified for peak detection by
     the <em>MSW</em> method.</p>
 <p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
+    <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
-    If <code>return.type = "xcmsSet"</code> an <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code> object
+    If <code>return.type = "xcmsSet"</code> an <code><a href='xcmsSet-class.html'>xcmsSet</a></code> object
     with the results of the detection.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -438,22 +438,22 @@ setter methods listed above.</p></dd>
 
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
-    <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code> methods. It supports peak detection on
+    <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports peak detection on
     <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
     objects (defined in the <code>MSnbase</code> package). All of the settings
     to the algorithm can be passed with a <code>MSWParam</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a></code> core API function
-    and <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.MSW-xcmsRaw-method.html'>findPeaks.MSW</a></code> for the old user interface.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+    <div class='dont-index'><p>The <code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a></code> core API function
+    and <code><a href='findPeaks.MSW,xcmsRaw-method.html'>findPeaks.MSW</a></code> for the old user interface.</p>
+<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the peak detection.</p>
 <p>Other peak detection methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code></p></div>
+<code><a href='chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
+<code><a href='findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
+<code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
+<code><a href='findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
+<code><a href='findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Joachim Kutzera, Steffen Neumann, Johannes Rainer</p>
@@ -461,9 +461,9 @@ setter methods listed above.</p></dd>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a MSWParam object</span>
-<span class='kw'>mp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></span>()
+<span class='kw'>mp</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span>()
 <span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mp</span>) <span class='op'>&lt;-</span> <span class='fl'>15</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mp</span>) <span class='op'>&lt;-</span> <span class='fl'>15</span>
 <span class='kw'>mp</span></div><div class='output co'>#&gt; Object of class:  MSWParam 
 #&gt; Parameters:
 #&gt;  snthresh: 15 
@@ -483,11 +483,11 @@ setter methods listed above.</p></dd>
 <span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fticrf</span>[<span class='fl'>1</span>], msLevel. = <span class='fl'>1</span>, mode = <span class='st'>"onDisk"</span>)
 
 <span class='co'>## Perform the MSW peak detection on these:</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>MSWParam</a></span>(scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), peakThr = <span class='fl'>80000</span>, ampTh = <span class='fl'>0.005</span>,
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span>(scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), peakThr = <span class='fl'>80000</span>, ampTh = <span class='fl'>0.005</span>,
              SNR.method = <span class='st'>"data.mean"</span>, winSize.noise = <span class='fl'>500</span>)
-<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>fticr</span>, param = <span class='kw'>p</span>)
+<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>fticr</span>, param = <span class='kw'>p</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>fticr</span>))</div><div class='output co'>#&gt;            mz    mzmin    mzmax rt rtmin rtmax    into     maxo        sn intf
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>fticr</span>))</div><div class='output co'>#&gt;            mz    mzmin    mzmax rt rtmin rtmax    into     maxo        sn intf
 #&gt; CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.975342   NA
 #&gt; CP02 409.1845 409.1755 409.1936 -1    -1    -1 4158404 310572.1 20.597978   NA
 #&gt; CP03 413.2677 413.2585 413.2769 -1    -1    -1 6099006 435462.6 27.217229   NA

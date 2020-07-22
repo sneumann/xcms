@@ -144,7 +144,7 @@ peak definitions to an existing plot, such as one created by the
 <code><a href='https://rdrr.io/pkg/MSnbase/man/MChromatograms-class.html'>MChromatograms</a></code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(
+    <pre class="usage"><span class='fu'>highlightChromPeaks</span>(
   <span class='kw'>x</span>,
   <span class='kw'>rt</span>,
   <span class='kw'>mz</span>,
@@ -217,7 +217,7 @@ one of <code>"any"</code>, <code>"within"</code>, and <code>"apex_within"</code>
 peaks that are even partially overlapping the region, peaks that are
 completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the <code>type</code> argument of the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></code> function. See related documentation for more
+<code><a href='XCMSnExp-class.html'>chromPeaks</a></code> function. See related documentation for more
 information and examples.</p></td>
     </tr>
     <tr>
@@ -236,20 +236,20 @@ function.</p></td>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
+<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
 
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chrs</span>)</div><div class='input'>
 <span class='co'>## Extract chromatographic peaks for the mz/rt range (if any).</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
 #&gt; CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</div><div class='input'>
 <span class='co'>## Highlight the chromatographic peaks in the area</span>
 <span class='co'>## Show the peak definition with a rectangle</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='input'>
+<span class='fu'>highlightChromPeaks</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)</div><div class='input'>
 <span class='co'>## Color the actual peak</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>,
+<span class='fu'>highlightChromPeaks</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>,
     col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span>), type = <span class='st'>"polygon"</span>)</div><div class='img'><img src='highlightChromPeaks-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

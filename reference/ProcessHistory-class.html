@@ -154,7 +154,7 @@ The fileIndex extracts the indices of the files on which
     <p>Objects of the type <code>ProcessHistory</code> allow to keep track
     of any data processing step in an metabolomics experiment. They are
     created by the data processing methods, such as
-    <code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></code> and added to the corresponding results
+    <code><a href='chromatographic-peak-detection.html'>findChromPeaks</a></code> and added to the corresponding results
     objects. Thus, usually, users don't need to create them.</p>
 <p>The <code>XProcessHistory</code> extends the <code>ProcessHistory</code> by
     adding a slot <code>param</code> that allows to store the actual parameter
@@ -180,22 +180,22 @@ The fileIndex extracts the indices of the files on which
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XProcessHistory</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>processParam</a></span>(<span class='kw'>object</span>)
+<span class='fu'>processParam</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XProcessHistory</span>
 <span class='fu'>msLevel</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ProcessHistory</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>processType</a></span>(<span class='kw'>object</span>)
+<span class='fu'>processType</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ProcessHistory</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>processDate</a></span>(<span class='kw'>object</span>)
+<span class='fu'>processDate</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ProcessHistory</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>processInfo</a></span>(<span class='kw'>object</span>)
+<span class='fu'>processInfo</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ProcessHistory</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/ProcessHistory-class.html'>fileIndex</a></span>(<span class='kw'>object</span>)</pre>
+<span class='fu'>fileIndex</span>(<span class='kw'>object</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -225,7 +225,7 @@ The fileIndex extracts the indices of the files on which
 <dl>
 <dt><code>type</code></dt><dd><p>character(1): string defining the type of the processing step.
 This string has to match predefined values. Use
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistoryTypes</a></code> to list them.</p></dd>
+<code><a href='XCMSnExp-class.html'>processHistoryTypes</a></code> to list them.</p></dd>
 
 <dt><code>date</code></dt><dd><p>character(1): date time stamp when the processing step was started.</p></dd>
 
@@ -237,7 +237,7 @@ samples of the object the processing was performed.</p></dd>
 <dt><code>error</code></dt><dd><p>(ANY): used to store eventual calculation errors.</p></dd>
 
 <dt><code>param</code></dt><dd><p>(Param): an object of type <code>Param</code> (e.g.
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></code>) specifying the settings of the processing
+<code><a href='findChromPeaks-centWave.html'>CentWaveParam</a></code>) specifying the settings of the processing
 step.</p></dd>
 
 <dt><code>msLevel:</code></dt><dd><p><code>integer</code> definining the MS level(s) on which the

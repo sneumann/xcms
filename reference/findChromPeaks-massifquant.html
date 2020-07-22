@@ -181,7 +181,7 @@ withWave,withWave&amp;lt;-: getter and
     <p>Massifquant is a Kalman filter (KF)-based chromatographic peak
     detection for XC-MS data in centroid mode. The identified peaks
     can be further refined with the <em>centWave</em> method (see
-    <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code> for details on centWave)
+    <code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code> for details on centWave)
     by specifying <code>withWave = TRUE</code>.</p>
 <p>The <code>MassifquantParam</code> class allows to specify all
     settings for a chromatographic peak detection using the massifquant
@@ -227,7 +227,7 @@ withWave,withWave&amp;lt;-: getter and
     setter for the <code>withWave</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>MassifquantParam</a></span>(
+    <pre class="usage"><span class='fu'>MassifquantParam</span>(
   ppm = <span class='fl'>25</span>,
   peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
   snthresh = <span class='fl'>10</span>,
@@ -246,7 +246,7 @@ withWave,withWave&amp;lt;-: getter and
 )
 
 <span class='co'># S4 method for OnDiskMSnExp,MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
   <span class='kw'>object</span>,
   <span class='kw'>param</span>,
   BPPARAM = <span class='fu'>bpparam</span>(),
@@ -258,34 +258,34 @@ withWave,withWave&amp;lt;-: getter and
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>peakwidth</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>peakwidth</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>peakwidth</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>peakwidth</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzCenterFun</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>mzCenterFun</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzCenterFun</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>mzCenterFun</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/integrate.html'>integrate</a></span>(<span class='kw'>f</span>)
@@ -294,58 +294,58 @@ withWave,withWave&amp;lt;-: getter and
 <span class='fu'><a href='https://rdrr.io/r/stats/integrate.html'>integrate</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>mzdiff</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>fitgauss</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>fitgauss</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>fitgauss</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>fitgauss</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>noise</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>noise</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>noise</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>noise</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>criticalValue</a></span>(<span class='kw'>object</span>)
+<span class='fu'>criticalValue</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>criticalValue</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>criticalValue</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>consecMissedLimit</a></span>(<span class='kw'>object</span>)
+<span class='fu'>consecMissedLimit</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>consecMissedLimit</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>consecMissedLimit</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>unions</a></span>(<span class='kw'>object</span>)
+<span class='fu'>unions</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>unions</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>unions</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>checkBack</a></span>(<span class='kw'>object</span>)
+<span class='fu'>checkBack</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>checkBack</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>checkBack</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>withWave</a></span>(<span class='kw'>object</span>)
+<span class='fu'>withWave</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>withWave</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>withWave</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -362,7 +362,7 @@ definition.</p></td>
 massifquant, which specifices the minimum peak length in time scans.
 For <code>withWave = TRUE</code> the second argument represents the maximum
 peak length subject to being greater than the mininum peak length
-(see also documentation of <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code>).</p></td>
+(see also documentation of <code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code>).</p></td>
     </tr>
     <tr>
       <th>snthresh</th>
@@ -371,7 +371,7 @@ peak length subject to being greater than the mininum peak length
     <tr>
       <th>prefilter</th>
       <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>. The first argument is only used
-if (<code>withWave = TRUE</code>); see <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>
+if (<code>withWave = TRUE</code>); see <code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>
 for details. The second argument specifies the minimum threshold for the
 maximum intensity of a chromatographic peak that must be met.</p></td>
     </tr>
@@ -519,10 +519,10 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     specified for chromatographic peak detection by the <em>massifquant</em>
     method.</p>
 <p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
+    <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
-    If <code>return.type = "xcmsSet"</code> an <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code> object
+    If <code>return.type = "xcmsSet"</code> an <code><a href='xcmsSet-class.html'>xcmsSet</a></code> object
     with the results of the peak detection.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -561,7 +561,7 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
-    <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
+    <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
     detection on
     <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the massifquant and
@@ -573,16 +573,16 @@ the version from the class. Slots values should exclusively be accessed
 detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></code> core API function
-    and <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.massifquant-methods.html'>findPeaks.massifquant</a></code> for the old user interface.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+    <div class='dont-index'><p>The <code><a href='do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></code> core API function
+    and <code><a href='findPeaks.massifquant-methods.html'>findPeaks.massifquant</a></code> for the old user interface.</p>
+<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the peak detection.</p>
 <p>Other peak detection methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
+<code><a href='chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
+<code><a href='findChromPeaks-centWaveWithPredIsoROIs.html'>findChromPeaks-centWaveWithPredIsoROIs</a></code>,
+<code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
+<code><a href='findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code>,
+<code><a href='findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Christopher Conley, Johannes Rainer</p>
@@ -590,10 +590,10 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a MassifquantParam object.</span>
-<span class='kw'>mqp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>MassifquantParam</a></span>()
+<span class='kw'>mqp</span> <span class='op'>&lt;-</span> <span class='fu'>MassifquantParam</span>()
 <span class='co'>## Change snthresh prefilter parameters</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mqp</span>) <span class='op'>&lt;-</span> <span class='fl'>30</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>mqp</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>6</span>, <span class='fl'>10000</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mqp</span>) <span class='op'>&lt;-</span> <span class='fl'>30</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span>(<span class='kw'>mqp</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>6</span>, <span class='fl'>10000</span>)
 <span class='kw'>mqp</span></div><div class='output co'>#&gt; Object of class:  MassifquantParam 
 #&gt; Parameters:
 #&gt;  ppm: 25 
@@ -619,9 +619,9 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class='kw'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>), recursive = <span class='fl'>TRUE</span>,
            full.names = <span class='fl'>TRUE</span>)
 <span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fls</span>[<span class='fl'>1</span>], mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the peak detection using the settings defined above.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>mqp</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>raw_data</span>, param = <span class='kw'>mqp</span>)</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Detecting  mass traces at 25ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 334 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax    rtmin    rtmax       rt    into   maxo sample
+#&gt; <span class='message'> Detecting  mass traces at 25ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 334 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax    rtmin    rtmax       rt    into   maxo sample
 #&gt; CP001 578.4 578.4 578.4 4103.890 4141.449 4119.540 1748295 187328      1
 #&gt; CP002 577.3 577.3 577.3 4100.760 4130.495 4114.845 3854210 457024      1
 #&gt; CP003 367.2 367.2 367.2 4099.196 4164.924 4122.670  140753  11330      1

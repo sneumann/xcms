@@ -158,13 +158,13 @@ peak(s) in the chromatographic data.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Chromatogram</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
+<span class='fu'>removeIntensity</span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
 
 <span class='co'># S4 method for MChromatograms</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
+<span class='fu'>removeIntensity</span>(<span class='kw'>object</span>, which = <span class='st'>"below_threshold"</span>, threshold = <span class='fl'>0</span>)
 
 <span class='co'># S4 method for XChromatogram</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(
+<span class='fu'>removeIntensity</span>(
   <span class='kw'>object</span>,
   which = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"below_threshold"</span>, <span class='st'>"outside_chromPeak"</span>),
   threshold = <span class='fl'>0</span>
@@ -176,8 +176,8 @@ peak(s) in the chromatographic data.</p>
     <tr>
       <th>object</th>
       <td><p>an object representing chromatographic data. Can be a
-<code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram()</a></code>, <code><a href='https://rdrr.io/pkg/MSnbase/man/MChromatograms-class.html'>MChromatograms()</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatogram()</a></code> or
-<code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatograms()</a></code> object.</p></td>
+<code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram()</a></code>, <code><a href='https://rdrr.io/pkg/MSnbase/man/MChromatograms-class.html'>MChromatograms()</a></code>, <code><a href='XChromatograms.html'>XChromatogram()</a></code> or
+<code><a href='XChromatograms.html'>XChromatograms()</a></code> object.</p></td>
     </tr>
     <tr>
       <th>which</th>
@@ -204,7 +204,7 @@ are removed (if <code>which = "below_threshold"</code>).</p></td>
     intensity = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>29</span>, <span class='fl'>50</span>, <span class='fl'>NA</span>, <span class='fl'>100</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>3</span>))
 
 <span class='co'>## Remove all intensities below 20</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/removeIntensity-Chromatogram.html'>removeIntensity</a></span>(<span class='kw'>chr</span>, threshold = <span class='fl'>20</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>removeIntensity</span>(<span class='kw'>chr</span>, threshold = <span class='fl'>20</span>)
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;  [1]  NA  29  50  NA 100  NA  NA  NA  NA  NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

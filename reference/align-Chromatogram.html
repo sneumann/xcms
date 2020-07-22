@@ -174,10 +174,10 @@ chromatograms from SWATH experiments).</p></li>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Chromatogram,Chromatogram</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)
+<span class='fu'>align</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)
 
 <span class='co'># S4 method for MChromatograms,Chromatogram</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)</pre>
+<span class='fu'>align</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -218,10 +218,10 @@ against <code>y</code>.</p>
 
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>chr1</span>, col = <span class='st'>"black"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(<span class='fu'>rtime</span>(<span class='kw'>chr2</span>), <span class='fu'>intensity</span>(<span class='kw'>chr2</span>), col = <span class='st'>"blue"</span>, type = <span class='st'>"l"</span>)</div><div class='input'>
 <span class='co'>## Align chr2 to chr1 without interpolation</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>chr2</span>, <span class='kw'>chr1</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>align</span>(<span class='kw'>chr2</span>, <span class='kw'>chr1</span>)
 <span class='fu'>rtime</span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</div><div class='input'><span class='fu'>intensity</span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;  [1] NA  5 12 15 11  5 NA NA NA NA</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>), <span class='fu'>intensity</span>(<span class='kw'>res</span>), col = <span class='st'>"#00ff0080"</span>, type = <span class='st'>"l"</span>)</div><div class='input'>
 <span class='co'>## Align chr2 to chr1 with interpolation</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/align-Chromatogram.html'>align</a></span>(<span class='kw'>chr2</span>, <span class='kw'>chr1</span>, method = <span class='st'>"approx"</span>)
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>align</span>(<span class='kw'>chr2</span>, <span class='kw'>chr1</span>, method = <span class='st'>"approx"</span>)
 <span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>), <span class='fu'>intensity</span>(<span class='kw'>res</span>), col = <span class='st'>"#ff000080"</span>, type = <span class='st'>"l"</span>)</div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topright"</span>, col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"black"</span>, <span class='st'>"blue"</span>, <span class='st'>"#00ff0080"</span>, <span class='st'>"#ff000080"</span>), lty = <span class='fl'>1</span>,
     legend = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"chr1"</span>, <span class='st'>"chr2"</span>, <span class='st'>"chr2 matchRtime"</span>, <span class='st'>"chr2 approx"</span>))</div><div class='img'><img src='align-Chromatogram-1.png' alt='' width='700' height='433' /></div><div class='input'></div></pre>

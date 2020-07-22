@@ -137,7 +137,7 @@ software (or the MetaboAnalystR R package)." />
 software (or the <code>MetaboAnalystR</code> R package).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/exportMetaboAnalyst.html'>exportMetaboAnalyst</a></span>(
+    <pre class="usage"><span class='fu'>exportMetaboAnalyst</span>(
   <span class='kw'>x</span>,
   file = <span class='kw'>NULL</span>,
   <span class='kw'>label</span>,
@@ -152,7 +152,7 @@ software (or the <code>MetaboAnalystR</code> R package).</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks grouped
+      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks grouped
 across samples.</p></td>
     </tr>
     <tr>
@@ -169,7 +169,7 @@ samples in <code>x</code> defining the group assignment of the samples.</p></td>
     <tr>
       <th>value</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the value to be returned for each
-feature. See <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for more details.</p></td>
+feature. See <code><a href='quantify,XCMSnExp-method.html'>featureValues()</a></code> for more details.</p></td>
     </tr>
     <tr>
       <th>digits</th>
@@ -182,12 +182,12 @@ used for numeric. The default <code>NULL</code> uses <code><a href='https://rdrr
       <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether row names of the resulting matrix
 should be the feature IDs (<code>groupnames = FALSE</code>; default) or IDs that
 are composed of the m/z and retention time of the features (in the
-format <code>M&lt;m/z&gt;T&lt;rt&gt;</code> (<code>groupnames = TRUE</code>). See help of the <a href='https://rdrr.io/pkg/xcms/man/groupnames-methods.html'>groupnames</a>
+format <code>M&lt;m/z&gt;T&lt;rt&gt;</code> (<code>groupnames = TRUE</code>). See help of the <a href='groupnames-methods.html'>groupnames</a>
 function for details.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional parameters to be passed to the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues()</a></code>
+      <td><p>additional parameters to be passed to the <code><a href='quantify,XCMSnExp-method.html'>featureValues()</a></code>
 function.</p></td>
     </tr>
     </table>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Remove chromatographic peaks with too large rt width — CleanPeaksParam • xcms</title>
+<title>Remove chromatographic peaks based on intensity — FilterIntensityParam • xcms</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,16 @@
 
 
 
-<meta property="og:title" content="Remove chromatographic peaks with too large rt width — CleanPeaksParam" />
-<meta property="og:description" content="Remove chromatographic peaks with a retention time range larger than the
-provided maximal acceptable width (maxPeakwidth)." />
+<meta property="og:title" content="Remove chromatographic peaks based on intensity — FilterIntensityParam" />
+<meta property="og:description" content="Remove chromatographic peaks with intensities below the specified threshold.
+By default, with nValues = 1, all peaks with an intensity
+&amp;gt;= threshold are retained. Parameter value allows to specify the column of
+the chromPeaks() matrix that should be used for the filtering (defaults to
+value = &quot;maxo&quot; and thus evaluating the maximal intensity for each peak).
+With nValues &amp;gt; 1 it is possible to keep only peaks that have nValues
+intensities &amp;gt;= threshold. Note that this requires data import from the
+original MS files and run time of the call can thus be significantly larger.
+Also, for nValues &amp;gt; 1 parameter value is ignored." />
 
 
 
@@ -127,28 +134,51 @@ provided maximal acceptable width (maxPeakwidth)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Remove chromatographic peaks with too large rt width</h1>
+    <h1>Remove chromatographic peaks based on intensity</h1>
     <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/functions-Params.R'><code>R/functions-Params.R</code></a>, <a href='https://github.com/sneumann/xcms/blob/master/R/methods-XCMSnExp.R'><code>R/methods-XCMSnExp.R</code></a></small>
-    <div class="hidden name"><code>refineChromPeaks-clean.Rd</code></div>
+    <div class="hidden name"><code>refineChromPeaks-filter-intensity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Remove chromatographic peaks with a retention time range larger than the
-provided maximal acceptable width (<code>maxPeakwidth</code>).</p>
+    <p>Remove chromatographic peaks with intensities below the specified threshold.
+By default, with <code>nValues = 1</code>, all peaks with an intensity
+<code>&gt;= threshold</code> are retained. Parameter <code>value</code> allows to specify the column of
+the <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> matrix that should be used for the filtering (defaults to
+<code>value = "maxo"</code> and thus evaluating the maximal intensity for each peak).
+With <code>nValues &gt; 1</code> it is possible to keep only peaks that have <code>nValues</code>
+intensities <code>&gt;= threshold</code>. Note that this requires data import from the
+original MS files and run time of the call can thus be significantly larger.
+Also, for <code>nValues &gt; 1</code> parameter <code>value</code> is ignored.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CleanPeaksParam</span>(maxPeakwidth = <span class='fl'>10</span>)
+    <pre class="usage"><span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>0</span>, nValues = <span class='fl'>1L</span>, value = <span class='st'>"maxo"</span>)
 
-<span class='co'># S4 method for XCMSnExp,CleanPeaksParam</span>
-<span class='fu'>refineChromPeaks</span>(<span class='kw'>object</span>, param = <span class='fu'>CleanPeaksParam</span>(), msLevel = <span class='fl'>1L</span>)</pre>
+<span class='co'># S4 method for XCMSnExp,FilterIntensityParam</span>
+<span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(
+  <span class='kw'>object</span>,
+  param = <span class='fu'>FilterIntensityParam</span>(),
+  msLevel = <span class='fl'>1L</span>,
+  BPPARAM = <span class='fu'>bpparam</span>()
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>maxPeakwidth</th>
-      <td><p>for <code>CleanPeaksParam</code>: <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal
-allowed peak width (in retention time).</p></td>
+      <th>threshold</th>
+      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the minimal required intensity for
+a peak to be retained. Defaults to <code>threshold = 0</code>.</p></td>
+    </tr>
+    <tr>
+      <th>nValues</th>
+      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the number of data points (per
+chromatographic peak) that have to be <code>&gt;= threshold</code>. Defaults to
+<code>nValues = 1</code>.</p></td>
+    </tr>
+    <tr>
+      <th>value</th>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the column in <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> that
+should be used for the comparison. This is ignored for <code>nValues &gt; 1</code>.</p></td>
     </tr>
     <tr>
       <th>object</th>
@@ -156,32 +186,33 @@ allowed peak width (in retention time).</p></td>
     </tr>
     <tr>
       <th>param</th>
-      <td><p><code>CleanPeaksParam</code> object defining the settings for the method.</p></td>
+      <td><p><code>FilterIntensityParam</code> object defining the settings for
+the method.</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
-      <td><p><code>integer</code> defining for which MS level(s) the chromatographic
-peaks should be cleaned.</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the MS level in which peaks should be
+filtered.</p></td>
+    </tr>
+    <tr>
+      <th>BPPARAM</th>
+      <td><p>parameter object to set up parallel processing. Uses the
+default parallel processing setup returned by <code>bpparam()</code>. See
+<code>bpparam()</code> for details and examples.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>XCMSnExp</code> object with chromatographic peaks exceeding the specified
-maximal retention time width being removed.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p><code>refineChromPeaks</code> methods will always remove feature definitions, because
-a call to this method can change or remove identified chromatographic peaks,
-which may be part of features.</p>
+    <p><code>XCMSnExp</code> object with filtererd chromatographic peaks.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other chromatographic peak refinement methods: 
-<code><a href='FilterIntensityParam.html'>FilterIntensityParam</a></code>,
+<code><a href='CleanPeaksParam.html'>CleanPeaksParam</a></code>,
 <code><a href='MergeNeighboringPeaksParam.html'>MergeNeighboringPeaksParam</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Johannes Rainer</p>
+    <p>Johannes Rainer, Mar Garcia-Aloy</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
@@ -190,13 +221,15 @@ which may be part of features.</p>
 <span class='co'>## Update the path to the files for the local system</span>
 <span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
-<span class='co'>## Distribution of chromatographic peak widths</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)[, <span class='st'>"rtmax"</span>] <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;      0%     25%     50%     75%    100% 
-#&gt;   6.259  29.734  43.819  57.903 173.710 </div><div class='input'>
-<span class='co'>## Remove all chromatographic peaks with a width larger 60 seconds</span>
-<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>refineChromPeaks</span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'>CleanPeaksParam</span>(<span class='fl'>60</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 54 of 248 chromatographic peaks.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmax"</span>] <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>data</span>)[, <span class='st'>"rtmin"</span>])</div><div class='output co'>#&gt;     0%    25%    50%    75%   100% 
-#&gt;  6.259 23.475 39.906 46.949 59.469 </div></pre>
+<span class='co'>## Remove all peaks with a maximal intensity below 50000</span>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>50000</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 93 chromatographic peaks.</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] 155</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"maxo"</span>] <span class='op'>&gt;</span> <span class='fl'>50000</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='co'>## Keep only chromatographic peaks that have 3 signals above 20000; we</span>
+<span class='co'>## perform this on the data of a single file.</span>
+<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterFile</a></span>(<span class='kw'>faahko_sub</span>)
+
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>xdata</span>, <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>20000</span>, nValues = <span class='fl'>3</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 28 chromatographic peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xdata</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] 220</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

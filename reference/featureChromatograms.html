@@ -146,7 +146,7 @@ range will be returned." />
     </div>
 
     <div class="ref-description">
-    <p>Extract ion chromatograms for features in an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object. The
+    <p>Extract ion chromatograms for features in an <a href='XCMSnExp-class.html'>XCMSnExp</a> object. The
 function returns for each feature its extracted ion chromatogram and all
 associated peaks with it. The chromatogram is extracted from the m/z - rt
 region including all chromatographic peaks of that features (i.e. based on
@@ -163,7 +163,7 @@ eventually the feature in which they are present) overlapping the m/z and rt
 range will be returned.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/featureChromatograms.html'>featureChromatograms</a></span>(
+    <pre class="usage"><span class='fu'>featureChromatograms</span>(
   <span class='kw'>x</span>,
   expandRt = <span class='fl'>0</span>,
   aggregationFun = <span class='st'>"max"</span>,
@@ -205,7 +205,7 @@ of the features in <code>featureDefinitions</code>, feature IDs (row names of
       <th>include</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining which chromatographic peaks (and
 related feature definitions) should be included in the returned
-<code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatograms()</a></code>. Defaults to <code>"feature_only"</code>; See description above
+<code><a href='XChromatograms.html'>XChromatograms()</a></code>. Defaults to <code>"feature_only"</code>; See description above
 for options and details.</p></td>
     </tr>
     <tr>
@@ -227,14 +227,14 @@ maximal peak intensity or the integrated peak area, respectively.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>optional arguments to be passed along to the <code><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram()</a></code>
+      <td><p>optional arguments to be passed along to the <code><a href='chromatogram,XCMSnExp-method.html'>chromatogram()</a></code>
 function.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://rdrr.io/pkg/xcms/man/XChromatogram.html'>XChromatograms()</a></code> object.</p>
+    <p><code><a href='XChromatograms.html'>XChromatograms()</a></code> object.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>When extracting EICs from only the top <code>n</code> samples it can happen that one
@@ -243,7 +243,7 @@ have no detected peak in the <em>top n</em> samples. The chance for this to happ
 is smaller if <code>x</code> contains also filled-in peaks (with <code>fillChromPeaks</code>).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/filter-MChromatograms.html'>filterColumnsKeepTop()</a></code> to filter the extracted EICs keeping only
+    <div class='dont-index'><p><code><a href='filterColumnsIntensityAbove,MChromatograms-method.html'>filterColumnsKeepTop()</a></code> to filter the extracted EICs keeping only
 the <em>top n</em> columns (samples) with the highest intensity.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -254,47 +254,46 @@ the <em>top n</em> columns (samples) with the highest intensity.</p></div>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset the object to a smaller retention time range</span>
-<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
+<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>faahko_sub</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3500</span>))
 
-<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>xdata</span>,
-    param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(minFraction = <span class='fl'>0.8</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>xdata</span>,
+    param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(minFraction = <span class='fl'>0.8</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2416 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Get the feature definitions</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>xdata</span>)</div><div class='output co'>#&gt; DataFrame with 21 rows and 10 columns
+<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>xdata</span>)</div><div class='output co'>#&gt; DataFrame with 11 rows and 10 columns
 #&gt;          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
 #&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; FT01     300.2     300.2     300.2   3387.14   3379.32   3390.27         4
 #&gt; FT02     301.0     301.0     301.0   2787.77   2786.20   2792.46         3
 #&gt; FT03     326.2     326.2     326.2   3416.88   3415.31   3424.70         3
-#&gt; FT04     328.2     328.2     328.2   3626.58   3618.76   3631.27         3
-#&gt; FT05     329.2     329.2     329.2   3626.58   3618.76   3631.27         3
-#&gt; ...        ...       ...       ...       ...       ...       ...       ...
-#&gt; FT17     523.2     523.2     523.2   3387.14   3344.89   3434.09         6
-#&gt; FT18     524.2     524.2     524.2   3676.66   3598.41   3704.83         4
-#&gt; FT19     525.2     525.2     525.2   3690.74   3662.57   3706.39         3
-#&gt; FT20     532.2     532.2     532.2   3482.61   3476.34   3488.86         3
-#&gt; FT21     536.2     536.2     536.2   3712.65   3703.26   3718.91         3
+#&gt; FT04     343.0     343.0     343.0   2684.48   2678.22   2686.04         3
+#&gt; FT05     344.0     344.0     344.0   2682.91   2679.78   2686.04         3
+#&gt; FT06     365.0     365.0     365.0   2684.48   2679.78   2686.04         3
+#&gt; FT07     496.2     496.2     496.2   3335.50   3316.72   3340.19         3
+#&gt; FT08     496.2     496.2     496.2   3402.79   3384.01   3410.62         3
+#&gt; FT09     522.2     522.2     522.2   3387.14   3344.89   3434.09         6
+#&gt; FT10     523.2     523.2     523.2   3387.14   3344.89   3434.09         6
+#&gt; FT11     532.2     532.2     532.2   3482.61   3476.34   3488.86         3
 #&gt;             X1         peakidx  ms_level
 #&gt;      &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
-#&gt; FT01         3  35,125,210,...         1
-#&gt; FT02         3      10, 97,198         1
-#&gt; FT03         3      37,128,213         1
-#&gt; FT04         3      64,159,231         1
-#&gt; FT05         3      63,156,230         1
-#&gt; ...        ...             ...       ...
-#&gt; FT17         3  38, 39,131,...         1
-#&gt; FT18         3  74, 75,175,...         1
-#&gt; FT19         3      72,173,238         1
-#&gt; FT20         3      49,137,219         1
-#&gt; FT21         3      73,174,237         1</div><div class='input'>
+#&gt; FT01         3  35, 91,129,...         1
+#&gt; FT02         3      10, 63,117         1
+#&gt; FT03         3      37, 94,132         1
+#&gt; FT04         3       6, 58,114         1
+#&gt; FT05         3       3, 56,112         1
+#&gt; FT06         3       7, 59,115         1
+#&gt; FT07         3      47,103,138         1
+#&gt; FT08         3      48,104,139         1
+#&gt; FT09         3  52, 53,105,...         1
+#&gt; FT10         3    38,39,97,...         1
+#&gt; FT11         3      49,102,137         1</div><div class='input'>
 <span class='co'>## Extract ion chromatograms for the first 3 features. Parameter</span>
 <span class='co'>## `features` can be either the feature IDs or feature indices.</span>
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/featureChromatograms.html'>featureChromatograms</a></span>(<span class='kw'>xdata</span>, features = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
+<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>featureChromatograms</span>(<span class='kw'>xdata</span>, features = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
 
 <span class='co'>## Plot the XIC for the first feature using different colors for each file</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(mfrow = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>))
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>chrs</span>[<span class='fl'>1</span>, ], col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"blue"</span>))</div><div class='img'><img src='featureChromatograms-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

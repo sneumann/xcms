@@ -134,10 +134,10 @@ features in x (defined by featureDefinitions())." />
 
     <div class="ref-description">
     <p>Return (MS2) spectra for all chromatographic peaks associated with the
-features in <code>x</code> (defined by <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code>).</p>
+features in <code>x</code> (defined by <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/featureSpectra.html'>featureSpectra</a></span>(
+    <pre class="usage"><span class='fu'>featureSpectra</span>(
   <span class='kw'>x</span>,
   msLevel = <span class='fl'>2</span>,
   expandRt = <span class='fl'>0</span>,
@@ -153,7 +153,7 @@ features in <code>x</code> (defined by <code><a href='https://rdrr.io/pkg/xcms/m
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with feature defitions available.</p></td>
+      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with feature defitions available.</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
@@ -187,7 +187,7 @@ MSpectra object or a simple <code>list</code>. See below for more information.</
     </tr>
     <tr>
       <th>...</th>
-      <td><p>additional arguments to be passed along to <code><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra()</a></code>,
+      <td><p>additional arguments to be passed along to <code><a href='chromPeakSpectra.html'>chromPeakSpectra()</a></code>,
 such as <code>method</code>.</p></td>
     </tr>
     </table>
@@ -212,7 +212,7 @@ feature and their retention time within the rt range of the same peak
 (<code>&gt;=</code> rtmin and <code>&lt;=</code> rtmax).</p>
 <p>The optional parameter <code>method</code> allows to ensure that for each
 chromatographic peak in one sample only one MS2 spectrum is returned.
-See <code><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra()</a></code> or the <em>LC-MS/MS analysis</em> vignette for more
+See <code><a href='chromPeakSpectra.html'>chromPeakSpectra()</a></code> or the <em>LC-MS/MS analysis</em> vignette for more
 details.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

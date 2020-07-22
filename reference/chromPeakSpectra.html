@@ -139,7 +139,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
     </div>
 
     <div class="ref-description">
-    <p>Extract (MS2) spectra from an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object that represent ions within
+    <p>Extract (MS2) spectra from an <a href='XCMSnExp-class.html'>XCMSnExp</a> object that represent ions within
 the rt and m/z range of each chromatographic peak (in the same file
 /sample in which the peak was detected). All MS2 spectra are returned for
 chromatographic peak <code>i</code> for which the precursor m/z is
@@ -149,7 +149,7 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
 <p>See also the <em>LC-MS/MS data analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></span>(
+    <pre class="usage"><span class='fu'>chromPeakSpectra</span>(
   <span class='kw'>x</span>,
   msLevel = <span class='fl'>2L</span>,
   expandRt = <span class='fl'>0</span>,
@@ -165,7 +165,7 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
+      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
@@ -216,7 +216,7 @@ MSpectra object or a simple <code>list</code>. See below for more information.</
 <li><p>For <code>return.type = "MSpectra"</code>: a MSpectra object with elements being
 Spectrum objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
-respective peak (i.e. its rowname in <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
+respective peak (i.e. its rowname in <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
 <li><p>If <code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
 0 or contain Spectrum2 object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.</p></li>
@@ -232,22 +232,25 @@ length of the list matches the number of peaks.</p></li>
 <span class='kw'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package = <span class='st'>"msdata"</span>)
 <span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='kw'>fl</span>, mode = <span class='st'>"onDisk"</span>)
 
+<span class='co'>## Subset the object to reduce runtime of the example</span>
+<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>dda</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>, <span class='fl'>400</span>))
+
 <span class='co'>## Perform MS1 peak detection</span>
-<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>dda</span>, <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>), prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1000</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 23 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 27 found.</span></div><div class='input'><span class='kw'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromPeakSpectra.html'>chromPeakSpectra</a></span>(<span class='kw'>dda</span>)
-<span class='kw'>ms2_sps</span></div><div class='output co'>#&gt; MSpectra with 93 spectra and 1 metadata column(s):
-#&gt;                   msLevel     rtime peaksCount |     peak_id
-#&gt;                 &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-#&gt;   CP01.F1.S1810         2   237.460        437 |        CP01
-#&gt;   CP01.F1.S1812         2   237.869       1489 |        CP01
-#&gt;   CP01.F1.S1842         2   240.759       2610 |        CP01
-#&gt;   CP01.F1.S1846         2   241.299       1807 |        CP01
-#&gt;   CP02.F1.S2391         2   318.444        102 |        CP02
-#&gt;             ...       ...       ...        ... .         ...
-#&gt;   CP25.F1.S4948         2   552.147        482 |        CP25
-#&gt;   CP27.F1.S5077         2   570.506         33 |        CP27
-#&gt;   CP27.F1.S5108         2   574.435       1334 |        CP27
-#&gt;   CP27.F1.S5110         2   574.725        890 |        CP27
-#&gt;   CP27.F1.S5115         2   575.255       1042 |        CP27</div><div class='input'>
+<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>dda</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>), prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1000</span>)))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 7 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 8 found.</span></div><div class='input'><span class='kw'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span>(<span class='kw'>dda</span>)
+<span class='kw'>ms2_sps</span></div><div class='output co'>#&gt; MSpectra with 25 spectra and 1 metadata column(s):
+#&gt;                  msLevel     rtime peaksCount |     peak_id
+#&gt;                &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
+#&gt;   CP1.F1.S1812         2   237.869       1489 |         CP1
+#&gt;   CP1.F1.S1842         2   240.759       2610 |         CP1
+#&gt;   CP1.F1.S1846         2   241.299       1807 |         CP1
+#&gt;   CP2.F1.S2391         2   318.444        102 |         CP2
+#&gt;   CP3.F1.S2729         2   354.271         26 |         CP3
+#&gt;            ...       ...       ...        ... .         ...
+#&gt;   CP7.F1.S3119         2   386.669        440 |         CP7
+#&gt;   CP7.F1.S3133         2   387.569        586 |         CP7
+#&gt;   CP7.F1.S3146         2   388.269        599 |         CP7
+#&gt;   CP8.F1.S2591         2   342.552        767 |         CP8
+#&gt;   CP8.F1.S2601         2   343.322        541 |         CP8</div><div class='input'>
 <span class='co'>## Metadata column `peak_id` contains the ID of the chromatographic peak</span>
 <span class='co'>## of the MS2 spectrum</span></div></pre>
   </div>

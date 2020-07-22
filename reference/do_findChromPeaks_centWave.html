@@ -139,7 +139,7 @@
     mode [Tautenhahn 2008].</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></span>(
+    <pre class="usage"><span class='fu'>do_findChromPeaks_centWave</span>(
   <span class='kw'>mz</span>,
   <span class='kw'>int</span>,
   <span class='kw'>scantime</span>,
@@ -355,12 +355,12 @@ the <code>roiList</code> parameter.</p>
     <em>BMC Bioinformatics</em> 2008, 9:504</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a></code> for the standard user interface method.</p>
+    <div class='dont-index'><p><code><a href='findChromPeaks-centWave.html'>centWave</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
+<code><a href='do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
+<code><a href='do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
+<code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
+<code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Ralf Tautenhahn, Johannes Rainer</p>
@@ -369,7 +369,7 @@ the <code>roiList</code> parameter.</p>
     <pre class="examples"><div class='input'><span class='co'>## Load the test file</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset to one file and restrict to a certain retention time range</span>
 <span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3000</span>))
@@ -384,7 +384,7 @@ the <code>roiList</code> parameter.</p>
 <span class='co'>## Calling the function. We're using a large value for noise and prefilter</span>
 <span class='co'>## to speed up the call in the example - in a real use case we would either</span>
 <span class='co'>## set the value to a reasonable value or use the default value.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_centWave</span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
     scantime = <span class='fu'>rtime</span>(<span class='kw'>data</span>), valsPerSpect = <span class='kw'>valsPerSpect</span>, noise = <span class='fl'>10000</span>,
     prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10000</span>))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 186 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 47 found.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;         mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo
 #&gt; [1,] 453.2 453.2 453.2 2506.073 2501.378 2527.982 1007409.0 1007380.8  38152

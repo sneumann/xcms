@@ -142,7 +142,7 @@ grouping based on the density (distribution) of peaks, found in different
 samples, along the retention time axis in slices of overlapping mz ranges.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(
+    <pre class="usage"><span class='fu'>do_groupChromPeaks_density</span>(
   <span class='kw'>peaks</span>,
   <span class='kw'>sampleGroups</span>,
   bw = <span class='fl'>30</span>,
@@ -245,8 +245,8 @@ Anal. Chem. 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other core peak grouping algorithms: 
-<code><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust</a>()</code></p></div>
+<code><a href='do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest</a>()</code>,
+<code><a href='do_groupPeaks_mzClust.html'>do_groupPeaks_mzClust</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin Smith, Johannes Rainer</p>
@@ -255,13 +255,13 @@ Anal. Chem. 2006, 78:779-787.</p>
     <pre class="examples"><div class='input'><span class='co'>## Load the test file</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the matrix with the identified peaks from the xcmsSet:</span>
-<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>)
 
 <span class='co'>## Perform the peak grouping with default settings:</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_groupChromPeaks_density.html'>do_groupChromPeaks_density</a></span>(<span class='kw'>pks</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_groupChromPeaks_density</span>(<span class='kw'>pks</span>, sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The feature definitions:</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;   mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks 1           peakidx
 #&gt; 1 279.0 279.0 279.0 2787.765 2787.765 2787.766      2 2           11, 199

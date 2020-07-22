@@ -195,7 +195,7 @@ data using the obiwarp method." />
 Obiwarp method [Prince 2006]. It is based on the code at
 <a href='http://obi-warp.sourceforge.net'>http://obi-warp.sourceforge.net</a> but supports alignment of multiple
 samples by aligning each against a <em>center</em> sample. The alignment is
-performed directly on the <code><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profile-matrix</a></code> and can hence be
+performed directly on the <code><a href='profMat-xcmsSet.html'>profile-matrix</a></code> and can hence be
 performed independently of the peak detection or peak grouping.</p>
 <p>It is also possible to exclude certain samples within an experiment from
 the estimation of the alignment models. The parameter <code>subset</code>
@@ -253,7 +253,7 @@ performs retention time correction/alignment based on the total mz-rt
 data using the <em>obiwarp</em> method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>ObiwarpParam</a></span>(
+    <pre class="usage"><span class='fu'>ObiwarpParam</span>(
   binSize = <span class='fl'>1</span>,
   centerSample = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
   response = <span class='fl'>1L</span>,
@@ -269,85 +269,85 @@ data using the <em>obiwarp</em> method.</p>
 )
 
 <span class='co'># S4 method for OnDiskMSnExp,ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)
+<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-matchedFilter.html'>binSize</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>centerSample</a></span>(<span class='kw'>object</span>)
+<span class='fu'>centerSample</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>centerSample</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>centerSample</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>response</a></span>(<span class='kw'>object</span>)
+<span class='fu'>response</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>response</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>response</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>distFun</a></span>(<span class='kw'>object</span>)
+<span class='fu'>distFun</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>distFun</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>distFun</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>gapInit</a></span>(<span class='kw'>object</span>)
+<span class='fu'>gapInit</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>gapInit</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>gapInit</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>gapExtend</a></span>(<span class='kw'>object</span>)
+<span class='fu'>gapExtend</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>gapExtend</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>gapExtend</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>factorDiag</a></span>(<span class='kw'>object</span>)
+<span class='fu'>factorDiag</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>factorDiag</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>factorDiag</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>factorGap</a></span>(<span class='kw'>object</span>)
+<span class='fu'>factorGap</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>factorGap</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>factorGap</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>localAlignment</a></span>(<span class='kw'>object</span>)
+<span class='fu'>localAlignment</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>localAlignment</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>localAlignment</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>initPenalty</a></span>(<span class='kw'>object</span>)
+<span class='fu'>initPenalty</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>initPenalty</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>initPenalty</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>x</span>)
+<span class='fu'><a href='adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,ObiwarpParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -356,7 +356,7 @@ data using the <em>obiwarp</em> method.</p>
       <th>binSize</th>
       <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
-parameter in <code><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profile-matrix</a></code> documentation for more details.</p></td>
+parameter in <code><a href='profMat-xcmsSet.html'>profile-matrix</a></code> documentation for more details.</p></td>
     </tr>
     <tr>
       <th>centerSample</th>
@@ -433,7 +433,7 @@ for more information.</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>For <code>adjustRtime</code>: an <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object.</p>
+      <td><p>For <code>adjustRtime</code>: an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p>
 <p>For all other methods: a <code>ObiwarpParam</code> object.</p></td>
     </tr>
     <tr>
@@ -462,11 +462,11 @@ time should be performed.</p></td>
     <code>ObiwarpParam</code> class instance with all of the settings
     specified for obiwarp retention time adjustment and alignment.</p>
 <p>For <code>adjustRtime,XCMSnExp,ObiwarpParam</code>: a
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the retention time
+<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the retention time
 adjustment step. These can be accessed with the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>adjustedRtime</a></code> method. Retention time correction does also
+<code><a href='XCMSnExp-class.html'>adjustedRtime</a></code> method. Retention time correction does also
 adjust the retention time of the identified chromatographic peaks
-(accessed <em>via</em> <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></code>. Note that retention time
+(accessed <em>via</em> <code><a href='XCMSnExp-class.html'>chromPeaks</a></code>. Note that retention time
 correction drops all previous peak grouping results from the result
 object.</p>
 <p>For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
@@ -486,7 +486,7 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface which will eventually replace the
-<code><a href='https://rdrr.io/pkg/xcms/man/retcor-methods.html'>retcor</a></code> methods. All of the settings to the alignment
+<code><a href='retcor-methods.html'>retcor</a></code> methods. All of the settings to the alignment
 algorithm can be passed with a <code>ObiwarpParam</code> object.</p>
 <p>Alignment using obiwarp is performed on the retention time of spectra
 of on MS level. Retention times for spectra of other MS levels are
@@ -505,13 +505,13 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <em>Anal. Chem.</em> 2006, 78 (17), 6140-6152.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/retcor.obiwarp-methods.html'>retcor.obiwarp</a></code> for the old user interface.
-    <code><a href='https://rdrr.io/pkg/xcms/man/plotAdjustedRtime.html'>plotAdjustedRtime</a></code> for visualization of alignment results.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+    <div class='dont-index'><p><code><a href='retcor.obiwarp.html'>retcor.obiwarp</a></code> for the old user interface.
+    <code><a href='plotAdjustedRtime.html'>plotAdjustedRtime</a></code> for visualization of alignment results.</p>
+<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the alignment.</p>
 <p>Other retention time correction methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>adjustRtime-peakGroups</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a>()</code></p></div>
+<code><a href='adjustRtime-peakGroups.html'>adjustRtime-peakGroups</a></code>,
+<code><a href='adjustRtime.html'>adjustRtime</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin Smith, Johannes Rainer</p>
@@ -521,10 +521,10 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Perform retention time correction:</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko15.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko18.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'>ObiwarpParam</span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko15.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko18.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## As a result we get a numeric vector with the adjusted retention times for</span>
 <span class='co'>## all spectra.</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")

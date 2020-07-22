@@ -139,16 +139,16 @@ on purely chromatographic data." />
 
     <div class="ref-description">
     <p><code>findChromPeaks</code> on a Chromatogram or MChromatograms object with a
-<a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> parameter object performs matchedFilter-based peak
-detection on purely chromatographic data. See <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a> for details
-on the method and <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> for details on the parameter class.
+<a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> parameter object performs matchedFilter-based peak
+detection on purely chromatographic data. See <a href='findChromPeaks-matchedFilter.html'>matchedFilter</a> for details
+on the method and <a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> for details on the parameter class.
 Note that not all settings from the <code>MatchedFilterParam</code> will be used.
-See <code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the arguments used for peak detection
+See <code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the arguments used for peak detection
 on purely chromatographic data.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Chromatogram,MatchedFilterParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,8 +159,8 @@ on purely chromatographic data.</p>
     </tr>
     <tr>
       <th>param</th>
-      <td><p>a <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> object specifying the settings for the
-peak detection. See <code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the description of
+      <td><p>a <a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a> object specifying the settings for the
+peak detection. See <code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the description of
 arguments used for peak detection.</p></td>
     </tr>
     <tr>
@@ -172,33 +172,35 @@ arguments used for peak detection.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>If called on a <code>Chromatogram</code> object, the method returns a <code>matrix</code> with
-the identified peaks. See <code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for details on the
+the identified peaks. See <code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for details on the
 matrix content.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the downstream function and
-<a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a> for details on the method.</p></div>
+    <div class='dont-index'><p><code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter()</a></code> for the downstream function and
+<a href='findChromPeaks-matchedFilter.html'>matchedFilter</a> for details on the method.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
-    mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='co'>## Loading a test data set with identified chromatographic peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='kw'>faahko_sub</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>faahko_sub</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3700</span>))
+
+<span class='co'>##</span>
+<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'>as</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1L</span>), <span class='st'>"OnDiskMSnExp"</span>)
+
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.3</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.3</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
 
 <span class='co'>## Identify peaks with default settings</span>
-<span class='kw'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chr</span>, <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>())
+<span class='kw'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chr</span>, <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>())
 
 <span class='co'>## Plot the identified peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-MatchedFilter-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## Modify the settings</span>
-<span class='kw'>mfp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(fwhm = <span class='fl'>60</span>)
-<span class='kw'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chr</span>, <span class='kw'>mfp</span>)
-
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-MatchedFilter-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-MatchedFilter-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

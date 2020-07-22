@@ -172,7 +172,7 @@ polarity,polarity&amp;lt;-: getter and
     predicted isotopes of peaks identified in the first centWave run.
     Instances should be created with the <code>CentWavePredIsoParam</code>
     constructor. See also the documentation of the
-    <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></code> for all methods and arguments this class
+    <code><a href='findChromPeaks-centWave.html'>CentWaveParam</a></code> for all methods and arguments this class
     inherits.</p>
 <p>The <code>findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam</code>
     method performs a two-step centWave-based chromatographic peak detection
@@ -193,7 +193,7 @@ polarity,polarity&amp;lt;-: getter and
     setter for the <code>polarity</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>CentWavePredIsoParam</a></span>(
+    <pre class="usage"><span class='fu'>CentWavePredIsoParam</span>(
   ppm = <span class='fl'>25</span>,
   peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
   snthresh = <span class='fl'>10</span>,
@@ -215,7 +215,7 @@ polarity,polarity&amp;lt;-: getter and
 )
 
 <span class='co'># S4 method for OnDiskMSnExp,CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></span>(
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
   <span class='kw'>object</span>,
   <span class='kw'>param</span>,
   BPPARAM = <span class='fu'>bpparam</span>(),
@@ -227,28 +227,28 @@ polarity,polarity&amp;lt;-: getter and
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>snthreshIsoROIs</a></span>(<span class='kw'>object</span>)
+<span class='fu'>snthreshIsoROIs</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>snthreshIsoROIs</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>snthreshIsoROIs</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>maxCharge</a></span>(<span class='kw'>object</span>)
+<span class='fu'>maxCharge</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>maxCharge</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>maxCharge</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>maxIso</a></span>(<span class='kw'>object</span>)
+<span class='fu'>maxIso</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>maxIso</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>maxIso</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>mzIntervalExtension</a></span>(<span class='kw'>object</span>)
+<span class='fu'>mzIntervalExtension</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>mzIntervalExtension</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>mzIntervalExtension</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
 <span class='fu'>polarity</span>(<span class='kw'>object</span>)
@@ -421,14 +421,14 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     specified for the two-step centWave-based peak detection considering also
     isotopes.</p>
 <p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
+    <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
-    If <code>return.type = "xcmsSet"</code> an <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet</a></code> object
+    If <code>return.type = "xcmsSet"</code> an <code><a href='xcmsSet-class.html'>xcmsSet</a></code> object
     with the results of the peak detection.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>See <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a></code> for details on the centWave method.</p>
+    <p>See <code><a href='findChromPeaks-centWave.html'>centWave</a></code> for details on the centWave method.</p>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
@@ -448,25 +448,25 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
-    <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
+    <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
     detection on
     <code>OnDiskMSnExp</code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the algorithm can be
     passed with a <code>CentWavePredIsoParam</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a></code> core
-    API function and <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.centWave-methods.html'>findPeaks.centWave</a></code> for the old user
-    interface. <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>CentWaveParam</a></code> for the class the
+    <div class='dont-index'><p>The <code><a href='do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a></code> core
+    API function and <code><a href='findPeaks.centWave-methods.html'>findPeaks.centWave</a></code> for the old user
+    interface. <code><a href='findChromPeaks-centWave.html'>CentWaveParam</a></code> for the class the
     <code>CentWavePredIsoParam</code> extends.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the peak detection.</p>
 <p>Other peak detection methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
+<code><a href='chromatographic-peak-detection.html'>chromatographic-peak-detection</a></code>,
+<code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>,
+<code><a href='findChromPeaks-massifquant.html'>findChromPeaks-massifquant</a></code>,
+<code><a href='findChromPeaks-matchedFilter.html'>findChromPeaks-matchedFilter</a></code>,
+<code><a href='findPeaks-MSW.html'>findPeaks-MSW</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Hendrik Treutler, Johannes Rainer</p>
@@ -474,9 +474,9 @@ the version from the class. Slots values should exclusively be accessed
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a param object</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWaveWithPredIsoROIs.html'>CentWavePredIsoParam</a></span>(maxCharge = <span class='fl'>4</span>)
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>CentWavePredIsoParam</span>(maxCharge = <span class='fl'>4</span>)
 <span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>p</span>) <span class='op'>&lt;-</span> <span class='fl'>25</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>p</span>) <span class='op'>&lt;-</span> <span class='fl'>25</span>
 <span class='kw'>p</span></div><div class='output co'>#&gt; Object of class:  CentWavePredIsoParam 
 #&gt; Parameters:
 #&gt;  ppm: 25 

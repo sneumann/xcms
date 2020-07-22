@@ -139,13 +139,13 @@ data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/reconstructChromPeakSpectra.html'>reconstructChromPeakSpectra</a></span>(
+    <pre class="usage"><span class='fu'>reconstructChromPeakSpectra</span>(
   <span class='kw'>object</span>,
   expandRt = <span class='fl'>0</span>,
   diffRt = <span class='fl'>2</span>,
   minCor = <span class='fl'>0.8</span>,
   intensity = <span class='st'>"maxo"</span>,
-  peakId = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>object</span>, msLevel = <span class='fl'>1L</span>)),
+  peakId = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>object</span>, msLevel = <span class='fl'>1L</span>)),
   BPPARAM = <span class='fu'>bpparam</span>()
 )</pre>
 
@@ -231,7 +231,7 @@ one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
 chromatographic peaks for each spectrum as well as their correlation value.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaksIsolationWindow.html'>findChromPeaksIsolationWindow()</a></code> for the function to perform MS2
+    <div class='dont-index'><p><code><a href='findChromPeaksIsolationWindow.html'>findChromPeaksIsolationWindow()</a></code> for the function to perform MS2
 peak detection in DIA isolation windows and for examples.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

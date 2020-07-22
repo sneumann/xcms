@@ -147,7 +147,7 @@
 
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
 
-    <p>Objects can be created with the <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></code> constructor
+    <p>Objects can be created with the <code><a href='xcmsRaw.html'>xcmsRaw</a></code> constructor
   which reads data from a NetCDF file into a new object.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
@@ -163,7 +163,7 @@
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
       values. The profile matrix should be extracted with the
-      <code><a href='https://rdrr.io/pkg/xcms/man/profMat-xcmsSet.html'>profMat</a></code> method.</p></dd>
+      <code><a href='profMat-xcmsSet.html'>profMat</a></code> method.</p></dd>
     <dt><code>filepath</code>:</dt><dd><p>Path to the raw data file</p></dd>
     <dt><code>gradient</code>:</dt><dd><p>matrix with first row, <code>time</code>, containing the time point
       for interpolation and successive columns representing solvent
@@ -190,7 +190,7 @@
     <dt><code>profmethod</code>:</dt><dd><p>characer value with name of method used for generating the
       profile matrix.</p></dd>
     <dt><code>profparam</code>:</dt><dd><p>list to store additional profile matrix
-      generation settings. Use the <code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>profinfo</a></code> method to
+      generation settings. Use the <code><a href='xcmsSet-class.html'>profinfo</a></code> method to
       extract all profile matrix creation relevant information.</p></dd>
     <dt><code>scanindex</code>:</dt><dd><p>integer vector with starting positions of each scan in the
       <code>mz</code> and <code>intensity</code> variables (note that index
@@ -216,51 +216,51 @@
     <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
 
     <p></p><dl>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/findPeaks-methods.html'>findPeaks</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: feature detection using
+    <dt><a href='findPeaks-methods.html'>findPeaks</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: feature detection using
       matched filtration in the chromatographic time domain</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/getEIC-methods.html'>getEIC</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get extracted ion
+    <dt><a href='getEIC-methods.html'>getEIC</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get extracted ion
       chromatograms in specified m/z ranges. This will return the total
   ion chromatogram (TIC) if the m/z range corresponds to the full m/z
   range (i.e. sum of all signals per retention time across all m/z).</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/getPeaks-methods.html'>getPeaks</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get data for peaks in
+    <dt><a href='getPeaks-methods.html'>getPeaks</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get data for peaks in
       specified m/z and time ranges</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/getScan-methods.html'>getScan</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get m/z and intensity
+    <dt><a href='getScan-methods.html'>getScan</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get m/z and intensity
       values for a single mass scan</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/getSpec-methods.html'>getSpec</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get average m/z and
+    <dt><a href='getSpec-methods.html'>getSpec</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get average m/z and
       intensity values for multiple mass scans</p></dd>
     <dt>image</dt><dd><p><code>signature(x = "xcmsRaw")</code>: get data for peaks in
       specified m/z and time ranges</p></dd>
     <dt>levelplot</dt><dd><p>Create an image of the raw (profile) data m/z against retention
   time, with the intensity color coded.</p></dd>
     <dt>mslevel</dt><dd><p>Getter method for the <code>mslevel</code> slot.</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotChrom-methods.html'>plotChrom</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a chromatogram
+    <dt><a href='plotChrom-methods.html'>plotChrom</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a chromatogram
       from profile data</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotRaw-methods.html'>plotRaw</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot locations of raw
+    <dt><a href='plotRaw-methods.html'>plotRaw</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot locations of raw
       intensity data points</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotScan-methods.html'>plotScan</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a mass spectrum
+    <dt><a href='plotScan-methods.html'>plotScan</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a mass spectrum
       of an individual scan from the raw data</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotSpec-methods.html'>plotSpec</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a mass spectrum
+    <dt><a href='plotSpec-methods.html'>plotSpec</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot a mass spectrum
       from profile data</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotSurf-methods.html'>plotSurf</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: experimental method for
+    <dt><a href='plotSurf-methods.html'>plotSurf</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: experimental method for
       plotting 3D surface of profile data with <code>rgl</code>.</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/plotTIC-methods.html'>plotTIC</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot total ion count
+    <dt><a href='plotTIC-methods.html'>plotTIC</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: plot total ion count
       chromatogram</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>profinfo</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: returns a list containing
+    <dt><a href='xcmsSet-class.html'>profinfo</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: returns a list containing
   the profile generation method and step (profile m/z step size) and
   eventual additional parameters to the profile function.</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/profMedFilt-methods.html'>profMedFilt</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: median filter profile
+    <dt><a href='profMedFilt-methods.html'>profMedFilt</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: median filter profile
       data in time and m/z dimensions</p></dd>
     <dt>profMethod&lt;-</dt><dd><p><code>signature(object = "xcmsRaw")</code>: change the method of
       generating the <code>profile</code> matrix</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/profMethod-methods.html'>profMethod</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get the method of
+    <dt><a href='profMethod-methods.html'>profMethod</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get the method of
       generating the <code>profile</code> matrix</p></dd>
     <dt>profMz</dt><dd><p><code>signature(object = "xcmsRaw")</code>: get vector of m/z values
       for each row of the <code>profile</code> matrix</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/profRange-methods.html'>profRange</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: interpret flexible ways
+    <dt><a href='profRange-methods.html'>profRange</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: interpret flexible ways
       of specifying subsets of the <code>profile</code> matrix</p></dd>
     <dt>profStep&lt;-</dt><dd><p><code>signature(object = "xcmsRaw")</code>: change the m/z step
       used for generating the <code>profile</code> matrix</p></dd>
-    <dt><a href='https://rdrr.io/pkg/xcms/man/profStep-methods.html'>profStep</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get the m/z step used
+    <dt><a href='profStep-methods.html'>profStep</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get the m/z step used
       for generating the <code>profile</code> matrix</p></dd>
     <dt>revMz</dt><dd><p><code>signature(object = "xcmsRaw")</code>: reverse the order of the
       data points for each scan</p></dd>
@@ -279,7 +279,7 @@
   Johannes Rainer <a href='mailto:johannes.rainer@eurac.edu'>johannes.rainer@eurac.edu</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></code>, <code><a href='https://rdrr.io/pkg/xcms/man/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html'>subset-xcmsRaw</a></code> for subsetting by spectra.</p></div>
+    <div class='dont-index'><p><code><a href='xcmsRaw.html'>xcmsRaw</a></code>, <code><a href='[,xcmsRaw,logicalOrNumeric,missing,missing-method.html'>subset-xcmsRaw</a></code> for subsetting by spectra.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

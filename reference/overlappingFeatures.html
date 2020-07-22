@@ -137,7 +137,7 @@ the m/z - rt space." />
 the m/z - rt space.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/overlappingFeatures.html'>overlappingFeatures</a></span>(<span class='kw'>x</span>, expandMz = <span class='fl'>0</span>, expandRt = <span class='fl'>0</span>, ppm = <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>overlappingFeatures</span>(<span class='kw'>x</span>, expandMz = <span class='fl'>0</span>, expandRt = <span class='fl'>0</span>, ppm = <span class='fl'>0</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,7 +171,7 @@ identifying overlapping features.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>list</code> with indices of features (in <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions()</a></code>) that
+    <p><code>list</code> with indices of features (in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>) that
 are overlapping.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -182,15 +182,15 @@ are overlapping.</p>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Correspondence analysis</span>
-<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Identify overlapping features</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/overlappingFeatures.html'>overlappingFeatures</a></span>(<span class='kw'>xdata</span>)</div><div class='output co'>#&gt; list()</div><div class='input'>
+<span class='fu'>overlappingFeatures</span>(<span class='kw'>xdata</span>)</div><div class='output co'>#&gt; list()</div><div class='input'>
 <span class='co'>## Identify features that are separated on retention time by less than</span>
 <span class='co'>## 2 minutes</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/overlappingFeatures.html'>overlappingFeatures</a></span>(<span class='kw'>xdata</span>, expandRt = <span class='fl'>60</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>overlappingFeatures</span>(<span class='kw'>xdata</span>, expandRt = <span class='fl'>60</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 5 6
 #&gt; 
 #&gt; [[2]]

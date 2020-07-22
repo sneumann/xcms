@@ -135,7 +135,7 @@
     <p>This is a method to find a fragment mass with a ppm window in a xcmsFragment object</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findMZ.html'>findMZ</a></span>(<span class='kw'>object</span>, <span class='kw'>find</span>, ppmE=<span class='fl'>25</span>, print=<span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>findMZ</span>(<span class='kw'>object</span>, <span class='kw'>find</span>, ppmE=<span class='fl'>25</span>, print=<span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +181,7 @@
   Analytical Chemistry 2008</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findneutral.html'>findneutral</a></code>,</p></div>
+    <div class='dont-index'><p><code><a href='findneutral.html'>findneutral</a></code>,</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>H. Paul Benton, <a href='mailto:hpaul.beonton08@imperial.ac.uk'>hpaul.beonton08@imperial.ac.uk</a></p>
@@ -192,10 +192,10 @@
     <span class='kw'>mzdatapath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"iontrap"</span>, package = <span class='st'>"msdata"</span>)
     <span class='kw'>mzdatafiles</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>mzdatapath</span>, pattern = <span class='st'>"extracted.mzData"</span>,
                             recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
-    <span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></span>(<span class='kw'>mzdatafiles</span>, method = <span class='st'>"MS1"</span>)
+    <span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span>(<span class='kw'>mzdatafiles</span>, method = <span class='st'>"MS1"</span>)
     <span class='co'>##takes only one file from the file set</span>
-    <span class='kw'>xfrag</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsFragments.html'>xcmsFragments</a></span>(<span class='kw'>xs</span>)
-    <span class='kw'>found</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/findMZ.html'>findMZ</a></span>(<span class='kw'>xfrag</span>, <span class='fl'>657.3433</span>, <span class='fl'>50</span>)
+    <span class='kw'>xfrag</span> <span class='op'>&lt;-</span> <span class='fu'><a href='xcmsFragments.html'>xcmsFragments</a></span>(<span class='kw'>xs</span>)
+    <span class='kw'>found</span><span class='op'>&lt;-</span><span class='fu'>findMZ</span>(<span class='kw'>xfrag</span>, <span class='fl'>657.3433</span>, <span class='fl'>50</span>)
 }
 </div></pre>
   </div>

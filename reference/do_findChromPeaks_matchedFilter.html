@@ -157,7 +157,7 @@
     and illustrations see [Smith 2006].</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></span>(
+    <pre class="usage"><span class='fu'>do_findChromPeaks_matchedFilter</span>(
   <span class='kw'>mz</span>,
   <span class='kw'>int</span>,
   <span class='kw'>scantime</span>,
@@ -210,7 +210,7 @@ bins/slices in m/z dimension.</p></td>
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
-<code>"intlin"</code>. See <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
+<code>"intlin"</code>. See <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for more details.</p></td>
     </tr>
     <tr>
       <th>baseValue</th>
@@ -300,7 +300,7 @@ future.</p></td>
     around the m/z values (i.e. the first bin includes all m/z values between
     <code>min(mz) - bin_size/2</code> and <code>min(mz) + bin_size/2</code>).</p>
 <p>For more details on binning and missing value imputation see
-    <code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> and <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
+    <code><a href='binYonX.html'>binYonX</a></code> and <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> methods.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>This function exposes core peak detection functionality of
@@ -316,14 +316,14 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> for a binning function,
-    <code><a href='https://rdrr.io/pkg/xcms/man/imputeLinInterpol.html'>imputeLinInterpol</a></code> for the interpolation of missing values.
-    <code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the standard user interface method.</p>
+    <div class='dont-index'><p><code><a href='binYonX.html'>binYonX</a></code> for a binning function,
+    <code><a href='imputeLinInterpol.html'>imputeLinInterpol</a></code> for the interpolation of missing values.
+    <code><a href='findChromPeaks-matchedFilter.html'>matchedFilter</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
+<code><a href='do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
+<code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
+<code><a href='do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a>()</code>,
+<code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin A Smith, Johannes Rainer</p>
@@ -333,7 +333,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <span class='co'>## Load the test file</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset to one file and restrict to a certain retention time range</span>
 <span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3000</span>))
@@ -345,7 +345,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <span class='co'>## Define the values per spectrum:</span>
 <span class='kw'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)
 
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
     scantime = <span class='fu'>rtime</span>(<span class='kw'>data</span>), valsPerSpect = <span class='kw'>valsPerSpect</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt;            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
 #&gt; [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280

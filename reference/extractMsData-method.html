@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DEPRECATED: Extract a <code>data.frame</code> containing MS data — extractMsData,OnDiskMSnExp-method • xcms</title>
+<title>DEPRECATED: Extract a data.frame containing MS data — extractMsData,OnDiskMSnExp-method • xcms</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="DEPRECATED: Extract a <code>data.frame</code> containing MS data — extractMsData,OnDiskMSnExp-method" />
+<meta property="og:title" content="DEPRECATED: Extract a data.frame containing MS data — extractMsData,OnDiskMSnExp-method" />
 <meta property="og:description" content="UPDATE: the extractMsData and plotMsData functions are deprecated
 and as(x, &quot;data.frame&quot;) and plot(x, type = &quot;XIC&quot;) (x being an
 OnDiskMSnExp or XCMSnExp object) should be used instead. See examples
@@ -145,22 +145,22 @@ and <code>as(x, "data.frame")</code> and <code><a href='https://rdrr.io/r/graphi
 <code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object) should be used instead. See examples
 below. Be aware that filtering the raw object might however drop the
 adjusted retention times. In such cases it is advisable to use the
-<code><a href='https://rdrr.io/pkg/xcms/man/applyAdjustedRtime.html'>applyAdjustedRtime()</a></code> function prior to filtering.</p>
+<code><a href='applyAdjustedRtime.html'>applyAdjustedRtime()</a></code> function prior to filtering.</p>
 <p>Extract a <code>data.frame</code> of retention time, mz and intensity
 values from each file/sample in the provided rt-mz range (or for the full
 data range if <code>rt</code> and <code>mz</code> are not defined).</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for OnDiskMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/extractMsData-method.html'>extractMsData</a></span>(<span class='kw'>object</span>, <span class='kw'>rt</span>, <span class='kw'>mz</span>, msLevel = <span class='fl'>1L</span>)
+<span class='fu'>extractMsData</span>(<span class='kw'>object</span>, <span class='kw'>rt</span>, <span class='kw'>mz</span>, msLevel = <span class='fl'>1L</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/extractMsData-method.html'>extractMsData</a></span>(
+<span class='fu'>extractMsData</span>(
   <span class='kw'>object</span>,
   <span class='kw'>rt</span>,
   <span class='kw'>mz</span>,
   msLevel = <span class='fl'>1L</span>,
-  adjustedRtime = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>)
+  adjustedRtime = <span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -213,7 +213,7 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the full MS data for a certain retention time range</span>
 <span class='co'>## as a data.frame</span>

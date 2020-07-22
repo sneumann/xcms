@@ -152,7 +152,7 @@ be passed to quantify with ...." />
     <p><code>featureValues,XCMSnExp</code> : extract a <code>matrix</code> for
 feature values with rows representing features and columns samples.
 Parameter <code>value</code> allows to define which column from the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></code> matrix should be returned. Multiple
+<code><a href='XCMSnExp-class.html'>chromPeaks</a></code> matrix should be returned. Multiple
 chromatographic peaks from the same sample can be assigned to a feature.
 Parameter <code>method</code> allows to specify the method to be used in such
 cases to chose from which of the peaks the value should be returned.
@@ -162,9 +162,9 @@ level).</p>
 <p><code>quantify,XCMSnExp</code>: return the preprocessing results as an
 <code>SummarizedExperiment</code> object containing the feature abundances
 as assay matrix, the feature definitions (returned by
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></code>) as <code>rowData</code> and the phenotype
+<code><a href='XCMSnExp-class.html'>featureDefinitions</a></code>) as <code>rowData</code> and the phenotype
 information as <code>colData</code>. This is an ideal container for further
-processing of the data. Internally, the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></code> method
+processing of the data. Internally, the <code>featureValues</code> method
 is used to extract the feature abundances, parameters for that method can
 be passed to <code>quantify</code> with <code>...</code>.</p>
     </div>
@@ -173,7 +173,7 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
 <span class='fu'>quantify</span>(<span class='kw'>object</span>, <span class='kw'>...</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(
+<span class='fu'>featureValues</span>(
   <span class='kw'>object</span>,
   method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"medret"</span>, <span class='st'>"maxint"</span>, <span class='st'>"sum"</span>),
   value = <span class='st'>"into"</span>,
@@ -188,13 +188,13 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>A <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object providing the feature
+      <td><p>A <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object providing the feature
 definitions.</p></td>
     </tr>
     <tr>
       <th>...</th>
       <td><p>For <code>quantify</code>: additional parameters to be passed on to the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-peak-grouping-results.html'>featureValues</a></code> method.</p></td>
+<code>featureValues</code> method.</p></td>
     </tr>
     <tr>
       <th>method</th>
@@ -210,15 +210,15 @@ If <code>"maxint"</code>: select the peak yielding the largest signal. If
     <tr>
       <th>value</th>
       <td><p><code>character</code> specifying the name of the column in
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks(object)</a></code> that should be returned. Defaults to
+<code><a href='XCMSnExp-class.html'>chromPeaks(object)</a></code> that should be returned. Defaults to
 <code>"into"</code> in which case the integrated peak area is returned. To
-get the index of the peak in the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks(object)</a></code> matrix use
+get the index of the peak in the <code><a href='XCMSnExp-class.html'>chromPeaks(object)</a></code> matrix use
 <code>"index"</code>.</p></td>
     </tr>
     <tr>
       <th>intensity</th>
       <td><p><code>character</code> specifying the name of the column in the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks(objects)</a></code> matrix containing the intensity value of the
+<code><a href='XCMSnExp-class.html'>chromPeaks(objects)</a></code> matrix containing the intensity value of the
 peak that should be used for the conflict resolution if
 <code>method = "maxint"</code>.</p></td>
     </tr>
@@ -227,7 +227,7 @@ peak that should be used for the conflict resolution if
       <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> specifying whether values for filled-in
 peaks should be returned or not. If <code>filled = FALSE</code>, an <code>NA</code>
 is returned in the matrix for the respective peak. See
-<code><a href='https://rdrr.io/pkg/xcms/man/fillChromPeaks.html'>fillChromPeaks</a></code> for details on peak filling.</p></td>
+<code><a href='FillChromPeaksParam-class.html'>fillChromPeaks</a></code> for details on peak filling.</p></td>
     </tr>
     <tr>
       <th>missing</th>
@@ -249,7 +249,7 @@ defined for all MS levels are returned.</p></td>
     <p>For <code>featureValues</code>: a <code>matrix</code> with
 feature values, columns representing samples, rows features. The order
 of the features matches the order found in the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions(object)</a></code> <code>DataFrame</code>. The rownames of the
+<code><a href='XCMSnExp-class.html'>featureDefinitions(object)</a></code> <code>DataFrame</code>. The rownames of the
 <code>matrix</code> are the same than those of the <code>featureDefinitions</code>
 <code>DataFrame</code>. <code>NA</code> is reported for features without
 corresponding chromatographic peak in the respective sample(s).</p>
@@ -257,20 +257,20 @@ corresponding chromatographic peak in the respective sample(s).</p>
 the preprocessing results.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>This method is equivalent to the <code><a href='https://rdrr.io/pkg/xcms/man/groupval-methods.html'>groupval</a></code> for
+    <p>This method is equivalent to the <code><a href='groupval-methods.html'>groupval</a></code> for
 <code>xcmsSet</code> objects. Note that <code>missing = 0</code> should be used to
 get the same behaviour as <code>groupval</code>, i.e. report missing values as 0
 after a call to <code>fillPeaks</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for information on the data object.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>featureDefinitions</a></code> to extract the <code>DataFrame</code> with the
+    <div class='dont-index'><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for information on the data object.</p>
+<p><code><a href='XCMSnExp-class.html'>featureDefinitions</a></code> to extract the <code>DataFrame</code> with the
 feature definitions.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/featureChromatograms.html'>featureChromatograms</a></code> to extract ion chromatograms for each
+<p><code><a href='featureChromatograms.html'>featureChromatograms</a></code> to extract ion chromatograms for each
 feature.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasFeatures</a></code> to evaluate whether the
-<code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> provides feature definitions.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/groupval-methods.html'>groupval</a></code> for the equivalent method on <code>xcmsSet</code> objects.</p></div>
+<p><code><a href='XCMSnExp-class.html'>hasFeatures</a></code> to evaluate whether the
+<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> provides feature definitions.</p>
+<p><code><a href='groupval-methods.html'>groupval</a></code> for the equivalent method on <code>xcmsSet</code> objects.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>

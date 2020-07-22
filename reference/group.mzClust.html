@@ -167,7 +167,7 @@
 
     
 <dl>
-<dt>object = "xcmsSet"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>
+<dt>object = "xcmsSet"</dt><dd><p><code><a href='group-methods.html'>
      group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minfrac=0)
   </a></code></p></dd>
 
@@ -177,7 +177,7 @@
     <p>Returns a xcmsSet with slots groups and groupindex set.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet-class</a></code>,</p></div>
+    <div class='dont-index'><p><code><a href='xcmsSet-class.html'>xcmsSet-class</a></code>,</p></div>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin,
@@ -192,11 +192,11 @@
 <span class='kw'>mzdatapath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"fticr"</span>, package = <span class='st'>"msdata"</span>)
 <span class='kw'>mzdatafiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>mzdatapath</span>, recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
 
-<span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsSet.html'>xcmsSet</a></span>(method=<span class='st'>"MSW"</span>, files=<span class='kw'>mzdatafiles</span>, scales=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>7</span>),
+<span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span>(method=<span class='st'>"MSW"</span>, files=<span class='kw'>mzdatafiles</span>, scales=<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>7</span>),
               SNR.method=<span class='st'>'data.mean'</span> , winSize.noise=<span class='fl'>500</span>,
               peakThr=<span class='fl'>80000</span>,  amp.Th=<span class='fl'>0.005</span>)
 
-<span class='kw'>xsg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></span>(<span class='kw'>xs</span>, method=<span class='st'>"mzClust"</span>)
+<span class='kw'>xsg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span>(<span class='kw'>xs</span>, method=<span class='st'>"mzClust"</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

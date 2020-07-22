@@ -140,10 +140,10 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise." />
 mz values of identified peaks are adjusted based on peaks that are close
 to the provided mz values. See details below for more information.</p>
 <p>The <code>isCalibrated</code> function returns <code>TRUE</code> if chromatographic
-peaks of the <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object <code>x</code> were calibrated and <code>FALSE</code> otherwise.</p>
+peaks of the <a href='XCMSnExp-class.html'>XCMSnExp</a> object <code>x</code> were calibrated and <code>FALSE</code> otherwise.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/calibrate-calibrant-mass.html'>CalibrantMassParam</a></span>(
+    <pre class="usage"><span class='fu'>CalibrantMassParam</span>(
   mz = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
   mzabs = <span class='fl'>1e-04</span>,
   mzppm = <span class='fl'>5</span>,
@@ -151,10 +151,10 @@ peaks of the <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp
   method = <span class='st'>"linear"</span>
 )
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/calibrate-calibrant-mass.html'>isCalibrated</a></span>(<span class='kw'>object</span>)
+<span class='fu'>isCalibrated</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/calibrate.html'>calibrate</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>)</pre>
+<span class='fu'><a href='calibrate-methods.html'>calibrate</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,7 +191,7 @@ or <code>"edgeshift"</code>.</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>An <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object.</p></td>
+      <td><p>An <a href='XCMSnExp-class.html'>XCMSnExp</a> object.</p></td>
     </tr>
     <tr>
       <th>param</th>
@@ -202,12 +202,12 @@ or <code>"edgeshift"</code>.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>For <code>CalibrantMassParam</code>: a <code>CalibrantMassParam</code> instance.
-For <code>calibrate</code>: an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with chromatographic peaks being
+For <code>calibrate</code>: an <a href='XCMSnExp-class.html'>XCMSnExp</a> object with chromatographic peaks being
 calibrated. <strong>Be aware</strong> that the actual raw mz values are not (yet)
 calibrated, but <strong>only</strong> the identified chromatographic peaks.</p>
 <p>The <code>CalibrantMassParam</code> function returns an instance of
 the <code>CalibrantMassParam</code> class with all settings and properties set.</p>
-<p>The <code>calibrate</code> method returns an <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with the
+<p>The <code>calibrate</code> method returns an <a href='XCMSnExp-class.html'>XCMSnExp</a> object with the
 chromatographic peaks being calibrated. Note that <strong>only</strong> the detected
 peaks are calibrated, but not the individual mz values in each spectrum.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>

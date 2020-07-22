@@ -139,7 +139,7 @@ chromatographic data, i.e. based on intensity and retention time values
 without m/z values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/peaksWithCentWave.html'>peaksWithCentWave</a></span>(
+    <pre class="usage"><span class='fu'>peaksWithCentWave</span>(
   <span class='kw'>int</span>,
   <span class='kw'>rt</span>,
   peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
@@ -251,19 +251,19 @@ chromatographic noise.</p></li>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The method uses the same algorithm for the peak detection than <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a>,
+    <p>The method uses the same algorithm for the peak detection than <a href='findChromPeaks-centWave.html'>centWave</a>,
 employs however a different approach to identify the initial regions in
 which the peak detection is performed (i.e. the <em>regions of interest</em> ROI).
 The method first identifies all local maxima in the chromatographic data and
 defines the corresponding positions +/- <code>peakwidth[2]</code> as the ROIs. Noise
-estimation bases also on these ROIs and can thus be different from <a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a>
+estimation bases also on these ROIs and can thus be different from <a href='findChromPeaks-centWave.html'>centWave</a>
 resulting in different signal to noise ratios.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-centWave.html'>centWave</a> for a detailed description of the peak detection
+    <div class='dont-index'><p><a href='findChromPeaks-centWave.html'>centWave</a> for a detailed description of the peak detection
 method.</p>
 <p>Other peak detection functions for chromatographic data: 
-<code><a href='https://rdrr.io/pkg/xcms/man/peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a>()</code></p></div>
+<code><a href='peaksWithMatchedFilter.html'>peaksWithMatchedFilter</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -276,7 +276,7 @@ method.</p>
     mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
 <span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.2</span>)
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3000</span>, <span class='fl'>3300</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3000</span>, <span class='fl'>3300</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
 
 <span class='kw'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>)
 <span class='kw'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>)
@@ -284,7 +284,7 @@ method.</p>
 <span class='co'>## Plot the region</span>
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr</span>, type = <span class='st'>"h"</span>)</div><div class='input'>
 <span class='co'>## Identify peaks in the chromatographic data</span>
-<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/peaksWithCentWave.html'>peaksWithCentWave</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>))
+<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'>peaksWithCentWave</span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>))
 <span class='kw'>pks</span></div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intb  maxo sn
 #&gt; [1,] 3119.535 3097.625 3127.359 247211.6 227217.9 16496 24</div><div class='input'>
 <span class='co'>## Highlight the peaks</span>

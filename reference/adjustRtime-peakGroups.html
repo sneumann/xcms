@@ -230,7 +230,7 @@ the non-subset sample to the subset samples used for alignment.</p>
     peak groups present in most samples.
     Instances should be created with the <code>PeakGroupsParam</code> constructor.</p>
 <p><code>adjustRtimePeakGroups</code> returns the features (peak groups)
-which would, depending on the provided <code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>PeakGroupsParam</a></code>, be
+which would, depending on the provided <code>PeakGroupsParam</code>, be
 selected for alignment/retention time correction.</p>
 <p><code>minFraction</code>,<code>minFraction&lt;-</code>: getter and setter
     for the <code>minFraction</code> slot of the object.</p>
@@ -256,7 +256,7 @@ the object, i.e. retention times of all spectra, also MS level &gt; 1 are
 adjusted.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>PeakGroupsParam</a></span>(
+    <pre class="usage"><span class='fu'>PeakGroupsParam</span>(
   minFraction = <span class='fl'>0.9</span>,
   extraPeaks = <span class='fl'>1</span>,
   smooth = <span class='st'>"loess"</span>,
@@ -267,61 +267,61 @@ adjusted.</p>
   subsetAdjust = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"average"</span>, <span class='st'>"previous"</span>)
 )
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>adjustRtimePeakGroups</a></span>(<span class='kw'>object</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>PeakGroupsParam</a></span>(), msLevel = <span class='fl'>1L</span>)
+<span class='fu'>adjustRtimePeakGroups</span>(<span class='kw'>object</span>, param = <span class='fu'>PeakGroupsParam</span>(), msLevel = <span class='fl'>1L</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
 <span class='fu'>show</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>extraPeaks</a></span>(<span class='kw'>object</span>)
+<span class='fu'>extraPeaks</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>extraPeaks</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>extraPeaks</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></span>(<span class='kw'>x</span>)
+<span class='fu'>smooth</span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>smooth</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>smooth</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>span</a></span>(<span class='kw'>object</span>)
+<span class='fu'>span</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>span</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>span</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>family</a></span>(<span class='kw'>object</span>)
+<span class='fu'>family</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>family</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>family</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>peakGroupsMatrix</a></span>(<span class='kw'>object</span>)
+<span class='fu'>peakGroupsMatrix</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>peakGroupsMatrix</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakGroupsMatrix</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>x</span>)
+<span class='fu'>subset</span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subset</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>subset</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>)
+<span class='fu'>subsetAdjust</span>(<span class='kw'>object</span>)
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>subsetAdjust</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>subsetAdjust</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,PeakGroupsParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -372,7 +372,7 @@ Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>.See
       <td><p>optional <code>matrix</code> of (raw) retention times for
 the peak groups on which the alignment should be performed. Each column
 represents a sample, each row a feature/peak group. Such a matrix is
-for example returned by the <code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>adjustRtimePeakGroups</a></code> method.</p></td>
+for example returned by the <code>adjustRtimePeakGroups</code> method.</p></td>
     </tr>
     <tr>
       <th>subset</th>
@@ -390,10 +390,10 @@ for more information.</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p>For <code>adjustRtime</code>: an <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object
+      <td><p>For <code>adjustRtime</code>: an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object
     containing the results from a previous chromatographic peak detection
-    (see <code><a href='https://rdrr.io/pkg/xcms/man/chromatographic-peak-detection.html'>findChromPeaks</a></code>) and alignment analysis (see
-    <code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></code>).</p>
+    (see <code><a href='chromatographic-peak-detection.html'>findChromPeaks</a></code>) and alignment analysis (see
+    <code><a href='groupChromPeaks.html'>groupChromPeaks</a></code>).</p>
 <p>For all other methods: a <code>PeakGroupsParam</code> object.</p></td>
     </tr>
     <tr>
@@ -425,11 +425,11 @@ level 1 is supported.</p></td>
 <p>For <code>adjustRtimePeakGroups</code>: a <code>matrix</code>, rows being
 features, columns samples, of retention times. The features are ordered
 by the median retention time across columns.</p>
-<p>For <code>adjustRtime</code>: a <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object with the
+<p>For <code>adjustRtime</code>: a <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object with the
 results of the retention time adjustment step. These can be accessed
-with the <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>adjustedRtime</a></code> method. Retention time correction
+with the <code><a href='XCMSnExp-class.html'>adjustedRtime</a></code> method. Retention time correction
 does also adjust the retention time of the identified chromatographic
-peaks (accessed <em>via</em> <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></code>. Note that retention
+peaks (accessed <em>via</em> <code><a href='XCMSnExp-class.html'>chromPeaks</a></code>. Note that retention
 time correction drops all previous alignment results from the result
 object.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
@@ -446,18 +446,18 @@ the version from the class. Slots values should exclusively be accessed
 
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface which will eventually replace the
-<code><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></code> methods. All of the settings to the alignment
+<code><a href='group-methods.html'>group</a></code> methods. All of the settings to the alignment
 algorithm can be passed with a <code>PeakGroupsParam</code> object.</p>
 <p>The matrix with the (raw) retention times of the peak groups used
 in the alignment is added to the <code>peakGroupsMatrix</code> slot of the
 <code>PeakGroupsParam</code> object that is stored into the corresponding
-<em>process history step</em> (see <code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>processHistory</a></code> for how
+<em>process history step</em> (see <code><a href='XCMSnExp-class.html'>processHistory</a></code> for how
 to access the process history).</p>
 <p><code>adjustRtimePeakGroups</code> is supposed to be called <em>before</em> the
 sample alignment, but after a correspondence (peak grouping).</p>
 <p>This method requires that a correspondence analysis has been performed
 on the data, i.e. that grouped chromatographic peaks/features are present
-(see <code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></code> for details).</p>
+(see <code><a href='groupChromPeaks.html'>groupChromPeaks</a></code> for details).</p>
 <p>Calling <code>adjustRtime</code> on an <code>XCMSnExp</code> object will cause all
 peak grouping (correspondence) results and any previous retention time
 adjustments to be dropped.
@@ -472,15 +472,15 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The <code><a href='https://rdrr.io/pkg/xcms/man/do_adjustRtime_peakGroups.html'>do_adjustRtime_peakGroups</a></code> core
-    API function and <code><a href='https://rdrr.io/pkg/xcms/man/retcor.peakgroups-methods.html'>retcor.peakgroups</a></code> for the old user
+    <div class='dont-index'><p>The <code><a href='do_adjustRtime_peakGroups.html'>do_adjustRtime_peakGroups</a></code> core
+    API function and <code><a href='retcor.peakgroups-methods.html'>retcor.peakgroups</a></code> for the old user
     interface.
-    <code><a href='https://rdrr.io/pkg/xcms/man/plotAdjustedRtime.html'>plotAdjustedRtime</a></code> for visualization of alignment results.</p>
-<p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
+    <code><a href='plotAdjustedRtime.html'>plotAdjustedRtime</a></code> for visualization of alignment results.</p>
+<p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for the object containing the results of
     the alignment.</p>
 <p>Other retention time correction methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-obiwarp.html'>adjustRtime-obiwarp</a></code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a>()</code></p></div>
+<code><a href='adjustRtime-obiwarp.html'>adjustRtime-obiwarp</a></code>,
+<code><a href='adjustRtime.html'>adjustRtime</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin Smith, Johannes Rainer</p>
@@ -489,10 +489,10 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <pre class="examples"><div class='input'><span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
@@ -506,19 +506,19 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #&gt; CP004    42      1
 #&gt; CP005    49      1
 #&gt; CP006    87      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
 #&gt;   1   2   3 
 #&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## Performing the peak grouping using the "peak density" method.</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>))
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>))
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Perform the retention time adjustment using peak groups found in both</span>
 <span class='co'>## files.</span>
-<span class='kw'>fgp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>PeakGroupsParam</a></span>(minFraction = <span class='fl'>1</span>)
+<span class='kw'>fgp</span> <span class='op'>&lt;-</span> <span class='fu'>PeakGroupsParam</span>(minFraction = <span class='fl'>1</span>)
 
 <span class='co'>## Before running the alignment we can evaluate which features (peak groups)</span>
 <span class='co'>## would be used based on the specified parameters.</span>
-<span class='kw'>pkGrps</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime-peakGroups.html'>adjustRtimePeakGroups</a></span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)
+<span class='kw'>pkGrps</span> <span class='op'>&lt;-</span> <span class='fu'>adjustRtimePeakGroups</span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)
 
 <span class='co'>## We can also plot these to evaluate if the peak groups span a large portion</span>
 <span class='co'>## of the retention time range.</span>
@@ -526,15 +526,15 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), xlab = <span class='st'>"rt"</span>, ylab = <span class='st'>""</span>, yaxt = <span class='st'>"n"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(x = <span class='kw'>pkGrps</span>[, <span class='fl'>2</span>], y = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)))</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/segments.html'>segments</a></span>(x0 = <span class='kw'>pkGrps</span>[, <span class='fl'>1</span>], x1 = <span class='kw'>pkGrps</span>[, <span class='fl'>2</span>],
     y0 = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)), y1 = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)))</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/grid.html'>grid</a></span>()</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/axis.html'>axis</a></span>(side = <span class='fl'>2</span>, at = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>), labels = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>pkGrps</span>))</div><div class='img'><img src='adjustRtime-peakGroups-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Next we perform the alignment.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)</div><div class='output co'>#&gt; <span class='message'>Performing retention time correction using 19 peak groups.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Span too small for 'loess' and the available number of peak groups, resetting to 0.21</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Adjusted retention times had to be re-adjusted for some files to ensure them being in the same order than the raw retention times. A call to 'dropAdjustedRtime' might thus fail to restore retention times of chromatographic peaks to their original values. Eventually consider to increase the value of the 'span' parameter.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)</div><div class='output co'>#&gt; <span class='message'>Performing retention time correction using 19 peak groups.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Span too small for 'loess' and the available number of peak groups, resetting to 0.21</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Adjusted retention times had to be re-adjusted for some files to ensure them being in the same order than the raw retention times. A call to 'dropAdjustedRtime' might thus fail to restore retention times of chromatographic peaks to their original values. Eventually consider to increase the value of the 'span' parameter.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Any grouping information was dropped</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>hasFeatures</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+<span class='fu'><a href='XCMSnExp-class.html'>hasFeatures</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 <span class='co'>## Plot the raw against the adjusted retention times.</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>, adjusted = <span class='fl'>FALSE</span>),
     <span class='fu'>rtime</span>(<span class='kw'>res</span>), pch = <span class='fl'>16</span>, cex = <span class='fl'>0.25</span>, col = <span class='fu'>fromFile</span>(<span class='kw'>res</span>))</div><div class='img'><img src='adjustRtime-peakGroups-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Adjusterd retention times can be accessed using</span>
 <span class='co'>## rtime(object, adjusted = TRUE) and adjustedRtime</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>), <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>adjustedRtime</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>), <span class='fu'><a href='XCMSnExp-class.html'>adjustedRtime</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## To extract the retention times grouped by sample/file:</span>
 <span class='kw'>rts</span> <span class='op'>&lt;-</span> <span class='fu'>rtime</span>(<span class='kw'>res</span>, bySample = <span class='fl'>TRUE</span>)</div></pre>
   </div>

@@ -8,8 +8,8 @@
 
 <title>Calculate relative log abundances
 
-<code>rla</code> calculates the relative log abundances (RLA, see reference) on a
-<code>numeric</code> vector. — rla • xcms</title>
+rla calculates the relative log abundances (RLA, see reference) on a
+numeric vector. — rla • xcms</title>
 
 
 <!-- jquery -->
@@ -44,8 +44,8 @@
 
 <meta property="og:title" content="Calculate relative log abundances
 
-<code>rla</code> calculates the relative log abundances (RLA, see reference) on a
-<code>numeric</code> vector. — rla" />
+rla calculates the relative log abundances (RLA, see reference) on a
+numeric vector. — rla" />
 <meta property="og:description" content="Calculate relative log abundances
 rla calculates the relative log abundances (RLA, see reference) on a
 numeric vector.
@@ -150,9 +150,9 @@ rowRla calculates row-wise RLAs." />
 <p><code>rowRla</code> calculates row-wise RLAs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/rla.html'>rla</a></span>(<span class='kw'>x</span>, <span class='kw'>group</span>, log.transform = <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>rla</span>(<span class='kw'>x</span>, <span class='kw'>group</span>, log.transform = <span class='fl'>TRUE</span>)
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/rla.html'>rowRla</a></span>(<span class='kw'>x</span>, <span class='kw'>group</span>, log.transform = <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>rowRla</span>(<span class='kw'>x</span>, <span class='kw'>group</span>, log.transform = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,7 +198,7 @@ McConville M, Speed TP. Normalizing and integrating metabolomics data.
 
 <span class='kw'>grp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>3</span>)
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/rla.html'>rla</a></span>(<span class='kw'>x</span>, <span class='kw'>grp</span>)</div><div class='output co'>#&gt;          1          1          1          2          2          2          3 
+<span class='fu'>rla</span>(<span class='kw'>x</span>, <span class='kw'>grp</span>)</div><div class='output co'>#&gt;          1          1          1          2          2          2          3 
 #&gt; -0.4150375  0.0000000  0.3219281 -1.0000000  0.0000000  0.5849625 -0.1926451 
 #&gt;          3          3 
 #&gt;  0.0000000  0.1699250 </div></pre>

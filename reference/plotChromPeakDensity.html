@@ -143,14 +143,14 @@ visualized setting simulate = FALSE." />
 time axis and indicate which peaks would be (or were) grouped into the
 same feature based using the <em>peak density</em> correspondence method.
 Settings for the <em>peak density</em> method can be passed with an
-<a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a> object to parameter <code>param</code>. If the <code>object</code> contains
+<a href='groupChromPeaks-density.html'>PeakDensityParam</a> object to parameter <code>param</code>. If the <code>object</code> contains
 correspondence results and the correspondence was performed with the
 <em>peak groups</em> method, the results from that correspondence can be
 visualized setting <code>simulate = FALSE</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeakDensity.html'>plotChromPeakDensity</a></span>(
+<span class='fu'>plotChromPeakDensity</span>(
   <span class='kw'>object</span>,
   <span class='kw'>mz</span>,
   <span class='kw'>rt</span>,
@@ -170,7 +170,7 @@ visualized setting <code>simulate = FALSE</code>.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>A <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified
+      <td><p>A <a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified
 chromatographic peaks.</p></td>
     </tr>
     <tr>
@@ -186,7 +186,7 @@ range of <code>object</code>.</p></td>
     </tr>
     <tr>
       <th>param</th>
-      <td><p><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a> from which parameters for the
+      <td><p><a href='groupChromPeaks-density.html'>PeakDensityParam</a> from which parameters for the
 <em>peak density</em> correspondence algorithm can be extracted. If not provided
 and if <code>object</code> contains feature definitions with the correspondence/
 peak grouping being performed by the <em>peak density</em> method, the
@@ -229,7 +229,7 @@ within the region defined by <code>mz</code> and <code>rt</code>. Can be one of 
 <code>"within"</code>, and <code>"apex_within"</code> for all peaks that are even partially
 overlapping the region, peaks that are completely within the region, and
 peaks for which the apex is within the region. This parameter is passed
-to the <a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>chromPeaks</a> function. See related documentation for more
+to the <a href='XCMSnExp-class.html'>chromPeaks</a> function. See related documentation for more
 information and examples.</p></td>
     </tr>
     <tr>
@@ -256,11 +256,11 @@ black line. Parameters for the <code>density</code> function are taken from the
 <code>param</code> object. Grey rectangles indicate which chromatographic peaks
 would be grouped into a feature by the <code>peak density</code> correspondence
 method. Parameters for the algorithm are also taken from <code>param</code>.
-See <code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>groupChromPeaks-density()</a></code> for more information about the
+See <code><a href='groupChromPeaks-density.html'>groupChromPeaks-density()</a></code> for more information about the
 algorithm and its supported settings.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>groupChromPeaks-density()</a></code> for details on the
+    <div class='dont-index'><p><code><a href='groupChromPeaks-density.html'>groupChromPeaks-density()</a></code> for details on the
 <em>peak density</em> correspondence method and supported settings.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -271,22 +271,14 @@ algorithm and its supported settings.</p>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Plot the chromatographic peak density for a specific mz range to evaluate</span>
 <span class='co'>## different peak density correspondence settings.</span>
 <span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>305.05</span>, <span class='fl'>305.15</span>)
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeakDensity.html'>plotChromPeakDensity</a></span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, pch = <span class='fl'>16</span>,
-    param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>faahko_sub</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## Use a larger bandwidth</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeakDensity.html'>plotChromPeakDensity</a></span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(bw = <span class='fl'>60</span>,
-    sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>faahko_sub</span>)))), pch = <span class='fl'>16</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>## Neighboring peaks are now fused into one.</span>
-
-<span class='co'>## Require the chromatographic peak to be present in all samples of a group</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeakDensity.html'>plotChromPeakDensity</a></span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, pch = <span class='fl'>16</span>,
-    param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupChromPeaks-density.html'>PeakDensityParam</a></span>(minFraction = <span class='fl'>1</span>,
-    sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>faahko_sub</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-3.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plotChromPeakDensity</span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, pch = <span class='fl'>16</span>,
+    param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>faahko_sub</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

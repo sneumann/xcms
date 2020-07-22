@@ -137,7 +137,7 @@ from fromX to toX." />
 from <code>fromX</code> to <code>toX</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/breaks_on_binSize.html'>breaks_on_binSize</a></span>(<span class='kw'>fromX</span>, <span class='kw'>toX</span>, <span class='kw'>binSize</span>)</pre>
+    <pre class="usage"><span class='fu'>breaks_on_binSize</span>(<span class='kw'>fromX</span>, <span class='kw'>toX</span>, <span class='kw'>binSize</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,22 +169,22 @@ desired bin size.
 See examples for more details and a comparisom to R's <code>seq</code> function.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/binYonX.html'>binYonX</a></code> for a binning function.</p>
+    <div class='dont-index'><p><code><a href='binYonX.html'>binYonX</a></code> for a binning function.</p>
 <p>Other functions to define bins: 
-<code><a href='https://rdrr.io/pkg/xcms/man/breaks_on_nBins.html'>breaks_on_nBins</a>()</code></p></div>
+<code><a href='breaks_on_nBins.html'>breaks_on_nBins</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Define breaks with a size of 0.13 for a data range from 1 to 10:</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/breaks_on_binSize.html'>breaks_on_binSize</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.13</span>)</div><div class='output co'>#&gt;  [1]  1.00  1.13  1.26  1.39  1.52  1.65  1.78  1.91  2.04  2.17  2.30  2.43
+<span class='fu'>breaks_on_binSize</span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.13</span>)</div><div class='output co'>#&gt;  [1]  1.00  1.13  1.26  1.39  1.52  1.65  1.78  1.91  2.04  2.17  2.30  2.43
 #&gt; [13]  2.56  2.69  2.82  2.95  3.08  3.21  3.34  3.47  3.60  3.73  3.86  3.99
 #&gt; [25]  4.12  4.25  4.38  4.51  4.64  4.77  4.90  5.03  5.16  5.29  5.42  5.55
 #&gt; [37]  5.68  5.81  5.94  6.07  6.20  6.33  6.46  6.59  6.72  6.85  6.98  7.11
 #&gt; [49]  7.24  7.37  7.50  7.63  7.76  7.89  8.02  8.15  8.28  8.41  8.54  8.67
 #&gt; [61]  8.80  8.93  9.06  9.19  9.32  9.45  9.58  9.71  9.84 10.00</div><div class='input'><span class='co'>## The size of the last bin is however larger than 0.13:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/breaks_on_binSize.html'>breaks_on_binSize</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.13</span>))</div><div class='output co'>#&gt;  [1] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13
+<span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'>breaks_on_binSize</span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.13</span>))</div><div class='output co'>#&gt;  [1] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13
 #&gt; [16] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13
 #&gt; [31] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13
 #&gt; [46] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13
@@ -196,9 +196,9 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
 #&gt; [61] 8.80 8.93 9.06 9.19 9.32 9.45 9.58 9.71 9.84 9.97</div><div class='input'>
 <span class='co'>## In the next example we use binSize that leads to an additional last bin with</span>
 <span class='co'>## a smaller binSize:</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/breaks_on_binSize.html'>breaks_on_binSize</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.51</span>)</div><div class='output co'>#&gt;  [1]  1.00  1.51  2.02  2.53  3.04  3.55  4.06  4.57  5.08  5.59  6.10  6.61
+<span class='fu'>breaks_on_binSize</span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.51</span>)</div><div class='output co'>#&gt;  [1]  1.00  1.51  2.02  2.53  3.04  3.55  4.06  4.57  5.08  5.59  6.10  6.61
 #&gt; [13]  7.12  7.63  8.14  8.65  9.16  9.67 10.00</div><div class='input'><span class='co'>## Again, the max value is included, but the size of the last bin is &lt; 0.51.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/breaks_on_binSize.html'>breaks_on_binSize</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.51</span>))</div><div class='output co'>#&gt;  [1] 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51
+<span class='fu'><a href='https://rdrr.io/r/base/diff.html'>diff</a></span>(<span class='fu'>breaks_on_binSize</span>(<span class='fl'>1</span>, <span class='fl'>10</span>, <span class='fl'>0.51</span>))</div><div class='output co'>#&gt;  [1] 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51
 #&gt; [16] 0.51 0.51 0.33</div><div class='input'><span class='co'>## Using just seq would result in the following bin definition:</span>
 <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>1</span>, <span class='fl'>10</span>, by = <span class='fl'>0.51</span>)</div><div class='output co'>#&gt;  [1] 1.00 1.51 2.02 2.53 3.04 3.55 4.06 4.57 5.08 5.59 6.10 6.61 7.12 7.63 8.14
 #&gt; [16] 8.65 9.16 9.67</div><div class='input'><span class='co'>## Thus it defines one bin (break) less.</span></div></pre>

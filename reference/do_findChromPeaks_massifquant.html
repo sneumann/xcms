@@ -139,11 +139,11 @@
     <p>Massifquant is a Kalman filter (KF)-based chromatographic peak
     detection for XC-MS data in centroid mode. The identified peaks
     can be further refined with the <em>centWave</em> method (see
-    <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code> for details on centWave)
+    <code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code> for details on centWave)
     by specifying <code>withWave = TRUE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></span>(
+    <pre class="usage"><span class='fu'>do_findChromPeaks_massifquant</span>(
   <span class='kw'>mz</span>,
   <span class='kw'>int</span>,
   <span class='kw'>scantime</span>,
@@ -326,7 +326,7 @@ centWave algorithm, which includes wavelet estimation.</p></td>
 </dl>
 
 <p>If <code>withWave</code> is set to <code>TRUE</code>, the result is the same as
-    returned by the <code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code> method.</p>
+    returned by the <code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a></code> method.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This algorithm's performance has been tested rigorously
@@ -352,12 +352,12 @@ centWave algorithm, which includes wavelet estimation.</p></td>
 detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/findChromPeaks-massifquant.html'>massifquant</a></code> for the standard user interface method.</p>
+    <div class='dont-index'><p><code><a href='findChromPeaks-massifquant.html'>massifquant</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
-<code><a href='https://rdrr.io/pkg/xcms/man/do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
+<code><a href='do_findChromPeaks_centWaveWithPredIsoROIs.html'>do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
+<code><a href='do_findChromPeaks_centWave.html'>do_findChromPeaks_centWave</a>()</code>,
+<code><a href='do_findChromPeaks_matchedFilter.html'>do_findChromPeaks_matchedFilter</a>()</code>,
+<code><a href='do_findPeaks_MSW.html'>do_findPeaks_MSW</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Christopher Conley</p>
@@ -367,7 +367,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class='co'>## Load the test file</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset to one file and restrict to a certain retention time range</span>
 <span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3000</span>))
@@ -381,7 +381,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 
 <span class='co'>## Perform the peak detection using massifquant - setting prefilter to</span>
 <span class='co'>## a high value to speed up the call for the example</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/do_findChromPeaks_massifquant.html'>do_findChromPeaks_massifquant</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_massifquant</span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
     scantime = <span class='fu'>rtime</span>(<span class='kw'>data</span>), valsPerSpect = <span class='kw'>valsPerSpect</span>,
     prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10000</span>))</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>

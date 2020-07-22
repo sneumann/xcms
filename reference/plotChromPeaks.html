@@ -155,7 +155,7 @@ with the number of peaks detected in each bin along the retention time
 represented with the color of the respective cell.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeaks</a></span>(
+    <pre class="usage"><span class='fu'>plotChromPeaks</span>(
   <span class='kw'>x</span>,
   file = <span class='fl'>1</span>,
   xlim = <span class='kw'>NULL</span>,
@@ -169,7 +169,7 @@ represented with the color of the respective cell.</p>
   <span class='kw'>...</span>
 )
 
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeakImage</a></span>(
+<span class='fu'>plotChromPeakImage</span>(
   <span class='kw'>x</span>,
   binSize = <span class='fl'>30</span>,
   xlim = <span class='kw'>NULL</span>,
@@ -185,7 +185,7 @@ represented with the color of the respective cell.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p><code><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
+      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
     </tr>
     <tr>
       <th>file</th>
@@ -269,7 +269,7 @@ specified using the <code>par</code> function, i.e. with <code><a href='https://
 and <code><a href='https://rdrr.io/r/graphics/par.html'>par(lty = 2)</a></code>, respectively.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/highlightChromPeaks.html'>highlightChromPeaks</a></code> for the function to highlight
+    <div class='dont-index'><p><code><a href='highlightChromPeaks.html'>highlightChromPeaks</a></code> for the function to highlight
     detected chromatographic peaks in extracted ion chromatogram plots.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -280,15 +280,15 @@ and <code><a href='https://rdrr.io/r/graphics/par.html'>par(lty = 2)</a></code>,
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## plotChromPeakImage: plot an image for the identified peaks per file</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeakImage</a></span>(<span class='kw'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plotChromPeakImage</span>(<span class='kw'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Show all detected chromatographic peaks from the first file</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeaks</a></span>(<span class='kw'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plotChromPeaks</span>(<span class='kw'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Plot all detected peaks from the second file and restrict the plot to a</span>
 <span class='co'>## mz-rt slice</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/plotChromPeaks.html'>plotChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>2</span>, xlim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3500</span>, <span class='fl'>3600</span>), ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>400</span>, <span class='fl'>600</span>))</div><div class='img'><img src='plotChromPeaks-3.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plotChromPeaks</span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>2</span>, xlim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3500</span>, <span class='fl'>3600</span>), ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>400</span>, <span class='fl'>600</span>))</div><div class='img'><img src='plotChromPeaks-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -139,7 +139,7 @@ with a proportion of the minimal value for that row (i.e.
 <code>min_fraction * min(x[i, ])</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMin.html'>imputeRowMin</a></span>(<span class='kw'>x</span>, min_fraction = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>imputeRowMin</span>(<span class='kw'>x</span>, min_fraction = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,7 +160,7 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 
     <div class='dont-index'><p><code>imputeLCMD</code> package for more left censored imputation functions.</p>
 <p>Other imputation functions: 
-<code><a href='https://rdrr.io/pkg/xcms/man/imputeRowMinRand.html'>imputeRowMinRand</a>()</code></p></div>
+<code><a href='imputeRowMinRand.html'>imputeRowMinRand</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -170,9 +170,9 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"faahko"</span>)
 
-<span class='kw'>xset</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/group-methods.html'>group</a></span>(<span class='kw'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='kw'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/groupval-methods.html'>groupval</a></span>(<span class='kw'>xset</span>, value = <span class='st'>"into"</span>)
+<span class='kw'>xset</span> <span class='op'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span>(<span class='kw'>faahko</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'><span class='kw'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupval-methods.html'>groupval</a></span>(<span class='kw'>xset</span>, value = <span class='st'>"into"</span>)
 
-<span class='kw'>mat_imp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMin.html'>imputeRowMin</a></span>(<span class='kw'>mat</span>)
+<span class='kw'>mat_imp</span> <span class='op'>&lt;-</span> <span class='fu'>imputeRowMin</span>(<span class='kw'>mat</span>)
 
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mat</span>)</div><div class='output co'>#&gt;                 ko15      ko16       ko18      ko19       ko21      ko22
 #&gt; 200.1/2926  147887.5  451600.7   65290.38        NA   91635.45  162012.4
@@ -202,7 +202,7 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 #&gt; 219.1/2525  244584.47  161184.05   72029.38   36014.69  238194.4  173829.95
 #&gt; 231/2517     89718.86   89718.86   89718.86  240261.21  201316.2  179437.72</div><div class='input'>
 <span class='co'>## Replace with 1/8 of the row mimimum</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/imputeRowMin.html'>imputeRowMin</a></span>(<span class='kw'>mat</span>, min_fraction = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>8</span>))</div><div class='output co'>#&gt;                  ko15       ko16        ko18        ko19       ko21       ko22
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>imputeRowMin</span>(<span class='kw'>mat</span>, min_fraction = <span class='fl'>1</span><span class='op'>/</span><span class='fl'>8</span>))</div><div class='output co'>#&gt;                  ko15       ko16        ko18        ko19       ko21       ko22
 #&gt; 200.1/2926  147887.53  451600.71   65290.385    8161.298   91635.45  162012.44
 #&gt; 205/2791   1778568.94 1567038.14 1482796.385 1039129.818 1223132.35 1072037.70
 #&gt; 206/2790    237993.62  269713.98  201393.415  150107.310  176989.65  156797.04

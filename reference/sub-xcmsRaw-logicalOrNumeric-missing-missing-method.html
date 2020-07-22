@@ -136,8 +136,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Subset an <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code> object by scans. The
-    returned <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code> object contains values for all
+    <p>Subset an <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code> object by scans. The
+    returned <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code> object contains values for all
     scans specified with argument <code>i</code>. Note that the <code>scanrange</code>
     slot of the returned <code>xcmsRaw</code> will be
     <code><a href='https://rdrr.io/r/base/c.html'>c(1, length(object@scantime))</a></code> and hence not <code><a href='https://rdrr.io/r/base/range.html'>range(i)</a></code>.</p>
@@ -151,7 +151,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>The <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code> object that should be sub-setted.</p></td>
+      <td><p>The <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code> object that should be sub-setted.</p></td>
     </tr>
     <tr>
       <th>i</th>
@@ -170,7 +170,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The sub-setted <code><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw-class.html'>xcmsRaw</a></code> object.</p>
+    <p>The sub-setted <code><a href='xcmsRaw-class.html'>xcmsRaw</a></code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Only subsetting by scan index in increasing order or by a logical
@@ -179,7 +179,7 @@
     are discarded.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/split.xcmsRaw.html'>split.xcmsRaw</a></code></p></div>
+    <div class='dont-index'><p><code><a href='split.xcmsRaw.html'>split.xcmsRaw</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -187,7 +187,7 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Load a test file</span>
 <span class='kw'>file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko15.CDF'</span>, package = <span class='st'>"faahKO"</span>)
-<span class='kw'>xraw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>file</span>, profstep = <span class='fl'>0</span>)
+<span class='kw'>xraw</span> <span class='op'>&lt;-</span> <span class='fu'><a href='xcmsRaw.html'>xcmsRaw</a></span>(<span class='kw'>file</span>, profstep = <span class='fl'>0</span>)
 <span class='co'>## The number of scans/spectra:</span>
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='kw'>xraw</span><span class='op'>@</span>scantime)</div><div class='output co'>#&gt; [1] 1278</div><div class='input'>
 <span class='co'>## Subset the object to scans with a scan time from 3500 to 4000.</span>

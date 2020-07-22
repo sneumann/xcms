@@ -186,7 +186,7 @@
       <td><p>intensity values to be used for the diffreport. <br />
     If <code>value="into"</code>, integrated peak intensities are used. <br />
     If <code>value="maxo"</code>, maximum peak intensities are used. <br />
-    If <code>value="intb"</code>, baseline corrected integrated peak intensities are used (only available if peak detection was done by <code><a href='https://rdrr.io/pkg/xcms/man/findPeaks.centWave-methods.html'>findPeaks.centWave</a></code>).</p></td>
+    If <code>value="intb"</code>, baseline corrected integrated peak intensities are used (only available if peak detection was done by <code><a href='findPeaks.centWave-methods.html'>findPeaks.centWave</a></code>).</p></td>
     </tr>
     <tr>
       <th>metlin</th>
@@ -212,7 +212,7 @@
       <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining an optional value for missing
     values. <code>missing = 0</code> would e.g. replace all <code>NA</code> values
     in the feature matrix with <code>0</code>. Note that also a call to
-    <code><a href='https://rdrr.io/pkg/xcms/man/fillPeaks-methods.html'>fillPeaks</a></code> results in a feature matrix in which
+    <code><a href='fillPeaks-methods.html'>fillPeaks</a></code> results in a feature matrix in which
     <code>NA</code> values are replaced by <code>0</code>.</p></td>
     </tr>
     <tr>
@@ -226,13 +226,13 @@
 
     
 <dl>
-<dt>object = "xcmsSet"</dt><dd><p><code><a href='https://rdrr.io/pkg/xcms/man/diffreport-methods.html'>diffreport(object, class1 = levels(sampclass(object))[1],
+<dt>object = "xcmsSet"</dt><dd><p><code>diffreport(object, class1 = levels(sampclass(object))[1],
                    class2 = levels(sampclass(object))[2],
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2),
                    value=c("into","maxo","intb"), metlin = FALSE,
 				   h=480,w=640, mzdec=2, missing =
-				   numeric(), ...)</a></code></p></dd>
+				   numeric(), ...)</code></p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -293,7 +293,7 @@
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/xcms/man/xcmsSet-class.html'>xcmsSet-class</a></code>,
+    <div class='dont-index'><p><code><a href='xcmsSet-class.html'>xcmsSet-class</a></code>,
   <code><a href='https://rdrr.io/r/grDevices/palette.html'>palette</a></code></p></div>
 
   </div>

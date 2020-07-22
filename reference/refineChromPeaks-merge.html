@@ -187,7 +187,7 @@ details for information on the <code>"mzmin"</code> and <code>"mzmax"</code> val
 peak.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span>(
+    <pre class="usage"><span class='fu'>MergeNeighboringPeaksParam</span>(
   expandRt = <span class='fl'>2</span>,
   expandMz = <span class='fl'>0</span>,
   ppm = <span class='fl'>10</span>,
@@ -195,9 +195,9 @@ peak.</p>
 )
 
 <span class='co'># S4 method for XCMSnExp,MergeNeighboringPeaksParam</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>refineChromPeaks</a></span>(
+<span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(
   <span class='kw'>object</span>,
-  param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span>(),
+  param = <span class='fu'>MergeNeighboringPeaksParam</span>(),
   msLevel = <span class='fl'>1L</span>,
   BPPARAM = <span class='fu'>bpparam</span>()
 )</pre>
@@ -232,7 +232,7 @@ of the two peak's <code>"maxo"</code> (maximal intensity at peak apex).</p></td>
     </tr>
     <tr>
       <th>object</th>
-      <td><p><a href='https://rdrr.io/pkg/xcms/man/XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
+      <td><p><a href='XCMSnExp-class.html'>XCMSnExp</a> object with identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>param</th>
@@ -291,7 +291,8 @@ newly merged peak are considered.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other chromatographic peak refinement methods: 
-<code><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>CleanPeaksParam</a></code></p></div>
+<code><a href='CleanPeaksParam.html'>CleanPeaksParam</a></code>,
+<code><a href='FilterIntensityParam.html'>FilterIntensityParam</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
@@ -301,23 +302,23 @@ newly merged peak are considered.</p>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='https://rdrr.io/pkg/xcms/man/dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset to a single file</span>
 <span class='kw'>xd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterFile</a></span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>1</span>)
 
 <span class='co'>## Example of a split peak that will be merged</span>
 <span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fl'>305.1</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>0.01</span>, <span class='fl'>0.01</span>)
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>xd</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>3700</span>))
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>xd</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>3700</span>))
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr</span>)</div><div class='img'><img src='refineChromPeaks-merge-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Combine the peaks</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-clean.html'>refineChromPeaks</a></span>(<span class='kw'>xd</span>, param = <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span>(expandRt = <span class='fl'>4</span>))</div><div class='output co'>#&gt; <span class='message'>Evaluating 8 peaks in file ko15.CDF for merging ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Merging reduced 87 chromPeaks to 70.</span></div><div class='input'><span class='kw'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>res</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>3700</span>))
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>xd</span>, param = <span class='fu'>MergeNeighboringPeaksParam</span>(expandRt = <span class='fl'>4</span>))</div><div class='output co'>#&gt; <span class='message'>Evaluating 8 peaks in file ko15.CDF for merging ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Merging reduced 87 chromPeaks to 70.</span></div><div class='input'><span class='kw'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>res</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>3700</span>))
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr_res</span>)</div><div class='img'><img src='refineChromPeaks-merge-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Example of a peak that was not merged, because the signal between them</span>
 <span class='co'>## is lower than the cut-off minProp</span>
 <span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fl'>496.2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='op'>-</span><span class='fl'>0.01</span>, <span class='fl'>0.01</span>)
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>xd</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3200</span>, <span class='fl'>3500</span>))
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr</span>)</div><div class='input'><span class='kw'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/xcms/man/chromatogram-method.html'>chromatogram</a></span>(<span class='kw'>res</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3200</span>, <span class='fl'>3500</span>))
+<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>xd</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3200</span>, <span class='fl'>3500</span>))
+<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr</span>)</div><div class='input'><span class='kw'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>res</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3200</span>, <span class='fl'>3500</span>))
 <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr_res</span>)</div><div class='img'><img src='refineChromPeaks-merge-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

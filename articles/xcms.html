@@ -82,7 +82,7 @@
 
       
 
-      </header><script src="xcms_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>LCMS data preprocessing and analysis with xcms</h1>
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-06-30 08:12:38<br><strong>Compiled</strong>: Tue Jun 30 08:53:17 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.12/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-07-22 12:04:11<br><strong>Compiled</strong>: Wed Jul 22 13:08:36 2020</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -348,7 +348,7 @@ Signal for an example peak. Red and blue colors represent KO and wild type sampl
 ## CP1705         1     FALSE
 ## CP1706         1     FALSE
 ## CP1707         1     FALSE</code></pre>
-<p>Peak detection will not always work perfectly leading to peak detection artifacts, such as overlapping peaks or artificially split peaks. The <code>refineChromPeaks</code> function allows to <em>refine</em> peak detection results by either or removing identified peaks exceeding a maximal allower rt width or by merging artificially split chromatographic peaks. For the former a <code>CleanPeaksParam</code> parameter object can be submitted to the function while the latter can be configured with the <code>MergeNeighboringPeaksParam</code> object. Below we post-process the peak detection results merging peaks overlapping in a 4 second window per file if the signal between in between them is lower than 75% of the smaller peak’s maximal intensity. See the <code>MergeNeighboringPeaksParam</code> help page for a detailed description of the settings and the approach.</p>
+<p>Peak detection will not always work perfectly leading to peak detection artifacts, such as overlapping peaks or artificially split peaks. The <code>refineChromPeaks</code> function allows to <em>refine</em> peak detection results by either removing identified peaks not passing a certain criteria or by merging artificially split chromatographic peaks. With parameter objects <code>CleanPeaksParam</code> and <code>FilterIntensityParam</code> it is possible to remove peaks with a retention time range or intensities below a threshold, respectively (see their respective help pages for more details and examples). With <code>MergeNeighboringPeaksParam</code> it is possible to merge chromatographic peaks. Below we post-process the peak detection results merging peaks overlapping in a 4 second window per file if the signal between in between them is lower than 75% of the smaller peak’s maximal intensity. See the <code>MergeNeighboringPeaksParam</code> help page for a detailed description of the settings and the approach.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="kw">mpp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MergeNeighboringPeaksParam.html">MergeNeighboringPeaksParam</a></span>(expandRt = <span class="fl">4</span>)
 <span class="kw">xdata_pp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CleanPeaksParam.html">refineChromPeaks</a></span>(<span class="kw">xdata</span>, <span class="kw">mpp</span>)
@@ -1187,7 +1187,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Peak detection 
-##  date: Tue Jun 30 08:53:43 2020 
+##  date: Wed Jul 22 13:09:02 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: CentWaveParam 
@@ -1196,7 +1196,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[2]]
 ## Object of class "XProcessHistory"
 ##  type: Peak refinement 
-##  date: Tue Jun 30 08:54:06 2020 
+##  date: Wed Jul 22 13:09:26 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1205,7 +1205,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[3]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Tue Jun 30 08:54:22 2020 
+##  date: Wed Jul 22 13:09:42 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1214,7 +1214,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[4]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Tue Jun 30 08:54:23 2020 
+##  date: Wed Jul 22 13:09:43 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1223,7 +1223,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[5]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Tue Jun 30 08:54:31 2020 
+##  date: Wed Jul 22 13:09:51 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1232,7 +1232,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[6]]
 ## Object of class "XProcessHistory"
 ##  type: Missing peak filling 
-##  date: Tue Jun 30 08:54:32 2020 
+##  date: Wed Jul 22 13:09:52 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: ChromPeakAreaParam 
@@ -1246,7 +1246,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Tue Jun 30 08:54:23 2020 
+##  date: Wed Jul 22 13:09:43 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
