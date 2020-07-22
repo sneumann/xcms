@@ -81,13 +81,8 @@ res <- groupChromPeaks(faahko_sub, param = p)
 fgp <- PeakGroupsParam(minFraction = 1)
 res <- adjustRtime(res, param = fgp)
 
-## Visualize the impact of the alignment. We show both versions of the plot,
-## with the raw retention times on the x-axis (top) and with the adjusted
-## retention times (bottom).
-par(mfrow = c(2, 1))
+## Visualize the impact of the alignment.
 plotAdjustedRtime(res, adjusted = FALSE)
-grid()
-plotAdjustedRtime(res)
 grid()
 }
 \seealso{

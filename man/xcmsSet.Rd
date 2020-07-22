@@ -101,7 +101,6 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \code{\link{findPeaks}},
   \code{\link{profStep}},
   \code{\link{profMethod}},
-  \code{\link{profBin}},
-  \code{\link{xcmsPapply}}
+  \code{\link{profBin}}
 }
 \keyword{file}

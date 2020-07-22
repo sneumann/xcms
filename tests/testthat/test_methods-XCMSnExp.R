@@ -2283,3 +2283,30 @@ test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
                 nrow(chromPeaks(tmp, msLevel = 1L)))
     expect_equal(chromPeaks(res, msLevel = 2L), chromPeaks(tmp, msLevel = 2L))
 })
+
+test_that("refineChromPeaks,FilterIntensityParam works", {
+    pks <- chromPeaks(xod_x)
+    prm <- FilterIntensityParam(nValues = 1, threshold = 50000)
+    res <- refineChromPeaks(xod_x, param = prm, msLevel = 2L)
+    expect_equal(chromPeaks(res), chromPeaks(xod_x))
+    res <- refineChromPeaks(xod_x, param = prm, msLevel = 1L)
+
+    x <- filterRt(xod_x, rt = c(2500, 3500))
+    prm <- FilterIntensityParam(nValues = 2, threshold = 50000)
+    res <- refineChromPeaks(xod_x, param = prm)
+    expect_true(all(chromPeaks(res)[, "maxo"] > 50000))
+    res <- refineChromPeaks(xod_x, param = prm, msLevel = 3)
+    expect_equal(chromPeaks(res), chromPeaks(xod_x))
+
+    ## With a real object having MS2.
+    prm <- FilterIntensityParam(nValues = 2, threshold = 50000)
+    res <- refineChromPeaks(pest_swth, param = prm, msLevel = 1L)
+    expect_equal(chromPeaks(res, msLevel = 2L),
+                 chromPeaks(pest_swth, msLevel = 2L))
+    expect_true(nrow(chromPeaks(res, msLevel = 1L)) == 0)
+
+    res <- refineChromPeaks(pest_swth, param = prm, msLevel = 2L)
+    expect_equal(chromPeaks(res, msLevel = 1L),
+                 chromPeaks(pest_swth, msLevel = 1L))
+    expect_true(nrow(chromPeaks(res, msLevel = 2L)) == 0)
+})

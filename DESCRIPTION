@@ -74,7 +74,6 @@ Suggests:
     pheatmap
 Enhances:
     Rgraphviz,
-    Rmpi,
     XML
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -136,7 +135,6 @@ Collate:
     'methods-xcmsSet.R'
     'models.R'
     'mzClust.R'
-    'netCDF.R'
     'plotQC.R'
     'ramp.R'
     'specDist.R'

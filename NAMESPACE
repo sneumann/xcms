@@ -85,7 +85,6 @@ export(
     "xcmsRaw",
     "xcmsSet",
     "xcmsFragments",
-    "xcmsPapply",
     "phenoDataFromPaths"
 )
 
@@ -230,7 +229,6 @@ export(
     "processHistoryTypes",
     "adjustRtimePeakGroups",
     "plotAdjustedRtime",
-    "plotChromatogram",
     "highlightChromPeaks",
     "plotChromPeaks",
     "plotChromPeakImage",
@@ -285,6 +283,7 @@ exportClasses(
     "CalibrantMassParam",
     "CleanPeaksParam",
     "MergeNeighboringPeaksParam",
+    "FilterIntensityParam",
     "ChromPeakAreaParam"
 )
 ## Param methods
@@ -455,6 +454,7 @@ export("CentWaveParam",
        "XChromatograms",
        "CleanPeaksParam",
        "MergeNeighboringPeaksParam",
+       "FilterIntensityParam",
        "ChromPeakAreaParam")
 ## Param class methods.
 
@@ -503,7 +503,6 @@ exportMethods("hasChromPeaks",
               "rtime",
               "mz",
               "intensity",
-              "extractChromatograms",
               "fillChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",

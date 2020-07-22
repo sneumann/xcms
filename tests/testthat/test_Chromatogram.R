@@ -1,8 +1,8 @@
-test_that("extractChromatograms is deprecated", {
-    expect_warning(chrs <- extractChromatograms(
-                       filterRt(filterFile(od_x, file = 2), c(2500, 2600))))
-    expect_warning(plotChromatogram(chrs))
-})
+## test_that("extractChromatograms is deprecated", {
+##     expect_warning(chrs <- extractChromatograms(
+##                        filterRt(filterFile(od_x, file = 2), c(2500, 2600))))
+##     expect_warning(plotChromatogram(chrs))
+## })
 
 test_that("chromatogram works", {
     ## OnDiskMSnExp

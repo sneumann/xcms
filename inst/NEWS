@@ -1,5 +1,7 @@
 Changes in version 3.11.6
 
+- Add `FilterIntensityParam` to filter chromatographic peaks on intensity
+  (issue #502).
 - Add `estimatePrecursorIntensity` function to determine the precursor intensity
   for MS2 spectra from the neighboring MS1 spectra.
 

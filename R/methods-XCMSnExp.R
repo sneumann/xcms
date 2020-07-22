@@ -3640,15 +3640,6 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #' plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
 #'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 #'
-#' ## Use a larger bandwidth
-#' plotChromPeakDensity(faahko_sub, mz = mzr, param = PeakDensityParam(bw = 60,
-#'     sampleGroups = rep(1, length(fileNames(faahko_sub)))), pch = 16)
-#' ## Neighboring peaks are now fused into one.
-#'
-#' ## Require the chromatographic peak to be present in all samples of a group
-#' plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
-#'     param = PeakDensityParam(minFraction = 1,
-#'     sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 setMethod("plotChromPeakDensity", "XCMSnExp", .plotChromPeakDensity)
 
 setMethod("updateObject", "XCMSnExp", function(object) {
@@ -3995,6 +3986,123 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               chromPeaks(msf) <- pks
               chromPeakData(msf) <- pkd
               object@msFeatureData <- msf
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+              xph <- XProcessHistory(param = param, date. = date(),
+                                     type. = .PROCSTEP.PEAK.REFINEMENT,
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
+              object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })
+
+#' @title Remove chromatographic peaks based on intensity
+#'
+#' @aliases FilterIntensityParam-class show,FilterIntensityParam-method
+#'
+#' @description
+#'
+#' Remove chromatographic peaks with intensities below the specified threshold.
+#' By default, with `nValues = 1`, all peaks with an intensity
+#' `>= threshold` are retained. Parameter `value` allows to specify the column of
+#' the [chromPeaks()] matrix that should be used for the filtering (defaults to
+#' `value = "maxo"` and thus evaluating the maximal intensity for each peak).
+#' With `nValues > 1` it is possible to keep only peaks that have `nValues`
+#' intensities `>= threshold`. Note that this requires data import from the
+#' original MS files and run time of the call can thus be significantly larger.
+#' Also, for `nValues > 1` parameter `value` is ignored.
+#'
+#' @param threshold `numeric(1)` defining the minimal required intensity for
+#'     a peak to be retained. Defaults to `threshold = 0`.
+#'
+#' @param nValues `integer(1)` defining the number of data points (per
+#'     chromatographic peak) that have to be `>= threshold`. Defaults to
+#'     `nValues = 1`.
+#'
+#' @param value `character(1)` specifying the column in [chromPeaks()] that
+#'     should be used for the comparison. This is ignored for `nValues > 1`.
+#'
+#' @param msLevel `integer(1)` defining the MS level in which peaks should be
+#'     filtered.
+#'
+#' @param object [XCMSnExp] object with identified chromatographic peaks.
+#'
+#' @param param `FilterIntensityParam` object defining the settings for
+#'     the method.
+#'
+#' @param BPPARAM parameter object to set up parallel processing. Uses the
+#'     default parallel processing setup returned by `bpparam()`. See
+#'     [bpparam()] for details and examples.
+#'
+#' @return `XCMSnExp` object with filtererd chromatographic peaks.
+#'
+#' @author Johannes Rainer, Mar Garcia-Aloy
+#'
+#' @md
+#'
+#' @family chromatographic peak refinement methods
+#'
+#' @rdname refineChromPeaks-filter-intensity
+#'
+#' @examples
+#'
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Remove all peaks with a maximal intensity below 50000
+#' res <- refineChromPeaks(faahko_sub, param = FilterIntensityParam(threshold = 50000))
+#'
+#' nrow(chromPeaks(faahko_sub))
+#' nrow(chromPeaks(res))
+#'
+#' all(chromPeaks(res)[, "maxo"] > 50000)
+#'
+#' ## Keep only chromatographic peaks that have 3 signals above 20000; we
+#' ## perform this on the data of a single file.
+#' xdata <- filterFile(faahko_sub)
+#'
+#' res <- refineChromPeaks(xdata, FilterIntensityParam(threshold = 20000, nValues = 3))
+#' nrow(chromPeaks(xdata))
+#' nrow(chromPeaks(res))
+setMethod("refineChromPeaks", c(object = "XCMSnExp",
+                                param = "FilterIntensityParam"),
+          function(object, param = FilterIntensityParam(),
+                   msLevel = 1L, BPPARAM = bpparam()) {
+              if (!hasChromPeaks(object, msLevel = msLevel)) {
+                  warning("No chromatographic peaks present in for MS level ",
+                          msLevel, ". Please run 'findChromPeaks' first.")
+                  return(object)
+              }
+              if (hasFeatures(object)) {
+                  message("Removing feature definitions.")
+                  object <- dropFeatureDefinitions(object)
+              }
+              validObject(param)
+              peak_count <- nrow(chromPeaks(object))
+              if (param@nValues == 1) {
+                  ## Simple subsetting of the chromPeaks matrix.
+                  if (!any(colnames(chromPeaks(object)) %in% param@value))
+                      stop("Column '", value, "' not found in chromPeaks matrix")
+                  keep <- chromPeaks(object)[, param@value] >= param@threshold |
+                      !chromPeakData(object)$ms_level %in% msLevel
+              } else {
+                  res <- bplapply(.split_by_file(object, to_class = "XCMSnExp",
+                                                 msLevel = 1:10),
+                                  FUN = .chrom_peaks_above_threshold,
+                                  nValues = param@nValues,
+                                  threshold = param@threshold,
+                                  msLevel = msLevel, BPPARAM = BPPARAM)
+                  keep <- unlist(res, use.names = FALSE)
+                  if (length(keep) != nrow(chromPeaks(object)))
+                      stop("Length of variable 'keep' does not match number ",
+                           "of peaks. Please contact developers.")
+              }
+              msfd <- .filterChromPeaks(object, idx = which(keep))
+              object@msFeatureData <- msfd
+              message("Removed ", peak_count - nrow(chromPeaks(object)),
+                      " chromatographic peaks.")
               ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
               xph <- XProcessHistory(param = param, date. = date(),
                                      type. = .PROCSTEP.PEAK.REFINEMENT,

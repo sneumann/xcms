@@ -2824,3 +2824,28 @@ setClass("MergeNeighboringPeaksParam",
                  msg
              else TRUE
          })
+
+setClass("FilterIntensityParam",
+         slots = c(threshold = "numeric",
+                   nValues = "integer",
+                   value = "character"),
+         contains = "Param",
+         prototype = prototype(
+             threshold = 0,
+             nValues = 1L,
+             value = "maxo"),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@threshold) > 1 || object@threshold < 0)
+                 msg <- c(msg, paste0("'threshold' has to be a positive ",
+                                      "number of length 1"))
+             if (length(object@nValues) > 1 || object@nValues < 1)
+                 msg <- c(msg, paste0("'nValues' has to be a positive ",
+                                      "number of length 1"))
+             if (length(object@value) > 1)
+                 msg <- c(msg, paste0("'value' has to be a character ",
+                                      "of length 1"))
+             if (length(msg))
+                 msg
+             else TRUE
+         })

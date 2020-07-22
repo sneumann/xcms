@@ -591,3 +591,16 @@ test_that(".features_ms_region works", {
     expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
     expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
 })
+
+test_that(".which_peaks_above_threshold works", {
+    xsub <- filterRt(filterFile(xod_x, 1L), rt = c(2500, 3500))
+    pks <- chromPeaks(xsub)
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 100, nValues = 4)
+    expect_equal(res, rep(TRUE, nrow(pks)))
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 50000, nValues = 1)
+    expect_equal(res, unname(pks[, "maxo"] >= 50000))
+
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 50000, nValues = 1,
+                                        msLevel = 2L)
+    expect_equal(res, rep(TRUE, nrow(pks)))
+})
