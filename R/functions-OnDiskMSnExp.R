@@ -150,18 +150,20 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ionSource = x@experimentData@ionSource[1],
         analyser = x@experimentData@analyser[1],
         detectorType = x@experimentData@detectorType[1])
+    a <- new(to_class)
     create_object <- function(x, i, to_class) {
-        a <- new(to_class)
-        a@processingData@files <- procd@files[i]
-        a@featureData <- extractROWS(
+        slot(procd, "files", check = FALSE) <- x@processingData@files[i]
+        slot(a, "processingData", check = FALSE) <- procd
+        slot(a, "featureData", check = FALSE) <- extractROWS(
             x@featureData, which(x@featureData$msLevel %in% msLevel. &
                                  x@featureData$fileIdx == i))
         if (!nrow(a@featureData))
             stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
         a@featureData$fileIdx <- 1L
-        a@experimentData <- expd
-        a@spectraProcessingQueue <- x@spectraProcessingQueue
-        a@phenoData <- x@phenoData[i, , drop = FALSE]
+        slot(a, "experimentData", check = FALSE) <- expd
+        slot(a, "spectraProcessingQueue", check = FALSE) <-
+            x@spectraProcessingQueue
+        slot(a, "phenoData", check = FALSE) <- x@phenoData[i, , drop = FALSE]
         a
     }
     if (to_class == "XCMSnExp" && is(x, "XCMSnExp") && hasChromPeaks(x)) {
@@ -190,13 +192,13 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                 chromPeakData(newFd) <- .chrom_peak_data(x@msFeatureData)[0, ]
             }
             lockEnvironment(newFd, bindings = TRUE)
-            a@msFeatureData <- newFd
+            slot(a, "msFeatureData", check = FALSE) <- newFd
             res[[i]] <- a
         }
         res
     } else {
         lapply(seq_along(fileNames(x)), function(z) {
-            a <- create_object(x, z, to_class)
+            create_object(x, z, to_class)
         })
     }
 }
