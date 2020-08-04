@@ -1724,7 +1724,7 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
     file_factor <- factor(pks[, "sample"])
     peak_ids <- rownames(pks)
     pks <- split.data.frame(pks, f = file_factor)
-    x <- .split_by_file(
+    x <- .split_by_file2(
         x, msLevel. = 2L, subsetFeatureData = FALSE)[as.integer(levels(file_factor))]
     res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
                     MoreArgs = list(method = method), SIMPLIFY = FALSE,
@@ -2476,7 +2476,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                          "isolationWindowLowerOffset",
                                          "isolationWindowUpperOffset"))
     sps <- bplapply(
-        .split_by_file(object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
+        .split_by_file2(
+            object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
         FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,

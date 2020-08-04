@@ -78,7 +78,7 @@ setMethod("findChromPeaks",
               if (is.na(centroided) || !centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
-              resList <- bplapply(.split_by_file(object, msLevel. = msLevel),
+              resList <- bplapply(.split_by_file2(object, msLevel. = msLevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "centWave",
                                   param = param, BPPARAM = BPPARAM)
@@ -145,7 +145,7 @@ setMethod("findChromPeaks",
               if (length(msLevel) > 1)
                   stop("Currently only peak detection in a single MS level is ",
                        "supported")
-              resList <- bplapply(.split_by_file(object, msLevel. = msLevel),
+              resList <- bplapply(.split_by_file2(object, msLevel. = msLevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "matchedFilter",
                                   param = param,
@@ -238,7 +238,7 @@ setMethod("findChromPeaks",
               if (length(msLevel) > 1)
                   stop("Currently only peak detection in a single MS level is ",
                        "supported")
-              resList <- bplapply(.split_by_file(object, msLevel. = msLevel),
+              resList <- bplapply(.split_by_file2(object, msLevel. = msLevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "massifquant", param = param,
                                   BPPARAM = BPPARAM)
@@ -318,7 +318,7 @@ setMethod("findChromPeaks",
                   stop("The MSW method can only be applied to single spectrum,",
                        " non-chromatographic, files (i.e. with a single ",
                        "retention time).")
-              resList <- bplapply(.split_by_file(object_mslevel),
+              resList <- bplapply(.split_by_file2(object_mslevel),
                                   FUN = findPeaks_MSW_OnDiskMSnExp,
                                   method = "MSW", param = param,
                                   BPPARAM = BPPARAM)
@@ -390,7 +390,7 @@ setMethod("findChromPeaks",
               if (is.na(centroided) || !centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
-              resList <- bplapply(.split_by_file(object, msLevel. = msLevel),
+              resList <- bplapply(.split_by_file2(object, msLevel. = msLevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "centWaveWithPredIsoROIs",
                                   param = param, BPPARAM = BPPARAM)

@@ -3952,10 +3952,10 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               }
               validObject(param)
               peak_count <- nrow(chromPeaks(object))
-              res <- bplapply(.split_by_file(object, msLevel. = msLevel,
-                                             to_class = "XCMSnExp",
-                                             subsetFeatureData = TRUE,
-                                             keep_sample_idx = TRUE),
+              res <- bplapply(.split_by_file2(object, msLevel. = msLevel,
+                                              to_class = "XCMSnExp",
+                                              subsetFeatureData = TRUE,
+                                              keep_sample_idx = TRUE),
                               FUN = .merge_neighboring_peaks,
                               expandRt = param@expandRt,
                               expandMz = param@expandMz, ppm = param@ppm,
@@ -4088,8 +4088,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                   keep <- chromPeaks(object)[, param@value] >= param@threshold |
                       !chromPeakData(object)$ms_level %in% msLevel
               } else {
-                  res <- bplapply(.split_by_file(object, to_class = "XCMSnExp",
-                                                 msLevel = 1:10),
+                  res <- bplapply(.split_by_file2(object, to_class = "XCMSnExp",
+                                                  msLevel = 1:10),
                                   FUN = .chrom_peaks_above_threshold,
                                   nValues = param@nValues,
                                   threshold = param@threshold,
