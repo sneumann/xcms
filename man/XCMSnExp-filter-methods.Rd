@@ -177,6 +177,9 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 ## Read the files
 od <- readMSData(fs, mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform peak detection on them using the matched filter algorithm. Note
 ## that we use a large value for binSize to reduce the runtime of the
 ## example code.

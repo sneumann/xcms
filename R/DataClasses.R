@@ -565,6 +565,9 @@ NULL
 #'            full.names = TRUE)
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
 #' head(chromPeaks(res))
@@ -1623,6 +1626,9 @@ NULL
 #'                     recursive = TRUE, full.names = TRUE)
 #' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
 #'              SNR.method = "data.mean", winSize.noise = 500)
@@ -1756,6 +1762,9 @@ NULL
 #'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -1986,6 +1995,9 @@ NULL
 #' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
 #' res <- findChromPeaks(raw_data, param = mfp)
@@ -2208,6 +2220,9 @@ NULL
 #'
 #' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform retention time correction on the OnDiskMSnExp:
 #' res <- adjustRtime(raw_data, param = ObiwarpParam())
@@ -2562,6 +2577,10 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'                    system.file("cdf/KO/ko16.CDF", package = "faahKO")),
 #'                  mode = "onDisk")
+#'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Now we perform a chromatographic peak detection on this data set using the
 #' ## matched filter method. We are tuning the settings such that it performs
 #' ## faster.

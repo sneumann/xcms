@@ -107,6 +107,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ## Reading 2 of the KO samples
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform the peak detection using the centWave method (settings are tuned
 ## to speed up example execution)
 res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000, snthresh = 40))

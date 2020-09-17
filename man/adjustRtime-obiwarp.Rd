@@ -321,6 +321,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ## Reading one of the KO samples
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform retention time correction on the OnDiskMSnExp:
 res <- adjustRtime(raw_data, param = ObiwarpParam())
 

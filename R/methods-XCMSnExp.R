@@ -1187,6 +1187,9 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' ## Read the files
 #' od <- readMSData(fs, mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Perform peak detection on them using the matched filter algorithm. Note
 #' ## that we use a large value for binSize to reduce the runtime of the
 #' ## example code.
@@ -2452,6 +2455,9 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #'
 #' od <- readMSData(faahko_files, mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Subset to speed up processing
 #' od <- filterRt(od, rt = c(2500, 3000))
 #'
@@ -2781,6 +2787,9 @@ setMethod("findChromPeaks",
 #'            full.names = TRUE)
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
@@ -2815,19 +2824,6 @@ setMethod("findChromPeaks",
 #'
 #' ## The parameter class:
 #' ph@param
-#'
-#' ## Drop the filled in peaks:
-#' res <- dropFilledChromPeaks(res)
-#'
-#' ## Perform the peak filling with modified settings: allow expansion of the
-#' ## mz range by a specified ppm and expanding the mz range by mz width/2
-#' prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
-#' res <- fillChromPeaks(res, param = prm)
-#'
-#' ## Did we get a signal for all missing peaks?
-#' sum(is.na(featureValues(res)))
-#'
-#' ## Still the same missing peaks.
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
           function(object, param, msLevel = 1L, BPPARAM = bpparam()) {
@@ -3155,6 +3151,9 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #' raw_data <- readMSData(fls[1], mode = "onDisk")
+#'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Extract the full data as a data.frame
 #' ms_all <- as(raw_data, "data.frame")
@@ -3546,6 +3545,9 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#'
+#' ## Disabling parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform the peak detection using the centWave method (settings are tuned
 #' ## to speed up example execution)

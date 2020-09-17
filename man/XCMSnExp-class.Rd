@@ -681,6 +681,10 @@ library(faahKO)
 od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
                    system.file("cdf/KO/ko16.CDF", package = "faahKO")),
                  mode = "onDisk")
+
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Now we perform a chromatographic peak detection on this data set using the
 ## matched filter method. We are tuning the settings such that it performs
 ## faster.

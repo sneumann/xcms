@@ -149,6 +149,9 @@ fticrf <- list.files(system.file("fticr", package = "msdata"),
                     recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform the MSW peak detection on these:
 p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
              SNR.method = "data.mean", winSize.noise = 500)

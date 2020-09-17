@@ -363,6 +363,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = cwp)
 head(chromPeaks(res))

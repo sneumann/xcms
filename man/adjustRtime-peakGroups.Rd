@@ -298,6 +298,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ## Reading one of the KO samples
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Perform the peak detection using the matchedFilter method.
 mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
 res <- findChromPeaks(raw_data, param = mfp)

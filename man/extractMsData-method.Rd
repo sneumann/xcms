@@ -61,6 +61,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 raw_data <- readMSData(fls[1], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Extract the full data as a data.frame
 ms_all <- as(raw_data, "data.frame")
 head(ms_all)

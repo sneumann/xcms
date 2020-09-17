@@ -184,6 +184,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Disabling parallel processing for this example
+register(SerialParam())
+
 ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 ## speed up the execution of the example - in a real use case the default
 ## value should be used, or it should be set to a reasonable value.
@@ -218,19 +221,6 @@ ph
 
 ## The parameter class:
 ph@param
-
-## Drop the filled in peaks:
-res <- dropFilledChromPeaks(res)
-
-## Perform the peak filling with modified settings: allow expansion of the
-## mz range by a specified ppm and expanding the mz range by mz width/2
-prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
-res <- fillChromPeaks(res, param = prm)
-
-## Did we get a signal for all missing peaks?
-sum(is.na(featureValues(res)))
-
-## Still the same missing peaks.
 }
 \seealso{
 \code{\link{groupChromPeaks}} for methods to perform the
