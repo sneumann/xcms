@@ -70,36 +70,6 @@ peak definitions to an existing plot, such as one created by the
 \code{plot} method on a \code{\link{Chromatogram}} or
 \code{\link{Chromatograms}} object.
 }
-\examples{
-
-## Read some files from the faahKO package.
-library(xcms)
-library(faahKO)
-faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
-od <- readMSData(faahko_3_files, mode = "onDisk")
-
-## Peak detection using the 'matchedFilter' method. Note that we are using a
-## larger binSize to reduce the runtime of the example.
-xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
-
-## Extract the ion chromatogram for one chromatographic peak in the data.
-chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
-
-plot(chrs)
-
-## Extract chromatographic peaks for the mz/rt range (if any).
-chromPeaks(xod, rt = c(2700, 2900), mz = 335)
-
-## Highlight the chromatographic peaks in the area
-## Show the peak definition with a rectangle
-highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335)
-
-## Color the actual peak
-highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335,
-    col = c("#ff000020", "#00ff0020"), type = "polygon")
-}
 \author{
 Johannes Rainer
 }

@@ -202,8 +202,8 @@ library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Reading one of the KO samples
+raw_data <- readMSData(fls[1], mode = "onDisk")
 
 ## Perform the chromatographic peak detection using the matchedFilter method.
 mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)

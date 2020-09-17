@@ -392,7 +392,9 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
+## Restricting the analysis to a smaller rt range to speed-up runtime
+raw_data <- filterRt(raw_data, rt = c(2500, 3000))
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = mqp)
 head(chromPeaks(res))

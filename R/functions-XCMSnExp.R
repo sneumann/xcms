@@ -769,7 +769,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
+#' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the matchedFilter method.
@@ -1070,36 +1070,6 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
 #'     function.
 #'
 #' @author Johannes Rainer
-#'
-#' @examples
-#'
-#' ## Read some files from the faahKO package.
-#' library(xcms)
-#' library(faahKO)
-#' faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-#'
-#' od <- readMSData(faahko_3_files, mode = "onDisk")
-#'
-#' ## Peak detection using the 'matchedFilter' method. Note that we are using a
-#' ## larger binSize to reduce the runtime of the example.
-#' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
-#'
-#' ## Extract the ion chromatogram for one chromatographic peak in the data.
-#' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
-#'
-#' plot(chrs)
-#'
-#' ## Extract chromatographic peaks for the mz/rt range (if any).
-#' chromPeaks(xod, rt = c(2700, 2900), mz = 335)
-#'
-#' ## Highlight the chromatographic peaks in the area
-#' ## Show the peak definition with a rectangle
-#' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335)
-#'
-#' ## Color the actual peak
-#' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335,
-#'     col = c("#ff000020", "#00ff0020"), type = "polygon")
 highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
                                 border = rep("00000040", length(fileNames(x))),
                                 lwd = 1, col = NA,
@@ -1262,9 +1232,6 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
 #' ## plotChromPeakImage: plot an image for the identified peaks per file
 #' plotChromPeakImage(xod)
 #'
-#' ## Show all detected chromatographic peaks from the first file
-#' plotChromPeaks(xod)
-#'
 #' ## Plot all detected peaks from the second file and restrict the plot to a
 #' ## mz-rt slice
 #' plotChromPeaks(xod, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
@@ -1416,33 +1383,6 @@ isCalibrated <- function(object) {
 #'     [dropAdjustedRtime] for the method to delete alignment results and to
 #'     restore the raw retention times.
 #'
-#' @examples
-#' ## Load test data
-#' files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-#'
-#' od <- readMSData(files, mode = "onDisk")
-#'
-#' ## Apply obiwarp retention time adjustment. We have to convert the
-#' ## OnDiskMSnExp first to an XCMSnExp
-#' xod <- as(od, "XCMSnExp")
-#' xod <- adjustRtime(xod, param = ObiwarpParam())
-#'
-#' hasAdjustedRtime(xod)
-#'
-#' ## Replace raw retention times with adjusted retention times.
-#' xod <- applyAdjustedRtime(xod)
-#'
-#' ## No adjusted retention times present
-#' hasAdjustedRtime(xod)
-#'
-#' ## Raw retention times have been replaced with adjusted retention times
-#' plot(split(rtime(od), fromFile(od))[[1]] -
-#'     split(rtime(xod), fromFile(xod))[[1]], type = "l")
-#'
-#' ## And the process history still contains the settings for the alignment
-#' processHistory(xod)
 applyAdjustedRtime <- function(object) {
     if (!is(object, "XCMSnExp"))
         stop("'object' has to be an 'XCMSnExp' object")

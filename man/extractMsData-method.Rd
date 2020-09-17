@@ -59,7 +59,7 @@ library(xcms)
 library(magrittr)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 
 ## Extract the full data as a data.frame
 ms_all <- as(raw_data, "data.frame")

@@ -31,34 +31,6 @@ retention time processing step with the settings of the alignment from
 the \code{\link[=processHistory]{processHistory()}} of the \code{object} to ensure that the processing
 history is preserved.
 }
-\examples{
-## Load test data
-files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
-od <- readMSData(files, mode = "onDisk")
-
-## Apply obiwarp retention time adjustment. We have to convert the
-## OnDiskMSnExp first to an XCMSnExp
-xod <- as(od, "XCMSnExp")
-xod <- adjustRtime(xod, param = ObiwarpParam())
-
-hasAdjustedRtime(xod)
-
-## Replace raw retention times with adjusted retention times.
-xod <- applyAdjustedRtime(xod)
-
-## No adjusted retention times present
-hasAdjustedRtime(xod)
-
-## Raw retention times have been replaced with adjusted retention times
-plot(split(rtime(od), fromFile(od))[[1]] -
-    split(rtime(xod), fromFile(xod))[[1]], type = "l")
-
-## And the process history still contains the settings for the alignment
-processHistory(xod)
-}
 \seealso{
 \code{\link[=adjustRtime]{adjustRtime()}} for the function to perform the alignment (retention
 time correction).\preformatted{[adjustedRtime()] for the method to extract adjusted retention times from

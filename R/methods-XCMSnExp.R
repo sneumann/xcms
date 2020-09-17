@@ -1183,7 +1183,6 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' ## Load some of the files from the faahKO package.
 #' library(faahKO)
 #' fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #' ## Read the files
 #' od <- readMSData(fs, mode = "onDisk")
@@ -1194,8 +1193,8 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' mfp <- MatchedFilterParam(binSize = 5)
 #' xod <- findChromPeaks(od, param = mfp)
 #'
-#' ## Subset the dataset to the first and third file.
-#' xod_sub <- filterFile(xod, file = c(1, 3))
+#' ## Subset the dataset to the first and second file.
+#' xod_sub <- filterFile(xod, file = c(1, 2))
 #'
 #' ## The number of chromatographic peaks per file for the full object
 #' table(chromPeaks(xod)[, "sample"])
@@ -3155,7 +3154,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' library(magrittr)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #'
 #' ## Extract the full data as a data.frame
 #' ms_all <- as(raw_data, "data.frame")

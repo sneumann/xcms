@@ -318,7 +318,7 @@ library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 
-## Reading 2 of the KO samples
+## Reading one of the KO samples
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
 ## Perform retention time correction on the OnDiskMSnExp:

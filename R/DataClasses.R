@@ -484,11 +484,11 @@ NULL
 #' @param roiScales Optional numeric vector with length equal to \code{roiList}
 #'     defining the scale for each region of interest in \code{roiList} that
 #'     should be used for the centWave-wavelets.
-#'     
-#' @param extendLengthMSW Option to force centWave to use all scales when 
+#'
+#' @param extendLengthMSW Option to force centWave to use all scales when
 #' running centWave rather than truncating with the EIC length. Uses the "open"
-#' method to extend the EIC to a integer base-2 length prior to being passed to 
-#' \code{convolve} rather than the default "reflect" method. See 
+#' method to extend the EIC to a integer base-2 length prior to being passed to
+#' \code{convolve} rather than the default "reflect" method. See
 #' https://github.com/sneumann/xcms/issues/445 for more information.
 #'
 #' @details
@@ -787,7 +787,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"
@@ -998,7 +998,9 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
+#' ## Restricting the analysis to a smaller rt range to speed-up runtime
+#' raw_data <- filterRt(raw_data, rt = c(2500, 3000))
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = mqp)
 #' head(chromPeaks(res))
@@ -1155,7 +1157,7 @@ NULL
 #' library(msdata)
 #' fticrf <- list.files(system.file("fticr", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+#' fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1492,8 +1494,8 @@ NULL
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' ## Reading one of the KO samples
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #'
 #' ## Perform the chromatographic peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -1981,7 +1983,7 @@ NULL
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
+#' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the matchedFilter method.
@@ -2204,7 +2206,7 @@ NULL
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
+#' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform retention time correction on the OnDiskMSnExp:

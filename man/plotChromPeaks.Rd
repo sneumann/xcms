@@ -117,9 +117,6 @@ xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 2
 ## plotChromPeakImage: plot an image for the identified peaks per file
 plotChromPeakImage(xod)
 
-## Show all detected chromatographic peaks from the first file
-plotChromPeaks(xod)
-
 ## Plot all detected peaks from the second file and restrict the plot to a
 ## mz-rt slice
 plotChromPeaks(xod, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))

@@ -305,7 +305,7 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 ## Perform the chromatographic peak detection using the settings defined
 ## above. Note that we are also disabling parallel processing in this
 ## example by registering a "SerialParam"
