@@ -79,7 +79,7 @@ Currently, there is no equivalent to minfrac or minsamp." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -204,7 +204,9 @@ Currently, there is no equivalent to minfrac or minsamp." />
 
     <span class='kw'>xset</span><span class='op'>&lt;-</span><span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span>(<span class='kw'>cdffiles</span>)
 
-    <span class='kw'>gxset</span><span class='op'>&lt;-</span><span class='fu'><a href='group-methods.html'>group</a></span>(<span class='kw'>xset</span>, method=<span class='st'>"nearest"</span>)</div><div class='output co'>#&gt; <span class='message'>Processing sample number 8 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 7 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 3 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 12 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 9 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 6 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 5 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 4 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 11 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 10 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>gxset</span><span class='op'>@</span>groups) <span class='op'>==</span> <span class='fl'>1096</span> <span class='co'>## the number of features before minFrac</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+    <span class='kw'>gxset</span><span class='op'>&lt;-</span><span class='fu'><a href='group-methods.html'>group</a></span>(<span class='kw'>xset</span>, method=<span class='st'>"nearest"</span>)
+</div><div class='output co'>#&gt; <span class='message'>Processing sample number 8 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 7 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 3 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 12 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 9 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 6 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 5 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 4 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 11 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 10 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>gxset</span><span class='op'>@</span>groups) <span class='op'>==</span> <span class='fl'>1096</span> <span class='co'>## the number of features before minFrac</span>
+</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
     <span class='kw'>post.minFrac</span><span class='op'>&lt;-</span><span class='fu'>function</span>(<span class='kw'>object</span>, <span class='kw'>minFrac</span>=<span class='fl'>0.5</span>){
         <span class='kw'>ix.minFrac</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span>(<span class='kw'>object</span>))),
                            <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>object</span>, <span class='kw'>mf</span>){
@@ -229,7 +231,9 @@ Currently, there is no equivalent to minfrac or minsamp." />
     <span class='kw'>gxset.post</span><span class='op'>@</span>groupidx<span class='op'>&lt;-</span><span class='kw'>gxset</span><span class='op'>@</span>groupidx[<span class='kw'>idx</span>]
     <span class='kw'>gxset.post</span><span class='op'>@</span>groups<span class='op'>&lt;-</span><span class='kw'>gxset</span><span class='op'>@</span>groups[<span class='kw'>idx</span>,]
 
-    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>gxset.post</span><span class='op'>@</span>groups) <span class='op'>==</span> <span class='fl'>465</span> <span class='co'>## number of features after minFrac</span></div><div class='output co'>#&gt; [1] FALSE</div><div class='input'></div></pre>
+    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>gxset.post</span><span class='op'>@</span>groups) <span class='op'>==</span> <span class='fl'>465</span> <span class='co'>## number of features after minFrac</span>
+</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -245,7 +249,7 @@ Currently, there is no equivalent to minfrac or minsamp." />
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

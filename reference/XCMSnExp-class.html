@@ -234,7 +234,7 @@ as rectangles with border color peakCol." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -966,9 +966,13 @@ with feature definitions and phenodata information, into a
 <span class='co'>## Update the path to the files for the local system</span>
 <span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
+<span class='co'>## Disable parallel processing for this example</span>
+<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+
 <span class='co'>## The results from the peak detection are now stored in the XCMSnExp</span>
 <span class='co'>## object</span>
-<span class='kw'>faahko_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='kw'>faahko_sub</span>
+</div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 1.23 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
@@ -997,7 +1001,8 @@ with feature definitions and phenodata information, into a
 #&gt;  248 peaks identified in 3 samples.
 #&gt;  On average 82.7 chromatographic peaks per sample.</div><div class='input'>
 <span class='co'>## The detected peaks can be accessed with the chromPeaks method.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='kw'>faahko_sub</span>))
+</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
@@ -1013,7 +1018,8 @@ with feature definitions and phenodata information, into a
 #&gt; CP006    87      1</div><div class='input'>
 <span class='co'>## The settings of the chromatographic peak detection can be accessed with</span>
 <span class='co'>## the processHistory method</span>
-<span class='fu'>processHistory</span>(<span class='kw'>faahko_sub</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>processHistory</span>(<span class='kw'>faahko_sub</span>)
+</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
 #&gt;  date: Mon Jun 15 06:30:55 2020 
@@ -1023,7 +1029,8 @@ with feature definitions and phenodata information, into a
 #&gt;  MS level(s) 1 
 #&gt; </div><div class='input'>
 <span class='co'>## Also the parameter class for the peak detection can be accessed</span>
-<span class='fu'><a href='ProcessHistory-class.html'>processParam</a></span>(<span class='fu'>processHistory</span>(<span class='kw'>faahko_sub</span>)[[<span class='fl'>1</span>]])</div><div class='output co'>#&gt; Object of class:  CentWaveParam 
+<span class='fu'><a href='ProcessHistory-class.html'>processParam</a></span>(<span class='fu'>processHistory</span>(<span class='kw'>faahko_sub</span>)[[<span class='fl'>1</span>]])
+</div><div class='output co'>#&gt; Object of class:  CentWaveParam 
 #&gt; Parameters:
 #&gt;  ppm: 25 
 #&gt;  peakwidth: 20, 50 
@@ -1042,7 +1049,8 @@ with feature definitions and phenodata information, into a
 <span class='co'>## defined in Bioconductor's MSnbase package. To access the (raw) retention</span>
 <span class='co'>## time for each spectrum we can use the rtime method. Setting bySample = TRUE</span>
 <span class='co'>## would cause the retention times to be grouped by sample</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>rtime</span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>rtime</span>(<span class='kw'>faahko_sub</span>))
+</div><div class='output co'>#&gt; F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
 #&gt; 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203 </div><div class='input'>
 <span class='co'>## Similarly it is possible to extract the mz values or the intensity values</span>
 <span class='co'>## using the mz and intensity method, respectively, also with the option to</span>
@@ -1052,7 +1060,9 @@ with feature definitions and phenodata information, into a
 <span class='co'>## Note that all these methods read the information from the original input</span>
 <span class='co'>## files and subsequently apply eventual data processing steps to them.</span>
 <span class='kw'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span>(<span class='kw'>faahko_sub</span>, bySample = <span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>mzs</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)</div><div class='output co'>#&gt;      1      2      3 
+<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>mzs</span>)
+</div><div class='output co'>#&gt; [1] 3</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)
+</div><div class='output co'>#&gt;      1      2      3 
 #&gt; 445769 440794 442516 </div><div class='input'>
 <span class='co'>## The full data could also be read using the spectra data, which returns</span>
 <span class='co'>## a list of Spectrum object containing the mz, intensity and rt values.</span>
@@ -1069,7 +1079,8 @@ with feature definitions and phenodata information, into a
 <span class='co'>## Below we filter the XCMSnExp object by file to extract the results for</span>
 <span class='co'>## only the second file.</span>
 <span class='kw'>xod_2</span> <span class='op'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>2</span>)
-<span class='kw'>xod_2</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='kw'>xod_2</span>
+</div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.49 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
@@ -1077,7 +1088,7 @@ with feature definitions and phenodata information, into a
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
 #&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
-#&gt; Filter: select file(s) 2. [Wed Jul 22 13:04:46 2020] 
+#&gt; Filter: select file(s) 2. [Fri Sep 18 10:31:11 2020] 
 #&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
@@ -1098,7 +1109,8 @@ with feature definitions and phenodata information, into a
 #&gt;  100 peaks identified in 1 samples.
 #&gt;  On average 100 chromatographic peaks per sample.</div><div class='input'>
 <span class='co'>## Now the objects contains only the idenfified peaks for the second file</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='kw'>xod_2</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into        intb
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>chromPeaks</span>(<span class='kw'>xod_2</span>))
+</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into        intb
 #&gt; CP088 384.1 384.1 384.1 2603.100 2592.145 2614.054   274906.3   274885.96
 #&gt; CP089 533.3 533.3 533.3 2686.042 2681.347 2689.172    70456.3    70450.04
 #&gt; CP090 344.0 344.0 344.0 2686.042 2648.483 2714.211  5700652.0  5574744.87
@@ -1116,7 +1128,9 @@ with feature definitions and phenodata information, into a
 <span class='co'>## Coercing to an xcmsSet object</span>
 <span class='co'>##</span>
 <span class='co'>## We can also coerce the XCMSnExp object into an xcmsSet object:</span>
-<span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'>as</span>(<span class='kw'>faahko_sub</span>, <span class='st'>"xcmsSet"</span>)</div><div class='output co'>#&gt; <span class='message'>Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='xcmsSet-class.html'>peaks</a></span>(<span class='kw'>xs</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='kw'>xs</span> <span class='op'>&lt;-</span> <span class='fu'>as</span>(<span class='kw'>faahko_sub</span>, <span class='st'>"xcmsSet"</span>)
+</div><div class='output co'>#&gt; <span class='message'>Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='xcmsSet-class.html'>peaks</a></span>(<span class='kw'>xs</span>))
+</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
@@ -1145,7 +1159,7 @@ with feature definitions and phenodata information, into a
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

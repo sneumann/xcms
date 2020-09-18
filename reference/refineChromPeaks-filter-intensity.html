@@ -80,7 +80,7 @@ Also, for nValues &amp;gt; 1 parameter value is ignored." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -221,15 +221,25 @@ default parallel processing setup returned by <code>bpparam()</code>. See
 <span class='co'>## Update the path to the files for the local system</span>
 <span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 
+<span class='co'>## Disable parallel processing for this example</span>
+<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+
 <span class='co'>## Remove all peaks with a maximal intensity below 50000</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>50000</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 93 chromatographic peaks.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] 155</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"maxo"</span>] <span class='op'>&gt;</span> <span class='fl'>50000</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>faahko_sub</span>, param = <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>50000</span>))
+</div><div class='output co'>#&gt; <span class='message'>Removed 93 chromatographic peaks.</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>))
+</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))
+</div><div class='output co'>#&gt; [1] 155</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"maxo"</span>] <span class='op'>&gt;</span> <span class='fl'>50000</span>)
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## Keep only chromatographic peaks that have 3 signals above 20000; we</span>
 <span class='co'>## perform this on the data of a single file.</span>
 <span class='kw'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterFile</a></span>(<span class='kw'>faahko_sub</span>)
 
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>xdata</span>, <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>20000</span>, nValues = <span class='fl'>3</span>))</div><div class='output co'>#&gt; <span class='message'>Removed 28 chromatographic peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xdata</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt; [1] 220</div></pre>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span>(<span class='kw'>xdata</span>, <span class='fu'>FilterIntensityParam</span>(threshold = <span class='fl'>20000</span>, nValues = <span class='fl'>3</span>))
+</div><div class='output co'>#&gt; <span class='message'>Removed 28 chromatographic peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xdata</span>))
+</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))
+</div><div class='output co'>#&gt; [1] 220</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -245,7 +255,7 @@ default parallel processing setup returned by <code>bpparam()</code>. See
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

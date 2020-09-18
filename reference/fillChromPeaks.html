@@ -103,7 +103,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -417,20 +417,28 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 <span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
 
+<span class='co'>## Disable parallel processing for this example</span>
+<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+
 <span class='co'>## Perform the correspondence. We assign all samples to the same group.</span>
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>,
-    param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='kw'>res</span>)))))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+    param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='kw'>res</span>)))))
+</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## For how many features do we lack an integrated peak signal?</span>
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))
+</div><div class='output co'>#&gt; [1] 26</div><div class='input'>
 <span class='co'>## Filling missing peak data using the peak area from identified</span>
 <span class='co'>## chromatographic peaks.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>fillChromPeaks</span>(<span class='kw'>res</span>, param = <span class='fu'>ChromPeakAreaParam</span>())</div><div class='output co'>#&gt; <span class='message'>Defining peak areas for filling-in .</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'> OK</span>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>fillChromPeaks</span>(<span class='kw'>res</span>, param = <span class='fu'>ChromPeakAreaParam</span>())
+</div><div class='output co'>#&gt; <span class='message'>Defining peak areas for filling-in .</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'>.</span></div><div class='output co'>#&gt; <span class='message'> OK</span>
 #&gt; <span class='message'>Start integrating peak areas from original files</span></div><div class='output co'>#&gt; <span class='message'>Requesting 8 peaks from ko15.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 7.</span></div><div class='output co'>#&gt; <span class='message'>Requesting 10 peaks from ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 10.</span></div><div class='output co'>#&gt; <span class='message'>Requesting 8 peaks from ko18.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>got 6.</span></div><div class='input'>
 <span class='co'>## How many missing values do we have after peak filling?</span>
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))
+</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
 <span class='co'>## Get the peaks that have been filled in:</span>
 <span class='kw'>fp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[<span class='fu'><a href='XCMSnExp-class.html'>chromPeakData</a></span>(<span class='kw'>res</span>)<span class='op'>$</span><span class='kw'>is_filled</span>, ]
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>fp</span>)</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into intb   maxo sn
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>fp</span>)
+</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax      into intb   maxo sn
 #&gt; CP249 286.2 286.2 286.2 3252.556 3236.907 3274.857 1288521.3   NA  78048 NA
 #&gt; CP250 380.1 380.1 380.1 3172.743 3129.707 3173.526  677133.8   NA  27040 NA
 #&gt; CP251 447.2 447.2 447.2 3858.193 3828.068 3914.140 2156784.3   NA  61256 NA
@@ -447,34 +455,36 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 <span class='co'>## Get the process history step along with the parameters used to perform</span>
 <span class='co'>## The peak filling:</span>
 <span class='kw'>ph</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>, type = <span class='st'>"Missing peak filling"</span>)[[<span class='fl'>1</span>]]
-<span class='kw'>ph</span></div><div class='output co'>#&gt; Object of class "XProcessHistory"
+<span class='kw'>ph</span>
+</div><div class='output co'>#&gt; Object of class "XProcessHistory"
 #&gt;  type: Missing peak filling 
-#&gt;  date: Wed Jul 22 13:05:16 2020 
+#&gt;  date: Fri Sep 18 10:31:43 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ChromPeakAreaParam 
 #&gt;  MS level(s) 1 </div><div class='input'>
 <span class='co'>## The parameter class:</span>
-<span class='kw'>ph</span><span class='op'>@</span>param</div><div class='output co'>#&gt; An object of class "ChromPeakAreaParam"
+<span class='kw'>ph</span><span class='op'>@</span>param
+</div><div class='output co'>#&gt; An object of class "ChromPeakAreaParam"
 #&gt; Slot "rtmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x5637d4c49da8&gt;
+#&gt; &lt;environment: 0x5646c2bc40e0&gt;
 #&gt; 
 #&gt; Slot "rtmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x5637d4c49da8&gt;
+#&gt; &lt;environment: 0x5646c2bc40e0&gt;
 #&gt; 
 #&gt; Slot "mzmin":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x5637d4c49da8&gt;
+#&gt; &lt;environment: 0x5646c2bc40e0&gt;
 #&gt; 
 #&gt; Slot "mzmax":
 #&gt; function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x5637d4c49da8&gt;
+#&gt; &lt;environment: 0x5646c2bc40e0&gt;
 #&gt; 
 #&gt; Slot ".__classVersion__":
 #&gt;   Param 
@@ -483,7 +493,8 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 <span class='co'>## It is also possible to remove filled-in peaks:</span>
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFilledChromPeaks</a></span>(<span class='kw'>res</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))</div><div class='output co'>#&gt; [1] 26</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>)))
+</div><div class='output co'>#&gt; [1] 26</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -499,7 +510,7 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

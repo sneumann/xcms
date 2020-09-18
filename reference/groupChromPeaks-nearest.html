@@ -102,7 +102,7 @@ already present feature definitions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -343,7 +343,8 @@ the peak grouping.</p>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a NearestPeaksParam object</span>
 <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>NearestPeaksParam</span>(kNN = <span class='fl'>3</span>)
-<span class='kw'>p</span></div><div class='output co'>#&gt; Object of class:  NearestPeaksParam 
+<span class='kw'>p</span>
+</div><div class='output co'>#&gt; Object of class:  NearestPeaksParam 
 #&gt; Parameters:
 #&gt;  sampleGroups: numeric of length 0 
 #&gt;  mzVsRtBalance: 10 
@@ -356,7 +357,11 @@ the peak grouping.</p>
 <span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
 <span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+<span class='co'>## Disable parallel processing for this example</span>
+<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))
+</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
 #&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
@@ -370,14 +375,17 @@ the peak grouping.</p>
 #&gt; CP004    42      1
 #&gt; CP005    49      1
 #&gt; CP006    87      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])
+</div><div class='output co'>#&gt; 
 #&gt;   1   2   3 
 #&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## Performing the peak grouping</span>
 <span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>NearestPeaksParam</span>()
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)</div><div class='output co'>#&gt; <span class='message'>Empty 'sampleGroups' in 'param', assuming all samples to be in the same group.</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 3 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)
+</div><div class='output co'>#&gt; <span class='message'>Empty 'sampleGroups' in 'param', assuming all samples to be in the same group.</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 3 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The results from the peak grouping:</span>
-<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; DataFrame with 188 rows and 10 columns
+<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='kw'>res</span>)
+</div><div class='output co'>#&gt; DataFrame with 188 rows and 10 columns
 #&gt;           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
 #&gt;       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
 #&gt; FT001     384.1     384.1     384.1   2603.10   2603.10   2603.10         1
@@ -406,7 +414,8 @@ the peak grouping.</p>
 #&gt; FT188         1         247         1</div><div class='input'>
 <span class='co'>## Using the featureValues method to extract a matrix with the intensities of</span>
 <span class='co'>## the features per sample.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>, value = <span class='st'>"into"</span>))</div><div class='output co'>#&gt;       ko15.CDF   ko16.CDF ko18.CDF
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span>(<span class='kw'>res</span>, value = <span class='st'>"into"</span>))
+</div><div class='output co'>#&gt;       ko15.CDF   ko16.CDF ko18.CDF
 #&gt; FT001       NA   274906.3       NA
 #&gt; FT002       NA    70456.3       NA
 #&gt; FT003  5210016  5700652.0  5255689
@@ -414,7 +423,8 @@ the peak grouping.</p>
 #&gt; FT005 24147443 26229546.1 23821647
 #&gt; FT006 14975761 15565868.0 12388547</div><div class='input'>
 <span class='co'>## The process history:</span>
-<span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='kw'>res</span>)
+</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
 #&gt;  date: Mon Jun 15 06:30:55 2020 
@@ -426,7 +436,7 @@ the peak grouping.</p>
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Wed Jul 22 13:06:42 2020 
+#&gt;  date: Fri Sep 18 10:33:10 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: NearestPeaksParam 
@@ -447,7 +457,7 @@ the peak grouping.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

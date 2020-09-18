@@ -76,7 +76,7 @@ rt against m/z values at the bottom." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -200,12 +200,14 @@ based on their intensity. See argument <code>col.regions</code> in
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>magrittr</span>)
 <span class='kw'>cdfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>), full.names = <span class='fl'>TRUE</span>,
     recursive = <span class='fl'>TRUE</span>)[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>]
-<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>cdfs</span>, mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>cdfs</span>, mode = <span class='st'>"onDisk"</span>)
+</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Subset the object to a rt and mz range and plot the data.</span>
 <span class='kw'>raw_data</span> <span class='op'>%&gt;%</span>
     <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterRt</a></span>(rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>)) <span class='op'>%&gt;%</span>
     <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/trimMz-methods.html'>filterMz</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>334.9</span>, <span class='fl'>335.1</span>)) <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(type = <span class='st'>"XIC"</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(type = <span class='st'>"XIC"</span>)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 #&gt; <span class='warning'>number 128. Returning empty spectrum.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 #&gt; <span class='warning'>number 131. Returning empty spectrum.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 #&gt; <span class='warning'>number 132. Returning empty spectrum.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
@@ -322,7 +324,7 @@ based on their intensity. See argument <code>col.regions</code> in
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

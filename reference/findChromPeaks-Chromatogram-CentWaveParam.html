@@ -81,7 +81,7 @@ detection artifacts." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
       </span>
     </div>
 
@@ -216,7 +216,8 @@ for details on the method.</p></div>
 
 <span class='co'>## Identify peaks with default settings</span>
 <span class='kw'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chr</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>())
-<span class='kw'>xchr</span></div><div class='output co'>#&gt; Object of class: XChromatogram
+<span class='kw'>xchr</span>
+</div><div class='output co'>#&gt; Object of class: XChromatogram
 #&gt; Intensity values aggregated using: sum 
 #&gt; length of object: 766
 #&gt; from file: 1
@@ -229,18 +230,24 @@ for details on the method.</p></div>
 #&gt;  3117.97	3097.625	3139.879	372049.599925925	16496	33
 #&gt;  3487.299	3457.565	3509.208	93049.7314242425	2651	15</div><div class='input'>
 <span class='co'>## Plot data and identified peaks.</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchr</span>)
+</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Perform peak detection on an MChromatograms object</span>
 <span class='kw'>od3</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko16.CDF"</span>, package = <span class='st'>"faahKO"</span>),
     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko18.CDF"</span>, package = <span class='st'>"faahKO"</span>)),
-    mode = <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+    mode = <span class='st'>"onDisk"</span>)
+</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
+<span class='co'>## Disable parallel processing for this example</span>
+<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+
 <span class='co'>## Extract chromatograms for a m/z - retention time slice</span>
 <span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>od3</span>, mz = <span class='fl'>344</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3500</span>))
 
 <span class='co'>## Perform peak detection using CentWave</span>
 <span class='kw'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>chrs</span>, param = <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>())
-<span class='kw'>xchrs</span></div><div class='output co'>#&gt; XChromatograms with 1 row and 3 columns
+<span class='kw'>xchrs</span>
+</div><div class='output co'>#&gt; XChromatograms with 1 row and 3 columns
 #&gt;             ko15.CDF        ko16.CDF        ko18.CDF
 #&gt;      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;
 #&gt; [1,]        peaks: 2        peaks: 2        peaks: 1
@@ -250,14 +257,16 @@ for details on the method.</p></div>
 #&gt; Chromatographic peak detection:
 #&gt;  method: centWave </div><div class='input'>
 <span class='co'>## Extract the identified chromatographic peaks</span>
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xchrs</span>)</div><div class='output co'>#&gt;            rt    rtmin    rtmax      into      intb   maxo sn row column
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>xchrs</span>)
+</div><div class='output co'>#&gt;            rt    rtmin    rtmax      into      intb   maxo sn row column
 #&gt; [1,] 2589.015 2571.801 2612.490  592297.3  554533.9  27600 14   1      1
 #&gt; [2,] 2679.783 2646.919 2709.517 5210015.9 5071346.6 152320 30   1      1
 #&gt; [3,] 2593.710 2559.281 2637.529  722415.3  640838.6  30640 14   1      2
 #&gt; [4,] 2686.042 2648.483 2714.211 5700652.0 5587464.2 151744 45   1      2
 #&gt; [5,] 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28   1      3</div><div class='input'>
 <span class='co'>## plot the result</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchrs</span>)</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-2.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>xchrs</span>)
+</div><div class='img'><img src='findChromPeaks-Chromatogram-CentWaveParam-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -273,7 +282,7 @@ for details on the method.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
