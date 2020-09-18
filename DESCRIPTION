@@ -42,7 +42,8 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.9.3)
+    MSnbase (>= 2.9.3),
+    MSnbase (<= 2.15.0)
 Imports:
     mzR (>= 2.19.5),
     BiocGenerics,
