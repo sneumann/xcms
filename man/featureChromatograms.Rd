@@ -85,6 +85,9 @@ data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Subset the object to a smaller retention time range
 xdata <- filterRt(faahko_sub, c(2500, 3500))
 

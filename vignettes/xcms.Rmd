@@ -38,13 +38,13 @@ library(BiocStyle)
 library(xcms)
 library(faahKO)
 library(pander)
-## ## Use socket based parallel processing on Windows systems
-## if (.Platform$OS.type == "unix") {
-##     register(bpstart(MulticoreParam(3)))
-## } else {
-##     register(bpstart(SnowParam(3)))
-## }
-register(SerialParam())
+## Use socket based parallel processing on Windows systems
+if (.Platform$OS.type == "unix") {
+    register(bpstart(MulticoreParam(3)))
+} else {
+    register(bpstart(SnowParam(3)))
+}
+## register(SerialParam())
 
 ```
 
@@ -906,7 +906,7 @@ apply(featureValues(xdata), MARGIN = 2,
 
 ```
 
-```{r export-result, eval = TRUE, echo = FALSE}
+```{r export-result, eval = FALSE, echo = FALSE}
 save(xdata, file = "xdata.RData")
 ```
 
@@ -1200,18 +1200,6 @@ x_list <- split(xdata, f = fromFile(xdata), keepAdjustedRtime = TRUE)
 lengths(x_list)
 
 lapply(x_list, hasAdjustedRtime)
-```
-
-Note however that there is also a dedicated `splitByFile` method instead for
-that operation, that internally uses `filterFile` and hence does e.g. not remove
-identified chromatographic peaks. The method does not yet support the
-`keepAdjustedRtime` parameter and thus removes by default adjusted retention
-times.
-
-```{r subset-split-by-file, message = FALSE }
-xdata_by_file <- splitByFile(xdata, f = factor(1:length(fileNames(xdata))))
-
-lapply(xdata_by_file, hasChromPeaks)
 ```
 
 

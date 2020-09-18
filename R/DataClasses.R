@@ -1491,6 +1491,9 @@ NULL
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' res <- faahko_sub
 #'
 #' head(chromPeaks(res))
@@ -1614,6 +1617,9 @@ NULL
 #' fticrf <- list.files(system.file("fticr", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
 #' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1740,6 +1746,9 @@ NULL
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #' res <- faahko_sub
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
@@ -1958,6 +1967,9 @@ NULL
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #' res <- faahko_sub
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
 #' table(chromPeaks(res)[, "sample"])
@@ -2172,6 +2184,9 @@ NULL
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform retention time correction:
 #' res <- adjustRtime(faahko_sub, param = ObiwarpParam())
@@ -2516,6 +2531,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## The results from the peak detection are now stored in the XCMSnExp
 #' ## object

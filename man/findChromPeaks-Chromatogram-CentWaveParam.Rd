@@ -72,6 +72,9 @@ od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
     mode = "onDisk")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Extract chromatograms for a m/z - retention time slice
 chrs <- chromatogram(od3, mz = 344, rt = c(2500, 3500))
 

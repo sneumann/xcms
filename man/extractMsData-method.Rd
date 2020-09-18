@@ -59,6 +59,9 @@ data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Extract the full MS data for a certain retention time range
 ## as a data.frame
 tmp <- filterRt(faahko_sub, rt = c(2800, 2900))

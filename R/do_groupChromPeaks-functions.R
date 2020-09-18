@@ -67,6 +67,9 @@
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Extract the matrix with the identified peaks from the xcmsSet:
 #' pks <- chromPeaks(faahko_sub)
 #'

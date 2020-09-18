@@ -661,6 +661,9 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Performing the peak grouping using the "peak density" method.
 #' p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
 #' res <- groupChromPeaks(faahko_sub, param = p)
@@ -957,6 +960,9 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
@@ -1289,6 +1295,9 @@ isCalibrated <- function(object) {
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' xod <- adjustRtime(faahko_sub, param = ObiwarpParam())
 #'
 #' hasAdjustedRtime(xod)
@@ -1566,6 +1575,9 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
 #' ## Correspondence analysis
 #' xdata <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
 #'
@@ -1724,7 +1736,7 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
     file_factor <- factor(pks[, "sample"])
     peak_ids <- rownames(pks)
     pks <- split.data.frame(pks, f = file_factor)
-    x <- .split_by_file(
+    x <- .split_by_file2(
         x, msLevel. = 2L, subsetFeatureData = FALSE)[as.integer(levels(file_factor))]
     res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
                     MoreArgs = list(method = method), SIMPLIFY = FALSE,
@@ -2085,6 +2097,9 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Subset the object to a smaller retention time range
 #' xdata <- filterRt(faahko_sub, c(2500, 3500))
@@ -2476,7 +2491,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                          "isolationWindowLowerOffset",
                                          "isolationWindowUpperOffset"))
     sps <- bplapply(
-        .split_by_file(object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
+        .split_by_file2(
+            object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
         FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,

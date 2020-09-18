@@ -236,6 +236,9 @@ data(faahko_sub)
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 res <- faahko_sub
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Perform the correspondence. We assign all samples to the same group.
 res <- groupChromPeaks(res,
     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))

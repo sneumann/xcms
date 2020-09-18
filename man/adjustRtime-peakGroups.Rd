@@ -290,6 +290,9 @@ data(faahko_sub)
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 res <- faahko_sub
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 head(chromPeaks(res))
 ## The number of peaks identified per sample:
 table(chromPeaks(res)[, "sample"])

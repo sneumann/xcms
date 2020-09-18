@@ -126,6 +126,9 @@ data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Subset to a single file
 xd <- filterFile(faahko_sub, file = 1)
 
