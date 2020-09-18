@@ -1,6 +1,7 @@
 .editorconfig
 local_data
 .git
+.github
 .travis.yml
 .org
 ^.*\.Rproj$
