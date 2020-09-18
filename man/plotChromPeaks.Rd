@@ -110,6 +110,9 @@ faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 
 od <- readMSData(faahko_file, mode = "onDisk")
 
+## Disabling parallel processing in this example
+register(SerialParam())
+
 ## Peak detection using the 'matchedFilter' method. Note that we are using a
 ## larger binSize to reduce the runtime of the example.
 xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))

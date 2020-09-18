@@ -10,6 +10,9 @@
 #'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
 #'     mode = "onDisk")
 #'
+#' ## Disabling parallel processing in this example
+#' register(SerialParam())
+#'
 #' ## Extract chromatograms for a m/z - retention time slice
 #' chrs <- chromatogram(od3, mz = 344, rt = c(2500, 3500))
 #'

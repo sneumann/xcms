@@ -38,6 +38,9 @@ data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
                      system.file("cdf/KO/ko16.CDF", package = "faahKO")),
                    mode = "onDisk")
 
+## Disabling parallel processing in this example
+register(SerialParam())
+
 ## Perform peak detection; parameters set to reduce processing speed
 data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
     noise = 10000, snthresh = 40))

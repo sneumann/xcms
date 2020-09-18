@@ -50,6 +50,9 @@ detection artifacts.
 od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
     mode = "onDisk")
 
+## Disabling parallel processing in this example
+register(SerialParam())
+
 ## Extract chromatographic data for a small m/z range
 chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
 
@@ -72,6 +75,9 @@ od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
     mode = "onDisk")
+
+## Disabling parallel processing in this example
+register(SerialParam())
 
 ## Extract chromatograms for a m/z - retention time slice
 chrs <- chromatogram(od3, mz = 344, rt = c(2500, 3500))

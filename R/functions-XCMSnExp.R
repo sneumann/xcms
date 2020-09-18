@@ -772,6 +772,9 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' ## Reading one of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
+#' ## Disabling parallel processing in this example
+#' register(SerialParam())
+#'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
 #' res <- findChromPeaks(raw_data, param = mfp)
@@ -1225,6 +1228,9 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
 #'
 #' od <- readMSData(faahko_file, mode = "onDisk")
 #'
+#' ## Disabling parallel processing in this example
+#' register(SerialParam())
+#'
 #' ## Peak detection using the 'matchedFilter' method. Note that we are using a
 #' ## larger binSize to reduce the runtime of the example.
 #' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
@@ -1642,6 +1648,9 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'                      system.file("cdf/KO/ko16.CDF", package = "faahKO")),
 #'                    mode = "onDisk")
+#'
+#' ## Disabling parallel processing in this example
+#' register(SerialParam())
 #'
 #' ## Perform peak detection; parameters set to reduce processing speed
 #' data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
@@ -2148,6 +2157,9 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' library(faahKO)
 #' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#'
+#' ## Disabling parallel processing in this example
+#' register(SerialParam())
 #'
 #' ## Do a simple and fast preprocessing on a subset of the test data
 #' od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))

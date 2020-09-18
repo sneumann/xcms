@@ -70,6 +70,9 @@ library(faahKO)
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
+## Disabling parallel processing in this example
+register(SerialParam())
+
 ## Do a simple and fast preprocessing on a subset of the test data
 od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
 od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
