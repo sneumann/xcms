@@ -1,6 +1,7 @@
 Changes in version 3.11.7
 
 - More efficient splitting data per file especially for larger data sets.
+- Disable parallel processing in examples.
 
 
 Changes in version 3.11.6

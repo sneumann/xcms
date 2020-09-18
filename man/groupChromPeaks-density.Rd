@@ -199,6 +199,9 @@ data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 res <- faahko_sub
 
 head(chromPeaks(res))

@@ -110,6 +110,9 @@ data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
+## Disable parallel processing for this example
+register(SerialParam())
+
 ## Extract the ion chromatogram for one chromatographic peak in the data.
 chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
 
