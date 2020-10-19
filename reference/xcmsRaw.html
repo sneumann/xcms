@@ -75,19 +75,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -141,10 +135,10 @@
   plotting and data exploration.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>xcmsRaw</span>(<span class='kw'>filename</span>, profstep = <span class='fl'>1</span>, profmethod = <span class='st'>"bin"</span>, profparam =
-<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), includeMSn=<span class='fl'>FALSE</span>, mslevel=<span class='kw'>NULL</span>, scanrange=<span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>xcmsRaw</span><span class='op'>(</span><span class='va'>filename</span>, profstep <span class='op'>=</span> <span class='fl'>1</span>, profmethod <span class='op'>=</span> <span class='st'>"bin"</span>, profparam <span class='op'>=</span>
+<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, includeMSn<span class='op'>=</span><span class='cn'>FALSE</span>, mslevel<span class='op'>=</span><span class='cn'>NULL</span>, scanrange<span class='op'>=</span><span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='fu'>deepCopy</span>(<span class='kw'>object</span>)</pre>
+<span class='fu'>deepCopy</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -222,35 +216,35 @@
   <code><a href='xcmsFragments.html'>xcmsFragments</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
-    <span class='kw'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>)
-    <span class='kw'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='kw'>cdfpath</span>, recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
-    <span class='kw'>xr</span><span class='op'>&lt;-</span><span class='fu'>xcmsRaw</span>(<span class='kw'>cdffiles</span>[<span class='fl'>1</span>])
-    <span class='kw'>xr</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span>
+    <span class='va'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
+    <span class='va'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='va'>cdfpath</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+    <span class='va'>xr</span><span class='op'>&lt;-</span><span class='fu'>xcmsRaw</span><span class='op'>(</span><span class='va'>cdffiles</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>
+    <span class='va'>xr</span>
     <span class='co'>##This gives some information about the file</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span>(<span class='kw'>xr</span>))
+    <span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>xr</span><span class='op'>)</span><span class='op'>)</span>
     <span class='co'>## Lets have a look at the structure of the object</span>
 
-    <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>xr</span>)
+    <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>xr</span><span class='op'>)</span>
     <span class='co'>##same but with a preview of each slot in the object</span>
     <span class='co'>##SO... lets have a look at how this works</span>
-    <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>xr</span><span class='op'>@</span>scanindex)
+    <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>scanindex</span><span class='op'>)</span>
     <span class='co'>##[1]    0  429  860 1291 1718 2140</span>
-    <span class='kw'>xr</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>mz</span>[<span class='fl'>425</span><span class='op'>:</span><span class='fl'>430</span>]
+    <span class='va'>xr</span><span class='op'>@</span><span class='va'>env</span><span class='op'>$</span><span class='va'>mz</span><span class='op'>[</span><span class='fl'>425</span><span class='op'>:</span><span class='fl'>430</span><span class='op'>]</span>
     <span class='co'>##[1] 596.3 597.0 597.3 598.1 599.3 200.1</span>
     <span class='co'>##We can see that the 429 index is the last mz of scan 1 therefore...</span>
 
-    <span class='kw'>mz.scan1</span><span class='op'>&lt;-</span><span class='kw'>xr</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>mz</span>[(<span class='fl'>1</span><span class='op'>+</span><span class='kw'>xr</span><span class='op'>@</span>scanindex[<span class='fl'>1</span>])<span class='op'>:</span><span class='kw'>xr</span><span class='op'>@</span>scanindex[<span class='fl'>2</span>]]
-    <span class='kw'>intensity.scan1</span><span class='op'>&lt;-</span><span class='kw'>xr</span><span class='op'>@</span>env<span class='op'>$</span><span class='kw'>intensity</span>[(<span class='fl'>1</span><span class='op'>+</span><span class='kw'>xr</span><span class='op'>@</span>scanindex[<span class='fl'>1</span>])<span class='op'>:</span><span class='kw'>xr</span><span class='op'>@</span>scanindex[<span class='fl'>2</span>]]
-    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>mz.scan1</span>, <span class='kw'>intensity.scan1</span>, type=<span class='st'>"h"</span>,
-         main=<span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='st'>"Scan 1 of file"</span>, <span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='kw'>cdffiles</span>[<span class='fl'>1</span>]), sep=<span class='st'>""</span>))
+    <span class='va'>mz.scan1</span><span class='op'>&lt;-</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>env</span><span class='op'>$</span><span class='va'>mz</span><span class='op'>[</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>scanindex</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span><span class='op'>:</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>scanindex</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>
+    <span class='va'>intensity.scan1</span><span class='op'>&lt;-</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>env</span><span class='op'>$</span><span class='va'>intensity</span><span class='op'>[</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>+</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>scanindex</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span><span class='op'>:</span><span class='va'>xr</span><span class='op'>@</span><span class='va'>scanindex</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span>
+    <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>mz.scan1</span>, <span class='va'>intensity.scan1</span>, type<span class='op'>=</span><span class='st'>"h"</span>,
+         main<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='st'>"Scan 1 of file"</span>, <span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span><span class='op'>(</span><span class='va'>cdffiles</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>)</span>, sep<span class='op'>=</span><span class='st'>""</span><span class='op'>)</span><span class='op'>)</span>
     <span class='co'>##the easier way :p</span>
-    <span class='kw'>scan1</span><span class='op'>&lt;-</span><span class='fu'><a href='getScan-methods.html'>getScan</a></span>(<span class='kw'>xr</span>, <span class='fl'>1</span>)
-    <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>scan1</span>)
-    <span class='fu'><a href='plotScan-methods.html'>plotScan</a></span>(<span class='kw'>xr</span>, <span class='fl'>1</span>)
-  }
+    <span class='va'>scan1</span><span class='op'>&lt;-</span><span class='fu'><a href='getScan-methods.html'>getScan</a></span><span class='op'>(</span><span class='va'>xr</span>, <span class='fl'>1</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>scan1</span><span class='op'>)</span>
+    <span class='fu'><a href='plotScan-methods.html'>plotScan</a></span><span class='op'>(</span><span class='va'>xr</span>, <span class='fl'>1</span><span class='op'>)</span>
+  <span class='op'>}</span>
 
 </div></pre>
   </div>

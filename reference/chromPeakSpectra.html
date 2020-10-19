@@ -79,19 +79,13 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -149,16 +143,16 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
 <p>See also the <em>LC-MS/MS data analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>chromPeakSpectra</span>(
-  <span class='kw'>x</span>,
-  msLevel = <span class='fl'>2L</span>,
-  expandRt = <span class='fl'>0</span>,
-  expandMz = <span class='fl'>0</span>,
-  ppm = <span class='fl'>0</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span>),
-  skipFilled = <span class='fl'>FALSE</span>,
-  return.type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MSpectra"</span>, <span class='st'>"list"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>chromPeakSpectra</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>2L</span>,
+  expandRt <span class='op'>=</span> <span class='fl'>0</span>,
+  expandMz <span class='op'>=</span> <span class='fl'>0</span>,
+  ppm <span class='op'>=</span> <span class='fl'>0</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span><span class='op'>)</span>,
+  skipFilled <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"list"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -229,16 +223,16 @@ length of the list matches the number of peaks.</p></li>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Read a file with DDA LC-MS/MS data</span>
-<span class='kw'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package = <span class='st'>"msdata"</span>)
-<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='kw'>fl</span>, mode = <span class='st'>"onDisk"</span>)
+<span class='va'>fl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package <span class='op'>=</span> <span class='st'>"msdata"</span><span class='op'>)</span>
+<span class='va'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>readMSData</span><span class='op'>(</span><span class='va'>fl</span>, mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
 
 <span class='co'>## Subset the object to reduce runtime of the example</span>
-<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='kw'>dda</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>200</span>, <span class='fl'>400</span>))
+<span class='va'>dda</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span><span class='op'>(</span><span class='va'>dda</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>200</span>, <span class='fl'>400</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Perform MS1 peak detection</span>
-<span class='kw'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>dda</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>15</span>), prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1000</span>)))
-</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 7 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 8 found.</span></div><div class='input'><span class='kw'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span>(<span class='kw'>dda</span>)
-<span class='kw'>ms2_sps</span>
+<span class='va'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>dda</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span><span class='op'>(</span>peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>15</span><span class='op'>)</span>, prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>1000</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 7 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 8 found.</span></div><div class='input'><span class='va'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span><span class='op'>)</span>
+<span class='va'>ms2_sps</span>
 </div><div class='output co'>#&gt; MSpectra with 25 spectra and 1 metadata column(s):
 #&gt;                  msLevel     rtime peaksCount |     peak_id
 #&gt;                &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;

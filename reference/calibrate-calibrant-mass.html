@@ -76,19 +76,13 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -143,18 +137,18 @@ to the provided mz values. See details below for more information.</p>
 peaks of the <a href='XCMSnExp-class.html'>XCMSnExp</a> object <code>x</code> were calibrated and <code>FALSE</code> otherwise.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CalibrantMassParam</span>(
-  mz = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  mzabs = <span class='fl'>1e-04</span>,
-  mzppm = <span class='fl'>5</span>,
-  neighbors = <span class='fl'>3</span>,
-  method = <span class='st'>"linear"</span>
-)
+    <pre class="usage"><span class='fu'>CalibrantMassParam</span><span class='op'>(</span>
+  mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  mzabs <span class='op'>=</span> <span class='fl'>1e-04</span>,
+  mzppm <span class='op'>=</span> <span class='fl'>5</span>,
+  neighbors <span class='op'>=</span> <span class='fl'>3</span>,
+  method <span class='op'>=</span> <span class='st'>"linear"</span>
+<span class='op'>)</span>
 
-<span class='fu'>isCalibrated</span>(<span class='kw'>object</span>)
+<span class='fu'>isCalibrated</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='calibrate-methods.html'>calibrate</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>)</pre>
+<span class='fu'><a href='calibrate-methods.html'>calibrate</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>param</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

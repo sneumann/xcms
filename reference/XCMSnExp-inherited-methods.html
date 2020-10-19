@@ -102,19 +102,13 @@ examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -196,37 +190,37 @@ examples.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>bin</span>(<span class='kw'>object</span>, binSize = <span class='fl'>1L</span>, <span class='kw'>msLevel.</span>)
+<span class='fu'>bin</span><span class='op'>(</span><span class='va'>object</span>, binSize <span class='op'>=</span> <span class='fl'>1L</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>clean</span>(<span class='kw'>object</span>, all = <span class='fl'>FALSE</span>, verbose = <span class='fl'>FALSE</span>, <span class='kw'>msLevel.</span>)
+<span class='fu'>clean</span><span class='op'>(</span><span class='va'>object</span>, all <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>filterAcquisitionNum</span>(<span class='kw'>object</span>, <span class='kw'>n</span>, <span class='kw'>file</span>)
+<span class='fu'>filterAcquisitionNum</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>n</span>, <span class='va'>file</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>normalize</span>(<span class='kw'>object</span>, method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"max"</span>, <span class='st'>"sum"</span>), <span class='kw'>...</span>)
+<span class='fu'>normalize</span><span class='op'>(</span><span class='va'>object</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"max"</span>, <span class='st'>"sum"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>pickPeaks</span>(
-  <span class='kw'>object</span>,
-  halfWindowSize = <span class='fl'>3L</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"MAD"</span>, <span class='st'>"SuperSmoother"</span>),
-  SNR = <span class='fl'>0L</span>,
-  <span class='kw'>...</span>
-)
+<span class='fu'>pickPeaks</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  halfWindowSize <span class='op'>=</span> <span class='fl'>3L</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MAD"</span>, <span class='st'>"SuperSmoother"</span><span class='op'>)</span>,
+  SNR <span class='op'>=</span> <span class='fl'>0L</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>removePeaks</span>(<span class='kw'>object</span>, t = <span class='st'>"min"</span>, verbose = <span class='fl'>FALSE</span>, <span class='kw'>msLevel.</span>)
+<span class='fu'>removePeaks</span><span class='op'>(</span><span class='va'>object</span>, t <span class='op'>=</span> <span class='st'>"min"</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='adjustRtime-peakGroups.html'>smooth</a></span>(
-  <span class='kw'>x</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"SavitzkyGolay"</span>, <span class='st'>"MovingAverage"</span>),
-  halfWindowSize = <span class='fl'>2L</span>,
-  verbose = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'><a href='adjustRtime-peakGroups.html'>smooth</a></span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"SavitzkyGolay"</span>, <span class='st'>"MovingAverage"</span><span class='op'>)</span>,
+  halfWindowSize <span class='op'>=</span> <span class='fl'>2L</span>,
+  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

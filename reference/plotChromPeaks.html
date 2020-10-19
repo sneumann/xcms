@@ -82,19 +82,13 @@ represented with the color of the respective cell." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -155,30 +149,30 @@ with the number of peaks detected in each bin along the retention time
 represented with the color of the respective cell.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotChromPeaks</span>(
-  <span class='kw'>x</span>,
-  file = <span class='fl'>1</span>,
-  xlim = <span class='kw'>NULL</span>,
-  ylim = <span class='kw'>NULL</span>,
-  add = <span class='fl'>FALSE</span>,
-  border = <span class='st'>"#00000060"</span>,
-  col = <span class='fl'>NA</span>,
-  xlab = <span class='st'>"retention time"</span>,
-  ylab = <span class='st'>"mz"</span>,
-  main = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)
+    <pre class="usage"><span class='fu'>plotChromPeaks</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  file <span class='op'>=</span> <span class='fl'>1</span>,
+  xlim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ylim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  add <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  border <span class='op'>=</span> <span class='st'>"#00000060"</span>,
+  col <span class='op'>=</span> <span class='cn'>NA</span>,
+  xlab <span class='op'>=</span> <span class='st'>"retention time"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"mz"</span>,
+  main <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>plotChromPeakImage</span>(
-  <span class='kw'>x</span>,
-  binSize = <span class='fl'>30</span>,
-  xlim = <span class='kw'>NULL</span>,
-  log = <span class='fl'>FALSE</span>,
-  xlab = <span class='st'>"retention time"</span>,
-  yaxt = <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span>(<span class='st'>"yaxt"</span>),
-  main = <span class='st'>"Chromatographic peak counts"</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'>plotChromPeakImage</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  binSize <span class='op'>=</span> <span class='fl'>30</span>,
+  xlim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  log <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  xlab <span class='op'>=</span> <span class='st'>"retention time"</span>,
+  yaxt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/graphics/par.html'>par</a></span><span class='op'>(</span><span class='st'>"yaxt"</span><span class='op'>)</span>,
+  main <span class='op'>=</span> <span class='st'>"Chromatographic peak counts"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -278,19 +272,19 @@ and <code><a href='https://rdrr.io/r/graphics/par.html'>par(lty = 2)</a></code>,
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
 
 <span class='co'>## plotChromPeakImage: plot an image for the identified peaks per file</span>
-<span class='fu'>plotChromPeakImage</span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'>plotChromPeakImage</span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 </div><div class='img'><img src='plotChromPeaks-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Show all detected chromatographic peaks from the first file</span>
-<span class='fu'>plotChromPeaks</span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'>plotChromPeaks</span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 </div><div class='img'><img src='plotChromPeaks-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Plot all detected peaks from the second file and restrict the plot to a</span>
 <span class='co'>## mz-rt slice</span>
-<span class='fu'>plotChromPeaks</span>(<span class='kw'>faahko_sub</span>, file = <span class='fl'>2</span>, xlim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3500</span>, <span class='fl'>3600</span>), ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>400</span>, <span class='fl'>600</span>))
+<span class='fu'>plotChromPeaks</span><span class='op'>(</span><span class='va'>faahko_sub</span>, file <span class='op'>=</span> <span class='fl'>2</span>, xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3500</span>, <span class='fl'>3600</span><span class='op'>)</span>, ylim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>400</span>, <span class='fl'>600</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='plotChromPeaks-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

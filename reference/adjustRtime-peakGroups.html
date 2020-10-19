@@ -133,19 +133,13 @@ adjusted." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -256,72 +250,72 @@ the object, i.e. retention times of all spectra, also MS level &gt; 1 are
 adjusted.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>PeakGroupsParam</span>(
-  minFraction = <span class='fl'>0.9</span>,
-  extraPeaks = <span class='fl'>1</span>,
-  smooth = <span class='st'>"loess"</span>,
-  span = <span class='fl'>0.2</span>,
-  family = <span class='st'>"gaussian"</span>,
-  peakGroupsMatrix = <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(nrow = <span class='fl'>0</span>, ncol = <span class='fl'>0</span>),
-  subset = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(),
-  subsetAdjust = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"average"</span>, <span class='st'>"previous"</span>)
-)
+    <pre class="usage"><span class='fu'>PeakGroupsParam</span><span class='op'>(</span>
+  minFraction <span class='op'>=</span> <span class='fl'>0.9</span>,
+  extraPeaks <span class='op'>=</span> <span class='fl'>1</span>,
+  smooth <span class='op'>=</span> <span class='st'>"loess"</span>,
+  span <span class='op'>=</span> <span class='fl'>0.2</span>,
+  family <span class='op'>=</span> <span class='st'>"gaussian"</span>,
+  peakGroupsMatrix <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span>nrow <span class='op'>=</span> <span class='fl'>0</span>, ncol <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>,
+  subset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>,
+  subsetAdjust <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"average"</span>, <span class='st'>"previous"</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>adjustRtimePeakGroups</span>(<span class='kw'>object</span>, param = <span class='fu'>PeakGroupsParam</span>(), msLevel = <span class='fl'>1L</span>)
-
-<span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>show</span>(<span class='kw'>object</span>)
+<span class='fu'>adjustRtimePeakGroups</span><span class='op'>(</span><span class='va'>object</span>, param <span class='op'>=</span> <span class='fu'>PeakGroupsParam</span><span class='op'>(</span><span class='op'>)</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>)
+<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>extraPeaks</span>(<span class='kw'>object</span>)
+<span class='fu'><a href='groupChromPeaks-density.html'>minFraction</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>extraPeaks</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>extraPeaks</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>smooth</span>(<span class='kw'>x</span>)
+<span class='fu'>extraPeaks</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>smooth</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>smooth</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>span</span>(<span class='kw'>object</span>)
+<span class='fu'>smooth</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>span</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>span</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>family</span>(<span class='kw'>object</span>)
+<span class='fu'>span</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>family</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>family</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>peakGroupsMatrix</span>(<span class='kw'>object</span>)
+<span class='fu'>family</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>peakGroupsMatrix</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakGroupsMatrix</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>subset</span>(<span class='kw'>x</span>)
+<span class='fu'>peakGroupsMatrix</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>subset</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>subset</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>subsetAdjust</span>(<span class='kw'>object</span>)
+<span class='fu'>subset</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for PeakGroupsParam</span>
-<span class='fu'>subsetAdjust</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>subsetAdjust</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
+
+<span class='co'># S4 method for PeakGroupsParam</span>
+<span class='fu'>subsetAdjust</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,PeakGroupsParam</span>
-<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>object</span>, <span class='kw'>param</span>, msLevel = <span class='fl'>1L</span>)</pre>
+<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>param</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -487,15 +481,15 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='kw'>faahko_sub</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='va'>faahko_sub</span>
 
 <span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
 #&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
 #&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
@@ -510,48 +504,48 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #&gt; CP004    42      1
 #&gt; CP005    49      1
 #&gt; CP006    87      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>res</span>)[, <span class='st'>"sample"</span>])
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"sample"</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; 
 #&gt;   1   2   3 
 #&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## Performing the peak grouping using the "peak density" method.</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>))
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='kw'>res</span>, param = <span class='kw'>p</span>)
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span><span class='op'>(</span><span class='va'>res</span>, param <span class='op'>=</span> <span class='va'>p</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Perform the retention time adjustment using peak groups found in both</span>
 <span class='co'>## files.</span>
-<span class='kw'>fgp</span> <span class='op'>&lt;-</span> <span class='fu'>PeakGroupsParam</span>(minFraction = <span class='fl'>1</span>)
+<span class='va'>fgp</span> <span class='op'>&lt;-</span> <span class='fu'>PeakGroupsParam</span><span class='op'>(</span>minFraction <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='co'>## Before running the alignment we can evaluate which features (peak groups)</span>
 <span class='co'>## would be used based on the specified parameters.</span>
-<span class='kw'>pkGrps</span> <span class='op'>&lt;-</span> <span class='fu'>adjustRtimePeakGroups</span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)
+<span class='va'>pkGrps</span> <span class='op'>&lt;-</span> <span class='fu'>adjustRtimePeakGroups</span><span class='op'>(</span><span class='va'>res</span>, param <span class='op'>=</span> <span class='va'>fgp</span><span class='op'>)</span>
 
 <span class='co'>## We can also plot these to evaluate if the peak groups span a large portion</span>
 <span class='co'>## of the retention time range.</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(x = <span class='kw'>pkGrps</span>[, <span class='fl'>1</span>], y = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)), xlim = <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>)),
-    ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), xlab = <span class='st'>"rt"</span>, ylab = <span class='st'>""</span>, yaxt = <span class='st'>"n"</span>)
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span>(x = <span class='kw'>pkGrps</span>[, <span class='fl'>2</span>], y = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/segments.html'>segments</a></span>(x0 = <span class='kw'>pkGrps</span>[, <span class='fl'>1</span>], x1 = <span class='kw'>pkGrps</span>[, <span class='fl'>2</span>],
-    y0 = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)), y1 = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pkGrps</span>)))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/grid.html'>grid</a></span>()
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/axis.html'>axis</a></span>(side = <span class='fl'>2</span>, at = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>), labels = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>pkGrps</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>pkGrps</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>]</span>, y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pkGrps</span><span class='op'>)</span><span class='op'>)</span>, xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span><span class='op'>(</span><span class='fu'>rtime</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>,
+    ylim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, xlab <span class='op'>=</span> <span class='st'>"rt"</span>, ylab <span class='op'>=</span> <span class='st'>""</span>, yaxt <span class='op'>=</span> <span class='st'>"n"</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/points.html'>points</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>pkGrps</span><span class='op'>[</span>, <span class='fl'>2</span><span class='op'>]</span>, y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pkGrps</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/segments.html'>segments</a></span><span class='op'>(</span>x0 <span class='op'>=</span> <span class='va'>pkGrps</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>]</span>, x1 <span class='op'>=</span> <span class='va'>pkGrps</span><span class='op'>[</span>, <span class='fl'>2</span><span class='op'>]</span>,
+    y0 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pkGrps</span><span class='op'>)</span><span class='op'>)</span>, y1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pkGrps</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/grid.html'>grid</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/axis.html'>axis</a></span><span class='op'>(</span>side <span class='op'>=</span> <span class='fl'>2</span>, at <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span><span class='op'>)</span>, labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>pkGrps</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='adjustRtime-peakGroups-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Next we perform the alignment.</span>
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='kw'>res</span>, param = <span class='kw'>fgp</span>)
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>res</span>, param <span class='op'>=</span> <span class='va'>fgp</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Performing retention time correction using 19 peak groups.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Span too small for 'loess' and the available number of peak groups, resetting to 0.21</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Adjusted retention times had to be re-adjusted for some files to ensure them being in the same order than the raw retention times. A call to 'dropAdjustedRtime' might thus fail to restore retention times of chromatographic peaks to their original values. Eventually consider to increase the value of the 'span' parameter.</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Any grouping information was dropped</span>
-<span class='fu'><a href='XCMSnExp-class.html'>hasFeatures</a></span>(<span class='kw'>res</span>)
+<span class='fu'><a href='XCMSnExp-class.html'>hasFeatures</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
 <span class='co'>## Plot the raw against the adjusted retention times.</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>, adjusted = <span class='fl'>FALSE</span>),
-    <span class='fu'>rtime</span>(<span class='kw'>res</span>), pch = <span class='fl'>16</span>, cex = <span class='fl'>0.25</span>, col = <span class='fu'>fromFile</span>(<span class='kw'>res</span>))
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'>rtime</span><span class='op'>(</span><span class='va'>res</span>, adjusted <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
+    <span class='fu'>rtime</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>, pch <span class='op'>=</span> <span class='fl'>16</span>, cex <span class='op'>=</span> <span class='fl'>0.25</span>, col <span class='op'>=</span> <span class='fu'>fromFile</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='adjustRtime-peakGroups-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Adjusterd retention times can be accessed using</span>
 <span class='co'>## rtime(object, adjusted = TRUE) and adjustedRtime</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'>rtime</span>(<span class='kw'>res</span>), <span class='fu'><a href='XCMSnExp-class.html'>adjustedRtime</a></span>(<span class='kw'>res</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='fu'>rtime</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>, <span class='fu'><a href='XCMSnExp-class.html'>adjustedRtime</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 <span class='co'>## To extract the retention times grouped by sample/file:</span>
-<span class='kw'>rts</span> <span class='op'>&lt;-</span> <span class='fu'>rtime</span>(<span class='kw'>res</span>, bySample = <span class='fl'>TRUE</span>)
+<span class='va'>rts</span> <span class='op'>&lt;-</span> <span class='fu'>rtime</span><span class='op'>(</span><span class='va'>res</span>, bySample <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

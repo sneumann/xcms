@@ -79,19 +79,13 @@ visualized setting simulate = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -150,20 +144,20 @@ visualized setting <code>simulate = FALSE</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>plotChromPeakDensity</span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>mz</span>,
-  <span class='kw'>rt</span>,
-  <span class='kw'>param</span>,
-  simulate = <span class='fl'>TRUE</span>,
-  col = <span class='st'>"#00000080"</span>,
-  xlab = <span class='st'>"retention time"</span>,
-  ylab = <span class='st'>"sample"</span>,
-  xlim = <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='kw'>rt</span>),
-  main = <span class='kw'>NULL</span>,
-  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'>plotChromPeakDensity</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>mz</span>,
+  <span class='va'>rt</span>,
+  <span class='va'>param</span>,
+  simulate <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  col <span class='op'>=</span> <span class='st'>"#00000080"</span>,
+  xlab <span class='op'>=</span> <span class='st'>"retention time"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"sample"</span>,
+  xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span><span class='op'>(</span><span class='va'>rt</span><span class='op'>)</span>,
+  main <span class='op'>=</span> <span class='cn'>NULL</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -269,16 +263,16 @@ algorithm and its supported settings.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
 
 <span class='co'>## Plot the chromatographic peak density for a specific mz range to evaluate</span>
 <span class='co'>## different peak density correspondence settings.</span>
-<span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>305.05</span>, <span class='fl'>305.15</span>)
+<span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>305.05</span>, <span class='fl'>305.15</span><span class='op'>)</span>
 
-<span class='fu'>plotChromPeakDensity</span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, pch = <span class='fl'>16</span>,
-    param = <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(sampleGroups = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>faahko_sub</span>)))))
+<span class='fu'>plotChromPeakDensity</span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, pch <span class='op'>=</span> <span class='fl'>16</span>,
+    param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>

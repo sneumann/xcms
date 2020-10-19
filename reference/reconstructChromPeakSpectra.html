@@ -74,19 +74,13 @@ LC-MS/MS analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -139,15 +133,15 @@ data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>reconstructChromPeakSpectra</span>(
-  <span class='kw'>object</span>,
-  expandRt = <span class='fl'>0</span>,
-  diffRt = <span class='fl'>2</span>,
-  minCor = <span class='fl'>0.8</span>,
-  intensity = <span class='st'>"maxo"</span>,
-  peakId = <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>object</span>, msLevel = <span class='fl'>1L</span>)),
-  BPPARAM = <span class='fu'>bpparam</span>()
-)</pre>
+    <pre class="usage"><span class='fu'>reconstructChromPeakSpectra</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  expandRt <span class='op'>=</span> <span class='fl'>0</span>,
+  diffRt <span class='op'>=</span> <span class='fl'>2</span>,
+  minCor <span class='op'>=</span> <span class='fl'>0.8</span>,
+  intensity <span class='op'>=</span> <span class='st'>"maxo"</span>,
+  peakId <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>object</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,8 +192,8 @@ information.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://rdrr.io/pkg/MSnbase/man/MSpectra.html'>MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
-in <code>object</code>. Contains empty <a href='https://rdrr.io/pkg/MSnbase/man/Spectrum2-class.html'>Spectrum2</a> objects for MS1 peaks for
+    <p><code><a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
+in <code>object</code>. Contains empty <a href='https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html'>Spectrum2</a> objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
 chromatographic peak was below threshold <code>minCor</code>. <code>MSpectra</code> metadata

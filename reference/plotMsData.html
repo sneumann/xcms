@@ -76,19 +76,13 @@ rt against m/z values at the bottom." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -136,21 +130,21 @@ rt against m/z values at the bottom." />
     </div>
 
     <div class="ref-description">
-    <p><strong>UPDATE</strong>: please use <code><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot(x, type = "XIC")</a></code> from the <code>MSnbase</code> package
+    <p><strong>UPDATE</strong>: please use <code><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot(x, type = "XIC")</a></code> from the <code>MSnbase</code> package
 instead. See examples below.</p>
 <p>The <code>plotMsData</code> creates a plot that combines an (base peak )
 extracted ion chromatogram on top (rt against intensity) and a plot of
 rt against m/z values at the bottom.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotMsData</span>(
-  <span class='kw'>x</span>,
-  main = <span class='st'>""</span>,
-  cex = <span class='fl'>1</span>,
-  mfrow = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>1</span>),
-  grid.color = <span class='st'>"lightgrey"</span>,
-  colramp = <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rev.html'>rev</a></span>(<span class='fu'>brewer.pal</span>(<span class='fl'>9</span>, <span class='st'>"YlGnBu"</span>)))
-)</pre>
+    <pre class="usage"><span class='fu'>plotMsData</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  main <span class='op'>=</span> <span class='st'>""</span>,
+  cex <span class='op'>=</span> <span class='fl'>1</span>,
+  mfrow <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  grid.color <span class='op'>=</span> <span class='st'>"lightgrey"</span>,
+  colramp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/colorRamp.html'>colorRampPalette</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rev.html'>rev</a></span><span class='op'>(</span><span class='fu'>brewer.pal</span><span class='op'>(</span><span class='fl'>9</span>, <span class='st'>"YlGnBu"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,17 +190,17 @@ based on their intensity. See argument <code>col.regions</code> in
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Read two files from the faahKO package</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>magrittr</span>)
-<span class='kw'>cdfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf"</span>, package = <span class='st'>"faahKO"</span>), full.names = <span class='fl'>TRUE</span>,
-    recursive = <span class='fl'>TRUE</span>)[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>]
-<span class='kw'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>cdfs</span>, mode = <span class='st'>"onDisk"</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>magrittr</span><span class='op'>)</span>
+<span class='va'>cdfs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span>,
+    recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span>
+<span class='va'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='va'>cdfs</span>, mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Subset the object to a rt and mz range and plot the data.</span>
-<span class='kw'>raw_data</span> <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/MSnExp-class.html'>filterRt</a></span>(rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>)) <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/trimMz-methods.html'>filterMz</a></span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>334.9</span>, <span class='fl'>335.1</span>)) <span class='op'>%&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(type = <span class='st'>"XIC"</span>)
+<span class='va'>raw_data</span> <span class='op'>%&gt;%</span>
+    <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterRt</a></span><span class='op'>(</span>rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/trimMz-methods.html'>filterMz</a></span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>334.9</span>, <span class='fl'>335.1</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span>type <span class='op'>=</span> <span class='st'>"XIC"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 #&gt; <span class='warning'>number 128. Returning empty spectrum.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 #&gt; <span class='warning'>number 131. Returning empty spectrum.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: No data points between 334.9 and 335.1 for spectrum with acquisition</span>

@@ -79,19 +79,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -149,23 +143,23 @@
     case also <code>y</code> will be ordered according to the order of <code>x</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>binYonX</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>y</span>,
-  <span class='kw'>breaks</span>,
-  <span class='kw'>nBins</span>,
-  <span class='kw'>binSize</span>,
-  <span class='kw'>binFromX</span>,
-  <span class='kw'>binToX</span>,
-  fromIdx = <span class='fl'>1L</span>,
-  toIdx = <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>x</span>),
-  method = <span class='st'>"max"</span>,
-  <span class='kw'>baseValue</span>,
-  sortedX = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/is.unsorted.html'>is.unsorted</a></span>(<span class='kw'>x</span>),
-  shiftByHalfBinSize = <span class='fl'>FALSE</span>,
-  returnIndex = <span class='fl'>FALSE</span>,
-  returnX = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>binYonX</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>y</span>,
+  <span class='va'>breaks</span>,
+  <span class='va'>nBins</span>,
+  <span class='va'>binSize</span>,
+  <span class='va'>binFromX</span>,
+  <span class='va'>binToX</span>,
+  fromIdx <span class='op'>=</span> <span class='fl'>1L</span>,
+  toIdx <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='st'>"max"</span>,
+  <span class='va'>baseValue</span>,
+  sortedX <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/is.unsorted.html'>is.unsorted</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  shiftByHalfBinSize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnIndex <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  returnX <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -322,11 +316,11 @@ demand.</p></td>
 <span class='co'>## Simple example illustrating the breaks and the binning.</span>
 <span class='co'>##</span>
 <span class='co'>## Define breaks for 5 bins:</span>
-<span class='kw'>brks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>2</span>, <span class='fl'>12</span>, length.out = <span class='fl'>6</span>)
+<span class='va'>brks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>12</span>, length.out <span class='op'>=</span> <span class='fl'>6</span><span class='op'>)</span>
 <span class='co'>## The first bin is then [2,4), the second [4,6) and so on.</span>
-<span class='kw'>brks</span>
+<span class='va'>brks</span>
 </div><div class='output co'>#&gt; [1]  2  4  6  8 10 12</div><div class='input'><span class='co'>## Get the max value falling within each bin.</span>
-<span class='fu'>binYonX</span>(x = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>, y = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>, breaks = <span class='kw'>brks</span>)
+<span class='fu'>binYonX</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>, y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>, breaks <span class='op'>=</span> <span class='va'>brks</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $x
 #&gt; [1]  3  5  7  9 11
 #&gt; 
@@ -341,10 +335,10 @@ demand.</p></td>
 <span class='co'>#######</span>
 <span class='co'>## Performing the binning ons sub-set of x</span>
 <span class='co'>##</span>
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>16</span>
 <span class='co'>## Bin X from element 4 to 10 into 5 bins.</span>
-<span class='kw'>X</span>[<span class='fl'>4</span><span class='op'>:</span><span class='fl'>10</span>]
-</div><div class='output co'>#&gt; [1]  4  5  6  7  8  9 10</div><div class='input'><span class='fu'>binYonX</span>(<span class='kw'>X</span>, <span class='kw'>X</span>, nBins = <span class='fl'>5L</span>, fromIdx = <span class='fl'>4</span>, toIdx = <span class='fl'>10</span>)
+<span class='va'>X</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; [1]  4  5  6  7  8  9 10</div><div class='input'><span class='fu'>binYonX</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>X</span>, nBins <span class='op'>=</span> <span class='fl'>5L</span>, fromIdx <span class='op'>=</span> <span class='fl'>4</span>, toIdx <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $x
 #&gt; [1] 4.6 5.8 7.0 8.2 9.4
 #&gt; 
@@ -354,7 +348,7 @@ demand.</p></td>
 <span class='co'>## the values into these 5 bins. Alternatively, we could manually specify</span>
 <span class='co'>## the range for the binning, i.e. the minimal and maximal value for the</span>
 <span class='co'>## breaks:</span>
-<span class='fu'>binYonX</span>(<span class='kw'>X</span>, <span class='kw'>X</span>, nBins = <span class='fl'>5L</span>, fromIdx = <span class='fl'>4</span>, toIdx = <span class='fl'>10</span>, binFromX = <span class='fl'>1</span>, binToX = <span class='fl'>16</span>)
+<span class='fu'>binYonX</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>X</span>, nBins <span class='op'>=</span> <span class='fl'>5L</span>, fromIdx <span class='op'>=</span> <span class='fl'>4</span>, toIdx <span class='op'>=</span> <span class='fl'>10</span>, binFromX <span class='op'>=</span> <span class='fl'>1</span>, binToX <span class='op'>=</span> <span class='fl'>16</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $x
 #&gt; [1]  2.5  5.5  8.5 11.5 14.5
 #&gt; 
@@ -373,12 +367,12 @@ demand.</p></td>
 <span class='co'>## each scan. We want to get the maximum intensities for M/Z value bins only</span>
 <span class='co'>## for the second scan, and thus we use fromIdx = 11 and toIdx = 20. The breaks</span>
 <span class='co'>## for the bins are defined with the nBins, binFromX and binToX.</span>
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>3</span>)
-<span class='kw'>Y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>30</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>3</span><span class='op'>)</span>
+<span class='va'>Y</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>30</span>
 <span class='co'>## Bin the M/Z values in the second scan into 5 bins and get the maximum</span>
 <span class='co'>## intensity for each bin. Note that we have to specify sortedX = TRUE as</span>
 <span class='co'>## the x and y vectors would be sorted otherwise.</span>
-<span class='fu'>binYonX</span>(<span class='kw'>X</span>, <span class='kw'>Y</span>, nBins = <span class='fl'>5L</span>, sortedX = <span class='fl'>TRUE</span>, fromIdx = <span class='fl'>11</span>, toIdx = <span class='fl'>20</span>)
+<span class='fu'>binYonX</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>Y</span>, nBins <span class='op'>=</span> <span class='fl'>5L</span>, sortedX <span class='op'>=</span> <span class='cn'>TRUE</span>, fromIdx <span class='op'>=</span> <span class='fl'>11</span>, toIdx <span class='op'>=</span> <span class='fl'>20</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $x
 #&gt; [1] 1.9 3.7 5.5 7.3 9.1
 #&gt; 
@@ -390,11 +384,11 @@ demand.</p></td>
 <span class='co'>##</span>
 <span class='co'>## In this example we define overlapping sub-sets of X and perform the binning</span>
 <span class='co'>## within these.</span>
-<span class='kw'>X</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>30</span>
+<span class='va'>X</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>30</span>
 <span class='co'>## Define the start and end indices of the sub-sets.</span>
-<span class='kw'>fIdx</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>21</span>)
-<span class='kw'>tIdx</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>10</span>, <span class='fl'>25</span>, <span class='fl'>30</span>)
-<span class='fu'>binYonX</span>(<span class='kw'>X</span>, nBins = <span class='fl'>5L</span>, fromIdx = <span class='kw'>fIdx</span>, toIdx = <span class='kw'>tIdx</span>)
+<span class='va'>fIdx</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>21</span><span class='op'>)</span>
+<span class='va'>tIdx</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>25</span>, <span class='fl'>30</span><span class='op'>)</span>
+<span class='fu'>binYonX</span><span class='op'>(</span><span class='va'>X</span>, nBins <span class='op'>=</span> <span class='fl'>5L</span>, fromIdx <span class='op'>=</span> <span class='va'>fIdx</span>, toIdx <span class='op'>=</span> <span class='va'>tIdx</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; [[1]]$x
 #&gt; [1] 2.8 4.4 6.0 7.6 9.2
@@ -419,7 +413,7 @@ demand.</p></td>
 #&gt; [1] 22 24 26 28 30
 #&gt; 
 #&gt; </div><div class='input'><span class='co'>## The same, but pre-defining also the desired range of the bins.</span>
-<span class='fu'>binYonX</span>(<span class='kw'>X</span>, nBins = <span class='fl'>5L</span>, fromIdx = <span class='kw'>fIdx</span>, toIdx = <span class='kw'>tIdx</span>, binFromX = <span class='fl'>4</span>, binToX = <span class='fl'>28</span>)
+<span class='fu'>binYonX</span><span class='op'>(</span><span class='va'>X</span>, nBins <span class='op'>=</span> <span class='fl'>5L</span>, fromIdx <span class='op'>=</span> <span class='va'>fIdx</span>, toIdx <span class='op'>=</span> <span class='va'>tIdx</span>, binFromX <span class='op'>=</span> <span class='fl'>4</span>, binToX <span class='op'>=</span> <span class='fl'>28</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; [[1]]$x
 #&gt; [1]  6.4 11.2 16.0 20.8 25.6

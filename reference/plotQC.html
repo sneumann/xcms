@@ -73,19 +73,13 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -137,7 +131,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z" />
 for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotQC</span>(<span class='kw'>object</span>, <span class='kw'>sampNames</span>, <span class='kw'>sampColors</span>, <span class='kw'>sampOrder</span>, <span class='kw'>what</span>)</pre>
+    <pre class="usage"><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>sampNames</span>, <span class='va'>sampColors</span>, <span class='va'>sampOrder</span>, <span class='va'>what</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,15 +181,15 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
     <p>Michael Wenk, Michael Wenk &lt;michael.wenk@student.uni-halle.de&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span>)
-<span class='kw'>xsg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span>(<span class='kw'>faahko</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span>
+<span class='va'>xsg</span> <span class='op'>&lt;-</span> <span class='fu'><a href='group-methods.html'>group</a></span><span class='op'>(</span><span class='va'>faahko</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevhist"</span>)
-</div><div class='img'><img src='plotQC-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"rtdevhist"</span>)
-</div><div class='img'><img src='plotQC-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevmass"</span>)
-</div><div class='img'><img src='plotQC-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevtime"</span>)
-</div><div class='img'><img src='plotQC-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"mzdevsample"</span>)
-</div><div class='img'><img src='plotQC-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span>(<span class='kw'>xsg</span>, what=<span class='st'>"rtdevsample"</span>)
+<span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"mzdevhist"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotQC-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"rtdevhist"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotQC-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"mzdevmass"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotQC-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"mzdevtime"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotQC-4.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"mzdevsample"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotQC-5.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plotQC</span><span class='op'>(</span><span class='va'>xsg</span>, what<span class='op'>=</span><span class='st'>"rtdevsample"</span><span class='op'>)</span>
 </div><div class='img'><img src='plotQC-6.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>

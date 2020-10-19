@@ -83,19 +83,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -157,24 +151,24 @@
     and illustrations see [Smith 2006].</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_findChromPeaks_matchedFilter</span>(
-  <span class='kw'>mz</span>,
-  <span class='kw'>int</span>,
-  <span class='kw'>scantime</span>,
-  <span class='kw'>valsPerSpect</span>,
-  binSize = <span class='fl'>0.1</span>,
-  impute = <span class='st'>"none"</span>,
-  <span class='kw'>baseValue</span>,
-  <span class='kw'>distance</span>,
-  fwhm = <span class='fl'>30</span>,
-  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
-  max = <span class='fl'>5</span>,
-  snthresh = <span class='fl'>10</span>,
-  steps = <span class='fl'>2</span>,
-  mzdiff = <span class='fl'>0.8</span> <span class='op'>-</span> <span class='kw'>binSize</span> <span class='op'>*</span> <span class='kw'>steps</span>,
-  index = <span class='fl'>FALSE</span>,
-  sleep = <span class='fl'>0</span>
-)</pre>
+    <pre class="usage"><span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>
+  <span class='va'>mz</span>,
+  <span class='va'>int</span>,
+  <span class='va'>scantime</span>,
+  <span class='va'>valsPerSpect</span>,
+  binSize <span class='op'>=</span> <span class='fl'>0.1</span>,
+  impute <span class='op'>=</span> <span class='st'>"none"</span>,
+  <span class='va'>baseValue</span>,
+  <span class='va'>distance</span>,
+  fwhm <span class='op'>=</span> <span class='fl'>30</span>,
+  sigma <span class='op'>=</span> <span class='va'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max <span class='op'>=</span> <span class='fl'>5</span>,
+  snthresh <span class='op'>=</span> <span class='fl'>10</span>,
+  steps <span class='op'>=</span> <span class='fl'>2</span>,
+  mzdiff <span class='op'>=</span> <span class='fl'>0.8</span> <span class='op'>-</span> <span class='va'>binSize</span> <span class='op'>*</span> <span class='va'>steps</span>,
+  index <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sleep <span class='op'>=</span> <span class='fl'>0</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -331,23 +325,23 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load the test file</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
 
 <span class='co'>## Subset to one file and restrict to a certain retention time range</span>
-<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='fu'>filterFile</span>(<span class='kw'>faahko_sub</span>, <span class='fl'>1</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2500</span>, <span class='fl'>3000</span>))
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span><span class='op'>(</span><span class='fu'>filterFile</span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3000</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Get m/z and intensity values</span>
-<span class='kw'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span>(<span class='kw'>data</span>)
-<span class='kw'>ints</span> <span class='op'>&lt;-</span> <span class='fu'>intensity</span>(<span class='kw'>data</span>)
+<span class='va'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
+<span class='va'>ints</span> <span class='op'>&lt;-</span> <span class='fu'>intensity</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
 
 <span class='co'>## Define the values per spectrum:</span>
-<span class='kw'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span>(<span class='kw'>mzs</span>)
+<span class='va'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>
 
-<span class='kw'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span>(mz = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>mzs</span>), int = <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='kw'>ints</span>),
-    scantime = <span class='fu'>rtime</span>(<span class='kw'>data</span>), valsPerSpect = <span class='kw'>valsPerSpect</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>res</span>)
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>, int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ints</span><span class='op'>)</span>,
+    scantime <span class='op'>=</span> <span class='fu'>rtime</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>, valsPerSpect <span class='op'>=</span> <span class='va'>valsPerSpect</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
 #&gt; [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280
 #&gt; [2,] 205.9819 205.9 206.0 2786.200 2772.115 2800.284  237993.6  448580.3 10681

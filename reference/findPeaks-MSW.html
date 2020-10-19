@@ -110,19 +110,13 @@ addParams,addParams&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -178,8 +172,8 @@ addParams,addParams&amp;lt;-: getter and setter for the
 <p>The <code>findChromPeaks,OnDiskMSnExp,MSWParam</code>
     method performs peak detection in single-spectrum non-chromatography MS
     data using functionality from the <code>MassSpecWavelet</code> package on all
-    samples from an <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object.
-    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all experiment
+    samples from an <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object.
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -211,97 +205,97 @@ addParams,addParams&amp;lt;-: getter and setter for the
     <code>MassSpecWavelet</code> package.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MSWParam</span>(
-  snthresh = <span class='fl'>3</span>,
-  verboseColumns = <span class='fl'>FALSE</span>,
-  scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>2</span>, <span class='fl'>30</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>32</span>, <span class='fl'>64</span>, <span class='fl'>4</span>)),
-  nearbyPeak = <span class='fl'>TRUE</span>,
-  peakScaleRange = <span class='fl'>5</span>,
-  ampTh = <span class='fl'>0.01</span>,
-  minNoiseLevel = <span class='kw'>ampTh</span><span class='op'>/</span><span class='kw'>snthresh</span>,
-  ridgeLength = <span class='fl'>24</span>,
-  peakThr = <span class='kw'>NULL</span>,
-  tuneIn = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)
+    <pre class="usage"><span class='fu'>MSWParam</span><span class='op'>(</span>
+  snthresh <span class='op'>=</span> <span class='fl'>3</span>,
+  verboseColumns <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  scales <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>30</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>32</span>, <span class='fl'>64</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>,
+  nearbyPeak <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  peakScaleRange <span class='op'>=</span> <span class='fl'>5</span>,
+  ampTh <span class='op'>=</span> <span class='fl'>0.01</span>,
+  minNoiseLevel <span class='op'>=</span> <span class='va'>ampTh</span><span class='op'>/</span><span class='va'>snthresh</span>,
+  ridgeLength <span class='op'>=</span> <span class='fl'>24</span>,
+  peakThr <span class='op'>=</span> <span class='cn'>NULL</span>,
+  tuneIn <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for OnDiskMSnExp,MSWParam</span>
-<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>param</span>,
-  BPPARAM = <span class='fu'>bpparam</span>(),
-  return.type = <span class='st'>"XCMSnExp"</span>,
-  msLevel = <span class='fl'>1L</span>
-)
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>param</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>1L</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>show</span>(<span class='kw'>object</span>)
+<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>)
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>verboseColumns</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>scales</span>(<span class='kw'>object</span>)
+<span class='fu'>scales</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>scales</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>scales</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>nearbyPeak</span>(<span class='kw'>object</span>)
+<span class='fu'>nearbyPeak</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>nearbyPeak</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>nearbyPeak</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>peakScaleRange</span>(<span class='kw'>object</span>)
+<span class='fu'>peakScaleRange</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>peakScaleRange</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakScaleRange</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>ampTh</span>(<span class='kw'>object</span>)
+<span class='fu'>ampTh</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>ampTh</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>ampTh</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>minNoiseLevel</span>(<span class='kw'>object</span>)
+<span class='fu'>minNoiseLevel</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>minNoiseLevel</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>minNoiseLevel</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>ridgeLength</span>(<span class='kw'>object</span>)
+<span class='fu'>ridgeLength</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>ridgeLength</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>ridgeLength</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>peakThr</span>(<span class='kw'>object</span>)
+<span class='fu'>peakThr</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>peakThr</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>peakThr</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>tuneIn</span>(<span class='kw'>object</span>)
+<span class='fu'>tuneIn</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>tuneIn</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>tuneIn</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>addParams</span>(<span class='kw'>object</span>)
+<span class='fu'>addParams</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MSWParam</span>
-<span class='fu'>addParams</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>addParams</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -367,7 +361,7 @@ estimation of the detected peaks.</p></td>
     <tr>
       <th>object</th>
       <td><p>For <code>findChromPeaks</code>: an
-    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object containing the MS- and all
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></td>
     </tr>
@@ -439,7 +433,7 @@ setter methods listed above.</p></dd>
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
     <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports peak detection on
-    <code><a href='https://rdrr.io/pkg/MSnbase/man/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
     objects (defined in the <code>MSnbase</code> package). All of the settings
     to the algorithm can be passed with a <code>MSWParam</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -461,10 +455,10 @@ setter methods listed above.</p></dd>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a MSWParam object</span>
-<span class='kw'>mp</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span>()
+<span class='va'>mp</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span><span class='op'>(</span><span class='op'>)</span>
 <span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>mp</span>) <span class='op'>&lt;-</span> <span class='fl'>15</span>
-<span class='kw'>mp</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>mp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>15</span>
+<span class='va'>mp</span>
 </div><div class='output co'>#&gt; Object of class:  MSWParam 
 #&gt; Parameters:
 #&gt;  snthresh: 15 
@@ -478,17 +472,17 @@ setter methods listed above.</p></dd>
 #&gt;  peakThr:  
 #&gt;  tuneIn: FALSE </div><div class='input'>
 <span class='co'>## Loading a small subset of direct injection, single spectrum files</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'>msdata</span>)
-<span class='kw'>fticrf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"fticr"</span>, package = <span class='st'>"msdata"</span>),
-                    recursive = <span class='fl'>TRUE</span>, full.names = <span class='fl'>TRUE</span>)
-<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='kw'>fticrf</span>[<span class='fl'>1</span>], msLevel. = <span class='fl'>1</span>, mode = <span class='st'>"onDisk"</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>msdata</span><span class='op'>)</span>
+<span class='va'>fticrf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"fticr"</span>, package <span class='op'>=</span> <span class='st'>"msdata"</span><span class='op'>)</span>,
+                    recursive <span class='op'>=</span> <span class='cn'>TRUE</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='va'>fticrf</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, msLevel. <span class='op'>=</span> <span class='fl'>1</span>, mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
 
 <span class='co'>## Perform the MSW peak detection on these:</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span>(scales = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>7</span>), peakThr = <span class='fl'>80000</span>, ampTh = <span class='fl'>0.005</span>,
-             SNR.method = <span class='st'>"data.mean"</span>, winSize.noise = <span class='fl'>500</span>)
-<span class='kw'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='kw'>fticr</span>, param = <span class='kw'>p</span>)
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>MSWParam</span><span class='op'>(</span>scales <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>7</span><span class='op'>)</span>, peakThr <span class='op'>=</span> <span class='fl'>80000</span>, ampTh <span class='op'>=</span> <span class='fl'>0.005</span>,
+             SNR.method <span class='op'>=</span> <span class='st'>"data.mean"</span>, winSize.noise <span class='op'>=</span> <span class='fl'>500</span><span class='op'>)</span>
+<span class='va'>fticr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>fticr</span>, param <span class='op'>=</span> <span class='va'>p</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>fticr</span>))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>fticr</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;            mz    mzmin    mzmax rt rtmin rtmax    into     maxo        sn intf
 #&gt; CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.975342   NA
 #&gt; CP02 409.1845 409.1755 409.1936 -1    -1    -1 4158404 310572.1 20.597978   NA

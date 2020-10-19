@@ -74,19 +74,13 @@ the exported spectra." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -140,14 +134,14 @@ the exported spectra.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp,character</span>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData</a></span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>file</span>,
-  outformat = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"mzml"</span>, <span class='st'>"mzxml"</span>),
-  copy = <span class='fl'>FALSE</span>,
-  software_processing = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/writeMSData.html'>writeMSData</a></span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>file</span>,
+  outformat <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"mzml"</span>, <span class='st'>"mzxml"</span><span class='op'>)</span>,
+  copy <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  software_processing <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,7 +173,7 @@ See documentation of the <code>software_processing</code> parameter of
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional parameters to pass down to the <code><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData()</a></code>
+      <td><p>Additional parameters to pass down to the <code><a href='https://lgatto.github.io/MSnbase/reference/writeMSData.html'>writeMSData()</a></code>
 function in the <code>MSnbase</code> package, such as <code>outformat</code> to specify the
 output format (<code>"mzml"</code> or <code>"mzxml"</code>) or <code>copy</code> to specify whether
 general information from the original MS data files (such as data
@@ -189,7 +183,7 @@ processing, software etc) should be copied to the new files.</p></td>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/MSnbase/man/writeMSData.html'>writeMSData()</a></code> function in the <code>MSnbase</code> package.</p></div>
+    <div class='dont-index'><p><code><a href='https://lgatto.github.io/MSnbase/reference/writeMSData.html'>writeMSData()</a></code> function in the <code>MSnbase</code> package.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>

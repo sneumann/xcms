@@ -75,19 +75,13 @@ chromatogram function in the MSnbase package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -142,18 +136,18 @@ an OnDiskMSnExp or <a href='XCMSnExp-class.html'>XCMSnExp</a> objects. See also 
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromatogram</span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>rt</span>,
-  <span class='kw'>mz</span>,
-  aggregationFun = <span class='st'>"sum"</span>,
-  missing = <span class='fl'>NA_real_</span>,
-  msLevel = <span class='fl'>1L</span>,
-  BPPARAM = <span class='fu'>bpparam</span>(),
-  adjustedRtime = <span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span>(<span class='kw'>object</span>),
-  filled = <span class='fl'>FALSE</span>,
-  include = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"apex_within"</span>, <span class='st'>"any"</span>, <span class='st'>"none"</span>)
-)</pre>
+<span class='fu'>chromatogram</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>rt</span>,
+  <span class='va'>mz</span>,
+  aggregationFun <span class='op'>=</span> <span class='st'>"sum"</span>,
+  missing <span class='op'>=</span> <span class='cn'>NA_real_</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>1L</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  adjustedRtime <span class='op'>=</span> <span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>,
+  filled <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"apex_within"</span>, <span class='st'>"any"</span>, <span class='st'>"none"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -276,17 +270,17 @@ the MS data as `data.frame`.
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with identified chromatographic peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
 
 <span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
 
-<span class='kw'>chrs</span>
+<span class='va'>chrs</span>
 </div><div class='output co'>#&gt; XChromatograms with 1 row and 3 columns
 #&gt;             ko15.CDF        ko16.CDF        ko18.CDF
 #&gt;      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;
@@ -297,20 +291,20 @@ the MS data as `data.frame`.
 #&gt; Chromatographic peak detection:
 #&gt;  method: centWave </div><div class='input'>
 <span class='co'>## Identified chromatographic peaks</span>
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>chrs</span>)
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
 #&gt; CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2
 #&gt;       row column
 #&gt; CP095   1      2</div><div class='input'>
 <span class='co'>## Plot the chromatogram</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>chrs</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='input'>
 <span class='co'>## Extract chromatograms for multiple ranges.</span>
-<span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>335</span>, <span class='fl'>335</span>, <span class='fl'>344</span>, <span class='fl'>344</span>), ncol = <span class='fl'>2</span>, byrow = <span class='fl'>TRUE</span>)
-<span class='kw'>rtr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>, <span class='fl'>2600</span>, <span class='fl'>2750</span>), ncol = <span class='fl'>2</span>, byrow = <span class='fl'>TRUE</span>)
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span>(<span class='kw'>faahko_sub</span>, mz = <span class='kw'>mzr</span>, rt = <span class='kw'>rtr</span>)
+<span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>335</span>, <span class='fl'>335</span>, <span class='fl'>344</span>, <span class='fl'>344</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>rtr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span>, <span class='fl'>2600</span>, <span class='fl'>2750</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='va'>rtr</span><span class='op'>)</span>
 
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>chrs</span>)
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax    into    intb   maxo sn
 #&gt; CP095 335   335   335 2786.199 2764.290 2812.803 1496244 1451652  58736 55
 #&gt; CP003 344   344   344 2679.783 2646.919 2709.517 5210016 5135917 152320 68
@@ -321,10 +315,10 @@ the MS data as `data.frame`.
 #&gt; CP003      1   2      1
 #&gt; CP090      2   2      2
 #&gt; CP193      3   2      3</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>chrs</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='img'><img src='chromatogram-method-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Get access to all chromatograms for the second mz/rt range</span>
-<span class='kw'>chrs</span>[<span class='fl'>1</span>, ]
+<span class='va'>chrs</span><span class='op'>[</span><span class='fl'>1</span>, <span class='op'>]</span>
 </div><div class='output co'>#&gt; XChromatograms with 1 row and 3 columns
 #&gt;             ko15.CDF        ko16.CDF        ko18.CDF
 #&gt;      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;
@@ -335,7 +329,7 @@ the MS data as `data.frame`.
 #&gt; Chromatographic peak detection:
 #&gt;  method: centWave </div><div class='input'>
 <span class='co'>## Plot just that one</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>chrs</span>[<span class='fl'>1</span>, , drop = <span class='fl'>FALSE</span>])
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>[</span><span class='fl'>1</span>, , drop <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>]</span><span class='op'>)</span>
 </div><div class='img'><img src='chromatogram-method-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

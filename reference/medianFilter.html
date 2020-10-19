@@ -73,19 +73,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -137,7 +131,7 @@
   values around it.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>medianFilter</span>(<span class='kw'>x</span>, <span class='kw'>mrad</span>, <span class='kw'>nrad</span>)</pre>
+    <pre class="usage"><span class='fu'>medianFilter</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>mrad</span>, <span class='va'>nrad</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,14 +160,14 @@
     <p>Colin A. Smith, <a href='mailto:csmith@scripps.edu'>csmith@scripps.edu</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>25</span>, nrow=<span class='fl'>5</span>)
-<span class='kw'>mat</span>
+    <pre class="examples"><div class='input'><span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>25</span>, nrow<span class='op'>=</span><span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>mat</span>
 </div><div class='output co'>#&gt;      [,1] [,2] [,3] [,4] [,5]
 #&gt; [1,]    1    6   11   16   21
 #&gt; [2,]    2    7   12   17   22
 #&gt; [3,]    3    8   13   18   23
 #&gt; [4,]    4    9   14   19   24
-#&gt; [5,]    5   10   15   20   25</div><div class='input'><span class='fu'>medianFilter</span>(<span class='kw'>mat</span>, <span class='fl'>1</span>, <span class='fl'>1</span>)
+#&gt; [5,]    5   10   15   20   25</div><div class='input'><span class='fu'>medianFilter</span><span class='op'>(</span><span class='va'>mat</span>, <span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      [,1] [,2] [,3] [,4] [,5]
 #&gt; [1,]  4.0  6.5 11.5 16.5 19.0
 #&gt; [2,]  4.5  7.0 12.0 17.0 19.5

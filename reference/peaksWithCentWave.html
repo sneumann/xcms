@@ -74,19 +74,13 @@ without m/z values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -139,20 +133,20 @@ chromatographic data, i.e. based on intensity and retention time values
 without m/z values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>peaksWithCentWave</span>(
-  <span class='kw'>int</span>,
-  <span class='kw'>rt</span>,
-  peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
-  snthresh = <span class='fl'>10</span>,
-  prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
-  integrate = <span class='fl'>1</span>,
-  fitgauss = <span class='fl'>FALSE</span>,
-  noise = <span class='fl'>0</span>,
-  verboseColumns = <span class='fl'>FALSE</span>,
-  firstBaselineCheck = <span class='fl'>TRUE</span>,
-  extendLengthMSW = <span class='fl'>FALSE</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>peaksWithCentWave</span><span class='op'>(</span>
+  <span class='va'>int</span>,
+  <span class='va'>rt</span>,
+  peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
+  snthresh <span class='op'>=</span> <span class='fl'>10</span>,
+  prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>100</span><span class='op'>)</span>,
+  integrate <span class='op'>=</span> <span class='fl'>1</span>,
+  fitgauss <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  noise <span class='op'>=</span> <span class='fl'>0</span>,
+  verboseColumns <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  firstBaselineCheck <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  extendLengthMSW <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,7 +158,7 @@ without m/z values.</p>
     <tr>
       <th>rt</th>
       <td><p><code>numeric</code> with the retention time for the intensities. Length has
-to be equal to <code><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length(int)</a></code>.</p></td>
+to be equal to <code><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length(int)</a></code>.</p></td>
     </tr>
     <tr>
       <th>peakwidth</th>
@@ -271,29 +265,29 @@ method.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Reading a file</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://github.com/sneumann/xcms'>xcms</a></span>)
-<span class='kw'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, package = <span class='st'>"faahKO"</span>),
-    mode = <span class='st'>"onDisk"</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span>
+<span class='va'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO/ko15.CDF"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>,
+    mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
-<span class='kw'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>272.1</span>, <span class='fl'>272.2</span>)
-<span class='kw'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>od</span>, mz = <span class='kw'>mzr</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3000</span>, <span class='fl'>3300</span>))[<span class='fl'>1</span>, <span class='fl'>1</span>]
+<span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>272.1</span>, <span class='fl'>272.2</span><span class='op'>)</span>
+<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3000</span>, <span class='fl'>3300</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>]</span>
 
-<span class='kw'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>)
-<span class='kw'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>)
+<span class='va'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
+<span class='va'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
 
 <span class='co'>## Plot the region</span>
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chr</span>, type = <span class='st'>"h"</span>)
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr</span>, type <span class='op'>=</span> <span class='st'>"h"</span><span class='op'>)</span>
 </div><div class='input'>
 <span class='co'>## Identify peaks in the chromatographic data</span>
-<span class='kw'>pks</span> <span class='op'>&lt;-</span> <span class='fu'>peaksWithCentWave</span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>intensity</a></span>(<span class='kw'>chr</span>), <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/Spectrum-class.html'>rtime</a></span>(<span class='kw'>chr</span>))
-<span class='kw'>pks</span>
+<span class='va'>pks</span> <span class='op'>&lt;-</span> <span class='fu'>peaksWithCentWave</span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>pks</span>
 </div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intb  maxo sn
 #&gt; [1,] 3119.535 3097.625 3127.359 247211.6 227217.9 16496 24</div><div class='input'>
 <span class='co'>## Highlight the peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span>(xleft = <span class='kw'>pks</span>[, <span class='st'>"rtmin"</span>], xright = <span class='kw'>pks</span>[, <span class='st'>"rtmax"</span>],
-    ybottom = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>pks</span>)), ytop = <span class='kw'>pks</span>[, <span class='st'>"maxo"</span>], col = <span class='st'>"#ff000040"</span>,
-    border = <span class='st'>"#00000040"</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span><span class='op'>(</span>xleft <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span>, xright <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span>,
+    ybottom <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pks</span><span class='op'>)</span><span class='op'>)</span>, ytop <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"maxo"</span><span class='op'>]</span>, col <span class='op'>=</span> <span class='st'>"#ff000040"</span>,
+    border <span class='op'>=</span> <span class='st'>"#00000040"</span><span class='op'>)</span>
 </div><div class='img'><img src='peaksWithCentWave-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

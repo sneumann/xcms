@@ -80,19 +80,13 @@ time of the MS2 spectrum)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -151,12 +145,12 @@ considers also the retention times of the two MS1 scans and the retention
 time of the MS2 spectrum).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>estimatePrecursorIntensity</span>(
-  <span class='kw'>x</span>,
-  ppm = <span class='fl'>10</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"previous"</span>, <span class='st'>"interpolation"</span>),
-  BPPARAM = <span class='fu'>bpparam</span>()
-)</pre>
+    <pre class="usage"><span class='fu'>estimatePrecursorIntensity</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  ppm <span class='op'>=</span> <span class='fl'>10</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"previous"</span>, <span class='st'>"interpolation"</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

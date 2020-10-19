@@ -101,19 +101,13 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -193,68 +187,68 @@ polarity,polarity&amp;lt;-: getter and
     setter for the <code>polarity</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CentWavePredIsoParam</span>(
-  ppm = <span class='fl'>25</span>,
-  peakwidth = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>50</span>),
-  snthresh = <span class='fl'>10</span>,
-  prefilter = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>100</span>),
-  mzCenterFun = <span class='st'>"wMean"</span>,
-  integrate = <span class='fl'>1L</span>,
-  mzdiff = <span class='op'>-</span><span class='fl'>0.001</span>,
-  fitgauss = <span class='fl'>FALSE</span>,
-  noise = <span class='fl'>0</span>,
-  verboseColumns = <span class='fl'>FALSE</span>,
-  roiList = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  firstBaselineCheck = <span class='fl'>TRUE</span>,
-  roiScales = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>(),
-  snthreshIsoROIs = <span class='fl'>6.25</span>,
-  maxCharge = <span class='fl'>3</span>,
-  maxIso = <span class='fl'>5</span>,
-  mzIntervalExtension = <span class='fl'>TRUE</span>,
-  polarity = <span class='st'>"unknown"</span>
-)
+    <pre class="usage"><span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>
+  ppm <span class='op'>=</span> <span class='fl'>25</span>,
+  peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
+  snthresh <span class='op'>=</span> <span class='fl'>10</span>,
+  prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>100</span><span class='op'>)</span>,
+  mzCenterFun <span class='op'>=</span> <span class='st'>"wMean"</span>,
+  integrate <span class='op'>=</span> <span class='fl'>1L</span>,
+  mzdiff <span class='op'>=</span> <span class='op'>-</span><span class='fl'>0.001</span>,
+  fitgauss <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  noise <span class='op'>=</span> <span class='fl'>0</span>,
+  verboseColumns <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  roiList <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  firstBaselineCheck <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  roiScales <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span><span class='op'>)</span>,
+  snthreshIsoROIs <span class='op'>=</span> <span class='fl'>6.25</span>,
+  maxCharge <span class='op'>=</span> <span class='fl'>3</span>,
+  maxIso <span class='op'>=</span> <span class='fl'>5</span>,
+  mzIntervalExtension <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  polarity <span class='op'>=</span> <span class='st'>"unknown"</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for OnDiskMSnExp,CentWavePredIsoParam</span>
-<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(
-  <span class='kw'>object</span>,
-  <span class='kw'>param</span>,
-  BPPARAM = <span class='fu'>bpparam</span>(),
-  return.type = <span class='st'>"XCMSnExp"</span>,
-  msLevel = <span class='fl'>1L</span>
-)
+<span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>param</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>1L</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>show</span>(<span class='kw'>object</span>)
+<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>snthreshIsoROIs</span>(<span class='kw'>object</span>)
+<span class='fu'>snthreshIsoROIs</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>snthreshIsoROIs</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>snthreshIsoROIs</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>maxCharge</span>(<span class='kw'>object</span>)
+<span class='fu'>maxCharge</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>maxCharge</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>maxCharge</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>maxIso</span>(<span class='kw'>object</span>)
+<span class='fu'>maxIso</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>maxIso</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>maxIso</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>mzIntervalExtension</span>(<span class='kw'>object</span>)
+<span class='fu'>mzIntervalExtension</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>mzIntervalExtension</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>mzIntervalExtension</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>polarity</span>(<span class='kw'>object</span>)
+<span class='fu'>polarity</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>polarity</span>(<span class='kw'>object</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span></pre>
+<span class='fu'>polarity</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -474,10 +468,10 @@ the version from the class. Slots values should exclusively be accessed
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Create a param object</span>
-<span class='kw'>p</span> <span class='op'>&lt;-</span> <span class='fu'>CentWavePredIsoParam</span>(maxCharge = <span class='fl'>4</span>)
+<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>maxCharge <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
 <span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span>(<span class='kw'>p</span>) <span class='op'>&lt;-</span> <span class='fl'>25</span>
-<span class='kw'>p</span>
+<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>25</span>
+<span class='va'>p</span>
 </div><div class='output co'>#&gt; Object of class:  CentWavePredIsoParam 
 #&gt; Parameters:
 #&gt;  ppm: 25 

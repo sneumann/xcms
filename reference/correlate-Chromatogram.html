@@ -85,19 +85,13 @@ by setting full = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -162,35 +156,35 @@ by setting <code>full = FALSE</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Chromatogram,Chromatogram</span>
-<span class='fu'>correlate</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>y</span>,
-  use = <span class='st'>"pairwise.complete.obs"</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span>),
-  align = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>),
-  <span class='kw'>...</span>
-)
+<span class='fu'>correlate</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>y</span>,
+  use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for MChromatograms,missing</span>
-<span class='fu'>correlate</span>(
-  <span class='kw'>x</span>,
-  y = <span class='kw'>NULL</span>,
-  use = <span class='st'>"pairwise.complete.obs"</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span>),
-  align = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>),
-  full = <span class='fl'>TRUE</span>,
-  <span class='kw'>...</span>
-)
+<span class='fu'>correlate</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  y <span class='op'>=</span> <span class='cn'>NULL</span>,
+  use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  full <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S4 method for MChromatograms,MChromatograms</span>
-<span class='fu'>correlate</span>(
-  <span class='kw'>x</span>,
-  y = <span class='kw'>NULL</span>,
-  use = <span class='st'>"pairwise.complete.obs"</span>,
-  method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span>),
-  align = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>),
-  <span class='kw'>...</span>
-)</pre>
+<span class='fu'>correlate</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  y <span class='op'>=</span> <span class='cn'>NULL</span>,
+  use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -243,19 +237,19 @@ represent the chromatograms in <code>x</code> and the columns the chromatograms 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>chr1</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span>(rtime = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(n = <span class='fl'>10</span>, sd = <span class='fl'>0.3</span>),
-    intensity = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>29</span>, <span class='fl'>50</span>, <span class='fl'>NA</span>, <span class='fl'>100</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>3</span>))
-<span class='kw'>chr2</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span>(rtime = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(n = <span class='fl'>10</span>, sd = <span class='fl'>0.3</span>),
-    intensity = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>80</span>, <span class='fl'>50</span>, <span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>9</span>, <span class='fl'>4</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>3</span>))
-<span class='kw'>chr3</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span>(rtime = <span class='fl'>3</span><span class='op'>:</span><span class='fl'>9</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>7</span>, sd = <span class='fl'>0.3</span>),
-    intensity = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>53</span>, <span class='fl'>80</span>, <span class='fl'>130</span>, <span class='fl'>15</span>, <span class='fl'>5</span>, <span class='fl'>3</span>, <span class='fl'>2</span>))
+<span class='va'>chr1</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>10</span>, sd <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>,
+    intensity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>29</span>, <span class='fl'>50</span>, <span class='cn'>NA</span>, <span class='fl'>100</span>, <span class='fl'>12</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chr2</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>10</span>, sd <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>,
+    intensity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>80</span>, <span class='fl'>50</span>, <span class='fl'>20</span>, <span class='fl'>10</span>, <span class='fl'>9</span>, <span class='fl'>4</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>1</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chr3</span> <span class='op'>&lt;-</span> <span class='fu'>Chromatogram</span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>3</span><span class='op'>:</span><span class='fl'>9</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>7</span>, sd <span class='op'>=</span> <span class='fl'>0.3</span><span class='op'>)</span>,
+    intensity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>53</span>, <span class='fl'>80</span>, <span class='fl'>130</span>, <span class='fl'>15</span>, <span class='fl'>5</span>, <span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>MChromatograms</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>chr1</span>, <span class='kw'>chr2</span>, <span class='kw'>chr3</span>))
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>MChromatograms</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span>, <span class='va'>chr3</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>correlate</span>(<span class='kw'>chr1</span>, <span class='kw'>chr2</span>)
-</div><div class='output co'>#&gt; [1] 0.03928289</div><div class='input'><span class='fu'>correlate</span>(<span class='kw'>chr2</span>, <span class='kw'>chr1</span>)
+<span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0.03928289</div><div class='input'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr2</span>, <span class='va'>chr1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] -0.01446223</div><div class='input'>
-<span class='fu'>correlate</span>(<span class='kw'>chrs</span>, <span class='kw'>chrs</span>)
+<span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chrs</span>, <span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;             [,1]       [,2]      [,3]
 #&gt; [1,]  1.00000000 0.03928289 0.9897667
 #&gt; [2,] -0.01446223 1.00000000 0.4762233

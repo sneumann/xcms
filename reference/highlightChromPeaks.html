@@ -77,19 +77,13 @@ MChromatograms object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -140,22 +134,22 @@ MChromatograms object." />
     <div class="ref-description">
     <p>The <code>highlightChromPeaks</code> function adds chromatographic
 peak definitions to an existing plot, such as one created by the
-<code>plot</code> method on a <code><a href='https://rdrr.io/pkg/MSnbase/man/Chromatogram-class.html'>Chromatogram</a></code> or
-<code><a href='https://rdrr.io/pkg/MSnbase/man/MChromatograms-class.html'>MChromatograms</a></code> object.</p>
+<code>plot</code> method on a <code><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>Chromatogram</a></code> or
+<code><a href='https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html'>MChromatograms</a></code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>highlightChromPeaks</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>rt</span>,
-  <span class='kw'>mz</span>,
-  peakIds = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
-  border = <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='st'>"00000040"</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='kw'>x</span>))),
-  lwd = <span class='fl'>1</span>,
-  col = <span class='fl'>NA</span>,
-  type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rect"</span>, <span class='st'>"point"</span>, <span class='st'>"polygon"</span>),
-  whichPeaks = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span>),
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>highlightChromPeaks</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>rt</span>,
+  <span class='va'>mz</span>,
+  peakIds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
+  border <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='st'>"00000040"</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,
+  lwd <span class='op'>=</span> <span class='fl'>1</span>,
+  col <span class='op'>=</span> <span class='cn'>NA</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"rect"</span>, <span class='st'>"point"</span>, <span class='st'>"polygon"</span><span class='op'>)</span>,
+  whichPeaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,7 +192,7 @@ rectangle (if <code>type = "rect"</code>) or the peak
     </tr>
     <tr>
       <th>type</th>
-      <td><p>the plotting type. See <code><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></code> in base grapics for
+      <td><p>the plotting type. See <code><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></code> in base grapics for
 more details.
 For <code>highlightChromPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining how the peak
 should be highlighted: <code>type = "rect"</code> draws a rectangle
@@ -234,29 +228,29 @@ function.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>faahko_sub</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='kw'>faahko_sub</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, package = <span class='st'>"faahKO"</span>)
+<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
 
 <span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span>(<span class='fu'>SerialParam</span>())
+<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='kw'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/plot-methods.html'>plot</a></span>(<span class='kw'>chrs</span>)
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='input'>
 <span class='co'>## Extract chromatographic peaks for the mz/rt range (if any).</span>
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
 #&gt; CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</div><div class='input'>
 <span class='co'>## Highlight the chromatographic peaks in the area</span>
 <span class='co'>## Show the peak definition with a rectangle</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>)
+<span class='fu'>highlightChromPeaks</span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
 </div><div class='input'>
 <span class='co'>## Color the actual peak</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='kw'>faahko_sub</span>, rt = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), mz = <span class='fl'>335</span>,
-    col = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span>), type = <span class='st'>"polygon"</span>)
+<span class='fu'>highlightChromPeaks</span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span>,
+    col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span><span class='op'>)</span>, type <span class='op'>=</span> <span class='st'>"polygon"</span><span class='op'>)</span>
 </div><div class='img'><img src='highlightChromPeaks-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

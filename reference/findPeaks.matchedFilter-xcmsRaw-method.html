@@ -74,19 +74,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.8</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/xcms.html">Get started</a>
 </li>
 <li>
@@ -140,19 +134,19 @@
     </div>
 
     <pre class="usage"><span class='co'># S4 method for xcmsRaw</span>
-<span class='fu'>findPeaks.matchedFilter</span>(
-  <span class='kw'>object</span>,
-  fwhm = <span class='fl'>30</span>,
-  sigma = <span class='kw'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
-  max = <span class='fl'>5</span>,
-  snthresh = <span class='fl'>10</span>,
-  step = <span class='fl'>0.1</span>,
-  steps = <span class='fl'>2</span>,
-  mzdiff = <span class='fl'>0.8</span> <span class='op'>-</span> <span class='kw'>step</span> <span class='op'>*</span> <span class='kw'>steps</span>,
-  index = <span class='fl'>FALSE</span>,
-  sleep = <span class='fl'>0</span>,
-  scanrange = <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span>()
-)</pre>
+<span class='fu'>findPeaks.matchedFilter</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  fwhm <span class='op'>=</span> <span class='fl'>30</span>,
+  sigma <span class='op'>=</span> <span class='va'>fwhm</span><span class='op'>/</span><span class='fl'>2.3548</span>,
+  max <span class='op'>=</span> <span class='fl'>5</span>,
+  snthresh <span class='op'>=</span> <span class='fl'>10</span>,
+  step <span class='op'>=</span> <span class='fl'>0.1</span>,
+  steps <span class='op'>=</span> <span class='fl'>2</span>,
+  mzdiff <span class='op'>=</span> <span class='fl'>0.8</span> <span class='op'>-</span> <span class='va'>step</span> <span class='op'>*</span> <span class='va'>steps</span>,
+  index <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  sleep <span class='op'>=</span> <span class='fl'>0</span>,
+  scanrange <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
