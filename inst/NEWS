@@ -1,3 +1,8 @@
+Changes in version 3.11.8
+
+- Disable parallel processing in vignettes.
+
+
 Changes in version 3.11.7
 
 - More efficient splitting data per file especially for larger data sets.

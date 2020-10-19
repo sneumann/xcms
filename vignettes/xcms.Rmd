@@ -39,12 +39,12 @@ library(xcms)
 library(faahKO)
 library(pander)
 ## Use socket based parallel processing on Windows systems
-if (.Platform$OS.type == "unix") {
-    register(bpstart(MulticoreParam(3)))
-} else {
-    register(bpstart(SnowParam(3)))
-}
-## register(SerialParam())
+## if (.Platform$OS.type == "unix") {
+##     register(bpstart(MulticoreParam(3)))
+## } else {
+##     register(bpstart(SnowParam(3)))
+## }
+register(SerialParam())
 
 ```
 
