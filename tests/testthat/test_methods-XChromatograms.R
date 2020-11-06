@@ -269,10 +269,16 @@ test_that("[,XChromatograms works", {
     expect_equal(chromPeaks(res), pks[pks[, "row"] == 2 &
                                       pks[, "column"] == 2,
                                       colnames(chromPeaks(res))])
+    res <- chrs[2, 2, drop = FALSE]
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(chromPeaks(res)[, 1:7],
+                 pks[pks[, "row"] == 2 & pks[, "column"] == 2, 1:7])
 
     res <- chrs[2, 2:3]
     expect_true(is(res, "XChromatograms"))
     expect_true(ncol(res) == 2)
+    res_2 <- chrs[2, 2:3, drop = TRUE]
+    expect_equal(res, res_2)
     expect_equal(res[1, 1], chrs[2, 2])
     expect_equal(res[1, 2], chrs[2, 3])
     pks_tmp <- pks[pks[, "row"] == 2 & pks[, "column"] %in% 2:3, ]

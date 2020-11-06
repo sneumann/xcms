@@ -97,7 +97,10 @@ setMethod("show", "XChromatogram", function(object) {
 #'     `XChromatograms` object.
 #'
 #' @param drop For `[`: `logical(1)` whether the dimensionality should be
-#'     dropped (if possible).
+#'     dropped (if possible). Defaults to `drop = TRUE`, thus, if length of `i`
+#'     and `j` is 1 a `XChromatogram` is returned. Note that `drop` is ignored
+#'     if length of `i` or `j` is larger than 1, thus a `XChromatograms` is
+#'     returned.
 #'
 #' @param method For `featureValues`: `character(1)` specifying the method to
 #'     resolve multi-peak mappings within the sample sample, i.e. to select

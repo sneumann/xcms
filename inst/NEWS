@@ -1,3 +1,8 @@
+Changes in version 3.13.1
+
+- Support subsetting of `XChromatograms` with `drop = FALSE`.
+
+
 Changes in version 3.11.8
 
 - Disable parallel processing in vignettes.

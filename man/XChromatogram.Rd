@@ -149,7 +149,7 @@ XChromatogram(
   type = c("any", "within", "apex_within")
 )
 
-\S4method{[}{XChromatograms,ANY,ANY,ANY}(x, i, j, drop = FALSE)
+\S4method{[}{XChromatograms,ANY,ANY,ANY}(x, i, j, drop = TRUE)
 
 \S4method{featureValues}{XChromatograms}(
   object,
@@ -331,7 +331,10 @@ be returned.}
 \code{XChromatograms} object.}
 
 \item{drop}{For \code{[}: \code{logical(1)} whether the dimensionality should be
-dropped (if possible).}
+dropped (if possible). Defaults to \code{drop = TRUE}, thus, if length of \code{i}
+and \code{j} is 1 a \code{XChromatogram} is returned. Note that \code{drop} is ignored
+if length of \code{i} or \code{j} is larger than 1, thus a \code{XChromatograms} is
+returned.}
 
 \item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
 resolve multi-peak mappings within the sample sample, i.e. to select
