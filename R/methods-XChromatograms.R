@@ -413,7 +413,7 @@ setMethod("featureDefinitions", "XChromatograms",
           })
 
 #' @rdname XChromatogram
-setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
+setMethod("[", "XChromatograms", function(x, i, j, drop = TRUE) {
     if (missing(i) && missing(j))
         return(x)
     if (missing(i))
@@ -424,12 +424,24 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         i <- which(i)
     if (is.logical(j))
         j <- which(j)
-    if (length(i) == 1 && length(j) == 1)
+    if (length(i) > 1 || length(j) > 1)
+        drop <- FALSE
+    if (length(i) == 1 && length(j) == 1 && drop)
         return(x@.Data[i, j, drop = TRUE][[1]])
     cpeaks_orig <- chromPeaks(x)
     fts_orig <- featureDefinitions(x)
+    ## The following code replicates the [,MChromatograms
     ph <- x@.processHistory
-    x <- callNextMethod(x = x, i = i, j = j, drop = drop)
+    pd <- x@phenoData
+    fd <- x@featureData
+    xclass <- class(x)
+    x <- as(x@.Data[i = i, j = j, drop = FALSE], xclass)
+    pd <- pd[j, ]
+    pData(pd) <- droplevels(pData(pd))
+    x@phenoData <- pd
+    fd <- fd[i, ]
+    pData(fd) <- droplevels(pData(fd))
+    x@featureData <- fd
     if (nrow(fts_orig)) {
         cpeaks_sub <- chromPeaks(x)
         ## re-order and duplicate fts based on i.
