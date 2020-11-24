@@ -64,7 +64,6 @@ Suggests:
     faahKO,
     msdata (>= 0.25.1),
     ncdf4,
-    rgl,
     microbenchmark,
     testthat,
     pander,
@@ -74,6 +73,7 @@ Suggests:
     pheatmap
 Enhances:
     Rgraphviz,
+    rgl,
     XML
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,

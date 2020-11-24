@@ -137,6 +137,9 @@ jobs:
           ## Helps compile RCurl from source
           brew uninstall curl
 
+          ## required for ncdf4
+          brew install netcdf
+
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
