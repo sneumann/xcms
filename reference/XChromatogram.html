@@ -81,7 +81,7 @@ Arguments section." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.1</span>
       </span>
     </div>
 
@@ -282,7 +282,7 @@ featureDefinitions(
 )
 
 # S4 method for XChromatograms,ANY,ANY,ANY
-[(x, i, j, drop = FALSE)
+[(x, i, j, drop = TRUE)
 
 # S4 method for XChromatograms
 featureValues(
@@ -540,7 +540,10 @@ be returned.</p></td>
     <tr>
       <th>drop</th>
       <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether the dimensionality should be
-dropped (if possible).</p></td>
+dropped (if possible). Defaults to <code>drop = TRUE</code>, thus, if length of <code>i</code>
+and <code>j</code> is 1 a <code>XChromatogram</code> is returned. Note that <code>drop</code> is ignored
+if length of <code>i</code> or <code>j</code> is larger than 1, thus a <code>XChromatograms</code> is
+returned.</p></td>
     </tr>
     <tr>
       <th>method</th>
@@ -825,7 +828,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Thu Nov 12 16:11:42 2020 
+#&gt;  date: Tue Nov 24 08:39:20 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2 
 #&gt;  Parameter class: CentWaveParam 

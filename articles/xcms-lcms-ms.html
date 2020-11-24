@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.1</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2020-11-12 14:49:53<br><strong>Compiled</strong>: Thu Nov 12 16:14:53 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2020-11-24 07:37:35<br><strong>Compiled</strong>: Tue Nov 24 08:41:44 2020</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -124,9 +124,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <pre><code>## 
 ##    1    2 
 ## 1504 2238</code></pre>
-<p>For the MS2 spectra we can get the m/z of the precursor ion with the <code>precursorMz</code> function. Below we first filter the data set by MS level, extract the precursor m/z and call <code>head</code> to just show the first 6 elements. For easier readability we use the forward pipe operator <code><a href="https://rdrr.io/pkg/magrittr/man/pipe.html">%&gt;%</a></code> from the <code>magrittr</code> package.</p>
+<p>For the MS2 spectra we can get the m/z of the precursor ion with the <code>precursorMz</code> function. Below we first filter the data set by MS level, extract the precursor m/z and call <code>head</code> to just show the first 6 elements. For easier readability we use the forward pipe operator <code><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></code> from the <code>magrittr</code> package.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">magrittr</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
 
 <span class="va">dda_data</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterMsLevel</a></span><span class="op">(</span><span class="fl">2L</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -561,7 +561,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <a href="#session-information" class="anchor"></a>Session information</h1>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R Under development (unstable) (2020-11-05 r79401)
+<pre><code>## R Under development (unstable) (2020-11-18 r79449)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.1 LTS
 ## 
@@ -581,9 +581,9 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] magrittr_1.5        pander_0.6.3        xcms_3.13.0        
-##  [4] MSnbase_2.17.1      ProtGenerics_1.23.1 S4Vectors_0.29.3   
-##  [7] mzR_2.25.0          Rcpp_1.0.5          BiocParallel_1.25.1
+##  [1] magrittr_2.0.1      pander_0.6.3        xcms_3.13.1        
+##  [4] MSnbase_2.17.2      ProtGenerics_1.23.1 S4Vectors_0.29.3   
+##  [7] mzR_2.25.1          Rcpp_1.0.5          BiocParallel_1.25.1
 ## [10] Biobase_2.51.0      BiocGenerics_0.37.0 BiocStyle_2.19.0   
 ## 
 ## loaded via a namespace (and not attached):
@@ -592,41 +592,40 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ##  [5] highr_0.8                   BiocManager_1.30.10        
 ##  [7] affy_1.69.0                 GenomeInfoDbData_1.2.4     
 ##  [9] yaml_2.2.1                  robustbase_0.93-6          
-## [11] impute_1.65.0               pillar_1.4.6               
-## [13] backports_1.2.0             lattice_0.20-41            
-## [15] glue_1.4.2                  limma_3.47.0               
-## [17] digest_0.6.27               GenomicRanges_1.43.0       
-## [19] RColorBrewer_1.1-2          XVector_0.31.0             
-## [21] colorspace_2.0-0            Matrix_1.2-18              
-## [23] htmltools_0.5.0             preprocessCore_1.53.0      
-## [25] plyr_1.8.6                  MALDIquant_1.19.3          
-## [27] XML_3.99-0.5                pkgconfig_2.0.3            
-## [29] bookdown_0.21               zlibbioc_1.37.0            
-## [31] scales_1.1.1                RANN_2.6.1                 
-## [33] affyio_1.61.0               tibble_3.0.4               
-## [35] farver_2.0.3                IRanges_2.25.2             
-## [37] ggplot2_3.3.2               ellipsis_0.3.1             
-## [39] SummarizedExperiment_1.21.0 MassSpecWavelet_1.57.0     
-## [41] crayon_1.3.4                memoise_1.1.0              
-## [43] evaluate_0.14               fs_1.5.0                   
-## [45] ncdf4_1.17                  doParallel_1.0.16          
-## [47] MASS_7.3-53                 textshaping_0.2.0          
-## [49] tools_4.1.0                 lifecycle_0.2.0            
-## [51] matrixStats_0.57.0          stringr_1.4.0              
-## [53] munsell_0.5.0               DelayedArray_0.17.0        
-## [55] pcaMethods_1.83.0           compiler_4.1.0             
-## [57] pkgdown_1.6.1.9000          GenomeInfoDb_1.27.0        
-## [59] mzID_1.29.0                 systemfonts_0.3.2          
-## [61] rlang_0.4.8                 grid_4.1.0                 
-## [63] RCurl_1.98-1.2              iterators_1.0.13           
-## [65] MsCoreUtils_1.3.1           labeling_0.4.2             
-## [67] bitops_1.0-6                rmarkdown_2.5              
-## [69] gtable_0.3.0                codetools_0.2-18           
-## [71] R6_2.5.0                    knitr_1.30                 
-## [73] rprojroot_1.3-2             ragg_0.4.0                 
-## [75] desc_1.2.0                  stringi_1.5.3              
-## [77] vctrs_0.3.4                 DEoptimR_1.0-8             
-## [79] xfun_0.19</code></pre>
+## [11] impute_1.65.0               pillar_1.4.7               
+## [13] lattice_0.20-41             glue_1.4.2                 
+## [15] limma_3.47.1                digest_0.6.27              
+## [17] GenomicRanges_1.43.0        RColorBrewer_1.1-2         
+## [19] XVector_0.31.0              colorspace_2.0-0           
+## [21] htmltools_0.5.0             preprocessCore_1.53.0      
+## [23] Matrix_1.2-18               plyr_1.8.6                 
+## [25] MALDIquant_1.19.3           XML_3.99-0.5               
+## [27] pkgconfig_2.0.3             bookdown_0.21              
+## [29] zlibbioc_1.37.0             scales_1.1.1               
+## [31] RANN_2.6.1                  affyio_1.61.0              
+## [33] tibble_3.0.4                farver_2.0.3               
+## [35] IRanges_2.25.2              ggplot2_3.3.2              
+## [37] ellipsis_0.3.1              SummarizedExperiment_1.21.0
+## [39] MassSpecWavelet_1.57.0      crayon_1.3.4               
+## [41] memoise_1.1.0               evaluate_0.14              
+## [43] fs_1.5.0                    ncdf4_1.17                 
+## [45] doParallel_1.0.16           MASS_7.3-53                
+## [47] textshaping_0.2.1           tools_4.1.0                
+## [49] lifecycle_0.2.0             matrixStats_0.57.0         
+## [51] stringr_1.4.0               munsell_0.5.0              
+## [53] DelayedArray_0.17.2         pcaMethods_1.83.0          
+## [55] compiler_4.1.0              pkgdown_1.6.1.9000         
+## [57] GenomeInfoDb_1.27.1         mzID_1.29.0                
+## [59] systemfonts_0.3.2           rlang_0.4.8                
+## [61] grid_4.1.0                  RCurl_1.98-1.2             
+## [63] iterators_1.0.13            MsCoreUtils_1.3.1          
+## [65] labeling_0.4.2              bitops_1.0-6               
+## [67] rmarkdown_2.5               gtable_0.3.0               
+## [69] codetools_0.2-18            R6_2.5.0                   
+## [71] knitr_1.30                  rprojroot_2.0.2            
+## [73] ragg_0.4.0                  desc_1.2.0                 
+## [75] stringi_1.5.3               vctrs_0.3.5                
+## [77] DEoptimR_1.0-8              xfun_0.19</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
