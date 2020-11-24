@@ -138,7 +138,7 @@ jobs:
           brew uninstall curl
 
           ## required for ncdf4
-          brew install netcdf
+          ## brew install netcdf
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
