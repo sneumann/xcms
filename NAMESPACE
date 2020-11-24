@@ -254,7 +254,8 @@ export(
     "findChromPeaksIsolationWindow",
     "reconstructChromPeakSpectra",
     "groupOverlaps",
-    "estimatePrecursorIntensity"
+    "estimatePrecursorIntensity",
+    "manualChromPeaks"
 )
 
 ## New analysis methods

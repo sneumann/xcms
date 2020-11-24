@@ -604,3 +604,27 @@ test_that(".which_peaks_above_threshold works", {
                                         msLevel = 2L)
     expect_equal(res, rep(TRUE, nrow(pks)))
 })
+
+test_that("manualChromPeaks works", {
+    cp <- cbind(mzmin = c(453, 301.9, 100),
+                mzmax = c(453.5, 302.1, 102),
+                rtmin = c(2400, 2500, 2460),
+                rtmax = c(2700, 2650, 2500))
+    ## Errors
+    expect_error(manualChromPeaks(xod_x, msLevel = 1:2), "can only add")
+    expect_error(manualChromPeaks(1:2), "either an OnDiskMSnExp")
+    expect_error(manualChromPeaks(xod_x, 1:2), "lacks one or more of the")
+    expect_error(manualChromPeaks(xod_x, cp, samples = 10), "out of bounds")
+    ## With an XCMSnExp
+    res <- manualChromPeaks(xod_x, cp)
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(xod_x)))
+    expect_equal(chromPeaks(res)[!is.na(chromPeaks(res)[, "intb"]), ],
+                 chromPeaks(xod_x))
+    ## With an OnDiskMSnExp
+    res2 <- manualChromPeaks(od_x, cp)
+    expect_true(is(res2, "XCMSnExp"))
+    expect_true(hasChromPeaks(res2))
+
+    res3 <- manualChromPeaks(od_x, cp, samples = 2)
+    expect_true(all(chromPeaks(res3)[, "sample"] == 2))
+})

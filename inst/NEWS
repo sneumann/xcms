@@ -1,3 +1,9 @@
+Changes in version 3.13.2
+
+- Add new function `manualChromPeaks` allowing to manually add and integrate
+  chromatographic peaks.
+
+
 Changes in version 3.13.1
 
 - Support subsetting of `XChromatograms` with `drop = FALSE`.

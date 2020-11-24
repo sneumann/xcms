@@ -42,6 +42,9 @@ The \code{findChromPeaks} methods perform the chromatographic
     \code{\link{refineChromPeaks}} for methods to refine or clean identified
     chromatographic peaks.
 
+    \code{\link{manualChromPeaks}} to manually add/define chromatographic
+    peaks.
+
 Other peak detection methods: 
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
