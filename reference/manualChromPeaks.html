@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Base class for loading raw data from a file — xcmsFileSource-class • xcms</title>
+<title>Manual peak integration — manualChromPeaks • xcms</title>
 
 
 <!-- jquery -->
@@ -39,17 +39,17 @@
 
 
 
-<meta property="og:title" content="Base class for loading raw data from a file — xcmsFileSource-class" />
-<meta property="og:description" content="Data sources which read data from a file should inherit from this
-  class. The xcms package provides classes to read from
-  netCDF, mzData, mzXML, and mzML files
-  using xcmsFileSource.
-This class should be considered virtual and will not work if passed to
-  loadRaw-methods. The reason it is not explicitly
-  virtual is that there does not appear to be a way for a class to be
-  both virtual and have a data part (which lets functions treat objects
-  as if they were character strings).
-This class validates that a file exists at the path given." />
+<meta property="og:title" content="Manual peak integration — manualChromPeaks" />
+<meta property="og:description" content="The manualChromPeaks function allows to manually define chromatographic
+peaks which are added to the object's chromPeaks matrix. In contrast to
+findChromPeaks(), no peak detection is performed (e.g. using an
+algorithm such as centWave) but the peak is added as defined by the user.
+Note that a peak will not be added if no signal (intensity) was found in a
+sample within the provided boundaries.
+Because chromatographic peaks are added to eventually previously identified
+peaks, it is suggested to run refineChromPeaks() with the
+MergeNeighboringPeaksParam() approach to merge potentially overlapping
+peaks." />
 
 
 
@@ -129,56 +129,69 @@ This class validates that a file exists at the path given." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Base class for loading raw data from a file</h1>
-    
-    <div class="hidden name"><code>xcmsFileSource-class.Rd</code></div>
+    <h1>Manual peak integration</h1>
+    <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R'><code>R/functions-XCMSnExp.R</code></a></small>
+    <div class="hidden name"><code>manualChromPeaks.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Data sources which read data from a file should inherit from this
-  class. The <code>xcms</code> package provides classes to read from
-  <code>netCDF</code>, <code>mzData</code>, <code>mzXML</code>, and <code>mzML</code> files
-  using <code>xcmsFileSource</code>.</p>
-<p>This class should be considered virtual and will not work if passed to
-  <code><a href='loadRaw-methods.html'>loadRaw-methods</a></code>. The reason it is not explicitly
-  virtual is that there does not appear to be a way for a class to be
-  both virtual and have a data part (which lets functions treat objects
-  as if they were character strings).</p>
-<p>This class validates that a file exists at the path given.</p>
+    <p>The <code>manualChromPeaks</code> function allows to manually define chromatographic
+peaks which are added to the object's <code>chromPeaks</code> matrix. In contrast to
+<code><a href='chromatographic-peak-detection.html'>findChromPeaks()</a></code>, no <em>peak detection</em> is performed (e.g. using an
+algorithm such as <em>centWave</em>) but the peak is added as defined by the user.
+Note that a peak will not be added if no signal (intensity) was found in a
+sample within the provided boundaries.</p>
+<p>Because chromatographic peaks are added to eventually previously identified
+peaks, it is suggested to run <code><a href='CleanPeaksParam.html'>refineChromPeaks()</a></code> with the
+<code><a href='MergeNeighboringPeaksParam.html'>MergeNeighboringPeaksParam()</a></code> approach to merge potentially overlapping
+peaks.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>manualChromPeaks</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  chromPeaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='op'>)</span>,
+  samples <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>1L</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p><code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>chromPeaks</th>
+      <td><p><code>matrix</code> defining the boundaries of the chromatographic
+peaks, one row per chromatographic peak, columns <code>"mzmin"</code>, <code>"mzmax"</code>,
+<code>"rtmin"</code> and <code>"rtmax"</code> defining the m/z and retention time region of
+each peak.</p></td>
+    </tr>
+    <tr>
+      <th>samples</th>
+      <td><p>optional <code>integer</code> to select samples in which the peak
+integration should be performed. By default performed in all samples.</p></td>
+    </tr>
+    <tr>
+      <th>BPPARAM</th>
+      <td><p>parallel processing settings (see <code>bpparam()</code> for details).</p></td>
+    </tr>
+    <tr>
+      <th>msLevel</th>
+      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the MS level in which peak integration
+should be performed.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>xcmsFileSource</code> objects should not be instantiated directly.
-  Instead, create subclasses and instantiate those.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
-    <p></p><dl>
-    <dt><code>.Data</code>:</dt><dd><p>Object of class <code>"character"</code>. File path
-      of a file from which to read raw data as the object's data part</p></dd>
-  
-</dl>
-
-    <h2 class="hasAnchor" id="extends"><a class="anchor" href="#extends"></a>Extends</h2>
-
-    <p>Class <code>"character"</code>, from data part.
-  Class <code>"<a href='xcmsSource-class.html'>xcmsSource</a>"</code>, directly.</p>
-    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
-
-    <p></p><dl>
-    <dt><code>xcmsSource</code></dt><dd><p><code>signature(object = "character")</code>: Create an
-      <code>xcmsFileSource</code> object referencing the given file name.</p></dd>
-  
-</dl>
-
+    <p><code>XCMSnExp</code> with the manually defined peaks added to the <code>chromPeaks</code>
+matrix.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Daniel Hackney <a href='mailto:dan@haxney.org'>dan@haxney.org</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='xcmsSource-class.html'>xcmsSource</a></code></p></div>
+    <p>Johannes Rainer</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
