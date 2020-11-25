@@ -410,6 +410,9 @@ setClass("XProcessHistory",
 #'     \code{\link{refineChromPeaks}} for methods to refine or clean identified
 #'     chromatographic peaks.
 #'
+#'     \code{\link{manualChromPeaks}} to manually add/define chromatographic
+#'     peaks.
+#'
 #' @author Johannes Rainer
 NULL
 #> NULL

@@ -220,7 +220,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                            "polarity", "seqNum"), colnames(fData(x)))
         x <- selectFeatureData(x, fcol = fcs)
     }
-    fdl <- split.data.frame(featureData(x), as.factor(fromFile(x)))
+    fdl <- split.data.frame(x@featureData, as.factor(fromFile(x)))
     procd <- x@processingData
     expd <- new(
         "MIAPE",

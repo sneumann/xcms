@@ -4110,7 +4110,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                       !chromPeakData(object)$ms_level %in% msLevel
               } else {
                   res <- bplapply(.split_by_file2(object, to_class = "XCMSnExp",
-                                                  msLevel = 1:10),
+                                                  msLevel. = 1:10),
                                   FUN = .chrom_peaks_above_threshold,
                                   nValues = param@nValues,
                                   threshold = param@threshold,

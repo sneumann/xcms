@@ -2922,3 +2922,116 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     keep_all[chromPeakData(x)$ms_level == msLevel] <- keep
     keep_all
 }
+
+#' @title Manual peak integration
+#'
+#' @description
+#'
+#' The `manualChromPeaks` function allows to manually define chromatographic
+#' peaks which are added to the object's `chromPeaks` matrix. In contrast to
+#' [findChromPeaks()], no *peak detection* is performed (e.g. using an
+#' algorithm such as *centWave*) but the peak is added as defined by the user.
+#' Note that a peak will not be added if no signal (intensity) was found in a
+#' sample within the provided boundaries.
+#'
+#' Because chromatographic peaks are added to eventually previously identified
+#' peaks, it is suggested to run [refineChromPeaks()] with the
+#' [MergeNeighboringPeaksParam()] approach to merge potentially overlapping
+#' peaks.
+#'
+#' @param object `XCMSnExp` or `OnDiskMSnExp` object.
+#'
+#' @param chromPeaks `matrix` defining the boundaries of the chromatographic
+#'     peaks, one row per chromatographic peak, columns `"mzmin"`, `"mzmax"`,
+#'     `"rtmin"` and `"rtmax"` defining the m/z and retention time region of
+#'     each peak.
+#'
+#' @param samples optional `integer` to select samples in which the peak
+#'     integration should be performed. By default performed in all samples.
+#'
+#' @param BPPARAM parallel processing settings (see [bpparam()] for details).
+#'
+#' @param msLevel `integer(1)` defining the MS level in which peak integration
+#'     should be performed.
+#'
+#' @return `XCMSnExp` with the manually defined peaks added to the `chromPeaks`
+#'     matrix.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+manualChromPeaks <- function(object, chromPeaks = matrix(),
+                             samples = seq_along(fileNames(object)),
+                             BPPARAM = bpparam(), msLevel = 1L) {
+    if (length(msLevel) > 1L)
+        stop("Length 'msLevel' is > 1: can only add peaks for one MS level",
+             " at a time.")
+    if (!inherits(object, "OnDiskMSnExp"))
+        stop("'object' has to be either an OnDiskMSnExp or XCMSnExp object")
+    if (is(object, "XCMSnExp") && hasFeatures(object))
+        object <- dropFeatureDefinitions(object)
+    else object <- as(object, "XCMSnExp")
+    if (!all(c("mzmin", "mzmax", "rtmin", "rtmax") %in% colnames(chromPeaks)))
+        stop("'chromPeaks' lacks one or more of the required columns: 'mzmin',",
+             " 'mzmax', 'rtmin' and 'rtmax'")
+    if (is.data.frame(chromPeaks)) chromPeaks <- as.matrix(chromPeaks)
+    if (!all(samples %in% seq_along(fileNames(object))))
+        stop("'samples' out of bounds")
+    if (hasChromPeaks(object))
+        cn <- colnames(chromPeaks(object))
+    else cn <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
+                 "intb", "maxo", "sn", "sample")
+    ## Do integration
+    res <- bpmapply(xcms:::.split_by_file2(object)[samples], samples,
+                    FUN = function(obj, idx, peakArea, msLevel, cn) {
+                        xcms:::.getChromPeakData(obj, peakArea = peakArea,
+                                                 sample_idx = idx,
+                                                 msLevel = msLevel,
+                                                 cn = cn)
+                    }, MoreArgs = list(peakArea = chromPeaks,
+                                       msLevel = msLevel, cn = cn),
+                    BPPARAM = BPPARAM, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    res <- do.call(rbind, res)
+    res <- res[!is.na(res[, "sample"]), , drop = FALSE]
+    if (nrow(res) == 0)
+        return(object)
+    newFd <- new("MsFeatureData")
+    if (hasChromPeaks(object)) {
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        object@msFeatureData <- new("MsFeatureData")
+        incr <- nrow(chromPeaks(newFd))
+        ## Define IDs for the new peaks; include fix for issue #347
+        maxId <- max(as.numeric(
+            sub("M", "", sub("^CP", "", rownames(chromPeaks(newFd))))))
+        if (maxId < 1)
+            stop("chromPeaks matrix lacks rownames; please update ",
+                 "'object' with the 'updateObject' function.")
+        toId <- maxId + nrow(res)
+        rownames(res) <- sprintf(
+            paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
+            (maxId + 1L):toId)
+        chromPeaks(newFd) <- rbind(chromPeaks(newFd), res)
+        cpd <- extractROWS(chromPeakData(newFd), rep(1L, nrow(res)))
+        cpd[,] <- NA
+        cpd$ms_level <- as.integer(msLevel)
+        cpd$is_filled <- FALSE
+        if (!any(colnames(chromPeakData(newFd)) == "is_filled"))
+            chromPeakData(newFd)$is_filled <- FALSE
+        chromPeakData(newFd) <- rbind(chromPeakData(newFd), cpd)
+        rownames(chromPeakData(newFd)) <- rownames(chromPeaks(newFd))
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+    } else {
+        nr <- nrow(res)
+        rownames(res) <- sprintf(
+            paste0("CP", "%0", ceiling(log10(nr + 1L)), "d"),
+            seq_len(nr))
+        chromPeaks(newFd) <- res
+        cpd <- DataFrame(ms_level = rep(msLevel, nr), is_filled = rep(FALSE, nr))
+        rownames(cpd) <- rownames(res)
+        chromPeakData(newFd) <- cpd
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+    }
+    object
+}

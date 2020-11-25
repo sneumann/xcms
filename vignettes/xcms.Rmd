@@ -547,6 +547,11 @@ boxplot(ints, varwidth = TRUE, col = group_colors[xdata$sample_group],
 grid(nx = NA, ny = NULL)
 ```
 
+Note that in addition to the above described identification of chromatographic
+peaks, it is also possible to *manually* define and add chromatographic peaks
+with the `manualChromPeaks` function (see `?manualChromPeaks` help page for more
+information).
+
 
 # Alignment
 
