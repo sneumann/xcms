@@ -1,3 +1,16 @@
+Changes in version 3.13.3
+
+- `align,Chromatogram` gains new method `"none"` which will only keep values
+  with identical retention times. For `method = "matchRtime"` the (much faster)
+  matching function `closest` from the `MsCoreUtils` package is used.
+- Method `correlate,Chromatogram` gains parameter `useIntensitiesAbove` to
+  perform the correlation only with values larger than this threshold
+  (avoiding thus high correlation because of many 0-values).
+- Add method `filterIntensity,Chromatogram` that allows to filter a chromatogram
+  object keeping only data points with an intensity above a user provided
+  threshold.
+
+
 Changes in version 3.13.2
 
 - Add new function `manualChromPeaks` allowing to manually add and integrate

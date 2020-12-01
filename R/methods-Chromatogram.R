@@ -171,6 +171,9 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'   measured in the same measurement run (e.g. MS1 and corresponding MS2
 #'   chromatograms from SWATH experiments).
 #'
+#' - `method = "none"`: use only values with exactly the same retention times
+#'    (i.e. don't perform any alignment).
+#'
 #' @param x [Chromatogram()] or [MChromatograms()] to be aligned against `y`.
 #'
 #' @param y [Chromatogram()] to which `x` should be aligned to.
@@ -211,7 +214,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'     legend = c("chr1", "chr2", "chr2 matchRtime", "chr2 approx"))
 #'
 setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
-          function(x, y, method = c("matchRtime", "approx"), ...) {
+          function(x, y, method = c("matchRtime", "approx", "none"), ...) {
               .align_chromatogram(x = x, y = y, method = method, ...)
           })
 
@@ -284,13 +287,16 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' correlate(chr1, chr2)
 #' correlate(chr2, chr1)
 #'
+#' ## To only intensities larger than 5.
+#' correlate(chr1, chr2, useIntensitiesAbove = 5)
+#'
 #' correlate(chrs, chrs)
 setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
           function(x, y, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("matchRtime", "approx"), ...) {
-              .correlate_chromatogram(x, y, use = use, method = method,
-                                      align = align, ...)
+                   align = c("matchRtime", "approx", "none"), ...) {
+              .correlate_chromatogram(
+                  x, y, use = use, method = method, align = align, ...)
           })
 
 #' @title Remove intensities from chromatographic data
@@ -314,6 +320,9 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' object) `which = "outside_chromPeak"` can be selected which removes any
 #' intensity which is outside the boundaries of identified chromatographic
 #' peak(s) in the chromatographic data.
+#'
+#' Note that [filterIntensity()] might be a better approach to subset/filter
+#' chromatographic data.
 #'
 #' @param object an object representing chromatographic data. Can be a
 #'     [Chromatogram()], [MChromatograms()], [XChromatogram()] or
@@ -375,4 +384,61 @@ setMethod("normalize", "Chromatogram",
           function(object, method = c("max", "sum")) {
               method <- match.arg(method)
               .normalize_chromatogram(object, method)
+})
+
+#' @title Filter intensities of a Chromatogram object
+#'
+#' @aliases filterIntensity
+#'
+#' @description
+#'
+#' Filter a [Chromatogram()] object removing data points with intensities below
+#' a user provided threshold. If `intensity` is a `numeric` value, the returned
+#' chromatogram will only contain data points with intensities > `intensity`. In
+#' addition it is possible to provide a function to perform the filtering.
+#' This function is expected to take the input `Chromatogram` (`object`) and to
+#' return a logical vector with the same length then there are data points in
+#' `object` with `TRUE` for data points that should be kept and `FALSE` for data
+#' points that should be removed. See examples below.
+#'
+#' @param object [Chromatogram()] object.
+#'
+#' @param intensity `numeric(1)` or `function` to use to filter the intensities.
+#'     See description for details.
+#'
+#' @param ... optional additional parameters. These will be passed to the
+#'     *filter function* if such a function is specified with parameter
+#'     `intensity`.
+#'
+#' @return filtered `Chromatogram` object.
+#'
+#' @author Johannes Rainer
+#'
+#' @rdname filterIntensity-Chromatogram
+#'
+#' @md
+#'
+#' @examples
+#'
+#' chr1 <- Chromatogram(rtime = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+#'     intensity = c(3, 5, 14, 30, 24, 6, 2, 1, 1, 0))
+#'
+#' ## Remove data points with intensities below 10
+#' res <- filterIntensity(chr1, 10)
+#' intensity(res)
+#'
+#' ## Remove data points with an intensity lower than 10% of the maximum
+#' ## intensity in the Chromatogram
+#' filt_fun <- function(x, prop = 0.1) {
+#'     x@intensity >= max(x@intensity, na.rm = TRUE) * prop
+#' }
+#' res <- filterIntensity(chr1, filt_fun)
+#' intensity(res)
+#'
+#' ## Remove data points with an intensity lower than half of the maximum
+#' res <- filterIntensity(chr1, filt_fun, prop = 0.5)
+#' intensity(res)
+setMethod("filterIntensity", "Chromatogram", function(object,
+                                                      intensity = 0, ...) {
+    .filter_intensity_chromatogram(object, intensity = intensity, ...)
 })

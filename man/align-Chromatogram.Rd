@@ -7,9 +7,9 @@
 \alias{align,MChromatograms,Chromatogram-method}
 \title{Aligning chromatographic data}
 \usage{
-\S4method{align}{Chromatogram,Chromatogram}(x, y, method = c("matchRtime", "approx"), ...)
+\S4method{align}{Chromatogram,Chromatogram}(x, y, method = c("matchRtime", "approx", "none"), ...)
 
-\S4method{align}{MChromatograms,Chromatogram}(x, y, method = c("matchRtime", "approx"), ...)
+\S4method{align}{MChromatograms,Chromatogram}(x, y, method = c("matchRtime", "approx", "none"), ...)
 }
 \arguments{
 \item{x}{\code{\link[=Chromatogram]{Chromatogram()}} or \code{\link[=MChromatograms]{MChromatograms()}} to be aligned against \code{y}.}
@@ -46,6 +46,8 @@ intensities in \code{x} to the retention times in \code{y} (using linear
 interpolation). This should only be used for chromatograms that were
 measured in the same measurement run (e.g. MS1 and corresponding MS2
 chromatograms from SWATH experiments).
+\item \code{method = "none"}: use only values with exactly the same retention times
+(i.e. don't perform any alignment).
 }
 }
 \examples{
