@@ -673,7 +673,8 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' a <- 1:10
 #' b <- c(3.1, 3.2, 4.3, 7.8)
 #'
-#' .match_closest(b, a)
+#' xcms:::.match_closest(b, a)
+#' MsCoreUtils::closest(b, a, tolerance = min(mean(diff(a)), mean(diff(b))))
 #'
 #' a <- c(1, 4, 7, 10)
 #' b <- c(2.2, 2.3, 2.4, 2.5)

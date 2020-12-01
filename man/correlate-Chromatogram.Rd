@@ -13,7 +13,7 @@
   y,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx"),
+  align = c("matchRtime", "approx", "none"),
   ...
 )
 
@@ -22,7 +22,7 @@
   y = NULL,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx"),
+  align = c("matchRtime", "approx", "none"),
   full = TRUE,
   ...
 )
@@ -32,7 +32,7 @@
   y = NULL,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx"),
+  align = c("matchRtime", "approx", "none"),
   ...
 )
 }
@@ -95,6 +95,9 @@ chrs <- MChromatograms(list(chr1, chr2, chr3))
 
 correlate(chr1, chr2)
 correlate(chr2, chr1)
+
+## To only intensities larger than 5.
+correlate(chr1, chr2, useIntensitiesAbove = 5)
 
 correlate(chrs, chrs)
 }

@@ -59,3 +59,19 @@ test_that("normalize,Chromatogram works", {
 
     res <- normalize(chr, method = "sum")
 })
+
+test_that("filterIntensity,Chromatogram works", {
+    chr <- Chromatogram(rtime = c(1, 2, 3, 4, 5, 6, 7),
+                        intensity = c(NA_real_, 13, 16, 22, 34, 15, 6))
+    res <- filterIntensity(chr, 7)
+    expect_equal(intensity(res), c(13, 16, 22, 34, 15))
+    expect_true(validObject(res))
+
+    filt_fun <- function(x, prop = 0.1) {
+        x@intensity >= max(x@intensity, na.rm = TRUE) * prop
+    }
+    res <- filterIntensity(chr, filt_fun)
+    expect_true(all(intensity(res) >= max(intensity(chr), na.rm = TRUE) * 0.1))
+    res <- filterIntensity(chr, filt_fun, prop = 0.5)
+    expect_true(all(intensity(res) >= max(intensity(chr), na.rm = TRUE) * 0.5))
+})
