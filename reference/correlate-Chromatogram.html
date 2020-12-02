@@ -85,7 +85,7 @@ by setting full = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
       </span>
     </div>
 
@@ -161,7 +161,7 @@ by setting <code>full = FALSE</code>.</p>
   <span class='va'>y</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -171,7 +171,7 @@ by setting <code>full = FALSE</code>.</p>
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
   full <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -182,7 +182,7 @@ by setting <code>full = FALSE</code>.</p>
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -248,12 +248,15 @@ represent the chromatograms in <code>x</code> and the columns the chromatograms 
 
 <span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 0.03928289</div><div class='input'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr2</span>, <span class='va'>chr1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] -0.01446223</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 0.06267484</div><div class='input'>
+<span class='co'>## To only intensities larger than 5.</span>
+<span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span>, useIntensitiesAbove <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0.03928289</div><div class='input'>
 <span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chrs</span>, <span class='va'>chrs</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             [,1]       [,2]      [,3]
-#&gt; [1,]  1.00000000 0.03928289 0.9897667
-#&gt; [2,] -0.01446223 1.00000000 0.4762233
-#&gt; [3,]  0.99981446 0.64823104 1.0000000</div></pre>
+</div><div class='output co'>#&gt;            [,1]       [,2]      [,3]
+#&gt; [1,] 1.00000000 0.03928289 0.9954195
+#&gt; [2,] 0.06267484 1.00000000 0.6482310
+#&gt; [3,] 0.99981446 0.64823104 1.0000000</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
