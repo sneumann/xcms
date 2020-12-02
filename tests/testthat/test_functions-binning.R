@@ -151,52 +151,52 @@ test_that("binYonX max works", {
 
     ## ####
     ## Define the number of bins.
-    step <- 0.1
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## step <- 0.1
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 
-    ## Next
-    step <- 0.2
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
-    shift <- FALSE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## ## Next
+    ## step <- 0.2
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
+    ## shift <- FALSE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 
-    step <- 0.13
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## step <- 0.13
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 })
 
 ## Test binning using min
