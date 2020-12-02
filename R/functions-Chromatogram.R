@@ -57,7 +57,7 @@
 #'
 #' @noRd
 .align_chromatogram_match_rtime <- function(x, y, na.value = NA_real_, ...) {
-    idx <- closest(x@rtime, y@rtime,
+    idx <- closest(x@rtime, y@rtime, duplicates = "closest",
                    tolerance = min(mean(diff(x@rtime)), mean(diff(y@rtime))))
     ## idx <- .match_closest(x@rtime, y@rtime, ...)
     not_na <- !is.na(idx)

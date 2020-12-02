@@ -649,55 +649,6 @@ rowRla <- function(x, group, log.transform = TRUE) {
     rbind(x, y[, colnames(x)])
 }
 
-#' @title Match closest values between vectors
-#'
-#' @description
-#'
-#' Match values in `x` to their closests counterpart in `y` if their difference
-#' is smaller than `maxDiff`. which is by defaul `min(mean(diff(x)), mean(diff(y)))`.
-#'
-#' @param x `numeric` of values to find closest matches in `y`.
-#'
-#' @param y `numeric` of values to match against.
-#'
-#' @return `integer` with the indices in `y` where `x` matches. An `NA` is
-#'     reported if for a value in `x` no value in `y` with a difference smaller
-#'     than `maxDiff` can be found.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-#'
-#' @examples
-#'
-#' a <- 1:10
-#' b <- c(3.1, 3.2, 4.3, 7.8)
-#'
-#' xcms:::.match_closest(b, a)
-#' MsCoreUtils::closest(b, a, tolerance = min(mean(diff(a)), mean(diff(b))))
-#'
-#' a <- c(1, 4, 7, 10)
-#' b <- c(2.2, 2.3, 2.4, 2.5)
-#' .match_closest(a, b)
-#'
-#' a <- c(1, 2.11, 3, 4, 5)
-#' .match_closest(a, b)
-#'
-#' a <- c(1, 1.5, 2, 2.5, 3, 3.5, 4)
-#' b <- c(1.7, 2.3, 3)
-#' .match_closest(a, b)
-#'
-#' .match_closest(b, a)
-.match_closest <- function(x, y, maxDiff = min(mean(diff(x)), mean(diff(y)))) {
-    vapply(x, function(a) {
-        diffs <- abs(y - a)
-        idx <- intersect(which(diffs <= maxDiff), which.min(diffs))
-        if (length(idx))
-            idx
-        else NA_integer_
-    }, integer(1))
-}
-
 #' @description
 #'
 #' Similar to the `IRanges::reduce` method, this function *joins* overlapping

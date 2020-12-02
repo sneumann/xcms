@@ -56,6 +56,9 @@ test_that(".correlate_chromatograms works", {
     expect_equal(nrow(res), 1)
     expect_true(res[1, 1] < 0.5)
     expect_true(res[1, 2] > 0.9)
+    res2 <- .correlate_chromatograms(list(chr1), list(chr2, chr3),
+                                           align = "none")
+    expect_true(all(is.na(res2)))
 
     expect_equal(res, .correlate_chromatograms(list(chr1), list(chr2, chr3),
                                                full = FALSE))

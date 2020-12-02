@@ -36,7 +36,9 @@ test_that(".align_chromatogram_match_rtime works", {
 
     res <- .align_chromatogram_match_rtime(chr1, chr2)
     expect_equal(rtime(res), rtime(chr2))
-    expect_equal(intensity(res), c(3, 4, 6))
+    expect_equal(intensity(res), c(3, 1, 3))
+    res_none <- .align_chromatogram_none(chr1, chr2)
+    expect_equal(res, res_none)
 
     ## Not perfectly matching rtimes:
     chr1 <- Chromatogram(rtime = c(1.1, 2.1, 3.1, 4.1, 5.1),
@@ -45,7 +47,6 @@ test_that(".align_chromatogram_match_rtime works", {
     res <- .align_chromatogram_match_rtime(chr2, chr1)
     expect_equal(rtime(res), rtime(chr1))
     expect_equal(intensity(res), c(NA, 3, 5, NA, NA))
-
     res <- .align_chromatogram_match_rtime(chr1, chr2)
     expect_equal(rtime(res), rtime(chr2))
     expect_equal(intensity(res), c(2, 3))
