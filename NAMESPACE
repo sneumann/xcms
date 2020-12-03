@@ -3,7 +3,9 @@ useDynLib(xcms)
 importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
-    "polarity<-", "centroided", "isCentroided", "peaks<-", "isolationWindowTargetMz")
+    "polarity<-", "centroided", "isCentroided", "peaks<-",
+    "isolationWindowTargetMz")
+importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
 ## import("Biobase")
@@ -268,7 +270,6 @@ exportMethods(
 
 ## New Param classes
 exportClasses(
-    "Param",
     "CentWaveParam",
     "MatchedFilterParam",
     "MassifquantParam",

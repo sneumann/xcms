@@ -9,7 +9,6 @@
 \alias{fixedRt}
 \alias{fixedMz}
 \alias{ChromPeakAreaParam}
-\alias{show,FillChromPeaksParam-method}
 \alias{expandMz,FillChromPeaksParam-method}
 \alias{expandMz}
 \alias{expandMz<-,FillChromPeaksParam-method}
@@ -44,8 +43,6 @@ ChromPeakAreaParam(
   rtmin = function(z) quantile(z, probs = 0.25),
   rtmax = function(z) quantile(z, probs = 0.75)
 )
-
-\S4method{show}{FillChromPeaksParam}(object)
 
 \S4method{expandMz}{FillChromPeaksParam}(object)
 
@@ -215,9 +212,10 @@ signal within the area is used.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt}}{See corresponding parameter above. `.__classVersion__` stores the version of the class.}
+\item{\code{expandMz,expandRt,ppm,fixedMz,fixedRt}}{See corresponding parameter
+above.}
 
-\item{\code{.__classVersion__,rtmin,rtmax,mzmin,mzmax}}{See corresponding parameter above. `.__classVersion__` stores the version of the class.}
+\item{\code{rtmin,rtmax,mzmin,mzmax}}{See corresponding parameter above.}
 }}
 
 \note{

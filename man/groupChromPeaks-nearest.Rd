@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-nearest}
 \alias{NearestPeaksParam-class}
 \alias{NearestPeaksParam}
-\alias{show,NearestPeaksParam-method}
 \alias{sampleGroups,NearestPeaksParam-method}
 \alias{sampleGroups<-,NearestPeaksParam-method}
 \alias{mzVsRtBalance,NearestPeaksParam-method}
@@ -33,8 +32,6 @@ NearestPeaksParam(
   absRt = 15,
   kNN = 10
 )
-
-\S4method{show}{NearestPeaksParam}(object)
 
 \S4method{sampleGroups}{NearestPeaksParam}(object)
 
@@ -147,9 +144,8 @@ already present feature definitions.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,mzVsRtBalance,absMz,absRt,kNN}}{See corresponding parameter
+above.}
 }}
 
 \note{

@@ -7,7 +7,6 @@
 \alias{PeakGroupsParam-class}
 \alias{PeakGroupsParam}
 \alias{adjustRtimePeakGroups}
-\alias{show,PeakGroupsParam-method}
 \alias{minFraction,PeakGroupsParam-method}
 \alias{minFraction<-,PeakGroupsParam-method}
 \alias{extraPeaks,PeakGroupsParam-method}
@@ -54,8 +53,6 @@ PeakGroupsParam(
 )
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
-
-\S4method{show}{PeakGroupsParam}(object)
 
 \S4method{minFraction}{PeakGroupsParam}(object)
 
@@ -252,9 +249,7 @@ adjusted.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above.}
 }}
 
 \note{

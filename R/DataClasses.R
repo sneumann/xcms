@@ -269,9 +269,6 @@ setClass("ProcessHistory",
 
 ## BasicParam class
 ## CentWaveParam
-setClass("Param",
-         representation = representation("VIRTUAL"),
-         contains = c("Versioned"))
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
 #' @aliases GenericParam Param class:Param Param-class
@@ -293,8 +290,6 @@ setClassUnion("ParamOrNULL", c("Param", "NULL"))
 #'
 #' @slot args \code{list} (ideally named) with the arguments to the
 #'     function.
-#'
-#' @slot .__classVersion__ the version of the class.
 #'
 #' @author Johannes Rainer
 #'
@@ -545,8 +540,7 @@ NULL
 #'     for a chromatographic peak detection using the centWave method. Instances
 #'     should be created with the \code{CentWaveParam} constructor.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
 #' @rdname findChromPeaks-centWave
@@ -770,9 +764,10 @@ NULL
 #'     method. Instances should be created with the \code{MatchedFilterParam}
 #'     constructor.
 #'
-#' @slot .__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index
+#'     See corresponding parameter above. Slots values should exclusively
+#'     be accessed \emph{via} the corresponding getter and setter methods listed
+#'     above.
 #'
 #' @rdname findChromPeaks-matchedFilter
 #'
@@ -981,9 +976,10 @@ NULL
 #'     method eventually in combination with the centWave algorithm. Instances
 #'     should be created with the \code{MassifquantParam} constructor.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave
+#'      See corresponding parameter above. Slots values should
+#'      exclusively be accessed \emph{via} the corresponding getter and setter
+#'      methods listed above.
 #'
 #' @rdname findChromPeaks-massifquant
 #'
@@ -1142,9 +1138,8 @@ NULL
 #'     settings for a peak detection using the MSW method. Instances should be
 #'     created with the \code{MSWParam} constructor.
 #'
-#' @slot .__classVersion__,snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams See corresponding parameter above. \code{.__classVersion__} stores the version from the class. Slots values
-#' should exclusively be accessed \emph{via} the corresponding getter and
-#' setter methods listed above.
+#' @slot snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams
+#'      See corresponding parameter above.
 #'
 #' @rdname findPeaks-MSW
 #'
@@ -1296,9 +1291,8 @@ NULL
 #'     \code{\link{CentWaveParam}} for all methods and arguments this class
 #'     inherits.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
+#'      See corresponding parameter above.
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 #'
@@ -1470,9 +1464,8 @@ NULL
 #' grouping based on peak densities along the time dimension. Instances should
 #' be created with the [PeakDensityParam()] constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See
+#'      corresponding parameter above.
 #'
 #' @rdname groupChromPeaks-density
 #'
@@ -1605,9 +1598,8 @@ NULL
 #' grouping based on the *mzClust* algorithm.
 #' Instances should be created with the `MzClustParam` constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,ppm,absMz,minFraction,minSamples See corresponding
+#'     parameter above.
 #'
 #' @md
 #'
@@ -1730,9 +1722,8 @@ NULL
 #'     settings for the peak grouping based on the *nearest* algorithm.
 #'     Instances should be created with the `NearestPeaksParam` constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter
+#'     above.
 #'
 #' @md
 #'
@@ -1957,9 +1948,7 @@ NULL
 #'     peak groups present in most samples.
 #'     Instances should be created with the \code{PeakGroupsParam} constructor.
 #'
-#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust See corresponding parameter above.
 #'
 #' @rdname adjustRtime-peakGroups
 #'
@@ -2175,9 +2164,8 @@ NULL
 #'     method. Class Instances should be created using the
 #'     \code{ObiwarpParam} constructor.
 #'
-#' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust See
+#'     corresponding parameter above.
 #'
 #' @rdname adjustRtime-obiwarp
 #'
@@ -2273,7 +2261,8 @@ setClass("ObiwarpParam",
              else TRUE
          })
 
-#' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. `.__classVersion__` stores the version of the class.
+#' @slot expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter
+#'      above.
 #'
 #' @rdname fillChromPeaks
 setClass("FillChromPeaksParam",
@@ -2311,7 +2300,7 @@ setClass("FillChromPeaksParam",
 
 #' @rdname fillChromPeaks
 #'
-#' @slot .__classVersion__,rtmin,rtmax,mzmin,mzmax See corresponding parameter above. `.__classVersion__` stores the version of the class.
+#' @slot rtmin,rtmax,mzmin,mzmax See corresponding parameter above.
 setClass("ChromPeakAreaParam",
          slots = c(rtmin = "function",
                    rtmax = "function",

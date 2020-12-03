@@ -7,7 +7,6 @@
 \alias{ObiwarpParam-class}
 \alias{ObiwarpParam}
 \alias{adjustRtime,OnDiskMSnExp,ObiwarpParam-method}
-\alias{show,ObiwarpParam-method}
 \alias{binSize,ObiwarpParam-method}
 \alias{binSize<-,ObiwarpParam-method}
 \alias{centerSample,ObiwarpParam-method}
@@ -69,8 +68,6 @@ ObiwarpParam(
 )
 
 \S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
-
-\S4method{show}{ObiwarpParam}(object)
 
 \S4method{binSize}{ObiwarpParam}(object)
 
@@ -292,9 +289,8 @@ data using the \emph{obiwarp} method.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust}}{See
+corresponding parameter above.}
 }}
 
 \note{
