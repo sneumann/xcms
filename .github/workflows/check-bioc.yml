@@ -139,6 +139,9 @@ jobs:
 
           ## required for ncdf4
           ## brew install netcdf
+          curl -O https://mac.r-project.org/libs-4/netcdf-4.7.3-darwin.17-x86_64.tar.gz
+          tar fvxzm netcdf-4.7.3-darwin.17-x86_64.tar.gz -C /
+          rm netcdf-4.7.3-darwin.17-x86_64.tar.gz
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
