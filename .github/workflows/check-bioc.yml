@@ -180,7 +180,12 @@ jobs:
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
           ## Manually add packages
-          BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick", "faahKO"))
+          BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick", "MSnbase", "faahKO"))
+
+          ## Ensure we have the most recent versions...
+          BiocManager::install("lgatto/ProtGenerics")
+          BiocManager::install("lgatto/MSnbase")
+
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
