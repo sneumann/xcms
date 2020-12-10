@@ -1,109 +1,3 @@
-#' @description
-#'
-#' *Align* chromatogram `x` to chromatogram `y`.
-#' The retention times of the first `Chromatogram` (`x`) will be replaced
-#' by the retention times of the second (`y`) estimated by the `approx`
-#' function.
-#'
-#' This type of alignment should be used if the chromatograms were measured in
-#' the same run (e.g. in SWATH experiments).
-#'
-#' @param x [Chromatogram()] object that will be aligned against `y`
-#'
-#' @param y [Chromatogram()] object.
-#'
-#' @param na.value optional parameter allowing to specify the value with which
-#'     `NA`s in the aligned chromatogram `x` will be replaced.
-#'
-#' @return aligned `x` `Chromatogram` with the same number of data points and
-#'     same retention times than `y`.
-#'
-#' @author Michael Witting
-#'
-#' @noRd
-.align_chromatogram_approx <- function(x, y, na.value = NA_real_, ...) {
-    x_aligned <- approx(x@rtime, x@intensity, y@rtime)
-    if (!is.na(na.value)) {
-        x_aligned$y[is.na(x_aligned$y)] <- na.value
-    }
-    ## correct rtime and int in chromatogram object
-    x@rtime <- x_aligned$x
-    x@intensity <- x_aligned$y
-    x
-}
-
-#' @description
-#'
-#' *Align* chromatogram `x` against chromatogram `y` matching each data point
-#' in `x` to the data point in `y` with the smallest difference between their
-#' retention times, but only if the difference in retention times is `<=` the
-#' minimal average difference between retention times in `x` or `y` (otherwise
-#' the data point will be discarded).
-#'
-#' @param x [Chromatogram()] object that will be aligned against `y`
-#'
-#' @param y [Chromatogram()] object.
-#'
-#' @param na.value optional parameter allowing to specify the value with which
-#'     `NA`s in the aligned chromatogram `x` will be replaced.
-#'
-#' @param ... optional parameters to be passed along to the `.match_closest`
-#'     function.
-#'
-#' @return aligned `x` `Chromatogram` with the same number of data points and
-#'     same retention times than `y`.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-.align_chromatogram_match_rtime <- function(x, y, na.value = NA_real_, ...) {
-    idx <- closest(x@rtime, y@rtime, duplicates = "closest",
-                   tolerance = min(mean(diff(x@rtime)), mean(diff(y@rtime))))
-    ## idx <- .match_closest(x@rtime, y@rtime, ...)
-    not_na <- !is.na(idx)
-    x@rtime <- rtime(y)
-    new_int <- rep(na.value, length(y))
-    if (any(not_na))
-        new_int[idx[not_na]] <- x@intensity[not_na]
-    x@intensity <- new_int
-    x
-}
-
-.align_chromatogram_none <- function(x, y, na.value = NA_real_, ...) {
-    idx <- match(x@rtime, y@rtime)
-    not_na <- !is.na(idx)
-    x@rtime <- y@rtime
-    new_int <- rep(na.value, length(y))
-    if (any(not_na))
-        new_int[idx[not_na]] <- x@intensity[not_na]
-    x@intensity <- new_int
-    x
-}
-
-.align_chromatogram <- function(x, y, method = c("matchRtime", "approx", "none"),
-                                na.value = NA_real_, ...) {
-    method <- match.arg(method)
-    switch(method,
-           matchRtime = .align_chromatogram_match_rtime(
-               x, y, na.value = na.value, ...),
-           approx = .align_chromatogram_approx(x, y, na.value = na.value, ...),
-           none = .align_chromatogram_none(x, y, na.value = na.value, ...))
-}
-
-.filter_intensity_chromatogram <- function(x, intensity = 0, ...) {
-    if (is.numeric(intensity)) {
-        keep <- x@intensity >= intensity[1]
-    } else if (is.function(intensity)) {
-        keep <- intensity(x, ...)
-    } else stop("'intensity' should be either a numeric value or a function.")
-    if (!is.logical(keep) | length(keep) != length(x@intensity))
-        stop("The filter function seems to not return the expected result.")
-    keep <- which(keep)
-    x@intensity <- x@intensity[keep]
-    x@rtime <- x@rtime[keep]
-    x
-}
-
 #' @title Correlate chromatograms
 #'
 #' @description
@@ -137,11 +31,11 @@
 .correlate_chromatogram <- function(x, y, use = "pairwise.complete.obs",
                                     method = c("pearson", "kendall",
                                                "spearman"),
-                                    align = c("matchRtime", "approx", "none"),
+                                    align = c("closest", "approx"),
                                     ...) {
     align <- match.arg(align)
     if(length(x) != length(y) || !all(rtime(x) %in% rtime(y)))
-        x <- .align_chromatogram(x, y, method = align, ...)
+        x <- alignRt(x, y, method = align, ...)
     cor(x@intensity, y@intensity, use = use, method = method)
 }
 
@@ -301,10 +195,4 @@
     keep <- which(!is.na(pks_new[, "rt"]))
     list(chromPeaks = pks_new[keep, cns, drop = FALSE],
          chromPeakData = extractROWS(pkd, keep))
-}
-
-.normalize_chromatogram <- function(x, method = "max") {
-    ref <- do.call(method, list(x = x@intensity, na.rm = TRUE))
-    x@intensity <- x@intensity / ref
-    x
 }

@@ -70,7 +70,8 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData",
-                  "filterIsolationWindow", "quantify")
+                  "filterIsolationWindow", "quantify", "filterIntensity",
+		  "alignRt")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -494,7 +495,6 @@ exportMethods("hasChromPeaks",
               "filterMsLevel",
               "filterMz",
               "filterRt",
-              "normalize",
               "pickPeaks",
               "removePeaks",
               "smooth",
@@ -512,12 +512,10 @@ exportMethods("hasChromPeaks",
               "spectrapply",
 	      "writeMSData",
               "plotChromPeakDensity",
-              "align",
               "correlate",
               "plot",
               "refineChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
-              "filterColumnsKeepTop",
-	      "filterIntensity"
+              "filterColumnsKeepTop"
               )

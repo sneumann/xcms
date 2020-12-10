@@ -62,21 +62,11 @@ setMethod("findChromPeaks", signature(object = "MChromatograms",
     if (validObject(object)) object
 }
 
-#' @rdname align-Chromatogram
-setMethod("align", signature = c(x = "MChromatograms", y = "Chromatogram"),
-          function(x, y, method = c("matchRtime", "approx", "none"), ...) {
-              x@.Data <- matrix(lapply(x@.Data, .align_chromatogram, y = y,
-                                       method = method, ...),
-                                nrow = nrow(x), dimnames = dimnames(x))
-              validObject(x)
-              x
-          })
-
 #' @rdname correlate-Chromatogram
 setMethod("correlate", signature = c(x = "MChromatograms", y = "missing"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("matchRtime", "approx", "none"), full = TRUE,
+                   align = c("closest", "approx"), full = TRUE,
                    ...) {
               .correlate_chromatograms(
                   x, x, use = use, method = method, align = align,
@@ -87,7 +77,7 @@ setMethod("correlate", signature = c(x = "MChromatograms", y = "missing"),
 setMethod("correlate", signature = c(x = "MChromatograms", y = "MChromatograms"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("matchRtime", "approx", "none"), ...) {
+                   align = c("closest", "approx"), ...) {
               .correlate_chromatograms(x, y, use = use, method = method,
                                        align = align, ...)
           })
@@ -364,26 +354,3 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
               idx <- order(colval, decreasing = TRUE)[seq_len(n)]
               object[, sort(idx)]
           })
-
-#' @rdname normalize-Chromatogram
-setMethod("normalize", "MChromatograms",
-          function(object, method = c("max", "sum")) {
-              method <- match.arg(method)
-              object@.Data <- matrix(lapply(c(object@.Data),
-                                            FUN = .normalize_chromatogram,
-                                            method = method),
-                                     ncol = ncol(object),
-                                     dimnames = dimnames(object@.Data))
-              object
-          })
-
-#' @rdname filterIntensity-Chromatogram
-setMethod("filterIntensity", "MChromatograms", function(object,
-                                                        intensity = 0, ...) {
-    object@.Data <- matrix(lapply(c(object@.Data),
-                                  FUN = .filter_intensity_chromatogram,
-                                  intensity = intensity, ...),
-                           ncol = ncol(object),
-                           dimnames = dimnames(object@.Data))
-    object
-})

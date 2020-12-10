@@ -13,7 +13,7 @@
   y,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx", "none"),
+  align = c("closest", "approx"),
   ...
 )
 
@@ -22,7 +22,7 @@
   y = NULL,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx", "none"),
+  align = c("closest", "approx"),
   full = TRUE,
   ...
 )
@@ -32,7 +32,7 @@
   y = NULL,
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
-  align = c("matchRtime", "approx", "none"),
+  align = c("closest", "approx"),
   ...
 )
 }
@@ -48,10 +48,12 @@ details.}
 details.}
 
 \item{align}{\code{character(1)} defining the alignment method to be used. See
-\code{\link[=align]{align()}} for details. The value of this parameter is passed to the
-\code{method} parameter of \code{align}.}
+help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for details. The value of
+this parameter is passed to the \code{method} parameter of \code{alignRt}.}
 
-\item{...}{optional parameters passed along to the \code{align} method.}
+\item{...}{optional parameters passed along to the \code{alignRt} method such as
+\code{tolerance} that, if set to \code{0} requires the retention times to be
+identical.}
 
 \item{full}{\code{logical(1)} for \code{correlate} on a single \code{MChromatograms} object:
 whether the \emph{full} correlation matrix should be calculated (default) or
@@ -67,7 +69,8 @@ represent the chromatograms in \code{x} and the columns the chromatograms in
 Correlate intensities of two chromatograms with each other. If the two
 \code{Chromatogram} objects have different retention times they are first
 \emph{aligned} to match data points in the first to data points in the second
-chromatogram. See \code{\link[=align]{align()}} for more details.
+chromatogram. See help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for more
+details.
 
 If \code{correlate} is called on a single \code{\link[=MChromatograms]{MChromatograms()}} object a pairwise
 correlation of each chromatogram with each other is performed and a \code{matrix}
