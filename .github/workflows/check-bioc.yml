@@ -53,7 +53,7 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: 'devel', bioc: '3.13', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: '4.0', bioc: '3.12'}
+          - { os: macOS-latest, r: 'devel', bioc: '3.13'}
           - { os: windows-latest, r: 'devel', bioc: '3.13'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -171,6 +171,10 @@ jobs:
           remotes::install_github("ropensci/RefManageR")
           remotes::install_github("cboettig/knitcitations")
 
+          ## Manually add packages
+          BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick",
+          "mzR", "xcms", "MSnbase", "faahKO"))
+
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
@@ -178,9 +182,6 @@ jobs:
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
-
-          ## Manually add packages
-          BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick", "MSnbase", "faahKO"))
 
           ## Ensure we have the most recent versions...
           BiocManager::install("lgatto/ProtGenerics")
