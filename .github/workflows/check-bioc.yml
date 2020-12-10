@@ -135,7 +135,7 @@ jobs:
           brew install harfbuzz fribidi
 
           ## Helps compile RCurl from source
-          brew uninstall curl
+          ## brew uninstall curl
 
           ## required for ncdf4
           ## brew install netcdf
@@ -180,7 +180,7 @@ jobs:
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
           ## Manually add packages
-          BiocManager::install(c("multtest", "rgl", "Rgraphviz"))
+          BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick", "faahKO"))
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
