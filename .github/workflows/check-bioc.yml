@@ -140,9 +140,9 @@ jobs:
           ## required for ncdf4
           ## brew install netcdf ## Does not work as it is compiled with gcc
           ## Use pre-compiled libraries from https://mac.r-project.org/libs-4/
-          curl -O https://mac.r-project.org/libs-4/netcdf-4.7.3-darwin.17-x86_64.tar.gz
-          tar fvxzm netcdf-4.7.3-darwin.17-x86_64.tar.gz -C /
-          rm netcdf-4.7.3-darwin.17-x86_64.tar.gz
+          curl -O https://mac.r-project.org/libs-4/netcdf-4.7.4-darwin.17-x86_64.tar.gz
+          tar fvxzm netcdf-4.7.4-darwin.17-x86_64.tar.gz -C /
+          rm netcdf-4.7.4-darwin.17-x86_64.tar.gz
           curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
           tar fvxzm hdf5-1.12.0-darwin.17-x86_64.tar.gz -C /
           rm hdf5-1.12.0-darwin.17-x86_64.tar.gz
