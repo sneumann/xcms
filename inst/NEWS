@@ -1,3 +1,10 @@
+Changes in version 3.13.4
+
+- Import `Param` object from `ProtGenerics`.
+- Import `filterIntensity`, `normalize` and `alignRt` for `Chromatogram` and
+  `MChromatograms` from `MSnbase`.
+
+
 Changes in version 3.13.3
 
 - `align,Chromatogram` gains new method `"none"` which will only keep values

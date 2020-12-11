@@ -3,7 +3,9 @@ useDynLib(xcms)
 importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
-    "polarity<-", "centroided", "isCentroided", "peaks<-", "isolationWindowTargetMz")
+    "polarity<-", "centroided", "isCentroided", "peaks<-",
+    "isolationWindowTargetMz")
+importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
 ## import("Biobase")
@@ -68,7 +70,8 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData",
-                  "filterIsolationWindow", "quantify")
+                  "filterIsolationWindow", "quantify", "filterIntensity",
+		  "alignRt")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -268,7 +271,6 @@ exportMethods(
 
 ## New Param classes
 exportClasses(
-    "Param",
     "CentWaveParam",
     "MatchedFilterParam",
     "MassifquantParam",
@@ -493,7 +495,6 @@ exportMethods("hasChromPeaks",
               "filterMsLevel",
               "filterMz",
               "filterRt",
-              "normalize",
               "pickPeaks",
               "removePeaks",
               "smooth",
@@ -511,12 +512,10 @@ exportMethods("hasChromPeaks",
               "spectrapply",
 	      "writeMSData",
               "plotChromPeakDensity",
-              "align",
               "correlate",
               "plot",
               "refineChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
-              "filterColumnsKeepTop",
-	      "filterIntensity"
+              "filterColumnsKeepTop"
               )

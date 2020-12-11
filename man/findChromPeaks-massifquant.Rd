@@ -8,7 +8,6 @@
 \alias{MassifquantParam-class}
 \alias{MassifquantParam}
 \alias{findChromPeaks,OnDiskMSnExp,MassifquantParam-method}
-\alias{show,MassifquantParam-method}
 \alias{ppm,MassifquantParam-method}
 \alias{ppm<-,MassifquantParam-method}
 \alias{peakwidth,MassifquantParam-method}
@@ -76,8 +75,6 @@ MassifquantParam(
   return.type = "XCMSnExp",
   msLevel = 1L
 )
-
-\S4method{show}{MassifquantParam}(object)
 
 \S4method{ppm}{MassifquantParam}(object)
 
@@ -363,9 +360,9 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave}}{See corresponding parameter above. Slots values should
+exclusively be accessed \emph{via} the corresponding getter and setter
+methods listed above.}
 }}
 
 \note{

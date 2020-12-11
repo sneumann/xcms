@@ -8,7 +8,6 @@
 \alias{MSWParam-class}
 \alias{MSWParam}
 \alias{findChromPeaks,OnDiskMSnExp,MSWParam-method}
-\alias{show,MSWParam-method}
 \alias{snthresh,MSWParam-method}
 \alias{snthresh<-,MSWParam-method}
 \alias{verboseColumns,MSWParam-method}
@@ -72,8 +71,6 @@ MSWParam(
   return.type = "XCMSnExp",
   msLevel = 1L
 )
-
-\S4method{show}{MSWParam}(object)
 
 \S4method{snthresh}{MSWParam}(object)
 
@@ -262,9 +259,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams}}{See corresponding parameter above. \code{.__classVersion__} stores the version from the class. Slots values
-should exclusively be accessed \emph{via} the corresponding getter and
-setter methods listed above.}
+\item{\code{snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams}}{See corresponding parameter above.}
 }}
 
 \note{

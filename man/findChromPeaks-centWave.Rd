@@ -8,7 +8,6 @@
 \alias{CentWaveParam-class}
 \alias{CentWaveParam}
 \alias{findChromPeaks,OnDiskMSnExp,CentWaveParam-method}
-\alias{show,CentWaveParam-method}
 \alias{ppm,CentWaveParam-method}
 \alias{ppm}
 \alias{ppm<-,CentWaveParam-method}
@@ -86,8 +85,6 @@ CentWaveParam(
   return.type = "XCMSnExp",
   msLevel = 1L
 )
-
-\S4method{show}{CentWaveParam}(object)
 
 \S4method{ppm}{CentWaveParam}(object)
 
@@ -331,8 +328,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW}}{See corresponding parameter above. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 

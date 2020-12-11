@@ -8,7 +8,6 @@
 \alias{CentWavePredIsoParam-class}
 \alias{CentWavePredIsoParam}
 \alias{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam-method}
-\alias{show,CentWavePredIsoParam-method}
 \alias{snthreshIsoROIs,CentWavePredIsoParam-method}
 \alias{snthreshIsoROIs}
 \alias{snthreshIsoROIs<-,CentWavePredIsoParam-method}
@@ -58,8 +57,6 @@ CentWavePredIsoParam(
   return.type = "XCMSnExp",
   msLevel = 1L
 )
-
-\S4method{show}{CentWavePredIsoParam}(object)
 
 \S4method{snthreshIsoROIs}{CentWavePredIsoParam}(object)
 
@@ -252,9 +249,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above.}
 }}
 
 \note{

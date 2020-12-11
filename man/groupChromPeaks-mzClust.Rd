@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-mzClust}
 \alias{MzClustParam-class}
 \alias{MzClustParam}
-\alias{show,MzClustParam-method}
 \alias{sampleGroups,MzClustParam-method}
 \alias{sampleGroups<-,MzClustParam-method}
 \alias{ppm,MzClustParam-method}
@@ -29,8 +28,6 @@ MzClustParam(
   minFraction = 0.5,
   minSamples = 1
 )
-
-\S4method{show}{MzClustParam}(object)
 
 \S4method{sampleGroups}{MzClustParam}(object)
 
@@ -127,9 +124,8 @@ grouping for single spectrum metabolomics data.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,ppm,absMz,minFraction,minSamples}}{See corresponding
+parameter above.}
 }}
 
 \note{

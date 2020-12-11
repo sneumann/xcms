@@ -8,7 +8,6 @@
 \alias{MatchedFilterParam-class}
 \alias{MatchedFilterParam}
 \alias{findChromPeaks,OnDiskMSnExp,MatchedFilterParam-method}
-\alias{show,MatchedFilterParam-method}
 \alias{binSize,MatchedFilterParam-method}
 \alias{binSize}
 \alias{binSize<-,MatchedFilterParam-method}
@@ -70,8 +69,6 @@ MatchedFilterParam(
   return.type = "XCMSnExp",
   msLevel = 1L
 )
-
-\S4method{show}{MatchedFilterParam}(object)
 
 \S4method{binSize}{MatchedFilterParam}(object)
 
@@ -275,9 +272,9 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index}}{See corresponding parameter above. Slots values should exclusively
+be accessed \emph{via} the corresponding getter and setter methods listed
+above.}
 }}
 
 \note{

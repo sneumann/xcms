@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-density}
 \alias{PeakDensityParam-class}
 \alias{PeakDensityParam}
-\alias{show,PeakDensityParam-method}
 \alias{sampleGroups,PeakDensityParam-method}
 \alias{sampleGroups}
 \alias{sampleGroups<-,PeakDensityParam-method}
@@ -40,8 +39,6 @@ PeakDensityParam(
   binSize = 0.25,
   maxFeatures = 50
 )
-
-\S4method{show}{PeakDensityParam}(object)
 
 \S4method{sampleGroups}{PeakDensityParam}(object)
 
@@ -173,9 +170,8 @@ already present feature definitions.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures}}{See
+corresponding parameter above.}
 }}
 
 \note{
