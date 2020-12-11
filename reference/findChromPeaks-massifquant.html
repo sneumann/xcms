@@ -118,7 +118,7 @@ withWave,withWave&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -247,9 +247,6 @@ withWave,withWave&amp;lt;-: getter and
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
 <span class='fu'><a href='findChromPeaks-centWave.html'>ppm</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -546,9 +543,9 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     
 
 <dl>
-<dt><code>.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave</code></dt><dd><p>See corresponding parameter above. <code>.__classVersion__</code> stores
-the version from the class. Slots values should exclusively be accessed
-<em>via</em> the corresponding getter and setter methods listed above.</p></dd>
+<dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave</code></dt><dd><p>See corresponding parameter above. Slots values should
+exclusively be accessed <em>via</em> the corresponding getter and setter
+methods listed above.</p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -590,22 +587,22 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span><span class='op'>(</span><span class='va'>mqp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='fl'>10000</span><span class='op'>)</span>
 <span class='va'>mqp</span>
 </div><div class='output co'>#&gt; Object of class:  MassifquantParam 
-#&gt; Parameters:
-#&gt;  ppm: 25 
-#&gt;  peakwidth: 20, 50 
-#&gt;  snthresh: 30 
-#&gt;  prefilter: 6, 10000 
-#&gt;  mzCenterFun: wMean 
-#&gt;  integrate: 1 
-#&gt;  mzdiff: -0.001 
-#&gt;  fitgauss: FALSE 
-#&gt;  noise: 0 
-#&gt;  verboseColumns: FALSE 
-#&gt;  criticalValue: 1.125 
-#&gt;  consecMissedLimit: 2 
-#&gt;  unions: 1 
-#&gt;  checkBack: 0 
-#&gt;  withWave: FALSE </div><div class='input'>
+#&gt;  Parameters:
+#&gt;  - ppm: [1] 25
+#&gt;  - peakwidth: [1] 20 50
+#&gt;  - snthresh: [1] 30
+#&gt;  - prefilter: [1]     6 10000
+#&gt;  - mzCenterFun: [1] "wMean"
+#&gt;  - integrate: [1] 1
+#&gt;  - mzdiff: [1] -0.001
+#&gt;  - fitgauss: [1] FALSE
+#&gt;  - noise: [1] 0
+#&gt;  - verboseColumns: [1] FALSE
+#&gt;  - criticalValue: [1] 1.125
+#&gt;  - consecMissedLimit: [1] 2
+#&gt;  - unions: [1] 1
+#&gt;  - checkBack: [1] 0
+#&gt;  - withWave: [1] FALSE</div><div class='input'>
 <span class='co'>## Perform the peak detection using massifquant on the files from the</span>
 <span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span>
 <span class='co'>## package</span>

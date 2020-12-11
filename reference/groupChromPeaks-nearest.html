@@ -102,7 +102,7 @@ already present feature definitions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -196,9 +196,6 @@ already present feature definitions.</p>
   absRt <span class='op'>=</span> <span class='fl'>15</span>,
   kNN <span class='op'>=</span> <span class='fl'>10</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for NearestPeaksParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for NearestPeaksParam</span>
 <span class='fu'><a href='groupChromPeaks-density.html'>sampleGroups</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -306,9 +303,8 @@ accessed with the <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></
     
 
 <dl>
-<dt><code>.__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN</code></dt><dd><p>See corresponding parameter above. <code>.__classVersion__</code> stores
-the version from the class. Slots values should exclusively be accessed
-<em>via</em> the corresponding getter and setter methods listed above.</p></dd>
+<dt><code>sampleGroups,mzVsRtBalance,absMz,absRt,kNN</code></dt><dd><p>See corresponding parameter
+above.</p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -339,12 +335,12 @@ the peak grouping.</p>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>NearestPeaksParam</span><span class='op'>(</span>kNN <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>p</span>
 </div><div class='output co'>#&gt; Object of class:  NearestPeaksParam 
-#&gt; Parameters:
-#&gt;  sampleGroups: numeric of length 0 
-#&gt;  mzVsRtBalance: 10 
-#&gt;  absMz: 0.2 
-#&gt;  absRt: 15 
-#&gt;  kNN: 3 </div><div class='input'>
+#&gt;  Parameters:
+#&gt;  - sampleGroups: numeric(0)
+#&gt;  - mzVsRtBalance: [1] 10
+#&gt;  - absMz: [1] 0.2
+#&gt;  - absRt: [1] 15
+#&gt;  - kNN: [1] 3</div><div class='input'>
 <span class='co'>## Load a test data set with detected peaks</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 <span class='co'>## Update the path to the files for the local system</span>
@@ -430,7 +426,7 @@ the peak grouping.</p>
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Wed Dec  2 09:34:04 2020 
+#&gt;  date: Fri Dec 11 12:32:37 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: NearestPeaksParam 

@@ -101,7 +101,7 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -216,9 +216,6 @@ polarity,polarity&amp;lt;-: getter and
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
 <span class='fu'>snthreshIsoROIs</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -433,9 +430,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     
 
 <dl>
-<dt><code>.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity</code></dt><dd><p>See corresponding parameter above. <code>.__classVersion__</code> stores
-the version from the class. Slots values should exclusively be accessed
-<em>via</em> the corresponding getter and setter methods listed above.</p></dd>
+<dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity</code></dt><dd><p>See corresponding parameter above.</p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -473,25 +468,26 @@ the version from the class. Slots values should exclusively be accessed
 <span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>25</span>
 <span class='va'>p</span>
 </div><div class='output co'>#&gt; Object of class:  CentWavePredIsoParam 
-#&gt; Parameters:
-#&gt;  ppm: 25 
-#&gt;  peakwidth: 20, 50 
-#&gt;  snthresh: 25 
-#&gt;  prefilter: 3, 100 
-#&gt;  mzCenterFun: wMean 
-#&gt;  integrate: 1 
-#&gt;  mzdiff: -0.001 
-#&gt;  fitgauss: FALSE 
-#&gt;  noise: 0 
-#&gt;  verboseColumns: FALSE 
-#&gt;  roiList length: 0 
-#&gt;  firstBaselineCheck TRUE 
-#&gt;  roiScales length: 0 
-#&gt;  snthreshIsoROIs: 6.25 
-#&gt;  maxCharge: 4 
-#&gt;  maxIso: 5 
-#&gt;  mzIntervalExtension: TRUE 
-#&gt;  polarity: unknown </div><div class='input'>
+#&gt;  Parameters:
+#&gt;  - snthreshIsoROIs: [1] 6.25
+#&gt;  - maxCharge: [1] 4
+#&gt;  - maxIso: [1] 5
+#&gt;  - mzIntervalExtension: [1] TRUE
+#&gt;  - polarity: [1] "unknown"
+#&gt;  - ppm: [1] 25
+#&gt;  - peakwidth: [1] 20 50
+#&gt;  - snthresh: [1] 25
+#&gt;  - prefilter: [1]   3 100
+#&gt;  - mzCenterFun: [1] "wMean"
+#&gt;  - integrate: [1] 1
+#&gt;  - mzdiff: [1] -0.001
+#&gt;  - fitgauss: [1] FALSE
+#&gt;  - noise: [1] 0
+#&gt;  - verboseColumns: [1] FALSE
+#&gt;  - roiList: list()
+#&gt;  - firstBaselineCheck: [1] TRUE
+#&gt;  - roiScales: numeric(0)
+#&gt;  - extendLengthMSW: [1] FALSE</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

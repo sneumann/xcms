@@ -110,7 +110,7 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -230,9 +230,6 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for CentWaveParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWaveParam</span>
 <span class='fu'>ppm</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -490,8 +487,7 @@ The first analysis step is skipped, if regions of interest are passed
     
 
 <dl>
-<dt><code>.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW</code></dt><dd><p>See corresponding parameter above. <code>.__classVersion__</code> stores
-the version from the class. Slots values should exclusively be accessed
+<dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW</code></dt><dd><p>See corresponding parameter above. Slots values should exclusively be accessed
 <em>via</em> the corresponding getter and setter methods listed above.</p></dd>
 
 </dl>
@@ -536,20 +532,21 @@ detection in purely chromatographic data.</p>
 <span class='fu'>snthresh</span><span class='op'>(</span><span class='va'>cwp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>25</span>
 <span class='va'>cwp</span>
 </div><div class='output co'>#&gt; Object of class:  CentWaveParam 
-#&gt; Parameters:
-#&gt;  ppm: 20 
-#&gt;  peakwidth: 20, 50 
-#&gt;  snthresh: 25 
-#&gt;  prefilter: 3, 10000 
-#&gt;  mzCenterFun: wMean 
-#&gt;  integrate: 1 
-#&gt;  mzdiff: -0.001 
-#&gt;  fitgauss: FALSE 
-#&gt;  noise: 10000 
-#&gt;  verboseColumns: FALSE 
-#&gt;  roiList length: 0 
-#&gt;  firstBaselineCheck TRUE 
-#&gt;  roiScales length: 0 </div><div class='input'>
+#&gt;  Parameters:
+#&gt;  - ppm: [1] 20
+#&gt;  - peakwidth: [1] 20 50
+#&gt;  - snthresh: [1] 25
+#&gt;  - prefilter: [1]     3 10000
+#&gt;  - mzCenterFun: [1] "wMean"
+#&gt;  - integrate: [1] 1
+#&gt;  - mzdiff: [1] -0.001
+#&gt;  - fitgauss: [1] FALSE
+#&gt;  - noise: [1] 10000
+#&gt;  - verboseColumns: [1] FALSE
+#&gt;  - roiList: list()
+#&gt;  - firstBaselineCheck: [1] TRUE
+#&gt;  - roiScales: numeric(0)
+#&gt;  - extendLengthMSW: [1] FALSE</div><div class='input'>
 <span class='co'>## Perform the peak detection using centWave on some of the files from the</span>
 <span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span>
 <span class='co'>## package</span>

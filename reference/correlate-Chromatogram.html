@@ -43,7 +43,8 @@
 <meta property="og:description" content="Correlate intensities of two chromatograms with each other. If the two
 Chromatogram objects have different retention times they are first
 aligned to match data points in the first to data points in the second
-chromatogram. See align() for more details.
+chromatogram. See help on alignRt in MSnbase::Chromatogram() for more
+details.
 If correlate is called on a single MChromatograms() object a pairwise
 correlation of each chromatogram with each other is performed and a matrix
 with the correlation coefficients is returned.
@@ -85,7 +86,7 @@ by setting full = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -142,7 +143,8 @@ by setting full = FALSE." />
     <p>Correlate intensities of two chromatograms with each other. If the two
 <code>Chromatogram</code> objects have different retention times they are first
 <em>aligned</em> to match data points in the first to data points in the second
-chromatogram. See <code><a href='align,Chromatogram,Chromatogram-method.html'>align()</a></code> for more details.</p>
+chromatogram. See help on <code>alignRt</code> in <code><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>MSnbase::Chromatogram()</a></code> for more
+details.</p>
 <p>If <code>correlate</code> is called on a single <code>MChromatograms()</code> object a pairwise
 correlation of each chromatogram with each other is performed and a <code>matrix</code>
 with the correlation coefficients is returned.</p>
@@ -161,7 +163,7 @@ by setting <code>full = FALSE</code>.</p>
   <span class='va'>y</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"closest"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -171,7 +173,7 @@ by setting <code>full = FALSE</code>.</p>
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"closest"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
   full <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
@@ -182,7 +184,7 @@ by setting <code>full = FALSE</code>.</p>
   y <span class='op'>=</span> <span class='cn'>NULL</span>,
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
-  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"matchRtime"</span>, <span class='st'>"approx"</span>, <span class='st'>"none"</span><span class='op'>)</span>,
+  align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"closest"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -210,12 +212,14 @@ details.</p></td>
     <tr>
       <th>align</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the alignment method to be used. See
-<code><a href='align,Chromatogram,Chromatogram-method.html'>align()</a></code> for details. The value of this parameter is passed to the
-<code>method</code> parameter of <code>align</code>.</p></td>
+help on <code>alignRt</code> in <code><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>MSnbase::Chromatogram()</a></code> for details. The value of
+this parameter is passed to the <code>method</code> parameter of <code>alignRt</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>optional parameters passed along to the <code>align</code> method.</p></td>
+      <td><p>optional parameters passed along to the <code>alignRt</code> method such as
+<code>tolerance</code> that, if set to <code>0</code> requires the retention times to be
+identical.</p></td>
     </tr>
     <tr>
       <th>full</th>

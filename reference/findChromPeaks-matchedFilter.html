@@ -115,7 +115,7 @@ index,index&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -237,9 +237,6 @@ index,index&amp;lt;-: getter and setter for the
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for MatchedFilterParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MatchedFilterParam</span>
 <span class='fu'>binSize</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -444,9 +441,9 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     
 
 <dl>
-<dt><code>.__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index</code></dt><dd><p>See corresponding parameter above. <code>.__classVersion__</code> stores
-the version from the class. Slots values should exclusively be accessed
-<em>via</em> the corresponding getter and setter methods listed above.</p></dd>
+<dt><code>binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index</code></dt><dd><p>See corresponding parameter above. Slots values should exclusively
+be accessed <em>via</em> the corresponding getter and setter methods listed
+above.</p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -491,18 +488,18 @@ peak detection in purely chromatographic data.</p>
 <span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>mfp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>15</span>
 <span class='va'>mfp</span>
 </div><div class='output co'>#&gt; Object of class:  MatchedFilterParam 
-#&gt; Parameters:
-#&gt;  binSize: 5 
-#&gt;  impute: none 
-#&gt;  baseValue:  
-#&gt;  distance:  
-#&gt;  fwhm: 30 
-#&gt;  sigma: 12.73994 
-#&gt;  max: 5 
-#&gt;  snthresh: 15 
-#&gt;  steps: 2 
-#&gt;  mzdiff: -9.2 
-#&gt;  index: FALSE </div><div class='input'>
+#&gt;  Parameters:
+#&gt;  - binSize: [1] 5
+#&gt;  - impute: [1] "none"
+#&gt;  - baseValue: numeric(0)
+#&gt;  - distance: numeric(0)
+#&gt;  - fwhm: [1] 30
+#&gt;  - sigma: [1] 12.73994
+#&gt;  - max: [1] 5
+#&gt;  - snthresh: [1] 15
+#&gt;  - steps: [1] 2
+#&gt;  - mzdiff: [1] -9.2
+#&gt;  - index: [1] FALSE</div><div class='input'>
 <span class='co'>## Perform the peak detection using matchecFilter on the files from the</span>
 <span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span>
 <span class='co'>## package</span>

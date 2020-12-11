@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-12-02 08:56:56<br><strong>Compiled</strong>: Wed Dec 2 09:35:57 2020</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2020-12-11 11:18:47<br><strong>Compiled</strong>: Fri Dec 11 12:34:22 2020</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -1120,7 +1120,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Peak detection 
-##  date: Wed Dec  2 09:36:22 2020 
+##  date: Fri Dec 11 12:34:46 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: CentWaveParam 
@@ -1129,7 +1129,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[2]]
 ## Object of class "XProcessHistory"
 ##  type: Peak refinement 
-##  date: Wed Dec  2 09:36:41 2020 
+##  date: Fri Dec 11 12:35:06 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1138,7 +1138,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[3]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Wed Dec  2 09:36:57 2020 
+##  date: Fri Dec 11 12:35:20 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1147,7 +1147,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[4]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Wed Dec  2 09:36:57 2020 
+##  date: Fri Dec 11 12:35:20 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1156,7 +1156,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[5]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Wed Dec  2 09:37:04 2020 
+##  date: Fri Dec 11 12:35:27 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1165,7 +1165,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[6]]
 ## Object of class "XProcessHistory"
 ##  type: Missing peak filling 
-##  date: Wed Dec  2 09:37:05 2020 
+##  date: Fri Dec 11 12:35:28 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: ChromPeakAreaParam 
@@ -1178,7 +1178,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Wed Dec  2 09:36:57 2020 
+##  date: Fri Dec 11 12:35:20 2020 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1188,14 +1188,77 @@ PCA for the faahKO data set, un-normalized intensities.
 <code class="sourceCode R"><span class="co">## Access the parameter</span>
 <span class="fu"><a href="../reference/ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="va">ph</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code>## Object of class:  PeakGroupsParam 
-## Parameters:
-##  minFraction: 0.85 
-##  extraPeaks: 1 
-##  smooth: loess 
-##  span: 0.4 
-##  family: gaussian 
-##  subset: 1 4 7 
-##  number of peak groups: 62</code></pre>
+##  Parameters:
+##  - minFraction: [1] 0.85
+##  - extraPeaks: [1] 1
+##  - smooth: [1] "loess"
+##  - span: [1] 0.4
+##  - family: [1] "gaussian"
+##  - peakGroupsMatrix:      ko15.CDF ko22.CDF wt21.CDF
+## FT12 2617.185 2623.444       NA
+## FT26 2679.783 2686.043       NA
+## FT25 2679.783 2686.043 2690.739
+## FT30 2676.653 2687.608 2695.434
+## FT31 2679.783 2687.608 2693.869
+## FT32 2679.783 2689.172 2692.304
+## FT42 2681.348 2689.172 2696.999
+## FT43 2678.218 2689.172 2700.129
+## FT45 2678.218 2689.172 2692.304
+## FT03 2711.082 2723.601       NA
+## FT07 2712.647 2720.472 2723.603
+## FT20 2784.635       NA       NA
+## FT13 2784.635 2790.894       NA
+## FT06 2784.635 2794.024       NA
+## FT01 2784.635 2789.330 2795.591
+## FT02 2783.070 2789.330 2794.026
+## FT18 2783.070 2790.894 2792.461
+## FT79 2784.635 2790.894 2792.461
+## FT09 2792.459 2801.849 2809.676
+## FT75 2903.571 2914.526 2922.352
+## FT14 2923.916 2923.916 2928.612
+## FT16 2923.916 2922.351 2928.612
+## FT15 2923.916 2927.045 2933.307
+## FT17 2995.903 2995.903 3002.165
+## FT80 2992.773 3008.423 3011.555
+## FT22 3019.378 3020.943 3031.899
+## FT04 3024.073 3014.683 3033.464
+## FT41 3005.293 3027.202 3028.769
+## FT40 3053.807 3069.456 3063.198
+## FT46 3064.761 3085.106 3089.802
+## FT51 3128.924 3146.139 3153.966
+## FT35 3194.652 3158.659 3163.355
+## FT60 3155.529 3171.178 3177.440
+## FT69 3166.483 3179.003 3204.044
+## FT70 3168.048       NA 3208.739
+## FT73 3185.263 3224.387 3225.953
+## FT74 3185.263 3227.516 3227.518
+## FT76 3189.958 3230.646 3233.778
+## FT77 3191.523 3230.646 3233.778
+## FT36 3258.816 3260.381       NA
+## FT08 3255.686 3260.381 3269.772
+## FT19 3276.030 3297.939 3304.201
+## FT47 3276.030 3297.939 3304.201
+## FT53 3318.284 3316.719 3333.935
+## FT52 3302.634 3324.544 3326.110
+## FT54 3297.939 3324.544 3330.805
+## FT39 3324.544 3327.674 3337.065
+## FT23 3299.504 3333.933 3332.370
+## FT71 3341.758 3357.408 3362.104
+## FT72 3341.758 3358.973 3362.104
+## FT37       NA 3355.843 3362.104
+## FT38 3341.758 3360.538 3362.104
+## FT10 3379.317 3398.096 3412.183
+## FT63       NA 3402.791 3410.618
+## FT21 3415.311 3421.571 3426.267
+## FT78 3374.622 3427.831 3427.832
+## FT55 3416.876 3429.395 3432.527
+## FT64 3377.752 3446.610 3446.612
+## FT65 3377.752 3448.175 3449.742
+## FT58 3384.012 3449.740 3449.742
+## FT49 3454.435 3470.084 3474.781
+## FT27 3490.429 3498.253 3498.255
+##  - subset: [1] 1 4 7
+##  - subsetAdjust: [1] "average"</code></pre>
 </div>
 <div id="subsetting-and-filtering" class="section level2">
 <h2 class="hasAnchor">

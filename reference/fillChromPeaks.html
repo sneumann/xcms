@@ -103,7 +103,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
       </span>
     </div>
 
@@ -209,9 +209,6 @@ from which the signal should be integrated.</p></li>
   rtmin <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='va'>z</span>, probs <span class='op'>=</span> <span class='fl'>0.25</span><span class='op'>)</span>,
   rtmax <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>z</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='va'>z</span>, probs <span class='op'>=</span> <span class='fl'>0.75</span><span class='op'>)</span>
 <span class='op'>)</span>
-
-<span class='co'># S4 method for FillChromPeaksParam</span>
-<span class='fu'>show</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for FillChromPeaksParam</span>
 <span class='fu'>expandMz</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
@@ -383,9 +380,10 @@ signal within the area is used.</p>
     
 
 <dl>
-<dt><code>.__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt</code></dt><dd><p>See corresponding parameter above. `.__classVersion__` stores the version of the class.</p></dd>
+<dt><code>expandMz,expandRt,ppm,fixedMz,fixedRt</code></dt><dd><p>See corresponding parameter
+above.</p></dd>
 
-<dt><code>.__classVersion__,rtmin,rtmax,mzmin,mzmax</code></dt><dd><p>See corresponding parameter above. `.__classVersion__` stores the version of the class.</p></dd>
+<dt><code>rtmin,rtmax,mzmin,mzmax</code></dt><dd><p>See corresponding parameter above.</p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -452,38 +450,27 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 <span class='va'>ph</span>
 </div><div class='output co'>#&gt; Object of class "XProcessHistory"
 #&gt;  type: Missing peak filling 
-#&gt;  date: Wed Dec  2 09:32:49 2020 
+#&gt;  date: Fri Dec 11 12:31:27 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ChromPeakAreaParam 
 #&gt;  MS level(s) 1 </div><div class='input'>
 <span class='co'>## The parameter class:</span>
 <span class='va'>ph</span><span class='op'>@</span><span class='va'>param</span>
-</div><div class='output co'>#&gt; An object of class "ChromPeakAreaParam"
-#&gt; Slot "rtmin":
-#&gt; function (z) 
+</div><div class='output co'>#&gt; Object of class:  ChromPeakAreaParam 
+#&gt;  Parameters:
+#&gt;  - rtmin: function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x55b40e105b58&gt;
-#&gt; 
-#&gt; Slot "rtmax":
-#&gt; function (z) 
+#&gt; &lt;environment: 0x558354d7d3f8&gt;
+#&gt;  - rtmax: function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x55b40e105b58&gt;
-#&gt; 
-#&gt; Slot "mzmin":
-#&gt; function (z) 
+#&gt; &lt;environment: 0x558354d7d3f8&gt;
+#&gt;  - mzmin: function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x55b40e105b58&gt;
-#&gt; 
-#&gt; Slot "mzmax":
-#&gt; function (z) 
+#&gt; &lt;environment: 0x558354d7d3f8&gt;
+#&gt;  - mzmax: function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x55b40e105b58&gt;
-#&gt; 
-#&gt; Slot ".__classVersion__":
-#&gt;   Param 
-#&gt; "0.0.1" 
-#&gt; </div><div class='input'>
+#&gt; &lt;environment: 0x558354d7d3f8&gt;</div><div class='input'>
 <span class='co'>## It is also possible to remove filled-in peaks:</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFilledChromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
 
