@@ -197,6 +197,8 @@ jobs:
           BiocManager::install("lgatto/ProtGenerics")
           BiocManager::install("lgatto/MSnbase")
 
+          BiocManager::install("rmarkdown")
+
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
