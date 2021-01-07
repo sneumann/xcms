@@ -68,6 +68,7 @@ Suggests:
     testthat,
     pander,
     magrittr,
+    rmarkdown,
     multtest,
     MALDIquant,
     pheatmap
