@@ -94,7 +94,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          saveRDS(remotes::dev_package_deps(dependencies = c("Depends", "Imports", "Suggests"), repos = BiocManager::repositories()), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
       - name: Cache R packages
@@ -186,8 +186,8 @@ jobs:
           remotes::install_local(dependencies = c("Depends", "Imports", "Suggests"), repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = "always")
 
           ## Pass #2 at installing dependencies
-          message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
-          remotes::install_local(dependencies = c("Depends", "Imports", "Suggests"), repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = "always")
+          # message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
+          # remotes::install_local(dependencies = c("Depends", "Imports", "Suggests"), repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = "always")
 
           ## Manually add packages
           BiocManager::install(c("multtest", "rgl", "Rgraphviz", "magick",
