@@ -1,6 +1,10 @@
 Package: xcms
 Version: 3.13.4
 Title: LC-MS and GC-MS Data Analysis
+Description: Framework for processing and visualization of chromatographically
+    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
+    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
+    analyte profiling.
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",
@@ -29,22 +33,14 @@ Authors@R: c(
 	   email = "wkumler@uw.edu", role = "ctb",
 	   comment = c(ORCID = "0000-0002-5022-8009"))
 	   )
-Author: Colin A. Smith <csmith@scripps.edu>,
-    Ralf Tautenhahn <rtautenh@gmail.com>,
-    Steffen Neumann <sneumann@ipb-halle.de>,
-    Paul Benton <hpbenton@scripps.edu>,
-    Christopher Conley <cjconley@ucdavis.edu>,
-    Johannes Rainer <Johannes.Rainer@eurac.edu>,
-    Michael Witting <michael.witting@helmholtz-muenchen.de>
-Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
 Depends:
-    R (>= 3.5.0),
-    methods,
+    R (>= 4.0.0),
     Biobase,
     BiocParallel (>= 1.8.0),
     MSnbase (>= 2.15.3)
 Imports:
     mzR (>= 2.19.5),
+    methods,
     BiocGenerics,
     ProtGenerics (>= 1.23.6),
     lattice,
@@ -64,10 +60,10 @@ Suggests:
     faahKO,
     msdata (>= 0.25.1),
     ncdf4,
-    microbenchmark,
     testthat,
     pander,
     magrittr,
+    rmarkdown,
     multtest,
     MALDIquant,
     pheatmap
@@ -75,14 +71,10 @@ Enhances:
     Rgraphviz,
     rgl,
     XML
-Description: Framework for processing and visualization of chromatographically
-    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
-    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
-    analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: https://github.com/sneumann/xcms
-VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
+VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 RoxygenNote: 7.1.1
 Collate:
