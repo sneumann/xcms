@@ -188,6 +188,10 @@ jobs:
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
 
+          ## Manually install packages that seem to be skipped.
+          message(paste('****', Sys.time(), 'force installation of selected packages  ****'))
+          BiocManager::install(c("faahKO"))
+
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
