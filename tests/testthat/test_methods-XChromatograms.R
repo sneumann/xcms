@@ -531,3 +531,19 @@ test_that("filterColumnsKeepTop,XChromatograms works", {
     res <- filterColumnsKeepTop(chrs, n = 1, sortBy = "maxo")
     expect_equal(res, chrs[, 3])
 })
+
+test_that("filterChromPeaks,XChromatograms works", {
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+    res <- filterChromPeaks(chrs, n = 2L)
+    expect_equal(nrow(chromPeaks(res[1, 1])), 2L)
+    expect_equal(nrow(chromPeaks(res[1, 2])), 0L)
+    expect_equal(nrow(chromPeaks(res[1, 3])), 2L)
+
+    chrs <- chromatogram(xod_xg, mz = rbind(305.1 + c(-0.01, 0.01),
+                                            462.2 + c(-0.04, 0.04)))
+    res <- filterChromPeaks(chrs, n = 2L)
+    a <- featureValues(res)
+    b <- featureValues(chrs)
+    expect_equal(a, b[2:3, ])
+})

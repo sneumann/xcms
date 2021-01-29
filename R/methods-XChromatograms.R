@@ -648,3 +648,22 @@ setMethod("filterColumnsKeepTop", "XChromatograms",
                   callNextMethod(object, n = n, sortBy = sortBy,
                                  aggregationFun = aggregationFun)
           })
+
+#' @rdname XChromatogram
+setMethod("filterChromPeaks", "XChromatograms",
+          function(object, method = c("keepTop"), ...) {
+              method <- match.arg(method)
+              pks_orig <- chromPeaks(object)
+              object@.Data <- matrix(lapply(object, filterChromPeaks,
+                                            method = method, ...),
+                                     nrow = nrow(object),
+                                     dimnames = dimnames(object))
+              pks_sub <- chromPeaks(object)
+              if (hasFeatures(object)) {
+                  fts <- .subset_features_on_chrom_peaks(
+                      object@featureDefinitions, pks_orig, chromPeaks(object))
+                  object@featureDefinitions <- fts
+              }
+              validObject(object)
+              object
+          })

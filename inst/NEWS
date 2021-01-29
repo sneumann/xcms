@@ -1,3 +1,9 @@
+Changes in version 3.13.5
+
+- Add `filterChromPeaks` method to filter chromatographic peaks in a
+  `XChromatogram` or `XChromatograms` object.
+
+
 Changes in version 3.13.4
 
 - Import `Param` object from `ProtGenerics`.
