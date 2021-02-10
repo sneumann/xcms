@@ -2,16 +2,16 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{featureSpectra}
 \alias{featureSpectra}
-\title{Extract (MS2) spectra associated with features}
+\title{Extract spectra associated with features}
 \usage{
 featureSpectra(
   x,
-  msLevel = 2,
+  msLevel = 2L,
   expandRt = 0,
   expandMz = 0,
   ppm = 0,
   skipFilled = FALSE,
-  return.type = c("MSpectra", "list"),
+  return.type = c("MSpectra", "Spectra", "list", "List"),
   ...
 )
 }
@@ -41,31 +41,43 @@ be reported or not.}
 such as \code{method}.}
 }
 \value{
-Which object is returned depends on the value of \code{return.type}:
+parameter \code{return.type} allow to specify the type of the returned object:
 \itemize{
-\item For \code{return.type = "MSpectra"} (the default): a \link{MSpectra} object with data
-only for features for which a \linkS4class{Spectrum2} was found. The
-ID of the feature and of the chromatographic peak to which the
-spectrum is associated are provided with the \code{"feature_id"} and
-\code{"peak_id"} metadata columns.
-\item For \code{return.type = "list"}: a \verb{list, same length than there are features in }x\verb{, each element being a }list\verb{of [Spectrum2-class] objects with the MS2 spectra that potentially represent ions measured by each chromatographic peak associated with the feature, or}NULL`
-if none are present.
+\item \code{return.type = "MSpectra"}: a \link{MSpectra} object with elements being
+\linkS4class{Spectrum} objects. The result objects contains all spectra
+for all features. Metadata column \code{"feature_id"} provides the ID of the
+respective feature (i.e. its rowname in \code{\link[=featureDefinitions]{featureDefinitions()}}).
+\item \code{return.type = "Spectra"}: a \code{Spectra} object (defined in the \code{Spectra}
+package). The result contains all spectra for all features. Metadata column
+\code{"feature_id"} provides the ID of the respective feature (i.e. its rowname
+in \code{\link[=featureDefinitions]{featureDefinitions()}} and \code{"feature_index"} its index in the object's
+\code{featureDefinitions} matrix.
+\item \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
+0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
+length of the list matches the number of features.
+\item \code{return.type = "List"}: \code{List} of length equal to the number of
+features is returned with elements being either \code{NULL} (no
+spectrum found) or a \code{Spectra} object.
 }
 }
 \description{
-Return (MS2) spectra for all chromatographic peaks associated with the
-features in \code{x} (defined by \code{\link[=featureDefinitions]{featureDefinitions()}}).
-}
-\details{
-The function identifies all MS2 spectra with their precursor m/z within the
-m/z range of a chromatographic peak (i.e. \code{>=} mzmin and \code{<=} mzmax) of a
-feature and their retention time within the rt range of the same peak
-(\code{>=} rtmin and \code{<=} rtmax).
+This function returns spectra associated with the identified features in the
+input object. Parameter \code{msLevel} allows to define whether MS level 1 or 2
+spectra should be returned. For \code{msLevel = 1L} all MS1 spectra within the
+retention time range of each chromatographic peak (in that respective data
+file) associated with a feature are returned. For \code{msLevel = 2L} all MS2
+spectra with a retention time within the retention time range and their
+precursor m/z within the m/z range of any chromatographic peak of a feature
+are returned. See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} (used internally to extract
+spectra for each chromatographic peak of a feature) for additional
+information.
 
-The optional parameter \code{method} allows to ensure that for each
-chromatographic peak in one sample only one MS2 spectrum is returned.
-See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} or the \emph{LC-MS/MS analysis} vignette for more
-details.
+In contrast to the \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} function, selecting a \code{method}
+different than \code{"all"} will not return a single spectrum per feature, but
+one spectrum per \strong{chromatographic peak} assigned to the feature.
+
+Note also that \code{msLevel = 1L} is only supported for \code{return.type = "List"}
+or \code{return.type = "Spectra"}.
 }
 \author{
 Johannes Rainer

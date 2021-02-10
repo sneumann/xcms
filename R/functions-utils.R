@@ -757,3 +757,15 @@ groupOverlaps <- function(xmin, xmax) {
 .fdata <- function(x) {
     x@featureData@data
 }
+
+.i2index <- function(x, ids = character(), name = character()) {
+    if (is.character(x))
+        x <- match(x, ids)
+    if (is.logical(x))
+        x <- which(x)
+    if (is.numeric(x))
+        x <- as.integer(x)
+    if (length(ids) && (any(x < 1) || any(x > length(ids))))
+        stop("'", name, "' out of bounds")
+    x
+}

@@ -332,3 +332,10 @@ test_that(".require_spectra works", {
         expect_true(.require_spectra())
     else expect_error("installed.")
 })
+
+test_that(".i2index works", {
+    ids <- c("a", "b", "c", "d")
+    res <- .i2index(c("c", "d"), ids)
+    expect_equal(res, c(3L, 4L))
+    expect_error(.i2index(12, ids), "out of bounds")
+})

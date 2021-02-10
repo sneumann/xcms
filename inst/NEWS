@@ -7,6 +7,9 @@ Changes in version 3.13.5
 - Support extraction of MS1 spectra with `chromPeakSpectra`.
 - Support extraction of the spectrum with the largest total signal or largest
   base peak signal in `chromPeakSpectra`.
+- Add support for extraction of spectra for selected/individual peaks/features
+  using the `peaks` and `features` parameter in `chromPeakSpectra` and
+  `featureSpectra`, respectively.
 
 Changes in version 3.13.4
 

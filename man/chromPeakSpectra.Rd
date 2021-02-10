@@ -12,7 +12,8 @@ chromPeakSpectra(
   ppm = 0,
   method = c("all", "closest_rt", "closest_mz", "signal", "largest_tic", "largest_bpi"),
   skipFilled = FALSE,
-  return.type = c("MSpectra", "Spectra", "list", "List")
+  return.type = c("MSpectra", "Spectra", "list", "List"),
+  peaks = character()
 )
 }
 \arguments{
@@ -40,6 +41,13 @@ be reported or not.}
 \item{return.type}{\code{character(1)} defining the result type. Defaults to
 \code{return.type = "MSpectra"} but \code{return.type = "Spectra"} or
 \code{return.type = "List"} are preferred. See below for more information.}
+
+\item{peaks}{\code{character}, \code{logical} or \code{integer} allowing to specify a
+subset of chromatographic peaks in \code{chromPeaks} for which spectra should
+be returned (providing either their ID, a logical vector same length
+than \code{nrow(chromPeaks(x))} or their index in \code{chromPeaks(x)}). This
+parameter overrides \code{skipFilled} and is only supported for \code{return.type}
+being either \code{"Spectra"} or \code{"List"}.}
 }
 \value{
 parameter \code{return.type} allow to specify the type of the returned object:
@@ -126,6 +134,9 @@ length(ms2_sps)
 ms1_sps <- chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt",
     return.type = "Spectra")
 ms1_sps
+
+## Parameter peaks would allow to extract spectra for specific peaks only
+chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
 }
 \author{
 Johannes Rainer

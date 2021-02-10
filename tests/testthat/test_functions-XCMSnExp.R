@@ -644,17 +644,38 @@ test_that(".spectra_for_peaks works", {
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res_all <- .spectra_for_peaks(pest_dda, method = "all")
         expect_true(length(res_all) == nrow(chromPeaks(pest_dda)))
-        res_1 <- .spectra_for_peaks(pest_dda, method = "closest_rt")
+        res_1 <- xcms:::.spectra_for_peaks(pest_dda, method = "closest_rt")
         expect_true(all(lengths(res_1) < 2))
 
         res <- .spectra_for_peaks(pest_dda, msLevel = 3)
         expect_true(all(lengths(res) == 0))
 
-        res <- .spectra_for_peaks(pest_dda, msLevel = 1, method = "closest_rt")
+        res <- .spectra_for_peaks(pest_dda, msLevel = 1L, method = "closest_rt")
         res <- do.call(c, unname(res))
         expect_equal(unname(rtime(res)), unname(chromPeaks(pest_dda)[, "rt"]))
 
         expect_warning(res <- .spectra_for_peaks(pest_dda, msLevel = 1L,
                                                  method = "signal"), "Changing")
+
+        res_56 <- .spectra_for_peaks(pest_dda, method = "all", peaks = c(5, 6))
+        expect_equal(res_56[[1]], res_all[[5]])
+        expect_equal(res_56[[2]], res_all[[6]])
+    }
+})
+
+test_that(".spectra_for_features works", {
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- xcms:::.spectra_for_features(xod_xgrg, method = "closest_rt")
+        expect_true(length(res) == nrow(featureDefinitions(xod_xgrg)))
+        expect_true(all(lengths(res) == 0))
+
+        res <- xcms:::.spectra_for_features(xod_xgrg, method = "closest_rt",
+                                            msLevel = 1L)
+        expect_true(all(vapply(res, is, logical(1), "Spectra")))
+        fds <- featureDefinitions(xod_xgrg)
+        for (i in seq_len(nrow(fds))) {
+            expect_true(all(res[[i]]$feature_index == i))
+            expect_true(all(res[[i]]$feature_id == rownames(fds)[i]))
+        }
     }
 })
