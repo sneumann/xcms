@@ -2427,12 +2427,12 @@ hasFilledChromPeaks <- function(object) {
         if (hasChromPeaks(z) && nrow(chromPeakData(z))) {
             ret <- chromPeakData(z)
             target_mz <- isolationWindowTargetMz(z)[1]
-            ret$isolationWindow <- fData(z)$isolationWindow[1]
+            ret$isolationWindow <- .fdata(z)$isolationWindow[1]
             ret$isolationWindowTargetMZ <- target_mz
             ret$isolationWindowLowerMz <-
-                target_mz - fData(z)$isolationWindowLowerOffset[1]
+                target_mz - .fdata(z)$isolationWindowLowerOffset[1]
             ret$isolationWindowUpperMz <-
-                target_mz + fData(z)$isolationWindowUpperOffset[1]
+                target_mz + .fdata(z)$isolationWindowUpperOffset[1]
             ret
         } else DataFrame()
     }))

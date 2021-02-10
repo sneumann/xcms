@@ -2393,7 +2393,7 @@ setMethod(
         object_od <- as(object, "OnDiskMSnExp")
         fcs <- c("fileIdx", "spIdx", "seqNum", "acquisitionNum", "msLevel",
                  "polarity", "retentionTime", "precursorScanNum")
-        fcs <- intersect(fcs, colnames(fData(object)))
+        fcs <- intersect(fcs, colnames(.fdata(object)))
         object_od <- selectFeatureData(object_od, fcol = fcs)
         if (adjustedRtime)
             object_od@featureData$retentionTime <- adj_rt
@@ -2839,7 +2839,7 @@ setMethod("fillChromPeaks",
               ## instead of filtering by file we create small objects to keep
               ## memory requirement to a minimum.
               req_fcol <- requiredFvarLabels("OnDiskMSnExp")
-              min_fdata <- fData(object)[, req_fcol]
+              min_fdata <- .fdata(object)[, req_fcol]
               rt_range <- range(pkArea[, c("rtmin", "rtmax")])
               if (hasAdjustedRtime(object))
                   min_fdata$retentionTime <- adjustedRtime(object)
@@ -3025,7 +3025,7 @@ setMethod("fillChromPeaks",
               ## instead of filtering by file we create small objects to keep
               ## memory requirement to a minimum.
               req_fcol <- requiredFvarLabels("OnDiskMSnExp")
-              min_fdata <- fData(object)[, req_fcol]
+              min_fdata <- .fdata(object)[, req_fcol]
               if (hasAdjustedRtime(object))
                   min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {

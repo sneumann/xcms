@@ -139,7 +139,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         x@featureData$retentionTime <- adjustedRtime(x)
     if (subsetFeatureData) {
         fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
-                           "polarity", "seqNum"), colnames(fData(x)))
+                           "polarity", "seqNum"), colnames(.fdata(x)))
         x <- selectFeatureData(x, fcol = fcs)
     }
     procd <- x@processingData
@@ -217,7 +217,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         x@featureData$retentionTime <- adjustedRtime(x)
     if (subsetFeatureData) {
         fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
-                           "polarity", "seqNum"), colnames(fData(x)))
+                           "polarity", "seqNum"), colnames(.fdata(x)))
         x <- selectFeatureData(x, fcol = fcs)
     }
     fdl <- split.data.frame(x@featureData, as.factor(fromFile(x)))
@@ -728,7 +728,7 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
     sps <- spectra(x_ms1)
     if (method == "previous") {
         for (i in idx) {
-            ms2_rt <- fData(x)$retentionTime[i]
+            ms2_rt <- .fdata(x)$retentionTime[i]
             ## Find the closest rtime before and the closest rtime after.
             before_idx <- which(ms1_rt < ms2_rt)
             before_int <- numeric()
@@ -747,7 +747,7 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
         }
     } else {
         for (i in idx) {
-            ms2_rt <- fData(x)$retentionTime[i]
+            ms2_rt <- .fdata(x)$retentionTime[i]
             ## Find the closest rtime before and the closest rtime after.
             before_idx <- which(ms1_rt < ms2_rt)
             before_int <- numeric()
@@ -836,7 +836,7 @@ estimatePrecursorIntensity <- function(x, ppm = 10,
 #'
 #' @noRd
 .OnDiskMSnExp2MsBackendMzR <- function(x) {
-    .fData2MsBackendMzR(fData(x), fileNames(x))
+    .fData2MsBackendMzR(.fdata(x), fileNames(x))
 }
 
 .fData2MsBackendMzR <- function(x, filenames, res = new("MsBackendMzR")) {
