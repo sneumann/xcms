@@ -30,11 +30,12 @@ constant value on each side.}
 \item{ppm}{\code{numeric(1)} to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.}
 
-\item{skipFilled}{\code{logical(1)} whether no spectra for filled-in peaks should
-be reported.}
+\item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
+be reported or not.}
 
-\item{return.type}{\code{character(1)} defining whether the result should be a
-\link{MSpectra} object or a simple \code{list}. See below for more information.}
+\item{return.type}{\code{character(1)} defining the result type. Defaults to
+\code{return.type = "MSpectra"} but \code{return.type = "Spectra"} or
+\code{return.type = "List"} are preferred. See below for more information.}
 
 \item{...}{additional arguments to be passed along to \code{\link[=chromPeakSpectra]{chromPeakSpectra()}},
 such as \code{method}.}

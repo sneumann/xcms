@@ -326,3 +326,9 @@ test_that("groupOverlaps works", {
 
     expect_error(groupOverlaps(x, 1:2), "lengths differ")
 })
+
+test_that(".require_spectra works", {
+    if (requireNamespace("Spectra", quietly = TRUE))
+        expect_true(.require_spectra())
+    else expect_error("installed.")
+})

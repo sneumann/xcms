@@ -813,7 +813,7 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
 #'     should be determined (see description above for details). Defaults to
 #'     `method = "previous"`.
 #'
-#' @param BPPARAM parallel processing setup. See [bppara()] for details.
+#' @param BPPARAM parallel processing setup. See [bpparam()] for details.
 #'
 #' @return `numeric` with length equal to the number of spectra in `x`. `NA` is
 #'     returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
@@ -821,6 +821,7 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
 #'
 #' @author Johannes Rainer
 #'
+#' @md
 estimatePrecursorIntensity <- function(x, ppm = 10,
                                        method = c("previous", "interpolation"),
                                        BPPARAM = bpparam()) {
@@ -828,4 +829,31 @@ estimatePrecursorIntensity <- function(x, ppm = 10,
     unlist(bplapply(.split_by_file2(x, subsetFeatureData = FALSE),
                     .estimate_prec_intensity, ppm = ppm, method = method,
                     BPPARAM = BPPARAM), use.names = FALSE)
+}
+
+#' Helper function to convert an OnDiskMSnExp to a Spectra object. This will
+#' only convert the spectra data, but no sample information.
+#'
+#' @noRd
+.OnDiskMSnExp2MsBackendMzR <- function(x) {
+    .fData2MsBackendMzR(fData(x), fileNames(x))
+}
+
+.fData2MsBackendMzR <- function(x, filenames, res = new("MsBackendMzR")) {
+    x$dataStorage <- x$dataOrigin <- filenames[x$fileIdx]
+    colnames(x)[colnames(x) == "retentionTime"] <- "rtime"
+    colnames(x)[colnames(x) == "seqNum"] <- "scanIndex"
+    colnames(x)[colnames(x) == "precursorScanNum"] <- "precScanNum"
+    colnames(x)[colnames(x) == "precursorMZ"] <- "precursorMz"
+    colnames(x)[colnames(x) == "isolationWindowTargetMZ"] <-
+        "isolationWindowTargetMz"
+    colnames(x)[colnames(x) == "fileIdx"] <- "fromFile"
+    x$isolationWindowLowerMz <- x$isolationWindowTargetMz -
+        x$isolationWindowLowerOffset
+    x$isolationWindowUpperMz <- x$isolationWindowTargetMz +
+        x$isolationWindowUpperOffset
+    x$isolationWindowUpperOffset <- NULL
+    x$isolationWindowLowerOffset <- NULL
+    slot(res, "spectraData", check = FALSE) <- as(x, "DataFrame")
+    res
 }
