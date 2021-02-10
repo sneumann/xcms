@@ -15,12 +15,6 @@ vignette: >
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
 csl: biomed-central.csl
-references:
-- id: dummy
-  title: no title
-  author:
-  - family: noname
-    given: noname
 ---
 
 ```{r biocstyle, echo = FALSE, results = "asis" }

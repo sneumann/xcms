@@ -10,17 +10,11 @@ vignette: >
   %\VignetteIndexEntry{LC-MS/MS data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,BiocStyle,magrittr,pander}
+  %\VignetteDepends{xcms,msdata,BiocStyle,magrittr,pander,Spectra,MsBackendMgf}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
 csl: biomed-central.csl
-references:
-- id: dummy
-  title: no title
-  author:
-  - family: noname
-    given: noname
 ---
 
 ```{r biocstyle, echo = FALSE, results = "asis"}
@@ -163,19 +157,40 @@ The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the
 corresponding MS2 spectra measured. Thus, for some of the ions (identified as
 MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the
 annotation of the respective MS1 chromatographic peaks (or MS1 features after a
-correspondence analysis). MS2 spectra for identified chromatographic peaks can
-be extracted with the `chromPeakSpectra` method which returns a `MSpectra` object
-of MS2 spectra associated with a chromatographic peak (i.e. with their retention
-time within the retention time window of a chromatographic peak and their
-precursor m/z within the m/z range of the same chromatographic peak.
+correspondence analysis). Spectra for identified chromatographic peaks can be
+extracted with the `chromPeakSpectra` method. MS2 spectra with their precursor
+m/z and retention time within the rt and m/z range of the chromatographic peak
+are returned. Parameter `return.type` allows to define in which format these are
+returned. With `return.type = "List"` or `return.type = "Spectra"` the data is
+represented by a `Spectra` object from the `r BiocStyle::Biocpkg("Spectra")`.
 
 ```{r dda-spectra, message = FALSE}
-dda_spectra <- chromPeakSpectra(dda_data)
+library(Spectra)
+dda_spectra <- chromPeakSpectra(
+    dda_data, msLevel = 2L, return.type = "Spectra")
 dda_spectra
 ```
 
-The metadata column `"peak_id"` contains the identifiers of the chromatographic
-peaks the MS2 spectrum is associated with.
+By default `chromPeakSpectra` returns all spectra associated with a MS1
+chromatographic peak, but parameter `method` allows to choose and return only
+one spectrum per peak (have a look at the `?chromPeakSpectra` help page for more
+details). Also, it would be possible to extract MS1 spectra for each peak by
+specifying `msLevel = 1L` in the call above (e.g. to evaluate the full MS1
+signal at the peak's apex position).
+
+In the example above we selected to return the data as a `Spectra`
+object. Spectra variables `"peak_id"` and `"peak_index"` contain the identifiers
+and the index (in the `chromPeaks` matrix) of the chromatographic peaks the MS2
+spectrum is associated with.
+
+```{r peak_id}
+dda_spectra$peak_id
+```
+
+Note also that with `return.type = "List"` a list parallel to the `chromPeaks`
+matrix would be returned, i.e. each element in that list would contain the
+spectra for the chromatographic peak with the same index. This data
+representation might eventually simplify further processing.
 
 We next use the MS2 information to aid in the annotation of a chromatographic
 peak. As an example we use a chromatographic peak of an ion with an m/z of
@@ -198,19 +213,22 @@ chromatographic peak using the ID of the peak in the present data set.
 
 ```{r dda-ms2-get-ms2, message = FALSE}
 ex_id <- rownames(chromPeaks(dda_data, mz = ex_mz, ppm = 20))
-ex_spectra <- dda_spectra[mcols(dda_spectra)$peak_id == ex_id]
+ex_spectra <- dda_spectra[dda_spectra$peak_id == ex_id]
 ex_spectra
 ```
 
 There are 5 MS2 spectra representing fragmentation of the ion(s) measured
 in our candidate chromatographic peak. We next reduce this to a single MS2
-spectrum using the `combineSpectra` method employing the `consensusSpectrum`
-function to determine which peaks to keep in the resulting spectrum.
+spectrum using the `combineSpectra` method employing the `combinePeaks`
+function to determine which peaks to keep in the resulting spectrum (have a look
+at the `?combinePeaks` help page for details). Parameter `f` allows to specify
+which spectra in the input object should be combined into one.
 
-```{r dda-ms2-consensus}
-ex_spectrum <- combineSpectra(ex_spectra, method = consensusSpectrum, mzd = 0,
-                              ppm = 20, minProp = 0.8, weighted = FALSE,
-                              intensityFun = median, mzFun = median)
+```{r dda-ms2-consensus, message = FALSE}
+ex_spectrum <- combineSpectra(ex_spectra, FUN = combinePeaks, ppm = 20,
+                              peaks = "intersect", minProp = 0.8,
+                              intensityFun = median, mzFun = median,
+                              f = ex_spectra$peak_id)
 ex_spectrum
 ```
 
@@ -222,7 +240,7 @@ spectrum contains only peaks that were present in 80% of the input spectra.
 A plot of this *consensus* spectrum is shown below.
 
 ```{r dda-ms2-consensus-plot, message = FALSE, fig.cap = "Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromatographic peak CP53.", fig.width = 8, fig.height = 8}
-plot(ex_spectrum[[1]])
+plotSpectra(ex_spectrum)
 ```
 
 We could now match the consensus spectrum against a database of MS2 spectra. In
@@ -230,38 +248,54 @@ our example we simply load MS2 spectra for the two compounds with matching m/z
 exported from Metlin. For each of the compounds MS2 spectra created with
 collision energies of 0V, 10V, 20V and 40V are available. Below we import the
 respective data and plot our candidate spectrum against the MS2 spectra of
-Flumanezil and Fenamiphos (from a collision energy of 20V).
+Flumanezil and Fenamiphos (from a collision energy of 20V). To import files in
+MGF format we have to load the `MsBackendMgf` R package which adds MGF file
+support to the `Spectra` package. This package can be installed with
+`BiocManager::install("RforMassSpectrometry/MsBackendMgf")`.
+
+Prior plotting we *normalize* our experimental spectra.
+
+```{r normalize}
+norm_fun <- function(z, ...) {
+    z[, "intensity"] <- z[, "intensity"] /
+        max(z[, "intensity"], na.rm = TRUE) * 100
+    z
+}
+ex_spectrum <- addProcessing(ex_spectrum, FUN = norm_fun)
+```
 
 ```{r dda-ms2-metlin-match, fig.cap = "Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot.", fig.width = 12, fig.height = 6}
-flumanezil <- spectra(readMgfData(
-    system.file("mgf/metlin-2724.mgf", package = "xcms")))
-fenamiphos <- spectra(readMgfData(
-    system.file("mgf/metlin-72445.mgf", package = "xcms")))
+library(MsBackendMgf)
+flumanezil <- Spectra(
+    system.file("mgf/metlin-2724.mgf", package = "xcms"),
+    source = MsBackendMgf())
+fenamiphos <- Spectra(
+    system.file("mgf/metlin-72445.mgf", package = "xcms"),
+    source = MsBackendMgf())
 
 par(mfrow = c(1, 2))
-plot(ex_spectrum[[1]], flumanezil[[3]], main = "against Flumanezil",
-     tolerance = 40e-6)
-plot(ex_spectrum[[1]], fenamiphos[[3]], main = "against Fenamiphos",
-     tolerance = 40e-6)
+plotSpectraMirror(ex_spectrum, flumanezil[3], main = "against Flumanezil",
+                  ppm = 40)
+plotSpectraMirror(ex_spectrum, fenamiphos[3], main = "against Fenamiphos",
+                  ppm = 40)
 ```
 
 Our candidate spectrum matches Fenamiphos, thus, our example chromatographic
 peak represents signal measured for this compound. In addition to plotting the
 spectra, we can also calculate similarities between them with the
-`compareSpectra` method (e.g. using the *dotproduct* method as shown below).
+`compareSpectra` method (which uses by default the normalized dot-product to
+calculate the similarity).
 
 ```{r dda-ms2-dotproduct}
-compareSpectra(ex_spectrum[[1]], flumanezil[[3]], binSize = 0.02,
-               fun = "dotproduct")
-compareSpectra(ex_spectrum[[1]], fenamiphos[[3]], binSize = 0.02,
-               fun = "dotproduct")
+compareSpectra(ex_spectrum, flumanezil, ppm = 40)
+compareSpectra(ex_spectrum, fenamiphos, ppm = 40)
 ```
 
 Clearly, the candidate spectrum does not match Flumanezil, while it has a high
 similarity to Fenamiphos. While we performed here the MS2-based annotation on a
 single chromatographic peak, this could be easily extended to the full list of
 MS2 spectra (returned by `chromPeakSpectra`) for all chromatographic peaks in an
-experiment. Respective code facilitating this will be implemented in future.
+experiment. See also [here](https://jorainer.github.io/SpectraTutorials/).
 
 In the present example we used only a single data file and we did thus not need
 to perform a sample alignment and correspondence analysis. These tasks could
@@ -533,6 +567,21 @@ fenamiphos_swath_spectrum <- swath_spectra[
     mcols(swath_spectra)$peak_id == rownames(fenamiphos_ms1_peak)]
 ```
 
+Until the `reconstructChromPeakSpectra` is updated and returns also a `Spectra`
+object we have to manually convert our experimental spectrum to the older
+`MSpectrum` object.
+
+```{r remove-mspectrum}
+ex_spectrum <- reset(ex_spectrum)
+sp <- new("Spectrum2", intensity = intensity(ex_spectrum)[[1L]],
+          mz = mz(ex_spectrum)[[1L]], centroided = TRUE)
+ex_spectrum <- MSpectra(sp)
+
+sp <- new("Spectrum2", intensity = intensity(fenamiphos)[[2L]],
+          mz = mz(fenamiphos)[[2L]], centroided = TRUE)
+fenamiphos <- MSpectra(sp)
+```
+
 We can now compare the reconstructed spectrum to the example consensus spectrum
 from the DDA experiment in the previous section (variable `ex_spectrum`) as well
 as to the MS2 spectrum for Fenamiphos from Metlin (with a collision energy of
@@ -542,7 +591,7 @@ as to the MS2 spectrum for Fenamiphos from Metlin (with a collision energy of
 par(mfrow = c(1, 2))
 plot(fenamiphos_swath_spectrum[[1]], ex_spectrum[[1]],
      tolerance = 50e-6, main = "against DDA")
-plot(fenamiphos_swath_spectrum[[1]], fenamiphos[[2]],
+plot(fenamiphos_swath_spectrum[[1]], fenamiphos[[1]],
      tolerance = 50e-6, main = "against Metlin")
 ```
 
@@ -607,16 +656,16 @@ prochloraz_dda_peak
 The retention times for the chromatographic peaks from the DDA and SWATH data
 match almost perfectly. Next we get the MS2 spectra for this peak.
 
-```{r pro-dda-ms2}
+```{r pro-dda-ms2, eval = FALSE}
 prochloraz_dda_spectra <- dda_spectra[
-    mcols(dda_spectra)$peak_id == rownames(prochloraz_dda_peak)]
+    dda_spectra$peak_id == rownames(prochloraz_dda_peak)]
 prochloraz_dda_spectra
 ```
 
 In total 5 spectra were measured, some with a relatively high number of
 peaks. Next we combine them into a consensus spectrum.
 
-```{r pro-dda-consensus}
+```{r pro-dda-consensus, eval = FALSE}
 prochloraz_dda_spectrum <- combineSpectra(
     prochloraz_dda_spectra, method = consensusSpectrum, msd = 0, ppm = 20,
     minProp = 0.8, weighted = FALSE, intensityFun = median, mzFun = median)
@@ -625,7 +674,7 @@ prochloraz_dda_spectrum <- combineSpectra(
 At last we load also the Prochloraz MS2 spectra (for different collision
 energies) from Metlin.
 
-```{r prochloraz-metlin}
+```{r prochloraz-metlin, eval = FALSE}
 prochloraz <- spectra(readMgfData(
     system.file("mgf/metlin-68898.mgf", package = "xcms")))
 ```
@@ -634,7 +683,7 @@ To validate the reconstructed spectrum we plot it against the corresponding DDA
 spectrum and the MS2 spectrum for Prochloraz (for a collision energy of 10V)
 from Metlin.
 
-```{r pro-swath-plot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel) against the measured spectrum from the DDA data and the Prochloraz spectrum from Metlin.", fig.width = 12, fig.height = 6}
+```{r pro-swath-plot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel) against the measured spectrum from the DDA data and the Prochloraz spectrum from Metlin.", fig.width = 12, fig.height = 6, eval = FALSE}
 par(mfrow = c(1, 2))
 plot(prochloraz_swath_spectrum[[1]], prochloraz_dda_spectrum[[1]],
      tolerance = 50e-6, main = "against DDA")
@@ -670,7 +719,9 @@ the workflow described here will be changed (improved) in future.
 
 Along with these developments, improved matching strategies for larger data sets
 will be implemented as well as functionality to compare `Spectra` directly to
-reference MS2 spectra from public annotation resources (e.g. Massbank or HMDB).
+reference MS2 spectra from public annotation resources (e.g. Massbank or
+HMDB). See for example [here](https://jorainer.github.io/SpectraTutorials) for
+more information.
 
 Regarding SWATH data analysis, future development will involve improved
 selection of the correct MS2 chromatographic peaks considering also correlation
