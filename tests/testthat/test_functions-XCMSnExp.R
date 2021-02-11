@@ -283,6 +283,13 @@ test_that("featureSpectra works", {
     expect_true(length(res) == 0)
     expect_warning(res <- featureSpectra(xod_xg, msLevel = 1L))
     expect_true(length(res) == 0)
+
+    res <- featureSpectra(xod_xg, method = "closest_rt", msLevel = 1L,
+                          return.type = "List")
+    expect_equal(length(res), nrow(featureDefinitions(xod_xg)))
+    for (i in seq_along(res)) {
+        expect_true(is(res[[i]], "Spectra"))
+    }
 })
 
 test_that("featureChromatograms works", {
@@ -665,11 +672,11 @@ test_that(".spectra_for_peaks works", {
 
 test_that(".spectra_for_features works", {
     if (requireNamespace("Spectra", quietly = TRUE)) {
-        res <- xcms:::.spectra_for_features(xod_xgrg, method = "closest_rt")
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt")
         expect_true(length(res) == nrow(featureDefinitions(xod_xgrg)))
         expect_true(all(lengths(res) == 0))
 
-        res <- xcms:::.spectra_for_features(xod_xgrg, method = "closest_rt",
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
                                             msLevel = 1L)
         expect_true(all(vapply(res, is, logical(1), "Spectra")))
         fds <- featureDefinitions(xod_xgrg)
@@ -677,5 +684,17 @@ test_that(".spectra_for_features works", {
             expect_true(all(res[[i]]$feature_index == i))
             expect_true(all(res[[i]]$feature_id == rownames(fds)[i]))
         }
+
+        ## with subset
+        idx <- c(1, 400)
+        expect_error(.spectra_for_features(
+            xod_xg, msLevel = 1L, features = idx), "out of bounds")
+        res_all <- .spectra_for_features(xod_xg, msLevel = 1L)
+        res_sub <- .spectra_for_features(xod_xg, msLevel = 1L,
+                                         features = c(5, 12, 45))
+        expect_equal(length(res_sub), 3)
+        expect_equal(rtime(res_sub[[1L]]), rtime(res_all[[5L]]))
+        expect_equal(rtime(res_sub[[2L]]), rtime(res_all[[12L]]))
+        expect_equal(rtime(res_sub[[3L]]), rtime(res_all[[45L]]))
     }
 })

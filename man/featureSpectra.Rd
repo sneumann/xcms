@@ -12,6 +12,7 @@ featureSpectra(
   ppm = 0,
   skipFilled = FALSE,
   return.type = c("MSpectra", "Spectra", "list", "List"),
+  features = character(),
   ...
 )
 }
@@ -36,6 +37,13 @@ be reported or not.}
 \item{return.type}{\code{character(1)} defining the result type. Defaults to
 \code{return.type = "MSpectra"} but \code{return.type = "Spectra"} or
 \code{return.type = "List"} are preferred. See below for more information.}
+
+\item{features}{\code{character}, \code{logical} or \code{integer} allowing to specify a
+subset of features in \code{featureDefinitions} for which spectra should
+be returned (providing either their ID, a logical vector same length
+than \code{nrow(featureDefinitions(x))} or their index in
+\code{featureDefinitions(x)}). This parameter overrides \code{skipFilled} and is
+only supported for \code{return.type} being either \code{"Spectra"} or \code{"List"}.}
 
 \item{...}{additional arguments to be passed along to \code{\link[=chromPeakSpectra]{chromPeakSpectra()}},
 such as \code{method}.}

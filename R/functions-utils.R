@@ -761,8 +761,11 @@ groupOverlaps <- function(xmin, xmax) {
 .i2index <- function(x, ids = character(), name = character()) {
     if (is.character(x))
         x <- match(x, ids)
-    if (is.logical(x))
+    if (is.logical(x)) {
+        if (length(ids) && length(ids) != length(x))
+            stop("Length of '", name, "' has to be equal to ", length(ids), ".")
         x <- which(x)
+    }
     if (is.numeric(x))
         x <- as.integer(x)
     if (length(ids) && (any(x < 1) || any(x > length(ids))))

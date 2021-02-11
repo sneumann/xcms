@@ -2144,6 +2144,13 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #'
 #' @inheritParams chromPeakSpectra
 #'
+#' @param features `character`, `logical` or `integer` allowing to specify a
+#'     subset of features in `featureDefinitions` for which spectra should
+#'     be returned (providing either their ID, a logical vector same length
+#'     than `nrow(featureDefinitions(x))` or their index in
+#'     `featureDefinitions(x)`). This parameter overrides `skipFilled` and is
+#'     only supported for `return.type` being either `"Spectra"` or `"List"`.
+#'
 #' @param ... additional arguments to be passed along to [chromPeakSpectra()],
 #'     such as `method`.
 #'
@@ -2173,7 +2180,8 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                            ppm = 0, skipFilled = FALSE,
                            return.type = c("MSpectra", "Spectra",
-                                           "list", "List"), ...) {
+                                           "list", "List"),
+                           features = character(), ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an 'XCMSnExp' object.")
     return.type <- match.arg(return.type)
@@ -2182,19 +2190,26 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
              "first.")
     if (return.type %in% c("Spectra", "List")) {
         .require_spectra()
-        res <- .spectra_for_features(x, msLevel = msLevel, method = method,
-                                     expandRt = expandRt, expandMz = expandMz,
-                                     ppm = ppm, skipFilled = skipFilled)
+        res <- .spectra_for_features(x, msLevel = msLevel, expandRt = expandRt,
+                                     expandMz = expandMz, ppm = ppm,
+                                     skipFilled = skipFilled,
+                                     features = features, ...)
         if (return.type == "Spectra") {
             res <- do.call(c, unname(res[lengths(res) > 0]))
         } else res <- List(res)
     } else {
         ## DEPRECATE IN BIOC3.14
+        if (length(features))
+            warning("Ignoring parameter 'features': this is only supported",
+                    " for 'return.type = \"Spectra\"' and ",
+                    "'return.type = \"List\"'.")
         if (msLevel != 2 || (msLevel == 2 & !any(msLevel(x) == 2))) {
             res <- vector(mode = "list", length = nrow(featureDefinitions(x)))
             names(res) <- rownames(featureDefinitions(x))
             if (msLevel != 2)
-                warning("msLevel = 1 is currently not supported.")
+                warning("msLevel = 1 is currently only supported for ",
+                        "'return.type = \"Spectra\"' and ",
+                        "'return.type = \"List\"'.")
             if (msLevel == 2 & !any(msLevel(x) == 2))
                 warning("No MS2 spectra available in 'x'.")
         } else {
@@ -2223,20 +2238,32 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
 #' 1) call chromPeakSpectra to get spectra for all peaks (as List)
 #' 2) iterate over features to extract all
 #' @noRd
-.spectra_for_features <- function(x, msLevel = 2L, method, expandRt = 0,
-                                  expandMz = 0, ppm = 0, skipFilled = TRUE) {
-    peak_sp <- .spectra_for_peaks(x, msLevel = msLevel, method = method,
-                                  expandRt = expandRt, expandMz = expandMz,
-                                  ppm = ppm, skipFilled = skipFilled)
+.spectra_for_features <- function(x, msLevel = 2L, expandRt = 0,
+                                  expandMz = 0, ppm = 0, skipFilled = TRUE,
+                                  features = character(), ...) {
     from_ms <- 1L
     fids <- rownames(featureDefinitions(x))
     idx <- featureDefinitions(x)$peakidx
     l <- length(fids)
     res <- vector("list", l)
     names(res) <- fids
-    keep <- rep(TRUE, l)
-    if (any(featureDefinitions(x)$ms_level))
-        keep <- featureDefinitions(x)$ms_level == from_ms
+    if (length(features)) {
+        keep <- rep(FALSE, l)
+        features <- .i2index(features, fids, "features")
+        keep[features] <- TRUE
+        pkidx <- sort(unique(unlist(idx[features], use.names = FALSE)))
+        peak_sp <- vector("list", nrow(chromPeaks(x)))
+        peak_sp[pkidx] <- .spectra_for_peaks(
+            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+            ppm = ppm, skipFilled = skipFilled, peaks = pkidx, ...)
+    } else {
+        peak_sp <- .spectra_for_peaks(
+            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+            ppm = ppm, skipFilled = skipFilled, ...)
+        keep <- rep(TRUE, l)
+        if (any(featureDefinitions(x)$ms_level))
+            keep <- featureDefinitions(x)$ms_level == from_ms
+    }
     for (i in which(keep)) {
         sps <- do.call(c, unname(peak_sp[idx[[i]]]))
         if (length(sps)) {
@@ -2247,7 +2274,10 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
             res[[i]] <- sps
         }
     }
-    res
+    if (length(features))
+        res[features]
+    else
+        res
 }
 
 #' @title Extract ion chromatograms for each feature
