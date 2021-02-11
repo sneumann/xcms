@@ -211,7 +211,7 @@ binned base peak chromatograms.
 
 ```{r data-inspection-bpc-heatmap, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 6, fig.cap = "Grouping of samples based on similarity of their base peak chromatogram."}
 ## Bin the BPC
-bpis_bin <- bin(bpis, binSize = 2)
+bpis_bin <- MSnbase::bin(bpis, binSize = 2)
 
 ## Calculate correlation on the log2 transformed base peak intensities
 cormat <- cor(log2(do.call(cbind, lapply(bpis_bin, intensity))))
