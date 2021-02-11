@@ -77,7 +77,6 @@ XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
     obj <- as(obj, "XProcessHistory")
     obj@param <- param
     obj@msLevel <- as.integer(msLevel)
-    classVersion(obj)["XProcessHistory"] <- "0.0.2"
     OK <- validObject(obj)
     if (is.character(OK))
         stop(OK)

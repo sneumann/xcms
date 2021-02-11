@@ -235,7 +235,6 @@ setClass("ProcessHistory",
              fileIndex = "integer",
              error = "ANY"
          ),
-         contains = "Versioned",
          prototype = prototype(
              type = .PROCSTEP.UNKNOWN,
              date = character(),
@@ -2324,7 +2323,7 @@ setClass("ChromPeakAreaParam",
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setClass("MsFeatureData", contains = c("environment", "Versioned"),
+setClass("MsFeatureData", contains = c("environment"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
 
 .REQ_PEAKS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",

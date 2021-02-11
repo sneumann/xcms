@@ -4,7 +4,6 @@
 #' do_adjustRtime-functions.R methods-xcmsRaw.R functions-OnDiskMSnExp.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
-    classVersion(.Object)["XCMSnExp"] <- "0.0.1"
     .Object <- callNextMethod(.Object, ...)
     lockEnvironment(.Object@msFeatureData)
     return(.Object)

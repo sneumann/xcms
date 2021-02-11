@@ -30,6 +30,7 @@ BiocStyle::markdown()
 ## Silently loading all packages
 library(BiocStyle)
 library(xcms)
+library(Spectra)
 library(pander)
 register(SerialParam())
 
@@ -256,7 +257,12 @@ support to the `Spectra` package. This package can be installed with
 
 Prior plotting we *normalize* our experimental spectra.
 
-```{r normalize, eval = FALSE}
+```{r procstep, echo = FALSE}
+tmp <- ProcessingStep(mean)
+invisible(validObject(tmp))
+```
+
+```{r normalize, eval = TRUE}
 norm_fun <- function(z, ...) {
     z[, "intensity"] <- z[, "intensity"] /
         max(z[, "intensity"], na.rm = TRUE) * 100

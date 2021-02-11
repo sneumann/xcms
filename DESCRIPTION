@@ -35,12 +35,12 @@ Authors@R: c(
 	   )
 Depends:
     R (>= 4.0.0),
-    Biobase,
     BiocParallel (>= 1.8.0),
     MSnbase (>= 2.15.3)
 Imports:
     mzR (>= 2.19.5),
     methods,
+    Biobase,
     BiocGenerics,
     ProtGenerics (>= 1.23.6),
     lattice,
