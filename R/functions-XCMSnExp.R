@@ -2066,6 +2066,11 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
              "first")
     if (return.type %in% c("Spectra", "List")) {
         .require_spectra()
+        if (length(x@spectraProcessingQueue))
+            warning("Lazy evaluation queue is not empty. Will ignore any",
+                    " processing steps as 'return.type = \"Spectra\"' and",
+                    " 'return.type = \"List\"' currently don't support a ",
+                    "non-empty processing queue.")
         res <- .spectra_for_peaks(x, msLevel = msLevel, method = method,
                                   expandRt = expandRt, expandMz = expandMz,
                                   ppm = ppm, skipFilled = skipFilled,
@@ -2190,6 +2195,11 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
              "first.")
     if (return.type %in% c("Spectra", "List")) {
         .require_spectra()
+        if (length(x@spectraProcessingQueue))
+            warning("Lazy evaluation queue is not empty. Will ignore any",
+                    " processing steps as 'return.type = \"Spectra\"' and",
+                    " 'return.type = \"List\"' currently don't support a ",
+                    "non-empty processing queue.")
         res <- .spectra_for_features(x, msLevel = msLevel, expandRt = expandRt,
                                      expandMz = expandMz, ppm = ppm,
                                      skipFilled = skipFilled,
