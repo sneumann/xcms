@@ -651,7 +651,7 @@ test_that(".spectra_for_peaks works", {
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res_all <- .spectra_for_peaks(pest_dda, method = "all")
         expect_true(length(res_all) == nrow(chromPeaks(pest_dda)))
-        res_1 <- xcms:::.spectra_for_peaks(pest_dda, method = "closest_rt")
+        res_1 <- .spectra_for_peaks(pest_dda, method = "closest_rt")
         expect_true(all(lengths(res_1) < 2))
 
         res <- .spectra_for_peaks(pest_dda, msLevel = 3)

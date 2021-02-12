@@ -2650,8 +2650,8 @@ findChromPeaksIsolationWindow <-
 #'
 #' @description
 #'
-#' Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-#' data independent acquisition (DIA) data (such as SWATH). See the
+#' *Reconstructs* MS2 spectra for each MS1 chromatographic peak (if possible)
+#' for data independent acquisition (DIA) data (such as SWATH). See the
 #' *LC-MS/MS analysis* vignette for more details and examples.
 #'
 #' @details
@@ -2701,19 +2701,30 @@ findChromPeaksIsolationWindow <-
 #' @param BPPARAM parallel processing setup. See [bpparam()] for more
 #'     information.
 #'
-#' @return [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
-#'     in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
-#'     which reconstruction was not possible (either no MS2 signal was recorded
-#'     or the correlation of the MS2 chromatographic peaks with the MS1
-#'     chromatographic peak was below threshold `minCor`. `MSpectra` metadata
-#'     columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
-#'     and [NumericList()] with length equal to the number of peaks per
-#'     reconstructed MS2 spectrum) providing the IDs and the correlation of the
-#'     MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
-#'     As retention time the median retention times of all MS2 chromatographic
-#'     peaks used for the spectrum reconstruction is reported. The MS1
-#'     chromatographic peak intensity is reported as the reconstructed
-#'     spectrum's `precursorIntensity` value (see parameter `intensity` above).
+#' @param return.type `character(1)` defining the type of the returned object.
+#'     Can be either `return.type = "MSpectra"` (the default) to return a
+#'     `MSnbase::MSpectra` object or `return.type = "Spectra"` for the newer
+#'     `Spectra::Spectra` object.
+#'
+#' @return
+#'
+#' Depending on `return.type`:
+#'
+#' - [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
+#'   in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
+#'   which reconstruction was not possible (either no MS2 signal was recorded
+#'   or the correlation of the MS2 chromatographic peaks with the MS1
+#'   chromatographic peak was below threshold `minCor`. `MSpectra` metadata
+#'   columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
+#'   and [NumericList()] with length equal to the number of peaks per
+#'   reconstructed MS2 spectrum) providing the IDs and the correlation of the
+#'   MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+#'   As retention time the median retention times of all MS2 chromatographic
+#'   peaks used for the spectrum reconstruction is reported. The MS1
+#'   chromatographic peak intensity is reported as the reconstructed
+#'   spectrum's `precursorIntensity` value (see parameter `intensity` above).
+#' - `Spectra` object (defined in the `Spectra` package). The same content and
+#'   information than above.
 #'
 #' @author Johannes Rainer, Michael Witting
 #'
@@ -2725,12 +2736,14 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                         minCor = 0.8, intensity = "maxo",
                                         peakId = rownames(
                                             chromPeaks(object, msLevel = 1L)),
-                                        BPPARAM = bpparam()) {
+                                        BPPARAM = bpparam(),
+                                        return.type = c("MSpectra", "Spectra")) {
     if (!inherits(object, "XCMSnExp") || !hasChromPeaks(object))
         stop("'object' should be an 'XCMSnExp' object with identified ",
              "chromatographic peaks")
     if (!is.character(peakId))
         stop("'peakId' has to be of type character")
+    return.type <- match.arg(return.type)
     n_peak_id <- length(peakId)
     peakId <- intersect(peakId, rownames(chromPeaks(object, msLevel = 1L)))
     if (!length(peakId))
@@ -2750,14 +2763,16 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     sps <- bplapply(
         .split_by_file2(
             object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
-        FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
+        FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
+                       return.type) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,
                 minCor = minCor, fromFile = match(fileNames(x), files),
-                column = col, peakId = pkId)
+                column = col, peakId = pkId, return.type = return.type)
         },
         files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
-        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
+        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM,
+        return.type = return.type)
     do.call(c, sps)
 }
 
