@@ -54,6 +54,8 @@ Arguments section." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -65,9 +67,15 @@ Arguments section." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -81,7 +89,7 @@ Arguments section." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -216,6 +224,9 @@ chromPeakData(object) &lt;- value
 # S4 method for XChromatogram,MergeNeighboringPeaksParam
 refineChromPeaks(object, param = MergeNeighboringPeaksParam())
 
+# S4 method for XChromatogram
+filterChromPeaks(object, method = c("keepTop"), ...)
+
 # S4 method for XChromatograms
 show(object)
 
@@ -313,7 +324,10 @@ plotChromPeakDensity(
 dropFilledChromPeaks(object)
 
 # S4 method for XChromatograms,MergeNeighboringPeaksParam
-refineChromPeaks(object, param = MergeNeighboringPeaksParam())</pre>
+refineChromPeaks(object, param = MergeNeighboringPeaksParam())
+
+# S4 method for XChromatograms
+filterChromPeaks(object, method = c("keepTop"), ...)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -352,10 +366,8 @@ has to match the number of chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>For <code>plot</code>: additional parameters to passed to the <code>plot</code>
-function.
-For <code>XChromatograms</code>: additional parameters to be passed to the
-<a href='https://rdrr.io/r/base/matrix.html'>matrix</a> constructor, such as <code>nrow</code>, <code>ncol</code> and <code>byrow</code>.</p></td>
+      <td><p>For <code>filterChromPeaks</code>: additional parameters defining how to
+filter chromatographic peaks. See function description below for details.</p></td>
     </tr>
     <tr>
       <th>rtime</th>
@@ -522,6 +534,19 @@ package for more details.</p></td>
 correspondence analysis algorithm.</p></td>
     </tr>
     <tr>
+      <th>method</th>
+      <td><p>For <code>featureValues</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the method to
+resolve multi-peak mappings within the sample sample, i.e. to select
+the <em>representative</em> peak for a feature for which more than one peak
+was assigned in one sample. Options are <code>"medret"</code> (default): select the
+peak closest to the median retention time of the feature, <code>"maxint"</code>:
+select the peak with the largest signal and <code>"sum"</code>: sum the values
+of all peaks (only if <code>value</code> is <code>"into"</code> or <code>"maxo"</code>).
+For <code>filterChromPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the method that should
+be used to filter chromatographic peaks. See help on <code>filterChromPeaks</code>
+below for details.</p></td>
+    </tr>
+    <tr>
       <th>fileIndex</th>
       <td><p>For <code>processHistory</code>: optional <code>integer</code> specifying the
 index of the files/samples for which the <a href='ProcessHistory-class.html'>ProcessHistory</a> objects should
@@ -544,16 +569,6 @@ dropped (if possible). Defaults to <code>drop = TRUE</code>, thus, if length of 
 and <code>j</code> is 1 a <code>XChromatogram</code> is returned. Note that <code>drop</code> is ignored
 if length of <code>i</code> or <code>j</code> is larger than 1, thus a <code>XChromatograms</code> is
 returned.</p></td>
-    </tr>
-    <tr>
-      <th>method</th>
-      <td><p>For <code>featureValues</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the method to
-resolve multi-peak mappings within the sample sample, i.e. to select
-the <em>representative</em> peak for a feature for which more than one peak
-was assigned in one sample. Options are <code>"medret"</code> (default): select the
-peak closest to the median retention time of the feature, <code>"maxint"</code>:
-select the peak with the largest signal and <code>"sum"</code>: sum the values
-of all peaks (only if <code>value</code> is <code>"into"</code> or <code>"maxo"</code>).</p></td>
     </tr>
     <tr>
       <th>missing</th>
@@ -681,6 +696,16 @@ with one row per feature (in <code>featureDefinitions</code>) and each column be
 a sample (i.e. column of <code>object</code>). For features without a peak associated
 in a certain sample <code>NA</code> is returned. This can be changed with the
 <code>missing</code> argument of the function.</p></li>
+<li><p><code>filterChromPeaks</code>: <em>filters</em> chromatographic peaks in <code>object</code> depending
+on parameter <code>method</code> and method-specific parameters passed as additional
+arguments with <code>...</code>. Available methods are:</p><ul>
+<li><p><code>method = "keepTop"</code>: keep top <code>n</code> (default <code>n = 1L</code>) peaks in each
+chromatogram ordered by column <code>order</code> (defaults to <code>order = "maxo"</code>).
+Parameter <code>decreasing</code> (default <code>decreasing = TRUE</code>) can be used to
+order peaks in descending (<code>decreasing = TRUE</code>) or ascending (
+<code>decreasing = FALSE</code>) order to keep the top <code>n</code> peaks with largest or
+smallest values, respectively.</p></li>
+</ul></li>
 <li><p><code>processHistory</code>: returns a <code>list</code> of <a href='ProcessHistory-class.html'>ProcessHistory</a> objects representing
 the individual performed processing steps. Optional parameters <code>type</code> and
 <code>fileIndex</code> allow to further specify which processing steps to return.</p></li>
@@ -828,7 +853,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Fri Jan  8 14:58:10 2021 
+#&gt;  date: Mon Feb 15 11:26:27 2021 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2 
 #&gt;  Parameter class: CentWaveParam 
@@ -989,6 +1014,8 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 
   
 
+
+  
 
   </body>
 </html>

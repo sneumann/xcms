@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -76,7 +78,7 @@
 
       
 
-      </header><script src="xcms-lcms-ms_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="xcms-lcms-ms_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>LC-MS/MS data analysis with xcms</h1>
@@ -100,13 +102,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-01-08 13:48:44<br><strong>Compiled</strong>: Fri Jan 8 15:00:44 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-02-15 10:15:15<br><strong>Compiled</strong>: Mon Feb 15 11:29:04 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Metabolite identification is an important step in non-targeted metabolomics and requires different steps. One involves the use of tandem mass spectrometry to generate fragmentation spectra of detected metabolites (LC-MS/MS), which are then compared to fragmentation spectra of known metabolites. Different approaches exist for the generation of these fragmentation spectra, whereas the most used is data dependent acquisition (DDA) also known as the top-n method. In this method the top N most intense m/z values from a MS1 scan are selected for fragmentation in the next N scans before the cycle starts again. This method allows to generate clean MS2 fragmentation spectra on the fly during acquisition without the need for further experiments, but suffers from poor coverage of the detected metabolites (since only a limited number of ions are fragmented).</p>
 <p>Data independent approaches (DIA) like Bruker bbCID, Agilent AllIons or Waters MSe don’t use such a preselection, but rather fragment all detected molecules at once. They are using alternating schemes with scan of low and high collision energy to collect MS1 and MS2 data. Using this approach, there is no problem in coverage, but the relation between the precursor and fragment masses is lost leading to chimeric spectra. Sequential Window Acquisition of all Theoretical Mass Spectra (or SWATH <span class="citation">[1]</span>) combines both approaches through a middle-way approach. There is no precursor selection and acquisition is independent of acquired data, but rather than isolating all precusors at once, defined windows (i.e. ranges of m/z values) are used and scanned. This reduces the overlap of fragment spectra while still keeping a high coverage.</p>
-<p>This document showcases the analysis of two small LC-MS/MS data sets using <code>r Biocpkg("xcms")</code>. The data files used are reversed-phase LC-MS/MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH acquisition mode. For comparison a DDA file from the same sample is included.</p>
+<p>This document showcases the analysis of two small LC-MS/MS data sets using <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em>. The data files used are reversed-phase LC-MS/MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH acquisition mode. For comparison a DDA file from the same sample is included.</p>
 </div>
 <div id="analysis-of-dda-data" class="section level1">
 <h1 class="hasAnchor">
@@ -161,27 +163,56 @@ document.addEventListener("DOMContentLoaded", function() {
                      peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="va">dda_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></code></pre></div>
 <p>In total 112 peaks were identified in the present data set.</p>
-<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). MS2 spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method which returns a <code>MSpectra</code> object of MS2 spectra associated with a chromatographic peak (i.e. with their retention time within the retention time window of a chromatographic peak and their precursor m/z within the m/z range of the same chromatographic peak.</p>
+<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). Spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method. MS2 spectra with their precursor m/z and retention time within the rt and m/z range of the chromatographic peak are returned. Parameter <code>return.type</code> allows to define in which format these are returned. With <code>return.type = "List"</code> or <code>return.type = "Spectra"</code> the data is represented by a <code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.13/Spectra">Spectra</a></em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dda_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromPeakSpectra.html">chromPeakSpectra</a></span><span class="op">(</span><span class="va">dda_data</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra">Spectra</a></span><span class="op">)</span>
+<span class="va">dda_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromPeakSpectra.html">chromPeakSpectra</a></span><span class="op">(</span>
+    <span class="va">dda_data</span>, msLevel <span class="op">=</span> <span class="fl">2L</span>, return.type <span class="op">=</span> <span class="st">"Spectra"</span><span class="op">)</span>
 <span class="va">dda_spectra</span></code></pre></div>
-<pre><code>## MSpectra with 150 spectra and 1 metadata column(s):
-##                    msLevel     rtime peaksCount |     peak_id
-##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-##   CP004.F1.S1812         2   237.869       1489 |       CP004
-##   CP004.F1.S1846         2   241.299       1807 |       CP004
-##   CP005.F1.S2446         2   326.583         21 |       CP005
-##   CP006.F1.S2450         2   327.113         85 |       CP006
-##   CP006.F1.S2502         2   330.273        168 |       CP006
-##              ...       ...       ...        ... .         ...
-##   CP100.F1.S5110         2   574.725        890 |       CP100
-##   CP100.F1.S5115         2   575.255       1042 |       CP100
-##   CP101.F1.S5272         2   596.584        196 |       CP101
-##   CP102.F1.S5236         2   592.424         12 |       CP102
-##   CP102.F1.S5266         2   596.054         88 |       CP102</code></pre>
-<p>The metadata column <code>"peak_id"</code> contains the identifiers of the chromatographic peaks the MS2 spectrum is associated with.</p>
-<p>We next use the MS2 information to aid in the annotation of a chromatographic peak. As an example we use a chromatographic peak of an ion with an m/z of 304.1131 which we extract in the code block below.</p>
+<pre><code>## MSn data (Spectra) with 150 spectra in a MsBackendMzR backend:
+##            msLevel     rtime scanIndex
+##          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+## F1.S1812         2   237.869      1812
+## F1.S1846         2   241.299      1846
+## F1.S2446         2   326.583      2446
+## F1.S2450         2   327.113      2450
+## F1.S2502         2   330.273      2502
+## ...            ...       ...       ...
+## F1.S5110         2   574.725      5110
+## F1.S5115         2   575.255      5115
+## F1.S5272         2   596.584      5272
+## F1.S5236         2   592.424      5236
+## F1.S5266         2   596.054      5266
+##  ... 38 more variables/columns.
+## 
+## file(s):
+## PestMix1_DDA.mzML
+## Processing:
+##  Merge 52 Spectra into one [Mon Feb 15 11:29:18 2021]</code></pre>
+<p>By default <code>chromPeakSpectra</code> returns all spectra associated with a MS1 chromatographic peak, but parameter <code>method</code> allows to choose and return only one spectrum per peak (have a look at the <code><a href="../reference/chromPeakSpectra.html">?chromPeakSpectra</a></code> help page for more details). Also, it would be possible to extract MS1 spectra for each peak by specifying <code>msLevel = 1L</code> in the call above (e.g. to evaluate the full MS1 signal at the peak’s apex position).</p>
+<p>In the example above we selected to return the data as a <code>Spectra</code> object. Spectra variables <code>"peak_id"</code> and <code>"peak_index"</code> contain the identifiers and the index (in the <code>chromPeaks</code> matrix) of the chromatographic peaks the MS2 spectrum is associated with.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dda_spectra</span><span class="op">$</span><span class="va">peak_id</span></code></pre></div>
+<pre><code>##   [1] "CP004" "CP004" "CP005" "CP006" "CP006" "CP008" "CP008" "CP011" "CP011"
+##  [10] "CP012" "CP012" "CP013" "CP013" "CP013" "CP013" "CP014" "CP014" "CP014"
+##  [19] "CP014" "CP018" "CP022" "CP022" "CP022" "CP022" "CP025" "CP025" "CP025"
+##  [28] "CP025" "CP026" "CP026" "CP026" "CP026" "CP033" "CP033" "CP034" "CP034"
+##  [37] "CP034" "CP034" "CP034" "CP035" "CP035" "CP035" "CP041" "CP041" "CP041"
+##  [46] "CP042" "CP042" "CP042" "CP042" "CP042" "CP043" "CP048" "CP048" "CP050"
+##  [55] "CP050" "CP050" "CP050" "CP051" "CP051" "CP051" "CP052" "CP052" "CP052"
+##  [64] "CP054" "CP055" "CP055" "CP056" "CP056" "CP056" "CP057" "CP057" "CP057"
+##  [73] "CP057" "CP057" "CP061" "CP061" "CP061" "CP061" "CP065" "CP065" "CP066"
+##  [82] "CP066" "CP067" "CP067" "CP069" "CP069" "CP069" "CP069" "CP070" "CP070"
+##  [91] "CP070" "CP070" "CP070" "CP072" "CP072" "CP072" "CP073" "CP074" "CP074"
+## [100] "CP074" "CP074" "CP075" "CP075" "CP075" "CP077" "CP077" "CP077" "CP079"
+## [109] "CP079" "CP079" "CP079" "CP080" "CP080" "CP080" "CP081" "CP087" "CP087"
+## [118] "CP087" "CP087" "CP087" "CP089" "CP089" "CP089" "CP090" "CP090" "CP090"
+## [127] "CP092" "CP092" "CP094" "CP094" "CP095" "CP095" "CP095" "CP096" "CP096"
+## [136] "CP096" "CP097" "CP097" "CP097" "CP099" "CP099" "CP099" "CP099" "CP099"
+## [145] "CP100" "CP100" "CP100" "CP101" "CP102" "CP102"</code></pre>
+<p>Note also that with <code>return.type = "List"</code> a list parallel to the <code>chromPeaks</code> matrix would be returned, i.e. each element in that list would contain the spectra for the chromatographic peak with the same index. This data representation might eventually simplify further processing.</p>
+<p>We next use the MS2 information to aid in the annotation of a chromatographic peak. As an example we use a chromatographic peak of an ion with an m/z of 304.1131 which we extract in the code block below.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ex_mz</span> <span class="op">&lt;-</span> <span class="fl">304.1131</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, mz <span class="op">=</span> <span class="va">ex_mz</span>, ppm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></code></pre></div>
 <pre><code>##             mz    mzmin    mzmax      rt   rtmin   rtmax    into     intb
@@ -189,64 +220,88 @@ document.addEventListener("DOMContentLoaded", function() {
 ##           maxo sn sample
 ## CP057 3978.987 79      1</code></pre>
 <p>A search of potential ions with a similar m/z in a reference database (e.g. <a href="https://metlin.scripps.edu">Metlin</a>) returned a large list of potential hits, most with a very small ppm. For two of the hits, <a href="https://en.wikipedia.org/wiki/Flumazenil">Flumazenil</a> (Metlin ID 2724) and <a href="https://en.wikipedia.org/wiki/Fenamiphos">Fenamiphos</a> (Metlin ID 72445) experimental MS2 spectra are available. Thus, we could match the MS2 spectrum for the identified chromatographic peak against these to annotate our ion. Below we extract all MS2 spectra that were associated with the candidate chromatographic peak using the ID of the peak in the present data set.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ex_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, mz <span class="op">=</span> <span class="va">ex_mz</span>, ppm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
-<span class="va">ex_spectra</span> <span class="op">&lt;-</span> <span class="va">dda_spectra</span><span class="op">[</span><span class="fu">mcols</span><span class="op">(</span><span class="va">dda_spectra</span><span class="op">)</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="va">ex_id</span><span class="op">]</span>
-<span class="va">ex_spectra</span></code></pre></div>
-<pre><code>## MSpectra with 5 spectra and 1 metadata column(s):
-##                    msLevel     rtime peaksCount |     peak_id
-##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-##   CP057.F1.S3505         2   418.926         10 |       CP057
-##   CP057.F1.S3510         2   419.306         30 |       CP057
-##   CP057.F1.S3582         2   423.036        694 |       CP057
-##   CP057.F1.S3603         2   423.966        783 |       CP057
-##   CP057.F1.S3609         2   424.296        753 |       CP057</code></pre>
-<p>There are 5 MS2 spectra representing fragmentation of the ion(s) measured in our candidate chromatographic peak. We next reduce this to a single MS2 spectrum using the <code>combineSpectra</code> method employing the <code>consensusSpectrum</code> function to determine which peaks to keep in the resulting spectrum.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/combineSpectra.html">combineSpectra</a></span><span class="op">(</span><span class="va">ex_spectra</span>, method <span class="op">=</span> <span class="va">consensusSpectrum</span>, mzd <span class="op">=</span> <span class="fl">0</span>,
-                              ppm <span class="op">=</span> <span class="fl">20</span>, minProp <span class="op">=</span> <span class="fl">0.8</span>, weighted <span class="op">=</span> <span class="cn">FALSE</span>,
-                              intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ex_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, mz <span class="op">=</span> <span class="va">ex_mz</span>, ppm <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
+<span class="va">ex_spectra</span> <span class="op">&lt;-</span> <span class="va">dda_spectra</span><span class="op">[</span><span class="va">dda_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="va">ex_id</span><span class="op">]</span>
+<span class="va">ex_spectra</span></code></pre></div>
+<pre><code>## MSn data (Spectra) with 5 spectra in a MsBackendMzR backend:
+##            msLevel     rtime scanIndex
+##          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+## F1.S3505         2   418.926      3505
+## F1.S3510         2   419.306      3510
+## F1.S3582         2   423.036      3582
+## F1.S3603         2   423.966      3603
+## F1.S3609         2   424.296      3609
+##  ... 38 more variables/columns.
+## 
+## file(s):
+## PestMix1_DDA.mzML
+## Processing:
+##  Merge 52 Spectra into one [Mon Feb 15 11:29:18 2021]</code></pre>
+<p>There are 5 MS2 spectra representing fragmentation of the ion(s) measured in our candidate chromatographic peak. We next reduce this to a single MS2 spectrum using the <code>combineSpectra</code> method employing the <code>combinePeaks</code> function to determine which peaks to keep in the resulting spectrum (have a look at the <code><a href="https://rdrr.io/pkg/Spectra/man/combinePeaks.html">?combinePeaks</a></code> help page for details). Parameter <code>f</code> allows to specify which spectra in the input object should be combined into one.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">combineSpectra</a></span><span class="op">(</span><span class="va">ex_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,
+                              peaks <span class="op">=</span> <span class="st">"intersect"</span>, minProp <span class="op">=</span> <span class="fl">0.8</span>,
+                              intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span>,
+                              f <span class="op">=</span> <span class="va">ex_spectra</span><span class="op">$</span><span class="va">peak_id</span><span class="op">)</span>
 <span class="va">ex_spectrum</span></code></pre></div>
-<pre><code>## MSpectra with 1 spectra and 1 metadata column(s):
-##                    msLevel     rtime peaksCount |     peak_id
-##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-##   CP057.F1.S3505         2   418.926         24 |       CP057</code></pre>
+<pre><code>## MSn data (Spectra) with 1 spectra in a MsBackendDataFrame backend:
+##            msLevel     rtime scanIndex
+##          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+## F1.S3505         2   418.926      3505
+##  ... 38 more variables/columns.
+## Processing:
+##  Merge 52 Spectra into one [Mon Feb 15 11:29:18 2021]
+##  Switch backend from MsBackendMzR to MsBackendDataFrame [Mon Feb 15 11:29:19 2021]</code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20 ppm (parameter <code>ppm</code>) were combined into one peak and the median m/z and intensity is reported for these. Due to parameter <code>minProp = 0.8</code>, the resulting MS2 spectrum contains only peaks that were present in 80% of the input spectra.</p>
 <p>A plot of this <em>consensus</em> spectrum is shown below.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectra</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="xcms-lcms-ms_files/figure-html/dda-ms2-consensus-plot-1.png" alt="Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromatographic peak CP53." width="768"><p class="caption">
 Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromatographic peak CP53.
 </p>
 </div>
-<p>We could now match the consensus spectrum against a database of MS2 spectra. In our example we simply load MS2 spectra for the two compounds with matching m/z exported from Metlin. For each of the compounds MS2 spectra created with collision energies of 0V, 10V, 20V and 40V are available. Below we import the respective data and plot our candidate spectrum against the MS2 spectra of Flumanezil and Fenamiphos (from a collision energy of 20V).</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">flumanezil</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">spectra</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMgfData.html">readMgfData</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-2724.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">fenamiphos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">spectra</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMgfData.html">readMgfData</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-72445.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">flumanezil</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"against Flumanezil"</span>,
-     tolerance <span class="op">=</span> <span class="fl">40e-6</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">fenamiphos</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"against Fenamiphos"</span>,
-     tolerance <span class="op">=</span> <span class="fl">40e-6</span><span class="op">)</span></code></pre></div>
+<p>We could now match the consensus spectrum against a database of MS2 spectra. In our example we simply load MS2 spectra for the two compounds with matching m/z exported from Metlin. For each of the compounds MS2 spectra created with collision energies of 0V, 10V, 20V and 40V are available. Below we import the respective data and plot our candidate spectrum against the MS2 spectra of Flumanezil and Fenamiphos (from a collision energy of 20V). To import files in MGF format we have to load the <code>MsBackendMgf</code> R package which adds MGF file support to the <code>Spectra</code> package. This package can be installed with <code><a href="https://rdrr.io/pkg/BiocManager/man/install.html">BiocManager::install("RforMassSpectrometry/MsBackendMgf")</a></code>.</p>
+<p>Prior plotting we <em>normalize</em> our experimental spectra.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">norm_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">z</span><span class="op">[</span>, <span class="st">"intensity"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span>, <span class="st">"intensity"</span><span class="op">]</span> <span class="op">/</span>
+        <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">z</span><span class="op">[</span>, <span class="st">"intensity"</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>
+    <span class="va">z</span>
+<span class="op">}</span>
+<span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">addProcessing</a></span><span class="op">(</span><span class="va">ex_spectrum</span>, FUN <span class="op">=</span> <span class="va">norm_fun</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsBackendMgf">MsBackendMgf</a></span><span class="op">)</span>
+<span class="va">flumanezil</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-2724.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Start data import from 1 files ... done</code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fenamiphos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-72445.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Start data import from 1 files ... done</code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">ex_spectrum</span>, <span class="va">flumanezil</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"against Flumanezil"</span>,
+                  ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">ex_spectrum</span>, <span class="va">fenamiphos</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"against Fenamiphos"</span>,
+                  ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="xcms-lcms-ms_files/figure-html/dda-ms2-metlin-match-1.png" alt="Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot." width="1152"><p class="caption">
 Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot.
 </p>
 </div>
-<p>Our candidate spectrum matches Fenamiphos, thus, our example chromatographic peak represents signal measured for this compound. In addition to plotting the spectra, we can also calculate similarities between them with the <code>compareSpectra</code> method (e.g. using the <em>dotproduct</em> method as shown below).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/compareSpectra-methods.html">compareSpectra</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">flumanezil</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, binSize <span class="op">=</span> <span class="fl">0.02</span>,
-               fun <span class="op">=</span> <span class="st">"dotproduct"</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 0.005350294</code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/compareSpectra-methods.html">compareSpectra</a></span><span class="op">(</span><span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">fenamiphos</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, binSize <span class="op">=</span> <span class="fl">0.02</span>,
-               fun <span class="op">=</span> <span class="st">"dotproduct"</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 0.9092189</code></pre>
-<p>Clearly, the candidate spectrum does not match Flumanezil, while it has a high similarity to Fenamiphos. While we performed here the MS2-based annotation on a single chromatographic peak, this could be easily extended to the full list of MS2 spectra (returned by <code>chromPeakSpectra</code>) for all chromatographic peaks in an experiment. Respective code facilitating this will be implemented in future.</p>
+<p>Our candidate spectrum matches Fenamiphos, thus, our example chromatographic peak represents signal measured for this compound. In addition to plotting the spectra, we can also calculate similarities between them with the <code>compareSpectra</code> method (which uses by default the normalized dot-product to calculate the similarity).</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">compareSpectra</a></span><span class="op">(</span><span class="va">ex_spectrum</span>, <span class="va">flumanezil</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] 4.520957e-02 3.283806e-02 2.049379e-03 3.374354e-05</code></pre>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/hidden_aliases.html">compareSpectra</a></span><span class="op">(</span><span class="va">ex_spectrum</span>, <span class="va">fenamiphos</span>, ppm <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></code></pre></div>
+<pre><code>## [1] 0.1326234432 0.4879399946 0.7198406271 0.3997922658 0.0004876129
+## [6] 0.0028408885 0.0071030051 0.0053809736</code></pre>
+<p>Clearly, the candidate spectrum does not match Flumanezil, while it has a high similarity to Fenamiphos. While we performed here the MS2-based annotation on a single chromatographic peak, this could be easily extended to the full list of MS2 spectra (returned by <code>chromPeakSpectra</code>) for all chromatographic peaks in an experiment. See also <a href="https://jorainer.github.io/SpectraTutorials/">here</a>.</p>
 <p>In the present example we used only a single data file and we did thus not need to perform a sample alignment and correspondence analysis. These tasks could however be performed similarly to <em>plain</em> LC-MS data, retention times of recorded MS2 spectra would however also be adjusted during alignment based on the MS1 data. After correspondence analysis (peak grouping) MS2 spectra for <em>features</em> can be extracted with the <code>featureSpectra</code> function which returns all MS2 spectra associated with any chromatographic peak of a feature.</p>
 <p>Note also that this workflow can be included into the <em>Feature-Based Molecular Networking</em> <a href="https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking/">FBMN</a> to match MS2 spectra against <a href="https://gnps.ucsd.edu/">GNPS</a>. See <a href="https://ccms-ucsd.github.io/GNPSDocumentation/featurebasedmolecularnetworking-with-xcms3/">here</a> for more details and examples.</p>
 </div>
@@ -254,20 +309,20 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 <h1 class="hasAnchor">
 <a href="#swath-data-analysis" class="anchor"></a>SWATH data analysis</h1>
 <p>In this section we analyze a small SWATH data set consisting of a single mzML file with data from the same sample analyzed in the previous section but recorded in SWATH mode. We again read the data with the <code>readMSData</code> function. The resulting object will contain all recorded MS1 and MS2 spectra in the specified file.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">swath_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH"</span>,
                           <span class="st">"PestMix1_SWATH.mzML"</span>,
                           package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
 
 <span class="va">swath_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html">readMSData</a></span><span class="op">(</span><span class="va">swath_file</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></code></pre></div>
 <p>Below we determine the number of MS level 1 and 2 spectra in the present data set.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">msLevel</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##    1    2 
 ##  444 3556</code></pre>
 <p>As described in the introduction, in SWATH mode all ions within pre-defined isolation windows are fragmented and MS2 spectra measured. The definition of these isolation windows (SWATH pockets) is imported from the mzML files and stored in the object’s <code>fData</code> (which provides additional annotations for each individual spectrum). Below we inspect the respective information for the first few spectra. The upper and lower isolation window m/z can be extracted with the <code>isolationWindowLowerMz</code> and <code>isolationWindowUpperMz</code>.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu">fData</span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"isolationWindowTargetMZ"</span>,
                            <span class="st">"isolationWindowLowerOffset"</span>,
                            <span class="st">"isolationWindowUpperOffset"</span>,
@@ -286,14 +341,14 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 ## F1.S2003                      15.60       2       200.375
 ## F1.S2004                      16.10       2       200.472
 ## F1.S2005                      22.45       2       200.569</code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">isolationWindowLowerMz</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 187.0 229.9 257.2 283.5 313.7 344.9</code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">isolationWindowUpperMz</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 230.9 258.2 284.5 314.7 345.9 389.8</code></pre>
 <p>In the present data set we use the value of the <em>isolation window target m/z</em> to define the individual SWATH pockets. Below we list the number of spectra that are recorded in each pocket/isolation window.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/isolationWindowTargetMz,OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 
@@ -303,17 +358,17 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 <h2 class="hasAnchor">
 <a href="#chromatographic-peak-detection-in-ms1-and-ms2-data" class="anchor"></a>Chromatographic peak detection in MS1 and MS2 data</h2>
 <p>Similar to a <em>conventional</em> LC-MS analysis, we perform first a chromatographic peak detection (on the MS level 1 data) with the <code>findChromPeaks</code> method. Below we define the settings for a <em>centWave</em>-based peak detection and perform the analysis.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cwp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span>snthresh <span class="op">=</span> <span class="fl">5</span>, noise <span class="op">=</span> <span class="fl">100</span>, ppm <span class="op">=</span> <span class="fl">10</span>,
                      peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="va">swath_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></code></pre></div>
 <p>Next we perform a chromatographic peak detection in the MS level 2 data of each isolation window. We use the <code>findChromPeaksIsolationWindow</code> function employing the same peak detection algorithm reducing however the required signal-to-noise ratio. The <code>isolationWindow</code> parameter allows to specify which MS2 spectra belong to which isolation window and hence defines in which set of MS2 spectra chromatographic peak detection should be performed. While the default value for this parameter uses isolation windows provided by calling <code>isolationWindowTargetMz</code> on the object, it would also be possible to manually define the isolation windows, e.g. if the corresponding information is not available in the input mzML files.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cwp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span>snthresh <span class="op">=</span> <span class="fl">3</span>, noise <span class="op">=</span> <span class="fl">10</span>, ppm <span class="op">=</span> <span class="fl">10</span>,
                      peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="va">swath_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findChromPeaksIsolationWindow.html">findChromPeaksIsolationWindow</a></span><span class="op">(</span><span class="va">swath_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></code></pre></div>
 <p>The <code>findChromPeaksIsolationWindow</code> function added all peaks identified in the individual isolation windows to the <code>chromPeaks</code> matrix containing already the MS1 chromatographic peaks. These newly added peaks can be identified by the value of the <code>"isolationWindow"</code> column in the corresponding row in <code>chromPeakData</code>, which lists also the MS level in which the peak was identified.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span></code></pre></div>
 <pre><code>## DataFrame with 368 rows and 6 columns
 ##        ms_level is_filled isolationWindow isolationWindowTargetMZ
@@ -343,7 +398,7 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 ## CP367                  388.8                  814.9
 ## CP368                  388.8                  814.9</code></pre>
 <p>Below we count the number of chromatographic peaks identified within each isolation window (the number of chromatographic peaks identified in MS1 is 62).</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">$</span><span class="va">isolationWindow</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 
@@ -361,7 +416,7 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 <li>Reconstruct the MS2 spectrum using the m/z of all above selected MS2 chromatographic peaks and their intensity; each MS2 chromatographic peak selected for an MS1 peak will thus represent one <strong>mass peak</strong> in the reconstructed spectrum.</li>
 </ul>
 <p>To illustrate this process we perform the individual steps on the example of Fenamiphos (exact mass 303.105800777 and m/z of [M+H]+ adduct 304.113077). As a first step we extract the chromatographic peak for this ion.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fenamiphos_mz</span> <span class="op">&lt;-</span> <span class="fl">304.113077</span>
 <span class="va">fenamiphos_ms1_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span>, mz <span class="op">=</span> <span class="va">fenamiphos_mz</span>, ppm <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="va">fenamiphos_ms1_peak</span></code></pre></div>
@@ -370,18 +425,18 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
 ##          maxo  sn sample
 ## CP34 2401.849 618      1</code></pre>
 <p>Next we identify all MS2 chromatographic peaks that were identified in the isolation window containing the m/z of Fenamiphos. The information on the isolation window in which a chromatographic peak was identified is available in the <code>chromPeakData</code> (which contains arbitrary additional annotations to each individual chromatographic peak).</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">$</span><span class="va">isolationWindowLowerMz</span> <span class="op">&lt;</span> <span class="va">fenamiphos_mz</span> <span class="op">&amp;</span>
         <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">$</span><span class="va">isolationWindowUpperMz</span> <span class="op">&gt;</span> <span class="va">fenamiphos_mz</span></code></pre></div>
 <p>We also require the retention time of the MS2 chromatographic peaks to be similar to the retention time of the MS1 peak and extract the corresponding peak information.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">keep</span> <span class="op">&lt;-</span> <span class="va">keep</span> <span class="op">&amp;</span>
     <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span> <span class="op">&lt;</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span> <span class="op">&amp;</span>
     <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">&gt;</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span>
 
 <span class="va">fenamiphos_ms2_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">keep</span><span class="op">)</span>, <span class="op">]</span></code></pre></div>
 <p>In total 24 MS2 chromatographic peaks match all the above condition. Next we extract their corresponding ion chromatograms, as well as the ion chromatogram of the MS1 peak. In addition we have to filter the object first by isolation window, keeping only spectra that were measured in that specific window and to specify to extract the chromatographic data from MS2 spectra (with <code>msLevel = 2L</code>).</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rtr</span> <span class="op">&lt;-</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rtmin"</span>, <span class="st">"rtmax"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">mzr</span> <span class="op">&lt;-</span> <span class="va">fenamiphos_ms1_peak</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mzmin"</span>, <span class="st">"mzmax"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">fenamiphos_ms1_chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram,XCMSnExp-method.html">chromatogram</a></span><span class="op">(</span><span class="va">swath_data</span>, rt <span class="op">=</span> <span class="va">rtr</span>, mz <span class="op">=</span> <span class="va">mzr</span><span class="op">)</span>
@@ -392,7 +447,7 @@ Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenami
     <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterIsolationWindow</a></span><span class="op">(</span><span class="va">swath_data</span>, mz <span class="op">=</span> <span class="va">fenamiphos_mz</span><span class="op">)</span>,
     rt <span class="op">=</span> <span class="va">rtr</span>, mz <span class="op">=</span> <span class="va">mzr</span>, msLevel <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></code></pre></div>
 <p>We can now plot the extracted ion chromatogram of the MS1 and the extracted MS2 data.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_chr</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>,
      <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_chr</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>,
      xlab <span class="op">=</span> <span class="st">"retention time [s]"</span>, ylab <span class="op">=</span> <span class="st">"intensity"</span>, pch <span class="op">=</span> <span class="fl">16</span>,
@@ -408,79 +463,97 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 </p>
 </div>
 <p>Next we can calculate correlations between the peak shapes of each MS2 chromatogram with the MS1 peak. We perform the correlation below for one of the MS2 chromatographic peaks. Note that, because spectra are recorded consecutively, the retention times of the individual data points will differ for the MS2 and MS1 chromatographic data and data points have thus to be matched (aligned) before performing the correlation analysis. This is done automatically by the <code>correlate</code> function. See the help for the <code>align</code> method for more information on alignment options.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/correlate,Chromatogram,Chromatogram-method.html">correlate</a></span><span class="op">(</span><span class="va">fenamiphos_ms2_chr</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>,
           <span class="va">fenamiphos_ms1_chr</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, align <span class="op">=</span> <span class="st">"approx"</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 0.9997871</code></pre>
 <p>After identifying the MS2 chromatographic peaks with shapes of enough high similarity to the MS1 chromatographic peaks, an MS2 spectrum could be <em>reconstructed</em> based on the m/z and intensities of the MS2 chromatographic peaks.</p>
-<p>The <code>reconstructChromPeakSpectra</code> function performs the above analysis for each individual MS1 chromatographic peak in a SWATH data set. Below we reconstruct MS2 spectra for our example data requiring a peak shape correlation higher than <code>0.9</code> between the candidate MS2 chromatographic peak and the target MS1 chromatographic peak.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">swath_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reconstructChromPeakSpectra.html">reconstructChromPeakSpectra</a></span><span class="op">(</span><span class="va">swath_data</span>, minCor <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span>
+<p>The <code>reconstructChromPeakSpectra</code> function performs the above analysis for each individual MS1 chromatographic peak in a SWATH data set. Below we reconstruct MS2 spectra for our example data requiring a peak shape correlation higher than <code>0.9</code> between the candidate MS2 chromatographic peak and the target MS1 chromatographic peak. Again, we use <code>return.type = "Spectra"</code> to return the results as a <code>Spectra</code> object (instead to the default, but older/obsolete <code>MSpectra</code> object).</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">swath_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reconstructChromPeakSpectra.html">reconstructChromPeakSpectra</a></span><span class="op">(</span><span class="va">swath_data</span>, minCor <span class="op">=</span> <span class="fl">0.9</span>,
+                                             return.type <span class="op">=</span> <span class="st">"Spectra"</span><span class="op">)</span>
 <span class="va">swath_spectra</span></code></pre></div>
-<pre><code>## MSpectra with 62 spectra and 3 metadata column(s):
-##       msLevel     rtime peaksCount |     ms2_peak_id      ms2_peak_cor
-##     &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;CharacterList&gt;     &lt;NumericList&gt;
-##   1         2   239.458          0 |                                  
-##   1         2   240.358          0 |                                  
-##   1         2   329.577          1 |           CP063          0.950582
-##   1         2   329.771          1 |           CP105           0.95157
-##   1         2   346.164          1 |           CP153          0.924545
-##   .       ...       ...        ... .             ...               ...
-##   1         2   551.735          0 |                                  
-##   1         2   551.735          0 |                                  
-##   1         2   575.134          0 |                                  
-##   1         2   575.134          0 |                                  
-##   1         2   574.942          2 |     CP334,CP329 0.918915,0.911944
-##         peak_id
-##     &lt;character&gt;
-##   1        CP01
-##   1        CP02
-##   1        CP03
-##   1        CP04
-##   1        CP05
-##   .         ...
-##   1        CP58
-##   1        CP59
-##   1        CP60
-##   1        CP61
-##   1        CP62</code></pre>
-<p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak.</p>
+<pre><code>## MSn data (Spectra) with 62 spectra in a MsBackendDataFrame backend:
+##       msLevel     rtime scanIndex
+##     &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+## 1           2   239.458        NA
+## 2           2   240.358        NA
+## 3           2   329.577        NA
+## 4           2   329.771        NA
+## 5           2   346.164        NA
+## ...       ...       ...       ...
+## 58          2   551.735        NA
+## 59          2   551.735        NA
+## 60          2   575.134        NA
+## 61          2   575.134        NA
+## 62          2   574.942        NA
+##  ... 20 more variables/columns.
+## Processing:
+##  Merge 1 Spectra into one [Mon Feb 15 11:29:50 2021]</code></pre>
+<p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak:</p>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">ms2_peak_id</span></code></pre></div>
+<pre><code>## CharacterList of length 62
+## [[1]] character(0)
+## [[2]] character(0)
+## [[3]] CP063
+## [[4]] CP105
+## [[5]] CP153
+## [[6]] character(0)
+## [[7]] character(0)
+## [[8]] character(0)
+## [[9]] character(0)
+## [[10]] character(0)
+## ...
+## &lt;52 more elements&gt;</code></pre>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span></code></pre></div>
+<pre><code>##  [1] "CP01" "CP02" "CP03" "CP04" "CP05" "CP06" "CP07" "CP08" "CP09" "CP10"
+## [11] "CP11" "CP12" "CP13" "CP14" "CP15" "CP16" "CP17" "CP18" "CP19" "CP20"
+## [21] "CP21" "CP22" "CP23" "CP24" "CP25" "CP26" "CP27" "CP28" "CP29" "CP30"
+## [31] "CP31" "CP32" "CP33" "CP34" "CP35" "CP36" "CP37" "CP38" "CP39" "CP40"
+## [41] "CP41" "CP42" "CP43" "CP44" "CP45" "CP46" "CP47" "CP48" "CP49" "CP50"
+## [51] "CP51" "CP52" "CP53" "CP54" "CP55" "CP56" "CP57" "CP58" "CP59" "CP60"
+## [61] "CP61" "CP62"</code></pre>
 <p>We next extract the MS2 spectrum for our example peak most likely representing [M+H]+ ions of Fenamiphos using its chromatographic peak ID:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fenamiphos_swath_spectrum</span> <span class="op">&lt;-</span> <span class="va">swath_spectra</span><span class="op">[</span>
-    <span class="fu">mcols</span><span class="op">(</span><span class="va">swath_spectra</span><span class="op">)</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_peak</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p>We can now compare the reconstructed spectrum to the example consensus spectrum from the DDA experiment in the previous section (variable <code>ex_spectrum</code>) as well as to the MS2 spectrum for Fenamiphos from Metlin (with a collision energy of 10V).</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">fenamiphos_ms1_peak</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+<p>We can now compare the reconstructed spectrum to the example consensus spectrum from the DDA experiment in the previous section (variable <code>ex_spectrum</code>) as well as to the MS2 spectrum for Fenamiphos from Metlin (with a collision energy of 10V). For better visualization we <em>normalize</em> also the peak intensities of the reconstructed SWATH spectrum with the same function we used for the experimental DDA spectrum.</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fenamiphos_swath_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">addProcessing</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span>,
+                                           <span class="va">norm_fun</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">ex_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
-     tolerance <span class="op">=</span> <span class="fl">50e-6</span>, main <span class="op">=</span> <span class="st">"against DDA"</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">fenamiphos</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,
-     tolerance <span class="op">=</span> <span class="fl">50e-6</span>, main <span class="op">=</span> <span class="st">"against Metlin"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span>, <span class="va">ex_spectrum</span>,
+     ppm <span class="op">=</span> <span class="fl">50</span>, main <span class="op">=</span> <span class="st">"against DDA"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span>, <span class="va">fenamiphos</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
+     ppm <span class="op">=</span> <span class="fl">50</span>, main <span class="op">=</span> <span class="st">"against Metlin"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="xcms-lcms-ms_files/figure-html/fena-swath-plot-1.png" alt="Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel) against the measured spectrum from the DDA data and the Fenamiphhos spectrum from Metlin." width="1152"><p class="caption">
 Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel) against the measured spectrum from the DDA data and the Fenamiphhos spectrum from Metlin.
 </p>
 </div>
 <p>If we wanted to get the EICs for the MS2 chromatographic peaks used to generate this MS2 spectrum we can use the IDs of these peaks which are provided with <code>$ms2_peak_id</code> of the result spectrum.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pk_ids</span> <span class="op">&lt;-</span> <span class="fu">mcols</span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span><span class="op">)</span><span class="op">$</span><span class="va">ms2_peak_id</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pk_ids</span> <span class="op">&lt;-</span> <span class="va">fenamiphos_swath_spectrum</span><span class="op">$</span><span class="va">ms2_peak_id</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 <span class="va">pk_ids</span></code></pre></div>
 <pre><code>##  [1] "CP199" "CP201" "CP211" "CP208" "CP200" "CP202" "CP217" "CP215" "CP205"
 ## [10] "CP212" "CP221" "CP223" "CP213" "CP207" "CP220"</code></pre>
 <p>With these peak IDs available we can extract their retention time window and m/z ranges from the <code>chromPeaks</code> matrix and use the <code>chromatogram</code> function to extract their EIC. Note however that for SWATH data we have MS2 signal from different isolation windows. Thus we have to first filter the <code>swath_data</code> object by the isolation window containing the precursor m/z with the <code>filterIsolationWindow</code> to subset the data to MS2 spectra related to the ion of interest. In addition, we have to use <code>msLevel = 2L</code> in the <code>chromatogram</code> call because <code>chromatogram</code> extracts by default only data from MS1 spectra.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rt_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span><span class="va">pk_ids</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"rtmin"</span>, <span class="st">"rtmax"</span><span class="op">)</span><span class="op">]</span>
 <span class="va">mz_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span><span class="op">)</span><span class="op">[</span><span class="va">pk_ids</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"mzmin"</span>, <span class="st">"mzmax"</span><span class="op">)</span><span class="op">]</span>
 
 <span class="va">pmz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html">precursorMz</a></span><span class="op">(</span><span class="va">fenamiphos_swath_spectrum</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="va">swath_data_iwindow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterIsolationWindow</a></span><span class="op">(</span><span class="va">swath_data</span>, mz <span class="op">=</span> <span class="va">pmz</span><span class="op">)</span></code></pre></div>
 <pre><code>## Warning in object[keep]: Removed preprocessing results</code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ms2_eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram,XCMSnExp-method.html">chromatogram</a></span><span class="op">(</span><span class="va">swath_data_iwindow</span>, rt <span class="op">=</span> <span class="va">rt_range</span>,
                          mz <span class="op">=</span> <span class="va">mz_range</span>, msLevel <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></code></pre></div>
 <p>Each row of this <code>ms2_eics</code> contains now the EIC of one of the MS2 chromatographic peaks.</p>
 <p>As a second example we analyze the signal from an [M+H]+ ion with an m/z of 376.0381 (which would match <a href="https://en.wikipedia.org/wiki/Prochloraz">Prochloraz</a>). We first identify the MS1 chromatographic peak for that m/z and retrieve the reconstructed MS2 spectrum for that peak.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz_mz</span> <span class="op">&lt;-</span> <span class="fl">376.0381</span>
 
 <span class="va">prochloraz_ms1_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">swath_data</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>,
@@ -490,11 +563,11 @@ Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel
 ## CP22 376.0373 376.037 376.0374 405.046 401.446 409.546 3664.051 3655.951
 ##          maxo  sn sample
 ## CP22 897.3923 278      1</code></pre>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz_swath_spectrum</span> <span class="op">&lt;-</span> <span class="va">swath_spectra</span><span class="op">[</span>
-    <span class="fu">mcols</span><span class="op">(</span><span class="va">swath_spectra</span><span class="op">)</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">prochloraz_ms1_peak</span><span class="op">)</span><span class="op">]</span></code></pre></div>
+    <span class="va">swath_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">prochloraz_ms1_peak</span><span class="op">)</span><span class="op">]</span></code></pre></div>
 <p>In addition we identify the corresponding MS1 peak in the DDA data set, extract all measured MS2 chromatographic peaks and build the consensus spectrum from these.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz_dda_peak</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>,
                                   mz <span class="op">=</span> <span class="va">prochloraz_mz</span>, ppm <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 <span class="va">prochloraz_dda_peak</span></code></pre></div>
@@ -503,34 +576,47 @@ Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel
 ##           maxo  sn sample
 ## CP034 1350.633 436      1</code></pre>
 <p>The retention times for the chromatographic peaks from the DDA and SWATH data match almost perfectly. Next we get the MS2 spectra for this peak.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz_dda_spectra</span> <span class="op">&lt;-</span> <span class="va">dda_spectra</span><span class="op">[</span>
-    <span class="fu">mcols</span><span class="op">(</span><span class="va">dda_spectra</span><span class="op">)</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">prochloraz_dda_peak</span><span class="op">)</span><span class="op">]</span>
+    <span class="va">dda_spectra</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">prochloraz_dda_peak</span><span class="op">)</span><span class="op">]</span>
 <span class="va">prochloraz_dda_spectra</span></code></pre></div>
-<pre><code>## MSpectra with 5 spectra and 1 metadata column(s):
-##                    msLevel     rtime peaksCount |     peak_id
-##                  &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-##   CP034.F1.S3253         2   401.438         84 |       CP034
-##   CP034.F1.S3259         2   402.198         67 |       CP034
-##   CP034.F1.S3306         2   404.677        277 |       CP034
-##   CP034.F1.S3316         2   405.127        311 |       CP034
-##   CP034.F1.S3325         2   405.877        383 |       CP034</code></pre>
+<pre><code>## MSn data (Spectra) with 5 spectra in a MsBackendMzR backend:
+##            msLevel     rtime scanIndex
+##          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+## F1.S3253         2   401.438      3253
+## F1.S3259         2   402.198      3259
+## F1.S3306         2   404.677      3306
+## F1.S3316         2   405.127      3316
+## F1.S3325         2   405.877      3325
+##  ... 38 more variables/columns.
+## 
+## file(s):
+## PestMix1_DDA.mzML
+## Processing:
+##  Merge 52 Spectra into one [Mon Feb 15 11:29:18 2021]</code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number of peaks. Next we combine them into a consensus spectrum.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/combineSpectra.html">combineSpectra</a></span><span class="op">(</span>
-    <span class="va">prochloraz_dda_spectra</span>, method <span class="op">=</span> <span class="va">consensusSpectrum</span>, msd <span class="op">=</span> <span class="fl">0</span>, ppm <span class="op">=</span> <span class="fl">20</span>,
-    minProp <span class="op">=</span> <span class="fl">0.8</span>, weighted <span class="op">=</span> <span class="cn">FALSE</span>, intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">combineSpectra</a></span><span class="op">(</span>
+    <span class="va">prochloraz_dda_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,
+    peaks <span class="op">=</span> <span class="st">"intersect"</span>, minProp <span class="op">=</span> <span class="fl">0.8</span>, intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span>,
+    f <span class="op">=</span> <span class="va">prochloraz_dda_spectra</span><span class="op">$</span><span class="va">peak_id</span><span class="op">)</span></code></pre></div>
+<pre><code>## Backend of the input object is read-only, will change that to an 'MsBackendDataFrame'</code></pre>
 <p>At last we load also the Prochloraz MS2 spectra (for different collision energies) from Metlin.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prochloraz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">spectra</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMgfData.html">readMgfData</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-68898.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">prochloraz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-68898.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## Start data import from 1 files ... done</code></pre>
 <p>To validate the reconstructed spectrum we plot it against the corresponding DDA spectrum and the MS2 spectrum for Prochloraz (for a collision energy of 10V) from Metlin.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">prochloraz_dda_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
-     tolerance <span class="op">=</span> <span class="fl">50e-6</span>, main <span class="op">=</span> <span class="st">"against DDA"</span><span class="op">)</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">prochloraz</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,
-     tolerance <span class="op">=</span> <span class="fl">50e-6</span>, main <span class="op">=</span> <span class="st">"against Metlin"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">prochloraz_swath_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">addProcessing</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span>, <span class="va">norm_fun</span><span class="op">)</span>
+<span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">addProcessing</a></span><span class="op">(</span><span class="va">prochloraz_dda_spectrum</span>, <span class="va">norm_fun</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span>, <span class="va">prochloraz_dda_spectrum</span>,
+                  ppm <span class="op">=</span> <span class="fl">40</span>, main <span class="op">=</span> <span class="st">"against DDA"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/spectra-plotting.html">plotSpectraMirror</a></span><span class="op">(</span><span class="va">prochloraz_swath_spectrum</span>, <span class="va">prochloraz</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
+                  ppm <span class="op">=</span> <span class="fl">40</span>, main <span class="op">=</span> <span class="st">"against Metlin"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="xcms-lcms-ms_files/figure-html/pro-swath-plot-1.png" alt="Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel) against the measured spectrum from the DDA data and the Prochloraz spectrum from Metlin." width="1152"><p class="caption">
 Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel) against the measured spectrum from the DDA data and the Prochloraz spectrum from Metlin.
@@ -553,15 +639,15 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <h1 class="hasAnchor">
 <a href="#outlook" class="anchor"></a>Outlook</h1>
 <p>Currently, spectra data representation, handling and processing is being re-implemented as part of the <a href="https://rformassspectrometry.org">RforMassSpectrometry</a> initiative aiming at increasing the performance of methods and simplifying their use. Thus, parts of the workflow described here will be changed (improved) in future.</p>
-<p>Along with these developments, improved matching strategies for larger data sets will be implemented as well as functionality to compare <code>Spectra</code> directly to reference MS2 spectra from public annotation resources (e.g. Massbank or HMDB).</p>
+<p>Along with these developments, improved matching strategies for larger data sets will be implemented as well as functionality to compare <code>Spectra</code> directly to reference MS2 spectra from public annotation resources (e.g. Massbank or HMDB). See for example <a href="https://jorainer.github.io/SpectraTutorials">here</a> for more information.</p>
 <p>Regarding SWATH data analysis, future development will involve improved selection of the correct MS2 chromatographic peaks considering also correlation with intensity values across several samples.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R Under development (unstable) (2020-12-31 r79746)
+<pre><code>## R Under development (unstable) (2021-02-11 r79990)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.1 LTS
 ## 
@@ -581,58 +667,59 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] magrittr_2.0.1      pander_0.6.3        xcms_3.13.4        
-##  [4] MSnbase_2.17.5      ProtGenerics_1.23.6 S4Vectors_0.29.6   
-##  [7] mzR_2.25.1          Rcpp_1.0.5          BiocParallel_1.25.2
-## [10] Biobase_2.51.0      BiocGenerics_0.37.0 BiocStyle_2.19.1   
+##  [1] MsBackendMgf_0.2.2  magrittr_2.0.1      pander_0.6.3       
+##  [4] Spectra_1.1.13      xcms_3.13.5         MSnbase_2.17.8     
+##  [7] ProtGenerics_1.23.7 S4Vectors_0.29.7    mzR_2.25.3         
+## [10] Rcpp_1.0.6          Biobase_2.51.0      BiocGenerics_0.37.1
+## [13] BiocParallel_1.25.4 BiocStyle_2.19.1   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] MatrixGenerics_1.3.0        vsn_3.59.1                 
+##  [1] MatrixGenerics_1.3.1        vsn_3.59.1                 
 ##  [3] foreach_1.5.1               assertthat_0.2.1           
 ##  [5] highr_0.8                   BiocManager_1.30.10        
 ##  [7] affy_1.69.0                 GenomeInfoDbData_1.2.4     
 ##  [9] yaml_2.2.1                  robustbase_0.93-7          
 ## [11] impute_1.65.0               pillar_1.4.7               
 ## [13] lattice_0.20-41             glue_1.4.2                 
-## [15] limma_3.47.3                digest_0.6.27              
-## [17] GenomicRanges_1.43.1        RColorBrewer_1.1-2         
-## [19] XVector_0.31.1              colorspace_2.0-0           
-## [21] htmltools_0.5.0             preprocessCore_1.53.1      
-## [23] Matrix_1.3-2                plyr_1.8.6                 
+## [15] limma_3.47.6                digest_0.6.27              
+## [17] XVector_0.31.1              GenomicRanges_1.43.3       
+## [19] RColorBrewer_1.1-2          colorspace_2.0-0           
+## [21] Matrix_1.3-2                htmltools_0.5.1.1          
+## [23] preprocessCore_1.53.1       plyr_1.8.6                 
 ## [25] MALDIquant_1.19.3           XML_3.99-0.5               
 ## [27] pkgconfig_2.0.3             bookdown_0.21              
 ## [29] zlibbioc_1.37.0             scales_1.1.1               
 ## [31] RANN_2.6.1                  affyio_1.61.0              
-## [33] tibble_3.0.4                farver_2.0.3               
-## [35] IRanges_2.25.6              ggplot2_3.3.3              
-## [37] ellipsis_0.3.1              SummarizedExperiment_1.21.1
-## [39] MassSpecWavelet_1.57.0      crayon_1.3.4               
-## [41] memoise_1.1.0               evaluate_0.14              
+## [33] tibble_3.0.6                IRanges_2.25.6             
+## [35] ggplot2_3.3.3               ellipsis_0.3.1             
+## [37] cachem_1.0.4                SummarizedExperiment_1.21.1
+## [39] MassSpecWavelet_1.57.0      crayon_1.4.1               
+## [41] memoise_2.0.0               evaluate_0.14              
 ## [43] fs_1.5.0                    ncdf4_1.17                 
-## [45] doParallel_1.0.16           MASS_7.3-53                
-## [47] textshaping_0.2.1           tools_4.1.0                
-## [49] lifecycle_0.2.0             matrixStats_0.57.0         
+## [45] doParallel_1.0.16           MASS_7.3-53.1              
+## [47] textshaping_0.3.0           tools_4.1.0                
+## [49] lifecycle_0.2.0             matrixStats_0.58.0         
 ## [51] stringr_1.4.0               munsell_0.5.0              
 ## [53] DelayedArray_0.17.7         pcaMethods_1.83.0          
 ## [55] compiler_4.1.0              pkgdown_1.6.1.9000         
-## [57] GenomeInfoDb_1.27.3         mzID_1.29.0                
-## [59] systemfonts_0.3.2           rlang_0.4.10               
+## [57] GenomeInfoDb_1.27.6         mzID_1.29.0                
+## [59] systemfonts_1.0.1           rlang_0.4.10               
 ## [61] grid_4.1.0                  RCurl_1.98-1.2             
 ## [63] iterators_1.0.13            MsCoreUtils_1.3.2          
-## [65] labeling_0.4.2              bitops_1.0-6               
-## [67] rmarkdown_2.6               gtable_0.3.0               
-## [69] codetools_0.2-18            R6_2.5.0                   
-## [71] knitr_1.30                  rprojroot_2.0.2            
-## [73] ragg_0.4.0                  desc_1.2.0                 
+## [65] bitops_1.0-6                rmarkdown_2.6              
+## [67] gtable_0.3.0                codetools_0.2-18           
+## [69] R6_2.5.0                    knitr_1.31                 
+## [71] fastmap_1.1.0               rprojroot_2.0.2            
+## [73] ragg_0.4.1                  desc_1.2.0                 
 ## [75] stringi_1.5.3               vctrs_0.3.6                
-## [77] DEoptimR_1.0-8              xfun_0.20</code></pre>
+## [77] DEoptimR_1.0-8              xfun_0.21</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
-<div id="ref-Ludwig:2018hv">
-<p>1. Ludwig C, Gillet L, Rosenberger G, Amon S, Collins BC, Aebersold R: <strong>Data-independent acquisition-based SWATH-MS for quantitative proteomics: a tutorial.</strong> <em>Molecular systems biology</em> 2018, <strong>14</strong>:e8126.</p>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Ludwig:2018hv" class="csl-entry">
+1. Ludwig C, Gillet L, Rosenberger G, Amon S, Collins BC, Aebersold R: <strong><span class="nocase">Data-independent acquisition-based SWATH-MS for quantitative proteomics: a tutorial.</span></strong> <em>Molecular systems biology</em> 2018, <strong>14</strong>:e8126.
 </div>
 </div>
 </div>
@@ -661,6 +748,8 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 
   
 
+
+  
 
   </body>
 </html>

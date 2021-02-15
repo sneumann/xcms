@@ -48,6 +48,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -59,9 +61,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -75,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -204,7 +212,7 @@
 #&gt; Profile method: bin 
 #&gt; Profile step: 1 m/z (401 grid points from 200 to 600 m/z)
 #&gt; 
-#&gt; Memory usage: 10.7 MB</div><div class='input'>    <span class='co'>##Lets assume that the lockmass starts at 1 and is every 100 scans</span>
+#&gt; Memory usage: 10.8 MB</div><div class='input'>    <span class='co'>##Lets assume that the lockmass starts at 1 and is every 100 scans</span>
     <span class='va'>lockMass</span><span class='op'>&lt;-</span><span class='fu'>xcms</span><span class='fu'>:::</span><span class='fu'>makeacqNum</span><span class='op'>(</span><span class='va'>xr</span>, freq<span class='op'>=</span><span class='fl'>100</span>, start<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
     <span class='co'>## these are equcal</span>
     <span class='va'>lockmass</span><span class='op'>&lt;-</span><span class='fu'><a href='AutoLockMass-methods.html'>AutoLockMass</a></span><span class='op'>(</span><span class='va'>xr</span><span class='op'>)</span>
@@ -255,6 +263,8 @@
 
   
 
+
+  
 
   </body>
 </html>

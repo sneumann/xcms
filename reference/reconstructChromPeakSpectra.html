@@ -40,9 +40,11 @@
 
 
 <meta property="og:title" content="Data independent acquisition (DIA): reconstruct MS2 spectra — reconstructChromPeakSpectra" />
-<meta property="og:description" content="Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-data independent acquisition (DIA) data (such as SWATH). See the
+<meta property="og:description" content="Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible)
+for data independent acquisition (DIA) data (such as SWATH). See the
 LC-MS/MS analysis vignette for more details and examples." />
+
+
 
 
 
@@ -58,9 +60,15 @@ LC-MS/MS analysis vignette for more details and examples." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -74,7 +82,7 @@ LC-MS/MS analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -128,8 +136,8 @@ LC-MS/MS analysis vignette for more details and examples." />
     </div>
 
     <div class="ref-description">
-    <p>Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-data independent acquisition (DIA) data (such as SWATH). See the
+    <p><em>Reconstructs</em> MS2 spectra for each MS1 chromatographic peak (if possible)
+for data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
 
@@ -140,7 +148,8 @@ data independent acquisition (DIA) data (such as SWATH). See the
   minCor <span class='op'>=</span> <span class='fl'>0.8</span>,
   intensity <span class='op'>=</span> <span class='st'>"maxo"</span>,
   peakId <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>object</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span><span class='op'>)</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
+  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -188,11 +197,19 @@ By default they are reconstructed for all MS1 chromatographic peaks.</p></td>
       <td><p>parallel processing setup. See <code>bpparam()</code> for more
 information.</p></td>
     </tr>
+    <tr>
+      <th>return.type</th>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the type of the returned object.
+Can be either <code>return.type = "MSpectra"</code> (the default) to return a
+<code><a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSnbase::MSpectra</a></code> object or <code>return.type = "Spectra"</code> for the newer
+<code><a href='https://rdrr.io/pkg/Spectra/man/Spectra.html'>Spectra::Spectra</a></code> object.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
+    <p>Depending on <code>return.type</code>:</p><ul>
+<li><p><code><a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
 in <code>object</code>. Contains empty <a href='https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html'>Spectrum2</a> objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
@@ -204,7 +221,11 @@ MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic
 peaks used for the spectrum reconstruction is reported. The MS1
 chromatographic peak intensity is reported as the reconstructed
-spectrum's <code>precursorIntensity</code> value (see parameter <code>intensity</code> above).</p>
+spectrum's <code>precursorIntensity</code> value (see parameter <code>intensity</code> above).</p></li>
+<li><p><code>Spectra</code> object (defined in the <code>Spectra</code> package). The same content and
+information than above.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In detail, the function performs for each MS1 chromatographic peak:</p><ul>
@@ -254,6 +275,8 @@ peak detection in DIA isolation windows and for examples.</p></div>
 
   
 
+
+  
 
   </body>
 </html>

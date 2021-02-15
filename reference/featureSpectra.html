@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extract (MS2) spectra associated with features — featureSpectra • xcms</title>
+<title>Extract spectra associated with features — featureSpectra • xcms</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,24 @@
 
 
 
-<meta property="og:title" content="Extract (MS2) spectra associated with features — featureSpectra" />
-<meta property="og:description" content="Return (MS2) spectra for all chromatographic peaks associated with the
-features in x (defined by featureDefinitions())." />
+<meta property="og:title" content="Extract spectra associated with features — featureSpectra" />
+<meta property="og:description" content="This function returns spectra associated with the identified features in the
+input object. Parameter msLevel allows to define whether MS level 1 or 2
+spectra should be returned. For msLevel = 1L all MS1 spectra within the
+retention time range of each chromatographic peak (in that respective data
+file) associated with a feature are returned. For msLevel = 2L all MS2
+spectra with a retention time within the retention time range and their
+precursor m/z within the m/z range of any chromatographic peak of a feature
+are returned. See also chromPeakSpectra() (used internally to extract
+spectra for each chromatographic peak of a feature) for additional
+information.
+In contrast to the chromPeakSpectra() function, selecting a method
+different than &quot;all&quot; will not return a single spectrum per feature, but
+one spectrum per chromatographic peak assigned to the feature.
+Note also that msLevel = 1L is only supported for return.type = &quot;List&quot;
+or return.type = &quot;Spectra&quot;." />
+
+
 
 
 
@@ -57,9 +72,15 @@ features in x (defined by featureDefinitions())." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -73,7 +94,7 @@ features in x (defined by featureDefinitions())." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -121,24 +142,38 @@ features in x (defined by featureDefinitions())." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extract (MS2) spectra associated with features</h1>
+    <h1>Extract spectra associated with features</h1>
     <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R'><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>featureSpectra.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Return (MS2) spectra for all chromatographic peaks associated with the
-features in <code>x</code> (defined by <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>).</p>
+    <p>This function returns spectra associated with the identified features in the
+input object. Parameter <code>msLevel</code> allows to define whether MS level 1 or 2
+spectra should be returned. For <code>msLevel = 1L</code> all MS1 spectra within the
+retention time range of each chromatographic peak (in that respective data
+file) associated with a feature are returned. For <code>msLevel = 2L</code> all MS2
+spectra with a retention time within the retention time range and their
+precursor m/z within the m/z range of any chromatographic peak of a feature
+are returned. See also <code><a href='chromPeakSpectra.html'>chromPeakSpectra()</a></code> (used internally to extract
+spectra for each chromatographic peak of a feature) for additional
+information.</p>
+<p>In contrast to the <code><a href='chromPeakSpectra.html'>chromPeakSpectra()</a></code> function, selecting a <code>method</code>
+different than <code>"all"</code> will not return a single spectrum per feature, but
+one spectrum per <strong>chromatographic peak</strong> assigned to the feature.</p>
+<p>Note also that <code>msLevel = 1L</code> is only supported for <code>return.type = "List"</code>
+or <code>return.type = "Spectra"</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>featureSpectra</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  msLevel <span class='op'>=</span> <span class='fl'>2</span>,
+  msLevel <span class='op'>=</span> <span class='fl'>2L</span>,
   expandRt <span class='op'>=</span> <span class='fl'>0</span>,
   expandMz <span class='op'>=</span> <span class='fl'>0</span>,
   ppm <span class='op'>=</span> <span class='fl'>0</span>,
   skipFilled <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"list"</span><span class='op'>)</span>,
+  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span>, <span class='st'>"list"</span>, <span class='st'>"List"</span><span class='op'>)</span>,
+  features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -171,13 +206,23 @@ by a value dependent on the peak's m/z.</p></td>
     </tr>
     <tr>
       <th>skipFilled</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether no spectra for filled-in peaks should
-be reported.</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether spectra for filled-in peaks should
+be reported or not.</p></td>
     </tr>
     <tr>
       <th>return.type</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining whether the result should be a
-MSpectra object or a simple <code>list</code>. See below for more information.</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the result type. Defaults to
+<code>return.type = "MSpectra"</code> but <code>return.type = "Spectra"</code> or
+<code>return.type = "List"</code> are preferred. See below for more information.</p></td>
+    </tr>
+    <tr>
+      <th>features</th>
+      <td><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
+subset of features in <code>featureDefinitions</code> for which spectra should
+be returned (providing either their ID, a logical vector same length
+than <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(featureDefinitions(x))</a></code> or their index in
+<code><a href='XCMSnExp-class.html'>featureDefinitions(x)</a></code>). This parameter overrides <code>skipFilled</code> and is
+only supported for <code>return.type</code> being either <code>"Spectra"</code> or <code>"List"</code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -188,26 +233,24 @@ such as <code>method</code>.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Which object is returned depends on the value of <code>return.type</code>:</p><ul>
-<li><p>For <code>return.type = "MSpectra"</code> (the default): a MSpectra object with data
-only for features for which a Spectrum2 was found. The
-ID of the feature and of the chromatographic peak to which the
-spectrum is associated are provided with the <code>"feature_id"</code> and
-<code>"peak_id"</code> metadata columns.</p></li>
-<li><p>For <code>return.type = "list"</code>: a <code>list, same length than there are features in </code>x<code>, each element being a </code>list<code>of [Spectrum2-class] objects with the MS2 spectra that potentially represent ions measured by each chromatographic peak associated with the feature, or</code>NULL`
-if none are present.</p></li>
+    <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul>
+<li><p><code>return.type = "MSpectra"</code>: a MSpectra object with elements being
+Spectrum objects. The result objects contains all spectra
+for all features. Metadata column <code>"feature_id"</code> provides the ID of the
+respective feature (i.e. its rowname in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>).</p></li>
+<li><p><code>return.type = "Spectra"</code>: a <code>Spectra</code> object (defined in the <code>Spectra</code>
+package). The result contains all spectra for all features. Metadata column
+<code>"feature_id"</code> provides the ID of the respective feature (i.e. its rowname
+in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code>"feature_index"</code> its index in the object's
+<code>featureDefinitions</code> matrix.</p></li>
+<li><p><code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
+0 or contain Spectrum2 object(s) within the m/z-rt range. The
+length of the list matches the number of features.</p></li>
+<li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
+features is returned with elements being either <code>NULL</code> (no
+spectrum found) or a <code>Spectra</code> object.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>The function identifies all MS2 spectra with their precursor m/z within the
-m/z range of a chromatographic peak (i.e. <code>&gt;=</code> mzmin and <code>&lt;=</code> mzmax) of a
-feature and their retention time within the rt range of the same peak
-(<code>&gt;=</code> rtmin and <code>&lt;=</code> rtmax).</p>
-<p>The optional parameter <code>method</code> allows to ensure that for each
-chromatographic peak in one sample only one MS2 spectrum is returned.
-See <code><a href='chromPeakSpectra.html'>chromPeakSpectra()</a></code> or the <em>LC-MS/MS analysis</em> vignette for more
-details.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -235,6 +278,8 @@ details.</p>
 
   
 
+
+  
 
   </body>
 </html>

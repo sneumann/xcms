@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -76,7 +78,7 @@
 
       
 
-      </header><script src="xcms_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="xcms_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>LCMS data preprocessing and analysis with xcms</h1>
@@ -100,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-01-08 13:48:44<br><strong>Compiled</strong>: Fri Jan 8 15:01:36 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-02-15 10:15:15<br><strong>Compiled</strong>: Mon Feb 15 11:29:59 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -192,7 +194,7 @@ Distribution of total ion currents per file.
 <p>Also, we can cluster the samples based on similarity of their base peak chromatogram. This can also be helpful to spot potentially problematic samples in an experiment or generally get an initial overview of the sample grouping in the experiment. Since the retention times between samples are not exactly identical, we use the <code>bin</code> function to group intensities in fixed time ranges (bins) along the retention time axis. In the present example we use a bin size of 1 second, the default is 0.5 seconds. The clustering is performed using complete linkage hierarchical clustering on the pairwise correlations of the binned base peak chromatograms.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Bin the BPC</span>
-<span class="va">bpis_bin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/bin-methods.html">bin</a></span><span class="op">(</span><span class="va">bpis</span>, binSize <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">bpis_bin</span> <span class="op">&lt;-</span> <span class="fu">MSnbase</span><span class="fu">::</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/bin-methods.html">bin</a></span><span class="op">(</span><span class="va">bpis</span>, binSize <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 
 <span class="co">## Calculate correlation on the log2 transformed base peak intensities</span>
 <span class="va">cormat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">bpis_bin</span>, <span class="va">intensity</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -1120,7 +1122,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Peak detection 
-##  date: Fri Jan  8 15:02:02 2021 
+##  date: Mon Feb 15 11:30:24 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: CentWaveParam 
@@ -1129,7 +1131,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[2]]
 ## Object of class "XProcessHistory"
 ##  type: Peak refinement 
-##  date: Fri Jan  8 15:02:21 2021 
+##  date: Mon Feb 15 11:30:44 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1138,7 +1140,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[3]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Fri Jan  8 15:02:36 2021 
+##  date: Mon Feb 15 11:30:58 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1147,7 +1149,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[4]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Fri Jan  8 15:02:37 2021 
+##  date: Mon Feb 15 11:30:59 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1156,7 +1158,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[5]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Fri Jan  8 15:02:43 2021 
+##  date: Mon Feb 15 11:31:06 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1165,7 +1167,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[6]]
 ## Object of class "XProcessHistory"
 ##  type: Missing peak filling 
-##  date: Fri Jan  8 15:02:45 2021 
+##  date: Mon Feb 15 11:31:07 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: ChromPeakAreaParam 
@@ -1178,7 +1180,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Fri Jan  8 15:02:37 2021 
+##  date: Mon Feb 15 11:30:59 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1364,7 +1366,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ##  Retention time: 42:10 
 ##  MSn level: 1 
 ##  Total ion count: 445 
-##  Polarity: NA</code></pre>
+##  Polarity: -1</code></pre>
 <p>At last we can also use the <code>split</code> method that allows to split an <code>XCMSnExp</code> based on a provided factor <code>f</code>. Below we split <code>xdata</code> per file. Using <code>keepAdjustedRtime = TRUE</code> ensures that adjusted retention times are not removed.</p>
 <div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">xdata</span>, f <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">fromFile</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -1415,21 +1417,21 @@ PCA for the faahKO data set, un-normalized intensities.
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
-<div id="ref-Saghatelian04">
-<p>1. Saghatelian A, Trauger SA, Want EJ, Hawkins EG, Siuzdak G, Cravatt BF: <strong>Assignment of endogenous substrates to enzymes by global metabolite profiling</strong>. <em>Biochemistry</em> 2004, <strong>43</strong>:14332–9.</p>
+<div id="refs" class="references csl-bib-body">
+<div id="ref-Saghatelian04" class="csl-entry">
+1. Saghatelian A, Trauger SA, Want EJ, Hawkins EG, Siuzdak G, Cravatt BF: <strong>Assignment of endogenous substrates to enzymes by global metabolite profiling</strong>. <em>Biochemistry</em> 2004, <strong>43</strong>:14332–9.
 </div>
-<div id="ref-Tautenhahn:2008fx">
-<p>2. Tautenhahn R, Böttcher C, Neumann S: <strong>Highly sensitive feature detection for high resolution LC/MS.</strong> <em>BMC Bioinformatics</em> 2008, <strong>9</strong>:504.</p>
+<div id="ref-Tautenhahn:2008fx" class="csl-entry">
+2. Tautenhahn R, Böttcher C, Neumann S: <strong><span class="nocase">Highly sensitive feature detection for high resolution LC/MS.</span></strong> <em>BMC Bioinformatics</em> 2008, <strong>9</strong>:504.
 </div>
-<div id="ref-Smith:2013gr">
-<p>3. Smith R, Ventura D, Prince JT: <strong>LC-MS alignment in theory and practice: a comprehensive algorithmic review.</strong> <em>Briefings in bioinformatics</em> 2013, <strong>16</strong>:bbt080–117.</p>
+<div id="ref-Smith:2013gr" class="csl-entry">
+3. Smith R, Ventura D, Prince JT: <strong><span class="nocase">LC-MS alignment in theory and practice: a comprehensive algorithmic review.</span></strong> <em>Briefings in bioinformatics</em> 2013, <strong>16</strong>:bbt080–117.
 </div>
-<div id="ref-Prince:2006jj">
-<p>4. Prince JT, Marcotte EM: <strong>Chromatographic alignment of ESI-LC-MS proteomics data sets by ordered bijective interpolated warping.</strong> <em>Analytical chemistry</em> 2006, <strong>78</strong>:6140–6152.</p>
+<div id="ref-Prince:2006jj" class="csl-entry">
+4. Prince JT, Marcotte EM: <strong><span class="nocase">Chromatographic alignment of ESI-LC-MS proteomics data sets by ordered bijective interpolated warping.</span></strong> <em>Analytical chemistry</em> 2006, <strong>78</strong>:6140–6152.
 </div>
-<div id="ref-Smith:2006ic">
-<p>5. Smith CA, Want EJ, O’Maille G, Abagyan R, Siuzdak G: <strong>XCMS: processing mass spectrometry data for metabolite profiling using nonlinear peak alignment, matching, and identification.</strong> <em>Analytical chemistry</em> 2006, <strong>78</strong>:779–787.</p>
+<div id="ref-Smith:2006ic" class="csl-entry">
+5. Smith CA, Want EJ, O’Maille G, Abagyan R, Siuzdak G: <strong><span class="nocase">XCMS: processing mass spectrometry data for metabolite profiling using nonlinear peak alignment, matching, and identification.</span></strong> <em>Analytical chemistry</em> 2006, <strong>78</strong>:779–787.
 </div>
 </div>
 </div>
@@ -1458,6 +1460,8 @@ PCA for the faahKO data set, un-normalized intensities.
 
   
 
+
+  
 
   </body>
 </html>

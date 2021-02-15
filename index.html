@@ -22,6 +22,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -34,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -87,16 +89,31 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#the-xcms-package-version--3" class="anchor"></a>The <code>xcms</code> package (version &gt;= 3)</h1></div>
 <p><img align="right" src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/xcms/xcms.png" height="200"></p>
-<p>Version &gt;= 3 of the <code>xcms</code> package are updated and partially re-written versions of the original <code>xcms</code> package. The version number <em>3</em> was selected to avoid confusions with the <code>xcms2</code> (<a href="http://pubs.acs.org/doi/abs/10.1021/ac800795f" class="uri">http://pubs.acs.org/doi/abs/10.1021/ac800795f</a>) software. While providing all of the original software’s functionality, <code>xcms</code> version &gt;= 3 aims at:</p>
-<p>1) Better integration into the Bioconductor framework:</p>
+<p>Version &gt;= 3 of the <code>xcms</code> package are updated and partially re-written versions of the original <code>xcms</code> package. The version number <em>3</em> was selected to avoid confusions with the <code>xcms2</code> (http://pubs.acs.org/doi/abs/10.1021/ac800795f) software. While providing all of the original software’s functionality, <code>xcms</code> version &gt;= 3 aims at:</p>
+<ol style="list-style-type: decimal">
+<li>Better integration into the Bioconductor framework:</li>
+</ol>
 <ul>
 <li>Make use and extend classes defined in the <code>MSnbase</code> package.</li>
 <li>Implement class versioning (Biobase’s <code>Versioned</code> class).</li>
-<li>Use <code>BiocParallel</code> for parallel processing. 2) Implementation of validation methods for all classes to ensure data integrity. 3) Easier and faster access to raw spectra data. 4) Cleanup of the source code:</li>
-<li>Remove obsolete and redundant functionality (<code>getEIC</code>, <code>rawEIC</code> etc).</li>
-<li>Unify interfaces, i.e. implement a layer of base functions accessing all analysis methods (which are implemented in C, C++ or R). 5) Using a more consistent naming scheme of methods that follows established naming conventions (e.g. <code>correspondence</code> instead of <code>grouping</code>). 6) Update, improve and extend the documentation. 7) Establishing a layer of base R-functions that interface all analysis methods. These should take M/Z, retention time (or scan index) and intensity values as input along with optional arguments for the downstream functions (implemented in C, C++ or R). The input arguments should be basic R objects (numeric vectors) thus enabling easy integration of analysis methods in other R packages. 8) The user interface’s analysis methods should take the (raw) data object and a parameter class, that is used for dispatching to the corresponding analysis algorithm.</li>
+<li>Use <code>BiocParallel</code> for parallel processing.</li>
 </ul>
-<p>Discussions and suggestions are welcome: <a href="https://github.com/sneumann/xcms/issues" class="uri">https://github.com/sneumann/xcms/issues</a></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Implementation of validation methods for all classes to ensure data integrity.</li>
+<li>Easier and faster access to raw spectra data.</li>
+<li>Cleanup of the source code:</li>
+</ol>
+<ul>
+<li>Remove obsolete and redundant functionality (<code>getEIC</code>, <code>rawEIC</code> etc).</li>
+<li>Unify interfaces, i.e. implement a layer of base functions accessing all analysis methods (which are implemented in C, C++ or R).</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Using a more consistent naming scheme of methods that follows established naming conventions (e.g. <code>correspondence</code> instead of <code>grouping</code>).</li>
+<li>Update, improve and extend the documentation.</li>
+<li>Establishing a layer of base R-functions that interface all analysis methods. These should take M/Z, retention time (or scan index) and intensity values as input along with optional arguments for the downstream functions (implemented in C, C++ or R). The input arguments should be basic R objects (numeric vectors) thus enabling easy integration of analysis methods in other R packages.</li>
+<li>The user interface’s analysis methods should take the (raw) data object and a parameter class, that is used for dispatching to the corresponding analysis algorithm.</li>
+</ol>
+<p>Discussions and suggestions are welcome: https://github.com/sneumann/xcms/issues</p>
 <p>For more information see the package <a href="vignettes/xcms.Rmd">vignette</a>.</p>
 </div>
 
@@ -114,6 +131,7 @@
 </li>
 </ul>
 </div>
+
 <div class="license">
 <h2>License</h2>
 <ul class="list-unstyled">
@@ -121,12 +139,15 @@
 </li>
 </ul>
 </div>
+
+
 <div class="citation">
 <h2>Citation</h2>
 <ul class="list-unstyled">
 <li><a href="authors.html">Citing xcms</a></li>
 </ul>
 </div>
+
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
@@ -135,7 +156,7 @@
 </ul>
 </div>
 
-  <div class="dev-status">
+<div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check-bioc"><img src="https://github.com/sneumann/xcms/workflows/R-CMD-check-bioc/badge.svg" alt="R-CMD-check-bioc"></a></li>
@@ -145,7 +166,8 @@
 <li><a href="http://www.bioconductor.org/checkResults/devel/bioc-LATEST/xcms.html"><img src="http://www.bioconductor.org/shields/build/devel/bioc/xcms.svg" alt="Bioconductor devel build status"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
@@ -162,6 +184,8 @@
 
   
 
+
+  
 
   </body>
 </html>

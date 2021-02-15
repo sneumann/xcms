@@ -40,14 +40,35 @@
 
 
 <meta property="og:title" content="Extract (MS2) spectra associated with chromatographic peaks — chromPeakSpectra" />
-<meta property="og:description" content="Extract (MS2) spectra from an XCMSnExp object that represent ions within
-the rt and m/z range of each chromatographic peak (in the same file
-/sample in which the peak was detected). All MS2 spectra are returned for
-chromatographic peak i for which the precursor m/z is
-&amp;gt;= chromPeaks(x)[i, &quot;mzmin&quot;] and &amp;lt;= chromPeaks(x)[i, &quot;mzmax&quot;] and the
-retention time is &amp;gt;= chromPeaks(x)[i, &quot;rtmin&quot;] and
-&amp;lt;= chromPeaks(x)[i, &quot;rtmax&quot;].
+<meta property="og:description" content="Extract (MS1 or MS2) spectra from an XCMSnExp object for each identified
+chromatographic peak. For msLevel = 1L (only supported for
+return.type = &quot;Spectra&quot; or return.type = &quot;List&quot;) MS1 spectra within the
+retention time boundaries (in the file in which the peak was detected) are
+returned. For msLevel = 2L MS2 spectra are returned for a chromatographic
+peak if their precursor m/z is within the retention time and m/z range of
+the chromatographic peak. Parameter method allows to define whether all
+or a single spectrum should be returned:
+method = &quot;all&quot;: (default): return all spectra for each peak.
+method = &quot;closest_rt&quot;: return the spectrum with the retention time
+closest to the peak's retention time (at apex).
+method = &quot;closest_mz&quot;: return the spectrum with the precursor m/z
+closest to the peaks's m/z (at apex); only supported for msLevel = 2L.
+method = &quot;signal&quot;: return the spectrum with the sum of intensities most
+similar to the peak's apex signal (&quot;maxo&quot;); only supported for
+msLevel = 2L.
+method = &quot;largest_tic&quot;: return the spectrum with the largest total
+signal (sum of peaks intensities).
+method = &quot;largest_bpi&quot;: return the spectrum with the largest peak
+intensity (maximal peak intensity).
+
+
+Parameter return.type allows to specify the type of the result object.
+Please use return.type = &quot;Spectra&quot; or return.type = &quot;List&quot;,
+return.type = &quot;list&quot; or the default return.type = &quot;MSpectra&quot; will be
+deprecated (also, they do not support extracting MS1 spectra).
 See also the LC-MS/MS data analysis vignette for more details and examples." />
+
+
 
 
 
@@ -63,9 +84,15 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,7 +106,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
       </span>
     </div>
 
@@ -133,13 +160,32 @@ See also the LC-MS/MS data analysis vignette for more details and examples." />
     </div>
 
     <div class="ref-description">
-    <p>Extract (MS2) spectra from an <a href='XCMSnExp-class.html'>XCMSnExp</a> object that represent ions within
-the rt and m/z range of each chromatographic peak (in the same file
-/sample in which the peak was detected). All MS2 spectra are returned for
-chromatographic peak <code>i</code> for which the precursor m/z is
-<code>&gt;= chromPeaks(x)[i, "mzmin"]</code> and <code>&lt;= chromPeaks(x)[i, "mzmax"]</code> and the
-retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
-<code>&lt;= chromPeaks(x)[i, "rtmax"]</code>.</p>
+    <p>Extract (MS1 or MS2) spectra from an <a href='XCMSnExp-class.html'>XCMSnExp</a> object for each identified
+chromatographic peak. For <code>msLevel = 1L</code> (only supported for
+<code>return.type = "Spectra"</code> or <code>return.type = "List"</code>) MS1 spectra within the
+retention time boundaries (in the file in which the peak was detected) are
+returned. For <code>msLevel = 2L</code> MS2 spectra are returned for a chromatographic
+peak if their precursor m/z is within the retention time and m/z range of
+the chromatographic peak. Parameter <code>method</code> allows to define whether all
+or a single spectrum should be returned:</p><ul>
+<li><p><code>method = "all"</code>: (default): return all spectra for each peak.</p></li>
+<li><p><code>method = "closest_rt"</code>: return the spectrum with the retention time
+closest to the peak's retention time (at apex).</p></li>
+<li><p><code>method = "closest_mz"</code>: return the spectrum with the precursor m/z
+closest to the peaks's m/z (at apex); only supported for <code>msLevel = 2L</code>.</p></li>
+<li><p><code>method = "signal"</code>: return the spectrum with the sum of intensities most
+similar to the peak's apex signal (<code>"maxo"</code>); only supported for
+<code>msLevel = 2L</code>.</p></li>
+<li><p><code>method = "largest_tic"</code>: return the spectrum with the largest total
+signal (sum of peaks intensities).</p></li>
+<li><p><code>method = "largest_bpi"</code>: return the spectrum with the largest peak
+intensity (maximal peak intensity).</p></li>
+</ul>
+
+<p>Parameter <code>return.type</code> allows to specify the <em>type</em> of the result object.
+Please use <code>return.type = "Spectra"</code> or <code>return.type = "List"</code>,
+<code>return.type = "list"</code> or the default <code>return.type = "MSpectra"</code> will be
+deprecated (also, they do not support extracting MS1 spectra).</p>
 <p>See also the <em>LC-MS/MS data analysis</em> vignette for more details and examples.</p>
     </div>
 
@@ -149,9 +195,10 @@ retention time is <code>&gt;= chromPeaks(x)[i, "rtmin"]</code> and
   expandRt <span class='op'>=</span> <span class='fl'>0</span>,
   expandMz <span class='op'>=</span> <span class='fl'>0</span>,
   ppm <span class='op'>=</span> <span class='fl'>0</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"all"</span>, <span class='st'>"closest_rt"</span>, <span class='st'>"closest_mz"</span>, <span class='st'>"signal"</span>, <span class='st'>"largest_tic"</span>, <span class='st'>"largest_bpi"</span><span class='op'>)</span>,
   skipFilled <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"list"</span><span class='op'>)</span>
+  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span>, <span class='st'>"list"</span>, <span class='st'>"List"</span><span class='op'>)</span>,
+  peaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -183,37 +230,50 @@ by a value dependent on the peak's m/z.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying which MS2 spectra should be included.
-Defaults to <code>"all"</code> in which all MS2 spectra within the rt and m/z range
-of a chromatographic peak are returned. <code>"closest_rt"</code> returns the one
-MS2 spectrum with the retention time closest to the chromatographic
-peak's apex rt. <code>"closest_mz"</code> returns the MS2 spectrum with the
-precursor m/z closest to the chromatographic peak's m/z. <code>"signal"</code>
-returns the MS2 spectrum which total signal is closest to the
-chromatographic peak's maximal signal (<code>"maxo"</code>).</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying which spectra to include in the
+result. Defaults to <code>method = "all"</code>. See function description for
+details.</p></td>
     </tr>
     <tr>
       <th>skipFilled</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether no spectra for filled-in peaks should
-be reported.</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether spectra for filled-in peaks should
+be reported or not.</p></td>
     </tr>
     <tr>
       <th>return.type</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining whether the result should be a
-MSpectra object or a simple <code>list</code>. See below for more information.</p></td>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the result type. Defaults to
+<code>return.type = "MSpectra"</code> but <code>return.type = "Spectra"</code> or
+<code>return.type = "List"</code> are preferred. See below for more information.</p></td>
+    </tr>
+    <tr>
+      <th>peaks</th>
+      <td><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
+subset of chromatographic peaks in <code>chromPeaks</code> for which spectra should
+be returned (providing either their ID, a logical vector same length
+than <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(chromPeaks(x))</a></code> or their index in <code><a href='XCMSnExp-class.html'>chromPeaks(x)</a></code>). This
+parameter overrides <code>skipFilled</code> and is only supported for <code>return.type</code>
+being either <code>"Spectra"</code> or <code>"List"</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Which object is returned depends on the value of <code>return.type</code>:</p><ul>
-<li><p>For <code>return.type = "MSpectra"</code>: a MSpectra object with elements being
+    <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul>
+<li><p><code>return.type = "MSpectra"</code>: a MSpectra object with elements being
 Spectrum objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
 respective peak (i.e. its rowname in <code><a href='XCMSnExp-class.html'>chromPeaks()</a></code>).</p></li>
-<li><p>If <code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
+<li><p><code>return.type = "Spectra"</code>: a <code>Spectra</code> object (defined in the <code>Spectra</code>
+package). The result contains all spectra for all peaks. Metadata column
+<code>"peak_id"</code> provides the ID of the respective peak (i.e. its rowname in
+<code><a href='XCMSnExp-class.html'>chromPeaks()</a></code> and <code>"peak_index"</code> its index in the object's <code>chromPeaks</code>
+matrix.</p></li>
+<li><p><code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
 0 or contain Spectrum2 object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.</p></li>
+<li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
+chromatographic peaks is returned with elements being either <code>NULL</code> (no
+spectrum found) or a <code>Spectra</code> object.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -231,25 +291,96 @@ length of the list matches the number of peaks.</p></li>
 
 <span class='co'>## Perform MS1 peak detection</span>
 <span class='va'>dda</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>dda</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span><span class='op'>(</span>peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>15</span><span class='op'>)</span>, prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>1000</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 7 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 8 found.</span></div><div class='input'><span class='va'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 7 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 8 found.</span></div><div class='input'>
+<span class='co'>## Load the required Spectra package and return all MS2 spectro for each</span>
+<span class='co'>## chromatographic peaks as a Spectra object</span>
+<span class='va'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span>, return.type <span class='op'>=</span> <span class='st'>"Spectra"</span><span class='op'>)</span>
 <span class='va'>ms2_sps</span>
-</div><div class='output co'>#&gt; MSpectra with 25 spectra and 1 metadata column(s):
-#&gt;                  msLevel     rtime peaksCount |     peak_id
-#&gt;                &lt;integer&gt; &lt;numeric&gt;  &lt;integer&gt; | &lt;character&gt;
-#&gt;   CP1.F1.S1812         2   237.869       1489 |         CP1
-#&gt;   CP1.F1.S1842         2   240.759       2610 |         CP1
-#&gt;   CP1.F1.S1846         2   241.299       1807 |         CP1
-#&gt;   CP2.F1.S2391         2   318.444        102 |         CP2
-#&gt;   CP3.F1.S2729         2   354.271         26 |         CP3
-#&gt;            ...       ...       ...        ... .         ...
-#&gt;   CP7.F1.S3119         2   386.669        440 |         CP7
-#&gt;   CP7.F1.S3133         2   387.569        586 |         CP7
-#&gt;   CP7.F1.S3146         2   388.269        599 |         CP7
-#&gt;   CP8.F1.S2591         2   342.552        767 |         CP8
-#&gt;   CP8.F1.S2601         2   343.322        541 |         CP8</div><div class='input'>
-<span class='co'>## Metadata column `peak_id` contains the ID of the chromatographic peak</span>
-<span class='co'>## of the MS2 spectrum</span>
-</div></pre>
+</div><div class='output co'>#&gt; MSn data (Spectra) with 25 spectra in a MsBackendMzR backend:
+#&gt;            msLevel     rtime scanIndex
+#&gt;          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+#&gt; F1.S1812         2   237.869      1812
+#&gt; F1.S1842         2   240.759      1842
+#&gt; F1.S1846         2   241.299      1846
+#&gt; F1.S2391         2   318.444      2391
+#&gt; F1.S2729         2   354.271      2729
+#&gt; ...            ...       ...       ...
+#&gt; F1.S3119         2   386.669      3119
+#&gt; F1.S3133         2   387.569      3133
+#&gt; F1.S3146         2   388.269      3146
+#&gt; F1.S2591         2   342.552      2591
+#&gt; F1.S2601         2   343.322      2601
+#&gt;  ... 38 more variables/columns.
+#&gt; 
+#&gt; file(s):
+#&gt; PestMix1_DDA.mzML
+#&gt; Processing:
+#&gt;  Merge 7 Spectra into one [Mon Feb 15 11:26:40 2021] </div><div class='input'>
+<span class='co'>## columns peak_id or peak_index assign spectra to the chromatographic peaks</span>
+<span class='va'>ms2_sps</span><span class='op'>$</span><span class='va'>peak_id</span>
+</div><div class='output co'>#&gt;  [1] "CP1" "CP1" "CP1" "CP2" "CP3" "CP3" "CP3" "CP3" "CP4" "CP4" "CP4" "CP6"
+#&gt; [13] "CP6" "CP6" "CP6" "CP6" "CP6" "CP7" "CP7" "CP7" "CP7" "CP7" "CP7" "CP8"
+#&gt; [25] "CP8"</div><div class='input'><span class='va'>ms2_sps</span><span class='op'>$</span><span class='va'>peak_index</span>
+</div><div class='output co'>#&gt;  [1] 1 1 1 2 3 3 3 3 4 4 4 6 6 6 6 6 6 7 7 7 7 7 7 8 8</div><div class='input'><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>dda</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;           mz    mzmin    mzmax      rt   rtmin   rtmax        into        intb
+#&gt; CP1 219.0961 219.0948 219.0996 240.897 235.892 246.984 15914.63661 15903.28137
+#&gt; CP2 219.0947 219.0936 219.0963 319.236 313.164 324.145    78.36274    67.09277
+#&gt; CP3 227.9913 227.9908 227.9921 357.929 351.649 365.748  5698.72930  5684.55178
+#&gt; CP4 300.0312 300.0296 300.0321 366.158 360.029 373.638 12468.01035 12454.28834
+#&gt; CP5 302.0284 302.0273 302.0295 366.158 360.449 373.638  7825.51188  7812.11153
+#&gt; CP6 224.0836 224.0831 224.0843 388.587 380.747 395.966  9401.70901  9386.10954
+#&gt; CP7 256.1102 256.1098 256.1109 388.167 380.330 395.556  8176.23790  8160.63125
+#&gt; CP8 298.2750 298.2739 298.2765 345.590 339.830 353.309 38318.95237 38305.30263
+#&gt;           maxo   sn sample
+#&gt; CP1 4877.11621 4876      1
+#&gt; CP2   19.35541   18      1
+#&gt; CP3 1459.38428 1458      1
+#&gt; CP4 3156.89258 3156      1
+#&gt; CP5 1974.66846 1974      1
+#&gt; CP6 2268.62915 2268      1
+#&gt; CP7 1836.12695 1835      1
+#&gt; CP8 8060.13037 8059      1</div><div class='input'>
+<span class='co'>## Alternatively, return the result as a List of Spectra objects. This list</span>
+<span class='co'>## is parallel to chromPeaks hence the mapping between chromatographic peaks</span>
+<span class='co'>## and MS2 spectra is easier.</span>
+<span class='va'>ms2_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span>, return.type <span class='op'>=</span> <span class='st'>"List"</span><span class='op'>)</span>
+<span class='va'>ms2_sps</span><span class='op'>[[</span><span class='fl'>1L</span><span class='op'>]</span><span class='op'>]</span>
+</div><div class='output co'>#&gt; MSn data (Spectra) with 3 spectra in a MsBackendMzR backend:
+#&gt;            msLevel     rtime scanIndex
+#&gt;          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+#&gt; F1.S1812         2   237.869      1812
+#&gt; F1.S1842         2   240.759      1842
+#&gt; F1.S1846         2   241.299      1846
+#&gt;  ... 38 more variables/columns.
+#&gt; 
+#&gt; file(s):
+#&gt; PestMix1_DDA.mzML</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>ms2_sps</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 8</div><div class='input'>
+<span class='co'>## In addition to MS2 spectra we could also return the MS1 spectrum for each</span>
+<span class='co'>## chromatographic peak which is closest to the peak's apex position.</span>
+<span class='va'>ms1_sps</span> <span class='op'>&lt;-</span> <span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span>, method <span class='op'>=</span> <span class='st'>"closest_rt"</span>,
+    return.type <span class='op'>=</span> <span class='st'>"Spectra"</span><span class='op'>)</span>
+<span class='va'>ms1_sps</span>
+</div><div class='output co'>#&gt; MSn data (Spectra) with 8 spectra in a MsBackendMzR backend:
+#&gt;            msLevel     rtime scanIndex
+#&gt;          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;
+#&gt; F1.S1843         1   240.897      1843
+#&gt; F1.S2396         1   319.236      2396
+#&gt; F1.S2804         1   357.929      2804
+#&gt; F1.S2920         1   366.158      2920
+#&gt; F1.S2920         1   366.158      2920
+#&gt; F1.S3153         1   388.587      3153
+#&gt; F1.S3144         1   388.167      3144
+#&gt; F1.S2620         1   345.590      2620
+#&gt;  ... 38 more variables/columns.
+#&gt; 
+#&gt; file(s):
+#&gt; PestMix1_DDA.mzML
+#&gt; Processing:
+#&gt;  Merge 8 Spectra into one [Mon Feb 15 11:26:40 2021] </div><div class='input'>
+<span class='co'>## Parameter peaks would allow to extract spectra for specific peaks only</span>
+<span class='fu'>chromPeakSpectra</span><span class='op'>(</span><span class='va'>dda</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span>, method <span class='op'>=</span> <span class='st'>"closest_rt"</span>, peaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring parameter 'peaks' which is only supported for 'return.type = "Spectra"' and 'return.type = "List"'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: msLevel = 1 is currently not supported forreturn.type = "MSpectra" or return.type = "list".</span></div><div class='output co'>#&gt; MSpectra with 0 spectra and 1 metadata column(s):</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -273,6 +404,8 @@ length of the list matches the number of peaks.</p></li>
 
   
 
+
+  
 
   </body>
 </html>
