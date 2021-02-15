@@ -1,11 +1,6 @@
 ## Methods for the MsFeatureData class.
 #' @include functions-MsFeatureData.R do_adjustRtime-functions.R
 
-setMethod("initialize", "MsFeatureData", function(.Object, ...) {
-    classVersion(.Object)["MsFeatureData"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
 setValidity("MsFeatureData", function(object) {
     validateMsFeatureData(object)
 })

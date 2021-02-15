@@ -127,3 +127,21 @@ test_that("estimatePrecursorIntensity,OnDiskMSnExp works", {
 
     expect_error(estimatePrecursorIntensity(od_x))
 })
+
+test_that(".OnDiskMSnExp2MsBackendMzR works", {
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- .OnDiskMSnExp2MsBackendMzR(xod_x)
+        expect_equal(Spectra::rtime(res), unname(rtime(xod_x)))
+    }
+})
+
+test_that(".fData2MsBackendMzR works", {
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- .fData2MsBackendMzR(fData(xod_x), fileNames(xod_x))
+        expect_true(is(res, "MsBackendMzR"))
+        expect_equal(Spectra::rtime(res), unname(rtime(xod_x)))
+        tmp <- xod_x[c(1, 45, 113)]
+        res <- .fData2MsBackendMzR(fData(tmp), fileNames(tmp))
+        expect_equal(Spectra::rtime(res), unname(rtime(tmp)))
+    }
+})

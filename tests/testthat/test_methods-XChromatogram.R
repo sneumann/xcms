@@ -173,3 +173,10 @@ test_that("removeIntensity,XChromatogram(s) works", {
     expect_equal(intensity(res[3, 1]), c(53, 80, 130, NA_real_, NA_real_,
                                          NA_real_, NA_real_))
 })
+
+test_that("filterChromPeaks,XChromatogram works", {
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+    res <- filterChromPeaks(chrs[1, 1], n = 1L, by = "keepTop")
+    expect_true(nrow(chromPeaks(res)) == 1L)
+})

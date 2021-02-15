@@ -738,3 +738,37 @@ groupOverlaps <- function(xmin, xmax) {
     }
     res
 }
+
+.require_spectra <- function() {
+    if (!requireNamespace("Spectra", quietly = TRUE))
+        stop("Returning data as a 'Spectra' object requires the 'Spectra' ",
+             "package to be installed. Please ",
+             "install with 'BiocInstaller::install(\"Spectra\")'")
+    else invisible(TRUE)
+}
+
+#' very efficient extractor for the featureData of an OnDiskMSnExp
+#'
+#' @param x `OnDiskMSnExp`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.fdata <- function(x) {
+    x@featureData@data
+}
+
+.i2index <- function(x, ids = character(), name = character()) {
+    if (is.character(x))
+        x <- match(x, ids)
+    if (is.logical(x)) {
+        if (length(ids) && length(ids) != length(x))
+            stop("Length of '", name, "' has to be equal to ", length(ids), ".")
+        x <- which(x)
+    }
+    if (is.numeric(x))
+        x <- as.integer(x)
+    if (length(ids) && (any(x < 1) || any(x > length(ids))))
+        stop("'", name, "' out of bounds")
+    x
+}

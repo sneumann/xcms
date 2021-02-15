@@ -81,3 +81,22 @@ test_that(".xchrom_merge_neighboring_peaks and refineChromPeaks works", {
     expect_true(validObject(res_2))
     expect_equal(res, res_2)
 })
+
+test_that(".filter_chrom_peaks_keep_top works", {
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+    a <- chrs[1, 1]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_true(all(res@chromPeaks[, "maxo"] > min(a@chromPeaks[, "maxo"])))
+
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 5)
+    expect_equal(a, res)
+
+    a <- chrs[1, 2]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_true(nrow(chromPeaks(res)) == 0)
+
+    a <- chrs[1, 3]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_equal(chromPeaks(res), chromPeaks(a)[c(1, 3), ])
+})

@@ -269,3 +269,16 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
     }
     x
 }
+
+.filter_chrom_peaks_keep_top <- function(x, order = c("maxo", "into"),
+                                         n = 1L, decreasing = TRUE, ...) {
+    order <- match.arg(order)
+    ncp <- nrow(x@chromPeaks)
+    if (ncp && ncp > n) {
+        sn <- seq_len(n)
+        idx <- sort(order(chromPeaks(x)[, order], decreasing = decreasing)[sn])
+        x@chromPeaks <- x@chromPeaks[idx, , drop = FALSE]
+        x@chromPeakData <- x@chromPeakData[idx, ]
+    }
+    x
+}

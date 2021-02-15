@@ -580,7 +580,7 @@ setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
 #'
 #' @md
 setMethod("isolationWindowTargetMz", "OnDiskMSnExp", function(object) {
-    if ("isolationWindowTargetMZ" %in% colnames(fData(object)))
-        return(fData(object)$isolationWindowTargetMZ)
+    if ("isolationWindowTargetMZ" %in% colnames(.fdata(object)))
+        return(.fdata(object)$isolationWindowTargetMZ)
     rep(NA_real_, length(object))
 })

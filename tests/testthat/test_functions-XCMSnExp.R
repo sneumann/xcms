@@ -220,7 +220,7 @@ test_that("exportMetaboAnalyst works", {
 
 test_that("chromPeakSpectra works", {
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_spectra_for_all_peaks(xod_x, method = "other"))
+    expect_error(ms2_mspectrum_for_all_peaks(xod_x, method = "other"))
     expect_error(res <- chromPeakSpectra(od_x))
     expect_warning(res <- chromPeakSpectra(xod_x, return.type = "list"))
     expect_true(length(res) == nrow(chromPeaks(xod_x)))
@@ -233,36 +233,47 @@ test_that("chromPeakSpectra works", {
 
     dta <- pest_dda
 
-    ## ms2_spectra_for_peaks_from_file
+    ## ms2_mspectrum_for_peaks_from_file
     pks <- chromPeaks(dta)
     pks[, "sample"] <- 5
-    res_all <- ms2_spectra_for_peaks_from_file(dta, pks)
+    res_all <- ms2_mspectrum_for_peaks_from_file(dta, pks)
     expect_equal(length(res_all), nrow(pks))
     expect_equal(names(res_all), rownames(pks))
     expect_true(any(lengths(res_all) > 1))
     tmp <- unlist(res_all)
     expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
 
-    res_sub <- ms2_spectra_for_peaks_from_file(dta, pks, method = "closest_rt")
+    res_sub <- ms2_mspectrum_for_peaks_from_file(dta, pks, method = "closest_rt")
     expect_true(all(lengths(res_sub) <= 1))
     pks[, "mz"] <- NA
-    res_na <- ms2_spectra_for_peaks_from_file(dta, pks)
+    res_na <- ms2_mspectrum_for_peaks_from_file(dta, pks)
     expect_true(all(lengths(res_na) == 0))
 
-    ## ms2_spectra_for_all_peaks
-    res_all <- ms2_spectra_for_all_peaks(dta)
+    ## ms2_mspectrum_for_all_peaks
+    res_all <- ms2_mspectrum_for_all_peaks(dta)
     expect_equal(rownames(chromPeaks(dta)), names(res_all))
 
     ## With subset.
     subs <- sample(1:nrow(chromPeaks(dta)), 20)
-    res_subs <- ms2_spectra_for_all_peaks(dta, subset = subs)
+    res_subs <- ms2_mspectrum_for_all_peaks(dta, subset = subs)
     expect_true(all(lengths(res_subs[-subs]) == 0))
 
+    ## With Spectra
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- chromPeakSpectra(pest_dda, msLevel = 1L, return.type = "Spectra",
+                                method = "closest_rt")
+        expect_true(is(res, "Spectra"))
+        expect_equal(rtime(res), unname(chromPeaks(pest_dda)[, "rt"]))
+
+        res <- chromPeakSpectra(pest_dda, msLevel = 2L, return.type = "List")
+        expect_true(is(res, "List"))
+        expect_true(length(res) == nrow(chromPeaks(pest_dda)))
+    }
 })
 
 test_that("featureSpectra works", {
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_spectra_for_features(xod_x, method = "other"))
+    expect_error(ms2_mspectrum_for_features(xod_x, method = "other"))
     expect_error(res <- featureSpectra(xod_x))
     expect_warning(res <- featureSpectra(xod_xg, return.type = "list"))
     expect_true(length(res) == nrow(featureDefinitions(xod_xg)))
@@ -272,6 +283,13 @@ test_that("featureSpectra works", {
     expect_true(length(res) == 0)
     expect_warning(res <- featureSpectra(xod_xg, msLevel = 1L))
     expect_true(length(res) == 0)
+
+    res <- featureSpectra(xod_xg, method = "closest_rt", msLevel = 1L,
+                          return.type = "List")
+    expect_equal(length(res), nrow(featureDefinitions(xod_xg)))
+    for (i in seq_along(res)) {
+        expect_true(is(res[[i]], "Spectra"))
+    }
 })
 
 test_that("featureChromatograms works", {
@@ -627,4 +645,56 @@ test_that("manualChromPeaks works", {
 
     res3 <- manualChromPeaks(od_x, cp, samples = 2)
     expect_true(all(chromPeaks(res3)[, "sample"] == 2))
+})
+
+test_that(".spectra_for_peaks works", {
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res_all <- .spectra_for_peaks(pest_dda, method = "all")
+        expect_true(length(res_all) == nrow(chromPeaks(pest_dda)))
+        res_1 <- .spectra_for_peaks(pest_dda, method = "closest_rt")
+        expect_true(all(lengths(res_1) < 2))
+
+        res <- .spectra_for_peaks(pest_dda, msLevel = 3)
+        expect_true(all(lengths(res) == 0))
+
+        res <- .spectra_for_peaks(pest_dda, msLevel = 1L, method = "closest_rt")
+        res <- do.call(c, unname(res))
+        expect_equal(unname(rtime(res)), unname(chromPeaks(pest_dda)[, "rt"]))
+
+        expect_warning(res <- .spectra_for_peaks(pest_dda, msLevel = 1L,
+                                                 method = "signal"), "Changing")
+
+        res_56 <- .spectra_for_peaks(pest_dda, method = "all", peaks = c(5, 6))
+        expect_equal(res_56[[1]], res_all[[5]])
+        expect_equal(res_56[[2]], res_all[[6]])
+    }
+})
+
+test_that(".spectra_for_features works", {
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt")
+        expect_true(length(res) == nrow(featureDefinitions(xod_xgrg)))
+        expect_true(all(lengths(res) == 0))
+
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
+                                            msLevel = 1L)
+        expect_true(all(vapply(res, is, logical(1), "Spectra")))
+        fds <- featureDefinitions(xod_xgrg)
+        for (i in seq_len(nrow(fds))) {
+            expect_true(all(res[[i]]$feature_index == i))
+            expect_true(all(res[[i]]$feature_id == rownames(fds)[i]))
+        }
+
+        ## with subset
+        idx <- c(1, 400)
+        expect_error(.spectra_for_features(
+            xod_xg, msLevel = 1L, features = idx), "out of bounds")
+        res_all <- .spectra_for_features(xod_xg, msLevel = 1L)
+        res_sub <- .spectra_for_features(xod_xg, msLevel = 1L,
+                                         features = c(5, 12, 45))
+        expect_equal(length(res_sub), 3)
+        expect_equal(rtime(res_sub[[1L]]), rtime(res_all[[5L]]))
+        expect_equal(rtime(res_sub[[2L]]), rtime(res_all[[12L]]))
+        expect_equal(rtime(res_sub[[3L]]), rtime(res_all[[45L]]))
+    }
 })

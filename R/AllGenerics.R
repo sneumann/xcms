@@ -1,4 +1,4 @@
-## On the long run it would be nice to have all generics in here.
+# On the long run it would be nice to have all generics in here.
 ## Alphabetically ordered.
 
 ## A
@@ -108,6 +108,8 @@ setGeneric("fillPeaks.chrom", function(object, ...)
 setGeneric("fillPeaks.MSW", function(object, ...)
     standardGeneric("fillPeaks.MSW"))
 setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
+setGeneric("filterChromPeaks", function(object, ...)
+    standardGeneric("filterChromPeaks"))
 setGeneric("filterColumnsIntensityAbove", function(object, ...)
     standardGeneric("filterColumnsIntensityAbove"))
 setGeneric("filterColumnsKeepTop", function(object, ...)

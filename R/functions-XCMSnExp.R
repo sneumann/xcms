@@ -1702,13 +1702,14 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
 #' @author Johannes Rainer
 #'
 #' @noRd
-ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
+ms2_mspectrum_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
                                   ppm = 0, method = c("all",
                                                       "closest_rt",
                                                       "closest_mz",
                                                       "signal"),
                                   skipFilled = FALSE, subset = NULL,
                                   BPPARAM = bpparam()) {
+    ## DEPRECATE THIS IN BIOC3.14
     method <- match.arg(method)
     pks <- chromPeaks(x)
     if (ppm != 0)
@@ -1738,7 +1739,7 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
     pks <- split.data.frame(pks, f = file_factor)
     x <- .split_by_file2(
         x, msLevel. = 2L, subsetFeatureData = FALSE)[as.integer(levels(file_factor))]
-    res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
+    res <- bpmapply(ms2_mspectrum_for_peaks_from_file, x, pks,
                     MoreArgs = list(method = method), SIMPLIFY = FALSE,
                     USE.NAMES = FALSE, BPPARAM = BPPARAM)
     res <- unsplit(res, file_factor)
@@ -1773,11 +1774,12 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
 #' @author Johannes Rainer
 #'
 #' @noRd
-ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
-                                                               "closest_rt",
-                                                               "closest_mz",
-                                                               "signal")) {
-    if (nrow(pks) == 0)
+ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
+                                                                 "closest_rt",
+                                                                 "closest_mz",
+                                                                 "signal")) {
+    ## DEPRECATE THIS IN BIOC3.14
+    if (nrow(pks) == 0 | !any(msLevel(x) == 2))
         return(list())
     method <- match.arg(method)
     fromFile <- as.integer(pks[1, "sample"])
@@ -1802,6 +1804,18 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
                                    numeric(1))
                     idx <- idx[order(abs(ints - pks[i, "maxo"]))][1]
                 }
+                if (method == "largest_tic") {
+                    sps_sub <- sps[idx]
+                    ints <- vapply(sps_sub, function(z) sum(intensity(z)),
+                                   numeric(1))
+                    idx <- idx[order(ints, decreasing = TRUE)][1L]
+                }
+                if (method == "largest_bpi") {
+                    sps_sub <- sps[idx]
+                    ints <- vapply(sps_sub, function(z) max(intensity(z)),
+                                   numeric(1))
+                    idx <- idx[order(ints, decreasing = TRUE)][1L]
+                }
             }
             res[[i]] <- lapply(sps[idx], function(z) {
                 z@fromFile = fromFile
@@ -1813,17 +1827,132 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
     res
 }
 
+#' given an XCMSnExp this function identifies for each MS1 chromatographic
+#' peak all MS2 spectra with a precursor m/z within the peak region and returns
+#' a `Spectra` object with all of these spectra.
+#'
+#' @return a `list`, same length than there are `chromPeaks` with a `Spectra`
+#'     in each, if found.
+#'
+#' @noRd
+.spectra_for_peaks <- function(x, method = c("all", "closest_rt",
+                                                  "closest_mz", "signal",
+                                                  "largest_tic", "largest_bpi"),
+                               msLevel = 2L, expandRt = 0, expandMz = 0,
+                               ppm = 0, skipFilled = FALSE,
+                               peaks = character()) {
+    if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
+        featureData(x)$retentionTime <- rtime(x)
+    from_msl <- 1L
+    method <- match.arg(method)
+    if (msLevel == 1L && method %in% c("closest_mz", "signal")) {
+        warning("method = \"closest_mz\" and method = \"signa;\" are not",
+                " supported for msLevel = 1. Changing to method = \"all\".")
+        method <- "all"
+    }
+    pks <- as.data.frame(chromPeaks(x))[, c("mz", "mzmin", "mzmax", "rt",
+                                            "rtmin", "rtmax", "maxo", "sample")]
+    if (ppm != 0)
+        expandMz <- expandMz + pks$mz * ppm / 1e6
+    if (expandMz[1L] != 0) {
+        pks$mzmin <- pks$mzmin - expandMz
+        pks$mzmax <- pks$mzmax + expandMz
+    }
+    if (expandRt != 0) {
+        pks$rtmin <- pks$rtmin - expandRt
+        pks$rtmax <- pks$rtmax + expandRt
+    }
+    if (length(peaks)) {
+        peaks <- .i2index(peaks, rownames(pks), "peaks")
+        keep <- rep(FALSE, nrow(pks))
+        keep[peaks] <- TRUE
+    } else {
+        keep <- rep(TRUE, nrow(pks))
+        if (skipFilled && any(chromPeakData(x)$is_filled))
+            keep <- !chromPeakData(x, msLevel = from_msl)$is_filled
+        if (any(chromPeakData(x)$ms_level))
+            keep <- keep & chromPeakData(x)$ms_level == from_msl
+    }
+    ## maybe subset by peak ID.
+    fns <- fileNames(x)
+    res <- vector("list", length(keep))
+    be <- new("MsBackendMzR")
+    sps <- new("Spectra")
+    for (i in which(keep)) {
+        sel <- .fdata(x)$msLevel == msLevel &
+               .fdata(x)$retentionTime >= pks$rtmin[i] &
+               .fdata(x)$retentionTime <= pks$rtmax[i] &
+               .fdata(x)$fileIdx == pks$sample[i]
+        if (msLevel > 1L)
+            sel <- sel &
+                   .fdata(x)$precursorMZ >= pks$mzmin[i] &
+                   .fdata(x)$precursorMZ <= pks$mzmax[i]
+        fd <- .fdata(x)[which(sel), ]
+        if (nrow(fd)) {
+            fd$peak_index <- i
+            fd$peak_id <- rownames(pks)[i]
+            sp <- .fData2MsBackendMzR(fd, fns, be)
+            sp <- switch(
+                method,
+                all = sp,
+                closest_rt = {
+                    sp[which.min(abs(pks$rt[i] - rtime(sp)))[1L]]
+                },
+                closest_mz = {
+                    sp[which.min(abs(pks$mz[i] - precursorMz(sp)))[1L]]
+                },
+                signal = {
+                    ints <- vapply(intensity(sp), sum, numeric(1))
+                    sp[which.min(abs(ints - pks$maxo[i]))[1L]]
+                },
+                largest_tic = {
+                    ints <- vapply(intensity(sp), sum, numeric(1))
+                    sp[which.max(ints)[1L]]
+                },
+                largest_bpi = {
+                    ints <- vapply(intensity(sp), max, numeric(1))
+                    sp[which.max(ints)[1L]]
+                })
+            slot(sps, "backend", check = FALSE) <- sp
+            res[[i]] <- sps
+        }
+    }
+    names(res) <- rownames(pks)
+    if (length(peaks))
+        res[peaks]
+    else res
+}
+
 #' @title Extract (MS2) spectra associated with chromatographic peaks
 #'
 #' @description
 #'
-#' Extract (MS2) spectra from an [XCMSnExp] object that represent ions within
-#' the rt and m/z range of each chromatographic peak (in the same file
-#' /sample in which the peak was detected). All MS2 spectra are returned for
-#' chromatographic peak `i` for which the precursor m/z is
-#' `>= chromPeaks(x)[i, "mzmin"]` and `<= chromPeaks(x)[i, "mzmax"]` and the
-#' retention time is `>= chromPeaks(x)[i, "rtmin"]` and
-#' `<= chromPeaks(x)[i, "rtmax"]`.
+#' Extract (MS1 or MS2) spectra from an [XCMSnExp] object for each identified
+#' chromatographic peak. For `msLevel = 1L` (only supported for
+#' `return.type = "Spectra"` or `return.type = "List"`) MS1 spectra within the
+#' retention time boundaries (in the file in which the peak was detected) are
+#' returned. For `msLevel = 2L` MS2 spectra are returned for a chromatographic
+#' peak if their precursor m/z is within the retention time and m/z range of
+#' the chromatographic peak. Parameter `method` allows to define whether all
+#' or a single spectrum should be returned:
+#'
+#' - `method = "all"`: (default): return all spectra for each peak.
+#' - `method = "closest_rt"`: return the spectrum with the retention time
+#'   closest to the peak's retention time (at apex).
+#' - `method = "closest_mz"`: return the spectrum with the precursor m/z
+#'   closest to the peaks's m/z (at apex); only supported for `msLevel = 2L`.
+#' - `method = "signal"`: return the spectrum with the sum of intensities most
+#'   similar to the peak's apex signal (`"maxo"`); only supported for
+#'   `msLevel = 2L`.
+#' - `method = "largest_tic"`: return the spectrum with the largest total
+#'   signal (sum of peaks intensities).
+#' - `method = "largest_bpi"`: return the spectrum with the largest peak
+#'   intensity (maximal peak intensity).
+#'
+#' Parameter `return.type` allows to specify the *type* of the result object.
+#' Please use `return.type = "Spectra"` or `return.type = "List"`,
+#' `return.type = "list"` or the default `return.type = "MSpectra"` will be
+#' deprecated (also, they do not support extracting MS1 spectra).
 #'
 #' See also the *LC-MS/MS data analysis* vignette for more details and examples.
 #'
@@ -1841,32 +1970,43 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #' @param ppm `numeric(1)` to expand the m/z range of each peak (on each side)
 #'     by a value dependent on the peak's m/z.
 #'
-#' @param method `character(1)` specifying which MS2 spectra should be included.
-#'     Defaults to `"all"` in which all MS2 spectra within the rt and m/z range
-#'     of a chromatographic peak are returned. `"closest_rt"` returns the one
-#'     MS2 spectrum with the retention time closest to the chromatographic
-#'     peak's apex rt. `"closest_mz"` returns the MS2 spectrum with the
-#'     precursor m/z closest to the chromatographic peak's m/z. `"signal"`
-#'     returns the MS2 spectrum which total signal is closest to the
-#'     chromatographic peak's maximal signal (`"maxo"`).
+#' @param method `character(1)` specifying which spectra to include in the
+#'     result. Defaults to `method = "all"`. See function description for
+#'     details.
 #'
-#' @param skipFilled `logical(1)` whether no spectra for filled-in peaks should
-#'     be reported.
+#' @param peaks `character`, `logical` or `integer` allowing to specify a
+#'     subset of chromatographic peaks in `chromPeaks` for which spectra should
+#'     be returned (providing either their ID, a logical vector same length
+#'     than `nrow(chromPeaks(x))` or their index in `chromPeaks(x)`). This
+#'     parameter overrides `skipFilled` and is only supported for `return.type`
+#'     being either `"Spectra"` or `"List"`.
 #'
-#' @param return.type `character(1)` defining whether the result should be a
-#'     [MSpectra] object or a simple `list`. See below for more information.
+#' @param skipFilled `logical(1)` whether spectra for filled-in peaks should
+#'     be reported or not.
+#'
+#' @param return.type `character(1)` defining the result type. Defaults to
+#'     `return.type = "MSpectra"` but `return.type = "Spectra"` or
+#'     `return.type = "List"` are preferred. See below for more information.
 #'
 #' @return
 #'
-#' Which object is returned depends on the value of `return.type`:
+#' parameter `return.type` allow to specify the type of the returned object:
 #'
-#' - For `return.type = "MSpectra"`: a [MSpectra] object with elements being
+#' - `return.type = "MSpectra"`: a [MSpectra] object with elements being
 #'   [Spectrum-class] objects. The result objects contains all spectra
 #'   for all peaks. Metadata column `"peak_id"` provides the ID of the
 #'   respective peak (i.e. its rowname in [chromPeaks()]).
-#' - If `return.type = "list"`: `list` of `list`s that are either of length
+#' - `return.type = "Spectra"`: a `Spectra` object (defined in the `Spectra`
+#'   package). The result contains all spectra for all peaks. Metadata column
+#'   `"peak_id"` provides the ID of the respective peak (i.e. its rowname in
+#'   [chromPeaks()] and `"peak_index"` its index in the object's `chromPeaks`
+#'   matrix.
+#' - `return.type = "list"`: `list` of `list`s that are either of length
 #'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
 #'   length of the list matches the number of peaks.
+#' - `return.type = "List"`: `List` of length equal to the number of
+#'   chromatographic peaks is returned with elements being either `NULL` (no
+#'   spectrum found) or a `Spectra` object.
 #'
 #' @author Johannes Rainer
 #'
@@ -1883,16 +2023,40 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #'
 #' ## Perform MS1 peak detection
 #' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
-#' ms2_sps <- chromPeakSpectra(dda)
+#'
+#' ## Load the required Spectra package and return all MS2 spectro for each
+#' ## chromatographic peaks as a Spectra object
+#' ms2_sps <- chromPeakSpectra(dda, return.type = "Spectra")
 #' ms2_sps
 #'
-#' ## Metadata column `peak_id` contains the ID of the chromatographic peak
-#' ## of the MS2 spectrum
+#' ## columns peak_id or peak_index assign spectra to the chromatographic peaks
+#' ms2_sps$peak_id
+#' ms2_sps$peak_index
+#' chromPeaks(dda)
+#'
+#' ## Alternatively, return the result as a List of Spectra objects. This list
+#' ## is parallel to chromPeaks hence the mapping between chromatographic peaks
+#' ## and MS2 spectra is easier.
+#' ms2_sps <- chromPeakSpectra(dda, return.type = "List")
+#' ms2_sps[[1L]]
+#' length(ms2_sps)
+#'
+#' ## In addition to MS2 spectra we could also return the MS1 spectrum for each
+#' ## chromatographic peak which is closest to the peak's apex position.
+#' ms1_sps <- chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt",
+#'     return.type = "Spectra")
+#' ms1_sps
+#'
+#' ## Parameter peaks would allow to extract spectra for specific peaks only
+#' chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
 chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                              ppm = 0, method = c("all", "closest_rt",
-                                                 "closest_mz", "signal"),
+                                                 "closest_mz", "signal",
+                                                 "largest_tic", "largest_bpi"),
                              skipFilled = FALSE,
-                             return.type = c("MSpectra", "list")) {
+                             return.type = c("MSpectra", "Spectra",
+                                             "list", "List"),
+                             peaks = character()) {
     method <- match.arg(method)
     return.type <- match.arg(return.type)
     if (!is(x, "XCMSnExp"))
@@ -1900,25 +2064,46 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
     if (!hasChromPeaks(x))
         stop("No chromatographic peaks present. Please run 'findChromPeaks' ",
              "first")
-    if (msLevel != 2 || (msLevel == 2 & !any(msLevel(x) == 2))) {
-        res <- vector(mode = "list", length = nrow(chromPeaks(x)))
-        names(res) <- rownames(chromPeaks(x))
-        if (msLevel != 2)
-            warning("msLevel = 1 is currently not supported.")
-        if (msLevel == 2 & !any(msLevel(x) == 2))
-            warning("No MS2 spectra available in 'x'.")
+    if (return.type %in% c("Spectra", "List")) {
+        .require_spectra()
+        if (length(x@spectraProcessingQueue))
+            warning("Lazy evaluation queue is not empty. Will ignore any",
+                    " processing steps as 'return.type = \"Spectra\"' and",
+                    " 'return.type = \"List\"' currently don't support a ",
+                    "non-empty processing queue.")
+        res <- .spectra_for_peaks(x, msLevel = msLevel, method = method,
+                                  expandRt = expandRt, expandMz = expandMz,
+                                  ppm = ppm, skipFilled = skipFilled,
+                                  peaks = peaks)
+        if (return.type == "Spectra") {
+            res <- do.call(c, unname(res[lengths(res) > 0]))
+        } else res <- List(res)
     } else {
-        res <- ms2_spectra_for_all_peaks(x, expandRt = expandRt,
-                                         expandMz = expandMz,
-                                         ppm = ppm, method = method,
-                                         skipFilled = skipFilled)
-    }
-    if (return.type == "MSpectra") {
-        pids <- rep(names(res), lengths(res))
-        res <- res[lengths(res) > 0]
-        if (length(res))
-            res <- unlist(res)
-        res <- MSpectra(res, elementMetadata = DataFrame(peak_id = pids))
+        ## DEPRECATE THIS IN BIOC 3.14
+        if (length(peaks))
+            warning("Ignoring parameter 'peaks' which is only supported for ",
+                    "'return.type = \"Spectra\"' and 'return.type = \"List\"'.")
+        if (msLevel != 2 || (msLevel == 2 & !any(msLevel(x) == 2))) {
+            res <- vector(mode = "list", length = nrow(chromPeaks(x)))
+            names(res) <- rownames(chromPeaks(x))
+            if (msLevel != 2)
+                warning("msLevel = 1 is currently not supported for",
+                        "return.type = \"MSpectra\" or return.type = \"list\".")
+            if (msLevel == 2 & !any(msLevel(x) == 2))
+                warning("No MS2 spectra available in 'x'.")
+        } else {
+            res <- ms2_mspectrum_for_all_peaks(x, expandRt = expandRt,
+                                               expandMz = expandMz,
+                                               ppm = ppm, method = method,
+                                               skipFilled = skipFilled)
+        }
+        if (return.type == "MSpectra") {
+            pids <- rep(names(res), lengths(res))
+            res <- res[lengths(res) > 0]
+            if (length(res))
+                res <- unlist(res)
+            res <- MSpectra(res, elementMetadata = DataFrame(peak_id = pids))
+        }
     }
     res
 }
@@ -1926,98 +2111,183 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
 #' For information and details see featureSpectra
 #'
 #' @noRd
-ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
-                                      skipFilled = FALSE, ...) {
+ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
+                                       skipFilled = FALSE, ...) {
     idxs <- featureDefinitions(x)$peakidx
-    sp_pks <- ms2_spectra_for_all_peaks(x, expandRt = expandRt,
-                                        expandMz = expandMz, ppm = ppm,
-                                        skipFilled = skipFilled,
-                                        subset = unique(unlist(idxs)), ...)
+    sp_pks <- ms2_mspectrum_for_all_peaks(x, expandRt = expandRt,
+                                          expandMz = expandMz, ppm = ppm,
+                                          skipFilled = skipFilled,
+                                          subset = unique(unlist(idxs)), ...)
     res <- lapply(idxs, function(z) unlist(sp_pks[z]))
     names(res) <- rownames(featureDefinitions(x))
     res
 }
 
-#' @title Extract (MS2) spectra associated with features
+#' @title Extract spectra associated with features
 #'
 #' @description
 #'
-#' Return (MS2) spectra for all chromatographic peaks associated with the
-#' features in `x` (defined by [featureDefinitions()]).
+#' This function returns spectra associated with the identified features in the
+#' input object. Parameter `msLevel` allows to define whether MS level 1 or 2
+#' spectra should be returned. For `msLevel = 1L` all MS1 spectra within the
+#' retention time range of each chromatographic peak (in that respective data
+#' file) associated with a feature are returned. For `msLevel = 2L` all MS2
+#' spectra with a retention time within the retention time range and their
+#' precursor m/z within the m/z range of any chromatographic peak of a feature
+#' are returned. See also [chromPeakSpectra()] (used internally to extract
+#' spectra for each chromatographic peak of a feature) for additional
+#' information.
 #'
-#' @details
+#' In contrast to the [chromPeakSpectra()] function, selecting a `method`
+#' different than `"all"` will not return a single spectrum per feature, but
+#' one spectrum per **chromatographic peak** assigned to the feature.
 #'
-#' The function identifies all MS2 spectra with their precursor m/z within the
-#' m/z range of a chromatographic peak (i.e. `>=` mzmin and `<=` mzmax) of a
-#' feature and their retention time within the rt range of the same peak
-#' (`>=` rtmin and `<=` rtmax).
-#'
-#' The optional parameter `method` allows to ensure that for each
-#' chromatographic peak in one sample only one MS2 spectrum is returned.
-#' See [chromPeakSpectra()] or the *LC-MS/MS analysis* vignette for more
-#' details.
+#' Note also that `msLevel = 1L` is only supported for `return.type = "List"`
+#' or `return.type = "Spectra"`.
 #'
 #' @param x [XCMSnExp] object with feature defitions available.
 #'
 #' @inheritParams chromPeakSpectra
+#'
+#' @param features `character`, `logical` or `integer` allowing to specify a
+#'     subset of features in `featureDefinitions` for which spectra should
+#'     be returned (providing either their ID, a logical vector same length
+#'     than `nrow(featureDefinitions(x))` or their index in
+#'     `featureDefinitions(x)`). This parameter overrides `skipFilled` and is
+#'     only supported for `return.type` being either `"Spectra"` or `"List"`.
 #'
 #' @param ... additional arguments to be passed along to [chromPeakSpectra()],
 #'     such as `method`.
 #'
 #' @return
 #'
-#' Which object is returned depends on the value of `return.type`:
+#' parameter `return.type` allow to specify the type of the returned object:
 #'
-#' - For `return.type = "MSpectra"` (the default): a [MSpectra] object with data
-#'   only for features for which a [Spectrum2-class] was found. The
-#'   ID of the feature and of the chromatographic peak to which the
-#'   spectrum is associated are provided with the `"feature_id"` and
-#'   `"peak_id"` metadata columns.
-#' - For `return.type = "list"`: a `list, same length than there are
-#'   features in `x`, each element being a `list` of [Spectrum2-class]
-#'   objects with the MS2 spectra that potentially represent ions measured
-#'   by each chromatographic peak associated with the feature, or `NULL`
-#'   if none are present.
+#' - `return.type = "MSpectra"`: a [MSpectra] object with elements being
+#'   [Spectrum-class] objects. The result objects contains all spectra
+#'   for all features. Metadata column `"feature_id"` provides the ID of the
+#'   respective feature (i.e. its rowname in [featureDefinitions()]).
+#' - `return.type = "Spectra"`: a `Spectra` object (defined in the `Spectra`
+#'   package). The result contains all spectra for all features. Metadata column
+#'   `"feature_id"` provides the ID of the respective feature (i.e. its rowname
+#'   in [featureDefinitions()] and `"feature_index"` its index in the object's
+#'   `featureDefinitions` matrix.
+#' - `return.type = "list"`: `list` of `list`s that are either of length
+#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   length of the list matches the number of features.
+#' - `return.type = "List"`: `List` of length equal to the number of
+#'   features is returned with elements being either `NULL` (no
+#'   spectrum found) or a `Spectra` object.
 #'
 #' @author Johannes Rainer
 #'
 #' @md
-featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
+featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                            ppm = 0, skipFilled = FALSE,
-                           return.type = c("MSpectra", "list"), ...) {
+                           return.type = c("MSpectra", "Spectra",
+                                           "list", "List"),
+                           features = character(), ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an 'XCMSnExp' object.")
     return.type <- match.arg(return.type)
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run 'groupChromPeaks' ",
              "first.")
-    if (msLevel != 2 || (msLevel == 2 & !any(msLevel(x) == 2))) {
-        res <- vector(mode = "list", length = nrow(featureDefinitions(x)))
-        names(res) <- rownames(featureDefinitions(x))
-        if (msLevel != 2)
-            warning("msLevel = 1 is currently not supported.")
-        if (msLevel == 2 & !any(msLevel(x) == 2))
-            warning("No MS2 spectra available in 'x'.")
+    if (return.type %in% c("Spectra", "List")) {
+        .require_spectra()
+        if (length(x@spectraProcessingQueue))
+            warning("Lazy evaluation queue is not empty. Will ignore any",
+                    " processing steps as 'return.type = \"Spectra\"' and",
+                    " 'return.type = \"List\"' currently don't support a ",
+                    "non-empty processing queue.")
+        res <- .spectra_for_features(x, msLevel = msLevel, expandRt = expandRt,
+                                     expandMz = expandMz, ppm = ppm,
+                                     skipFilled = skipFilled,
+                                     features = features, ...)
+        if (return.type == "Spectra") {
+            res <- do.call(c, unname(res[lengths(res) > 0]))
+        } else res <- List(res)
     } else {
-        res <- ms2_spectra_for_features(x, expandRt = expandRt,
-                                        expandMz = expandMz,
-                                        ppm = ppm, skipFilled = skipFilled,
-                                        ...)
-    }
-    if (return.type == "MSpectra") {
-        fids <- rep(names(res), lengths(res))
-        res <- res[lengths(res) > 0]
-        if (length(res)) {
-            res <- unlist(res)
-            pids <- vapply(strsplit(names(res), ".", TRUE),
-                           `[`, character(1), 2)
+        ## DEPRECATE IN BIOC3.14
+        if (length(features))
+            warning("Ignoring parameter 'features': this is only supported",
+                    " for 'return.type = \"Spectra\"' and ",
+                    "'return.type = \"List\"'.")
+        if (msLevel != 2 || (msLevel == 2 & !any(msLevel(x) == 2))) {
+            res <- vector(mode = "list", length = nrow(featureDefinitions(x)))
+            names(res) <- rownames(featureDefinitions(x))
+            if (msLevel != 2)
+                warning("msLevel = 1 is currently only supported for ",
+                        "'return.type = \"Spectra\"' and ",
+                        "'return.type = \"List\"'.")
+            if (msLevel == 2 & !any(msLevel(x) == 2))
+                warning("No MS2 spectra available in 'x'.")
         } else {
-            pids <- character()
+            res <- ms2_mspectrum_for_features(
+                x, expandRt = expandRt, expandMz = expandMz,
+                ppm = ppm, skipFilled = skipFilled, ...)
         }
-        res <- MSpectra(res, elementMetadata = DataFrame(feature_id = fids,
-                                                        peak_id = pids))
+        if (return.type == "MSpectra") {
+            fids <- rep(names(res), lengths(res))
+            res <- res[lengths(res) > 0]
+            if (length(res)) {
+                res <- unlist(res)
+                pids <- vapply(strsplit(names(res), ".", TRUE),
+                               `[`, character(1), 2)
+            } else {
+                pids <- character()
+            }
+            res <- MSpectra(res, elementMetadata = DataFrame(feature_id = fids,
+                                                             peak_id = pids))
+        }
     }
     res
+}
+
+#' get spectra per feature:
+#' 1) call chromPeakSpectra to get spectra for all peaks (as List)
+#' 2) iterate over features to extract all
+#' @noRd
+.spectra_for_features <- function(x, msLevel = 2L, expandRt = 0,
+                                  expandMz = 0, ppm = 0, skipFilled = TRUE,
+                                  features = character(), ...) {
+    from_ms <- 1L
+    fids <- rownames(featureDefinitions(x))
+    idx <- featureDefinitions(x)$peakidx
+    l <- length(fids)
+    res <- vector("list", l)
+    names(res) <- fids
+    if (length(features)) {
+        keep <- rep(FALSE, l)
+        features <- .i2index(features, fids, "features")
+        keep[features] <- TRUE
+        pkidx <- sort(unique(unlist(idx[features], use.names = FALSE)))
+        peak_sp <- vector("list", nrow(chromPeaks(x)))
+        peak_sp[pkidx] <- .spectra_for_peaks(
+            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+            ppm = ppm, skipFilled = skipFilled, peaks = pkidx, ...)
+    } else {
+        peak_sp <- .spectra_for_peaks(
+            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+            ppm = ppm, skipFilled = skipFilled, ...)
+        keep <- rep(TRUE, l)
+        if (any(featureDefinitions(x)$ms_level))
+            keep <- featureDefinitions(x)$ms_level == from_ms
+    }
+    for (i in which(keep)) {
+        sps <- do.call(c, unname(peak_sp[idx[[i]]]))
+        if (length(sps)) {
+            ## Need to fix this below once $<- becomes faster
+            sps@backend@spectraData <- cbind(sps@backend@spectraData,
+                                             DataFrame(feature_id = fids[i],
+                                                       feature_index = i))
+            res[[i]] <- sps
+        }
+    }
+    if (length(features))
+        res[features]
+    else
+        res
 }
 
 #' @title Extract ion chromatograms for each feature
@@ -2128,21 +2398,8 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run first 'groupChromPeaks'")
     if (!missing(features)) {
-        if (is.logical(features)) {
-            if (length(features) != nrow(featureDefinitions(x)))
-                stop("If 'features' is a logical vector, its length has to ",
-                     "be equal to the number of features.")
-            features <- which(features)
-        }
-        if (is.character(features)) {
-            features <- match(features, rownames(featureDefinitions(x)))
-            if (any(is.na(features)))
-                stop("Some of the feature IDs specified with 'features' ",
-                     "can not be found.")
-        }
-        features <- as.integer(features)
-        if (any(features < 1) || any(features > nrow(featureDefinitions(x))))
-            stop("'features' are out of range")
+        features <- .i2index(features, ids = rownames(featureDefinitions(x)),
+                             "features")
     } else features <- seq_len(nrow(featureDefinitions(x)))
     if (!length(features))
         return(MChromatograms(ncol = length(fileNames(x)), nrow = 0))
@@ -2271,12 +2528,12 @@ hasFilledChromPeaks <- function(object) {
         if (hasChromPeaks(z) && nrow(chromPeakData(z))) {
             ret <- chromPeakData(z)
             target_mz <- isolationWindowTargetMz(z)[1]
-            ret$isolationWindow <- fData(z)$isolationWindow[1]
+            ret$isolationWindow <- .fdata(z)$isolationWindow[1]
             ret$isolationWindowTargetMZ <- target_mz
             ret$isolationWindowLowerMz <-
-                target_mz - fData(z)$isolationWindowLowerOffset[1]
+                target_mz - .fdata(z)$isolationWindowLowerOffset[1]
             ret$isolationWindowUpperMz <-
-                target_mz + fData(z)$isolationWindowUpperOffset[1]
+                target_mz + .fdata(z)$isolationWindowUpperOffset[1]
             ret
         } else DataFrame()
     }))
@@ -2393,8 +2650,8 @@ findChromPeaksIsolationWindow <-
 #'
 #' @description
 #'
-#' Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-#' data independent acquisition (DIA) data (such as SWATH). See the
+#' *Reconstructs* MS2 spectra for each MS1 chromatographic peak (if possible)
+#' for data independent acquisition (DIA) data (such as SWATH). See the
 #' *LC-MS/MS analysis* vignette for more details and examples.
 #'
 #' @details
@@ -2444,19 +2701,30 @@ findChromPeaksIsolationWindow <-
 #' @param BPPARAM parallel processing setup. See [bpparam()] for more
 #'     information.
 #'
-#' @return [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
-#'     in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
-#'     which reconstruction was not possible (either no MS2 signal was recorded
-#'     or the correlation of the MS2 chromatographic peaks with the MS1
-#'     chromatographic peak was below threshold `minCor`. `MSpectra` metadata
-#'     columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
-#'     and [NumericList()] with length equal to the number of peaks per
-#'     reconstructed MS2 spectrum) providing the IDs and the correlation of the
-#'     MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
-#'     As retention time the median retention times of all MS2 chromatographic
-#'     peaks used for the spectrum reconstruction is reported. The MS1
-#'     chromatographic peak intensity is reported as the reconstructed
-#'     spectrum's `precursorIntensity` value (see parameter `intensity` above).
+#' @param return.type `character(1)` defining the type of the returned object.
+#'     Can be either `return.type = "MSpectra"` (the default) to return a
+#'     `MSnbase::MSpectra` object or `return.type = "Spectra"` for the newer
+#'     `Spectra::Spectra` object.
+#'
+#' @return
+#'
+#' Depending on `return.type`:
+#'
+#' - [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
+#'   in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
+#'   which reconstruction was not possible (either no MS2 signal was recorded
+#'   or the correlation of the MS2 chromatographic peaks with the MS1
+#'   chromatographic peak was below threshold `minCor`. `MSpectra` metadata
+#'   columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
+#'   and [NumericList()] with length equal to the number of peaks per
+#'   reconstructed MS2 spectrum) providing the IDs and the correlation of the
+#'   MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+#'   As retention time the median retention times of all MS2 chromatographic
+#'   peaks used for the spectrum reconstruction is reported. The MS1
+#'   chromatographic peak intensity is reported as the reconstructed
+#'   spectrum's `precursorIntensity` value (see parameter `intensity` above).
+#' - `Spectra` object (defined in the `Spectra` package). The same content and
+#'   information than above.
 #'
 #' @author Johannes Rainer, Michael Witting
 #'
@@ -2468,12 +2736,14 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                         minCor = 0.8, intensity = "maxo",
                                         peakId = rownames(
                                             chromPeaks(object, msLevel = 1L)),
-                                        BPPARAM = bpparam()) {
+                                        BPPARAM = bpparam(),
+                                        return.type = c("MSpectra", "Spectra")) {
     if (!inherits(object, "XCMSnExp") || !hasChromPeaks(object))
         stop("'object' should be an 'XCMSnExp' object with identified ",
              "chromatographic peaks")
     if (!is.character(peakId))
         stop("'peakId' has to be of type character")
+    return.type <- match.arg(return.type)
     n_peak_id <- length(peakId)
     peakId <- intersect(peakId, rownames(chromPeaks(object, msLevel = 1L)))
     if (!length(peakId))
@@ -2493,14 +2763,16 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     sps <- bplapply(
         .split_by_file2(
             object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
-        FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
+        FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
+                       return.type) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,
                 minCor = minCor, fromFile = match(fileNames(x), files),
-                column = col, peakId = pkId)
+                column = col, peakId = pkId, return.type = return.type)
         },
         files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
-        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
+        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM,
+        return.type = return.type)
     do.call(c, sps)
 }
 

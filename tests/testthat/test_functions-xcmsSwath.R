@@ -63,22 +63,87 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
 
 test_that(".reconstruct_ms2_for_peaks_file works", {
     ## No MS2 level peaks: expect empty.
-    res <- .reconstruct_ms2_for_peaks_file(
-                      filterRt(filterFile(xod_x, 1), rt = c(2500, 3000)))
+    tmp <- filterRt(filterFile(xod_x, 1), rt = c(2500, 3000))
+    res <- xcms:::.reconstruct_ms2_for_peaks_file(tmp)
     expect_true(all(isEmpty(res)))
     expect_true(is(mcols(res)$ms2_peak_id, "CharacterList"))
     expect_true(is(mcols(res)$ms2_peak_cor, "NumericList"))
-    expect_identical(rownames(chromPeaks(filterRt(filterFile(xod_x, 1),
-                                                  rt = c(2500, 3000)))),
+    expect_identical(rownames(chromPeaks(tmp)),
                      mcols(res)$peak_id)
 
-    res <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
-    expect_true(isEmpty(res)[1])
-    expect_true(length(intensity(res[[7]])) == 5)
-    expect_true(all(fromFile(res) == 2L))
+    res_2 <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
+    expect_true(isEmpty(res_2)[1])
+    expect_true(length(intensity(res_2[[7]])) == 5)
+    expect_true(all(fromFile(res_2) == 2L))
 
-    res_3 <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,
-                                                    peakId = "CP03")
-    expect_identical(intensity(res_3), intensity(res[3]))
-    expect_identical(mcols(res_3)$ms2_peak_id[[1]], mcols(res)$ms2_peak_id[[3]])
+    res_3 <- .reconstruct_ms2_for_peaks_file(
+                        pest_swth, fromFile = 2L,
+                        peakId = c("CP03", "CP04", "CP07"))
+    expect_identical(intensity(res_3)[1L], intensity(res_2[3]))
+    expect_identical(intensity(res_3)[2L], intensity(res_2[4]))
+    expect_identical(intensity(res_3)[[3L]], intensity(res_2[7])[[1L]])
+    expect_identical(mcols(res_3)$ms2_peak_id[[1L]],
+                     mcols(res_2)$ms2_peak_id[[3L]])
+    expect_identical(mcols(res_3)$ms2_peak_id[[2L]],
+                     mcols(res_2)$ms2_peak_id[[4L]])
+
+    ## Same with return.type = "Spectra"
+    res_s <- .reconstruct_ms2_for_peaks_file(tmp, return.type = "Spectra")
+    expect_true(is(res_s, "Spectra"))
+    expect_true(all(msLevel(res_s) == 2L))
+    expect_equal(res_s$peak_id, mcols(res)$peak_id)
+    expect_equal(rtime(res_s), unname(rtime(res)))
+    expect_equal(precursorMz(res_s), unname(precursorMz(res)))
+    expect_true(all(isEmpty(res_s)))
+
+    res_s2 <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,
+                                                     return.type = "Spectra")
+    expect_true(isEmpty(res_s2)[1])
+    expect_true(length(intensity(res_s2)[[7L]]) == 5)
+    expect_true(all(res_s2$fromFile == 2L))
+
+    res_s3 <- .reconstruct_ms2_for_peaks_file(
+                        pest_swth, fromFile = 2L,
+                        peakId = c("CP03", "CP04", "CP07"),
+                        return.type = "Spectra")
+    expect_identical(intensity(res_s3)[1L], intensity(res_s2[3]))
+    expect_identical(intensity(res_s3)[2L], intensity(res_s2[4]))
+    expect_identical(intensity(res_s3)[[3L]], intensity(res_s2[7])[[1L]])
+    expect_identical(res_s3$ms2_peak_id[[1L]],
+                     mcols(res_2)$ms2_peak_id[[3L]])
+    expect_identical(res_s3$ms2_peak_id[[2L]],
+                     mcols(res_2)$ms2_peak_id[[4L]])
+})
+
+test_that(".data2spectra works", {
+    ## empty one, no mz, no intensity, just rt fromFile etc.
+    res <- .data2spectra(rt = 3.2, polarity = 1L, precursorMz = 12.3,
+                         precursorIntensity = 1234, return.type = "MSpectra")
+    expect_true(is(res, "MSpectra"))
+    expect_true(validObject(res))
+    expect_equal(unname(rtime(res)), 3.2)
+    expect_equal(mcols(res)$ms2_peak_cor[[1L]], numeric())
+
+    res <- .data2spectra(rt = 3.2, polarity = 1L, precursorMz = 12.3,
+                         precursorIntensity = 1234, return.type = "MSpectra",
+                         mz = c(1, 2, 3, 4), intensity = c(12, 13, 14, 15),
+                         peak_id = c("a", "b", "c", "d"))
+    expect_true(validObject(res))
+    expect_equal(mz(res)[[1L]], c(1, 2, 3, 4))
+    expect_equal(mcols(res)$ms2_peak_id[[1L]], c("a", "b", "c", "d"))
+    expect_true(centroided(res))
+    expect_equal(unname(polarity(res)), 1L)
+
+    ## DataFrame
+    res <- .data2spectra(rt = 3.2, polarity = 1L, precursorMz = 12.3,
+                         precursorIntensity = 1234, return.type = "Spectra",
+                         mz = c(1, 2, 3, 4), intensity = c(12, 13, 14, 15),
+                         peak_id = c("a", "b", "c", "d"))
+    expect_true(is(res, "DataFrame"))
+    expect_equal(res$mz, NumericList(c(1, 2, 3, 4), compress = FALSE))
+
+    res <- .data2spectra(rt = 3.2, polarity = 1L, precursorMz = 12.3,
+                         precursorIntensity = 1234, return.type = "Spectra")
+    expect_true(is(res, "DataFrame"))
+    expect_equal(res$mz, NumericList(c(), compress = FALSE))
 })

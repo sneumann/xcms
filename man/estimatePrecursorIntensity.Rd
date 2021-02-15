@@ -12,31 +12,31 @@ estimatePrecursorIntensity(
 )
 }
 \arguments{
-\item{x}{`OnDiskMSnExp` or `XCMSnExp` object.}
+\item{x}{\code{OnDiskMSnExp} or \code{XCMSnExp} object.}
 
-\item{ppm}{`numeric(1)` defining the maximal acceptable difference (in ppm)
+\item{ppm}{\code{numeric(1)} defining the maximal acceptable difference (in ppm)
 of the precursor m/z and the m/z of the corresponding peak in the MS 1
 scan.}
 
-\item{method}{`character(1)` defining the method how the precursor intensity
+\item{method}{\code{character(1)} defining the method how the precursor intensity
 should be determined (see description above for details). Defaults to
-`method = "previous"`.}
+\code{method = "previous"}.}
 
-\item{BPPARAM}{parallel processing setup. See [bppara()] for details.}
+\item{BPPARAM}{parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for details.}
 }
 \value{
-`numeric` with length equal to the number of spectra in `x`. `NA` is
-    returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
-    found for an MS 2 spectrum
+\code{numeric} with length equal to the number of spectra in \code{x}. \code{NA} is
+returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
+found for an MS 2 spectrum
 }
 \description{
-`estimatePrecursorIntensity` determines the precursor intensity for a MS 2
+\code{estimatePrecursorIntensity} determines the precursor intensity for a MS 2
 spectrum based on the intensity of the respective signal from the
 neighboring MS 1 spectra (i.e. based on the peak with the m/z matching the
-precursor m/z of the MS 2 spectrum). Based on parameter `method` either the
+precursor m/z of the MS 2 spectrum). Based on parameter \code{method} either the
 intensity of the peak from the previous MS 1 scan is used
-(`method = "previous"`) or an interpolation between the intensity from the
-previous and subsequent MS1 scan is used (`method = "interpolation"`, which
+(\code{method = "previous"}) or an interpolation between the intensity from the
+previous and subsequent MS1 scan is used (\code{method = "interpolation"}, which
 considers also the retention times of the two MS1 scans and the retention
 time of the MS2 spectrum).
 }

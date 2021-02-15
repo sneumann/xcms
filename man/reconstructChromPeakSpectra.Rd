@@ -11,7 +11,8 @@ reconstructChromPeakSpectra(
   minCor = 0.8,
   intensity = "maxo",
   peakId = rownames(chromPeaks(object, msLevel = 1L)),
-  BPPARAM = bpparam()
+  BPPARAM = bpparam(),
+  return.type = c("MSpectra", "Spectra")
 )
 }
 \arguments{
@@ -42,9 +43,16 @@ By default they are reconstructed for all MS1 chromatographic peaks.}
 
 \item{BPPARAM}{parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for more
 information.}
+
+\item{return.type}{\code{character(1)} defining the type of the returned object.
+Can be either \code{return.type = "MSpectra"} (the default) to return a
+\code{MSnbase::MSpectra} object or \code{return.type = "Spectra"} for the newer
+\code{Spectra::Spectra} object.}
 }
 \value{
-\code{\link[=MSpectra]{MSpectra()}} with the reconstructed MS2 spectra for all MS1 peaks
+Depending on \code{return.type}:
+\itemize{
+\item \code{\link[=MSpectra]{MSpectra()}} with the reconstructed MS2 spectra for all MS1 peaks
 in \code{object}. Contains empty \linkS4class{Spectrum2} objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
@@ -57,10 +65,13 @@ As retention time the median retention times of all MS2 chromatographic
 peaks used for the spectrum reconstruction is reported. The MS1
 chromatographic peak intensity is reported as the reconstructed
 spectrum's \code{precursorIntensity} value (see parameter \code{intensity} above).
+\item \code{Spectra} object (defined in the \code{Spectra} package). The same content and
+information than above.
+}
 }
 \description{
-Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-data independent acquisition (DIA) data (such as SWATH). See the
+\emph{Reconstructs} MS2 spectra for each MS1 chromatographic peak (if possible)
+for data independent acquisition (DIA) data (such as SWATH). See the
 \emph{LC-MS/MS analysis} vignette for more details and examples.
 }
 \details{

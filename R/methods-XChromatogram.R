@@ -17,6 +17,7 @@ setMethod("show", "XChromatogram", function(object) {
 
 #' @rdname XChromatogram
 #'
+#' @aliases filterChromPeaks
 #'
 #' @section Accessing data:
 #'
@@ -86,6 +87,16 @@ setMethod("show", "XChromatogram", function(object) {
 #'   in a certain sample `NA` is returned. This can be changed with the
 #'   `missing` argument of the function.
 #'
+#' - `filterChromPeaks`: *filters* chromatographic peaks in `object` depending
+#'   on parameter `method` and method-specific parameters passed as additional
+#'   arguments with `...`. Available methods are:
+#'   - `method = "keepTop"`: keep top `n` (default `n = 1L`) peaks in each
+#'     chromatogram ordered by column `order` (defaults to `order = "maxo"`).
+#'     Parameter `decreasing` (default `decreasing = TRUE`) can be used to
+#'     order peaks in descending (`decreasing = TRUE`) or ascending (
+#'     `decreasing = FALSE`) order to keep the top `n` peaks with largest or
+#'     smallest values, respectively.
+#'
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
@@ -109,6 +120,9 @@ setMethod("show", "XChromatogram", function(object) {
 #'     peak closest to the median retention time of the feature, `"maxint"`:
 #'     select the peak with the largest signal and `"sum"`: sum the values
 #'     of all peaks (only if `value` is `"into"` or `"maxo"`).
+#'     For `filterChromPeaks`: `character(1)` defining the method that should
+#'     be used to filter chromatographic peaks. See help on `filterChromPeaks`
+#'     below for details.
 #'
 #' @param missing For `featureValues`: how missing values should be reported.
 #'     Allowed values are `NA` (default), a `numeric(1)` to replace `NA`s with
@@ -280,6 +294,9 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #'     correspondence analysis should be *simulated* based on the available
 #'     data and the provided [PeakDensityParam()] `param` argument. See
 #'     section *Correspondence analysis* for details.
+#'
+#' @param ... For `filterChromPeaks`: additional parameters defining how to
+#'     filter chromatographic peaks. See function description below for details.
 #'
 #' @md
 #'
@@ -454,4 +471,12 @@ setMethod("removeIntensity", "XChromatogram",
                               "Returning data as is")
                   return(object)
               } else callNextMethod(object, which = which, threshold = threshold)
+          })
+
+#' @rdname XChromatogram
+setMethod("filterChromPeaks", "XChromatogram",
+          function(object, method = c("keepTop"), ...) {
+              method <- match.arg(method)
+              switch(method,
+                     keepTop = .filter_chrom_peaks_keep_top(object, ...))
           })

@@ -1,16 +1,6 @@
 ## Methods for ProcessHistory and XProcessHistory.
 #' @include functions-ProcessHistory.R
 
-setMethod("initialize", "ProcessHistory", function(.Object, ...) {
-    classVersion(.Object)["ProcessHistory"] <- "0.0.2"
-    callNextMethod(.Object, ...)
-})
-
-setMethod("initialize", "XProcessHistory", function(.Object, ...) {
-    classVersion(.Object)["XProcessHistory"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
 #' @rdname ProcessHistory-class
 setMethod("show", "ProcessHistory", function(object) {
     cat("Object of class \"", class(object), "\"\n", sep = "")
@@ -49,7 +39,7 @@ setMethod("processParam", "XProcessHistory", function(object) {
 #' @aliases processParam<-
 #'
 #' @param value An object extending the \code{Param} class.
-#' 
+#'
 #' @noRd
 setReplaceMethod("processParam", "XProcessHistory", function(object, value) {
     object@param <- value
@@ -58,7 +48,7 @@ setReplaceMethod("processParam", "XProcessHistory", function(object, value) {
 })
 #' @description \code{msLevel}: returns the MS level on which a certain analysis
 #'     has been performed, or \code{NA} if not defined.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setMethod("msLevel", "XProcessHistory", function(object) {
     if (.hasSlot(object, "msLevel"))
@@ -75,7 +65,7 @@ setMethod("msLevel", "XProcessHistory", function(object) {
 #'
 #' @return The \code{processType} method returns a character string with the
 #'     processing step type.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setMethod("processType", "ProcessHistory", function(object) {
     return(object@type)
@@ -94,7 +84,7 @@ setReplaceMethod("processType", "ProcessHistory", function(object, value) {
 #'
 #' @return The \code{processDate} method returns a character string with the
 #'     time stamp of the processing step start.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setMethod("processDate", "ProcessHistory", function(object) {
     return(object@date)
@@ -113,7 +103,7 @@ setReplaceMethod("processDate", "ProcessHistory", function(object, value) {
 #'
 #' @return The \code{processInfo} method returns a character string with
 #'     optional additional informations.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setMethod("processInfo", "ProcessHistory", function(object) {
     return(object@info)
@@ -132,7 +122,7 @@ setReplaceMethod("processInfo", "ProcessHistory", function(object, value) {
 #'
 #' @return The \code{fileIndex} method returns a integer vector with the index
 #'     of the files/samples on which the processing step was applied.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setMethod("fileIndex", "ProcessHistory", function(object) {
     return(object@fileIndex)
@@ -143,4 +133,3 @@ setReplaceMethod("fileIndex", "ProcessHistory", function(object, value) {
     if (validObject(object))
         return(object)
 })
-

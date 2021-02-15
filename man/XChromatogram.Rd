@@ -10,6 +10,7 @@
 \alias{coerce,MChromatograms,XChromatograms-method}
 \alias{show,XChromatogram-method}
 \alias{chromPeaks,XChromatogram-method}
+\alias{filterChromPeaks}
 \alias{chromPeaks<-,XChromatogram-method}
 \alias{plot,XChromatogram,ANY-method}
 \alias{filterMz,XChromatogram-method}
@@ -19,6 +20,7 @@
 \alias{chromPeakData,XChromatogram-method}
 \alias{chromPeakData<-,XChromatogram-method}
 \alias{refineChromPeaks,XChromatogram,MergeNeighboringPeaksParam-method}
+\alias{filterChromPeaks,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{hasFilledChromPeaks,XChromatograms-method}
@@ -37,6 +39,7 @@
 \alias{plotChromPeakDensity,XChromatograms-method}
 \alias{dropFilledChromPeaks,XChromatograms-method}
 \alias{refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam-method}
+\alias{filterChromPeaks,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
@@ -96,6 +99,8 @@ XChromatogram(
 \S4method{chromPeakData}{XChromatogram}(object) <- value
 
 \S4method{refineChromPeaks}{XChromatogram,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
+
+\S4method{filterChromPeaks}{XChromatogram}(object, method = c("keepTop"), ...)
 
 \S4method{show}{XChromatograms}(object)
 
@@ -177,6 +182,8 @@ XChromatogram(
 \S4method{dropFilledChromPeaks}{XChromatograms}(object)
 
 \S4method{refineChromPeaks}{XChromatograms,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
+
+\S4method{filterChromPeaks}{XChromatograms}(object, method = c("keepTop"), ...)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -201,10 +208,8 @@ in \code{data}.}
 additional annotations for each chromatographic peak. The number of rows
 has to match the number of chromatographic peaks.}
 
-\item{...}{For \code{plot}: additional parameters to passed to the \code{plot}
-function.
-For \code{XChromatograms}: additional parameters to be passed to the
-\link{matrix} constructor, such as \code{nrow}, \code{ncol} and \code{byrow}.}
+\item{...}{For \code{filterChromPeaks}: additional parameters defining how to
+filter chromatographic peaks. See function description below for details.}
 
 \item{rtime}{For \code{XChromatogram}: \code{numeric} with the retention times
 (length has to be equal to the length of \code{intensity}).}
@@ -320,6 +325,17 @@ package for more details.}
 \code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the settings for the \emph{peak density}
 correspondence analysis algorithm.}
 
+\item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
+resolve multi-peak mappings within the sample sample, i.e. to select
+the \emph{representative} peak for a feature for which more than one peak
+was assigned in one sample. Options are \code{"medret"} (default): select the
+peak closest to the median retention time of the feature, \code{"maxint"}:
+select the peak with the largest signal and \code{"sum"}: sum the values
+of all peaks (only if \code{value} is \code{"into"} or \code{"maxo"}).
+For \code{filterChromPeaks}: \code{character(1)} defining the method that should
+be used to filter chromatographic peaks. See help on \code{filterChromPeaks}
+below for details.}
+
 \item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
 index of the files/samples for which the \link{ProcessHistory} objects should
 be returned.}
@@ -335,14 +351,6 @@ dropped (if possible). Defaults to \code{drop = TRUE}, thus, if length of \code{
 and \code{j} is 1 a \code{XChromatogram} is returned. Note that \code{drop} is ignored
 if length of \code{i} or \code{j} is larger than 1, thus a \code{XChromatograms} is
 returned.}
-
-\item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
-resolve multi-peak mappings within the sample sample, i.e. to select
-the \emph{representative} peak for a feature for which more than one peak
-was assigned in one sample. Options are \code{"medret"} (default): select the
-peak closest to the median retention time of the feature, \code{"maxint"}:
-select the peak with the largest signal and \code{"sum"}: sum the values
-of all peaks (only if \code{value} is \code{"into"} or \code{"maxo"}).}
 
 \item{missing}{For \code{featureValues}: how missing values should be reported.
 Allowed values are \code{NA} (default), a \code{numeric(1)} to replace \code{NA}s with
@@ -477,6 +485,17 @@ with one row per feature (in \code{featureDefinitions}) and each column being
 a sample (i.e. column of \code{object}). For features without a peak associated
 in a certain sample \code{NA} is returned. This can be changed with the
 \code{missing} argument of the function.
+\item \code{filterChromPeaks}: \emph{filters} chromatographic peaks in \code{object} depending
+on parameter \code{method} and method-specific parameters passed as additional
+arguments with \code{...}. Available methods are:
+\itemize{
+\item \code{method = "keepTop"}: keep top \code{n} (default \code{n = 1L}) peaks in each
+chromatogram ordered by column \code{order} (defaults to \code{order = "maxo"}).
+Parameter \code{decreasing} (default \code{decreasing = TRUE}) can be used to
+order peaks in descending (\code{decreasing = TRUE}) or ascending (
+\code{decreasing = FALSE}) order to keep the top \code{n} peaks with largest or
+smallest values, respectively.
+}
 \item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
 the individual performed processing steps. Optional parameters \code{type} and
 \code{fileIndex} allow to further specify which processing steps to return.
