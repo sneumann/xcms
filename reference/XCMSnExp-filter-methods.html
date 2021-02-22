@@ -40,58 +40,60 @@
 
 
 <meta property="og:title" content="XCMSnExp filtering and subsetting — filterFeatureDefinitions" />
-<meta property="og:description" content="filterFeatureDefinitions allows to subset the feature definitions of
-an XCMSnExp object. Which feature definitions should be kept can be
-specified with the features argument that can be a logical,
-integer or character vector. The function returns the
-XCMSnExp with the reduced featureDefinitions data frame.
-The [ method allows to subset a XCMSnExp
-object by spectra. Be aware that the [ method removes all
-preprocessing results, except adjusted retention times if
+<meta property="og:description" content="The methods listed on this page allow to filter and subset XCMSnExp
+objects. Most of them are inherited from the OnDiskMSnExp object defined
+in the MSnbase package and have been adapted for XCMSnExp to enable
+correct subsetting of preprocessing results.
+[: subset a XCMSnExp object by spectra. Be aware that this removes
+all preprocessing results, except adjusted retention times if
 keepAdjustedRtime = TRUE is passed to the method.
-[[ extracts a single Spectrum
-object from an XCMSnExp. The reported retention time is the
-adjusted retention time if alignment has been performed on x.
-filterMsLevel: reduces the XCMSnExp
-object to spectra of the specified MS level(s). Chromatographic peaks
-and identified features are also subsetted to the respective MS level. See
-filterMsLevel documentation for details and
-examples.
-The methods listed on this page allow to filter and subset
-XCMSnExp objects. Most of them are inherited from the
-OnDiskMSnExp object and have been adapted for
-XCMSnExp to enable subsetting also on the preprocessing
-results.
-filterFile: allows to reduce the
-XCMSnExp to data from only certain files. Identified
-chromatographic peaks for these files are retained while correspondence
-results (feature definitions) are removed by default. To force keeping
-feature definitions use keepFeatures = TRUE. Adjusted retention times
-are kept by default if present. Use keepAdjustedRtime = FALSE to
-remove them.
-filterMz: filters the data set based on the
-provided mz value range. All chromatographic peaks and features (grouped
-peaks) falling completely within the provided mz value range are retained
-(if their minimal mz value is &amp;gt;= mz[1] and the maximal mz value
-&amp;lt;= mz[2]. Adjusted retention times, if present, are not altered by
-the filtering.
-filterRt: filters the data set based on the
-provided retention time range. All chromatographic peaks and features
-(grouped peaks) the specified retention time window are retained (i.e. if
-the retention time corresponding to the peak's apex is within the
+[[: extracts a single Spectrum object (defined in MSnbase). The
+reported retention time is the adjusted retention time if alignment has
+been performed.
+filterChromPeaks: subset the chromPeaks matrix in object. Parameter
+method allows to specify how the chromatographic peaks should be
+filtered. Currently, only method = &quot;keep&quot; is supported which allows to
+specify chromatographic peaks to keep with parameter keep (i.e. provide
+a logical, integer or character defining which chromatographic peaks
+to keep). Feature definitions (if present) are updated correspondingly.
+filterFeatureDefinitions: allows to subset the feature definitions of
+an XCMSnExp object. Parameter features allow to define which features
+to keep. It can be a logical, integer (index of features to keep) or
+character (feature IDs) vector.
+filterFile: allows to reduce the XCMSnExp to data from only selected
+files. Identified chromatographic peaks for these files are retained while
+correspondence results (feature definitions) are removed by default. To
+force keeping feature definitions use keepFeatures = TRUE. Adjusted
+retention times (if present) are retained by default if present. Use
+keepAdjustedRtime = FALSE to drop them.
+filterMsLevel: reduces the XCMSnExp object to spectra of the
+specified MS level(s). Chromatographic peaks and identified features are
+also subsetted to the respective MS level. See also the filterMsLevel
+documentation in MSnbase for details and examples.
+filterMz: filters the data set based on the provided m/z value range.
+All chromatographic peaks and features (grouped peaks) falling
+completely within the provided mz value range are retained
+(i.e. if their minimal m/z value is &amp;gt;= mz[1] and the maximal m/z value
+&amp;lt;= mz[2]. Adjusted retention times, if present, are kept.
+filterRt: filters the data set based on the provided retention time
+range. All chromatographic peaks and features (grouped peaks)
+completely within the specified retention time window are retained
+(i.e. if the retention time corresponding to the peak's apex is within the
 specified rt range). If retention time correction has been performed,
 the method will by default filter the object by adjusted retention times.
 The argument adjusted allows to specify manually whether filtering
-should be performed by raw or adjusted retention times. Filtering by
+should be performed on raw or adjusted retention times. Filtering by
 retention time does not drop any preprocessing results nor does it remove
 or change alignment results (i.e. adjusted retention times).
 The method returns an empty object if no spectrum or feature is within
 the specified retention time range.
-split splits an XCMSnExp object into a list
-of XCMSnExp objects based on the provided parameter f.
-Note that by default all pre-processing results are removed by the
-splitting, except adjusted retention times, if the optional argument
-keepAdjustedRtime = TRUE is provided." />
+split: splits an XCMSnExp object into a list of XCMSnExp objects
+based on the provided parameter f. Note that by default all
+pre-processing results are removed by the splitting, except adjusted
+retention times, if the optional argument keepAdjustedRtime = TRUE is
+provided.
+
+" />
 
 
 
@@ -185,58 +187,60 @@ keepAdjustedRtime = TRUE is provided." />
     </div>
 
     <div class="ref-description">
-    <p><code>filterFeatureDefinitions</code> allows to subset the feature definitions of
-an <code>XCMSnExp</code> object. Which feature definitions should be kept can be
-specified with the <code>features</code> argument that can be a <code>logical</code>,
-<code>integer</code> or <code>character</code> vector. The function returns the
-<code>XCMSnExp</code> with the reduced <code>featureDefinitions</code> data frame.</p>
-<p>The <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> method allows to subset a <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
-object by spectra. Be aware that the <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> method removes all
-preprocessing results, except adjusted retention times if
-<code>keepAdjustedRtime = TRUE</code> is passed to the method.</p>
-<p><code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> extracts a single <code>Spectrum</code>
-object from an <code>XCMSnExp</code>. The reported retention time is the
-adjusted retention time if alignment has been performed on <code>x</code>.</p>
-<p><code>filterMsLevel</code>: reduces the <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
-object to spectra of the specified MS level(s). Chromatographic peaks
-and identified features are also subsetted to the respective MS level. See
-<code>filterMsLevel</code> documentation for details and
-examples.</p>
-<p>The methods listed on this page allow to filter and subset
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> objects. Most of them are inherited from the
-<code>OnDiskMSnExp</code> object and have been adapted for
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> to enable subsetting also on the preprocessing
-results.</p>
-<p><code>filterFile</code>: allows to reduce the
-<code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> to data from only certain files. Identified
-chromatographic peaks for these files are retained while correspondence
-results (feature definitions) are removed by default. To force keeping
-feature definitions use <code>keepFeatures = TRUE</code>. Adjusted retention times
-are kept by default if present. Use <code>keepAdjustedRtime = FALSE</code> to
-remove them.</p>
-<p><code>filterMz</code>: filters the data set based on the
-provided mz value range. All chromatographic peaks and features (grouped
-peaks) falling completely within the provided mz value range are retained
-(if their minimal mz value is <code>&gt;= mz[1]</code> and the maximal mz value
-<code>&lt;= mz[2]</code>. Adjusted retention times, if present, are not altered by
-the filtering.</p>
-<p><code>filterRt</code>: filters the data set based on the
-provided retention time range. All chromatographic peaks and features
-(grouped peaks) the specified retention time window are retained (i.e. if
-the retention time corresponding to the peak's apex is within the
+    <p>The methods listed on this page allow to filter and subset <a href='XCMSnExp-class.html'>XCMSnExp</a>
+objects. Most of them are inherited from the OnDiskMSnExp object defined
+in the <code>MSnbase</code> package and have been adapted for <code>XCMSnExp</code> to enable
+correct subsetting of preprocessing results.</p><ul>
+<li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>: subset a <code>XCMSnExp</code> object by spectra. Be aware that this removes
+<strong>all</strong> preprocessing results, except adjusted retention times if
+<code>keepAdjustedRtime = TRUE</code> is passed to the method.</p></li>
+<li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: extracts a single <code>Spectrum</code> object (defined in <code>MSnbase</code>). The
+reported retention time is the adjusted retention time if alignment has
+been performed.</p></li>
+<li><p><code>filterChromPeaks</code>: subset the <code>chromPeaks</code> <code>matrix</code> in <code>object</code>. Parameter
+<code>method</code> allows to specify how the chromatographic peaks should be
+filtered. Currently, only <code>method = "keep"</code> is supported which allows to
+specify chromatographic peaks to keep with parameter <code>keep</code> (i.e. provide
+a <code>logical</code>, <code>integer</code> or <code>character</code> defining which chromatographic peaks
+to keep). Feature definitions (if present) are updated correspondingly.</p></li>
+<li><p><code>filterFeatureDefinitions</code>: allows to subset the feature definitions of
+an <code>XCMSnExp</code> object. Parameter <code>features</code> allow to define which features
+to keep. It can be a <code>logical</code>, <code>integer</code> (index of features to keep) or
+<code>character</code> (feature IDs) vector.</p></li>
+<li><p><code>filterFile</code>: allows to reduce the <code>XCMSnExp</code> to data from only selected
+files. Identified chromatographic peaks for these files are retained while
+correspondence results (feature definitions) are removed by default. To
+force keeping feature definitions use <code>keepFeatures = TRUE</code>. Adjusted
+retention times (if present) are retained by default if present. Use
+<code>keepAdjustedRtime = FALSE</code> to drop them.</p></li>
+<li><p><code>filterMsLevel</code>: reduces the <code>XCMSnExp</code> object to spectra of the
+specified MS level(s). Chromatographic peaks and identified features are
+also subsetted to the respective MS level. See also the <code>filterMsLevel</code>
+documentation in <code>MSnbase</code> for details and examples.</p></li>
+<li><p><code>filterMz</code>: filters the data set based on the provided m/z value range.
+All chromatographic peaks and features (grouped peaks) falling
+<strong>completely</strong> within the provided mz value range are retained
+(i.e. if their minimal m/z value is <code>&gt;= mz[1]</code> and the maximal m/z value
+<code>&lt;= mz[2]</code>. Adjusted retention times, if present, are kept.</p></li>
+<li><p><code>filterRt</code>: filters the data set based on the provided retention time
+range. All chromatographic peaks and features (grouped peaks)
+<strong>completely</strong> within the specified retention time window are retained
+(i.e. if the retention time corresponding to the peak's apex is within the
 specified rt range). If retention time correction has been performed,
 the method will by default filter the object by adjusted retention times.
 The argument <code>adjusted</code> allows to specify manually whether filtering
-should be performed by raw or adjusted retention times. Filtering by
+should be performed on raw or adjusted retention times. Filtering by
 retention time does not drop any preprocessing results nor does it remove
 or change alignment results (i.e. adjusted retention times).
 The method returns an empty object if no spectrum or feature is within
-the specified retention time range.</p>
-<p><code>split</code> splits an <code>XCMSnExp</code> object into a <code>list</code>
-of <code>XCMSnExp</code> objects based on the provided parameter <code>f</code>.
-Note that by default all pre-processing results are removed by the
-splitting, except adjusted retention times, if the optional argument
-<code>keepAdjustedRtime = TRUE</code> is provided.</p>
+the specified retention time range.</p></li>
+<li><p><code>split</code>: splits an <code>XCMSnExp</code> object into a <code>list</code> of <code>XCMSnExp</code> objects
+based on the provided parameter <code>f</code>. Note that by default all
+pre-processing results are removed by the splitting, except adjusted
+retention times, if the optional argument <code>keepAdjustedRtime = TRUE</code> is
+provided.</p></li>
+</ul>
+
     </div>
 
     <pre class="usage">filterFeatureDefinitions(x, features)
@@ -265,14 +269,22 @@ filterMz(object, mz, msLevel., ...)
 filterRt(object, rt, msLevel., adjusted = hasAdjustedRtime(object))
 
 # S4 method for XCMSnExp,ANY
-split(x, f, drop = FALSE, ...)</pre>
+split(x, f, drop = FALSE, ...)
+
+# S4 method for XCMSnExp
+filterChromPeaks(
+  object,
+  keep = rep(TRUE, nrow(chromPeaks(object))),
+  method = "keep",
+  ...
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
+      <td><p>For <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: an <code>XCMSnExp</code> object.</p></td>
     </tr>
     <tr>
       <th>features</th>
@@ -301,19 +313,18 @@ For <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>: a single 
     </tr>
     <tr>
       <th>object</th>
-      <td><p>A <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p></td>
+      <td><p>A <a href='XCMSnExp-class.html'>XCMSnExp</a> object.</p></td>
     </tr>
     <tr>
       <th>msLevel.</th>
-      <td><p>For <code>filterMz</code>, <code>filterRt</code>, <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>
+      <td><p>For <code>filterMz</code>, <code>filterRt</code>: <code>numeric</code>
 defining the MS level(s) to which operations should be applied or to
-which the object should be subsetted. See <code>filterMz</code>
-for more details</p></td>
+which the object should be subsetted.</p></td>
     </tr>
     <tr>
       <th>keepAdjustedRtime</th>
       <td><p>For <code>filterFile</code>, <code>filterMsLevel</code>,
-<code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> <code>split</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> defining whether the adjusted
+<code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>, <code>split</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> defining whether the adjusted
 retention times should be kept, even if e.g. features are being removed
 (and the retention time correction was performed on these features).</p></td>
     </tr>
@@ -328,8 +339,8 @@ increasingly ordered, if not they are ordered internally.</p></td>
       <th>keepFeatures</th>
       <td><p>For <code>filterFile</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether
 correspondence results (feature definitions) should be kept or dropped.
-Defaults to <code>keepFeatures = FALSE</code> hence removing feature
-definitions from the returned object.</p></td>
+Defaults to <code>keepFeatures = FALSE</code> hence feature definitions are removed
+from the returned object by default.</p></td>
     </tr>
     <tr>
       <th>mz</th>
@@ -352,14 +363,26 @@ For <code>spectra</code>: whether the retention times in the individual
     <tr>
       <th>f</th>
       <td><p>For <code>split</code> a vector of length equal to the length of x
-defining how <code>x</code> will be splitted. It is converted internally to
+defining how <code>x</code> should be splitted. It is converted internally to
 a <code>factor</code>.</p></td>
+    </tr>
+    <tr>
+      <th>keep</th>
+      <td><p>For <code>filterChromPeaks</code>: <code>logical</code>, <code>integer</code> or <code>character</code>
+defining which chromatographic peaks should be retained.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>For <code>filterChromPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> allowing to specify the
+method by which chromatographic peaks should be filtered. Currently only
+<code>method = "keep"</code> is supported (i.e. specify with parameter <code>keep</code> which
+chromatographic peaks should be retained).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>All methods return an <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object.</p>
+    <p>All methods return an <a href='XCMSnExp-class.html'>XCMSnExp</a> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>All subsetting methods try to ensure that the returned data is
@@ -381,12 +404,14 @@ the object.</p>
 <p>Note also that most of the filtering methods, and also the subsetting
 operations <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> drop all or selected preprocessing results. To
 consolidate the alignment results, i.e. ensure that adjusted retention
-times are always preserved, use the <code><a href='applyAdjustedRtime.html'>applyAdjustedRtime</a></code>
+times are always preserved, use the <code><a href='applyAdjustedRtime.html'>applyAdjustedRtime()</a></code>
 function on the object that contains the alignment results. This replaces
 the raw retention times with the adjusted ones.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.</p></div>
+    <div class='dont-index'><p><a href='XCMSnExp-class.html'>XCMSnExp</a> for base class documentation.</p>
+<p><code><a href='XChromatograms.html'>XChromatograms()</a></code> for similar filter functions on
+<code>XChromatograms</code> objects.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
