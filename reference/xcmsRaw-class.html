@@ -270,9 +270,12 @@
       above for more information.</p></dd>
     <dt>sortMz</dt><dd><p><code>signature(object = "xcmsRaw")</code>: sort the data points
       by increasing m/z for each scan</p></dd>
-	<dt>stitch</dt><dd><p><code>signature(object = "xcmsRaw")</code>: Raw data correction for
-	  lock mass calibration gaps.</p></dd>
-  
+    <dt>stitch</dt><dd><p><code>signature(object = "xcmsRaw")</code>: Raw data correction for
+      lock mass calibration gaps.</p></dd>
+    <dt>findmzROI</dt><dd><p><code>signature(object = "xcmsRaw")</code>:
+	internal function to identify regions of interest in the raw
+	data as part of the first step of centWave-based peak detection.</p></dd>
+    
 </dl>
 
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -294,11 +297,11 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Steffen Neumann.</p>
+  <p><p>Developed by Steffen Neumann.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>

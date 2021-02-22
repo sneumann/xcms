@@ -63,7 +63,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -78,15 +78,15 @@
 
       
 
-      </header><script src="xcms-direct-injection_files/header-attrs-2.6/header-attrs.js"></script><div class="row">
+      </header><script src="xcms-direct-injection_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Grouping FTICR-MS data with xcms</h1>
-                        <h4 class="author">Joachim Bargsten</h4>
-                                    <h4 class="author">Johannes Rainer</h4>
+                        <h4 data-toc-skip class="author">Joachim Bargsten</h4>
+                                    <h4 data-toc-skip class="author">Johannes Rainer</h4>
                         
       
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/vignettes/xcms-direct-injection.Rmd"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/vignettes/xcms-direct-injection.Rmd" class="external-link"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
       <div class="hidden name"><code>xcms-direct-injection.Rmd</code></div>
 
     </div>
@@ -107,51 +107,51 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
 </div>
 <div id="peak-detection" class="section level1">
 <h1 class="hasAnchor">
 <a href="#peak-detection" class="anchor"></a>Peak detection</h1>
-<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.13/xcms">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
+<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
 <p>Below we load the required packages. For information on the parallel processing setup please see the <code>BiocParallel</code> vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms">xcms</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">MassSpecWavelet</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MassSpecWavelet</span><span class="op">)</span>
 
 <span class="fu">register</span><span class="op">(</span><span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.13/msdata">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.13/msdata">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.13/msdata" class="external-link">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.13/msdata" class="external-link">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mzdata_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"fticr"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
-<span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">mzdata_path</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">mzdata_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
+<span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">mzdata_path</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co">## We're subsetting to 2 samples per condition</span>
-<span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="va">mzdata_files</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span><span class="op">]</span>
+<span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="va">mzdata_files</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">6</span>, <span class="fl">7</span><span class="op">)</span><span class="op">]</span>
 
 <span class="co">## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.</span>
-<span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"ham4"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span><span class="op">)</span>
-<span class="va">grp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">grep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"^HAM005"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"ham5"</span>
-<span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span>, sample_group <span class="op">=</span> <span class="va">grp</span><span class="op">)</span>
+<span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"ham4"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span><span class="op">)</span>
+<span class="va">grp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span>, pattern <span class="op">=</span> <span class="st">"^HAM005"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"ham5"</span>
+<span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">mzdata_files</span><span class="op">)</span>, sample_group <span class="op">=</span> <span class="va">grp</span><span class="op">)</span>
 
 <span class="co">## Load the data.</span>
-<span class="va">ham_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html">readMSData</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">mzdata_files</span>,
+<span class="va">ham_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">mzdata_files</span>,
                       pdata <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="st">"NAnnotatedDataFrame"</span>, <span class="va">pd</span><span class="op">)</span>,
                       mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></code></pre></div>
 <p>The data files are from <em>direct injection</em> mass spectrometry experiments, i.e. we have only a single spectrum available for each sample and no retention times.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Only a single spectrum with an *artificial* retention time is available</span>
 <span class="co">## for each sample</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">ham_raw</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">ham_raw</span><span class="op">)</span></code></pre></div>
 <pre><code>## F1.S1 F2.S1 F3.S1 F4.S1 
 ##     1     1     1     1</code></pre>
 <p>Peaks are identified within each spectrum using the <em>mass spec wavelet</em> method.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Define the parameters for the peak detection</span>
-<span class="va">msw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findPeaks-MSW.html">MSWParam</a></span><span class="op">(</span>scales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">9</span><span class="op">)</span>, nearbyPeak <span class="op">=</span> <span class="cn">TRUE</span>, winSize.noise <span class="op">=</span> <span class="fl">500</span>,
+<span class="va">msw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/findPeaks-MSW.html">MSWParam</a></span><span class="op">(</span>scales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">9</span><span class="op">)</span>, nearbyPeak <span class="op">=</span> <span class="cn">TRUE</span>, winSize.noise <span class="op">=</span> <span class="fl">500</span>,
                 SNR.method <span class="op">=</span> <span class="st">"data.mean"</span>, snthresh <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
 
 <span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">ham_raw</span>, param <span class="op">=</span> <span class="va">msw</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##            mz    mzmin    mzmax rt rtmin rtmax    into     maxo       sn intf
 ## CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.97534   NA
 ## CP02 409.1845 409.1747 409.1936 -1    -1    -1 4158404 310572.1 20.61382   NA
@@ -174,11 +174,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Below we demonstrate the <code>calibrate</code> method on one of the data files with artificially defined calibration m/z values. We first subset the data set to the first data file, extract the m/z values of 3 peaks and modify the values slightly.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Subset to the first file.</span>
-<span class="va">first_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterFile</a></span><span class="op">(</span><span class="va">ham_prep</span>, file <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+<span class="va">first_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">ham_prep</span>, file <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 
 <span class="co">## Extract 3 m/z values</span>
-<span class="va">calib_mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"mz"</span><span class="op">]</span>
-<span class="va">calib_mz</span> <span class="op">&lt;-</span> <span class="va">calib_mz</span> <span class="op">+</span> <span class="fl">0.00001</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span> <span class="op">*</span> <span class="va">calib_mz</span> <span class="op">+</span> <span class="fl">0.0001</span></code></pre></div>
+<span class="va">calib_mz</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"mz"</span><span class="op">]</span>
+<span class="va">calib_mz</span> <span class="op">&lt;-</span> <span class="va">calib_mz</span> <span class="op">+</span> <span class="fl">0.00001</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0.4</span><span class="op">)</span> <span class="op">*</span> <span class="va">calib_mz</span> <span class="op">+</span> <span class="fl">0.0001</span></code></pre></div>
 <p>Next we calibrate the data set using the previously defined <em>artificial</em> calibrants. We are using the <code>"edgeshift"</code> method for calibration that adjusts all peaks within the range of the m/z values of the calibrants using a linear interpolation and shifts all chromatographic peaks outside of that range by a constant factor (the difference between the lowest respectively largest calibrant m/z with the closest peak’s m/z). Note that in a <em>real</em> use case, the m/z values would obviously represent known m/z of calibrants and would not be defined on the actual data.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Set-up the parameter class for the calibration</span>
@@ -190,8 +190,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <code class="sourceCode R"><span class="va">diffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file_calibrated</span><span class="op">)</span><span class="op">[</span>, <span class="st">"mz"</span><span class="op">]</span> <span class="op">-</span>
     <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file</span><span class="op">)</span><span class="op">[</span>, <span class="st">"mz"</span><span class="op">]</span>
 
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file</span><span class="op">)</span><span class="op">[</span>, <span class="st">"mz"</span><span class="op">]</span>, xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span>,
-     y <span class="op">=</span> <span class="va">diffs</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">calibrated</span><span class="op">]</span> <span class="op">-</span> <span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">first_file</span><span class="op">)</span><span class="op">[</span>, <span class="st">"mz"</span><span class="op">]</span>, xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span>,
+     y <span class="op">=</span> <span class="va">diffs</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">calibrated</span><span class="op">]</span> <span class="op">-</span> <span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="xcms-direct-injection_files/figure-html/calibrationresult-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div id="correspondence" class="section level1">
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  Number of spectra: 4 
 ##  MSn retention times: 0:01 - 0:01 minutes
 ## - - - Processing information - - -
-## Data loaded [Mon Feb 15 11:28:53 2021] 
+## Data loaded [Mon Feb 22 12:15:40 2021] 
 ##  MSnbase version: 2.17.8 
 ## - - - Meta data  - - -
 ## phenoData
@@ -274,29 +274,29 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span><span class="op">$</span><span class="va">peakidx</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="op">]</span>
 
 <span class="co">## Define the m/z range</span>
-<span class="va">mzr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">pks</span><span class="op">[</span>, <span class="st">"mzmin"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.001</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">pks</span><span class="op">[</span>, <span class="st">"mzmax"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.001</span><span class="op">)</span>
+<span class="va">mzr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">pks</span><span class="op">[</span>, <span class="st">"mzmin"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.001</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">pks</span><span class="op">[</span>, <span class="st">"mzmax"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.001</span><span class="op">)</span>
 
 <span class="co">## Subset the object to the m/z range</span>
-<span class="va">ham_prep_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html">filterMz</a></span><span class="op">(</span><span class="va">ham_prep</span>, mz <span class="op">=</span> <span class="va">mzr</span><span class="op">)</span>
+<span class="va">ham_prep_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html" class="external-link">filterMz</a></span><span class="op">(</span><span class="va">ham_prep</span>, mz <span class="op">=</span> <span class="va">mzr</span><span class="op">)</span>
 
 <span class="co">## Extract the mz and intensity values</span>
-<span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">mz</a></span><span class="op">(</span><span class="va">ham_prep_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">ham_prep_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">ham_prep_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">ham_prep_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co">## Plot the data</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span>, pch <span class="op">=</span> <span class="cn">NA</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>, main <span class="op">=</span> <span class="st">"FT01"</span>,
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span>, pch <span class="op">=</span> <span class="cn">NA</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>, main <span class="op">=</span> <span class="st">"FT01"</span>,
      xlab <span class="op">=</span> <span class="st">"m/z"</span>, ylab <span class="op">=</span> <span class="st">"intensity"</span><span class="op">)</span>
 <span class="co">## Define colors</span>
-<span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span><span class="op">)</span>
+<span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span><span class="op">)</span>
 <span class="va">cols</span><span class="op">[</span><span class="va">ham_prep_sub</span><span class="op">$</span><span class="va">sample_group</span> <span class="op">==</span> <span class="st">"ham5"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"#0000ff80"</span>
-<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mapply.html">mapply</a></span><span class="op">(</span><span class="va">mzs</span>, <span class="va">ints</span>, <span class="va">cols</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="va">col</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
+<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="va">mzs</span>, <span class="va">ints</span>, <span class="va">cols</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">col</span><span class="op">)</span> <span class="op">{</span>
+    <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, col <span class="op">=</span> <span class="va">col</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p><img src="xcms-direct-injection_files/figure-html/feature1-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>To access the actual intensity values of each feature in each sample the <code>featureValue</code> method can be used. The setting <code>value = "into"</code> tells the function to return the integrated signal for each peak (one representative peak) per sample.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">feat_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/quantify,XCMSnExp-method.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">feat_vals</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feat_vals</span><span class="op">)</span></code></pre></div>
 <pre><code>##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata
 ## FT01                                           NA
 ## FT02                                      4735258
@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FillChromPeaksParam-class.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/FillChromPeaksParam-class.html">FillChromPeaksParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/quantify,XCMSnExp-method.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/quantify,XCMSnExp-method.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata
 ## FT01                                     768754.0
 ## FT02                                    4735257.5
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="further-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#further-analysis" class="anchor"></a>Further analysis</h1>
-<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.13/limma">limma</a></em>.</p>
+<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.13/limma" class="external-link">limma</a></em>.</p>
 </div>
   </div>
 
@@ -377,11 +377,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
       <footer><div class="copyright">
-  <p>Developed by Steffen Neumann.</p>
+  <p></p>
+<p>Developed by Steffen Neumann.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
