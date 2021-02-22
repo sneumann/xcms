@@ -12,6 +12,8 @@
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
 \alias{levelplot}
+\alias{findmzROI}
+\alias{findmzROI,xcmsRaw-method}
 
 \title{Class xcmsRaw, a class for handling raw data}
 \description{
@@ -209,12 +211,17 @@
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points
       by increasing m/z for each scan
-	}
-	\item{stitch}{
-	  \code{signature(object = "xcmsRaw")}: Raw data correction for
-	  lock mass calibration gaps.
-	}
-  }
+    }
+    \item{stitch}{
+      \code{signature(object = "xcmsRaw")}: Raw data correction for
+      lock mass calibration gaps.
+    }
+    \item{findmzROI}{
+      \code{signature(object = "xcmsRaw")}:
+	internal function to identify regions of interest in the raw
+	data as part of the first step of centWave-based peak detection.
+      }
+    }
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu},
   Johannes Rainer \email{johannes.rainer@eurac.edu}}
