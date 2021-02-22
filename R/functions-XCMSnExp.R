@@ -1381,19 +1381,6 @@ applyAdjustedRtime <- function(object) {
     new_x
 }
 
-#' @description
-#'
-#' \code{filterFeatureDefinitions} allows to subset the feature definitions of
-#' an \code{XCMSnExp} object. Which feature definitions should be kept can be
-#' specified with the \code{features} argument that can be a \code{logical},
-#' \code{integer} or \code{character} vector. The function returns the
-#' \code{XCMSnExp} with the reduced \code{featureDefinitions} data frame.
-#'
-#' @param features For \code{filterFeatureDefinitions}: either a \code{integer}
-#'     specifying the indices of the features (rows) to keep, a \code{logical}
-#'     with a length matching the number of rows of \code{featureDefinitions}
-#'     or a \code{character} with the feature (row) names.
-#'
 #' @rdname XCMSnExp-filter-methods
 filterFeatureDefinitions <- function(x, features) {
     if (!is(x, "XCMSnExp"))

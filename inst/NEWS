@@ -2,6 +2,7 @@ Changes in version 3.13.5
 
 - Add `filterChromPeaks` method to filter chromatographic peaks in a
   `XChromatogram` or `XChromatograms` object.
+- Add `filterChromPeaks` method for `XCMSnExp` (issue #541).
 - Support return of `Spectra` objects by `chromPeakSpectra`, `featureSpectra`
   and `reconstructChromPeakSpectra`.
 - Support extraction of MS1 spectra with `chromPeakSpectra`.
