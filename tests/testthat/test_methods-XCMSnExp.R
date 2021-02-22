@@ -2310,3 +2310,21 @@ test_that("refineChromPeaks,FilterIntensityParam works", {
                  chromPeaks(pest_swth, msLevel = 1L))
     expect_true(nrow(chromPeaks(res, msLevel = 2L)) == 0)
 })
+
+test_that("filterChromPeaks,XCMSnExp works", {
+    res <- filterChromPeaks(xod_x, keep = c(5, 23, 3))
+    expect_true(nrow(chromPeaks(res)) == 3)
+    expect_equal(chromPeaks(res), chromPeaks(xod_x)[c(3, 5, 23), ])
+
+    expect_error(filterChromPeaks(xod_x, keep = 1235), "out of bounds")
+
+    res <- filterChromPeaks(xod_xg, keep = c(8, 197, 14))
+    expect_equal(chromPeaks(res), chromPeaks(xod_xg)[c(8, 14, 197), ])
+    expect_true(nrow(featureDefinitions(res)) == 2)
+    ## chromPeak 14 is part of feature 6
+    tmp <- featureValues(xod_xg)[6, ]
+    tmp[3] <- NA
+    expect_equal(featureValues(res)[1, ], tmp)
+    ## chromPeaks 8 and 197 are part of feature 46
+    expect_equal(featureValues(res)[2, ], featureValues(xod_xg)[46, ])
+})

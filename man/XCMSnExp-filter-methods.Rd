@@ -3,13 +3,14 @@
 \name{filterFeatureDefinitions}
 \alias{filterFeatureDefinitions}
 \alias{[,XCMSnExp,ANY,ANY,ANY-method}
+\alias{XCMSnExp-filter}
 \alias{[[,XCMSnExp,ANY,ANY-method}
 \alias{filterMsLevel,XCMSnExp-method}
 \alias{filterFile,XCMSnExp-method}
-\alias{XCMSnExp-filter}
 \alias{filterMz,XCMSnExp-method}
 \alias{filterRt,XCMSnExp-method}
 \alias{split,XCMSnExp,ANY-method}
+\alias{filterChromPeaks,XCMSnExp-method}
 \title{XCMSnExp filtering and subsetting}
 \usage{
 filterFeatureDefinitions(x, features)
@@ -32,9 +33,16 @@ filterFeatureDefinitions(x, features)
 \S4method{filterRt}{XCMSnExp}(object, rt, msLevel., adjusted = hasAdjustedRtime(object))
 
 \S4method{split}{XCMSnExp,ANY}(x, f, drop = FALSE, ...)
+
+\S4method{filterChromPeaks}{XCMSnExp}(
+  object,
+  keep = rep(TRUE, nrow(chromPeaks(object))),
+  method = "keep",
+  ...
+)
 }
 \arguments{
-\item{x}{For \code{[} and \code{[[}: an \code{\link{XCMSnExp}} object.}
+\item{x}{For \code{[} and \code{[[}: an \code{XCMSnExp} object.}
 
 \item{features}{For \code{filterFeatureDefinitions}: either a \code{integer}
 specifying the indices of the features (rows) to keep, a \code{logical}
@@ -51,15 +59,14 @@ For \code{[[}: a single integer or character.}
 
 \item{drop}{For \code{[} and \code{[[}: not supported.}
 
-\item{object}{A \code{\link{XCMSnExp}} object.}
+\item{object}{A \link{XCMSnExp} object.}
 
-\item{msLevel.}{For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
+\item{msLevel.}{For \code{filterMz}, \code{filterRt}: \code{numeric}
 defining the MS level(s) to which operations should be applied or to
-which the object should be subsetted. See \code{\link{filterMz}}
-for more details}
+which the object should be subsetted.}
 
 \item{keepAdjustedRtime}{For \code{filterFile}, \code{filterMsLevel},
-\code{[} \code{split}: \code{logical(1)} defining whether the adjusted
+\code{[}, \code{split}: \code{logical(1)} defining whether the adjusted
 retention times should be kept, even if e.g. features are being removed
 (and the retention time correction was performed on these features).}
 
@@ -70,8 +77,8 @@ increasingly ordered, if not they are ordered internally.}
 
 \item{keepFeatures}{For \code{filterFile}: \code{logical(1)} whether
 correspondence results (feature definitions) should be kept or dropped.
-Defaults to \code{keepFeatures = FALSE} hence removing feature
-definitions from the returned object.}
+Defaults to \code{keepFeatures = FALSE} hence feature definitions are removed
+from the returned object by default.}
 
 \item{mz}{For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 mz value for the filtering.}
@@ -86,73 +93,75 @@ For \code{spectra}: whether the retention times in the individual
 \code{Spectrum} objects should be the adjusted or raw retention times.}
 
 \item{f}{For \code{split} a vector of length equal to the length of x
-defining how \code{x} will be splitted. It is converted internally to
+defining how \code{x} should be splitted. It is converted internally to
 a \code{factor}.}
+
+\item{keep}{For \code{filterChromPeaks}: \code{logical}, \code{integer} or \code{character}
+defining which chromatographic peaks should be retained.}
+
+\item{method}{For \code{filterChromPeaks}: \code{character(1)} allowing to specify the
+method by which chromatographic peaks should be filtered. Currently only
+\code{method = "keep"} is supported (i.e. specify with parameter \code{keep} which
+chromatographic peaks should be retained).}
 }
 \value{
-All methods return an \code{\link{XCMSnExp}} object.
+All methods return an \link{XCMSnExp} object.
 }
 \description{
-\code{filterFeatureDefinitions} allows to subset the feature definitions of
-an \code{XCMSnExp} object. Which feature definitions should be kept can be
-specified with the \code{features} argument that can be a \code{logical},
-\code{integer} or \code{character} vector. The function returns the
-\code{XCMSnExp} with the reduced \code{featureDefinitions} data frame.
-
-The \code{[} method allows to subset a \code{\link{XCMSnExp}}
-object by spectra. Be aware that the \code{[} method removes all
-preprocessing results, except adjusted retention times if
+The methods listed on this page allow to filter and subset \link{XCMSnExp}
+objects. Most of them are inherited from the \link{OnDiskMSnExp} object defined
+in the \code{MSnbase} package and have been adapted for \code{XCMSnExp} to enable
+correct subsetting of preprocessing results.
+\itemize{
+\item \code{[}: subset a \code{XCMSnExp} object by spectra. Be aware that this removes
+\strong{all} preprocessing results, except adjusted retention times if
 \code{keepAdjustedRtime = TRUE} is passed to the method.
-
-\code{[[} extracts a single \code{\link{Spectrum}}
-object from an \code{XCMSnExp}. The reported retention time is the
-adjusted retention time if alignment has been performed on \code{x}.
-
-\code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
-object to spectra of the specified MS level(s). Chromatographic peaks
-and identified features are also subsetted to the respective MS level. See
-\code{\link{filterMsLevel}} documentation for details and
-examples.
-
-The methods listed on this page allow to filter and subset
-\code{\link{XCMSnExp}} objects. Most of them are inherited from the
-\code{\link{OnDiskMSnExp}} object and have been adapted for
-\code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
-results.
-
-\code{filterFile}: allows to reduce the
-\code{\link{XCMSnExp}} to data from only certain files. Identified
-chromatographic peaks for these files are retained while correspondence
-results (feature definitions) are removed by default. To force keeping
-feature definitions use \code{keepFeatures = TRUE}. Adjusted retention times
-are kept by default if present. Use \code{keepAdjustedRtime = FALSE} to
-remove them.
-
-\code{filterMz}: filters the data set based on the
-provided mz value range. All chromatographic peaks and features (grouped
-peaks) falling completely within the provided mz value range are retained
-(if their minimal mz value is \code{>= mz[1]} and the maximal mz value
-\code{<= mz[2]}. Adjusted retention times, if present, are not altered by
-the filtering.
-
-\code{filterRt}: filters the data set based on the
-provided retention time range. All chromatographic peaks and features
-(grouped peaks) the specified retention time window are retained (i.e. if
-the retention time corresponding to the peak's apex is within the
+\item \code{[[}: extracts a single \code{Spectrum} object (defined in \code{MSnbase}). The
+reported retention time is the adjusted retention time if alignment has
+been performed.
+\item \code{filterChromPeaks}: subset the \code{chromPeaks} \code{matrix} in \code{object}. Parameter
+\code{method} allows to specify how the chromatographic peaks should be
+filtered. Currently, only \code{method = "keep"} is supported which allows to
+specify chromatographic peaks to keep with parameter \code{keep} (i.e. provide
+a \code{logical}, \code{integer} or \code{character} defining which chromatographic peaks
+to keep). Feature definitions (if present) are updated correspondingly.
+\item \code{filterFeatureDefinitions}: allows to subset the feature definitions of
+an \code{XCMSnExp} object. Parameter \code{features} allow to define which features
+to keep. It can be a \code{logical}, \code{integer} (index of features to keep) or
+\code{character} (feature IDs) vector.
+\item \code{filterFile}: allows to reduce the \code{XCMSnExp} to data from only selected
+files. Identified chromatographic peaks for these files are retained while
+correspondence results (feature definitions) are removed by default. To
+force keeping feature definitions use \code{keepFeatures = TRUE}. Adjusted
+retention times (if present) are retained by default if present. Use
+\code{keepAdjustedRtime = FALSE} to drop them.
+\item \code{filterMsLevel}: reduces the \code{XCMSnExp} object to spectra of the
+specified MS level(s). Chromatographic peaks and identified features are
+also subsetted to the respective MS level. See also the \code{filterMsLevel}
+documentation in \code{MSnbase} for details and examples.
+\item \code{filterMz}: filters the data set based on the provided m/z value range.
+All chromatographic peaks and features (grouped peaks) falling
+\strong{completely} within the provided mz value range are retained
+(i.e. if their minimal m/z value is \verb{>= mz[1]} and the maximal m/z value
+\verb{<= mz[2]}. Adjusted retention times, if present, are kept.
+\item \code{filterRt}: filters the data set based on the provided retention time
+range. All chromatographic peaks and features (grouped peaks)
+\strong{completely} within the specified retention time window are retained
+(i.e. if the retention time corresponding to the peak's apex is within the
 specified rt range). If retention time correction has been performed,
 the method will by default filter the object by adjusted retention times.
 The argument \code{adjusted} allows to specify manually whether filtering
-should be performed by raw or adjusted retention times. Filtering by
+should be performed on raw or adjusted retention times. Filtering by
 retention time does not drop any preprocessing results nor does it remove
 or change alignment results (i.e. adjusted retention times).
 The method returns an empty object if no spectrum or feature is within
 the specified retention time range.
-
-\code{split} splits an \code{XCMSnExp} object into a \code{list}
-of \code{XCMSnExp} objects based on the provided parameter \code{f}.
-Note that by default all pre-processing results are removed by the
-splitting, except adjusted retention times, if the optional argument
-\code{keepAdjustedRtime = TRUE} is provided.
+\item \code{split}: splits an \code{XCMSnExp} object into a \code{list} of \code{XCMSnExp} objects
+based on the provided parameter \code{f}. Note that by default all
+pre-processing results are removed by the splitting, except adjusted
+retention times, if the optional argument \code{keepAdjustedRtime = TRUE} is
+provided.
+}
 }
 \details{
 All subsetting methods try to ensure that the returned data is
@@ -175,7 +184,7 @@ the object.
 Note also that most of the filtering methods, and also the subsetting
 operations \code{[} drop all or selected preprocessing results. To
 consolidate the alignment results, i.e. ensure that adjusted retention
-times are always preserved, use the \code{\link{applyAdjustedRtime}}
+times are always preserved, use the \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}}
 function on the object that contains the alignment results. This replaces
 the raw retention times with the adjusted ones.
 }
@@ -235,7 +244,10 @@ xod_list <- split(faahko_sub, f = fromFile(faahko_sub))
 xod_list
 }
 \seealso{
-\code{\link{XCMSnExp}} for base class documentation.
+\link{XCMSnExp} for base class documentation.
+
+\code{\link[=XChromatograms]{XChromatograms()}} for similar filter functions on
+\code{XChromatograms} objects.
 }
 \author{
 Johannes Rainer

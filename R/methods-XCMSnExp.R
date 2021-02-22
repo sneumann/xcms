@@ -825,24 +825,230 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 })
 
 
+#' @title XCMSnExp filtering and subsetting
+#'
+#' @aliases XCMSnExp-filter
+#'
 #' @description
 #'
-#' The \code{[} method allows to subset a \code{\link{XCMSnExp}}
-#' object by spectra. Be aware that the \code{[} method removes all
-#' preprocessing results, except adjusted retention times if
-#' \code{keepAdjustedRtime = TRUE} is passed to the method.
+#' The methods listed on this page allow to filter and subset [XCMSnExp]
+#' objects. Most of them are inherited from the [OnDiskMSnExp] object defined
+#' in the `MSnbase` package and have been adapted for `XCMSnExp` to enable
+#' correct subsetting of preprocessing results.
 #'
-#' @param x For \code{[} and \code{[[}: an \code{\link{XCMSnExp}} object.
+#' - `[`: subset a `XCMSnExp` object by spectra. Be aware that this removes
+#'   **all** preprocessing results, except adjusted retention times if
+#'   `keepAdjustedRtime = TRUE` is passed to the method.
 #'
-#' @param i For \code{[}: \code{numeric} or \code{logical} vector specifying to
+#' - `[[`: extracts a single `Spectrum` object (defined in `MSnbase`). The
+#'   reported retention time is the adjusted retention time if alignment has
+#'   been performed.
+#'
+#' - `filterChromPeaks`: subset the `chromPeaks` `matrix` in `object`. Parameter
+#'   `method` allows to specify how the chromatographic peaks should be
+#'   filtered. Currently, only `method = "keep"` is supported which allows to
+#'   specify chromatographic peaks to keep with parameter `keep` (i.e. provide
+#'   a `logical`, `integer` or `character` defining which chromatographic peaks
+#'   to keep). Feature definitions (if present) are updated correspondingly.
+#'
+#' - `filterFeatureDefinitions`: allows to subset the feature definitions of
+#'   an `XCMSnExp` object. Parameter `features` allow to define which features
+#'   to keep. It can be a `logical`, `integer` (index of features to keep) or
+#'   `character` (feature IDs) vector.
+#'
+#' - `filterFile`: allows to reduce the `XCMSnExp` to data from only selected
+#'   files. Identified chromatographic peaks for these files are retained while
+#'   correspondence results (feature definitions) are removed by default. To
+#'   force keeping feature definitions use `keepFeatures = TRUE`. Adjusted
+#'   retention times (if present) are retained by default if present. Use
+#'   `keepAdjustedRtime = FALSE` to drop them.
+#'
+#' - `filterMsLevel`: reduces the `XCMSnExp` object to spectra of the
+#'   specified MS level(s). Chromatographic peaks and identified features are
+#'   also subsetted to the respective MS level. See also the `filterMsLevel`
+#'   documentation in `MSnbase` for details and examples.
+#'
+#' - `filterMz`: filters the data set based on the provided m/z value range.
+#'   All chromatographic peaks and features (grouped peaks) falling
+#'   **completely** within the provided mz value range are retained
+#'   (i.e. if their minimal m/z value is `>= mz[1]` and the maximal m/z value
+#'   `<= mz[2]`. Adjusted retention times, if present, are kept.
+#'
+#' - `filterRt`: filters the data set based on the provided retention time
+#'   range. All chromatographic peaks and features (grouped peaks)
+#'   **completely** within the specified retention time window are retained
+#'   (i.e. if the retention time corresponding to the peak's apex is within the
+#'   specified rt range). If retention time correction has been performed,
+#'   the method will by default filter the object by adjusted retention times.
+#'   The argument `adjusted` allows to specify manually whether filtering
+#'   should be performed on raw or adjusted retention times. Filtering by
+#'   retention time does not drop any preprocessing results nor does it remove
+#'   or change alignment results (i.e. adjusted retention times).
+#'   The method returns an empty object if no spectrum or feature is within
+#'   the specified retention time range.
+#'
+#' - `split`: splits an `XCMSnExp` object into a `list` of `XCMSnExp` objects
+#'   based on the provided parameter `f`. Note that by default all
+#'   pre-processing results are removed by the splitting, except adjusted
+#'   retention times, if the optional argument `keepAdjustedRtime = TRUE` is
+#'   provided.
+#'
+#' @details
+#'
+#' All subsetting methods try to ensure that the returned data is
+#' consistent. Correspondence results for example are removed by default if the
+#' data set is sub-setted by file, since the correspondence results are
+#' dependent on the files on which correspondence was performed. This can be
+#' changed by setting `keepFeatures = TRUE`.
+#' For adjusted retention times, most subsetting methods
+#' support the argument `keepAdjustedRtime` (even the `[` method)
+#' that forces the adjusted retention times to be retained even if the
+#' default would be to drop them.
+#'
+#' @note
+#'
+#' The `filterFile` method removes also process history steps not
+#' related to the files to which the object should be sub-setted and updates
+#' the `fileIndex` attribute accordingly. Also, the method does not
+#' allow arbitrary ordering of the files or re-ordering of the files within
+#' the object.
+#'
+#' Note also that most of the filtering methods, and also the subsetting
+#' operations `[` drop all or selected preprocessing results. To
+#' consolidate the alignment results, i.e. ensure that adjusted retention
+#' times are always preserved, use the [applyAdjustedRtime()]
+#' function on the object that contains the alignment results. This replaces
+#' the raw retention times with the adjusted ones.
+#'
+#' @param adjusted For `filterRt`: `logical` indicating whether the
+#'     object should be filtered by original (`adjusted = FALSE`) or
+#'     adjusted retention times (`adjusted = TRUE`).
+#'     For `spectra`: whether the retention times in the individual
+#'     `Spectrum` objects should be the adjusted or raw retention times.
+#'
+#' @param drop For `[` and `[[`: not supported.
+#'
+#' @param f For `split` a vector of length equal to the length of x
+#'     defining how `x` should be splitted. It is converted internally to
+#'     a `factor`.
+#'
+#' @param features For `filterFeatureDefinitions`: either a `integer`
+#'     specifying the indices of the features (rows) to keep, a `logical`
+#'     with a length matching the number of rows of `featureDefinitions`
+#'     or a `character` with the feature (row) names.
+#'
+#' @param file For `filterFile`: `integer` defining the file index
+#'     within the object to subset the object by file or `character`
+#'     specifying the file names to sub set. The indices are expected to be
+#'     increasingly ordered, if not they are ordered internally.
+#'
+#' @param i For `[`: `numeric` or `logical` vector specifying to
 #'     which spectra the data set should be reduced.
-#'     For \code{[[}: a single integer or character.
+#'     For `[[`: a single integer or character.
 #'
-#' @param j For \code{[} and \code{[[}: not supported.
+#' @param j For `[` and `[[`: not supported.
 #'
-#' @param drop For \code{[} and \code{[[}: not supported.
+#' @param keep For `filterChromPeaks`: `logical`, `integer` or `character`
+#'     defining which chromatographic peaks should be retained.
+#'
+#' @param keepAdjustedRtime For `filterFile`, `filterMsLevel`,
+#'     `[`, `split`: `logical(1)` defining whether the adjusted
+#'     retention times should be kept, even if e.g. features are being removed
+#'     (and the retention time correction was performed on these features).
+#'
+#' @param keepFeatures For `filterFile`: `logical(1)` whether
+#'     correspondence results (feature definitions) should be kept or dropped.
+#'     Defaults to `keepFeatures = FALSE` hence feature definitions are removed
+#'     from the returned object by default.
+#'
+#' @param method For `filterChromPeaks`: `character(1)` allowing to specify the
+#'     method by which chromatographic peaks should be filtered. Currently only
+#'     `method = "keep"` is supported (i.e. specify with parameter `keep` which
+#'     chromatographic peaks should be retained).
+#'
+#' @param msLevel. For `filterMz`, `filterRt`: `numeric`
+#'     defining the MS level(s) to which operations should be applied or to
+#'     which the object should be subsetted.
+#'
+#' @param mz For `filterMz`: `numeric(2)` defining the lower and upper
+#'     mz value for the filtering.
+#'
+#' @param object A [XCMSnExp] object.
+#'
+#' @param rt For `filterRt`: `numeric(2)` defining the retention time
+#'     window (lower and upper bound) for the filtering.
+#'
+#' @param x For `[` and `[[`: an `XCMSnExp` object.
+#'
+#' @param ... Optional additional arguments.
+#'
+#' @return All methods return an [XCMSnExp] object.
+#'
+#' @author Johannes Rainer
+#'
+#' @seealso [XCMSnExp] for base class documentation.
+#'
+#' @seealso [XChromatograms()] for similar filter functions on
+#'     `XChromatograms` objects.
 #'
 #' @rdname XCMSnExp-filter-methods
+#'
+#' @md
+#'
+#' @examples
+#'
+#' ## Loading a test data set with identified chromatographic peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
+#' ## Subset the dataset to the first and third file.
+#' xod_sub <- filterFile(faahko_sub, file = c(1, 3))
+#'
+#' ## The number of chromatographic peaks per file for the full object
+#' table(chromPeaks(faahko_sub)[, "sample"])
+#'
+#' ## The number of chromatographic peaks per file for the subset
+#' table(chromPeaks(xod_sub)[, "sample"])
+#'
+#' basename(fileNames(faahko_sub))
+#' basename(fileNames(xod_sub))
+#'
+#' ## Filter on mz values; chromatographic peaks and features within the
+#' ## mz range are retained (as well as adjusted retention times).
+#' xod_sub <- filterMz(faahko_sub, mz = c(300, 400))
+#' head(chromPeaks(xod_sub))
+#' nrow(chromPeaks(xod_sub))
+#' nrow(chromPeaks(faahko_sub))
+#'
+#' ## Filter on rt values. All chromatographic peaks and features within the
+#' ## retention time range are retained. Filtering is performed by default on
+#' ## adjusted retention times, if present.
+#' xod_sub <- filterRt(faahko_sub, rt = c(2700, 2900))
+#'
+#' range(rtime(xod_sub))
+#' head(chromPeaks(xod_sub))
+#' range(chromPeaks(xod_sub)[, "rt"])
+#'
+#' nrow(chromPeaks(faahko_sub))
+#' nrow(chromPeaks(xod_sub))
+#'
+#' ## Extract a single Spectrum
+#' faahko_sub[[4]]
+#'
+#' ## Subsetting using [ removes all preprocessing results - using
+#' ## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.
+#' xod_sub <- faahko_sub[fromFile(faahko_sub) == 1]
+#' xod_sub
+#'
+#' ## Using split does also remove preprocessing results, but it supports the
+#' ## optional parameter keepAdjustedRtime.
+#' ## Split the object into a list of XCMSnExp objects, one per file
+#' xod_list <- split(faahko_sub, f = fromFile(faahko_sub))
+#' xod_list
 setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
     if (!missing(j))
         stop("subsetting by columns ('j') not supported")
@@ -873,12 +1079,6 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
     callNextMethod()
 })
 
-#' @description
-#'
-#' \code{[[} extracts a single \code{\link{Spectrum}}
-#' object from an \code{XCMSnExp}. The reported retention time is the
-#' adjusted retention time if alignment has been performed on \code{x}.
-#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("[[", "XCMSnExp",
           function(x, i, j, drop = FALSE) {
@@ -969,14 +1169,6 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
     callNextMethod()
 })
 
-#' @description
-#'
-#' \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
-#' object to spectra of the specified MS level(s). Chromatographic peaks
-#' and identified features are also subsetted to the respective MS level. See
-#' \code{\link{filterMsLevel}} documentation for details and
-#' examples.
-#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
                                                 keepAdjustedRtime =
@@ -1069,132 +1261,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
     callNextMethod()
 })
 
-#' @aliases XCMSnExp-filter
-#'
-#' @title XCMSnExp filtering and subsetting
-#'
-#' @description
-#'
-#' The methods listed on this page allow to filter and subset
-#' \code{\link{XCMSnExp}} objects. Most of them are inherited from the
-#' \code{\link{OnDiskMSnExp}} object and have been adapted for
-#' \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
-#' results.
-#'
-#' \code{filterFile}: allows to reduce the
-#' \code{\link{XCMSnExp}} to data from only certain files. Identified
-#' chromatographic peaks for these files are retained while correspondence
-#' results (feature definitions) are removed by default. To force keeping
-#' feature definitions use \code{keepFeatures = TRUE}. Adjusted retention times
-#' are kept by default if present. Use \code{keepAdjustedRtime = FALSE} to
-#' remove them.
-#'
-#' @details
-#'
-#' All subsetting methods try to ensure that the returned data is
-#' consistent. Correspondence results for example are removed by default if the
-#' data set is sub-setted by file, since the correspondence results are
-#' dependent on the files on which correspondence was performed. This can be
-#' changed by setting \code{keepFeatures = TRUE}.
-#' For adjusted retention times, most subsetting methods
-#' support the argument \code{keepAdjustedRtime} (even the \code{[} method)
-#' that forces the adjusted retention times to be retained even if the
-#' default would be to drop them.
-#'
-#' @note
-#'
-#' The \code{filterFile} method removes also process history steps not
-#' related to the files to which the object should be sub-setted and updates
-#' the \code{fileIndex} attribute accordingly. Also, the method does not
-#' allow arbitrary ordering of the files or re-ordering of the files within
-#' the object.
-#'
-#' Note also that most of the filtering methods, and also the subsetting
-#' operations \code{[} drop all or selected preprocessing results. To
-#' consolidate the alignment results, i.e. ensure that adjusted retention
-#' times are always preserved, use the \code{\link{applyAdjustedRtime}}
-#' function on the object that contains the alignment results. This replaces
-#' the raw retention times with the adjusted ones.
-#'
-#' @param object A \code{\link{XCMSnExp}} object.
-#'
-#' @param file For \code{filterFile}: \code{integer} defining the file index
-#'     within the object to subset the object by file or \code{character}
-#'     specifying the file names to sub set. The indices are expected to be
-#'     increasingly ordered, if not they are ordered internally.
-#'
-#' @param keepAdjustedRtime For \code{filterFile}, \code{filterMsLevel},
-#'     \code{[} \code{split}: \code{logical(1)} defining whether the adjusted
-#'     retention times should be kept, even if e.g. features are being removed
-#'     (and the retention time correction was performed on these features).
-#'
-#' @param keepFeatures For \code{filterFile}: \code{logical(1)} whether
-#'     correspondence results (feature definitions) should be kept or dropped.
-#'     Defaults to \code{keepFeatures = FALSE} hence removing feature
-#'     definitions from the returned object.
-#'
-#' @return All methods return an \code{\link{XCMSnExp}} object.
-#'
-#' @author Johannes Rainer
-#'
-#' @seealso \code{\link{XCMSnExp}} for base class documentation.
-#'
 #' @rdname XCMSnExp-filter-methods
-#'
-#' @examples
-#'
-#' ## Loading a test data set with identified chromatographic peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
-#'
-#' ## Disable parallel processing for this example
-#' register(SerialParam())
-#'
-#' ## Subset the dataset to the first and third file.
-#' xod_sub <- filterFile(faahko_sub, file = c(1, 3))
-#'
-#' ## The number of chromatographic peaks per file for the full object
-#' table(chromPeaks(faahko_sub)[, "sample"])
-#'
-#' ## The number of chromatographic peaks per file for the subset
-#' table(chromPeaks(xod_sub)[, "sample"])
-#'
-#' basename(fileNames(faahko_sub))
-#' basename(fileNames(xod_sub))
-#'
-#' ## Filter on mz values; chromatographic peaks and features within the
-#' ## mz range are retained (as well as adjusted retention times).
-#' xod_sub <- filterMz(faahko_sub, mz = c(300, 400))
-#' head(chromPeaks(xod_sub))
-#' nrow(chromPeaks(xod_sub))
-#' nrow(chromPeaks(faahko_sub))
-#'
-#' ## Filter on rt values. All chromatographic peaks and features within the
-#' ## retention time range are retained. Filtering is performed by default on
-#' ## adjusted retention times, if present.
-#' xod_sub <- filterRt(faahko_sub, rt = c(2700, 2900))
-#'
-#' range(rtime(xod_sub))
-#' head(chromPeaks(xod_sub))
-#' range(chromPeaks(xod_sub)[, "rt"])
-#'
-#' nrow(chromPeaks(faahko_sub))
-#' nrow(chromPeaks(xod_sub))
-#'
-#' ## Extract a single Spectrum
-#' faahko_sub[[4]]
-#'
-#' ## Subsetting using [ removes all preprocessing results - using
-#' ## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.
-#' xod_sub <- faahko_sub[fromFile(faahko_sub) == 1]
-#' xod_sub
-#'
-#' ## Using split does also remove preprocessing results, but it supports the
-#' ## optional parameter keepAdjustedRtime.
-#' ## Split the object into a list of XCMSnExp objects, one per file
-#' xod_list <- split(faahko_sub, f = fromFile(faahko_sub))
-#' xod_list
 setMethod(
     "filterFile", "XCMSnExp",
     function(object, file, keepAdjustedRtime = hasAdjustedRtime(object),
@@ -1206,25 +1273,6 @@ setMethod(
         object
     })
 
-#' @description
-#'
-#' \code{filterMz}: filters the data set based on the
-#' provided mz value range. All chromatographic peaks and features (grouped
-#' peaks) falling completely within the provided mz value range are retained
-#' (if their minimal mz value is \code{>= mz[1]} and the maximal mz value
-#' \code{<= mz[2]}. Adjusted retention times, if present, are not altered by
-#' the filtering.
-#'
-#' @param mz For \code{filterMz}: \code{numeric(2)} defining the lower and upper
-#'     mz value for the filtering.
-#'
-#' @param msLevel. For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
-#'     defining the MS level(s) to which operations should be applied or to
-#'     which the object should be subsetted. See \code{\link{filterMz}}
-#'     for more details
-#'
-#' @param ... Optional additional arguments.
-#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
     if (missing(mz))
@@ -1246,30 +1294,6 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
     object
 })
 
-#' @description
-#'
-#' \code{filterRt}: filters the data set based on the
-#' provided retention time range. All chromatographic peaks and features
-#' (grouped peaks) the specified retention time window are retained (i.e. if
-#' the retention time corresponding to the peak's apex is within the
-#' specified rt range). If retention time correction has been performed,
-#' the method will by default filter the object by adjusted retention times.
-#' The argument \code{adjusted} allows to specify manually whether filtering
-#' should be performed by raw or adjusted retention times. Filtering by
-#' retention time does not drop any preprocessing results nor does it remove
-#' or change alignment results (i.e. adjusted retention times).
-#' The method returns an empty object if no spectrum or feature is within
-#' the specified retention time range.
-#'
-#' @param rt For \code{filterRt}: \code{numeric(2)} defining the retention time
-#'     window (lower and upper bound) for the filtering.
-#'
-#' @param adjusted For \code{filterRt}: \code{logical} indicating whether the
-#'     object should be filtered by original (\code{adjusted = FALSE}) or
-#'     adjusted retention times (\code{adjusted = TRUE}).
-#'     For \code{spectra}: whether the retention times in the individual
-#'     \code{Spectrum} objects should be the adjusted or raw retention times.
-#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
                                            adjusted = hasAdjustedRtime(object)) {
@@ -3392,18 +3416,6 @@ setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
     callNextMethod()
 })
 
-#' @description
-#'
-#' \code{split} splits an \code{XCMSnExp} object into a \code{list}
-#' of \code{XCMSnExp} objects based on the provided parameter \code{f}.
-#' Note that by default all pre-processing results are removed by the
-#' splitting, except adjusted retention times, if the optional argument
-#' \code{keepAdjustedRtime = TRUE} is provided.
-#'
-#' @param f For \code{split} a vector of length equal to the length of x
-#'     defining how \code{x} will be splitted. It is converted internally to
-#'     a \code{factor}.
-#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("split", "XCMSnExp", function(x, f,
                                         drop = FALSE, ...) {
@@ -4129,6 +4141,23 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                                      fileIndex = 1:length(fileNames(object)),
                                      msLevel = msLevel)
               object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })
+
+#' @rdname XCMSnExp-filter-methods
+setMethod("filterChromPeaks", "XCMSnExp",
+          function(object, keep = rep(TRUE, nrow(chromPeaks(object))),
+                   method = "keep", ...) {
+              method <- match.arg(method)
+              object <- switch(
+                  method,
+                  keep = {
+                      idx <- .i2index(keep, ids = rownames(chromPeaks(object)),
+                                      name = "keep")
+                      object@msFeatureData <- .filterChromPeaks(object, idx)
+                      object
+                  })
               validObject(object)
               object
           })
