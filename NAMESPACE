@@ -208,7 +208,8 @@ exportMethods(
     "xcmsSource",
     "loadRaw",
     "isolationWindowTargetMz",
-    "quantify"
+    "quantify",
+    "findmzROI"
 )
 
 ## New functions
