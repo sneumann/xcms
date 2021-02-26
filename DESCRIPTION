@@ -38,7 +38,7 @@ Depends:
     BiocParallel (>= 1.8.0),
     MSnbase (>= 2.17.7)
 Imports:
-    mzR (>= 2.19.5),
+    mzR (>= 2.25.3),
     methods,
     Biobase,
     BiocGenerics,
@@ -67,7 +67,7 @@ Suggests:
     multtest,
     MALDIquant,
     pheatmap,
-    Spectra,
+    Spectra (>= 1.0.0),
     MsBackendMgf
 Enhances:
     Rgraphviz,
