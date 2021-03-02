@@ -2721,6 +2721,8 @@ do_findChromPeaks_addPredIsoROIs <-
                 tittle[expand_mz]
             f_mod[expand_mz, "mzmax"] <- peaks.[expand_mz, "mz"] + tittle[expand_mz]
         }
+        ## issue #545: with fitgauss = TRUE the scmin and scmax can be -1
+        f_mod <- f_mod[f_mod[, "scmin"] < f_mod[, "scmax"], , drop = FALSE]
         ## Add predicted ROIs
         if (addNewIsotopeROIs) {
             iso_ROIs <- do_define_isotopes(peaks. = f_mod,

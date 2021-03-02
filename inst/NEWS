@@ -1,5 +1,6 @@
 Changes in version 3.12.1
 
+- Fix issue #545: CentWavePredIsoParam with fitgauss = TRUE.
 - Support subsetting of `XChromatograms` with `drop = FALSE`.
 
 
