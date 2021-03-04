@@ -2,6 +2,8 @@ Changes in version 3.13.6
 
 - Fix issue #545: skip second centWave run with CentWavePredIsoParam in regions
   of interest with undefined peak boundaries/scan ranges.
+- Temporarily remove the LC-MS/MS vignette (until MsBackendMgf is added to
+  Bioconductor).
 
 Changes in version 3.13.5
 
