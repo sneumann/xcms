@@ -3133,9 +3133,17 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
 #' @noRd
 .features_ms_region <- function(x, mzmin = median, mzmax = median,
                                 rtmin = median, rtmax = median,
-                                msLevel = unique(msLevel(x))) {
+                                msLevel = unique(msLevel(x)),
+                                features = character()) {
     pk_idx <- featureValues(x, value = "index", method = "maxint",
                             msLevel = msLevel)
+    if (length(features)) {
+        if (!all(features %in% rownames(pk_idx)))
+            stop(sum(!features %in% rownames(pk_idx)), " IDs defined with ",
+                 "'features' are not available in 'object' for MS level ",
+                 msLevel)
+        pk_idx <- pk_idx[features, , drop = FALSE]
+    }
     n_ft <- nrow(pk_idx)
     rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
     for (i in seq_len(n_ft)) {
@@ -3146,7 +3154,51 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
         mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
     }
-    cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+    res <- cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+    rownames(res) <- rownames(pk_idx)
+    res
+}
+
+#' @rdname XCMSnExp-class
+#'
+#' @description
+#'
+#' \code{featureArea} extracts the m/z - retention time region for each feature.
+#' This area is defined by the m/z - retention time regions of all
+#' chromatographic peaks associated with a feature. Parameters \code{mzmin},
+#' \code{mzmax}, \code{rtmin} and \code{rtmax} allow to define functions how
+#' the corresponding value is calculated from the individual values (such as
+#' the \code{"rtmin"}) of all chromatographic peaks of that feature. By default
+#' the median \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}
+#' is reported. Parameter \code{features} allows to provide feature IDs for
+#' which the area should be extracted. By default it is extracted for all
+#' features.
+#'
+#' @param features for \code{featureArea}: IDs of features for which the area
+#'     should be extracted.
+#'
+#' @param mzmin for \code{featureArea}: \code{function} to be applied to values
+#'     in the \code{"mzmin"} column of all chromatographic peaks of a feature
+#'     to define the lower m/z value of the feature area.
+#'     Defaults to \code{median}.
+#'
+#' @param mzmax for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"mzmax"} column.
+#'
+#' @param rtmin for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"rtmin"} column.
+#'
+#' @param rtmax for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"rtmax"} column.
+featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
+                        rtmax = median, msLevel = unique(msLevel(object)),
+                        features = character()) {
+    if (!hasFeatures(object))
+        stop("No correspondence results available. Please run ",
+             "'groupChromPeaks' first.")
+    .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                        rtmax = rtmax, msLevel = force(msLevel),
+                        features = features)
 }
 
 #' @param x `XCMSnExp` object of a single file.
