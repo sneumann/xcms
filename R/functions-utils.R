@@ -768,7 +768,7 @@ groupOverlaps <- function(xmin, xmax) {
     }
     if (is.numeric(x))
         x <- as.integer(x)
-    if (length(ids) && (any(x < 1) || any(x > length(ids))))
+    if (length(ids) && any(is.na(x)) || (any(x < 1) || any(x > length(ids))))
         stop("'", name, "' out of bounds")
     x
 }

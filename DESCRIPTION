@@ -67,7 +67,8 @@ Suggests:
     multtest,
     MALDIquant,
     pheatmap,
-    Spectra (>= 1.0.0)
+    Spectra (>= 1.1.17),
+    MsBackendMgf
 Enhances:
     Rgraphviz,
     rgl,
