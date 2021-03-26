@@ -75,7 +75,7 @@ Below we load the example DDA data set using the `readMSData` function from the
 ```{r load-dda-data, message = FALSE}
 library(xcms)
 
-dda_file <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML",
+dda_file <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
                         package = "msdata")
 dda_data <- readMSData(dda_file, mode = "onDisk")
 ```
@@ -268,10 +268,10 @@ ex_spectrum <- addProcessing(ex_spectrum, FUN = norm_fun)
 ```{r dda-ms2-metlin-match, fig.cap = "Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot.", fig.width = 12, fig.height = 6, eval = TRUE}
 library(MsBackendMgf)
 flumanezil <- Spectra(
-    system.file("mgf/metlin-2724.mgf", package = "xcms"),
+    system.file("mgf", "metlin-2724.mgf", package = "xcms"),
     source = MsBackendMgf())
 fenamiphos <- Spectra(
-    system.file("mgf/metlin-72445.mgf", package = "xcms"),
+    system.file("mgf", "metlin-72445.mgf", package = "xcms"),
     source = MsBackendMgf())
 
 par(mfrow = c(1, 2))
@@ -679,7 +679,7 @@ energies) from Metlin.
 
 ```{r prochloraz-metlin}
 prochloraz <- Spectra(
-    system.file("mgf/metlin-68898.mgf", package = "xcms"),
+    system.file("mgf", "metlin-68898.mgf", package = "xcms"),
     source = MsBackendMgf())
 ```
 

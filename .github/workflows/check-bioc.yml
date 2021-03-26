@@ -196,6 +196,7 @@ jobs:
           BiocManager::install(c("faahKO"))
           BiocManager::install("lgatto/MSnbase")
           BiocManager::install("Spectra")
+          BiocManager::install("RforMassSpectromatry/MsBackendMassbank")
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
