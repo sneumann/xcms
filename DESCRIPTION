@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.13.6
+Version: 3.13.7
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -67,13 +67,12 @@ Suggests:
     multtest,
     MALDIquant,
     pheatmap,
-    Spectra (>= 1.0.0)
+    Spectra (>= 1.1.17),
+    MsBackendMgf
 Enhances:
     Rgraphviz,
     rgl,
     XML
-Remotes:
-    RforMassSpectrometry/MsBackendMgf
 License: GPL (>= 2) + file LICENSE
 URL: https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new

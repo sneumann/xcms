@@ -2727,6 +2727,9 @@ setMethod("findChromPeaks",
 #'
 #' @seealso [groupChromPeaks()] for methods to perform the correspondence.
 #'
+#' @seealso [featureArea] for the function to define the m/z-retention time
+#'     region for each feature.
+#'
 #' @md
 #'
 #' @examples

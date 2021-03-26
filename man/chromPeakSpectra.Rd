@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{chromPeakSpectra}
 \alias{chromPeakSpectra}
-\title{Extract (MS2) spectra associated with chromatographic peaks}
+\title{Extract spectra associated with chromatographic peaks}
 \usage{
 chromPeakSpectra(
   x,
@@ -20,7 +20,8 @@ chromPeakSpectra(
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks.}
 
 \item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
-returned. Currently only \code{msLevel = 2} is supported.}
+returned. \code{msLevel = 1} is currently only supported for \code{return.type}
+being \code{"Spectra"} or \code{"List"}.}
 
 \item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
@@ -71,10 +72,13 @@ spectrum found) or a \code{Spectra} object.
 }
 \description{
 Extract (MS1 or MS2) spectra from an \link{XCMSnExp} object for each identified
-chromatographic peak. For \code{msLevel = 1L} (only supported for
-\code{return.type = "Spectra"} or \code{return.type = "List"}) MS1 spectra within the
-retention time boundaries (in the file in which the peak was detected) are
-returned. For \code{msLevel = 2L} MS2 spectra are returned for a chromatographic
+chromatographic peak. The function returns by default spectra for
+chromatographic peaks of \strong{all} MS levels, but parameter \code{peaks} allows to
+restrict the result to selected chromatographic peaks.
+For \code{msLevel = 1L} (only supported for \code{return.type = "Spectra"} or
+\code{return.type = "List"}) MS1 spectra within the retention time boundaries
+(in the file in which the peak was detected) are returned. For
+\code{msLevel = 2L} MS2 spectra are returned for a chromatographic
 peak if their precursor m/z is within the retention time and m/z range of
 the chromatographic peak. Parameter \code{method} allows to define whether all
 or a single spectrum should be returned:

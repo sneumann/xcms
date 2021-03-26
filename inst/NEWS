@@ -1,3 +1,9 @@
+Changes in version 3.13.7
+
+- Add `featureArea` function to extract the m/z-rt region for features.
+- Fix `featureSpectra` function.
+- Re-add the LC-MS/MS vignette.
+
 Changes in version 3.13.6
 
 - Fix issue #545: skip second centWave run with CentWavePredIsoParam in regions

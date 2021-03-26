@@ -71,8 +71,17 @@ acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed
 up processing of this vignette we will restrict the analysis to only 8 files and
 to the retention time range from 2500 to 3500 seconds.
 
-Below we load all required packages, locate the raw CDF files within the `faahKO`
-package and build a *phenodata* data frame describing the experimental setup.
+Below we load all required packages, locate the raw CDF files within the
+`faahKO` package and build a *phenodata* data frame describing the experimental
+setup. Note that for *real* experiments it is suggested to define a file (table)
+that contains the file names of the raw data files along with descriptions of
+the samples for each file as additional columns. Such a file could then be
+imported with e.g. `read.table` as variable `pd` (instead of being defined
+within R as in the example below) and the file names could be passed along to
+the `readMSData` function below with e.g.
+`files = paste0(MZML_PATH, "/", pd$mzML_file)` where `MZML_PATH` would be the
+path to directory in which the files are located and `"mzML_file"` the name of
+the column in the phenodata file that contains the file names.
 
 ```{r load-libs-pheno, message = FALSE }
 library(xcms)

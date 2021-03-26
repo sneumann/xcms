@@ -270,6 +270,9 @@ sum(is.na(featureValues(res)))
 }
 \seealso{
 \code{\link[=groupChromPeaks]{groupChromPeaks()}} for methods to perform the correspondence.
+
+\link{featureArea} for the function to define the m/z-retention time
+region for each feature.
 }
 \author{
 Johannes Rainer
