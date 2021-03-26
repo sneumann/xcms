@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.7</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-02-26 09:44:31<br><strong>Compiled</strong>: Fri Feb 26 10:25:32 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-03-26 09:42:04<br><strong>Compiled</strong>: Fri Mar 26 10:59:26 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 
-<span class="va">dda_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>,
+<span class="va">dda_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH"</span>, <span class="st">"PestMix1_DDA.mzML"</span>,
                         package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
 <span class="va">dda_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">dda_file</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></code></pre></div>
 <p>The variable <code>dda_data</code> contains now all MS1 and MS2 spectra from the specified mzML file. The number of spectra for each MS level is listed below.</p>
@@ -186,9 +186,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  ... 38 more variables/columns.
 ## 
 ## file(s):
-## PestMix1_DDA.mzML
-## Processing:
-##  Merge 52 Spectra into one [Fri Feb 26 10:25:49 2021]</code></pre>
+## PestMix1_DDA.mzML</code></pre>
 <p>By default <code>chromPeakSpectra</code> returns all spectra associated with a MS1 chromatographic peak, but parameter <code>method</code> allows to choose and return only one spectrum per peak (have a look at the <code><a href="../reference/chromPeakSpectra.html">?chromPeakSpectra</a></code> help page for more details). Also, it would be possible to extract MS1 spectra for each peak by specifying <code>msLevel = 1L</code> in the call above (e.g. to evaluate the full MS1 signal at the peak’s apex position).</p>
 <p>In the example above we selected to return the data as a <code>Spectra</code> object. Spectra variables <code>"peak_id"</code> and <code>"peak_index"</code> contain the identifiers and the index (in the <code>chromPeaks</code> matrix) of the chromatographic peaks the MS2 spectrum is associated with.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -235,9 +233,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  ... 38 more variables/columns.
 ## 
 ## file(s):
-## PestMix1_DDA.mzML
-## Processing:
-##  Merge 52 Spectra into one [Fri Feb 26 10:25:49 2021]</code></pre>
+## PestMix1_DDA.mzML</code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s) measured in our candidate chromatographic peak. We next reduce this to a single MS2 spectrum using the <code>combineSpectra</code> method employing the <code>combinePeaks</code> function to determine which peaks to keep in the resulting spectrum (have a look at the <code><a href="https://rdrr.io/pkg/Spectra/man/combinePeaks.html" class="external-link">?combinePeaks</a></code> help page for details). Parameter <code>f</code> allows to specify which spectra in the input object should be combined into one.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span><span class="va">ex_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,
@@ -251,8 +247,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ## F1.S3505         2   418.926      3505
 ##  ... 38 more variables/columns.
 ## Processing:
-##  Merge 52 Spectra into one [Fri Feb 26 10:25:49 2021]
-##  Switch backend from MsBackendMzR to MsBackendDataFrame [Fri Feb 26 10:25:50 2021]</code></pre>
+##  Switch backend from MsBackendMzR to MsBackendDataFrame [Fri Mar 26 10:59:42 2021]</code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20 ppm (parameter <code>ppm</code>) were combined into one peak and the median m/z and intensity is reported for these. Due to parameter <code>minProp = 0.8</code>, the resulting MS2 spectrum contains only peaks that were present in 80% of the input spectra.</p>
 <p>A plot of this <em>consensus</em> spectrum is shown below.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -274,12 +269,12 @@ Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromat
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsBackendMgf" class="external-link">MsBackendMgf</a></span><span class="op">)</span>
 <span class="va">flumanezil</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-2724.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf"</span>, <span class="st">"metlin-2724.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
     source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html" class="external-link">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## Start data import from 1 files ... done</code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fenamiphos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-72445.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf"</span>, <span class="st">"metlin-72445.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
     source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html" class="external-link">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## Start data import from 1 files ... done</code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
@@ -489,7 +484,7 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 ## 62          2   574.942        NA
 ##  ... 20 more variables/columns.
 ## Processing:
-##  Merge 1 Spectra into one [Fri Feb 26 10:26:27 2021]</code></pre>
+##  Merge 1 Spectra into one [Fri Mar 26 11:00:17 2021]</code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak:</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">ms2_peak_id</span></code></pre></div>
@@ -591,9 +586,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel
 ##  ... 38 more variables/columns.
 ## 
 ## file(s):
-## PestMix1_DDA.mzML
-## Processing:
-##  Merge 52 Spectra into one [Fri Feb 26 10:25:49 2021]</code></pre>
+## PestMix1_DDA.mzML</code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span>
@@ -604,7 +597,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel
 <p>At last we load also the Prochloraz MS2 spectra (for different collision energies) from Metlin.</p>
 <div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">prochloraz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf/metlin-68898.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
+    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"mgf"</span>, <span class="st">"metlin-68898.mgf"</span>, package <span class="op">=</span> <span class="st">"xcms"</span><span class="op">)</span>,
     source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsBackendMgf/man/MsBackendMgf.html" class="external-link">MsBackendMgf</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## Start data import from 1 files ... done</code></pre>
 <p>To validate the reconstructed spectrum we plot it against the corresponding DDA spectrum and the MS2 spectrum for Prochloraz (for a collision energy of 10V) from Metlin.</p>
@@ -647,9 +640,9 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <a href="#session-information" class="anchor"></a>Session information</h1>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R Under development (unstable) (2021-02-18 r80027)
+<pre><code>## R Under development (unstable) (2021-03-18 r80099)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.1 LTS
+## Running under: Ubuntu 20.04.2 LTS
 ## 
 ## Matrix products: default
 ## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
@@ -667,53 +660,56 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] MsBackendMgf_0.2.2  magrittr_2.0.1      pander_0.6.3       
-##  [4] Spectra_1.1.13      xcms_3.13.5         MSnbase_2.17.8     
-##  [7] ProtGenerics_1.23.7 S4Vectors_0.29.7    mzR_2.25.3         
+##  [1] MsBackendMgf_0.99.3 magrittr_2.0.1      pander_0.6.3       
+##  [4] Spectra_1.1.17      xcms_3.13.7         MSnbase_2.17.8     
+##  [7] ProtGenerics_1.23.7 S4Vectors_0.29.9    mzR_2.25.3         
 ## [10] Rcpp_1.0.6          Biobase_2.51.0      BiocGenerics_0.37.1
-## [13] BiocParallel_1.25.4 BiocStyle_2.19.1   
+## [13] BiocParallel_1.25.5 BiocStyle_2.19.1   
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-6                matrixStats_0.58.0         
 ##  [3] fs_1.5.0                    doParallel_1.0.16          
 ##  [5] RColorBrewer_1.1-2          rprojroot_2.0.2            
-##  [7] GenomeInfoDb_1.27.6         tools_4.1.0                
-##  [9] utf8_1.1.4                  R6_2.5.0                   
-## [11] affyio_1.61.0               colorspace_2.0-0           
-## [13] compiler_4.1.0              MassSpecWavelet_1.57.0     
-## [15] preprocessCore_1.53.1       textshaping_0.3.1          
-## [17] desc_1.2.0                  DelayedArray_0.17.9        
-## [19] bookdown_0.21               scales_1.1.1               
-## [21] DEoptimR_1.0-8              robustbase_0.93-7          
-## [23] affy_1.69.0                 pkgdown_1.6.1.9000         
-## [25] systemfonts_1.0.1           stringr_1.4.0              
-## [27] digest_0.6.27               rmarkdown_2.7              
-## [29] XVector_0.31.1              pkgconfig_2.0.3            
-## [31] htmltools_0.5.1.1           MatrixGenerics_1.3.1       
-## [33] fastmap_1.1.0               limma_3.47.8               
-## [35] highr_0.8                   rlang_0.4.10               
-## [37] impute_1.65.0               mzID_1.29.0                
-## [39] RCurl_1.98-1.2              GenomeInfoDbData_1.2.4     
-## [41] MALDIquant_1.19.3           Matrix_1.3-2               
-## [43] munsell_0.5.0               fansi_0.4.2                
-## [45] MsCoreUtils_1.3.2           lifecycle_1.0.0            
-## [47] vsn_3.59.1                  stringi_1.5.3              
-## [49] yaml_2.2.1                  MASS_7.3-53.1              
-## [51] SummarizedExperiment_1.21.1 zlibbioc_1.37.0            
-## [53] plyr_1.8.6                  grid_4.1.0                 
-## [55] crayon_1.4.1                lattice_0.20-41            
-## [57] knitr_1.31                  pillar_1.5.0               
-## [59] GenomicRanges_1.43.3        codetools_0.2-18           
-## [61] XML_3.99-0.5                glue_1.4.2                 
-## [63] evaluate_0.14               pcaMethods_1.83.0          
-## [65] BiocManager_1.30.10         vctrs_0.3.6                
-## [67] foreach_1.5.1               gtable_0.3.0               
-## [69] RANN_2.6.1                  assertthat_0.2.1           
-## [71] cachem_1.0.4                ggplot2_3.3.3              
-## [73] xfun_0.21                   ragg_1.1.1                 
-## [75] ncdf4_1.17                  tibble_3.1.0               
-## [77] iterators_1.0.13            memoise_2.0.0              
-## [79] IRanges_2.25.6              ellipsis_0.3.1</code></pre>
+##  [7] GenomeInfoDb_1.27.8         tools_4.1.0                
+##  [9] bslib_0.2.4                 utf8_1.2.1                 
+## [11] R6_2.5.0                    affyio_1.61.0              
+## [13] colorspace_2.0-0            MassSpecWavelet_1.57.0     
+## [15] compiler_4.1.0              preprocessCore_1.53.2      
+## [17] textshaping_0.3.3           desc_1.3.0                 
+## [19] DelayedArray_0.17.10        bookdown_0.21              
+## [21] sass_0.3.1                  scales_1.1.1               
+## [23] DEoptimR_1.0-8              robustbase_0.93-7          
+## [25] affy_1.69.0                 pkgdown_1.6.1.9001         
+## [27] systemfonts_1.0.1           stringr_1.4.0              
+## [29] digest_0.6.27               rmarkdown_2.7              
+## [31] XVector_0.31.1              pkgconfig_2.0.3            
+## [33] htmltools_0.5.1.1           MatrixGenerics_1.3.1       
+## [35] highr_0.8                   fastmap_1.1.0              
+## [37] limma_3.47.11               rlang_0.4.10               
+## [39] impute_1.65.0               jquerylib_0.1.3            
+## [41] jsonlite_1.7.2              mzID_1.29.0                
+## [43] RCurl_1.98-1.3              GenomeInfoDbData_1.2.4     
+## [45] MALDIquant_1.19.3           Matrix_1.3-2               
+## [47] munsell_0.5.0               fansi_0.4.2                
+## [49] MsCoreUtils_1.3.3           lifecycle_1.0.0            
+## [51] vsn_3.59.1                  stringi_1.5.3              
+## [53] yaml_2.2.1                  MASS_7.3-53.1              
+## [55] SummarizedExperiment_1.21.1 zlibbioc_1.37.0            
+## [57] plyr_1.8.6                  grid_4.1.0                 
+## [59] crayon_1.4.1                lattice_0.20-41            
+## [61] knitr_1.31                  pillar_1.5.1               
+## [63] GenomicRanges_1.43.3        codetools_0.2-18           
+## [65] XML_3.99-0.6                glue_1.4.2                 
+## [67] evaluate_0.14               pcaMethods_1.83.0          
+## [69] BiocManager_1.30.10         vctrs_0.3.6                
+## [71] foreach_1.5.1               gtable_0.3.0               
+## [73] RANN_2.6.1                  clue_0.3-58                
+## [75] cachem_1.0.4                ggplot2_3.3.3              
+## [77] xfun_0.22                   ragg_1.1.2                 
+## [79] ncdf4_1.17                  tibble_3.1.0               
+## [81] iterators_1.0.13            memoise_2.0.0              
+## [83] IRanges_2.25.6              cluster_2.1.1              
+## [85] ellipsis_0.3.1</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -743,7 +739,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>

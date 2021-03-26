@@ -89,6 +89,9 @@ from which the signal should be integrated.
 
 
 
+<!-- dependencies from examples -->
+
+
   
 
   
@@ -111,7 +114,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.7</span>
       </span>
     </div>
 
@@ -132,6 +135,9 @@ from which the signal should be integrated.
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
+    </li>
+    <li>
+      <a href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
     </li>
   </ul>
 </li>
@@ -401,7 +407,9 @@ in the respective mz-rt area. These samples will still show a <code>NA</code>
 in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>featureValues()</a></code> method.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='groupChromPeaks.html'>groupChromPeaks()</a></code> for methods to perform the correspondence.</p></div>
+    <div class='dont-index'><p><code><a href='groupChromPeaks.html'>groupChromPeaks()</a></code> for methods to perform the correspondence.</p>
+<p><a href='XCMSnExp-class.html'>featureArea</a> for the function to define the m/z-retention time
+region for each feature.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
@@ -455,7 +463,7 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 <span class='va'>ph</span>
 </div><div class='output co'>#&gt; Object of class "XProcessHistory"
 #&gt;  type: Missing peak filling 
-#&gt;  date: Thu Mar  4 10:34:13 2021 
+#&gt;  date: Fri Mar 26 10:56:44 2021 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: ChromPeakAreaParam 
@@ -466,16 +474,16 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 #&gt;  Parameters:
 #&gt;  - rtmin: function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x55e971f85010&gt;
+#&gt; &lt;environment: 0x55cbaa4bc398&gt;
 #&gt;  - rtmax: function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x55e971f85010&gt;
+#&gt; &lt;environment: 0x55cbaa4bc398&gt;
 #&gt;  - mzmin: function (z) 
 #&gt; quantile(z, probs = 0.25)
-#&gt; &lt;environment: 0x55e971f85010&gt;
+#&gt; &lt;environment: 0x55cbaa4bc398&gt;
 #&gt;  - mzmax: function (z) 
 #&gt; quantile(z, probs = 0.75)
-#&gt; &lt;environment: 0x55e971f85010&gt;</div><div class='input'>
+#&gt; &lt;environment: 0x55cbaa4bc398&gt;</div><div class='input'>
 <span class='co'>## It is also possible to remove filled-in peaks:</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFilledChromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
 
@@ -496,7 +504,7 @@ in the matrix returned by the <code><a href='quantify,XCMSnExp-method.html'>feat
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

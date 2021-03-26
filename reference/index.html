@@ -57,6 +57,7 @@
 
 
 
+
   
 
   
@@ -79,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.7</span>
       </span>
     </div>
 
@@ -100,6 +101,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
+    </li>
+    <li>
+      <a href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
     </li>
   </ul>
 </li>
@@ -174,7 +178,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="XCMSnExp-class.html">processHistoryTypes()</a></code> <code><a href="XCMSnExp-class.html">hasFilledChromPeaks()</a></code> <code><a href="XCMSnExp-class.html">profMat(<i>&lt;OnDiskMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">show(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasAdjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasFeatures(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">adjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`adjustedRtime&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">featureDefinitions(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`featureDefinitions&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">chromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`chromPeaks&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">rtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">mz(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">intensity(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">spectra(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">processHistory(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropFeatureDefinitions(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropAdjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">profMat(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">findChromPeaks(<i>&lt;XCMSnExp&gt;</i>,<i>&lt;Param&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropFilledChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">spectrapply(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">c(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">chromPeakData(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`chromPeakData&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">plot(<i>&lt;XCMSnExp&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> </p>
+          <p><code><a href="XCMSnExp-class.html">processHistoryTypes()</a></code> <code><a href="XCMSnExp-class.html">hasFilledChromPeaks()</a></code> <code><a href="XCMSnExp-class.html">featureArea()</a></code> <code><a href="XCMSnExp-class.html">profMat(<i>&lt;OnDiskMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">show(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasAdjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasFeatures(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">hasChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">adjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`adjustedRtime&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">featureDefinitions(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`featureDefinitions&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">chromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`chromPeaks&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">rtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">mz(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">intensity(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">spectra(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">processHistory(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropFeatureDefinitions(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropAdjustedRtime(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">profMat(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">findChromPeaks(<i>&lt;XCMSnExp&gt;</i>,<i>&lt;Param&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">dropFilledChromPeaks(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">spectrapply(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">c(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">chromPeakData(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">`chromPeakData&lt;-`(<i>&lt;XCMSnExp&gt;</i>)</a></code> <code><a href="XCMSnExp-class.html">plot(<i>&lt;XCMSnExp&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> </p>
         </td>
         <td><p>Data container storing xcms preprocessing results</p></td>
       </tr><tr>
@@ -273,7 +277,7 @@ groups</p></td>
         <td>
           <p><code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code> </p>
         </td>
-        <td><p>Extract (MS2) spectra associated with chromatographic peaks</p></td>
+        <td><p>Extract spectra associated with chromatographic peaks</p></td>
       </tr><tr>
         
         <td>
@@ -1160,7 +1164,7 @@ neighbor approach</p></td>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
