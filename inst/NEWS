@@ -1,3 +1,7 @@
+Changes in version 3.13.7
+
+- Feature: plotQC() supports XCMSnExp objects now
+
 Changes in version 3.13.6
 
 - Fix issue #545: skip second centWave run with CentWavePredIsoParam in regions
