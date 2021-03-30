@@ -1830,7 +1830,7 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
                                peaks = character()) {
     if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
         featureData(x)$retentionTime <- rtime(x)
-    from_msl <- 1L
+    ## from_msl <- 1L
     method <- match.arg(method)
     if (msLevel == 1L && method %in% c("closest_mz", "signal")) {
         warning("method = \"closest_mz\" and method = \"signa;\" are not",
@@ -1856,9 +1856,9 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
     } else {
         keep <- rep(TRUE, nrow(pks))
         if (skipFilled && any(chromPeakData(x)$is_filled))
-            keep <- !chromPeakData(x, msLevel = from_msl)$is_filled
-        if (any(chromPeakData(x)$ms_level))
-            keep <- keep & chromPeakData(x)$ms_level == from_msl
+            keep <- !chromPeakData(x)$is_filled
+        ## if (any(chromPeakData(x)$ms_level))
+        ##     keep <- keep & chromPeakData(x)$ms_level == from_msl
     }
     ## maybe subset by peak ID.
     fns <- fileNames(x)
@@ -1910,15 +1910,18 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
     else res
 }
 
-#' @title Extract (MS2) spectra associated with chromatographic peaks
+#' @title Extract spectra associated with chromatographic peaks
 #'
 #' @description
 #'
 #' Extract (MS1 or MS2) spectra from an [XCMSnExp] object for each identified
-#' chromatographic peak. For `msLevel = 1L` (only supported for
-#' `return.type = "Spectra"` or `return.type = "List"`) MS1 spectra within the
-#' retention time boundaries (in the file in which the peak was detected) are
-#' returned. For `msLevel = 2L` MS2 spectra are returned for a chromatographic
+#' chromatographic peak. The function returns by default spectra for
+#' chromatographic peaks of **all** MS levels, but parameter `peaks` allows to
+#' restrict the result to selected chromatographic peaks.
+#' For `msLevel = 1L` (only supported for `return.type = "Spectra"` or
+#' `return.type = "List"`) MS1 spectra within the retention time boundaries
+#' (in the file in which the peak was detected) are returned. For
+#' `msLevel = 2L` MS2 spectra are returned for a chromatographic
 #' peak if their precursor m/z is within the retention time and m/z range of
 #' the chromatographic peak. Parameter `method` allows to define whether all
 #' or a single spectrum should be returned:
@@ -1946,7 +1949,8 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
 #' @param x [XCMSnExp] object with identified chromatographic peaks.
 #'
 #' @param msLevel `integer(1)` defining whether MS1 or MS2 spectra should be
-#'     returned. Currently only `msLevel = 2` is supported.
+#'     returned. `msLevel = 1` is currently only supported for `return.type`
+#'     being `"Spectra"` or `"List"`.
 #'
 #' @param expandRt `numeric(1)` to expand the retention time range of each
 #'     peak by a constant value on each side.
@@ -2064,6 +2068,8 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                                   peaks = peaks)
         if (return.type == "Spectra") {
             res <- do.call(c, unname(res[lengths(res) > 0]))
+            if (is(res, "Spectra"))
+                res@processing <- character()
         } else res <- List(res)
     } else {
         ## DEPRECATE THIS IN BIOC 3.14
@@ -2115,7 +2121,10 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' @description
 #'
 #' This function returns spectra associated with the identified features in the
-#' input object. Parameter `msLevel` allows to define whether MS level 1 or 2
+#' input object. By default, spectra are returned for all features (from all
+#' MS levels), but parameter `features` allows to specify selected features for
+#' which the result should be returned.
+#' Parameter `msLevel` allows to define whether MS level 1 or 2
 #' spectra should be returned. For `msLevel = 1L` all MS1 spectra within the
 #' retention time range of each chromatographic peak (in that respective data
 #' file) associated with a feature are returned. For `msLevel = 2L` all MS2
@@ -2157,14 +2166,13 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' - `return.type = "Spectra"`: a `Spectra` object (defined in the `Spectra`
 #'   package). The result contains all spectra for all features. Metadata column
 #'   `"feature_id"` provides the ID of the respective feature (i.e. its rowname
-#'   in [featureDefinitions()] and `"feature_index"` its index in the object's
-#'   `featureDefinitions` matrix.
+#'   in [featureDefinitions()].
 #' - `return.type = "list"`: `list` of `list`s that are either of length
 #'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
 #'   length of the list matches the number of features.
 #' - `return.type = "List"`: `List` of length equal to the number of
-#'   features is returned with elements being either `NULL` (no
-#'   spectrum found) or a `Spectra` object.
+#'   features with MS level `msLevel` is returned with elements being either
+#'   `NULL` (no spectrum found) or a `Spectra` object.
 #'
 #' @author Johannes Rainer
 #'
@@ -2193,6 +2201,12 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                                      features = features, ...)
         if (return.type == "Spectra") {
             res <- do.call(c, unname(res[lengths(res) > 0]))
+            if (!length(res)) {
+                warning("No MS level ", msLevel, " spectra found")
+                if (!is(res, "Spectra"))
+                    res <- Spectra::Spectra()
+            }
+            res@processing <- character()
         } else res <- List(res)
     } else {
         ## DEPRECATE IN BIOC3.14
@@ -2238,43 +2252,31 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
 .spectra_for_features <- function(x, msLevel = 2L, expandRt = 0,
                                   expandMz = 0, ppm = 0, skipFilled = TRUE,
                                   features = character(), ...) {
-    from_ms <- 1L
     fids <- rownames(featureDefinitions(x))
     idx <- featureDefinitions(x)$peakidx
-    l <- length(fids)
-    res <- vector("list", l)
-    names(res) <- fids
     if (length(features)) {
-        keep <- rep(FALSE, l)
-        features <- .i2index(features, fids, "features")
-        keep[features] <- TRUE
-        pkidx <- sort(unique(unlist(idx[features], use.names = FALSE)))
-        peak_sp <- vector("list", nrow(chromPeaks(x)))
-        peak_sp[pkidx] <- .spectra_for_peaks(
-            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
-            ppm = ppm, skipFilled = skipFilled, peaks = pkidx, ...)
-    } else {
-        peak_sp <- .spectra_for_peaks(
-            x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
-            ppm = ppm, skipFilled = skipFilled, ...)
-        keep <- rep(TRUE, l)
-        if (any(featureDefinitions(x)$ms_level))
-            keep <- featureDefinitions(x)$ms_level == from_ms
+        findex <- .i2index(features, fids, "features")
+        fids <- fids[findex]
+        idx <- idx[findex]
     }
-    for (i in which(keep)) {
-        sps <- do.call(c, unname(peak_sp[idx[[i]]]))
-        if (length(sps)) {
-            ## Need to fix this below once $<- becomes faster
-            sps@backend@spectraData <- cbind(sps@backend@spectraData,
-                                             DataFrame(feature_id = fids[i],
-                                                       feature_index = i))
-            res[[i]] <- sps
+    ## Get spectra for all peaks of these features
+    pkidx <- sort(unique(unlist(idx, use.names = FALSE)))
+    peak_sp <- vector("list", nrow(chromPeaks(x)))
+    peak_sp[pkidx] <- xcms:::.spectra_for_peaks(
+        x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+        ppm = ppm, skipFilled = skipFilled, peaks = pkidx, ...)
+    res <- lapply(seq_along(fids), function(i) {
+        z <- peak_sp[idx[[i]]]
+        if (any(lengths(z))) {
+            z <- Spectra::concatenateSpectra(z)
+            z@backend@spectraData <- cbind(z@backend@spectraData,
+                                           DataFrame(feature_id = fids[i]))
+            z@processing <- character()
+            z
         }
-    }
-    if (length(features))
-        res[features]
-    else
-        res
+    })
+    names(res) <- fids
+    res
 }
 
 #' @title Extract ion chromatograms for each feature
@@ -3133,9 +3135,17 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
 #' @noRd
 .features_ms_region <- function(x, mzmin = median, mzmax = median,
                                 rtmin = median, rtmax = median,
-                                msLevel = unique(msLevel(x))) {
+                                msLevel = unique(msLevel(x)),
+                                features = character()) {
     pk_idx <- featureValues(x, value = "index", method = "maxint",
                             msLevel = msLevel)
+    if (length(features)) {
+        if (!all(features %in% rownames(pk_idx)))
+            stop(sum(!features %in% rownames(pk_idx)), " IDs defined with ",
+                 "'features' are not available in 'object' for MS level ",
+                 msLevel)
+        pk_idx <- pk_idx[features, , drop = FALSE]
+    }
     n_ft <- nrow(pk_idx)
     rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
     for (i in seq_len(n_ft)) {
@@ -3146,7 +3156,51 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
         mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
     }
-    cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+    res <- cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+    rownames(res) <- rownames(pk_idx)
+    res
+}
+
+#' @rdname XCMSnExp-class
+#'
+#' @description
+#'
+#' \code{featureArea} extracts the m/z - retention time region for each feature.
+#' This area is defined by the m/z - retention time regions of all
+#' chromatographic peaks associated with a feature. Parameters \code{mzmin},
+#' \code{mzmax}, \code{rtmin} and \code{rtmax} allow to define functions how
+#' the corresponding value is calculated from the individual values (such as
+#' the \code{"rtmin"}) of all chromatographic peaks of that feature. By default
+#' the median \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}
+#' is reported. Parameter \code{features} allows to provide feature IDs for
+#' which the area should be extracted. By default it is extracted for all
+#' features.
+#'
+#' @param features for \code{featureArea}: IDs of features for which the area
+#'     should be extracted.
+#'
+#' @param mzmin for \code{featureArea}: \code{function} to be applied to values
+#'     in the \code{"mzmin"} column of all chromatographic peaks of a feature
+#'     to define the lower m/z value of the feature area.
+#'     Defaults to \code{median}.
+#'
+#' @param mzmax for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"mzmax"} column.
+#'
+#' @param rtmin for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"rtmin"} column.
+#'
+#' @param rtmax for \code{featureArea}: \code{function} same as \code{mzmin}
+#'     but for the \code{"rtmax"} column.
+featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
+                        rtmax = median, msLevel = unique(msLevel(object)),
+                        features = character()) {
+    if (!hasFeatures(object))
+        stop("No correspondence results available. Please run ",
+             "'groupChromPeaks' first.")
+    .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                        rtmax = rtmax, msLevel = force(msLevel),
+                        features = features)
 }
 
 #' @param x `XCMSnExp` object of a single file.

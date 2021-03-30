@@ -20,7 +20,8 @@ featureSpectra(
 \item{x}{\link{XCMSnExp} object with feature defitions available.}
 
 \item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
-returned. Currently only \code{msLevel = 2} is supported.}
+returned. \code{msLevel = 1} is currently only supported for \code{return.type}
+being \code{"Spectra"} or \code{"List"}.}
 
 \item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
@@ -58,19 +59,21 @@ respective feature (i.e. its rowname in \code{\link[=featureDefinitions]{feature
 \item \code{return.type = "Spectra"}: a \code{Spectra} object (defined in the \code{Spectra}
 package). The result contains all spectra for all features. Metadata column
 \code{"feature_id"} provides the ID of the respective feature (i.e. its rowname
-in \code{\link[=featureDefinitions]{featureDefinitions()}} and \code{"feature_index"} its index in the object's
-\code{featureDefinitions} matrix.
+in \code{\link[=featureDefinitions]{featureDefinitions()}}.
 \item \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
 0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
 length of the list matches the number of features.
 \item \code{return.type = "List"}: \code{List} of length equal to the number of
-features is returned with elements being either \code{NULL} (no
-spectrum found) or a \code{Spectra} object.
+features with MS level \code{msLevel} is returned with elements being either
+\code{NULL} (no spectrum found) or a \code{Spectra} object.
 }
 }
 \description{
 This function returns spectra associated with the identified features in the
-input object. Parameter \code{msLevel} allows to define whether MS level 1 or 2
+input object. By default, spectra are returned for all features (from all
+MS levels), but parameter \code{features} allows to specify selected features for
+which the result should be returned.
+Parameter \code{msLevel} allows to define whether MS level 1 or 2
 spectra should be returned. For \code{msLevel = 1L} all MS1 spectra within the
 retention time range of each chromatographic peak (in that respective data
 file) associated with a feature are returned. For \code{msLevel = 2L} all MS2

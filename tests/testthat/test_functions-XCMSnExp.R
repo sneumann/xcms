@@ -290,6 +290,9 @@ test_that("featureSpectra works", {
     for (i in seq_along(res)) {
         expect_true(is(res[[i]], "Spectra"))
     }
+
+    res2 <- featureSpectra(xod_xg, msLevel = 2L, return.type = "Spectra")
+    expect_true(length(res2) == 0)
 })
 
 test_that("featureChromatograms works", {
@@ -608,6 +611,9 @@ test_that(".features_ms_region works", {
     expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
     expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
     expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
+
+    expect_error(.features_ms_region(xod_xgrg, msLevel = 1L,
+                                     features = c("a", "b")), "not available")
 })
 
 test_that(".which_peaks_above_threshold works", {
@@ -672,16 +678,17 @@ test_that(".spectra_for_peaks works", {
 
 test_that(".spectra_for_features works", {
     if (requireNamespace("Spectra", quietly = TRUE)) {
-        res <- .spectra_for_features(xod_xgrg, method = "closest_rt")
-        expect_true(length(res) == nrow(featureDefinitions(xod_xgrg)))
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
+                                     msLevel = 2L)
+        expect_true(length(res) ==
+                    nrow(featureDefinitions(xod_xgrg)))
         expect_true(all(lengths(res) == 0))
 
         res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
-                                            msLevel = 1L)
+                                     msLevel = 1L)
         expect_true(all(vapply(res, is, logical(1), "Spectra")))
         fds <- featureDefinitions(xod_xgrg)
         for (i in seq_len(nrow(fds))) {
-            expect_true(all(res[[i]]$feature_index == i))
             expect_true(all(res[[i]]$feature_id == rownames(fds)[i]))
         }
 
@@ -692,9 +699,17 @@ test_that(".spectra_for_features works", {
         res_all <- .spectra_for_features(xod_xg, msLevel = 1L)
         res_sub <- .spectra_for_features(xod_xg, msLevel = 1L,
                                          features = c(5, 12, 45))
+        res_sub2 <- .spectra_for_features(
+            xod_xg, msLevel = 1L,
+            features = rownames(featureDefinitions(xod_xg))[c(5, 12, 45)])
         expect_equal(length(res_sub), 3)
         expect_equal(rtime(res_sub[[1L]]), rtime(res_all[[5L]]))
         expect_equal(rtime(res_sub[[2L]]), rtime(res_all[[12L]]))
         expect_equal(rtime(res_sub[[3L]]), rtime(res_all[[45L]]))
+
+        expect_equal(length(res_sub), length(res_sub2))
+        expect_equal(rtime(res_sub[[1L]]), rtime(res_sub2[[1L]]))
+        expect_equal(rtime(res_sub[[2L]]), rtime(res_sub2[[2L]]))
+        expect_equal(rtime(res_sub[[3L]]), rtime(res_sub2[[3L]]))
     }
 })
