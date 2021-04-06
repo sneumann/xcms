@@ -3,6 +3,7 @@ Changes in version 3.13.7
 - Add `featureArea` function to extract the m/z-rt region for features.
 - Fix `featureSpectra` function.
 - Re-add the LC-MS/MS vignette.
+- Feature: plotQC() supports XCMSnExp objects now
 
 Changes in version 3.13.6
 
