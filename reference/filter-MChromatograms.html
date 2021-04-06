@@ -164,7 +164,7 @@ chromPeaks matrix.
 
     <div class="ref-description">
     <p>These functions allow to filter (subset) <code>MChromatograms()</code> or
-<code><a href='XChromatograms.html'>XChromatograms()</a></code> objects, i.e. sets of chromatographic data, without
+<code><a href='XChromatogram.html'>XChromatograms()</a></code> objects, i.e. sets of chromatographic data, without
 changing the data (intensity and retention times) within the individual
 chromatograms (<code>Chromatogram()</code> objects).</p><ul>
 <li><p><code>filterColumnsIntensityAbove</code>: subsets a <code>MChromatograms</code> objects keeping
@@ -193,7 +193,7 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
     </div>
 
     <pre class="usage"><span class='co'># S4 method for MChromatograms</span>
-<span class='fu'>filterColumnsIntensityAbove</span><span class='op'>(</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>,
   value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bpi"</span>, <span class='st'>"tic"</span><span class='op'>)</span>,
@@ -201,7 +201,7 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span class='op'>)</span>
 
 <span class='co'># S4 method for MChromatograms</span>
-<span class='fu'>filterColumnsKeepTop</span><span class='op'>(</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsKeepTop</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   n <span class='op'>=</span> <span class='fl'>1L</span>,
   sortBy <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bpi"</span>, <span class='st'>"tic"</span><span class='op'>)</span>,
@@ -209,7 +209,7 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span class='op'>)</span>
 
 <span class='co'># S4 method for XChromatograms</span>
-<span class='fu'>filterColumnsIntensityAbove</span><span class='op'>(</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   threshold <span class='op'>=</span> <span class='fl'>0</span>,
   value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bpi"</span>, <span class='st'>"tic"</span>, <span class='st'>"maxo"</span>, <span class='st'>"into"</span><span class='op'>)</span>,
@@ -217,7 +217,7 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span class='op'>)</span>
 
 <span class='co'># S4 method for XChromatograms</span>
-<span class='fu'>filterColumnsKeepTop</span><span class='op'>(</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsKeepTop</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   n <span class='op'>=</span> <span class='fl'>1L</span>,
   sortBy <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bpi"</span>, <span class='st'>"tic"</span>, <span class='st'>"maxo"</span>, <span class='st'>"into"</span><span class='op'>)</span>,
@@ -229,7 +229,7 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p><code>MChromatograms()</code> or <code><a href='XChromatograms.html'>XChromatograms()</a></code> object.</p></td>
+      <td><p><code>MChromatograms()</code> or <code><a href='XChromatogram.html'>XChromatograms()</a></code> object.</p></td>
     </tr>
     <tr>
       <th>threshold</th>
@@ -241,7 +241,7 @@ threshold value to compare against.</p></td>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining which value should be used in the
 comparison or sorting. Can be <code>value = "bpi"</code> (default) to use the
 maximum intensity per chromatogram or <code>value = "tic"</code> to use the sum
-of intensities per chromatogram. For <code><a href='XChromatograms.html'>XChromatograms()</a></code> objects also
+of intensities per chromatogram. For <code><a href='XChromatogram.html'>XChromatograms()</a></code> objects also
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></td>
@@ -265,7 +265,7 @@ columns that should be returned. <code>n</code> will be rounded to the closest
 be ordered to determine the top n columns. Can be either <code>sortBy = "bpi"</code>
 (the default), in which case the maximum intensity of each column's
 chromatograms is used, or <code>sortBy = "tic"</code> to use the total intensity
-sum of all chromatograms. For <code><a href='XChromatograms.html'>XChromatograms()</a></code> objects also
+sum of all chromatograms. For <code><a href='XChromatogram.html'>XChromatograms()</a></code> objects also
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></td>
@@ -312,7 +312,7 @@ same number of rows (EICs) but eventually a lower number of columns
 <span class='co'>##</span>
 <span class='co'>## Keep all columns with for which the maximum intensity of any of its</span>
 <span class='co'>## chromatograms is larger 90</span>
-<span class='fu'>filterColumnsIntensityAbove</span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>90</span><span class='op'>)</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove</a></span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>90</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; MChromatograms with 2 rows and 3 columns
 #&gt;                   1              2              3
 #&gt;      &lt;Chromatogram&gt; &lt;Chromatogram&gt; &lt;Chromatogram&gt;
@@ -321,7 +321,7 @@ same number of rows (EICs) but eventually a lower number of columns
 #&gt; phenoData with 0 variables
 #&gt; featureData with 0 variables</div><div class='input'>
 <span class='co'>## Require that ALL chromatograms in a column have a value larger 90</span>
-<span class='fu'>filterColumnsIntensityAbove</span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>90</span>, which <span class='op'>=</span> <span class='st'>"all"</span><span class='op'>)</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove</a></span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>90</span>, which <span class='op'>=</span> <span class='st'>"all"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; MChromatograms with 2 rows and 1 column
 #&gt;                   2
 #&gt;      &lt;Chromatogram&gt;
@@ -330,7 +330,7 @@ same number of rows (EICs) but eventually a lower number of columns
 #&gt; phenoData with 0 variables
 #&gt; featureData with 0 variables</div><div class='input'>
 <span class='co'>## If none of the columns fulfills the criteria no columns are returned</span>
-<span class='fu'>filterColumnsIntensityAbove</span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>900</span><span class='op'>)</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove</a></span><span class='op'>(</span><span class='va'>chrs</span>, threshold <span class='op'>=</span> <span class='fl'>900</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; MChromatograms with 2 rows and 0 columns
 #&gt; phenoData with 0 variables
 #&gt; featureData with 0 variables</div><div class='input'>
@@ -342,7 +342,7 @@ same number of rows (EICs) but eventually a lower number of columns
 <span class='co'>##</span>
 <span class='co'>## Keep the 2 columns with the highest sum of maximal intensities in their</span>
 <span class='co'>## chromatograms</span>
-<span class='fu'>filterColumnsKeepTop</span><span class='op'>(</span><span class='va'>chrs</span>, n <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsKeepTop</a></span><span class='op'>(</span><span class='va'>chrs</span>, n <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; MChromatograms with 2 rows and 1 column
 #&gt;                   2
 #&gt;      &lt;Chromatogram&gt;
@@ -352,7 +352,7 @@ same number of rows (EICs) but eventually a lower number of columns
 #&gt; featureData with 0 variables</div><div class='input'>
 <span class='co'>## Keep the 50 percent of columns with the highest total sum of signal. Note</span>
 <span class='co'>## that n will be rounded to the next larger integer value</span>
-<span class='fu'>filterColumnsKeepTop</span><span class='op'>(</span><span class='va'>chrs</span>, n <span class='op'>=</span> <span class='fl'>0.5</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>, sortBy <span class='op'>=</span> <span class='st'>"tic"</span><span class='op'>)</span>
+<span class='fu'><a href='filter-MChromatograms.html'>filterColumnsKeepTop</a></span><span class='op'>(</span><span class='va'>chrs</span>, n <span class='op'>=</span> <span class='fl'>0.5</span> <span class='op'>*</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>, sortBy <span class='op'>=</span> <span class='st'>"tic"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; MChromatograms with 2 rows and 2 columns
 #&gt;                   2              3
 #&gt;      &lt;Chromatogram&gt; &lt;Chromatogram&gt;

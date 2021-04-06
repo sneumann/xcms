@@ -156,12 +156,12 @@ original MS files and run time of the call can thus be significantly larger.
 Also, for <code>nValues &gt; 1</code> parameter <code>value</code> is ignored.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>FilterIntensityParam</span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>0</span>, nValues <span class='op'>=</span> <span class='fl'>1L</span>, value <span class='op'>=</span> <span class='st'>"maxo"</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'><a href='refineChromPeaks-filter-intensity.html'>FilterIntensityParam</a></span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>0</span>, nValues <span class='op'>=</span> <span class='fl'>1L</span>, value <span class='op'>=</span> <span class='st'>"maxo"</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp,FilterIntensityParam</span>
-<span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span><span class='op'>(</span>
+<span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
-  param <span class='op'>=</span> <span class='fu'>FilterIntensityParam</span><span class='op'>(</span><span class='op'>)</span>,
+  param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-filter-intensity.html'>FilterIntensityParam</a></span><span class='op'>(</span><span class='op'>)</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
@@ -213,8 +213,8 @@ default parallel processing setup returned by <code>bpparam()</code>. See
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other chromatographic peak refinement methods: 
-<code><a href='CleanPeaksParam.html'>CleanPeaksParam</a></code>,
-<code><a href='MergeNeighboringPeaksParam.html'>MergeNeighboringPeaksParam</a></code></p></div>
+<code><a href='refineChromPeaks-clean.html'>CleanPeaksParam</a></code>,
+<code><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
@@ -230,7 +230,7 @@ default parallel processing setup returned by <code>bpparam()</code>. See
 <span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Remove all peaks with a maximal intensity below 50000</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'>FilterIntensityParam</span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>50000</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-filter-intensity.html'>FilterIntensityParam</a></span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>50000</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Removed 93 chromatographic peaks.</span></div><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
@@ -241,7 +241,7 @@ default parallel processing setup returned by <code>bpparam()</code>. See
 <span class='co'>## perform this on the data of a single file.</span>
 <span class='va'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterFile</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
 
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>xdata</span>, <span class='fu'>FilterIntensityParam</span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>20000</span>, nValues <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>xdata</span>, <span class='fu'><a href='refineChromPeaks-filter-intensity.html'>FilterIntensityParam</a></span><span class='op'>(</span>threshold <span class='op'>=</span> <span class='fl'>20000</span>, nValues <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Removed 28 chromatographic peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>xdata</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 220</div></pre>

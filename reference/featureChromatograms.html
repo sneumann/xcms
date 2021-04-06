@@ -210,7 +210,7 @@ of the features in <code>featureDefinitions</code>, feature IDs (row names of
       <th>include</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining which chromatographic peaks (and
 related feature definitions) should be included in the returned
-<code><a href='XChromatograms.html'>XChromatograms()</a></code>. Defaults to <code>"feature_only"</code>; See description above
+<code><a href='XChromatogram.html'>XChromatograms()</a></code>. Defaults to <code>"feature_only"</code>; See description above
 for options and details.</p></td>
     </tr>
     <tr>
@@ -232,14 +232,14 @@ maximal peak intensity or the integrated peak area, respectively.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>optional arguments to be passed along to the <code><a href='chromatogram,XCMSnExp-method.html'>chromatogram()</a></code>
+      <td><p>optional arguments to be passed along to the <code><a href='chromatogram-method.html'>chromatogram()</a></code>
 function.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='XChromatograms.html'>XChromatograms()</a></code> object.</p>
+    <p><code><a href='XChromatogram.html'>XChromatograms()</a></code> object.</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>When extracting EICs from only the top <code>n</code> samples it can happen that one
@@ -248,7 +248,7 @@ have no detected peak in the <em>top n</em> samples. The chance for this to happ
 is smaller if <code>x</code> contains also filled-in peaks (with <code>fillChromPeaks</code>).</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='filterColumnsIntensityAbove,MChromatograms-method.html'>filterColumnsKeepTop()</a></code> to filter the extracted EICs keeping only
+    <div class='dont-index'><p><code><a href='filter-MChromatograms.html'>filterColumnsKeepTop()</a></code> to filter the extracted EICs keeping only
 the <em>top n</em> columns (samples) with the highest intensity.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

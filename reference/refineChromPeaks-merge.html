@@ -192,7 +192,7 @@ details for information on the <code>"mzmin"</code> and <code>"mzmax"</code> val
 peak.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MergeNeighboringPeaksParam</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span><span class='op'>(</span>
   expandRt <span class='op'>=</span> <span class='fl'>2</span>,
   expandMz <span class='op'>=</span> <span class='fl'>0</span>,
   ppm <span class='op'>=</span> <span class='fl'>10</span>,
@@ -200,9 +200,9 @@ peak.</p>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp,MergeNeighboringPeaksParam</span>
-<span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span><span class='op'>(</span>
+<span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
-  param <span class='op'>=</span> <span class='fu'>MergeNeighboringPeaksParam</span><span class='op'>(</span><span class='op'>)</span>,
+  param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span><span class='op'>(</span><span class='op'>)</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
@@ -296,8 +296,8 @@ newly merged peak are considered.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other chromatographic peak refinement methods: 
-<code><a href='CleanPeaksParam.html'>CleanPeaksParam</a></code>,
-<code><a href='FilterIntensityParam.html'>FilterIntensityParam</a></code></p></div>
+<code><a href='refineChromPeaks-clean.html'>CleanPeaksParam</a></code>,
+<code><a href='refineChromPeaks-filter-intensity.html'>FilterIntensityParam</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
@@ -317,20 +317,20 @@ newly merged peak are considered.</p>
 
 <span class='co'>## Example of a split peak that will be merged</span>
 <span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fl'>305.1</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>0.01</span>, <span class='fl'>0.01</span><span class='op'>)</span>
-<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>xd</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>3700</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>xd</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>3700</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
 </div><div class='img'><img src='refineChromPeaks-merge-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Combine the peaks</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='CleanPeaksParam.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>xd</span>, param <span class='op'>=</span> <span class='fu'>MergeNeighboringPeaksParam</span><span class='op'>(</span>expandRt <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Evaluating 8 peaks in file ko15.CDF for merging ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Merging reduced 87 chromPeaks to 70.</span></div><div class='input'><span class='va'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>res</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>3700</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>xd</span>, param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam</a></span><span class='op'>(</span>expandRt <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Evaluating 8 peaks in file ko15.CDF for merging ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Merging reduced 87 chromPeaks to 70.</span></div><div class='input'><span class='va'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>res</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>3700</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr_res</span><span class='op'>)</span>
 </div><div class='img'><img src='refineChromPeaks-merge-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Example of a peak that was not merged, because the signal between them</span>
 <span class='co'>## is lower than the cut-off minProp</span>
 <span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fl'>496.2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>0.01</span>, <span class='fl'>0.01</span><span class='op'>)</span>
-<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>xd</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3200</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>xd</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3200</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
-</div><div class='input'><span class='va'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>res</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3200</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='va'>chr_res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>res</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3200</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
 <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr_res</span><span class='op'>)</span>
 </div><div class='img'><img src='refineChromPeaks-merge-3.png' alt='' width='700' height='433' /></div></pre>
   </div>

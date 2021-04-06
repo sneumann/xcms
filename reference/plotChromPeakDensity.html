@@ -155,7 +155,7 @@ visualized setting <code>simulate = FALSE</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>plotChromPeakDensity</span><span class='op'>(</span>
+<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>mz</span>,
   <span class='va'>rt</span>,
@@ -282,7 +282,7 @@ algorithm and its supported settings.</p>
 <span class='co'>## different peak density correspondence settings.</span>
 <span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>305.05</span>, <span class='fl'>305.15</span><span class='op'>)</span>
 
-<span class='fu'>plotChromPeakDensity</span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, pch <span class='op'>=</span> <span class='fl'>16</span>,
+<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, pch <span class='op'>=</span> <span class='fl'>16</span>,
     param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>

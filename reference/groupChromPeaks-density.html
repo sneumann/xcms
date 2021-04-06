@@ -359,12 +359,12 @@ Anal. Chem. 2006, 78:779-787.</p>
 
     <div class='dont-index'><p>The <code><a href='do_groupChromPeaks_density.html'>do_groupChromPeaks_density()</a></code> core API function and <code><a href='group.density.html'>group.density()</a></code>
 for the old user interface.</p>
-<p><code><a href='plotChromPeakDensity,XCMSnExp-method.html'>plotChromPeakDensity()</a></code> to plot peak densities and evaluate different
+<p><code><a href='plotChromPeakDensity.html'>plotChromPeakDensity()</a></code> to plot peak densities and evaluate different
 algorithm settings.</p>
-<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='quantify,XCMSnExp-method.html'>featureValues()</a></code> for methods to access the
+<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access the
 features (i.e. the peak grouping results).</p>
 <p><a href='XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of the correspondence.</p>
-<p><code><a href='plotChromPeakDensity,XCMSnExp-method.html'>plotChromPeakDensity()</a></code> for plotting chromatographic peak density with the
+<p><code><a href='plotChromPeakDensity.html'>plotChromPeakDensity()</a></code> for plotting chromatographic peak density with the
 possibility to test different parameter settings.</p>
 <p>Other peak grouping methods: 
 <code><a href='groupChromPeaks-mzClust.html'>groupChromPeaks-mzClust</a></code>,
@@ -457,7 +457,7 @@ possibility to test different parameter settings.</p>
 #&gt; FT47         2         164,234         1</div><div class='input'>
 <span class='co'>## Using the featureValues method to extract a matrix with the</span>
 <span class='co'>## intensities of the features per sample.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span><span class='op'>(</span><span class='va'>res</span>, value <span class='op'>=</span> <span class='st'>"into"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span><span class='op'>(</span><span class='va'>res</span>, value <span class='op'>=</span> <span class='st'>"into"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        ko15.CDF ko16.CDF   ko18.CDF
 #&gt; FT01 17140627.0       NA 16919266.9
 #&gt; FT02         NA  1264119   732016.2
@@ -479,7 +479,7 @@ possibility to test different parameter settings.</p>
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Fri Mar 26 10:58:07 2021 
+#&gt;  date: Tue Apr  6 12:05:37 2021 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: PeakDensityParam 

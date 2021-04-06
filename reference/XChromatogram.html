@@ -598,7 +598,7 @@ section <em>Correspondence analysis</em> for details.</p></td>
 object (<code>plot</code> with <code>peakType = "polygon"</code>) draws a polygon representing
 the displayed chromatogram from the peak's minimal retention time to the
 maximal retention time. If the <code>XChromatograms</code> was extracted from an
-<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram,XCMSnExp-method.html'>chromatogram()</a></code> function this might not
+<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram-method.html'>chromatogram()</a></code> function this might not
 represent the actual identified peak area if the m/z range that was
 used to extract the chromatogram was larger than the peak's m/z.</p>
     <h2 class="hasAnchor" id="creation-of-objects"><a class="anchor" href="#creation-of-objects"></a>Creation of objects</h2>
@@ -617,7 +617,7 @@ Chromatogram or <code>MChromatograms()</code> objects using
 
 <p>Besides classical subsetting with <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> specific filter operations on
 <code>MChromatograms()</code> and <code>XChromatograms</code> objects are available. See
-<code><a href='filterColumnsIntensityAbove,MChromatograms-method.html'>filterColumnsIntensityAbove()</a></code> for more details.</p>
+<code><a href='filter-MChromatograms.html'>filterColumnsIntensityAbove()</a></code> for more details.</p>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> allows to subset a <code>XChromatograms</code> object by row (<code>i</code>) and column
@@ -626,7 +626,7 @@ will also be subsetted accordingly and the <code>peakidx</code> column updated.<
 <li><p><code>filterMz</code> filters the chromatographic peaks within an <code>XChromatogram</code> or
 <code>XChromatograms</code>, if a column <code>"mz"</code> is present in the <code>chromPeaks</code> matrix.
 This would be the case if the <code>XChromatogram</code> was extracted from an
-<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram,XCMSnExp-method.html'>chromatogram()</a></code> function. All
+<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram-method.html'>chromatogram()</a></code> function. All
 chromatographic peaks with their m/z within the m/z range defined by <code>mz</code>
 will be retained. Also feature definitions (if present) will be subset
 accordingly. The function returns a filtered <code>XChromatogram</code> or
@@ -737,12 +737,12 @@ analysis results. See section <em>Correspondence analysis</em> for more details.
     
 
 
-<p>See <a href='findChromPeaks,Chromatogram,CentWaveParam-method.html'>findChromPeaks-Chromatogram-CentWaveParam</a> for information.</p>
+<p>See <a href='findChromPeaks-Chromatogram-CentWaveParam.html'>findChromPeaks-Chromatogram-CentWaveParam</a> for information.</p>
 <p>After chromatographic peak detection it is also possible to <em>refine</em>
 identified chromatographic peaks with the <code>refineChromPeaks</code> method (e.g. to
 reduce peak detection artifacts). Currently, only peak refinement using the
 <em>merge neighboring peaks</em> method is available (see
-<code><a href='MergeNeighboringPeaksParam.html'>MergeNeighboringPeaksParam()</a></code> for a detailed description of the approach.</p>
+<code><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam()</a></code> for a detailed description of the approach.</p>
     <h2 class="hasAnchor" id="correspondence-analysis"><a class="anchor" href="#correspondence-analysis"></a>Correspondence analysis</h2>
 
     
@@ -781,7 +781,7 @@ integrated peak area for each feature. The result is a <code>matrix</code>, colu
 being samples and rows features.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='findChromPeaks,Chromatogram,CentWaveParam-method.html'>findChromPeaks-centWave</a> for peak
+    <div class='dont-index'><p><a href='findChromPeaks-Chromatogram-CentWaveParam.html'>findChromPeaks-centWave</a> for peak
 detection on <code>MChromatograms()</code> objects.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -796,19 +796,19 @@ detection on <code>MChromatograms()</code> objects.</p></div>
     <span class='fu'>Chromatogram</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>6</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>7</span>, <span class='fl'>13</span>, <span class='fl'>43</span>, <span class='fl'>34</span>, <span class='fl'>23</span>, <span class='fl'>9</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Create an XChromatograms without peak data</span>
-<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'>XChromatograms</span><span class='op'>(</span><span class='va'>dta</span><span class='op'>)</span>
+<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XChromatogram.html'>XChromatograms</a></span><span class='op'>(</span><span class='va'>dta</span><span class='op'>)</span>
 
 <span class='co'>## Create an XChromatograms with peaks data</span>
 <span class='va'>pks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>2</span>, <span class='fl'>5</span>, <span class='fl'>30</span>, <span class='fl'>12</span>, <span class='cn'>NA</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>1</span>,
     dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"rt"</span>, <span class='st'>"rtmin"</span>, <span class='st'>"rtmax"</span>, <span class='st'>"into"</span>, <span class='st'>"maxo"</span>, <span class='st'>"sn"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,
     <span class='cn'>NULL</span><span class='op'>)</span>
-<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'>XChromatograms</span><span class='op'>(</span><span class='va'>dta</span>, chromPeaks <span class='op'>=</span> <span class='va'>pks</span><span class='op'>)</span>
+<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XChromatogram.html'>XChromatograms</a></span><span class='op'>(</span><span class='va'>dta</span>, chromPeaks <span class='op'>=</span> <span class='va'>pks</span><span class='op'>)</span>
 
 <span class='co'>## Create an XChromatograms from XChromatogram objects</span>
 <span class='va'>dta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>dta</span>, <span class='va'>as</span>, <span class='st'>"XChromatogram"</span><span class='op'>)</span>
 <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>dta</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>pks</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
 
-<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'>XChromatograms</span><span class='op'>(</span><span class='va'>dta</span>, nrow <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XChromatogram.html'>XChromatograms</a></span><span class='op'>(</span><span class='va'>dta</span>, nrow <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='fu'><a href='XCMSnExp-class.html'>hasChromPeaks</a></span><span class='op'>(</span><span class='va'>xchrs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;      1     2
@@ -824,7 +824,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 <span class='va'>od</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='va'>xod_sub</span>, <span class='st'>"OnDiskMSnExp"</span><span class='op'>)</span>
 
 <span class='co'>## Extract chromatograms for a m/z - retention time slice</span>
-<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='fl'>344</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='fl'>344</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>chrs</span>
 </div><div class='output co'>#&gt; MChromatograms with 1 row and 2 columns
 #&gt;            ko15.CDF       ko18.CDF
@@ -856,7 +856,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Fri Mar 26 10:56:14 2021 
+#&gt;  date: Tue Apr  6 12:04:15 2021 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2 
 #&gt;  Parameter class: CentWaveParam 
@@ -905,13 +905,13 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 <span class='co'>## Plot the correspondence results. Use simulate = FALSE to show the</span>
 <span class='co'>## actual results. Grouped chromatographic peaks are indicated with</span>
 <span class='co'>## grey shaded rectangles.</span>
-<span class='fu'><a href='plotChromPeakDensity,XCMSnExp-method.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>res</span>, simulate <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>res</span>, simulate <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='img'><img src='XChromatogram-4.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Simulate a correspondence analysis based on different settings. Larger</span>
 <span class='co'>## bw will increase the smoothing of the density estimate hence grouping</span>
 <span class='co'>## chromatographic peaks that are more apart on the retention time axis.</span>
 <span class='va'>prm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroup <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span><span class='op'>)</span>, bw <span class='op'>=</span> <span class='fl'>60</span><span class='op'>)</span>
-<span class='fu'><a href='plotChromPeakDensity,XCMSnExp-method.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>res</span>, param <span class='op'>=</span> <span class='va'>prm</span><span class='op'>)</span>
+<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>res</span>, param <span class='op'>=</span> <span class='va'>prm</span><span class='op'>)</span>
 </div><div class='img'><img src='XChromatogram-5.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Delete the identified feature definitions</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFeatureDefinitions</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
@@ -926,7 +926,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"maxo"</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>19</span>
 <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"into"</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>93</span>
 
-<span class='va'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'>XChromatogram</span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
+<span class='va'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XChromatogram.html'>XChromatogram</a></span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
     intensity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>14</span>, <span class='fl'>19</span>, <span class='fl'>18</span>, <span class='fl'>12</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>2</span><span class='op'>)</span>,
     chromPeaks <span class='op'>=</span> <span class='va'>pks</span><span class='op'>)</span>
 <span class='va'>xchr</span>
@@ -941,7 +941,7 @@ detection on <code>MChromatograms()</code> objects.</p></div>
 #&gt;  4	2	9	93	19	NA</div><div class='input'>
 <span class='co'>## Add arbitrary peak annotations</span>
 <span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>peak_id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'>XChromatogram</span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
+<span class='va'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XChromatogram.html'>XChromatogram</a></span><span class='op'>(</span>rtime <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>,
     intensity <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>14</span>, <span class='fl'>19</span>, <span class='fl'>18</span>, <span class='fl'>12</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>2</span><span class='op'>)</span>,
     chromPeaks <span class='op'>=</span> <span class='va'>pks</span>, chromPeakData <span class='op'>=</span> <span class='va'>df</span><span class='op'>)</span>
 <span class='va'>xchr</span>

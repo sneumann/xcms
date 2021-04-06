@@ -331,7 +331,7 @@ data. Bioinformatics 2006, 22:634-636.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>The <code><a href='do_groupChromPeaks_nearest.html'>do_groupChromPeaks_nearest()</a></code> core API function.</p>
-<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='quantify,XCMSnExp-method.html'>featureValues()</a></code> for methods to access
+<p><code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code> and <code><a href='XCMSnExp-peak-grouping-results.html'>featureValues()</a></code> for methods to access
 peak grouping results (i.e. the features).</p>
 <p><a href='XCMSnExp-class.html'>XCMSnExp</a> for the object containing the results of
 the peak grouping.</p>
@@ -415,7 +415,7 @@ the peak grouping.</p>
 #&gt; FT188         1         247         1</div><div class='input'>
 <span class='co'>## Using the featureValues method to extract a matrix with the intensities of</span>
 <span class='co'>## the features per sample.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='quantify,XCMSnExp-method.html'>featureValues</a></span><span class='op'>(</span><span class='va'>res</span>, value <span class='op'>=</span> <span class='st'>"into"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span><span class='op'>(</span><span class='va'>res</span>, value <span class='op'>=</span> <span class='st'>"into"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;       ko15.CDF   ko16.CDF ko18.CDF
 #&gt; FT001       NA   274906.3       NA
 #&gt; FT002       NA    70456.3       NA
@@ -437,7 +437,7 @@ the peak grouping.</p>
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Fri Mar 26 10:58:11 2021 
+#&gt;  date: Tue Apr  6 12:05:40 2021 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: NearestPeaksParam 

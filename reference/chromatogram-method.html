@@ -147,7 +147,7 @@ an OnDiskMSnExp or <a href='XCMSnExp-class.html'>XCMSnExp</a> objects. See also 
     </div>
 
     <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>chromatogram</span><span class='op'>(</span>
+<span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>rt</span>,
   <span class='va'>mz</span>,
@@ -233,7 +233,7 @@ not include any chromatographic peaks.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>chromatogram</code> returns a <a href='XChromatograms.html'>XChromatograms</a> object with
+    <p><code>chromatogram</code> returns a <a href='XChromatogram.html'>XChromatograms</a> object with
 the number of columns corresponding to the number of files in
 <code>object</code> and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments <code>mz</code> and/or
@@ -289,7 +289,7 @@ the MS data as `data.frame`.
 <span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span><span class='op'>)</span>, mz <span class='op'>=</span> <span class='fl'>335</span><span class='op'>)</span>
 
 <span class='va'>chrs</span>
 </div><div class='output co'>#&gt; XChromatograms with 1 row and 3 columns
@@ -313,7 +313,7 @@ the MS data as `data.frame`.
 <span class='co'>## Extract chromatograms for multiple ranges.</span>
 <span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>335</span>, <span class='fl'>335</span>, <span class='fl'>344</span>, <span class='fl'>344</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>rtr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2700</span>, <span class='fl'>2900</span>, <span class='fl'>2600</span>, <span class='fl'>2750</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>chromatogram</span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='va'>rtr</span><span class='op'>)</span>
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='va'>rtr</span><span class='op'>)</span>
 
 <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax    into    intb   maxo sn

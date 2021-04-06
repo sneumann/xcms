@@ -154,7 +154,7 @@ Note that not all settings from the <code>CentWaveParam</code> will be used.
 See <code><a href='peaksWithCentWave.html'>peaksWithCentWave()</a></code> for the arguments used for peak detection
 on purely chromatographic data.</p>
 <p>After chromatographic peak detection, identified peaks can also be <em>refined</em>
-with the <code><a href='CleanPeaksParam.html'>refineChromPeaks()</a></code> method, which can help to reduce peak
+with the <code><a href='refineChromPeaks-clean.html'>refineChromPeaks()</a></code> method, which can help to reduce peak
 detection artifacts.</p>
     </div>
 
@@ -194,7 +194,7 @@ should be performed (only for <code>XChromatograms</code> objects). It defaults 
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>If called on a <code>Chromatogram</code> object, the method returns an <a href='XChromatograms.html'>XChromatogram</a>
+    <p>If called on a <code>Chromatogram</code> object, the method returns an <a href='XChromatogram.html'>XChromatogram</a>
 object with the identified peaks. See <code><a href='peaksWithCentWave.html'>peaksWithCentWave()</a></code> for details on
 the peak matrix content.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -217,7 +217,7 @@ for details on the method.</p></div>
 <span class='va'>od</span> <span class='op'>&lt;-</span> <span class='fu'>as</span><span class='op'>(</span><span class='fu'>filterFile</span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1L</span><span class='op'>)</span>, <span class='st'>"OnDiskMSnExp"</span><span class='op'>)</span>
 
 <span class='co'>## Extract chromatographic data for a small m/z range</span>
-<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>272.1</span>, <span class='fl'>272.3</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>]</span>
+<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>272.1</span>, <span class='fl'>272.3</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>]</span>
 
 <span class='co'>## Identify peaks with default settings</span>
 <span class='va'>xchr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>chr</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
@@ -247,7 +247,7 @@ for details on the method.</p></div>
 <span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Extract chromatograms for a m/z - retention time slice</span>
-<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram,XCMSnExp-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od3</span>, mz <span class='op'>=</span> <span class='fl'>344</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od3</span>, mz <span class='op'>=</span> <span class='fl'>344</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'>## Perform peak detection using CentWave</span>
 <span class='va'>xchrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>chrs</span>, param <span class='op'>=</span> <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
