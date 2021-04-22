@@ -1,3 +1,7 @@
+Changes in version 3.13.8
+
+- Fix plotQC() for XCMSnExp objects
+
 Changes in version 3.13.7
 
 - Add `featureArea` function to extract the m/z-rt region for features.
