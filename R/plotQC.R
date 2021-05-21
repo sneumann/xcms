@@ -63,8 +63,8 @@ plotQC <- function(object,
   } else if (inherits(objects, "XCMSnExp")) {
     deviations <- list(mzs=featureValues(object, value = "mz"),
                        rts=featureValues(object, value = "rt"))
-    deviations$mzdev <- deviations$mzs - featureDefinitions(xdata)[,"mzmed"]
-    deviations$rtdev <- deviations$rts - featureDefinitions(xdata)[,"rtmed"]
+    deviations$mzdev <- deviations$mzs - featureDefinitions(object)[,"mzmed"]
+    deviations$rtdev <- deviations$rts - featureDefinitions(object)[,"rtmed"]
   } else {
     stop("object not xcmsSet nor XCMSnExp")
   }
