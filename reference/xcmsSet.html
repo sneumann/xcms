@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -142,12 +142,12 @@
   into different classes suitable for grouping.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>xcmsSet</span><span class='op'>(</span>files <span class='op'>=</span> <span class='cn'>NULL</span>, snames <span class='op'>=</span> <span class='cn'>NULL</span>, sclass <span class='op'>=</span> <span class='cn'>NULL</span>, phenoData <span class='op'>=</span> <span class='cn'>NULL</span>,
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>xcmsSet</span><span class='op'>(</span>files <span class='op'>=</span> <span class='cn'>NULL</span>, snames <span class='op'>=</span> <span class='cn'>NULL</span>, sclass <span class='op'>=</span> <span class='cn'>NULL</span>, phenoData <span class='op'>=</span> <span class='cn'>NULL</span>,
         profmethod <span class='op'>=</span> <span class='st'>"bin"</span>, profparam <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
         polarity <span class='op'>=</span> <span class='cn'>NULL</span>, lockMassFreq<span class='op'>=</span><span class='cn'>FALSE</span>,
   mslevel<span class='op'>=</span><span class='cn'>NULL</span>, nSlaves<span class='op'>=</span><span class='fl'>0</span>, progressCallback<span class='op'>=</span><span class='cn'>NULL</span>,
-        scanrange <span class='op'>=</span> <span class='cn'>NULL</span>, BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
-        stopOnError <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+        scanrange <span class='op'>=</span> <span class='cn'>NULL</span>, BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
+        stopOnError <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -216,9 +216,9 @@
       <th>BPPARAM</th>
       <td><p>a <code>BiocParallel</code> parameter object to control how
     and if parallel processing should be performed. Such objects can be
-    created by the <code>SerialParam</code>,
-    <code>MulticoreParam</code> or
-    <code>SnowParam</code> functions.</p></td>
+    created by the <code><a href='https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html'>SerialParam</a></code>,
+    <code><a href='https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html'>MulticoreParam</a></code> or
+    <code><a href='https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html'>SnowParam</a></code> functions.</p></td>
     </tr>
     <tr>
       <th>stopOnError</th>

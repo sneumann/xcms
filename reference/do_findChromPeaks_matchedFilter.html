@@ -69,8 +69,6 @@
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -94,7 +92,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -162,7 +160,7 @@
     and illustrations see [Smith 2006].</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>
   <span class='va'>mz</span>,
   <span class='va'>int</span>,
   <span class='va'>scantime</span>,
@@ -179,7 +177,7 @@
   mzdiff <span class='op'>=</span> <span class='fl'>0.8</span> <span class='op'>-</span> <span class='va'>binSize</span> <span class='op'>*</span> <span class='va'>steps</span>,
   index <span class='op'>=</span> <span class='cn'>FALSE</span>,
   sleep <span class='op'>=</span> <span class='fl'>0</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,7 +204,7 @@ spectrum.</p></td>
     </tr>
     <tr>
       <th>binSize</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> specifying the width of the
+      <td><p><code>numeric(1)</code> specifying the width of the
 bins/slices in m/z dimension.</p></td>
     </tr>
     <tr>
@@ -231,34 +229,34 @@ linear interpolation. See details section for more information.</p></td>
     </tr>
     <tr>
       <th>fwhm</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> specifying the full width at half maximum
+      <td><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
 actual sigma, see below.</p></td>
     </tr>
     <tr>
       <th>sigma</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> specifying the standard deviation (width)
+      <td><p><code>numeric(1)</code> specifying the standard deviation (width)
 of the matched filtration model peak.</p></td>
     </tr>
     <tr>
       <th>max</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> representing the maximum number of peaks
+      <td><p><code>numeric(1)</code> representing the maximum number of peaks
 that are expected/will be identified per slice.</p></td>
     </tr>
     <tr>
       <th>snthresh</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio cutoff.</p></td>
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
     </tr>
     <tr>
       <th>steps</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the number of bins to be
+      <td><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
 performed).</p></td>
     </tr>
     <tr>
       <th>mzdiff</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> representing the minimum difference in m/z
+      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
@@ -266,12 +264,12 @@ signal.</p></td>
     </tr>
     <tr>
       <th>index</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> specifying whether indicies should be
+      <td><p><code>logical(1)</code> specifying whether indicies should be
 returned instead of values for m/z and retention times.</p></td>
     </tr>
     <tr>
       <th>sleep</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the number of seconds to wait between
+      <td><p><code>numeric(1)</code> defining the number of seconds to wait between
 iterations. Defaults to <code>sleep = 0</code>. If <code>&gt; 0</code> a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
@@ -334,39 +332,40 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <p>Colin A Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load the test file</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Subset to one file and restrict to a certain retention time range</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span><span class='op'>(</span><span class='fu'>filterFile</span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3000</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Get m/z and intensity values</span>
-<span class='va'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
-<span class='va'>ints</span> <span class='op'>&lt;-</span> <span class='fu'>intensity</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
-
-<span class='co'>## Define the values per spectrum:</span>
-<span class='va'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>
-
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>, int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ints</span><span class='op'>)</span>,
-    scantime <span class='op'>=</span> <span class='fu'>rtime</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>, valsPerSpect <span class='op'>=</span> <span class='va'>valsPerSpect</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
-#&gt; [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280
-#&gt; [2,] 205.9819 205.9 206.0 2786.200 2772.115 2800.284  237993.6  448580.3 10681
-#&gt; [3,] 207.0821 207.0 207.1 2712.647 2698.562 2726.731  380873.0  730981.4 18800
-#&gt; [4,] 236.0956 236.0 236.1 2518.593 2504.508 2534.242  252282.0  458747.7 12957
-#&gt; [5,] 244.1000 244.1 244.1 2828.453 2814.369 2844.103  612169.9 1279308.9 31312
-#&gt; [6,] 266.0751 266.0 266.1 2828.453 2815.934 2844.103  113219.0  214886.8  5801
-#&gt;           maxf i       sn
-#&gt; [1,] 195026.48 1 28.33394
-#&gt; [2,]  23860.11 1 16.53987
-#&gt; [3,]  40065.74 1 12.87314
-#&gt; [4,]  24536.55 1 14.99012
-#&gt; [5,]  69898.24 1 24.20989
-#&gt; [6,]  11773.56 1 10.83870</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load the test file</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Subset to one file and restrict to a certain retention time range</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterRt</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterFile</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3000</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Get m/z and intensity values</span></span>
+<span class='r-in'><span class='va'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>mz</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>ints</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Define the values per spectrum:</span></span>
+<span class='r-in'><span class='va'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_matchedFilter</span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>, int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ints</span><span class='op'>)</span>,</span>
+<span class='r-in'>    scantime <span class='op'>=</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>, valsPerSpect <span class='op'>=</span> <span class='va'>valsPerSpect</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,] 205.9819 205.9 206.0 2786.200 2772.115 2800.284  237993.6  448580.3 10681</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,] 207.0821 207.0 207.1 2712.647 2698.562 2726.731  380873.0  730981.4 18800</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,] 236.0956 236.0 236.1 2518.593 2504.508 2534.242  252282.0  458747.7 12957</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5,] 244.1000 244.1 244.1 2828.453 2814.369 2844.103  612169.9 1279308.9 31312</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [6,] 266.0751 266.0 266.1 2828.453 2815.934 2844.103  113219.0  214886.8  5801</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           maxf i       sn</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 195026.48 1 28.33394</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]  23860.11 1 16.53987</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]  40065.74 1 12.87314</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]  24536.55 1 14.99012</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5,]  69898.24 1 24.20989</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [6,]  11773.56 1 10.83870</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

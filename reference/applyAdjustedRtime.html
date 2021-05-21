@@ -59,8 +59,6 @@ time or returns the object unchanged if none are present." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -84,7 +82,7 @@ time or returns the object unchanged if none are present." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -142,7 +140,7 @@ time or returns the object unchanged if none are present." />
 time or returns the object unchanged if none are present.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>applyAdjustedRtime</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>applyAdjustedRtime</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,61 +172,72 @@ history is preserved.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='adjustRtime.html'>adjustRtime()</a></code> for the function to perform the alignment (retention
-time correction).</p><pre>[adjustedRtime()] for the method to extract adjusted retention times from
+time correction).</p><pre><code>[adjustedRtime()] for the method to extract adjusted retention times from
 an [XCMSnExp] object.
 
 [dropAdjustedRtime] for the method to delete alignment results and to
 restore the raw retention times.
-</pre>
+</code></pre>
 </div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'><a href='adjustRtime-obiwarp.html'>ObiwarpParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko15.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko18.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='co'>## Replace raw retention times with adjusted retention times.</span>
-<span class='va'>xod</span> <span class='op'>&lt;-</span> <span class='fu'>applyAdjustedRtime</span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>
-
-<span class='co'>## No adjusted retention times present</span>
-<span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
-<span class='co'>## Raw retention times have been replaced with adjusted retention times</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='fu'>rtime</span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>, <span class='fu'>fromFile</span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='fu'>rtime</span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>, <span class='fu'>fromFile</span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>, type <span class='op'>=</span> <span class='st'>"l"</span><span class='op'>)</span>
-</div><div class='img'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'>## And the process history still contains the settings for the alignment</span>
-<span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; Object of class "XProcessHistory"
-#&gt;  type: Peak detection 
-#&gt;  date: Mon Jun 15 06:30:55 2020 
-#&gt;  info:  
-#&gt;  fileIndex: 1,2,3 
-#&gt;  Parameter class: CentWaveParam 
-#&gt;  MS level(s) 1 
-#&gt; 
-#&gt; [[2]]
-#&gt; Object of class "XProcessHistory"
-#&gt;  type: Retention time correction 
-#&gt;  date: Thu Apr 22 08:18:30 2021 
-#&gt;  info:  
-#&gt;  fileIndex: 1,2,3 
-#&gt;  Parameter class: ObiwarpParam 
-#&gt;  MS level(s) 1 
-#&gt; </div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load a test data set with detected peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Disable parallel processing for this example</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html'>SerialParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>xod</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'><a href='adjustRtime-obiwarp.html'>ObiwarpParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Sample number 2 used as center sample.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Aligning ko15.CDF against ko16.CDF ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Aligning ko18.CDF against ko16.CDF ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Applying retention time adjustment to the identified chromatographic peaks ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Replace raw retention times with adjusted retention times.</span></span>
+<span class='r-in'><span class='va'>xod</span> <span class='op'>&lt;-</span> <span class='fu'>applyAdjustedRtime</span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## No adjusted retention times present</span></span>
+<span class='r-in'><span class='fu'><a href='XCMSnExp-class.html'>hasAdjustedRtime</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Raw retention times have been replaced with adjusted retention times</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>fromFile</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>-</span></span>
+<span class='r-in'>    <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>fromFile</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>, type <span class='op'>=</span> <span class='st'>"l"</span><span class='op'>)</span></span>
+<span class='r-plt'><img src='applyAdjustedRtime-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## And the process history still contains the settings for the alignment</span></span>
+<span class='r-in'><span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span><span class='op'>(</span><span class='va'>xod</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Object of class "XProcessHistory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  type: Peak detection </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  date: Mon Jun 15 06:30:55 2020 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  info:  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  fileIndex: 1,2,3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameter class: CentWaveParam </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  MS level(s) 1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Object of class "XProcessHistory"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  type: Retention time correction </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  date: Fri May 21 08:01:39 2021 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  info:  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  fileIndex: 1,2,3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameter class: ObiwarpParam </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  MS level(s) 1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

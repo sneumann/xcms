@@ -111,7 +111,7 @@ examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -167,51 +167,51 @@ examples." />
     <div class="ref-description">
     <p>The methods listed on this page are <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code>
 methods inherited from its parent, the
-<code>OnDiskMSnExp</code> class from the <code>MSnbase</code>
+<code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> class from the <code>MSnbase</code>
 package, that alter the raw data or are related to data subsetting. Thus
 calling any of these methods causes all <code>xcms</code> pre-processing
 results to be removed from the <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object to ensure
 its data integrity.</p>
 <p><code>bin</code>: allows to <em>bin</em> spectra. See
-<code>bin</code> documentation in the <code>MSnbase</code> package for more
+<code><a href='https://lgatto.github.io/MSnbase/reference/bin-methods.html'>bin</a></code> documentation in the <code>MSnbase</code> package for more
 details and examples.</p>
 <p><code>clean</code>: removes unused <code>0</code> intensity data
-points. See <code>clean</code> documentation in the <code>MSnbase</code> package
+points. See <code><a href='https://lgatto.github.io/MSnbase/reference/clean-methods.html'>clean</a></code> documentation in the <code>MSnbase</code> package
 for details and examples.</p>
 <p><code>filterAcquisitionNum</code>: filters the
 <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> object keeping only spectra with the provided
-acquisition numbers. See <code>filterAcquisitionNum</code> for
+acquisition numbers. See <code><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterAcquisitionNum</a></code> for
 details and examples.</p>
 <p>The <code>normalize</code> method performs basic normalization of
-spectra intensities. See <code>normalize</code> documentation
+spectra intensities. See <code><a href='https://lgatto.github.io/MSnbase/reference/normalise-methods.html'>normalize</a></code> documentation
 in the <code>MSnbase</code> package for details and examples.</p>
 <p>The <code>pickPeaks</code> method performs peak picking. See
-<code>pickPeaks</code> documentation for details and examples.</p>
+<code><a href='https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html'>pickPeaks</a></code> documentation for details and examples.</p>
 <p>The <code>removePeaks</code> method removes mass peaks (intensities)
 lower than a threshold. Note that these peaks refer to <em>mass</em>
 peaks, which are different to the chromatographic peaks detected and
 analyzed in a metabolomics experiment! See
-<code>removePeaks</code> documentation for details and
+<code><a href='https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html'>removePeaks</a></code> documentation for details and
 examples.</p>
 <p>The <code>smooth</code> method smooths spectra. See
 <code><a href='adjustRtime-peakGroups.html'>smooth</a></code> documentation in <code>MSnbase</code> for details and
 examples.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>bin</span><span class='op'>(</span><span class='va'>object</span>, binSize <span class='op'>=</span> <span class='fl'>1L</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='co'># S4 method for XCMSnExp</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/bin-methods.html'>bin</a></span><span class='op'>(</span><span class='va'>object</span>, binSize <span class='op'>=</span> <span class='fl'>1L</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>clean</span><span class='op'>(</span><span class='va'>object</span>, all <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/clean-methods.html'>clean</a></span><span class='op'>(</span><span class='va'>object</span>, all <span class='op'>=</span> <span class='cn'>FALSE</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>filterAcquisitionNum</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>n</span>, <span class='va'>file</span><span class='op'>)</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterAcquisitionNum</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>n</span>, <span class='va'>file</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>normalize</span><span class='op'>(</span><span class='va'>object</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"max"</span>, <span class='st'>"sum"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/normalise-methods.html'>normalize</a></span><span class='op'>(</span><span class='va'>object</span>, method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"max"</span>, <span class='st'>"sum"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>pickPeaks</span><span class='op'>(</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html'>pickPeaks</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   halfWindowSize <span class='op'>=</span> <span class='fl'>3L</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MAD"</span>, <span class='st'>"SuperSmoother"</span><span class='op'>)</span>,
@@ -220,7 +220,7 @@ examples.</p>
 <span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'>removePeaks</span><span class='op'>(</span><span class='va'>object</span>, t <span class='op'>=</span> <span class='st'>"min"</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html'>removePeaks</a></span><span class='op'>(</span><span class='va'>object</span>, t <span class='op'>=</span> <span class='st'>"min"</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>msLevel.</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp</span>
 <span class='fu'><a href='adjustRtime-peakGroups.html'>smooth</a></span><span class='op'>(</span>
@@ -229,35 +229,35 @@ examples.</p>
   halfWindowSize <span class='op'>=</span> <span class='fl'>2L</span>,
   verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
+      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
 object.</p></td>
     </tr>
     <tr>
       <th>binSize</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the size of a bin (in Dalton).</p></td>
+      <td><p><code>numeric(1)</code> defining the size of a bin (in Dalton).</p></td>
     </tr>
     <tr>
       <th>msLevel.</th>
       <td><p>For <code>bin</code>, <code>clean</code>, <code>filterMsLevel</code>,
-<code>removePeaks</code>: <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the MS level(s)
+<code>removePeaks</code>: <code>numeric(1)</code> defining the MS level(s)
 to which operations should be applied or to which the object should be
 subsetted.</p></td>
     </tr>
     <tr>
       <th>all</th>
-      <td><p>For <code>clean</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>, if <code>TRUE</code> all zeros are
+      <td><p>For <code>clean</code>: <code>logical(1)</code>, if <code>TRUE</code> all zeros are
 removed.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether progress information should be
+      <td><p><code>logical(1)</code> whether progress information should be
 displayed.</p></td>
     </tr>
     <tr>
@@ -274,12 +274,12 @@ object by file.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>For <code>normalize</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the
-normalization method. See <code>normalize</code> in the <code>MSnbase</code>
+      <td><p>For <code>normalize</code>: <code>character(1)</code> specifying the
+normalization method. See <code><a href='https://lgatto.github.io/MSnbase/reference/normalise-methods.html'>normalize</a></code> in the <code>MSnbase</code>
 package for details.
-For <code>pickPeaks</code>: <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the method. See
-<code>pickPeaks</code> for options. For <code>smooth</code>:
-<code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the method. See
+For <code>pickPeaks</code>: <code>character(1)</code> defining the method. See
+<code><a href='https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html'>pickPeaks</a></code> for options. For <code>smooth</code>:
+<code>character(1)</code> defining the method. See
 <code><a href='adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code> package for options and
 details.</p></td>
     </tr>
@@ -290,25 +290,25 @@ details.</p></td>
     <tr>
       <th>halfWindowSize</th>
       <td><p>For <code>pickPeaks</code> and <code>smooth</code>:
-<code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the window size for the peak picking. See
-<code>pickPeaks</code> and <code><a href='adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code>
+<code>integer(1)</code> defining the window size for the peak picking. See
+<code><a href='https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html'>pickPeaks</a></code> and <code><a href='adjustRtime-peakGroups.html'>smooth</a></code> in the <code>MSnbase</code>
 package for details and options.</p></td>
     </tr>
     <tr>
       <th>SNR</th>
-      <td><p>For <code>pickPeaks</code>: <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to
-noise ratio to be considered. See <code>pickPeaks</code>
+      <td><p>For <code>pickPeaks</code>: <code>numeric(1)</code> defining the signal to
+noise ratio to be considered. See <code><a href='https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html'>pickPeaks</a></code>
 documentation for details.</p></td>
     </tr>
     <tr>
       <th>t</th>
-      <td><p>For <code>removePeaks</code>: either a <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code>"min"</code>
+      <td><p>For <code>removePeaks</code>: either a <code>numeric(1)</code> or <code>"min"</code>
 defining the threshold (method) to be used. See
-<code>removePeaks</code> for details.</p></td>
+<code><a href='https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html'>removePeaks</a></code> for details.</p></td>
     </tr>
     <tr>
       <th>x</th>
-      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code>OnDiskMSnExp</code>
+      <td><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> or <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>
 object.</p></td>
     </tr>
     </table>
@@ -321,7 +321,7 @@ object.</p></td>
     <div class='dont-index'><p><code><a href='XCMSnExp-filter-methods.html'>XCMSnExp-filter</a></code> for methods to filter and subset
     <code>XCMSnExp</code> objects.
     <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.
-    <code>OnDiskMSnExp</code> for the documentation of the
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> for the documentation of the
     parent class.</p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 

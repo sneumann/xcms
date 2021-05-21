@@ -117,8 +117,6 @@ data using the obiwarp method." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -142,7 +140,7 @@ data using the obiwarp method." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -258,7 +256,7 @@ performs retention time correction/alignment based on the total mz-rt
 data using the <em>obiwarp</em> method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ObiwarpParam</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>ObiwarpParam</span><span class='op'>(</span>
   binSize <span class='op'>=</span> <span class='fl'>1</span>,
   centerSample <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>,
   response <span class='op'>=</span> <span class='fl'>1L</span>,
@@ -349,28 +347,28 @@ data using the <em>obiwarp</em> method.</p>
 <span class='fu'><a href='adjustRtime-peakGroups.html'>subsetAdjust</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for XCMSnExp,ObiwarpParam</span>
-<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>param</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></pre>
+<span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>param</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>binSize</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the bin size (in mz dimension)
+      <td><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
 parameter in <code><a href='profMat-xcmsSet.html'>profile-matrix</a></code> documentation for more details.</p></td>
     </tr>
     <tr>
       <th>centerSample</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the index of the center sample
+      <td><p><code>integer(1)</code> defining the index of the center sample
 in the experiment. It defaults to
-<code><a href='https://rdrr.io/r/base/Round.html'>floor(median(1:length(fileNames(object))))</a></code>. Note that if
+<code>floor(median(1:length(fileNames(object))))</code>. Note that if
 <code>subset</code> is used, the index passed with <code>centerSample</code> is
 within these subset samples.</p></td>
     </tr>
     <tr>
       <th>response</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the <em>responsiveness</em> of
+      <td><p><code>numeric(1)</code> defining the <em>responsiveness</em> of
 warping with <code>response = 0</code> giving linear warping on start and end
 points and <code>response = 100</code> warping using all bijective anchors.</p></td>
     </tr>
@@ -384,7 +382,7 @@ values are <code>"cor"</code> (Pearson's correlation), <code>"cor_opt"</code>
     </tr>
     <tr>
       <th>gapInit</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the penalty for gap opening. The
+      <td><p><code>numeric(1)</code> defining the penalty for gap opening. The
 default value for <code>gapInit</code> depends on the value of <code>distFun</code>:
 for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
 <code>0.3</code>, for <code>distFun = "cov"</code> and <code>distFun = "prd"</code>
@@ -392,7 +390,7 @@ for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
     </tr>
     <tr>
       <th>gapExtend</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the penalty for gap enlargement.
+      <td><p><code>numeric(1)</code> defining the penalty for gap enlargement.
 The default value for <code>gapExtend</code> depends on the value of
 <code>distFun</code>, for <code>distFun = "cor"</code> and
 <code>distFun = "cor_opt"</code> it is <code>2.4</code>, for <code>distFun = "cov"</code>
@@ -401,22 +399,22 @@ The default value for <code>gapExtend</code> depends on the value of
     </tr>
     <tr>
       <th>factorDiag</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the local weight applied to
+      <td><p><code>numeric(1)</code> defining the local weight applied to
 diagonal moves in the alignment.</p></td>
     </tr>
     <tr>
       <th>factorGap</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the local weight for gap moves
+      <td><p><code>numeric(1)</code> defining the local weight for gap moves
 in the alignment.</p></td>
     </tr>
     <tr>
       <th>localAlignment</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether a local alignment should be
+      <td><p><code>logical(1)</code> whether a local alignment should be
 performed instead of the default global alignment.</p></td>
     </tr>
     <tr>
       <th>initPenalty</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the penalty for initiating an
+      <td><p><code>numeric(1)</code> defining the penalty for initiating an
 alignment (for local alignment only).</p></td>
     </tr>
     <tr>
@@ -518,49 +516,57 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
     <p>Colin Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Perform retention time correction:</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'>ObiwarpParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Sample number 2 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko15.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko18.CDF against ko16.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='co'>## As a result we get a numeric vector with the adjusted retention times for</span>
-<span class='co'>## all spectra.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
-#&gt; Object size in memory: 0.03 Mb
-#&gt; - - - Spectra data - - -
-#&gt;  MS level(s): 1 
-#&gt;  Number of spectra: 3 
-#&gt;  MSn retention times: 41:41 - 41:45 minutes
-#&gt; - - - Processing information - - -
-#&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
-#&gt;  MSnbase version: 2.15.2 
-#&gt; - - - Meta data  - - -
-#&gt; phenoData
-#&gt;   rowNames: ko15.CDF
-#&gt;   varLabels: sampleNames
-#&gt;   varMetadata: labelDescription
-#&gt; Loaded from:
-#&gt;   ko15.CDF 
-#&gt; protocolData: none
-#&gt; featureData
-#&gt;   featureNames: F1.S0001 F1.S0002 F1.S0003
-#&gt;   fvarLabels: fileIdx spIdx ... spectrum (33 total)
-#&gt;   fvarMetadata: labelDescription
-#&gt; experimentData: use 'experimentData(object)'
-#&gt; - - - xcms preprocessing - - -</div><div class='input'>
-<span class='co'>## We can split this by file to get the adjusted retention times for each</span>
-<span class='co'>## file</span>
-<span class='va'>resL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='fu'>fromFile</span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
-
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load a test data set with detected peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Disable parallel processing for this example</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html'>SerialParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Perform retention time correction:</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'>ObiwarpParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Sample number 2 used as center sample.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Aligning ko15.CDF against ko16.CDF ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Aligning ko18.CDF against ko16.CDF ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Applying retention time adjustment to the identified chromatographic peaks ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## As a result we get a numeric vector with the adjusted retention times for</span></span>
+<span class='r-in'><span class='co'>## all spectra.</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> MSn experiment data ("XCMSnExp")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Object size in memory: 0.03 Mb</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - - - Spectra data - - -</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  MS level(s): 1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Number of spectra: 3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  MSn retention times: 41:41 - 41:45 minutes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - - - Processing information - - -</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  MSnbase version: 2.15.2 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - - - Meta data  - - -</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> phenoData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   rowNames: ko15.CDF</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   varLabels: sampleNames</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   varMetadata: labelDescription</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Loaded from:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   ko15.CDF </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> protocolData: none</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> featureData</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   featureNames: F1.S0001 F1.S0002 F1.S0003</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (33 total)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   fvarMetadata: labelDescription</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> experimentData: use 'experimentData(object)'</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> - - - xcms preprocessing - - -</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## We can split this by file to get the adjusted retention times for each</span></span>
+<span class='r-in'><span class='co'>## file</span></span>
+<span class='r-in'><span class='va'>resL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>fromFile</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

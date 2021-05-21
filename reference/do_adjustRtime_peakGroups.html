@@ -90,7 +90,7 @@ spectrum in each sample." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@ models are subsequently used to adjust the retention time for each
 spectrum in each sample.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_adjustRtime_peakGroups</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>do_adjustRtime_peakGroups</span><span class='op'>(</span>
   <span class='va'>peaks</span>,
   <span class='va'>peakIndex</span>,
   <span class='va'>rtime</span>,
@@ -167,7 +167,7 @@ spectrum in each sample.</p>
   peakGroupsMatrix <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span>ncol <span class='op'>=</span> <span class='fl'>0</span>, nrow <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>,
   subset <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>,
   subsetAdjust <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"average"</span>, <span class='st'>"previous"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,7 +189,7 @@ times per file/sample.</p></td>
     </tr>
     <tr>
       <th>minFraction</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> between 0 and 1 defining the minimum
+      <td><p><code>numeric(1)</code> between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
 identified. Peak groups passing this criteria will aligned across
 samples and retention times of individual spectra will be adjusted
@@ -202,7 +202,7 @@ proportion of subset samples).</p></td>
     </tr>
     <tr>
       <th>extraPeaks</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal number of
+      <td><p><code>numeric(1)</code> defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
 feature) for retention time correction. For a data set with 6 samples,
 <code>extraPeaks = 1</code> uses all peak groups with a total peak count
@@ -218,7 +218,7 @@ corrected retention times for all peak groups. Either <code>"loess"</code> or
     </tr>
     <tr>
       <th>span</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the degree of smoothing (if
+      <td><p><code>numeric(1)</code> defining the degree of smoothing (if
 <code>smooth = "loess"</code>). This parameter is passed to the internal call
 to <code><a href='https://rdrr.io/r/stats/loess.html'>loess</a></code>.</p></td>
     </tr>

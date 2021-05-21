@@ -104,8 +104,6 @@ withWave,withWave&amp;lt;-: getter and
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -129,7 +127,7 @@ withWave,withWave&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -195,8 +193,8 @@ withWave,withWave&amp;lt;-: getter and
 <p>The <code>findChromPeaks,OnDiskMSnExp,MassifquantParam</code>
     method performs chromatographic peak detection using the
     <em>massifquant</em> algorithm on all samples from an
-    <code>OnDiskMSnExp</code> object.
-    <code>OnDiskMSnExp</code> objects encapsule all experiment
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object.
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -232,7 +230,7 @@ withWave,withWave&amp;lt;-: getter and
     setter for the <code>withWave</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MassifquantParam</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>MassifquantParam</span><span class='op'>(</span>
   ppm <span class='op'>=</span> <span class='fl'>25</span>,
   peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
   snthresh <span class='op'>=</span> <span class='fl'>10</span>,
@@ -254,7 +252,7 @@ withWave,withWave&amp;lt;-: getter and
 <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>param</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
@@ -347,20 +345,20 @@ withWave,withWave&amp;lt;-: getter and
 <span class='fu'>withWave</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for MassifquantParam</span>
-<span class='fu'>withWave</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
+<span class='fu'>withWave</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ppm</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal tolerated m/z deviation in
+      <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></td>
     </tr>
     <tr>
       <th>peakwidth</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>. Only the first element is used by
+      <td><p><code>numeric(2)</code>. Only the first element is used by
 massifquant, which specifices the minimum peak length in time scans.
 For <code>withWave = TRUE</code> the second argument represents the maximum
 peak length subject to being greater than the mininum peak length
@@ -368,11 +366,11 @@ peak length subject to being greater than the mininum peak length
     </tr>
     <tr>
       <th>snthresh</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio cutoff.</p></td>
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
     </tr>
     <tr>
       <th>prefilter</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>. The first argument is only used
+      <td><p><code>numeric(2)</code>. The first argument is only used
 if (<code>withWave = TRUE</code>); see <code><a href='findChromPeaks-centWave.html'>findChromPeaks-centWave</a></code>
 for details. The second argument specifies the minimum threshold for the
 maximum intensity of a chromatographic peak that must be met.</p></td>
@@ -398,7 +396,7 @@ robust, but less exact.</p></td>
     </tr>
     <tr>
       <th>mzdiff</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> representing the minimum difference in m/z
+      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
@@ -406,24 +404,24 @@ signal.</p></td>
     </tr>
     <tr>
       <th>fitgauss</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether or not a Gaussian should be fitted
+      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></td>
     </tr>
     <tr>
       <th>noise</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> allowing to set a minimum intensity required
+      <td><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></td>
     </tr>
     <tr>
       <th>verboseColumns</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether additional peak meta data
+      <td><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></td>
     </tr>
     <tr>
       <th>criticalValue</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>. Suggested values:
+      <td><p><code>numeric(1)</code>. Suggested values:
 (<code>0.1-3.0</code>). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
 peak must fall within the KF prediction margin of error. Much like
@@ -435,7 +433,7 @@ better and vice versa.</p></td>
     </tr>
     <tr>
       <th>consecMissedLimit</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> Suggested values: (<code>1,2,3</code>).
+      <td><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
 or more consecutive failed predictions, this setting informs Massifquant
@@ -443,7 +441,7 @@ when to stop a Kalman Filter from following a candidate peak.</p></td>
     </tr>
     <tr>
       <th>unions</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> set to <code>1</code> if apply t-test union on
+      <td><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
 segmentation; set to <code>0</code> if no t-test to be applied on
 chromatographically continous peaks sharing same m/z range.
 Explanation: With very few data points, sometimes a Kalman Filter stops
@@ -457,7 +455,7 @@ is that some truly distinct peaks may be merged.</p></td>
     </tr>
     <tr>
       <th>checkBack</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> set to <code>1</code> if turned on; set to
+      <td><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
 <code>0</code> if turned off. The convergence of a Kalman Filter to a peak's
 precise m/z mapping is very fast, but sometimes it incorporates erroneous
 centroids as part of a peak (especially early on). The <code>scanBack</code>
@@ -469,14 +467,14 @@ to being turned off.</p></td>
     </tr>
     <tr>
       <th>withWave</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> if <code>TRUE</code>, the peaks identified first
+      <td><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.</p></td>
     </tr>
     <tr>
       <th>object</th>
       <td><p>For <code>findChromPeaks</code>: an
-    <code>OnDiskMSnExp</code> object containing the MS- and all
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></td>
     </tr>
@@ -488,7 +486,7 @@ the massifquant algorithm.</p></td>
     <tr>
       <th>BPPARAM</th>
       <td><p>A parameter class specifying if and how parallel processing
-should be performed. It defaults to <code>bpparam</code>.
+should be performed. It defaults to <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></td>
@@ -501,7 +499,7 @@ return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
     </tr>
     <tr>
       <th>msLevel</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the MS level on which the peak
+      <td><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     </tr>
     <tr>
@@ -547,7 +545,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
-    <code>register</code> method from the <code>BiocParallel</code>
+    <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></code> method from the <code>BiocParallel</code>
     package.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
@@ -590,50 +588,58 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <p>Christopher Conley, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Create a MassifquantParam object.</span>
-<span class='va'>mqp</span> <span class='op'>&lt;-</span> <span class='fu'>MassifquantParam</span><span class='op'>(</span><span class='op'>)</span>
-<span class='co'>## Change snthresh prefilter parameters</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>mqp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>30</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span><span class='op'>(</span><span class='va'>mqp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='fl'>10000</span><span class='op'>)</span>
-<span class='va'>mqp</span>
-</div><div class='output co'>#&gt; Object of class:  MassifquantParam 
-#&gt;  Parameters:
-#&gt;  - ppm: [1] 25
-#&gt;  - peakwidth: [1] 20 50
-#&gt;  - snthresh: [1] 30
-#&gt;  - prefilter: [1]     6 10000
-#&gt;  - mzCenterFun: [1] "wMean"
-#&gt;  - integrate: [1] 1
-#&gt;  - mzdiff: [1] -0.001
-#&gt;  - fitgauss: [1] FALSE
-#&gt;  - noise: [1] 0
-#&gt;  - verboseColumns: [1] FALSE
-#&gt;  - criticalValue: [1] 1.125
-#&gt;  - consecMissedLimit: [1] 2
-#&gt;  - unions: [1] 1
-#&gt;  - checkBack: [1] 0
-#&gt;  - withWave: [1] FALSE</div><div class='input'>
-<span class='co'>## Perform the peak detection using massifquant on the files from the</span>
-<span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span>
-<span class='co'>## package</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lgatto.github.io/MSnbase'>MSnbase</a></span><span class='op'>)</span>
-<span class='va'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span>,
-           full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='va'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='va'>fls</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'><span class='co'>## Perform the peak detection using the settings defined above.</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>raw_data</span>, param <span class='op'>=</span> <span class='va'>mqp</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Detecting  mass traces at 25ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 334 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          mz mzmin mzmax    rtmin    rtmax       rt    into   maxo sample
-#&gt; CP001 578.4 578.4 578.4 4103.890 4141.449 4119.540 1748295 187328      1
-#&gt; CP002 577.3 577.3 577.3 4100.760 4130.495 4114.845 3854210 457024      1
-#&gt; CP003 367.2 367.2 367.2 4099.196 4164.924 4122.670  140753  11330      1
-#&gt; CP004 459.1 459.1 459.1 4099.196 4128.930 4113.280  144739  15874      1
-#&gt; CP005 401.2 401.2 401.2 4083.546 4221.262 4147.709  472407  11783      1
-#&gt; CP006 412.3 412.3 412.3 4072.591 4111.715 4089.806 2192350 183936      1</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Create a MassifquantParam object.</span></span>
+<span class='r-in'><span class='va'>mqp</span> <span class='op'>&lt;-</span> <span class='fu'>MassifquantParam</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Change snthresh prefilter parameters</span></span>
+<span class='r-in'><span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>mqp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>30</span></span>
+<span class='r-in'><span class='fu'><a href='findChromPeaks-centWave.html'>prefilter</a></span><span class='op'>(</span><span class='va'>mqp</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>6</span>, <span class='fl'>10000</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>mqp</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Object of class:  MassifquantParam </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameters:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - ppm: [1] 25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - peakwidth: [1] 20 50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - snthresh: [1] 30</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - prefilter: [1]     6 10000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzCenterFun: [1] "wMean"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - integrate: [1] 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzdiff: [1] -0.001</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - fitgauss: [1] FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - noise: [1] 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - verboseColumns: [1] FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - criticalValue: [1] 1.125</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - consecMissedLimit: [1] 2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - unions: [1] 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - checkBack: [1] 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - withWave: [1] FALSE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Perform the peak detection using massifquant on the files from the</span></span>
+<span class='r-in'><span class='co'>## faahKO package. Files are read using the readMSData from the MSnbase</span></span>
+<span class='r-in'><span class='co'>## package</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lgatto.github.io/MSnbase'>MSnbase</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>fls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>           full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>raw_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='va'>fls</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>, mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
+<span class='r-in'><span class='co'>## Perform the peak detection using the settings defined above.</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span><span class='va'>raw_data</span>, param <span class='op'>=</span> <span class='va'>mqp</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Massifquant, Copyright (C) 2013 Brigham Young University.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Detecting  mass traces at 25ppm ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  334 Peaks.</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          mz mzmin mzmax    rtmin    rtmax       rt    into   maxo sample</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP001 578.4 578.4 578.4 4103.890 4141.449 4119.540 1748295 187328      1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP002 577.3 577.3 577.3 4100.760 4130.495 4114.845 3854210 457024      1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP003 367.2 367.2 367.2 4099.196 4164.924 4122.670  140753  11330      1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP004 459.1 459.1 459.1 4099.196 4128.930 4113.280  144739  15874      1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP005 401.2 401.2 401.2 4083.546 4221.262 4147.709  472407  11783      1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> CP006 412.3 412.3 412.3 4072.591 4111.715 4089.806 2192350 183936      1</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

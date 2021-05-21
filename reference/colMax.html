@@ -81,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -138,10 +138,10 @@
     <p>Find row and column maximum values for numeric arrays.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>colMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>colMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='fu'>rowMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='fu'>which.colMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-<span class='fu'>which.rowMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></pre>
+<span class='fu'>which.rowMax</span><span class='op'>(</span><span class='va'>x</span>, na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>, dims <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,7 +179,7 @@
   <code>x[index]</code>). For <code>which.colMax()</code>, the actual row
   indecies my be determined using <code>(which.colMax(x)-1) %%
   nrow(x) + 1</code>. For <code>which.rowMax()</code>, the actual column indecies
-  may be determined using <code><a href='https://rdrr.io/r/base/Round.html'>ceiling(rowMax(x)/nrow(x))</a></code>.</p>
+  may be determined using <code>ceiling(rowMax(x)/nrow(x))</code>.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Colin A. Smith, <a href='mailto:csmith@scripps.edu'>csmith@scripps.edu</a></p>

@@ -62,8 +62,6 @@
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -87,7 +85,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -148,7 +146,7 @@
     by specifying <code>withWave = TRUE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>do_findChromPeaks_massifquant</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>do_findChromPeaks_massifquant</span><span class='op'>(</span>
   <span class='va'>mz</span>,
   <span class='va'>int</span>,
   <span class='va'>scantime</span>,
@@ -168,7 +166,7 @@
   unions <span class='op'>=</span> <span class='fl'>1</span>,
   checkBack <span class='op'>=</span> <span class='fl'>0</span>,
   withWave <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,23 +193,23 @@ spectrum.</p></td>
     </tr>
     <tr>
       <th>ppm</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal tolerated m/z deviation in
+      <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></td>
     </tr>
     <tr>
       <th>peakwidth</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> with the expected approximate
+      <td><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></td>
     </tr>
     <tr>
       <th>snthresh</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio cutoff.</p></td>
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
     </tr>
     <tr>
       <th>prefilter</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>: <code><a href='https://rdrr.io/r/base/c.html'>c(k, I)</a></code> specifying the prefilter
+      <td><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></td>
@@ -237,7 +235,7 @@ robust, but less exact.</p></td>
     </tr>
     <tr>
       <th>mzdiff</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> representing the minimum difference in m/z
+      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
@@ -245,24 +243,24 @@ signal.</p></td>
     </tr>
     <tr>
       <th>fitgauss</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether or not a Gaussian should be fitted
+      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></td>
     </tr>
     <tr>
       <th>noise</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> allowing to set a minimum intensity required
+      <td><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></td>
     </tr>
     <tr>
       <th>verboseColumns</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether additional peak meta data
+      <td><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></td>
     </tr>
     <tr>
       <th>criticalValue</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>. Suggested values:
+      <td><p><code>numeric(1)</code>. Suggested values:
 (<code>0.1-3.0</code>). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
 peak must fall within the KF prediction margin of error. Much like
@@ -274,7 +272,7 @@ better and vice versa.</p></td>
     </tr>
     <tr>
       <th>consecMissedLimit</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> Suggested values: (<code>1,2,3</code>).
+      <td><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
 or more consecutive failed predictions, this setting informs Massifquant
@@ -282,7 +280,7 @@ when to stop a Kalman Filter from following a candidate peak.</p></td>
     </tr>
     <tr>
       <th>unions</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> set to <code>1</code> if apply t-test union on
+      <td><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
 segmentation; set to <code>0</code> if no t-test to be applied on
 chromatographically continous peaks sharing same m/z range.
 Explanation: With very few data points, sometimes a Kalman Filter stops
@@ -296,7 +294,7 @@ is that some truly distinct peaks may be merged.</p></td>
     </tr>
     <tr>
       <th>checkBack</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> set to <code>1</code> if turned on; set to
+      <td><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
 <code>0</code> if turned off. The convergence of a Kalman Filter to a peak's
 precise m/z mapping is very fast, but sometimes it incorporates erroneous
 centroids as part of a peak (especially early on). The <code>scanBack</code>
@@ -308,7 +306,7 @@ to being turned off.</p></td>
     </tr>
     <tr>
       <th>withWave</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> if <code>TRUE</code>, the peaks identified first
+      <td><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.</p></td>
     </tr>
@@ -368,37 +366,43 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <p>Christopher Conley</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load the test file</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Subset to one file and restrict to a certain retention time range</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span><span class='op'>(</span><span class='fu'>filterFile</span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3000</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Get m/z and intensity values</span>
-<span class='va'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'>mz</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
-<span class='va'>ints</span> <span class='op'>&lt;-</span> <span class='fu'>intensity</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>
-
-<span class='co'>## Define the values per spectrum:</span>
-<span class='va'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>
-
-<span class='co'>## Perform the peak detection using massifquant - setting prefilter to</span>
-<span class='co'>## a high value to speed up the call for the example</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_massifquant</span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>, int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ints</span><span class='op'>)</span>,
-    scantime <span class='op'>=</span> <span class='fu'>rtime</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>, valsPerSpect <span class='op'>=</span> <span class='va'>valsPerSpect</span>,
-    prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>10000</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Massifquant, Copyright (C) 2013 Brigham Young University.</span></div><div class='output co'>#&gt; <span class='message'> Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'> Detecting  mass traces at 10ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'> 69 Peaks.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         mz mzmin mzmax    rtmin    rtmax       rt    into  maxo
-#&gt; [1,] 426.1 426.1 426.1 2963.039 2999.033 2977.124  129958 29408
-#&gt; [2,] 590.3 590.3 590.3 2963.039 2999.033 2978.689  255317 19072
-#&gt; [3,] 454.1 454.1 454.1 2934.870 2975.559 2953.650  372685 20432
-#&gt; [4,] 309.1 309.1 309.1 2905.136 2967.734 2936.435  652140 38888
-#&gt; [5,] 475.2 475.2 475.2 2880.097 2999.033 2934.870 2415224 37160
-#&gt; [6,] 532.2 532.2 532.2 2853.493 2906.701 2878.532  232493 16480</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load the test file</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Subset to one file and restrict to a certain retention time range</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterRt</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterFile</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3000</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Get m/z and intensity values</span></span>
+<span class='r-in'><span class='va'>mzs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>mz</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>ints</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Define the values per spectrum:</span></span>
+<span class='r-in'><span class='va'>valsPerSpect</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lengths.html'>lengths</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Perform the peak detection using massifquant - setting prefilter to</span></span>
+<span class='r-in'><span class='co'>## a high value to speed up the call for the example</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'>do_findChromPeaks_massifquant</span><span class='op'>(</span>mz <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>mzs</span><span class='op'>)</span>, int <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='va'>ints</span><span class='op'>)</span>,</span>
+<span class='r-in'>    scantime <span class='op'>=</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span>, valsPerSpect <span class='op'>=</span> <span class='va'>valsPerSpect</span>,</span>
+<span class='r-in'>    prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>10000</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Massifquant, Copyright (C) 2013 Brigham Young University.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  Detecting  mass traces at 10ppm ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span>  69 Peaks.</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         mz mzmin mzmax    rtmin    rtmax       rt    into  maxo</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 426.1 426.1 426.1 2963.039 2999.033 2977.124  129958 29408</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,] 590.3 590.3 590.3 2963.039 2999.033 2978.689  255317 19072</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,] 454.1 454.1 454.1 2934.870 2975.559 2953.650  372685 20432</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,] 309.1 309.1 309.1 2905.136 2967.734 2936.435  652140 38888</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5,] 475.2 475.2 475.2 2880.097 2999.033 2934.870 2415224 37160</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [6,] 532.2 532.2 532.2 2853.493 2906.701 2878.532  232493 16480</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

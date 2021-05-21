@@ -59,8 +59,6 @@ provided maximal acceptable width (maxPeakwidth)." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -84,7 +82,7 @@ provided maximal acceptable width (maxPeakwidth)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -142,17 +140,17 @@ provided maximal acceptable width (maxPeakwidth)." />
 provided maximal acceptable width (<code>maxPeakwidth</code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='refineChromPeaks-clean.html'>CleanPeaksParam</a></span><span class='op'>(</span>maxPeakwidth <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>CleanPeaksParam</span><span class='op'>(</span>maxPeakwidth <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 
 <span class='co'># S4 method for XCMSnExp,CleanPeaksParam</span>
-<span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>object</span>, param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-clean.html'>CleanPeaksParam</a></span><span class='op'>(</span><span class='op'>)</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></pre>
+<span class='fu'>refineChromPeaks</span><span class='op'>(</span><span class='va'>object</span>, param <span class='op'>=</span> <span class='fu'>CleanPeaksParam</span><span class='op'>(</span><span class='op'>)</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>maxPeakwidth</th>
-      <td><p>for <code>CleanPeaksParam</code>: <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal
+      <td><p>for <code>CleanPeaksParam</code>: <code>numeric(1)</code> defining the maximal
 allowed peak width (in retention time).</p></td>
     </tr>
     <tr>
@@ -189,25 +187,28 @@ which may be part of features.</p>
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Distribution of chromatographic peak widths</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      0%     25%     50%     75%    100% 
-#&gt;   6.259  29.734  43.819  57.903 173.710 </div><div class='input'>
-<span class='co'>## Remove all chromatographic peaks with a width larger 60 seconds</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='refineChromPeaks-clean.html'>refineChromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'><a href='refineChromPeaks-clean.html'>CleanPeaksParam</a></span><span class='op'>(</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Removed 54 of 248 chromatographic peaks.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;     0%    25%    50%    75%   100% 
-#&gt;  6.259 23.475 39.906 46.949 59.469 </div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load a test data set with detected peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Disable parallel processing for this example</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html'>SerialParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Distribution of chromatographic peak widths</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      0%     25%     50%     75%    100% </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   6.259  29.734  43.819  57.903 173.710 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Remove all chromatographic peaks with a width larger 60 seconds</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>refineChromPeaks</span><span class='op'>(</span><span class='va'>faahko_sub</span>, param <span class='op'>=</span> <span class='fu'>CleanPeaksParam</span><span class='op'>(</span><span class='fl'>60</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Removed 54 of 248 chromatographic peaks.</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span> <span class='op'>-</span> <span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     0%    25%    50%    75%   100% </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  6.259 23.475 39.906 46.949 59.469 </span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

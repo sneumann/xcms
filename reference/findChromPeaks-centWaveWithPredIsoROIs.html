@@ -87,8 +87,6 @@ polarity,polarity&amp;lt;-: getter and
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -112,7 +110,7 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -181,8 +179,8 @@ polarity,polarity&amp;lt;-: getter and
     inherits.</p>
 <p>The <code>findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam</code>
     method performs a two-step centWave-based chromatographic peak detection
-    on all samples from an <code>OnDiskMSnExp</code> object.
-    <code>OnDiskMSnExp</code> objects encapsule all experiment
+    on all samples from an <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> object.
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -198,7 +196,7 @@ polarity,polarity&amp;lt;-: getter and
     setter for the <code>polarity</code> slot of the object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>
   ppm <span class='op'>=</span> <span class='fl'>25</span>,
   peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
   snthresh <span class='op'>=</span> <span class='fl'>10</span>,
@@ -223,7 +221,7 @@ polarity,polarity&amp;lt;-: getter and
 <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>param</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
   return.type <span class='op'>=</span> <span class='st'>"XCMSnExp"</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
 <span class='op'>)</span>
@@ -253,33 +251,33 @@ polarity,polarity&amp;lt;-: getter and
 <span class='fu'>mzIntervalExtension</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>polarity</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>polarity</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S4 method for CentWavePredIsoParam</span>
-<span class='fu'>polarity</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></pre>
+<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>polarity</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ppm</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal tolerated m/z deviation in
+      <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></td>
     </tr>
     <tr>
       <th>peakwidth</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> with the expected approximate
+      <td><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></td>
     </tr>
     <tr>
       <th>snthresh</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio cutoff.</p></td>
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
     </tr>
     <tr>
       <th>prefilter</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code>: <code><a href='https://rdrr.io/r/base/c.html'>c(k, I)</a></code> specifying the prefilter
+      <td><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></td>
@@ -305,7 +303,7 @@ robust, but less exact.</p></td>
     </tr>
     <tr>
       <th>mzdiff</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> representing the minimum difference in m/z
+      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
@@ -313,19 +311,19 @@ signal.</p></td>
     </tr>
     <tr>
       <th>fitgauss</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether or not a Gaussian should be fitted
+      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></td>
     </tr>
     <tr>
       <th>noise</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> allowing to set a minimum intensity required
+      <td><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></td>
     </tr>
     <tr>
       <th>verboseColumns</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether additional peak meta data
+      <td><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></td>
     </tr>
     <tr>
@@ -342,7 +340,7 @@ be represented by a <code>list</code> of elements or a single row
     </tr>
     <tr>
       <th>firstBaselineCheck</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>. If <code>TRUE</code> continuous
+      <td><p><code>logical(1)</code>. If <code>TRUE</code> continuous
 data within regions of interest is checked to be above the first baseline.</p></td>
     </tr>
     <tr>
@@ -353,36 +351,36 @@ should be used for the centWave-wavelets.</p></td>
     </tr>
     <tr>
       <th>snthreshIsoROIs</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio
 cutoff to be used in the second centWave run to identify peaks for
 predicted isotope ROIs.</p></td>
     </tr>
     <tr>
       <th>maxCharge</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the maximal isotope charge.
+      <td><p><code>integer(1)</code> defining the maximal isotope charge.
 Isotopes will be defined for charges <code>1:maxCharge</code>.</p></td>
     </tr>
     <tr>
       <th>maxIso</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the number of isotope peaks that
+      <td><p><code>integer(1)</code> defining the number of isotope peaks that
 should be predicted for each peak identified in the first centWave run.</p></td>
     </tr>
     <tr>
       <th>mzIntervalExtension</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether the mz range for the
+      <td><p><code>logical(1)</code> whether the mz range for the
 predicted isotope ROIs should be extended to increase detection of low
 intensity peaks.</p></td>
     </tr>
     <tr>
       <th>polarity</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the polarity of the data.
+      <td><p><code>character(1)</code> specifying the polarity of the data.
 Currently not used, but has to be <code>"positive"</code>, <code>"negative"</code> or
 <code>"unknown"</code> if provided.</p></td>
     </tr>
     <tr>
       <th>object</th>
       <td><p>For <code>findChromPeaks</code>: an
-    <code>OnDiskMSnExp</code>  object containing the MS- and all
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code>  object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></td>
     </tr>
@@ -394,7 +392,7 @@ chromatographic peak detection algorithm.</p></td>
     <tr>
       <th>BPPARAM</th>
       <td><p>A parameter class specifying if and how parallel processing
-should be performed. It defaults to <code>bpparam</code>.
+should be performed. It defaults to <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></td>
@@ -407,7 +405,7 @@ return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
     </tr>
     <tr>
       <th>msLevel</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the MS level on which the peak
+      <td><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     </tr>
     <tr>
@@ -434,7 +432,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
-    <code>register</code> method from the <code>BiocParallel</code>
+    <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></code> method from the <code>BiocParallel</code>
     package.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
@@ -450,7 +448,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     <code>xcms</code> user interface which will eventually replace the
     <code><a href='findPeaks-methods.html'>findPeaks</a></code> methods. It supports chromatographic peak
     detection on
-    <code>OnDiskMSnExp</code> objects (defined in the
+    <code><a href='https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html'>OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the algorithm can be
     passed with a <code>CentWavePredIsoParam</code> object.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -472,34 +470,35 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     <p>Hendrik Treutler, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Create a param object</span>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>maxCharge <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span>
-<span class='co'>## Change snthresh parameter</span>
-<span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>25</span>
-<span class='va'>p</span>
-</div><div class='output co'>#&gt; Object of class:  CentWavePredIsoParam 
-#&gt;  Parameters:
-#&gt;  - snthreshIsoROIs: [1] 6.25
-#&gt;  - maxCharge: [1] 4
-#&gt;  - maxIso: [1] 5
-#&gt;  - mzIntervalExtension: [1] TRUE
-#&gt;  - polarity: [1] "unknown"
-#&gt;  - ppm: [1] 25
-#&gt;  - peakwidth: [1] 20 50
-#&gt;  - snthresh: [1] 25
-#&gt;  - prefilter: [1]   3 100
-#&gt;  - mzCenterFun: [1] "wMean"
-#&gt;  - integrate: [1] 1
-#&gt;  - mzdiff: [1] -0.001
-#&gt;  - fitgauss: [1] FALSE
-#&gt;  - noise: [1] 0
-#&gt;  - verboseColumns: [1] FALSE
-#&gt;  - roiList: list()
-#&gt;  - firstBaselineCheck: [1] TRUE
-#&gt;  - roiScales: numeric(0)
-#&gt;  - extendLengthMSW: [1] FALSE</div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Create a param object</span></span>
+<span class='r-in'><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'>CentWavePredIsoParam</span><span class='op'>(</span>maxCharge <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Change snthresh parameter</span></span>
+<span class='r-in'><span class='fu'><a href='findChromPeaks-centWave.html'>snthresh</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>25</span></span>
+<span class='r-in'><span class='va'>p</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Object of class:  CentWavePredIsoParam </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameters:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - snthreshIsoROIs: [1] 6.25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - maxCharge: [1] 4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - maxIso: [1] 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzIntervalExtension: [1] TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - polarity: [1] "unknown"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - ppm: [1] 25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - peakwidth: [1] 20 50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - snthresh: [1] 25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - prefilter: [1]   3 100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzCenterFun: [1] "wMean"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - integrate: [1] 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzdiff: [1] -0.001</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - fitgauss: [1] FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - noise: [1] 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - verboseColumns: [1] FALSE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - roiList: list()</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - firstBaselineCheck: [1] TRUE</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - roiScales: numeric(0)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - extendLengthMSW: [1] FALSE</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

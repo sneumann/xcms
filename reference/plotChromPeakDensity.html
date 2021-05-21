@@ -65,8 +65,6 @@ visualized setting simulate = FALSE." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -90,7 +88,7 @@ visualized setting simulate = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -154,8 +152,8 @@ correspondence results and the correspondence was performed with the
 visualized setting <code>simulate = FALSE</code>.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for XCMSnExp</span>
-<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='co'># S4 method for XCMSnExp</span>
+<span class='fu'>plotChromPeakDensity</span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>mz</span>,
   <span class='va'>rt</span>,
@@ -166,9 +164,9 @@ visualized setting <code>simulate = FALSE</code>.</p>
   ylab <span class='op'>=</span> <span class='st'>"sample"</span>,
   xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span><span class='op'>(</span><span class='va'>rt</span><span class='op'>)</span>,
   main <span class='op'>=</span> <span class='cn'>NULL</span>,
-  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span><span class='op'>)</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='st'>"any"</span>, <span class='st'>"within"</span>, <span class='st'>"apex_within"</span><span class='op'>)</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,12 +178,12 @@ chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>mz</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> defining an mz range for which the peak density
+      <td><p><code>numeric(2)</code> defining an mz range for which the peak density
 should be plotted.</p></td>
     </tr>
     <tr>
       <th>rt</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> defining an optional rt range for which the
+      <td><p><code>numeric(2)</code> defining an optional rt range for which the
 peak density should be plotted. Defaults to the absolute retention time
 range of <code>object</code>.</p></td>
     </tr>
@@ -199,7 +197,7 @@ corresponding parameter class stored in <code>object</code> is used.</p></td>
     </tr>
     <tr>
       <th>simulate</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> defining whether correspondence should be
+      <td><p><code>logical(1)</code> defining whether correspondence should be
 simulated within the specified m/z / rt region or (with
 <code>simulate = FALSE</code>) whether the results from an already performed
 correspondence should be shown.</p></td>
@@ -211,25 +209,25 @@ or equal to the number of samples in <code>object</code>.</p></td>
     </tr>
     <tr>
       <th>xlab</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> with the label for the x-axis.</p></td>
+      <td><p><code>character(1)</code> with the label for the x-axis.</p></td>
     </tr>
     <tr>
       <th>ylab</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> with the label for the y-axis.</p></td>
+      <td><p><code>character(1)</code> with the label for the y-axis.</p></td>
     </tr>
     <tr>
       <th>xlim</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> representing the limits for the x-axis.
+      <td><p><code>numeric(2)</code> representing the limits for the x-axis.
 Defaults to the range of the <code>rt</code> parameter.</p></td>
     </tr>
     <tr>
       <th>main</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the title of the plot. By default
+      <td><p><code>character(1)</code> defining the title of the plot. By default
 (for <code>main = NULL</code>) the mz-range is used.</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying how peaks are called to be located
+      <td><p><code>character(1)</code> specifying how peaks are called to be located
 within the region defined by <code>mz</code> and <code>rt</code>. Can be one of <code>"any"</code>,
 <code>"within"</code>, and <code>"apex_within"</code> for all peaks that are even partially
 overlapping the region, peaks that are completely within the region, and
@@ -272,20 +270,22 @@ algorithm and its supported settings.</p>
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Plot the chromatographic peak density for a specific mz range to evaluate</span>
-<span class='co'>## different peak density correspondence settings.</span>
-<span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>305.05</span>, <span class='fl'>305.15</span><span class='op'>)</span>
-
-<span class='fu'><a href='plotChromPeakDensity.html'>plotChromPeakDensity</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, pch <span class='op'>=</span> <span class='fl'>16</span>,
-    param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load a test data set with detected peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Plot the chromatographic peak density for a specific mz range to evaluate</span></span>
+<span class='r-in'><span class='co'>## different peak density correspondence settings.</span></span>
+<span class='r-in'><span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>305.05</span>, <span class='fl'>305.15</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>plotChromPeakDensity</span><span class='op'>(</span><span class='va'>faahko_sub</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, pch <span class='op'>=</span> <span class='fl'>16</span>,</span>
+<span class='r-in'>    param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span>
+<span class='r-plt'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

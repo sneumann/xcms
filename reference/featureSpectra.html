@@ -98,7 +98,7 @@ or return.type = &quot;Spectra&quot;." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@ one spectrum per <strong>chromatographic peak</strong> assigned to the feature.<
 or <code>return.type = "Spectra"</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>featureSpectra</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>featureSpectra</span><span class='op'>(</span>
   <span class='va'>x</span>,
   msLevel <span class='op'>=</span> <span class='fl'>2L</span>,
   expandRt <span class='op'>=</span> <span class='fl'>0</span>,
@@ -182,7 +182,7 @@ or <code>return.type = "Spectra"</code>.</p>
   return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span>, <span class='st'>"list"</span>, <span class='st'>"List"</span><span class='op'>)</span>,
   features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -193,33 +193,33 @@ or <code>return.type = "Spectra"</code>.</p>
     </tr>
     <tr>
       <th>msLevel</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining whether MS1 or MS2 spectra should be
+      <td><p><code>integer(1)</code> defining whether MS1 or MS2 spectra should be
 returned. <code>msLevel = 1</code> is currently only supported for <code>return.type</code>
 being <code>"Spectra"</code> or <code>"List"</code>.</p></td>
     </tr>
     <tr>
       <th>expandRt</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> to expand the retention time range of each
+      <td><p><code>numeric(1)</code> to expand the retention time range of each
 peak by a constant value on each side.</p></td>
     </tr>
     <tr>
       <th>expandMz</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> to expand the m/z range of each peak by a
+      <td><p><code>numeric(1)</code> to expand the m/z range of each peak by a
 constant value on each side.</p></td>
     </tr>
     <tr>
       <th>ppm</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> to expand the m/z range of each peak (on each side)
+      <td><p><code>numeric(1)</code> to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.</p></td>
     </tr>
     <tr>
       <th>skipFilled</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether spectra for filled-in peaks should
+      <td><p><code>logical(1)</code> whether spectra for filled-in peaks should
 be reported or not.</p></td>
     </tr>
     <tr>
       <th>return.type</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the result type. Defaults to
+      <td><p><code>character(1)</code> defining the result type. Defaults to
 <code>return.type = "MSpectra"</code> but <code>return.type = "Spectra"</code> or
 <code>return.type = "List"</code> are preferred. See below for more information.</p></td>
     </tr>
@@ -228,8 +228,8 @@ be reported or not.</p></td>
       <td><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
 subset of features in <code>featureDefinitions</code> for which spectra should
 be returned (providing either their ID, a logical vector same length
-than <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(featureDefinitions(x))</a></code> or their index in
-<code><a href='XCMSnExp-class.html'>featureDefinitions(x)</a></code>). This parameter overrides <code>skipFilled</code> and is
+than <code>nrow(featureDefinitions(x))</code> or their index in
+<code>featureDefinitions(x)</code>). This parameter overrides <code>skipFilled</code> and is
 only supported for <code>return.type</code> being either <code>"Spectra"</code> or <code>"List"</code>.</p></td>
     </tr>
     <tr>
@@ -242,8 +242,8 @@ such as <code>method</code>.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul>
-<li><p><code>return.type = "MSpectra"</code>: a MSpectra object with elements being
-Spectrum objects. The result objects contains all spectra
+<li><p><code>return.type = "MSpectra"</code>: a <a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSpectra</a> object with elements being
+<a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>Spectrum</a> objects. The result objects contains all spectra
 for all features. Metadata column <code>"feature_id"</code> provides the ID of the
 respective feature (i.e. its rowname in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>).</p></li>
 <li><p><code>return.type = "Spectra"</code>: a <code>Spectra</code> object (defined in the <code>Spectra</code>
@@ -251,7 +251,7 @@ package). The result contains all spectra for all features. Metadata column
 <code>"feature_id"</code> provides the ID of the respective feature (i.e. its rowname
 in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>.</p></li>
 <li><p><code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
-0 or contain Spectrum2 object(s) within the m/z-rt range. The
+0 or contain <a href='https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html'>Spectrum2</a> object(s) within the m/z-rt range. The
 length of the list matches the number of features.</p></li>
 <li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
 features with MS level <code>msLevel</code> is returned with elements being either

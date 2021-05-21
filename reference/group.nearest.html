@@ -65,8 +65,6 @@ Currently, there is no equivalent to minfrac or minsamp." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -90,7 +88,7 @@ Currently, there is no equivalent to minfrac or minsamp." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -185,9 +183,9 @@ Currently, there is no equivalent to minfrac or minsamp." />
 
     
 <dl>
-<dt>object = "xcmsSet"</dt><dd><p><code><a href='group-methods.html'>
+<dt>object = "xcmsSet"</dt><dd><p><code>
     group(object, mzVsRTbalance=10, mzCheck=0.2, rtCheck=15, kNN=10)
-  </a></code></p></dd>
+  </code></p></dd>
 
 </dl>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -200,45 +198,69 @@ Currently, there is no equivalent to minfrac or minsamp." />
   <code><a href='group.mzClust.html'>group.mzClust</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span>
-    <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span>
-    <span class='co'>## These files do not have this problem to correct for</span>
-    <span class='co'>## but just for an example</span>
-    <span class='va'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-    <span class='va'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='va'>cdfpath</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-
-    <span class='va'>xset</span><span class='op'>&lt;-</span><span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span><span class='op'>(</span><span class='va'>cdffiles</span><span class='op'>)</span>
-
-    <span class='va'>gxset</span><span class='op'>&lt;-</span><span class='fu'><a href='group-methods.html'>group</a></span><span class='op'>(</span><span class='va'>xset</span>, method<span class='op'>=</span><span class='st'>"nearest"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Processing sample number 8 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 1 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 7 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 3 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 12 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 9 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 6 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 5 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 4 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 11 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Processing sample number 10 ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>1096</span> <span class='co'>## the number of features before minFrac</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
-    <span class='va'>post.minFrac</span><span class='op'>&lt;-</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>minFrac</span><span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span><span class='op'>{</span>
-        <span class='va'>ix.minFrac</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,
-                           <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>object</span>, <span class='va'>mf</span><span class='op'>)</span><span class='op'>{</span>
-                               <span class='va'>meta</span><span class='op'>&lt;-</span><span class='fu'><a href='xcmsSet-class.html'>groups</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
-                               <span class='va'>minFrac.idx</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span>length<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>meta</span><span class='op'>)</span><span class='op'>)</span>
-                               <span class='va'>idx</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span>
-                                   <span class='va'>meta</span><span class='op'>[</span>,<span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='va'>x</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&gt;=</span>
-                                   <span class='va'>mf</span><span class='op'>*</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='va'>x</span><span class='op'>]</span>
-                                                   <span class='op'>==</span> <span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>)</span><span class='op'>)</span>
-                               <span class='va'>minFrac.idx</span><span class='op'>[</span><span class='va'>idx</span><span class='op'>]</span><span class='op'>&lt;-</span><span class='fl'>1</span>
-                               <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>minFrac.idx</span><span class='op'>)</span>
-                           <span class='op'>}</span>, <span class='va'>object</span>, <span class='va'>minFrac</span><span class='op'>)</span>
-        <span class='va'>ix.minFrac</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/logical.html'>as.logical</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>ix.minFrac</span>, <span class='fl'>1</span>, <span class='va'>sum</span><span class='op'>)</span><span class='op'>)</span>
-        <span class='va'>ix</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='va'>ix.minFrac</span> <span class='op'>==</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>ix</span><span class='op'>)</span>
-    <span class='op'>}</span>
-
-    <span class='co'>## using the above function we can get a post processing minFrac</span>
-    <span class='va'>idx</span><span class='op'>&lt;-</span><span class='fu'>post.minFrac</span><span class='op'>(</span><span class='va'>gxset</span><span class='op'>)</span>
-
-    <span class='va'>gxset.post</span><span class='op'>&lt;-</span><span class='va'>gxset</span> <span class='co'>## copy the xcmsSet object</span>
-    <span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groupidx</span><span class='op'>&lt;-</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groupidx</span><span class='op'>[</span><span class='va'>idx</span><span class='op'>]</span>
-    <span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>&lt;-</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>[</span><span class='va'>idx</span>,<span class='op'>]</span>
-
-    <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>465</span> <span class='co'>## number of features after minFrac</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://dx.doi.org/10.1021/bi0480335'>faahKO</a></span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='co'>## These files do not have this problem to correct for</span></span>
+<span class='r-in'>    <span class='co'>## but just for an example</span></span>
+<span class='r-in'>    <span class='va'>cdfpath</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='va'>cdffiles</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='va'>cdfpath</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='va'>xset</span><span class='op'>&lt;-</span><span class='fu'><a href='xcmsSet.html'>xcmsSet</a></span><span class='op'>(</span><span class='va'>cdffiles</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='va'>gxset</span><span class='op'>&lt;-</span><span class='fu'><a href='group-methods.html'>group</a></span><span class='op'>(</span><span class='va'>xset</span>, method<span class='op'>=</span><span class='st'>"nearest"</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 8 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 1 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 7 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 3 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 12 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 9 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 6 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 5 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 4 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 11 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing sample number 10 ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-in'>    <span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>1096</span> <span class='co'>## the number of features before minFrac</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE</span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='va'>post.minFrac</span><span class='op'>&lt;-</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>minFrac</span><span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span><span class='op'>{</span></span>
+<span class='r-in'>        <span class='va'>ix.minFrac</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/unique.html'>unique</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'>                           <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>object</span>, <span class='va'>mf</span><span class='op'>)</span><span class='op'>{</span></span>
+<span class='r-in'>                               <span class='va'>meta</span><span class='op'>&lt;-</span><span class='fu'><a href='xcmsSet-class.html'>groups</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></span>
+<span class='r-in'>                               <span class='va'>minFrac.idx</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span>length<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>meta</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>                               <span class='va'>idx</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/which.html'>which</a></span><span class='op'>(</span></span>
+<span class='r-in'>                                   <span class='va'>meta</span><span class='op'>[</span>,<span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Factor-class.html'>levels</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='va'>x</span><span class='op'>]</span><span class='op'>]</span> <span class='op'>&gt;=</span></span>
+<span class='r-in'>                                   <span class='va'>mf</span><span class='op'>*</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Factor-class.html'>levels</a></span><span class='op'>(</span><span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='va'>x</span><span class='op'>]</span></span>
+<span class='r-in'>                                                   <span class='op'>==</span> <span class='fu'><a href='xcmsSet-class.html'>sampclass</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>                               <span class='va'>minFrac.idx</span><span class='op'>[</span><span class='va'>idx</span><span class='op'>]</span><span class='op'>&lt;-</span><span class='fl'>1</span></span>
+<span class='r-in'>                               <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>minFrac.idx</span><span class='op'>)</span></span>
+<span class='r-in'>                           <span class='op'>}</span>, <span class='va'>object</span>, <span class='va'>minFrac</span><span class='op'>)</span></span>
+<span class='r-in'>        <span class='va'>ix.minFrac</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/logical.html'>as.logical</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>ix.minFrac</span>, <span class='fl'>1</span>, <span class='va'>sum</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'>        <span class='va'>ix</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/which.html'>which</a></span><span class='op'>(</span><span class='va'>ix.minFrac</span> <span class='op'>==</span> <span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'>        <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>ix</span><span class='op'>)</span></span>
+<span class='r-in'>    <span class='op'>}</span></span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='co'>## using the above function we can get a post processing minFrac</span></span>
+<span class='r-in'>    <span class='va'>idx</span><span class='op'>&lt;-</span><span class='fu'>post.minFrac</span><span class='op'>(</span><span class='va'>gxset</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='va'>gxset.post</span><span class='op'>&lt;-</span><span class='va'>gxset</span> <span class='co'>## copy the xcmsSet object</span></span>
+<span class='r-in'>    <span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groupidx</span><span class='op'>&lt;-</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groupidx</span><span class='op'>[</span><span class='va'>idx</span><span class='op'>]</span></span>
+<span class='r-in'>    <span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>&lt;-</span><span class='va'>gxset</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>[</span><span class='va'>idx</span>,<span class='op'>]</span></span>
+<span class='r-in'></span>
+<span class='r-in'>    <span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>gxset.post</span><span class='op'>@</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>465</span> <span class='co'>## number of features after minFrac</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

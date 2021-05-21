@@ -90,7 +90,7 @@ peaks." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -156,13 +156,13 @@ peaks, it is suggested to run <code><a href='refineChromPeaks-clean.html'>refine
 peaks.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>manualChromPeaks</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>manualChromPeaks</span><span class='op'>(</span>
   <span class='va'>object</span>,
   chromPeaks <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='op'>)</span>,
   samples <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,11 +185,11 @@ integration should be performed. By default performed in all samples.</p></td>
     </tr>
     <tr>
       <th>BPPARAM</th>
-      <td><p>parallel processing settings (see <code>bpparam()</code> for details).</p></td>
+      <td><p>parallel processing settings (see <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam()</a></code> for details).</p></td>
     </tr>
     <tr>
       <th>msLevel</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> defining the MS level in which peak integration
+      <td><p><code>integer(1)</code> defining the MS level in which peak integration
 should be performed.</p></td>
     </tr>
     </table>

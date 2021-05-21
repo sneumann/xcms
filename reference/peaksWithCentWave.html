@@ -60,8 +60,6 @@ without m/z values." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -85,7 +83,7 @@ without m/z values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -144,12 +142,12 @@ chromatographic data, i.e. based on intensity and retention time values
 without m/z values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>peaksWithCentWave</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>peaksWithCentWave</span><span class='op'>(</span>
   <span class='va'>int</span>,
   <span class='va'>rt</span>,
-  peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
+  peakwidth <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>50</span><span class='op'>)</span>,
   snthresh <span class='op'>=</span> <span class='fl'>10</span>,
-  prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>100</span><span class='op'>)</span>,
+  prefilter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>100</span><span class='op'>)</span>,
   integrate <span class='op'>=</span> <span class='fl'>1</span>,
   fitgauss <span class='op'>=</span> <span class='cn'>FALSE</span>,
   noise <span class='op'>=</span> <span class='fl'>0</span>,
@@ -157,7 +155,7 @@ without m/z values.</p>
   firstBaselineCheck <span class='op'>=</span> <span class='cn'>TRUE</span>,
   extendLengthMSW <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,27 +167,27 @@ without m/z values.</p>
     <tr>
       <th>rt</th>
       <td><p><code>numeric</code> with the retention time for the intensities. Length has
-to be equal to <code><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length(int)</a></code>.</p></td>
+to be equal to <code>length(int)</code>.</p></td>
     </tr>
     <tr>
       <th>peakwidth</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> with the lower and upper bound of the
+      <td><p><code>numeric(2)</code> with the lower and upper bound of the
 expected peak width.</p></td>
     </tr>
     <tr>
       <th>snthresh</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the signal to noise ratio cutoff.
+      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.
 Peaks with a signal to noise ratio &lt; <code>snthresh</code> are omitted.</p></td>
     </tr>
     <tr>
       <th>prefilter</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> (<code><a href='https://rdrr.io/r/base/c.html'>c(k, I)</a></code>): only regions of interest with at
+      <td><p><code>numeric(2)</code> (<code>c(k, I)</code>): only regions of interest with at
 least <code>k</code> centroids with signal <code>&gt;= I</code> are returned in the first
 step.</p></td>
     </tr>
     <tr>
       <th>integrate</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>, integration method. For <code>integrate = 1</code> peak
+      <td><p><code>numeric(1)</code>, integration method. For <code>integrate = 1</code> peak
 limits are found through descending on the mexican hat filtered data,
 for <code>integrate = 2</code> the descend is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
@@ -197,28 +195,28 @@ robust, but less exact.</p></td>
     </tr>
     <tr>
       <th>fitgauss</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether or not a Gaussian should be fitted
+      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak.</p></td>
     </tr>
     <tr>
       <th>noise</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the minimum required intensity for
+      <td><p><code>numeric(1)</code> defining the minimum required intensity for
 centroids to be considered in the first analysis step (definition of
 the <em>regions of interest</em>).</p></td>
     </tr>
     <tr>
       <th>verboseColumns</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>: whether additional peak meta data
+      <td><p><code>logical(1)</code>: whether additional peak meta data
 columns should be returned.</p></td>
     </tr>
     <tr>
       <th>firstBaselineCheck</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>. If <code>TRUE</code> continuous data within
+      <td><p><code>logical(1)</code>. If <code>TRUE</code> continuous data within
 regions of interest is checked to be above the first baseline.</p></td>
     </tr>
     <tr>
       <th>extendLengthMSW</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>. If <code>TRUE</code> the "open" method of EIC
+      <td><p><code>logical(1)</code>. If <code>TRUE</code> the "open" method of EIC
 extension is used, rather than the default "reflect" method.</p></td>
     </tr>
     <tr>
@@ -274,32 +272,35 @@ method.</p>
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Reading a file</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span>
-<span class='va'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO/ko15.CDF"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>,
-    mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Extract chromatographic data for a small m/z range</span>
-<span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>272.1</span>, <span class='fl'>272.2</span><span class='op'>)</span>
-<span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3000</span>, <span class='fl'>3300</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>]</span>
-
-<span class='va'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
-<span class='va'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>
-
-<span class='co'>## Plot the region</span>
-<span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr</span>, type <span class='op'>=</span> <span class='st'>"h"</span><span class='op'>)</span>
-</div><div class='input'>
-<span class='co'>## Identify peaks in the chromatographic data</span>
-<span class='va'>pks</span> <span class='op'>&lt;-</span> <span class='fu'>peaksWithCentWave</span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>pks</span>
-</div><div class='output co'>#&gt;            rt    rtmin    rtmax     into     intb  maxo sn
-#&gt; [1,] 3119.535 3097.625 3127.359 247211.6 227217.9 16496 24</div><div class='input'>
-<span class='co'>## Highlight the peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span><span class='op'>(</span>xleft <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span>, xright <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span>,
-    ybottom <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pks</span><span class='op'>)</span><span class='op'>)</span>, ytop <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"maxo"</span><span class='op'>]</span>, col <span class='op'>=</span> <span class='st'>"#ff000040"</span>,
-    border <span class='op'>=</span> <span class='st'>"#00000040"</span><span class='op'>)</span>
-</div><div class='img'><img src='peaksWithCentWave-1.png' alt='' width='700' height='433' /></div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Reading a file</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sneumann/xcms'>xcms</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>od</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/readMSData.html'>readMSData</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO/ko15.CDF"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>,</span>
+<span class='r-in'>    mode <span class='op'>=</span> <span class='st'>"onDisk"</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Extract chromatographic data for a small m/z range</span></span>
+<span class='r-in'><span class='va'>mzr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>272.1</span>, <span class='fl'>272.2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>chr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span><span class='op'>(</span><span class='va'>od</span>, mz <span class='op'>=</span> <span class='va'>mzr</span>, rt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>3000</span>, <span class='fl'>3300</span><span class='op'>)</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>]</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>int</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Plot the region</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chr</span>, type <span class='op'>=</span> <span class='st'>"h"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Identify peaks in the chromatographic data</span></span>
+<span class='r-in'><span class='va'>pks</span> <span class='op'>&lt;-</span> <span class='fu'>peaksWithCentWave</span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>intensity</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span>, <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Spectrum-class.html'>rtime</a></span><span class='op'>(</span><span class='va'>chr</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>pks</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            rt    rtmin    rtmax     into     intb  maxo sn</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 3119.535 3097.625 3127.359 247211.6 227217.9 16496 24</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Highlight the peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/rect.html'>rect</a></span><span class='op'>(</span>xleft <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmin"</span><span class='op'>]</span>, xright <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"rtmax"</span><span class='op'>]</span>,</span>
+<span class='r-in'>    ybottom <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>rep</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>pks</span><span class='op'>)</span><span class='op'>)</span>, ytop <span class='op'>=</span> <span class='va'>pks</span><span class='op'>[</span>, <span class='st'>"maxo"</span><span class='op'>]</span>, col <span class='op'>=</span> <span class='st'>"#ff000040"</span>,</span>
+<span class='r-in'>    border <span class='op'>=</span> <span class='st'>"#00000040"</span><span class='op'>)</span></span>
+<span class='r-plt'><img src='peaksWithCentWave-1.png' alt='' width='700' height='433' /></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

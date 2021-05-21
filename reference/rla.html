@@ -67,8 +67,6 @@ rowRla calculates row-wise RLAs." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -92,7 +90,7 @@ rowRla calculates row-wise RLAs." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -155,9 +153,9 @@ rowRla calculates row-wise RLAs." />
 <p><code>rowRla</code> calculates row-wise RLAs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>group</span>, log.transform <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>rla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>group</span>, log.transform <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='fu'>rowRla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>group</span>, log.transform <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>rowRla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>group</span>, log.transform <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,7 +173,7 @@ to be from the same group.</p></td>
     </tr>
     <tr>
       <th>log.transform</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether <code>x</code> should be log2 transformed.
+      <td><p><code>logical(1)</code> whether <code>x</code> should be log2 transformed.
 Set to <code>log.transform = FALSE</code> if <code>x</code> is already in log scale.</p></td>
     </tr>
     </table>
@@ -198,16 +196,17 @@ McConville M, Speed TP. Normalizing and integrating metabolomics data.
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>5</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>7</span>, <span class='fl'>8</span>, <span class='fl'>9</span><span class='op'>)</span>
-
-<span class='va'>grp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>3</span><span class='op'>)</span>
-
-<span class='fu'>rla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>grp</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          1          1          1          2          2          2          3 
-#&gt; -0.4150375  0.0000000  0.3219281 -1.0000000  0.0000000  0.5849625 -0.1926451 
-#&gt;          3          3 
-#&gt;  0.0000000  0.1699250 </div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>4</span>, <span class='fl'>5</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>7</span>, <span class='fl'>8</span>, <span class='fl'>9</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>grp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>, <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>rla</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>grp</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          1          1          1          2          2          2          3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> -0.4150375  0.0000000  0.3219281 -1.0000000  0.0000000  0.5849625 -0.1926451 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          3          3 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0.0000000  0.1699250 </span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

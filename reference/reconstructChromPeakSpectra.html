@@ -83,7 +83,7 @@ LC-MS/MS analysis vignette for more details and examples." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -142,16 +142,16 @@ for data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>reconstructChromPeakSpectra</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>reconstructChromPeakSpectra</span><span class='op'>(</span>
   <span class='va'>object</span>,
   expandRt <span class='op'>=</span> <span class='fl'>0</span>,
   diffRt <span class='op'>=</span> <span class='fl'>2</span>,
   minCor <span class='op'>=</span> <span class='fl'>0.8</span>,
   intensity <span class='op'>=</span> <span class='st'>"maxo"</span>,
-  peakId <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>object</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span><span class='op'>)</span>,
-  BPPARAM <span class='op'>=</span> <span class='fu'>bpparam</span><span class='op'>(</span><span class='op'>)</span>,
-  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+  peakId <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html'>rownames</a></span><span class='op'>(</span><span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span><span class='op'>(</span><span class='va'>object</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span><span class='op'>)</span>,
+  BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
+  return.type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/S4Vectors/man/Vector-class.html'>c</a></span><span class='op'>(</span><span class='st'>"MSpectra"</span>, <span class='st'>"Spectra"</span><span class='op'>)</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,27 +162,27 @@ for data independent acquisition (DIA) data (such as SWATH). See the
     </tr>
     <tr>
       <th>expandRt</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> allowing to expand the retention time range
+      <td><p><code>numeric(1)</code> allowing to expand the retention time range
 for extracted ion chromatograms by a constant value (for the peak
 shape correlation). Defaults to <code>expandRt = 0</code> hence correlates only
 the signal included in the identified chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>diffRt</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the maximal allowed difference between
+      <td><p><code>numeric(1)</code> defining the maximal allowed difference between
 the retention time of the chromatographic peak (apex) and the retention
 times of MS2 chromatographic peaks (apex) to consider them as
 representing candidate fragments of the original ion.</p></td>
     </tr>
     <tr>
       <th>minCor</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> defining the minimal required correlation
+      <td><p><code>numeric(1)</code> defining the minimal required correlation
 coefficient for MS2 chromatographic peaks to be considered for MS2
 spectrum reconstruction.</p></td>
     </tr>
     <tr>
       <th>intensity</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the column in the <code>chromPeaks</code>
+      <td><p><code>character(1)</code> defining the column in the <code>chromPeaks</code>
 matrix that should be used for the intensities of the reconstructed
 spectra's peaks. The same value from the MS1 chromatographic peaks will
 be used as <code>precursorIntensity</code> of the resulting spectra.</p></td>
@@ -195,12 +195,12 @@ By default they are reconstructed for all MS1 chromatographic peaks.</p></td>
     </tr>
     <tr>
       <th>BPPARAM</th>
-      <td><p>parallel processing setup. See <code>bpparam()</code> for more
+      <td><p>parallel processing setup. See <code><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam()</a></code> for more
 information.</p></td>
     </tr>
     <tr>
       <th>return.type</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the type of the returned object.
+      <td><p><code>character(1)</code> defining the type of the returned object.
 Can be either <code>return.type = "MSpectra"</code> (the default) to return a
 <code><a href='https://lgatto.github.io/MSnbase/reference/MSpectra.html'>MSnbase::MSpectra</a></code> object or <code>return.type = "Spectra"</code> for the newer
 <code><a href='https://rdrr.io/pkg/Spectra/man/Spectra.html'>Spectra::Spectra</a></code> object.</p></td>

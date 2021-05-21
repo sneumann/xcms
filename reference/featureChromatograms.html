@@ -72,8 +72,6 @@ range will be returned." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -97,7 +95,7 @@ range will be returned." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.13.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
       </span>
     </div>
 
@@ -168,17 +166,17 @@ eventually the feature in which they are present) overlapping the m/z and rt
 range will be returned.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>featureChromatograms</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>featureChromatograms</span><span class='op'>(</span>
   <span class='va'>x</span>,
   expandRt <span class='op'>=</span> <span class='fl'>0</span>,
   aggregationFun <span class='op'>=</span> <span class='st'>"max"</span>,
   <span class='va'>features</span>,
   include <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"feature_only"</span>, <span class='st'>"apex_within"</span>, <span class='st'>"any"</span>, <span class='st'>"all"</span><span class='op'>)</span>,
   filled <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  n <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='fu'>fileNames</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
+  n <span class='op'>=</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>length</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>,
   value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"maxo"</span>, <span class='st'>"into"</span><span class='op'>)</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,12 +187,12 @@ range will be returned.</p>
     </tr>
     <tr>
       <th>expandRt</th>
-      <td><p><code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> to expand the retention time range for each
+      <td><p><code>numeric(1)</code> to expand the retention time range for each
 chromatographic peak by a constant value on each side.</p></td>
     </tr>
     <tr>
       <th>aggregationFun</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the name that should be
+      <td><p><code>character(1)</code> specifying the name that should be
 used to aggregate intensity values across the m/z value range for
 the same retention time. The default <code>"sum"</code> returns a base peak
 chromatogram.</p></td>
@@ -208,25 +206,25 @@ of the features in <code>featureDefinitions</code>, feature IDs (row names of
     </tr>
     <tr>
       <th>include</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining which chromatographic peaks (and
+      <td><p><code>character(1)</code> defining which chromatographic peaks (and
 related feature definitions) should be included in the returned
 <code><a href='XChromatogram.html'>XChromatograms()</a></code>. Defaults to <code>"feature_only"</code>; See description above
 for options and details.</p></td>
     </tr>
     <tr>
       <th>filled</th>
-      <td><p><code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether filled-in peaks should be included in
+      <td><p><code>logical(1)</code> whether filled-in peaks should be included in
 the result object. The default is <code>filled = FALSE</code>, i.e. only detected
 peaks are reported.</p></td>
     </tr>
     <tr>
       <th>n</th>
-      <td><p><code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> to optionally specify the number of <em>top n</em> samples
+      <td><p><code>integer(1)</code> to optionally specify the number of <em>top n</em> samples
 from which the EIC should be extracted.</p></td>
     </tr>
     <tr>
       <th>value</th>
-      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> specifying the column to be used to sort the
+      <td><p><code>character(1)</code> specifying the column to be used to sort the
 samples. Can be either <code>"maxo"</code> (the default) or <code>"into"</code> to use the
 maximal peak intensity or the integrated peak area, respectively.</p></td>
     </tr>
@@ -255,57 +253,61 @@ the <em>top n</em> columns (samples) with the highest intensity.</p></div>
     <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load a test data set with detected peaks</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span>
-<span class='co'>## Update the path to the files for the local system</span>
-<span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span>
-
-<span class='co'>## Disable parallel processing for this example</span>
-<span class='fu'>register</span><span class='op'>(</span><span class='fu'>SerialParam</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'>## Subset the object to a smaller retention time range</span>
-<span class='va'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'>filterRt</span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='va'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span><span class='op'>(</span><span class='va'>xdata</span>,
-    param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>minFraction <span class='op'>=</span> <span class='fl'>0.8</span>, sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Processing 2416 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
-<span class='co'>## Get the feature definitions</span>
-<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span><span class='op'>(</span><span class='va'>xdata</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 11 rows and 10 columns
-#&gt;          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-#&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-#&gt; FT01     300.2     300.2     300.2   3387.14   3379.32   3390.27         4
-#&gt; FT02     301.0     301.0     301.0   2787.77   2786.20   2792.46         3
-#&gt; FT03     326.2     326.2     326.2   3416.88   3415.31   3424.70         3
-#&gt; FT04     343.0     343.0     343.0   2684.48   2678.22   2686.04         3
-#&gt; FT05     344.0     344.0     344.0   2682.91   2679.78   2686.04         3
-#&gt; FT06     365.0     365.0     365.0   2684.48   2679.78   2686.04         3
-#&gt; FT07     496.2     496.2     496.2   3335.50   3316.72   3340.19         3
-#&gt; FT08     496.2     496.2     496.2   3402.79   3384.01   3410.62         3
-#&gt; FT09     522.2     522.2     522.2   3387.14   3344.89   3434.09         6
-#&gt; FT10     523.2     523.2     523.2   3387.14   3344.89   3434.09         6
-#&gt; FT11     532.2     532.2     532.2   3482.61   3476.34   3488.86         3
-#&gt;             X1         peakidx  ms_level
-#&gt;      &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
-#&gt; FT01         3  35, 91,129,...         1
-#&gt; FT02         3      10, 63,117         1
-#&gt; FT03         3      37, 94,132         1
-#&gt; FT04         3       6, 58,114         1
-#&gt; FT05         3       3, 56,112         1
-#&gt; FT06         3       7, 59,115         1
-#&gt; FT07         3      47,103,138         1
-#&gt; FT08         3      48,104,139         1
-#&gt; FT09         3  52, 53,105,...         1
-#&gt; FT10         3    38,39,97,...         1
-#&gt; FT11         3      49,102,137         1</div><div class='input'>
-<span class='co'>## Extract ion chromatograms for the first 3 features. Parameter</span>
-<span class='co'>## `features` can be either the feature IDs or feature indices.</span>
-<span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>featureChromatograms</span><span class='op'>(</span><span class='va'>xdata</span>, features <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
-
-<span class='co'>## Plot the XIC for the first feature using different colors for each file</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>[</span><span class='fl'>1</span>, <span class='op'>]</span>, col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"blue"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='img'><img src='featureChromatograms-1.png' alt='' width='700' height='433' /></div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load a test data set with detected peaks</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Update the path to the files for the local system</span></span>
+<span class='r-in'><span class='fu'><a href='dirname.html'>dirname</a></span><span class='op'>(</span><span class='va'>faahko_sub</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"cdf/KO"</span>, package <span class='op'>=</span> <span class='st'>"faahKO"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Disable parallel processing for this example</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>register</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html'>SerialParam</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Subset the object to a smaller retention time range</span></span>
+<span class='r-in'><span class='va'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MSnExp-class.html'>filterRt</a></span><span class='op'>(</span><span class='va'>faahko_sub</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2500</span>, <span class='fl'>3500</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>xdata</span> <span class='op'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span><span class='op'>(</span><span class='va'>xdata</span>,</span>
+<span class='r-in'>    param <span class='op'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span><span class='op'>(</span>minFraction <span class='op'>=</span> <span class='fl'>0.8</span>, sampleGroups <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Processing 2416 mz slices ... </span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> OK</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Get the feature definitions</span></span>
+<span class='r-in'><span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span><span class='op'>(</span><span class='va'>xdata</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 11 rows and 10 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT01     300.2     300.2     300.2   3387.14   3379.32   3390.27         4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT02     301.0     301.0     301.0   2787.77   2786.20   2792.46         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT03     326.2     326.2     326.2   3416.88   3415.31   3424.70         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT04     343.0     343.0     343.0   2684.48   2678.22   2686.04         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT05     344.0     344.0     344.0   2682.91   2679.78   2686.04         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT06     365.0     365.0     365.0   2684.48   2679.78   2686.04         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT07     496.2     496.2     496.2   3335.50   3316.72   3340.19         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT08     496.2     496.2     496.2   3402.79   3384.01   3410.62         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT09     522.2     522.2     522.2   3387.14   3344.89   3434.09         6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT10     523.2     523.2     523.2   3387.14   3344.89   3434.09         6</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT11     532.2     532.2     532.2   3482.61   3476.34   3488.86         3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             X1         peakidx  ms_level</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT01         3  35, 91,129,...         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT02         3      10, 63,117         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT03         3      37, 94,132         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT04         3       6, 58,114         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT05         3       3, 56,112         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT06         3       7, 59,115         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT07         3      47,103,138         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT08         3      48,104,139         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT09         3  52, 53,105,...         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT10         3    38,39,97,...         1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FT11         3      49,102,137         1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Extract ion chromatograms for the first 3 features. Parameter</span></span>
+<span class='r-in'><span class='co'>## `features` can be either the feature IDs or feature indices.</span></span>
+<span class='r-in'><span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'>featureChromatograms</span><span class='op'>(</span><span class='va'>xdata</span>, features <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Plot the XIC for the first feature using different colors for each file</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/plot-methods.html'>plot</a></span><span class='op'>(</span><span class='va'>chrs</span><span class='op'>[</span><span class='fl'>1</span>, <span class='op'>]</span>, col <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"red"</span>, <span class='st'>"green"</span>, <span class='st'>"blue"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-plt'><img src='featureChromatograms-1.png' alt='' width='700' height='433' /></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
