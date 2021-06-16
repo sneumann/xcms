@@ -95,14 +95,12 @@ table(msLevel(dda_data))
 For the MS2 spectra we can get the m/z of the precursor ion with the
 `precursorMz` function. Below we first filter the data set by MS level, extract
 the precursor m/z and call `head` to just show the first 6 elements. For easier
-readability we use the forward pipe operator `%>%` from the `magrittr` package.
+readability we use the forward pipe operator `|>` introduced in R version 4.1.
 
 ```{r precursor}
-library(magrittr)
-
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorMz() %>%
+dda_data |>
+    filterMsLevel(2L) |>
+    precursorMz() |>
     head()
 ```
 
@@ -110,23 +108,27 @@ With the `precursorIntensity` function it is also possible to extract the
 intensity of the precursor ion.
 
 ```{r precursor-intensity}
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorIntensity() %>%
+dda_data |>
+    filterMsLevel(2L) |>
+    precursorIntensity() |>
     head()
 ```
 
 Some manufacturers (like Sciex for the present test data) don't define/export
 the precursor intensity and thus either `NA` or `0` is reported. We can however
-use the `estimatePrecursorIntensity` function to determine the precursor
-intensity for a MS 2 spectrum based on the intensity of the respective ion in
-the previous MS1 scan (note that with `method = "interpolation"` the precursor
-intensity would be defined based on interpolation between the intensity in the
-previous and subsequent MS1 scan). Below we estimate the precursor intensities,
-on the full data (for MS1 spectra a `NA` value is reported)
+use the `estimatePrecursorIntensity` function from the `xcms` package to
+determine the precursor intensity for a MS 2 spectrum based on the intensity of
+the respective ion in the previous MS1 scan (note that with
+`method = "interpolation"` the precursor intensity would be defined based on
+interpolation between the intensity in the previous and subsequent MS1 scan).
+Below we estimate the precursor intensities, on the full data (for MS1 spectra
+a `NA` value is reported). Note also that we use `xcms::` to call the function
+from the `xcms` package, because a function with the same name is also
+implemented in the `Spectra` package, which would however not support
+`OnDiskMSnExp` objects as input.
 
 ```{r estimate-precursor}
-prec_int <- estimatePrecursorIntensity(dda_data)
+prec_int <- xcms::estimatePrecursorIntensity(dda_data)
 ```
 
 We next set the precursor intensity in the spectrum metadata of `dda_data`. So
@@ -135,9 +137,9 @@ that it can be extracted later with the `precursorIntensity` function.
 ```{r set-precursor-intensity}
 fData(dda_data)$precursorIntensity <- prec_int
 
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorIntensity() %>%
+dda_data |>
+    filterMsLevel(2L) |>
+    precursorIntensity() |>
     head()
 ```
 
