@@ -95,12 +95,14 @@ table(msLevel(dda_data))
 For the MS2 spectra we can get the m/z of the precursor ion with the
 `precursorMz` function. Below we first filter the data set by MS level, extract
 the precursor m/z and call `head` to just show the first 6 elements. For easier
-readability we use the forward pipe operator `|>` introduced in R version 4.1.
+readability we use the forward pipe operator `%>%` from the `magrittr` package.
 
 ```{r precursor}
-dda_data |>
-    filterMsLevel(2L) |>
-    precursorMz() |>
+library(magrittr)
+
+dda_data %>%
+    filterMsLevel(2L) %>%
+    precursorMz() %>%
     head()
 ```
 
@@ -108,9 +110,9 @@ With the `precursorIntensity` function it is also possible to extract the
 intensity of the precursor ion.
 
 ```{r precursor-intensity}
-dda_data |>
-    filterMsLevel(2L) |>
-    precursorIntensity() |>
+dda_data %>%
+    filterMsLevel(2L) %>%
+    precursorIntensity() %>%
     head()
 ```
 
@@ -137,9 +139,9 @@ that it can be extracted later with the `precursorIntensity` function.
 ```{r set-precursor-intensity}
 fData(dda_data)$precursorIntensity <- prec_int
 
-dda_data |>
-    filterMsLevel(2L) |>
-    precursorIntensity() |>
+dda_data %>%
+    filterMsLevel(2L) %>%
+    precursorIntensity() %>%
     head()
 ```
 
