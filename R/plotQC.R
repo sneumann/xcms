@@ -1,6 +1,3 @@
-
-
-
 #' Plot m/z and RT deviations for QC purposes without external reference data
 #'
 #' Use "democracy" to determine the average m/z and RT deviations
@@ -56,22 +53,22 @@ plotQC <- function(object,
                           "mzdevtime",
                           "mzdevsample",
                           "rtdevsample")) {
-  
-  if (class(object)=="xcmsSet") {
+
+  if (inherits(object, "xcmsSet")) {
     deviations <- list(mzs=groupval(object, value = "mz"),
                        rts=groupval(object, value = "rt"))
     deviations$mzdev <- deviations$mzs - groups(object)[,"mzmed"]
     deviations$rtdev <- deviations$rts - groups(object)[,"rtmed"]
-    
-  } else if (class(object)=="XCMSnExp") {
+
+  } else if (inherits(objects, "XCMSnExp")) {
     deviations <- list(mzs=featureValues(object, value = "mz"),
                        rts=featureValues(object, value = "rt"))
     deviations$mzdev <- deviations$mzs - featureDefinitions(object)[,"mzmed"]
     deviations$rtdev <- deviations$rts - featureDefinitions(object)[,"rtmed"]
   } else {
     stop("object not xcmsSet nor XCMSnExp")
-  }   
-  
+  }
+
   if (missing(sampNames) || is.null(sampNames)) {
     if (class(object)=="xcmsSet") {
       sampNames <- sampnames(object)
@@ -79,18 +76,18 @@ plotQC <- function(object,
       sampNames <- sampleNames(object)
     } else {
       stop("object not xcmsSet nor XCMSnExp")
-    }   
+    }
   }
-  
+
   n <- ncol(deviations$mzs)
   if (missing(sampColors) || is.null(sampColors)) {
     sampColors <- rainbow(n)
   }
-  
+
   if (missing(sampOrder) || is.null(sampOrder)) {
     sampOrder <- 1:n
   }
-  
+
   ## Plot histograms of deviation
   if ("mzdevhist" %in% what) {
     hist(deviations$mzdev, breaks=100,
@@ -98,13 +95,13 @@ plotQC <- function(object,
          xlab = "m/z Deviation",
          main = "m/z Deviation")
   }
-  
+
   if ("rtdevhist" %in% what) {
     hist(deviations$rtdev, breaks=100, ylab = "Number of Peaks",
          xlab = "Retention Time Deviation",
          main = "Retention Time Deviation")
   }
-  
+
   if ("mzdevmass" %in% what) {
     ## Plot mass deviation depending on absolute mass
     # Add extra space to right of plot area; change clipping to figure
@@ -115,7 +112,7 @@ plotQC <- function(object,
          col=sampColors, pch = ".", type = "p",
          main = "m/z Deviation vs. m/z",
          xlab = "m/z", ylab = "m/z deviation")
-    
+
     for(i in 1:n) {
       data <- na.omit(data.frame(mzs = deviations$mzs[,i], mzdev = deviations$mzdev[,i]))
       lo <- loess(formula = mzdev ~ mzs, data = data)
@@ -125,8 +122,8 @@ plotQC <- function(object,
     }
     legend("topright", legend=sampNames, col=sampColors, pch = c(1), cex=0.35,  ncol=4, title = "samples")
   }
-  
-  
+
+
   if ("mzdevtime" %in% what) {
     ## Plot mass deviation depending on retention time
     ## Add extra space to right of plot area; change clipping to figure
@@ -134,7 +131,7 @@ plotQC <- function(object,
     plot(x = as.vector(deviations$rts), y = deviations$mzdev, pch = ".", type = "p",
          col=sampColors, main = "m/z deviation vs. retention time",
          xlab = "Retention Time", ylab = "m/z deviation")
-    
+
     for(i in 1:n){
       data <- na.omit(data.frame(rts = deviations$rts[,i], mzdev = deviations$mzdev[,i]))
       lo <- loess(formula = mzdev ~ rts, data = data)
@@ -144,10 +141,10 @@ plotQC <- function(object,
     }
     legend("topright", legend=sampNames, col=sampColors, pch = c(1), cex=0.35,  ncol=4, title = "samples")
   }
-  
+
   ## still to come: median deviations per sample,
   ## to detect corrupt samples
-  
+
   if ("mzdevsample" %in% what) {
     barplot(apply(deviations$mzdev[,sampOrder], MARGIN=2, FUN=function(x) median(x, na.rm=TRUE)),
             col = sampColors, xlab = "", ylab = "m/z Deviation",
