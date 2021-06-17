@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="xcms-direct-injection_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="xcms-direct-injection_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Grouping FTICR-MS data with xcms</h1>
@@ -107,19 +107,19 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
 </div>
 <div id="peak-detection" class="section level1">
 <h1 class="hasAnchor">
 <a href="#peak-detection" class="anchor" aria-hidden="true"></a>Peak detection</h1>
-<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
+<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
 <p>Below we load the required packages. For information on the parallel processing setup please see the <code>BiocParallel</code> vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MassSpecWavelet</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.13/msdata" class="external-link">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.13/msdata" class="external-link">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.14/msdata" class="external-link">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.14/msdata" class="external-link">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mzdata_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
 <span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">mzdata_path</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  Number of spectra: 4 
 ##  MSn retention times: 0:01 - 0:01 minutes
 ## - - - Processing information - - -
-## Data loaded [Fri May 21 08:04:06 2021] 
+## Data loaded [Thu Jun 17 10:19:46 2021] 
 ##  MSnbase version: 2.17.8 
 ## - - - Meta data  - - -
 ## phenoData
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div id="further-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#further-analysis" class="anchor" aria-hidden="true"></a>Further analysis</h1>
-<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.13/limma" class="external-link">limma</a></em>.</p>
+<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.14/limma" class="external-link">limma</a></em>.</p>
 </div>
   </div>
 

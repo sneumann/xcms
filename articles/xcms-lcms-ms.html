@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="xcms-lcms-ms_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><script src="xcms-lcms-ms_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>LC-MS/MS data analysis with xcms</h1>
@@ -102,18 +102,18 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-05-21 06:54:13<br><strong>Compiled</strong>: Fri May 21 08:04:16 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-06-17 09:09:55<br><strong>Compiled</strong>: Thu Jun 17 10:19:58 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
 <p>Metabolite identification is an important step in non-targeted metabolomics and requires different steps. One involves the use of tandem mass spectrometry to generate fragmentation spectra of detected metabolites (LC-MS/MS), which are then compared to fragmentation spectra of known metabolites. Different approaches exist for the generation of these fragmentation spectra, whereas the most used is data dependent acquisition (DDA) also known as the top-n method. In this method the top N most intense m/z values from a MS1 scan are selected for fragmentation in the next N scans before the cycle starts again. This method allows to generate clean MS2 fragmentation spectra on the fly during acquisition without the need for further experiments, but suffers from poor coverage of the detected metabolites (since only a limited number of ions are fragmented).</p>
 <p>Data independent approaches (DIA) like Bruker bbCID, Agilent AllIons or Waters MSe don’t use such a preselection, but rather fragment all detected molecules at once. They are using alternating schemes with scan of low and high collision energy to collect MS1 and MS2 data. Using this approach, there is no problem in coverage, but the relation between the precursor and fragment masses is lost leading to chimeric spectra. Sequential Window Acquisition of all Theoretical Mass Spectra (or SWATH <span class="citation">[1]</span>) combines both approaches through a middle-way approach. There is no precursor selection and acquisition is independent of acquired data, but rather than isolating all precusors at once, defined windows (i.e. ranges of m/z values) are used and scanned. This reduces the overlap of fragment spectra while still keeping a high coverage.</p>
-<p>This document showcases the analysis of two small LC-MS/MS data sets using <em><a href="https://bioconductor.org/packages/3.13/xcms" class="external-link">xcms</a></em>. The data files used are reversed-phase LC-MS/MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH acquisition mode. For comparison a DDA file from the same sample is included.</p>
+<p>This document showcases the analysis of two small LC-MS/MS data sets using <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em>. The data files used are reversed-phase LC-MS/MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH acquisition mode. For comparison a DDA file from the same sample is included.</p>
 </div>
 <div id="analysis-of-dda-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#analysis-of-dda-data" class="anchor" aria-hidden="true"></a>Analysis of DDA data</h1>
-<p>Below we load the example DDA data set using the <code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.13/MSnbase" class="external-link">MSnbase</a></em> package.</p>
+<p>Below we load the example DDA data set using the <code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.14/MSnbase" class="external-link">MSnbase</a></em> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 
@@ -144,9 +144,9 @@ document.addEventListener("DOMContentLoaded", function() {
     <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## F1.S1570 F1.S1588 F1.S1592 F1.S1594 F1.S1595 F1.S1596 
 ##        0        0        0        0        0        0</code></pre>
-<p>Some manufacturers (like Sciex for the present test data) don’t define/export the precursor intensity and thus either <code>NA</code> or <code>0</code> is reported. We can however use the <code>estimatePrecursorIntensity</code> function to determine the precursor intensity for a MS 2 spectrum based on the intensity of the respective ion in the previous MS1 scan (note that with <code>method = "interpolation"</code> the precursor intensity would be defined based on interpolation between the intensity in the previous and subsequent MS1 scan). Below we estimate the precursor intensities, on the full data (for MS1 spectra a <code>NA</code> value is reported)</p>
+<p>Some manufacturers (like Sciex for the present test data) don’t define/export the precursor intensity and thus either <code>NA</code> or <code>0</code> is reported. We can however use the <code>estimatePrecursorIntensity</code> function from the <code>xcms</code> package to determine the precursor intensity for a MS 2 spectrum based on the intensity of the respective ion in the previous MS1 scan (note that with <code>method = "interpolation"</code> the precursor intensity would be defined based on interpolation between the intensity in the previous and subsequent MS1 scan). Below we estimate the precursor intensities, on the full data (for MS1 spectra a <code>NA</code> value is reported). Note also that we use <code>xcms::</code> to call the function from the <code>xcms</code> package, because a function with the same name is also implemented in the <code>Spectra</code> package, which would however not support <code>OnDiskMSnExp</code> objects as input.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prec_int</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimatePrecursorIntensity.html">estimatePrecursorIntensity</a></span><span class="op">(</span><span class="va">dda_data</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">prec_int</span> <span class="op">&lt;-</span> <span class="fu">xcms</span><span class="fu">::</span><span class="fu"><a href="../reference/estimatePrecursorIntensity.html">estimatePrecursorIntensity</a></span><span class="op">(</span><span class="va">dda_data</span><span class="op">)</span></code></pre></div>
 <p>We next set the precursor intensity in the spectrum metadata of <code>dda_data</code>. So that it can be extracted later with the <code>precursorIntensity</code> function.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureData.html" class="external-link">fData</a></span><span class="op">(</span><span class="va">dda_data</span><span class="op">)</span><span class="op">$</span><span class="va">precursorIntensity</span> <span class="op">&lt;-</span> <span class="va">prec_int</span>
@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
                      peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span>
 <span class="va">dda_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">dda_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></code></pre></div>
 <p>In total 112 peaks were identified in the present data set.</p>
-<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). Spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method. MS2 spectra with their precursor m/z and retention time within the rt and m/z range of the chromatographic peak are returned. Parameter <code>return.type</code> allows to define in which format these are returned. With <code>return.type = "List"</code> or <code>return.type = "Spectra"</code> the data is represented by a <code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.13/Spectra" class="external-link">Spectra</a></em>.</p>
+<p>The advantage of LC-MS/MS data is that (MS1) ions are fragmented and the corresponding MS2 spectra measured. Thus, for some of the ions (identified as MS1 chromatographic peaks) MS2 spectra are available. These can facilitate the annotation of the respective MS1 chromatographic peaks (or MS1 features after a correspondence analysis). Spectra for identified chromatographic peaks can be extracted with the <code>chromPeakSpectra</code> method. MS2 spectra with their precursor m/z and retention time within the rt and m/z range of the chromatographic peak are returned. Parameter <code>return.type</code> allows to define in which format these are returned. With <code>return.type = "List"</code> or <code>return.type = "Spectra"</code> the data is represented by a <code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.14/Spectra" class="external-link">Spectra</a></em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra" class="external-link">Spectra</a></span><span class="op">)</span>
 <span class="va">dda_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromPeakSpectra.html">chromPeakSpectra</a></span><span class="op">(</span>
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ## F1.S3505         2   418.926      3505
 ##  ... 38 more variables/columns.
 ## Processing:
-##  Switch backend from MsBackendMzR to MsBackendDataFrame [Fri May 21 08:04:30 2021]</code></pre>
+##  Switch backend from MsBackendMzR to MsBackendDataFrame [Thu Jun 17 10:20:16 2021]</code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20 ppm (parameter <code>ppm</code>) were combined into one peak and the median m/z and intensity is reported for these. Due to parameter <code>minProp = 0.8</code>, the resulting MS2 spectrum contains only peaks that were present in 80% of the input spectra.</p>
 <p>A plot of this <em>consensus</em> spectrum is shown below.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -484,7 +484,7 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 ## 62          2   574.942        NA
 ##  ... 20 more variables/columns.
 ## Processing:
-##  Merge 1 Spectra into one [Fri May 21 08:05:00 2021]</code></pre>
+##  Merge 1 Spectra into one [Thu Jun 17 10:20:52 2021]</code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak:</p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">ms2_peak_id</span></code></pre></div>
@@ -640,7 +640,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R Under development (unstable) (2021-04-15 r80175)
+<pre><code>## R version 4.1.0 (2021-05-18)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 20.04.2 LTS
 ## 
@@ -656,60 +656,60 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
-## [8] methods   base     
+## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
-##  [1] MsBackendMgf_1.1.0  magrittr_2.0.1      pander_0.6.3       
-##  [4] Spectra_1.3.0       xcms_3.15.0         MSnbase_2.17.8     
-##  [7] ProtGenerics_1.23.9 S4Vectors_0.30.0    mzR_2.26.0         
-## [10] Rcpp_1.0.6          Biobase_2.52.0      BiocGenerics_0.38.0
-## [13] BiocParallel_1.26.0 BiocStyle_2.20.0   
+##  [1] MsBackendMgf_1.1.2  magrittr_2.0.1      pander_0.6.4       
+##  [4] Spectra_1.3.1       xcms_3.15.2         MSnbase_2.17.8     
+##  [7] ProtGenerics_1.25.0 S4Vectors_0.31.0    mzR_2.27.0         
+## [10] Rcpp_1.0.6          Biobase_2.53.0      BiocGenerics_0.39.1
+## [13] BiocParallel_1.27.0 BiocStyle_2.21.2   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-7                matrixStats_0.58.0         
+##  [1] bitops_1.0-7                matrixStats_0.59.0         
 ##  [3] fs_1.5.0                    doParallel_1.0.16          
 ##  [5] RColorBrewer_1.1-2          rprojroot_2.0.2            
-##  [7] GenomeInfoDb_1.28.0         tools_4.1.0                
+##  [7] GenomeInfoDb_1.29.0         tools_4.1.0                
 ##  [9] bslib_0.2.5.1               utf8_1.2.1                 
-## [11] R6_2.5.0                    affyio_1.62.0              
-## [13] colorspace_2.0-1            MassSpecWavelet_1.58.0     
-## [15] compiler_4.1.0              preprocessCore_1.54.0      
-## [17] textshaping_0.3.4           desc_1.3.0                 
-## [19] DelayedArray_0.18.0         bookdown_0.22              
+## [11] R6_2.5.0                    affyio_1.63.1              
+## [13] colorspace_2.0-1            MassSpecWavelet_1.59.0     
+## [15] compiler_4.1.0              preprocessCore_1.55.0      
+## [17] textshaping_0.3.5           desc_1.3.0                 
+## [19] DelayedArray_0.19.0         bookdown_0.22              
 ## [21] sass_0.4.0                  scales_1.1.1               
-## [23] DEoptimR_1.0-8              robustbase_0.93-7          
-## [25] affy_1.70.0                 pkgdown_1.6.1.9001         
+## [23] DEoptimR_1.0-9              robustbase_0.93-8          
+## [25] affy_1.71.0                 pkgdown_1.6.1.9001         
 ## [27] systemfonts_1.0.2           stringr_1.4.0              
-## [29] digest_0.6.27               rmarkdown_2.8              
-## [31] XVector_0.32.0              pkgconfig_2.0.3            
-## [33] htmltools_0.5.1.1           MatrixGenerics_1.4.0       
+## [29] digest_0.6.27               rmarkdown_2.9              
+## [31] XVector_0.33.0              pkgconfig_2.0.3            
+## [33] htmltools_0.5.1.1           MatrixGenerics_1.5.0       
 ## [35] highr_0.9                   fastmap_1.1.0              
-## [37] limma_3.48.0                rlang_0.4.11               
-## [39] impute_1.66.0               jquerylib_0.1.4            
-## [41] jsonlite_1.7.2              mzID_1.30.0                
+## [37] limma_3.49.0                rlang_0.4.11               
+## [39] impute_1.67.0               jquerylib_0.1.4            
+## [41] jsonlite_1.7.2              mzID_1.31.0                
 ## [43] RCurl_1.98-1.3              GenomeInfoDbData_1.2.6     
-## [45] MALDIquant_1.19.3           Matrix_1.3-3               
-## [47] munsell_0.5.0               fansi_0.4.2                
-## [49] MsCoreUtils_1.4.0           lifecycle_1.0.0            
-## [51] vsn_3.60.0                  stringi_1.6.2              
+## [45] MALDIquant_1.19.3           Matrix_1.3-4               
+## [47] munsell_0.5.0               fansi_0.5.0                
+## [49] MsCoreUtils_1.5.0           lifecycle_1.0.0            
+## [51] vsn_3.61.0                  stringi_1.6.2              
 ## [53] yaml_2.2.1                  MASS_7.3-54                
-## [55] SummarizedExperiment_1.22.0 zlibbioc_1.38.0            
+## [55] SummarizedExperiment_1.23.0 zlibbioc_1.39.0            
 ## [57] plyr_1.8.6                  grid_4.1.0                 
-## [59] crayon_1.4.1                lattice_0.20-44            
-## [61] knitr_1.33                  pillar_1.6.1               
-## [63] GenomicRanges_1.44.0        codetools_0.2-18           
-## [65] XML_3.99-0.6                glue_1.4.2                 
-## [67] evaluate_0.14               pcaMethods_1.84.0          
-## [69] BiocManager_1.30.15         vctrs_0.3.8                
-## [71] foreach_1.5.1               gtable_0.3.0               
-## [73] RANN_2.6.1                  clue_0.3-59                
-## [75] cachem_1.0.5                ggplot2_3.3.3              
-## [77] xfun_0.23                   ragg_1.1.2                 
-## [79] ncdf4_1.17                  tibble_3.1.2               
-## [81] iterators_1.0.13            memoise_2.0.0              
-## [83] IRanges_2.26.0              cluster_2.1.2              
-## [85] ellipsis_0.3.2</code></pre>
+## [59] parallel_4.1.0              crayon_1.4.1               
+## [61] lattice_0.20-44             knitr_1.33                 
+## [63] pillar_1.6.1                GenomicRanges_1.45.0       
+## [65] codetools_0.2-18            XML_3.99-0.6               
+## [67] glue_1.4.2                  evaluate_0.14              
+## [69] pcaMethods_1.85.0           BiocManager_1.30.16        
+## [71] vctrs_0.3.8                 foreach_1.5.1              
+## [73] gtable_0.3.0                RANN_2.6.1                 
+## [75] clue_0.3-59                 cachem_1.0.5               
+## [77] ggplot2_3.3.3               xfun_0.24                  
+## [79] ragg_1.1.3                  ncdf4_1.17                 
+## [81] tibble_3.1.2                iterators_1.0.13           
+## [83] memoise_2.0.0               IRanges_2.27.0             
+## [85] cluster_2.1.2               ellipsis_0.3.2</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
