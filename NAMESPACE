@@ -32,9 +32,7 @@ import("BiocParallel")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
-
 importFrom("SummarizedExperiment", "SummarizedExperiment")
-
 importFrom("MsCoreUtils", "rbindFill", "closest")
 
 ## Additional imports proposed by R CMD check:
@@ -522,3 +520,23 @@ exportMethods("hasChromPeaks",
               "filterColumnsKeepTop",
 	      "filterChromPeaks"
               )
+
+## feature grouping functions and methods.
+importFrom("MsCoreUtils",
+           "group")
+importFrom("utils", "txtProgressBar", "setTxtProgressBar")
+importMethodsFrom("MsFeatures",
+                  "featureGroups",
+		  "featureGroups<-",
+		  "groupFeatures")
+importClassesFrom("MsFeatures",
+                  "SimilarRtimeParam",
+		  "AbundanceSimilarityParam")
+importFrom("MsFeatures",
+           "SimilarRtimeParam",
+	   "AbundanceSimilarityParam")
+exportMethods("featureGroups",
+              "featureGroups<-")
+## exportClasses("EicCorrelationParam")
+## export("EicCorrelationParam")
+export("plotFeatureGroups")

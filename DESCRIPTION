@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.15.2
+Version: 3.15.3
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -52,7 +52,8 @@ Imports:
     robustbase,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils
+    MsCoreUtils,
+    MsFeatures
 Suggests:
     BiocStyle,
     caTools,
@@ -121,6 +122,7 @@ Collate:
     'methods-XCMSnExp.R'
     'methods-XChromatogram.R'
     'methods-XChromatograms.R'
+    'methods-group-features.R'
     'methods-xcmsEIC.R'
     'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'
