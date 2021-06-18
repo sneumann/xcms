@@ -1829,7 +1829,7 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
                                ppm = 0, skipFilled = FALSE,
                                peaks = character()) {
     if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
-        featureData(x)$retentionTime <- rtime(x)
+        fData(x)$retentionTime <- rtime(x)
     ## from_msl <- 1L
     method <- match.arg(method)
     if (msLevel == 1L && method %in% c("closest_mz", "signal")) {
