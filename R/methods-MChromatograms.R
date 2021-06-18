@@ -63,110 +63,29 @@ setMethod("findChromPeaks", signature(object = "MChromatograms",
 }
 
 #' @rdname correlate-Chromatogram
-setMethod("correlate", signature = c(x = "MChromatograms", y = "missing"),
+setMethod("correlate",
+          signature = c(x = "MChromatograms", y = "missing"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("closest", "approx"), full = TRUE,
                    ...) {
-              .correlate_chromatograms(
-                  x, x, use = use, method = method, align = align,
-                  full = full, ...)
+              .compare_chromatograms(
+                  x, x, ALIGNFUN = alignRt, ALIGNFUNARGS = list(method = align),
+                  FUN = cor, FUNARGS = list(method = method, use = use),
+                  full = full)
           })
 
 #' @rdname correlate-Chromatogram
-setMethod("correlate", signature = c(x = "MChromatograms", y = "MChromatograms"),
+setMethod("correlate",
+          signature = c(x = "MChromatograms", y = "MChromatograms"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("closest", "approx"), ...) {
-              .correlate_chromatograms(x, y, use = use, method = method,
-                                       align = align, ...)
+                   align = c("closest", "approx"), full = TRUE, ...) {
+              .compare_chromatograms(
+                  x, y, ALIGNFUN = alignRt, ALIGNFUNARGS = list(method = align),
+                  FUN = cor, FUNARGS = list(method = method, use = use),
+                  full = full)
           })
-
-#' @title Correlate chromatograms within an `MChromatograms` with each other
-#'
-#' @description
-#'
-#' The `correlate_chromatograms_self` function correlates each chromatogram
-#' in an (single column) [MChromatograms()] object with each other.
-#'
-#' @note
-#'
-#' This is an optimized version that does not calculate the lower triangular
-#' part of the correlation matrix - but might thus also not be correct,
-#' @param x `MChromatograms` object or a `list` of [Chromatogram] objects.
-#'
-#' @param ... Additional arguments to be passed down to the [correlate()]
-#'     function.
-#'
-#' @return `matrix` with the correlation coefficients.
-#'
-#' @importMethodsFrom xcms correlate
-#'
-#' @importFrom MSnbase Chromatogram
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-#'
-#' @examples
-#'
-#' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
-#' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-#'     intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
-#' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
-#'     intensity = c(53, 80, 130, 15, 5, 3, 2))
-#'
-#' correlate_chromatograms_self(list(chr1, chr2, chr3))
-#'
-#' chrs <- MChromatograms(list(chr1, chr2, chr3))
-#' correlate_chromatograms_self(chrs)
-.correlate_chromatograms_self <- function(x, ...) {
-    if (inherits(x, "MChromatograms")) {
-        if (ncol(x) > 1)
-            stop("Currently only single column MChromatograms are supported.")
-        x <- unlist(x)
-    }
-    nx <- length(x)
-    m <- matrix(NA_real_, nrow = nx, ncol = nx)
-    cb <- which(lower.tri(m, diag = TRUE), arr.ind = TRUE)
-    for (i in seq_len(nrow(cb))) {
-        cur <- cb[i, 2L]
-        if (i == 1L || cb[i - 1L, 2L] != cur)
-            py <- px <- x[[cur]]
-        else
-            py <- x[[cb[i, 1L]]]
-        m[cb[i, 1L], cur] <- m[cur, cb[i, 1L]] <-
-            correlate(px, py, ...)
-    }
-    m
-}
-
-.correlate_chromatograms <- function(x, y, full = TRUE, ...) {
-    if (inherits(x, "MChromatograms")) {
-        if (ncol(x) > 1)
-            stop("Currently only single column MChromatograms are supported.")
-        x <- unlist(x)
-    }
-    if (inherits(y, "MChromatograms")) {
-        if (ncol(y) > 1)
-            stop("Currently only single column MChromatograms are supported.")
-        y <- unlist(y)
-    }
-    nx <- length(x)
-    ny <- length(y)
-
-    m <- matrix(NA_real_, nrow = nx, ncol = ny)
-
-    for (i in seq_len(nx)) {
-        for (j in seq_len(ny)) {
-            if (!full && i > j)
-                next
-            m[i, j] <- correlate(x[[i]], y[[j]], ...)
-        }
-    }
-    m
-}
 
 #' @rdname removeIntensity-Chromatogram
 setMethod("removeIntensity", "MChromatograms",

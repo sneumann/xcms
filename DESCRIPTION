@@ -36,7 +36,7 @@ Authors@R: c(
 Depends:
     R (>= 4.0.0),
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.17.7)
+    MSnbase (>= 2.19.1)
 Imports:
     mzR (>= 2.25.3),
     methods,

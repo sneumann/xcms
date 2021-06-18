@@ -33,6 +33,7 @@
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
   align = c("closest", "approx"),
+  full = TRUE,
   ...
 )
 }
