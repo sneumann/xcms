@@ -149,6 +149,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
+#' **Please use [compareChromatograms()] instead of `correlate`**
+#'
 #' Correlate intensities of two chromatograms with each other. If the two
 #' `Chromatogram` objects have different retention times they are first
 #' *aligned* to match data points in the first to data points in the second
@@ -210,19 +212,21 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' chrs <- MChromatograms(list(chr1, chr2, chr3))
 #'
-#' correlate(chr1, chr2)
-#' correlate(chr2, chr1)
+#' ## Using `compareChromatograms` instead of `correlate`.
+#' compareChromatograms(chr1, chr2)
+#' compareChromatograms(chr2, chr1)
 #'
-#' ## To only intensities larger than 5.
-#' correlate(chr1, chr2, useIntensitiesAbove = 5)
-#'
-#' correlate(chrs, chrs)
+#' compareChromatograms(chrs, chrs)
 setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
           function(x, y, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("closest", "approx"), ...) {
-              .correlate_chromatogram(
-                  x, y, use = use, method = method, align = align, ...)
+              .Deprecated(new = "compareChromatograms")
+              lst <- list(...)
+              compareChromatograms(
+                  x, y, ALIGNFUN = alignRt, FUN = cor,
+                  ALIGNFUNARGS = c(list(method = align), lst),
+                  FUNARGS = c(list(method = method, use = use), lst))
           })
 
 #' @title Remove intensities from chromatographic data
@@ -278,6 +282,7 @@ setMethod("removeIntensity", "Chromatogram",
           function(object, which = "below_threshold", threshold = 0) {
               which <- match.arg(which)
               if (which == "below_threshold")
-                  object@intensity[which(object@intensity < threshold)] <- NA_real_
+                  object@intensity[which(object@intensity < threshold)] <-
+                      NA_real_
               object
           })

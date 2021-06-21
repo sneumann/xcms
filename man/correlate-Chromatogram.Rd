@@ -67,6 +67,8 @@ represent the chromatograms in \code{x} and the columns the chromatograms in
 \code{y}.
 }
 \description{
+\strong{Please use \code{\link[=compareChromatograms]{compareChromatograms()}} instead of \code{correlate}}
+
 Correlate intensities of two chromatograms with each other. If the two
 \code{Chromatogram} objects have different retention times they are first
 \emph{aligned} to match data points in the first to data points in the second
@@ -97,13 +99,11 @@ chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
 
 chrs <- MChromatograms(list(chr1, chr2, chr3))
 
-correlate(chr1, chr2)
-correlate(chr2, chr1)
+## Using `compareChromatograms` instead of `correlate`.
+compareChromatograms(chr1, chr2)
+compareChromatograms(chr2, chr1)
 
-## To only intensities larger than 5.
-correlate(chr1, chr2, useIntensitiesAbove = 5)
-
-correlate(chrs, chrs)
+compareChromatograms(chrs, chrs)
 }
 \author{
 Michael Witting, Johannes Rainer

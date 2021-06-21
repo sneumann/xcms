@@ -1,5 +1,6 @@
 Changes in version 3.15.3
 
+- Import `compareChromatograms` from `MSnbase`.
 - Add feature grouping by similar retention time: `SimilarRtimeParams.
 - Add feature grouping by similarity of feature abundances across samples:
   `AbundanceSimilarityParam`.

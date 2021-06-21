@@ -69,9 +69,12 @@ setMethod("correlate",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("closest", "approx"), full = TRUE,
                    ...) {
-              .compare_chromatograms(
-                  x, x, ALIGNFUN = alignRt, ALIGNFUNARGS = list(method = align),
-                  FUN = cor, FUNARGS = list(method = method, use = use),
+              .Deprecated(new = "compareChromatograms")
+              dots <- list(...)
+              compareChromatograms(
+                  x, x, ALIGNFUN = alignRt, FUN = cor,
+                  ALIGNFUNARGS = c(list(method = align), dots),
+                  FUNARGS = c(list(method = method, use = use), dots),
                   full = full)
           })
 
@@ -81,9 +84,12 @@ setMethod("correlate",
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("closest", "approx"), full = TRUE, ...) {
-              .compare_chromatograms(
-                  x, y, ALIGNFUN = alignRt, ALIGNFUNARGS = list(method = align),
-                  FUN = cor, FUNARGS = list(method = method, use = use),
+              .Deprecated(new = "compareChromatograms")
+              dots <- list(...)
+              compareChromatograms(
+                  x, y, ALIGNFUN = alignRt, FUN = cor,
+                  ALIGNFUNARGS = c(list(method = align), dots),
+                  FUNARGS = c(list(method = method, use = use), dots),
                   full = full)
           })
 

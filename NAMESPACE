@@ -537,6 +537,4 @@ importFrom("MsFeatures",
 	   "AbundanceSimilarityParam")
 exportMethods("featureGroups",
               "featureGroups<-")
-## exportClasses("EicCorrelationParam")
-## export("EicCorrelationParam")
 export("plotFeatureGroups")
