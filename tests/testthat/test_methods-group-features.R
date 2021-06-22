@@ -16,7 +16,7 @@ test_that("featureGroups,featureGroups<-,XCMSnExp works", {
     expect_error(featureGroups(xodg) <- 1:2, "length")
 })
 
-test_that("SimillarRtimeParam works", {
+test_that("SimilarRtimeParam works", {
     prm <- SimilarRtimeParam(3)
 
     expect_error(groupFeatures(xod_x, prm), "No feature definitions")
@@ -51,42 +51,6 @@ test_that("SimillarRtimeParam works", {
     expect_true(all(is.na(featureGroups(res))[idx]))
     expect_false(any(is.na(featureGroups(res))[-idx]))
 })
-
-## test_that("EicCorrelationParam works", {
-##     res <- EicCorrelationParam(threshold = 4)
-##     expect_equal(res@threshold, 4)
-
-##     expect_error(EicCorrelationParam(threshold = c(1, 2)), "positive numeric")
-##     expect_error(EicCorrelationParam(n = 1:2), "positive numeric")
-##     expect_error(EicCorrelationParam(clean = c(TRUE, FALSE)), "length 1")
-##     expect_error(EicCorrelationParam(value = "other"))
-
-##     ## n bigger than 3
-##     expect_error(groupFeatures(xodg, param = EicCorrelationParam(n = 5)),
-##                  "smaller or")
-##     ## no feature definitions
-##     expect_error(groupFeatures(xod_x, param = EicCorrelationParam()), "No")
-##     ## MS level length > 1
-##     expect_error(
-##         groupFeatures(xodg, param = EicCorrelationParam(), msLevel = 1:2),
-##         "single MS level")
-
-##     idx <- c(9, 14, 30, 32, 47, 45)
-##     tmp <- xodg
-##     featureDefinitions(tmp)$feature_group <- NA
-##     featureDefinitions(tmp)$feature_group[idx] <- "FG"
-##     res <- groupFeatures(tmp, param = EicCorrelationParam())
-##     expect_true(all(is.na(featureDefinitions(res)$feature_group[-idx])))
-
-##     expect_true(length(unique(featureGroups(res))) < length(idx))
-
-##     featureDefinitions(tmp)$feature_group <- NULL
-##     featureDefinitions(tmp)$ms_level[idx] <- 2
-
-##     res_2 <- groupFeatures(tmp, param = EicCorrelationParam(), msLevel = 2)
-##     expect_equal(featureDefinitions(res)$feature_group,
-##                  featureDefinitions(res_2)$feature_group)
-## })
 
 test_that("AbundanceSimilarityParam works", {
     prm <- AbundanceSimilarityParam(threshold = 0.5, value = "maxo")
@@ -208,3 +172,121 @@ test_that("AbundanceSimilarityParam works", {
 ##     expect_equal(res[[1]], res_all[[idx[1]]])
 ##     expect_equal(res[[2]], res_all[[idx[2]]])
 ## })
+
+test_that(".group_eic_similarity works", {
+    set.seed(123)
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+                         intensity = c(53, 80, 130, 15, 5, 3, 2))
+    chrs <- MChromatograms(list(chr1, chr2, chr3))
+
+    res <- .group_eic_similarity(chrs, ALIGNFUNARGS = list(method = "closest"))
+    expect_true(is.factor(res))
+    expect_equal(res, factor(c(1L, 2L, 1L)))
+    res <- .group_eic_similarity(
+        chrs, ALIGNFUNARGS = list(method = "closest", tolerance = 0))
+    expect_equal(res, factor(c(1L, 2L, 3L)))
+
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1, chr2, chr3), ncol = 2)
+    res <- .group_eic_similarity(chrs, aggregationFun = mean,
+                                 ALIGNFUNARGS = list(method = "closest"))
+    expect_equal(res, factor(c(1L, 2L, 1L)))
+    res <- .group_eic_similarity(chrs, aggregationFun = max,
+                                 ALIGNFUNARGS = list(method = "closest"))
+    expect_equal(res, factor(c(1L, 2L, 1L)))
+    res <- .group_eic_similarity(chrs, aggregationFun = min,
+                                 ALIGNFUNARGS = list(method = "closest"))
+    expect_equal(res, factor(c(1L, 2L, 1L)))
+
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1, chr2, chr3,
+                                chr2, chr3, chr1), ncol = 3)
+    res <- .group_eic_similarity(chrs, ALIGNFUNARGS = list(method = "closest"))
+    expect_true(is.factor(res))
+    expect_equal(res, factor(c(1L, 2L, 3L)))
+
+    res <- .group_eic_similarity(chrs, aggregationFun = max,
+                                 threshold = 0.1,
+                                 ALIGNFUNARGS = list(method = "closest"))
+    expect_true(is.factor(res))
+    expect_equal(res, factor(c(1L, 1L, 1L)))
+
+    res <- .group_eic_similarity(chrs, aggregationFun = median,
+                                 ALIGNFUNARGS = list(method = "closest"))
+    expect_true(is.factor(res))
+    expect_equal(res, factor(c(1L, 2L, 1L)))
+})
+
+test_that("EicSimilarityParam works", {
+    res <- EicSimilarityParam()
+    expect_equal(res@threshold, 0.9)
+    expect_equal(res@ALIGNFUNARGS, list(tolerance = 0, method = "closest"))
+    expect_equal(res@ALIGNFUN, alignRt)
+    expect_equal(res@FUN, stats::cor)
+    expect_equal(res@FUNARGS, list(use = "pairwise.complete.obs"))
+    expect_equal(res@n, 1L)
+    expect_equal(res@onlyPeak, TRUE)
+    expect_equal(res@dots, list())
+
+    res <- EicSimilarityParam(FUN = dist)
+    expect_equal(res@FUN, dist)
+    res <- EicSimilarityParam(ALIGNFUN = sum)
+    expect_equal(res@ALIGNFUN, sum)
+    res <- EicSimilarityParam(groupFun = max)
+    expect_equal(res@groupFun, max)
+    res <- EicSimilarityParam(threshold = 0, n = 10, onlyPeak = FALSE)
+    expect_equal(res@threshold, 0)
+    expect_equal(res@n, 10)
+    expect_equal(res@onlyPeak, FALSE)
+    res <- EicSimilarityParam(ALIGNFUNARGS = list(a = 4))
+    expect_equal(res@ALIGNFUNARGS, list(a = 4))
+    res <- EicSimilarityParam(FUNARGS = list(b = 5))
+    expect_equal(res@FUNARGS, list(b = 5))
+    res <- EicSimilarityParam(someother = 5)
+    expect_equal(res@dots, list(someother = 5))
+
+    expect_error(EicSimilarityParam(threshold = c(4, 3)), "positive numeric")
+    expect_error(EicSimilarityParam(n = 1:2), "positive numeric")
+    expect_error(EicSimilarityParam(onlyPeak = c(TRUE, FALSE)), "length 1")
+    expect_error(EicSimilarityParam(value = "other"))
+
+})
+
+test_that("groupFeatures,EicSimilarityParam works", {
+    ## n bigger than 3
+    expect_error(groupFeatures(xodg, param = EicSimilarityParam(n = 5)),
+                 "smaller than or")
+    ## no feature definitions
+    expect_error(groupFeatures(xod_x, param = EicSimilarityParam()), "No")
+    ## MS level length > 1
+    expect_error(
+        groupFeatures(xodg, param = EicSimilarityParam(), msLevel = 1:2),
+        "single MS level")
+
+    tmp <- xodg
+    res_all <- groupFeatures(tmp, param = EicSimilarityParam())
+    expect_true(is.character(featureGroups(res_all)))
+
+    idx <- c(3, 12, 13, 34, 39, 40)
+    tmp <- xodg
+    featureDefinitions(tmp)$feature_group <- NA
+    featureDefinitions(tmp)$feature_group[idx] <- "FG"
+    res <- groupFeatures(tmp, param = EicSimilarityParam())
+    expect_true(all(is.na(featureGroups(res)[-idx])))
+    expect_true(length(unique(featureGroups(res))) < length(idx))
+    expect_equal(as.integer(factor(featureGroups(res)[idx])),
+                 as.integer(factor(featureGroups(res_all)[idx])))
+
+    featureDefinitions(tmp)$feature_group <- NULL
+    featureDefinitions(tmp)$ms_level[idx] <- 2
+
+    res_2 <- groupFeatures(tmp, param = EicSimilarityParam(), msLevel = 2)
+    expect_equal(featureDefinitions(res)$feature_group,
+                 featureDefinitions(res_2)$feature_group)
+
+    res <- groupFeatures(xodgg, param = EicSimilarityParam(threshold = 0.7))
+    expect_true(length(table(featureGroups(xodgg))) <
+                length(table(featureGroups(res))))
+})

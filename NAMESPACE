@@ -524,7 +524,6 @@ exportMethods("hasChromPeaks",
 ## feature grouping functions and methods.
 importFrom("MsCoreUtils",
            "group")
-importFrom("utils", "txtProgressBar", "setTxtProgressBar")
 importMethodsFrom("MsFeatures",
                   "featureGroups",
 		  "featureGroups<-",
@@ -534,7 +533,9 @@ importClassesFrom("MsFeatures",
 		  "AbundanceSimilarityParam")
 importFrom("MsFeatures",
            "SimilarRtimeParam",
-	   "AbundanceSimilarityParam")
+	   "AbundanceSimilarityParam",
+	   "groupSimilarityMatrix")
 exportMethods("featureGroups",
               "featureGroups<-")
-export("plotFeatureGroups")
+export("plotFeatureGroups", "EicSimilarityParam")
+exportClasses("EicSimilarityParam")

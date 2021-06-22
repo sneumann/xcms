@@ -17,43 +17,43 @@
 )
 }
 \arguments{
-\item{object}{[XCMSnExp()] object containing also correspondence results.}
+\item{object}{\code{\link[=XCMSnExp]{XCMSnExp()}} object containing also correspondence results.}
 
-\item{param}{`AbudanceSimilarityParam` object with the settings for the
-method. See [AbundanceSimilarityParam()] for details on the grouping
+\item{param}{\code{AbudanceSimilarityParam} object with the settings for the
+method. See \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for details on the grouping
 method and its parameters.}
 
-\item{msLevel}{`integer(1)` defining the MS level on which the features
+\item{msLevel}{\code{integer(1)} defining the MS level on which the features
 should be grouped.}
 
-\item{method}{`character(1)` passed to the `featureValues` call. See
-[featureValues()] for details. Defaults to `method = "medret"`.}
+\item{method}{\code{character(1)} passed to the \code{featureValues} call. See
+\code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{method = "medret"}.}
 
-\item{value}{`character(1)` passed to the `featureValues` call. See
-[featureValues()] for details. Defaults to `value = "into"`.}
+\item{value}{\code{character(1)} passed to the \code{featureValues} call. See
+\code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{value = "into"}.}
 
-\item{intensity}{`character(1)` passed to the `featureValues` call. See
-[featureValues()] for details. Defaults to `intensity = "into"`.}
+\item{intensity}{\code{character(1)} passed to the \code{featureValues} call. See
+\code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{intensity = "into"}.}
 
-\item{filled}{`logical(1)` whether filled-in values should be included in
-the correlation analysis. Defaults to `filled = TRUE`.}
+\item{filled}{\code{logical(1)} whether filled-in values should be included in
+the correlation analysis. Defaults to \code{filled = TRUE}.}
 
-\item{...}{additional parameters passed to the `groupFeatures` method for
-`matrix`.}
+\item{...}{additional parameters passed to the \code{groupFeatures} method for
+\code{matrix}.}
 }
 \value{
-input `XCMSnExp` with feature group definitions added to a column
-    `"feature_group"` in its `featureDefinitions` data frame.
+input \code{XCMSnExp} with feature group definitions added to a column
+\code{"feature_group"} in its \code{featureDefinitions} data frame.
 }
 \description{
 This method groups features based on similarity of abundances (i.e.
-*feature values*) across samples. See also [AbundanceSimilarityParam()] for
+\emph{feature values}) across samples. See also \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for
 additional information and details.
 
-This help page lists parameters specific for `xcms` result objects (i.e. the
-[XCMSnExp()] object). Documentation of the parameters for the similarity
-calculation is available in the [AbundanceSimilarityParam()] help page in
-the `MsFeatures` package.
+This help page lists parameters specific for \code{xcms} result objects (i.e. the
+\code{\link[=XCMSnExp]{XCMSnExp()}} object). Documentation of the parameters for the similarity
+calculation is available in the \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} help page in
+the \code{MsFeatures} package.
 }
 \examples{
 
@@ -86,6 +86,7 @@ table(featureDefinitions(xodg_grp)$feature_group)
 feature-grouping for a general overview.
 
 Other feature grouping methods: 
+\code{\link{groupFeatures-eic-similarity}},
 \code{\link{groupFeatures-similar-rtime}}
 }
 \author{

@@ -69,7 +69,8 @@ Suggests:
     MALDIquant,
     pheatmap,
     Spectra (>= 1.1.17),
-    MsBackendMgf
+    MsBackendMgf,
+    progress
 Enhances:
     Rgraphviz,
     rgl,

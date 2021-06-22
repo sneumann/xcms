@@ -11,41 +11,40 @@
 \S4method{featureGroups}{XCMSnExp}(object) <- value
 }
 \arguments{
-\item{object}{an [XCMSnExp()] object.}
+\item{object}{an \code{\link[=XCMSnExp]{XCMSnExp()}} object.}
 
-\item{value}{for `featureGroups<-`: replacement for the feature groups in
-`object`. Has to be of length 1 or length equal to the number of features
-in `object`.}
+\item{value}{for \verb{featureGroups<-}: replacement for the feature groups in
+\code{object}. Has to be of length 1 or length equal to the number of features
+in \code{object}.}
 }
 \description{
-After correspondence analysis ([xcms::groupChromPeaks()]) the identified
+After correspondence analysis (\code{\link[=groupChromPeaks]{groupChromPeaks()}}) the identified
 LC-MS features can be further grouped based on different criteria into
-*feature groups* which contain ideally features representing
+\emph{feature groups} which contain ideally features representing
 ions (adducts, isotopes) of the same compound/metabolite.
 
-See [MsFeatures::groupFeatures()] for an overview on the general feature
+See \code{\link[MsFeatures:groupFeatures]{MsFeatures::groupFeatures()}} for an overview on the general feature
 grouping concept as well as details on the individual settings and
 parameters.
 
-The available options for `groupFeatures` on `xcms` preprocessing results
-(i.e. on `XCMSnExp` objects after correspondence analysis with
-[groupChromPeaks()]) are:
-
-- Grouping by similar retention times: [groupFeatures-similar-rtime()].
-
-- Grouping by similar feature values across samples:
-  [AbundanceSimilarityParam()].
-
-- Grouping by similar peak shape of extracted ion chromatograms:
-  [EicCorrelationParam()].
+The available options for \code{groupFeatures} on \code{xcms} preprocessing results
+(i.e. on \code{XCMSnExp} objects after correspondence analysis with
+\code{\link[=groupChromPeaks]{groupChromPeaks()}}) are:
+\itemize{
+\item Grouping by similar retention times: \code{\link[=groupFeatures-similar-rtime]{groupFeatures-similar-rtime()}}.
+\item Grouping by similar feature values across samples:
+\code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}}.
+\item Grouping by similar peak shape of extracted ion chromatograms:
+\code{\link[=EicSimilarityParam]{EicSimilarityParam()}}.
+}
 
 An ideal workflow grouping features should sequentially perform the above
 methods (in the listed order).
 
-Feature groups can be accessed with the `featureGroups` function.
+Feature groups can be accessed with the \code{featureGroups} function.
 }
 \seealso{
-[plotFeatureGroups()] for visualization of grouped features.
+\code{\link[=plotFeatureGroups]{plotFeatureGroups()}} for visualization of grouped features.
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy, Vinicius Veri Hernandes

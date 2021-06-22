@@ -8,29 +8,29 @@
 \S4method{groupFeatures}{XCMSnExp,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
 }
 \arguments{
-\item{object}{[XCMSnExp()] object containing also correspondence results.}
+\item{object}{\code{\link[=XCMSnExp]{XCMSnExp()}} object containing also correspondence results.}
 
-\item{param}{`SimilarRtimeParam` object with the settings for the method. See
-[MsFeatures::SimilarRtimeParam()] for details and options.}
+\item{param}{\code{SimilarRtimeParam} object with the settings for the method. See
+\code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}} for details and options.}
 
-\item{msLevel}{`integer(1)` defining the MS level on which the features
+\item{msLevel}{\code{integer(1)} defining the MS level on which the features
 should be grouped.}
 
-\item{...}{passed to the `groupFeatures` function on numeric values.}
+\item{...}{passed to the \code{groupFeatures} function on numeric values.}
 }
 \value{
-input `XCMSnExp` with feature groups added (i.e. in column
-    `"feature_group"` of its `featureDefinitions` data frame.
+input \code{XCMSnExp} with feature groups added (i.e. in column
+\code{"feature_group"} of its \code{featureDefinitions} data frame.
 }
 \description{
 Group features based on similar retention time. This method is supposed to be
-used as an initial *crude* grouping of features based on the median retention
+used as an initial \emph{crude} grouping of features based on the median retention
 time of all their chromatographic peaks. All features with a difference in
-their retention time which is `<=` parameter `diffRt` of the parameter object
-are grouped together. If a column `"feature_group"` is found in
-[xcms::featureDefinitions()] this is further sub-grouped by this method.
+their retention time which is \code{<=} parameter \code{diffRt} of the parameter object
+are grouped together. If a column \code{"feature_group"} is found in
+\code{\link[=featureDefinitions]{featureDefinitions()}} this is further sub-grouped by this method.
 
-See [MsFeatures::SimilarRtimeParam()] in `MsFeatures` for more details.
+See \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}} in \code{MsFeatures} for more details.
 }
 \examples{
 
@@ -63,7 +63,8 @@ length(unique(featureDefinitions(xodg_grp)$feature_group))
 }
 \seealso{
 Other feature grouping methods: 
-\code{\link{groupFeatures-abundance-correlation}}
+\code{\link{groupFeatures-abundance-correlation}},
+\code{\link{groupFeatures-eic-similarity}}
 }
 \author{
 Johannes Rainer

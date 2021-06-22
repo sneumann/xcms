@@ -18,37 +18,37 @@ plotFeatureGroups(
 )
 }
 \arguments{
-\item{x}{[XCMSnExp()] object with grouped features (i.e. after calling
-[groupFeatures()].}
+\item{x}{\code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features (i.e. after calling
+\code{\link[=groupFeatures]{groupFeatures()}}.}
 
-\item{xlim}{`numeric(2)` with the lower and upper limit for the x-axis.}
+\item{xlim}{\code{numeric(2)} with the lower and upper limit for the x-axis.}
 
-\item{ylim}{`numeric(2)` with the lower and upper limit for the y-axis.}
+\item{ylim}{\code{numeric(2)} with the lower and upper limit for the y-axis.}
 
-\item{xlab}{`character(1)` with the label for the x-axis.}
+\item{xlab}{\code{character(1)} with the label for the x-axis.}
 
-\item{ylab}{`character(1)` with the label for the y-axis.}
+\item{ylab}{\code{character(1)} with the label for the y-axis.}
 
-\item{pch}{the plotting character. Defaults to `pch = 4` i.e. plotting
-features as crosses. See [par()] for more information.}
+\item{pch}{the plotting character. Defaults to \code{pch = 4} i.e. plotting
+features as crosses. See \code{\link[=par]{par()}} for more information.}
 
 \item{col}{color to be used to draw the features. At present only a single
 color is supported.}
 
-\item{type}{plotting type (see [par()]). Defaults to `type = "o"` which
+\item{type}{plotting type (see \code{\link[=par]{par()}}). Defaults to \code{type = "o"} which
 draws each feature as a point and connecting the features of the same
 feature group with a line.}
 
-\item{main}{`character(1)` with the title of the plot.}
+\item{main}{\code{character(1)} with the title of the plot.}
 
-\item{featureGroups}{optional `character` of feature group IDs to draw only
+\item{featureGroups}{optional \code{character} of feature group IDs to draw only
 specified feature group(s). If not provided, all feature groups are
 drawn.}
 }
 \description{
-`plotFeatureGroups` visualizes defined feature groups in the m/z by
+\code{plotFeatureGroups} visualizes defined feature groups in the m/z by
 retention time space. Features are indicated by points with features from
-the same feature group being connected by a line. See [featureGroups()]
+the same feature group being connected by a line. See \code{\link[=featureGroups]{featureGroups()}}
 for details on and options for feature grouping.
 }
 \author{
