@@ -139,4 +139,5 @@ Collate:
     'writemzdata.R'
     'writemztab.R'
     'xcmsSource.R'
+    'xdata.R'
     'zzz.R'
