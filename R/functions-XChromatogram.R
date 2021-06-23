@@ -203,15 +203,17 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
 #' @param pks chromatographic peaks as returned by `chromPeaks(x)`.
 #'
 #' @noRd
-.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch, ...) {
+.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch,
+                                    yoffset = 0, ...) {
     switch(type,
            point = {
-               points(pks[, "rt"], pks[, "maxo"], pch = pch, col = col,
-                      bg = bg, ...)
+               points(pks[, "rt"], pks[, "maxo"] + yoffset, pch = pch,
+                      col = col, bg = bg, ...)
            },
            rectangle = {
                rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-                    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
+                    ybottom = rep(yoffset, nrow(pks)),
+                    ytop = pks[, "maxo"] + yoffset,
                     col = bg, border = col, ...)
            },
            polygon = {
@@ -222,7 +224,7 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                xs_all <- numeric()
                ys_all <- numeric()
                for (i in seq_len(nrow(pks))) {
-                   if (inherits(x, "XChromatograms")) {
+                   if (inherits(x, "MChromatograms")) {
                        chr <- filterRt(x[pks[i, "row"], pks[i, "column"]],
                                        rt = pks[i, c("rtmin", "rtmax")])
                    } else
@@ -234,7 +236,7 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                        bg <- bg[-i]
                    }
                    xs <- c(xs[1], xs, xs[length(xs)])
-                   ys <- c(0, intensity(chr), 0)
+                   ys <- c(yoffset, intensity(chr) + yoffset, yoffset)
                    nona <- !is.na(ys)
                    if (length(xs_all)) {
                        xs_all <- c(xs_all, NA)

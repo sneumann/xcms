@@ -1,5 +1,7 @@
 Changes in version 3.15.3
 
+- Add `plotChromatogramsOverlay` function to support plotting of multiple EICs
+  from the same sample into the same plot (eventually stacked).
 - Add feature grouping by EIC similarity: `EicSimilarityParam`.
 - Import `compareChromatograms` from `MSnbase`.
 - Add feature grouping by similar retention time: `SimilarRtimeParams.

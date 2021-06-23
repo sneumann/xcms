@@ -165,3 +165,43 @@ test_that("normalize,MChromatograms works", {
     expect_equal(intensity(res[1, 2]) * max(intensity(chrs[1, 2]), na.rm = TRUE),
                  intensity(chrs[1, 2]))
 })
+
+test_that(".plot_xchromatograms_overlay works", {
+    set.seed(123)
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chrs <- MChromatograms(list(chr1, chr2), ncol = 1)
+    .plot_xchromatograms_overlay(chrs)
+    .plot_xchromatograms_overlay(chrs, xlim = c(-10, 20),
+                                 ylim = c(0, 150), fill = "red")
+    .plot_xchromatograms_overlay(chrs, xlim = c(-10, 20), ylim = c(0, 150),
+                                 yoffset = 10, fill = c("red", "blue"))
+
+})
+
+test_that("plotChromatogramsOverlay,MChromatograms,XChromatograms work", {
+    data(xdata)
+    dirname(xdata) <- c(rep(system.file("cdf", "KO", package = "faahKO"), 4),
+                        rep(system.file("cdf", "WT", package = "faahKO"), 4))
+    fts <- c("FT097", "FT163", "FT165")
+    xdata <- filterFile(xdata, file = 1:2, keepFeatures = TRUE)
+    chrs <- featureChromatograms(xdata, features = fts)
+
+    plotChromatogramsOverlay(chrs)
+    plotChromatogramsOverlay(chrs, peakType = "rectangle", peakBg = NA)
+    plotChromatogramsOverlay(
+        chrs, peakType = "rectangle", peakBg = NA, yoffset = 100000,
+        fill = c("#ff000040", "#00ff0040", "#0000ff40"))
+
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.5, bty = "n")
+    expect_equal(length(res), ncol(chrs))
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.1, bty = "n")
+
+    plotChromatogramsOverlay(chrs[1, ])
+
+    chr <- chrs[, 1]
+    plotChromatogramsOverlay(chr, peakBg = c("red", "blue"))
+    plotChromatogramsOverlay(chr, peakBg = c("blue", "red"))
+})

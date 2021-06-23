@@ -18,7 +18,7 @@ importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
 importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
-           "grid", "mtext", "polygon")
+           "grid", "mtext", "polygon", "box", "plot.xy")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
            "level.colors", "do.breaks")
@@ -42,7 +42,8 @@ importFrom("graphics", "abline", "barplot", "close.screen", "hist",
            "strwidth", "text", "title")
 importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
            "dev.list", "dev.off", "dev.set", "palette", "pdf", "png",
-           "rainbow", "rgb", "terrain.colors")
+           "rainbow", "rgb", "terrain.colors", "n2mfrow", "dev.flush",
+	   "dev.hold", "xy.coords")
 importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
@@ -518,7 +519,8 @@ exportMethods("hasChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
               "filterColumnsKeepTop",
-	      "filterChromPeaks"
+	      "filterChromPeaks",
+	      "plotChromatogramsOverlay"
               )
 
 ## feature grouping functions and methods.
