@@ -361,7 +361,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                    drop = FALSE]
     ## Select peaks within rt range.
     if (length(rt)) {
-        rt <- range(rt)
+        rt <- range(as.numeric(rt))
         if (type == "any")
             keep <- which(pks[, "rtmin"] <= rt[2] & pks[, "rtmax"] >= rt[1])
         if (type == "within")
@@ -372,7 +372,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     }
     ## Select peaks within mz range, considering also ppm
     if (length(mz) && length(pks)) {
-        mz <- range(mz)
+        mz <- range(as.numeric(mz))
         ## Increase mz by ppm.
         if (is.finite(mz[1]))
             mz[1] <- mz[1] - mz[1] * ppm / 1e6
