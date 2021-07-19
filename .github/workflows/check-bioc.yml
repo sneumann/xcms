@@ -150,18 +150,10 @@ jobs:
           tar fvxzm szip-2.1.1-darwin.17-x86_64.tar.gz -C /
           rm szip-2.1.1-darwin.17-x86_64.tar.gz
 
-      - name: Install macOS R packages
-        if: matrix.config.os == 'macOS-latest'
-        run: |
-          ## Edit below if you have any Windows system dependencies
-          BiocManager::install("sneumann/mzR")
-        shell: Rscript {0}
-
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
           ## Edit below if you have any Windows system dependencies
-          BiocManager::install("sneumann/mzR")
         shell: Rscript {0}
 
       - name: Install BiocManager
@@ -204,6 +196,7 @@ jobs:
           BiocManager::install(c("faahKO"))
           BiocManager::install("lgatto/ProtGenerics")
           BiocManager::install("lgatto/MSnbase")
+          BiocManager::install("sneumann/mzR")
           BiocManager::install("RforMassSpectrometry/Spectra")
           BiocManager::install("RforMassSpectrometry/MsBackendMgf")
           BiocManager::install("magick")
