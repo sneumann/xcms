@@ -67,15 +67,14 @@ setMethod("correlate",
           signature = c(x = "MChromatograms", y = "missing"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("closest", "approx"), full = TRUE,
+                   align = c("closest", "approx"),
                    ...) {
               .Deprecated(new = "compareChromatograms")
               dots <- list(...)
               compareChromatograms(
                   x, x, ALIGNFUN = alignRt, FUN = cor,
                   ALIGNFUNARGS = c(list(method = align), dots),
-                  FUNARGS = c(list(method = method, use = use), dots),
-                  full = full)
+                  FUNARGS = c(list(method = method, use = use), dots))
           })
 
 #' @rdname correlate-Chromatogram
@@ -83,14 +82,13 @@ setMethod("correlate",
           signature = c(x = "MChromatograms", y = "MChromatograms"),
           function(x, y = NULL, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
-                   align = c("closest", "approx"), full = TRUE, ...) {
+                   align = c("closest", "approx"), ...) {
               .Deprecated(new = "compareChromatograms")
               dots <- list(...)
               compareChromatograms(
                   x, y, ALIGNFUN = alignRt, FUN = cor,
                   ALIGNFUNARGS = c(list(method = align), dots),
-                  FUNARGS = c(list(method = method, use = use), dots),
-                  full = full)
+                  FUNARGS = c(list(method = method, use = use), dots))
           })
 
 #' @rdname removeIntensity-Chromatogram

@@ -166,10 +166,6 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' `correlate(chr2, chr1)`. The lower and upper triangular part of the
 #' correlation matrix might thus be different.
 #'
-#' For correlating elements of a `MChromatograms` with each other it might be
-#' sufficient to calculate just the upper triangular matrix. This can be done
-#' by setting `full = FALSE`.
-#'
 #' @param x [Chromatogram()] or [MChromatograms()] object.
 #'
 #' @param y [Chromatogram()] or [MChromatograms()] object.
@@ -183,10 +179,6 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' @param align `character(1)` defining the alignment method to be used. See
 #'     help on `alignRt` in [MSnbase::Chromatogram()] for details. The value of
 #'     this parameter is passed to the `method` parameter of `alignRt`.
-#'
-#' @param full `logical(1)` for `correlate` on a single `MChromatograms` object:
-#'     whether the *full* correlation matrix should be calculated (default) or
-#'     just the upper triangular matrix (and diagonal).
 #'
 #' @param ... optional parameters passed along to the `alignRt` method such as
 #'     `tolerance` that, if set to `0` requires the retention times to be

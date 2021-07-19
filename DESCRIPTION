@@ -42,7 +42,7 @@ Imports:
     methods,
     Biobase,
     BiocGenerics,
-    ProtGenerics (>= 1.23.7),
+    ProtGenerics (>= 1.25.1),
     lattice,
     RColorBrewer,
     plyr,

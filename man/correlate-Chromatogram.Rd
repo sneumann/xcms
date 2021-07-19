@@ -23,7 +23,6 @@
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
   align = c("closest", "approx"),
-  full = TRUE,
   ...
 )
 
@@ -33,7 +32,6 @@
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
   align = c("closest", "approx"),
-  full = TRUE,
   ...
 )
 }
@@ -55,10 +53,6 @@ this parameter is passed to the \code{method} parameter of \code{alignRt}.}
 \item{...}{optional parameters passed along to the \code{alignRt} method such as
 \code{tolerance} that, if set to \code{0} requires the retention times to be
 identical.}
-
-\item{full}{\code{logical(1)} for \code{correlate} on a single \code{MChromatograms} object:
-whether the \emph{full} correlation matrix should be calculated (default) or
-just the upper triangular matrix (and diagonal).}
 }
 \value{
 \code{numeric(1)} or \code{matrix} (if called on \code{MChromatograms} objects)
@@ -83,10 +77,6 @@ Note that the correlation of two chromatograms depends also on their order,
 e.g. \code{correlate(chr1, chr2)} might not be identical to
 \code{correlate(chr2, chr1)}. The lower and upper triangular part of the
 correlation matrix might thus be different.
-
-For correlating elements of a \code{MChromatograms} with each other it might be
-sufficient to calculate just the upper triangular matrix. This can be done
-by setting \code{full = FALSE}.
 }
 \examples{
 

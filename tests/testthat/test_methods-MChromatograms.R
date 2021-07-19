@@ -39,9 +39,9 @@ test_that("correlate,MChromatograms works", {
     res_2 <- correlate(chrs, chrs)
     expect_equal(res_2, res)
 
-    res <- correlate(chrs, full = FALSE)
-    expect_true(is.na(res[2, 1]))
-    expect_true(is.na(res[3, 1]))
+    res <- correlate(chrs)
+    expect_equal(res[2, 1], res[1, 2])
+    expect_equal(res[3, 1], res[1, 3])
 
 })
 

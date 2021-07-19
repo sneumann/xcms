@@ -1129,14 +1129,14 @@ setMethod("[[", "XCMSnExp",
 #'     parent class.
 #'
 #' @author Johannes Rainer
-setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
-    if (hasAdjustedRtime(object) | hasFeatures(object) |
-        hasChromPeaks(object)) {
+setMethod("bin", "XCMSnExp", function(x, binSize = 1L, msLevel.) {
+    if (hasAdjustedRtime(x) | hasFeatures(x) |
+        hasChromPeaks(x)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
-        object <- dropAdjustedRtime(object)
-        object <- dropFeatureDefinitions(object)
-        object <- dropChromPeaks(object)
+        x <- dropAdjustedRtime(x)
+        x <- dropFeatureDefinitions(x)
+        x <- dropChromPeaks(x)
         warning("Removed preprocessing results")
     }
     callNextMethod()

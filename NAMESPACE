@@ -4,7 +4,7 @@ importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
-    "isolationWindowTargetMz", "quantify")
+    "isolationWindowTargetMz", "quantify", "bin")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
