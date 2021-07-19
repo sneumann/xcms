@@ -151,13 +151,13 @@ jobs:
           rm szip-2.1.1-darwin.17-x86_64.tar.gz
 
       - name: Install macOS R packages
-        if: runner.os == 'macOS-latest'
+        if: matrix.config.os == 'macOS-latest'
         run: |
           ## Edit below if you have any Windows system dependencies
           BiocManager::install("sneumann/mzR")
         shell: Rscript {0}
 
-        - name: Install Windows system dependencies
+      - name: Install Windows system dependencies
         if: runner.os == 'Windows'
         run: |
           ## Edit below if you have any Windows system dependencies
