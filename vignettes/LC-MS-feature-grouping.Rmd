@@ -8,8 +8,8 @@ vignette: >
   %\VignetteIndexEntry{LC-MS feature grouping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,BiocStyle,faahKO,pheatmap}
-  %\VignettePackage{CompMetaboTools}
+  %\VignetteDepends{xcms,msdata,BiocStyle,faahKO,pheatmap,MsFeatures}
+  %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
 
