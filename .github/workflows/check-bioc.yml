@@ -196,7 +196,7 @@ jobs:
           BiocManager::install(c("faahKO"))
           BiocManager::install("lgatto/ProtGenerics")
           BiocManager::install("lgatto/MSnbase")
-          BiocManager::install("sneumann/mzR")
+          ## BiocManager::install("sneumann/mzR")
           BiocManager::install("RforMassSpectrometry/Spectra")
           BiocManager::install("RforMassSpectrometry/MsBackendMgf")
           BiocManager::install("magick")
@@ -204,7 +204,7 @@ jobs:
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
-          BiocManager::install("BiocCheck")
+          BiocManager::install(c("BiocCheck", "DBI"))
         shell: Rscript {0}
 
       - name: Install BiocGenerics
