@@ -1,6 +1,6 @@
 ---
 title: "LC-MS feature grouping"
-package: CompMetaboTools
+package: xcms
 output:
   BiocStyle::html_document:
     toc_float: true
@@ -27,6 +27,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ## Silently loading all packages
 library(BiocStyle)
 library(xcms)
+library(MsFeatures)
 register(SerialParam())
 
 ```
