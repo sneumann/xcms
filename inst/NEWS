@@ -1,3 +1,7 @@
+Changes in version 3.14.1
+
+- Compatibility fix for nls() in R >= 4.1, contributed by Rick Helmus.
+
 Changes in version 3.13.8
 
 - Fix plotQC() for XCMSnExp objects
