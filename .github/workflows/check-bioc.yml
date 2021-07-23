@@ -52,9 +52,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: 'devel', bioc: '3.13', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: 'devel', bioc: '3.13'}
-          - { os: windows-latest, r: 'devel', bioc: '3.13'}
+          - { os: ubuntu-latest, r: '4.1', bioc: '3.13', cont: "bioconductor/bioconductor_docker:RELEASE_3_13", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: macOS-latest, r: '4.1', bioc: '3.13'}
+          - { os: windows-latest, r: '4.1', bioc: '3.13'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -194,10 +194,10 @@ jobs:
           ## Manually install packages that seem to be skipped.
           message(paste('****', Sys.time(), 'force installation of selected packages  ****'))
           BiocManager::install(c("faahKO"))
-          BiocManager::install("lgatto/ProtGenerics")
-          BiocManager::install("lgatto/MSnbase")
-          BiocManager::install("RforMassSpectrometry/Spectra")
-          BiocManager::install("RforMassSpectrometry/MsBackendMgf")
+          BiocManager::install("ProtGenerics")
+          BiocManager::install("MSnbase")
+          BiocManager::install("Spectra")
+          BiocManager::install("MsBackendMgf")
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
