@@ -16,6 +16,7 @@
   xlim = numeric(),
   ylim = numeric(),
   stacked = 0,
+  transform = identity,
   ...
 )
 
@@ -33,6 +34,7 @@
   peakCol = NULL,
   peakPch = 1,
   stacked = 0,
+  transform = identity,
   ...
 )
 }
@@ -63,6 +65,11 @@ default) no stacking is performed. With \code{stacked = 1} half of the y-axis
 is used for stacking and half for the intensity y-axis (i.e. the ratio
 between stacking and intensity y-axis is 1:1). Note that if \code{stacking}
 is different from 0 no y-axis and label are drawn.}
+
+\item{transform}{\code{function} to transform the intensity values before
+plotting. Defaults to \code{transform = identity} which plots the data as it
+is. With \code{transform = log10} intensity values would be log10 transformed
+before plotting.}
 
 \item{...}{optional arguments to be passed to the plotting functions (see
 help on the base R \code{plot} function.}

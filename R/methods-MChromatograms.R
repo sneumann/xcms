@@ -332,6 +332,11 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 #'     between stacking and intensity y-axis is 1:1). Note that if `stacking`
 #'     is different from 0 no y-axis and label are drawn.
 #'
+#' @param transform `function` to transform the intensity values before
+#'     plotting. Defaults to `transform = identity` which plots the data as it
+#'     is. With `transform = log10` intensity values would be log10 transformed
+#'     before plotting.
+#'
 #' @param type `character(1)` defing the type of the plot. By default
 #'     (`type = "l"`) each chromatogram is drawn as a line.
 #'
@@ -416,8 +421,9 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 setMethod("plotChromatogramsOverlay", "MChromatograms",
           function(object, col = "#00000060", type = "l", main = NULL,
                    xlab = "rtime", ylab = "intensity", xlim = numeric(),
-                   ylim = numeric(), stacked = 0, ...) {
+                   ylim = numeric(), stacked = 0, transform = identity, ...) {
               nsam <- ncol(object)
+              transform <- match.fun(transform)
               if (nsam > 1)
                   par(mfrow = n2mfrow(nsam, 1))
               res <- vector("list", nsam)
@@ -426,7 +432,7 @@ setMethod("plotChromatogramsOverlay", "MChromatograms",
                       object[, i, drop = FALSE], main = main,
                       xlab = xlab, ylab = ylab, xlim = xlim,
                       ylim = ylim, col = col, type = type,
-                      stacked = stacked, ...)
+                      stacked = stacked, transform = transform, ...)
               }
               invisible(res)
           })
@@ -438,7 +444,8 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
                    ylim = numeric(), peakType = c("polygon", "point",
                                                   "rectangle", "none"),
                    peakBg = NULL, peakCol = NULL, peakPch = 1,
-                   stacked = 0, ...) {
+                   stacked = 0, transform = identity, ...) {
+              transform <- match.fun(transform)
               nsam <- ncol(object)
               peakType <- match.arg(peakType)
               if (nsam > 1)
@@ -450,7 +457,7 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
                       ylab = ylab, xlim = xlim, ylim = ylim, col = col,
                       type = type, peakType = peakType, peakCol = peakCol,
                       peakBg = peakBg, peakPch = peakPch,
-                      stacked = stacked, ...)
+                      stacked = stacked, transform = transform, ...)
               }
               invisible(res)
           })
@@ -460,31 +467,33 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
                                                      "rectangle", "none"),
                                         peakCol = NULL, peakBg = NULL,
                                         peakPch = 1, yoffset = 0,
-                                        fill = NA, ...) {
+                                        fill = NA, transform = identity, ...) {
     peakType <- match.arg(peakType)
     .plot_single_chromatograms(x, type = type, col = col,
-                               yoffset = yoffset, fill = fill, ...)
+                               yoffset = yoffset, fill = fill,
+                               transform = transform, ...)
     pks <- chromPeaks(x)
     if (nrow(pks) && peakType != "none") {
         .add_chromatogram_peaks(as(x, "Chromatogram"), pks, col = peakCol,
                                 bg = peakBg, type = peakType,
-                                pch = peakPch, yoffset = yoffset, ...)
+                                pch = peakPch, yoffset = yoffset,
+                                transform = transform, ...)
     }
 }
 
 .plot_single_chromatograms <- function(x, type = "l", col = "#00000060",
-                                       fill = NA, yoffset = 0, ...) {
+                                       fill = NA, yoffset = 0,
+                                       transform = identity, ...) {
+    ints <- transform(intensity(x)) + yoffset
+    ints[is.infinite(ints)] <- 0
     if (!is.na(fill)) {
-        rts <- rtime(x)
-        ints <- intensity(x)
         nnas <- !is.na(ints)
-        rts <- rts[nnas]
-        ints <- ints[nnas] + yoffset
-        if (length(ints))
+        rts <- rtime(x)[nnas]
+        if (any(nnas))
             polygon(c(rts[1], rts, rts[length(rts)]),
-                    c(yoffset, ints, yoffset), border = NA, col = fill)
+                    c(yoffset, ints[nnas], yoffset), border = NA, col = fill)
     }
-    plot.xy(xy.coords(rtime(x), intensity(x) + yoffset),
+    plot.xy(xy.coords(rtime(x), ints),
             type = type, col = col, ...)
 }
 
@@ -502,7 +511,8 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
                                          peakPch = 1,
                                          fill = NA,
                                          yoffset = 0,
-                                         stacked = 0, ...) {
+                                         stacked = 0,
+                                         transform = identity, ...) {
     if (ncol(x) > 1)
         stop(".plot_chromatograms_overlay supports only single column",
              " XChromatograms")
@@ -515,8 +525,10 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
         fill <- rep(fill[1], nchr)
     if(!length(xlim))
         xlim <- suppressWarnings(range(lapply(x, rtime), na.rm = TRUE))
-    if(!length(ylim))
-        ylim <- range(c(lapply(x, intensity), 0), na.rm = TRUE)
+    if(!length(ylim)) {
+        ylim <- transform(range(c(lapply(x, intensity), 0), na.rm = TRUE))
+        ylim[is.infinite(ylim)] <- 0
+    }
     if (any(is.infinite(xlim)))
         xlim <- c(0, 0)
     if (any(is.infinite(ylim)))
@@ -573,12 +585,14 @@ setMethod("plotChromatogramsOverlay", "XChromatograms",
                                         peakCol = peakCol[pk_row == i],
                                         peakBg = peakBg[pk_row == i],
                                         peakPch = peakPch, fill = fill[i],
-                                        yoffset = ypos[i], ...)
+                                        yoffset = ypos[i],
+                                        transform = transform, ...)
         }
     } else {
         for (i in order(ypos, decreasing = TRUE)) {
             .plot_single_chromatograms(x[i, 1], col = col[i], type = type,
-                                       fill = fill[i], yoffset = ypos[i], ...)
+                                       fill = fill[i], yoffset = ypos[i],
+                                       transform = transform, ...)
         }
     }
     ypos

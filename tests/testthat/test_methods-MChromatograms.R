@@ -190,13 +190,18 @@ test_that("plotChromatogramsOverlay,MChromatograms,XChromatograms work", {
     chrs <- featureChromatograms(xdata, features = fts)
 
     plotChromatogramsOverlay(chrs)
+    plotChromatogramsOverlay(chrs, transform = log10)
     plotChromatogramsOverlay(chrs, peakType = "rectangle", peakBg = NA)
+    plotChromatogramsOverlay(chrs, peakType = "rectangle", peakBg = NA,
+                             transform = log2)
     plotChromatogramsOverlay(
         chrs, peakType = "rectangle", peakBg = NA, yoffset = 100000,
         fill = c("#ff000040", "#00ff0040", "#0000ff40"))
 
     res <- plotChromatogramsOverlay(chrs, stacked = 0.5, bty = "n")
     expect_equal(length(res), ncol(chrs))
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.5, bty = "n",
+                                    transform = log2)
     res <- plotChromatogramsOverlay(chrs, stacked = 0.1, bty = "n")
 
     plotChromatogramsOverlay(chrs[1, ])
@@ -204,4 +209,8 @@ test_that("plotChromatogramsOverlay,MChromatograms,XChromatograms work", {
     chr <- chrs[, 1]
     plotChromatogramsOverlay(chr, peakBg = c("red", "blue"))
     plotChromatogramsOverlay(chr, peakBg = c("blue", "red"))
+
+    chrs <- as(chrs, "MChromatograms")
+    plotChromatogramsOverlay(chrs)
+    plotChromatogramsOverlay(chrs, transform = log2)
 })

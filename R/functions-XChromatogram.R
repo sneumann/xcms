@@ -204,20 +204,20 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
 #'
 #' @noRd
 .add_chromatogram_peaks <- function(x, pks, col, bg, type, pch,
-                                    yoffset = 0, ...) {
+                                    yoffset = 0, transform = identity, ...) {
     switch(type,
            point = {
-               points(pks[, "rt"], pks[, "maxo"] + yoffset, pch = pch,
-                      col = col, bg = bg, ...)
+               points(pks[, "rt"], transform(pks[, "maxo"]) + yoffset,
+                      pch = pch, col = col, bg = bg, ...)
            },
            rectangle = {
                rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
                     ybottom = rep(yoffset, nrow(pks)),
-                    ytop = pks[, "maxo"] + yoffset,
+                    ytop = transform(pks[, "maxo"]) + yoffset,
                     col = bg, border = col, ...)
            },
            polygon = {
-               ordr <- order(pks[, "maxo"], decreasing = TRUE)
+               ordr <- order(transform(pks[, "maxo"]), decreasing = TRUE)
                pks <- pks[ordr, , drop = FALSE]
                col <- col[ordr]
                bg <- bg[ordr]
@@ -236,7 +236,9 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                        bg <- bg[-i]
                    }
                    xs <- c(xs[1], xs, xs[length(xs)])
-                   ys <- c(yoffset, intensity(chr) + yoffset, yoffset)
+                   ints <- transform(intensity(chr))
+                   ints[is.infinite(ints)] <- 0
+                   ys <- c(yoffset, ints + yoffset, yoffset)
                    nona <- !is.na(ys)
                    if (length(xs_all)) {
                        xs_all <- c(xs_all, NA)

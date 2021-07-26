@@ -149,7 +149,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
-#' **Please use [compareChromatograms()] instead of `correlate`**
+#' **For `xcms` >= 3.15.3 please use [compareChromatograms()] instead of
+#' `correlate`**
 #'
 #' Correlate intensities of two chromatograms with each other. If the two
 #' `Chromatogram` objects have different retention times they are first

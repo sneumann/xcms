@@ -61,7 +61,8 @@ represent the chromatograms in \code{x} and the columns the chromatograms in
 \code{y}.
 }
 \description{
-\strong{Please use \code{\link[=compareChromatograms]{compareChromatograms()}} instead of \code{correlate}}
+\strong{For \code{xcms} >= 3.15.3 please use \code{\link[=compareChromatograms]{compareChromatograms()}} instead of
+\code{correlate}}
 
 Correlate intensities of two chromatograms with each other. If the two
 \code{Chromatogram} objects have different retention times they are first
