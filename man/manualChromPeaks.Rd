@@ -2,7 +2,8 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{manualChromPeaks}
 \alias{manualChromPeaks}
-\title{Manual peak integration}
+\alias{manualFeatures}
+\title{Manual peak integration and feature definition}
 \usage{
 manualChromPeaks(
   object,
@@ -11,6 +12,8 @@ manualChromPeaks(
   BPPARAM = bpparam(),
   msLevel = 1L
 )
+
+manualFeatures(object, peakIdx = list(), msLevel = 1L)
 }
 \arguments{
 \item{object}{\code{XCMSnExp} or \code{OnDiskMSnExp} object.}
@@ -27,10 +30,13 @@ integration should be performed. By default performed in all samples.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level in which peak integration
 should be performed.}
+
+\item{peakIdx}{for \code{nabbyakFeatyres}: \code{list} of \code{integer} vectors with the
+indices of chromatographic peaks in the object's \code{chromPeaks} matrix
+that should be grouped into features.}
 }
 \value{
-\code{XCMSnExp} with the manually defined peaks added to the \code{chromPeaks}
-matrix.
+\code{XCMSnExp} with the manually added chromatographic peaks or features.
 }
 \description{
 The \code{manualChromPeaks} function allows to manually define chromatographic
@@ -44,6 +50,10 @@ Because chromatographic peaks are added to eventually previously identified
 peaks, it is suggested to run \code{\link[=refineChromPeaks]{refineChromPeaks()}} with the
 \code{\link[=MergeNeighboringPeaksParam]{MergeNeighboringPeaksParam()}} approach to merge potentially overlapping
 peaks.
+
+The \code{manualFeatures} function allows to manually group identified
+chromatographic peaks into features by providing their index in the
+object's \code{chromPeaks} matrix.
 }
 \author{
 Johannes Rainer

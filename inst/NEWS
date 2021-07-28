@@ -1,5 +1,7 @@
 Changes in version 3.15.3
 
+- Add `manualFeatures` allowing to manually define and add features to an
+  `XCMSnExp` object.
 - Add `plotChromatogramsOverlay` function to support plotting of multiple EICs
   from the same sample into the same plot (eventually stacked).
 - Add feature grouping by EIC similarity: `EicSimilarityParam`.

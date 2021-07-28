@@ -259,6 +259,7 @@ export(
     "groupOverlaps",
     "estimatePrecursorIntensity",
     "manualChromPeaks",
+    "manualFeatures",
     "featureArea"
 )
 
