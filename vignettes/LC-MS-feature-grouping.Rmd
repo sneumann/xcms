@@ -1,5 +1,5 @@
 ---
-title: "LC-MS feature grouping"
+title: "Compounding (grouping) of LC-MS features"
 package: xcms
 output:
   BiocStyle::html_document:
@@ -42,27 +42,28 @@ is then pre-processed to identify chromatographic peaks in the data and to group
 these across samples in the correspondence analysis. The result are distinct
 LC-MS features, characterized by their specific m/z and retention time
 range. Different ions generated during ionization will be detected as different
-features. To reduce data set complexity (and to aid in subsequent annotation
-steps) it is advisable to group features which are supposedly representing
-signal from the same original ion. This document describes functionality to aid
-in this feature grouping step which are provided by this package.
+features. *Compounding* aims now at grouping such features presumably
+representing signal from the same originating compound to reduce data set
+complexity (and to aid in subsequent annotation steps). General MS feature
+grouping functionality if defined by the `r Biocpkg("MsFeatures")` package with
+additional functionality being implemented in the `xcms` package to enable the
+compounding of LC-MS data.
 
-General MS feature grouping concepts and functionality are provided by
-Bioconductor's `r Biocpkg("MsFeatures")` package. Within `xcms` this
-functionality is re-used and expanded to also allow feature grouping based on
-similarity between the features' extracted ion chromatograms (EIC).
+This document provides a simple compounding workflow using `xcms`. Note that the
+present functionality does not (yet) *aggregate* or combine the actual features
+per values, but does only define the feature groups (one per compound).
 
 
-# LC-MS feature grouping
+# Compounding of LC-MS data
 
-We demonstrate the feature grouping functionality on the simple toy data set
-used also in the `r Biocpkg("xcms")` package and provided through the `faahKO`
-package. This data set consists of samples from 4 mice with knock-out of the
-fatty acid amide hydrolase (FAAH) and 4 wild type mice. Pre-processing of this
-data set is described in detail in the *xcms* vignette of the `xcms`
-package. Below we load all required packages and the result from this
-pre-processing updating also the location of the respective raw data files on
-the current machine.
+We demonstrate the compounding (feature grouping) functionality on the simple
+toy data set used also in the `r Biocpkg("xcms")` package and provided through
+the `faahKO` package. This data set consists of samples from 4 mice with
+knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type
+mice. Pre-processing of this data set is described in detail in the *xcms*
+vignette of the `xcms` package. Below we load all required packages and the
+result from this pre-processing updating also the location of the respective raw
+data files on the current machine.
 
 ```{r load-data}
 library(xcms)

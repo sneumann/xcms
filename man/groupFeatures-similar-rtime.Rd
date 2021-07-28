@@ -3,7 +3,7 @@
 \name{groupFeatures-similar-rtime}
 \alias{groupFeatures-similar-rtime}
 \alias{groupFeatures,XCMSnExp,SimilarRtimeParam-method}
-\title{Group features based on similar retention times}
+\title{Compounding/feature grouping based on similar retention times}
 \usage{
 \S4method{groupFeatures}{XCMSnExp,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
 }

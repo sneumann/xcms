@@ -4,7 +4,7 @@
 \alias{feature-grouping}
 \alias{featureGroups,XCMSnExp-method}
 \alias{featureGroups<-,XCMSnExp-method}
-\title{Grouping of LC-MS features}
+\title{Compounding of LC-MS features}
 \usage{
 \S4method{featureGroups}{XCMSnExp}(object)
 
@@ -18,10 +18,15 @@
 in \code{object}.}
 }
 \description{
-After correspondence analysis (\code{\link[=groupChromPeaks]{groupChromPeaks()}}) the identified
-LC-MS features can be further grouped based on different criteria into
-\emph{feature groups} which contain ideally features representing
-ions (adducts, isotopes) of the same compound/metabolite.
+Feature \emph{compounding} aims at identifying and grouping LC-MS features
+representing different ions or adducts (including isotopes) of the same
+originating compound.
+The \href{https://bioconductor.org/packages/MsFeatures}{MsFeatures} package
+provides a general framework and functionality to group features based on
+different properties. The \code{groupFeatures} methods for \linkS4class{XCMSnExp}
+objects implemented in \code{xcms} extend these to enable the \emph{compounding} of
+LC-MS data. Note that these functions simply define feature groups but don't
+actually \emph{aggregate} or combine the features.
 
 See \code{\link[MsFeatures:groupFeatures]{MsFeatures::groupFeatures()}} for an overview on the general feature
 grouping concept as well as details on the individual settings and
@@ -41,7 +46,7 @@ The available options for \code{groupFeatures} on \code{xcms} preprocessing resu
 An ideal workflow grouping features should sequentially perform the above
 methods (in the listed order).
 
-Feature groups can be accessed with the \code{featureGroups} function.
+Compounded feature groups can be accessed with the \code{featureGroups} function.
 }
 \seealso{
 \code{\link[=plotFeatureGroups]{plotFeatureGroups()}} for visualization of grouped features.

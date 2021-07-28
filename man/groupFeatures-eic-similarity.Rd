@@ -5,7 +5,7 @@
 \alias{EicSimilarityParam-class}
 \alias{EicSimilarityParam}
 \alias{groupFeatures,XCMSnExp,EicSimilarityParam-method}
-\title{Group features based on similarity of extracted ion chromatograms}
+\title{Compounding/feature grouping based on similarity of extracted ion chromatograms}
 \usage{
 EicSimilarityParam(
   threshold = 0.9,
@@ -74,11 +74,13 @@ input \code{XCMSnExp} with feature groups added (i.e. in column
 \code{"feature_group"} of its \code{featureDefinitions} data frame.
 }
 \description{
-Group features based on similarity of their extracted ion chromatograms
-(EICs). The similarity calculation is performed separately for each sample
-with the similarity score being aggregated across samples for the final
-generation of the similarity matrix on which the grouping (considering
-parameter \code{threshold}) will be performed.
+Features from the same originating compound are expected to share their
+elution pattern (i.e. chromatographic peak shape) with it.
+Thus, this methods allows to group features based on similarity of their
+extracted ion chromatograms (EICs). The similarity calculation is performed
+separately for each sample with the similarity score being aggregated across
+samples for the final generation of the similarity matrix on which the
+grouping (considering parameter \code{threshold}) will be performed.
 
 The \code{\link[=compareChromatograms]{compareChromatograms()}} function is used for similarity calculation
 which by default calculates the Pearson's correlation coefficient. The

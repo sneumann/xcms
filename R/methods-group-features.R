@@ -1,13 +1,18 @@
-#' @title Grouping of LC-MS features
+#' @title Compounding of LC-MS features
 #'
 #' @name feature-grouping
 #'
 #' @description
 #'
-#' After correspondence analysis ([xcms::groupChromPeaks()]) the identified
-#' LC-MS features can be further grouped based on different criteria into
-#' *feature groups* which contain ideally features representing
-#' ions (adducts, isotopes) of the same compound/metabolite.
+#' Feature *compounding* aims at identifying and grouping LC-MS features
+#' representing different ions or adducts (including isotopes) of the same
+#' originating compound.
+#' The [MsFeatures](https://bioconductor.org/packages/MsFeatures) package
+#' provides a general framework and functionality to group features based on
+#' different properties. The `groupFeatures` methods for [XCMSnExp-class]
+#' objects implemented in `xcms` extend these to enable the *compounding* of
+#' LC-MS data. Note that these functions simply define feature groups but don't
+#' actually *aggregate* or combine the features.
 #'
 #' See [MsFeatures::groupFeatures()] for an overview on the general feature
 #' grouping concept as well as details on the individual settings and
@@ -28,7 +33,7 @@
 #' An ideal workflow grouping features should sequentially perform the above
 #' methods (in the listed order).
 #'
-#' Feature groups can be accessed with the `featureGroups` function.
+#' Compounded feature groups can be accessed with the `featureGroups` function.
 #'
 #' @param object an [XCMSnExp()] object.
 #'
@@ -71,7 +76,7 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 })
 
 
-#' @title Group features based on similar retention times
+#' @title Compounding/feature grouping based on similar retention times
 #'
 #' @name groupFeatures-similar-rtime
 #'
@@ -188,15 +193,16 @@ setMethod(
         object
     })
 
-#' @title Group features based on similarity of abundances across samples
+#' @title Compounding/feature grouping based on similarity of abundances across samples
 #'
 #' @name groupFeatures-abundance-correlation
 #'
 #' @description
 #'
-#' This method groups features based on similarity of abundances (i.e.
-#' *feature values*) across samples. See also [AbundanceSimilarityParam()] for
-#' additional information and details.
+#' Features from the same originating compound are expected to have similar
+#' intensities across samples. This method this groups features based on
+#' similarity of abundances (i.e. *feature values*) across samples.
+#' See also [AbundanceSimilarityParam()] for additional information and details.
 #'
 #' This help page lists parameters specific for `xcms` result objects (i.e. the
 #' [XCMSnExp()] object). Documentation of the parameters for the similarity
@@ -644,7 +650,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 ##     sp
 ## }
 
-#' @title Group features based on similarity of extracted ion chromatograms
+#' @title Compounding/feature grouping based on similarity of extracted ion chromatograms
 #'
 #' @aliases EicSimilarityParam-class
 #'
@@ -652,11 +658,13 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'
 #' @description
 #'
-#' Group features based on similarity of their extracted ion chromatograms
-#' (EICs). The similarity calculation is performed separately for each sample
-#' with the similarity score being aggregated across samples for the final
-#' generation of the similarity matrix on which the grouping (considering
-#' parameter `threshold`) will be performed.
+#' Features from the same originating compound are expected to share their
+#' elution pattern (i.e. chromatographic peak shape) with it.
+#' Thus, this methods allows to group features based on similarity of their
+#' extracted ion chromatograms (EICs). The similarity calculation is performed
+#' separately for each sample with the similarity score being aggregated across
+#' samples for the final generation of the similarity matrix on which the
+#' grouping (considering parameter `threshold`) will be performed.
 #'
 #' The [compareChromatograms()] function is used for similarity calculation
 #' which by default calculates the Pearson's correlation coefficient. The

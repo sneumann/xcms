@@ -3,7 +3,7 @@
 \name{groupFeatures-abundance-correlation}
 \alias{groupFeatures-abundance-correlation}
 \alias{groupFeatures,XCMSnExp,AbundanceSimilarityParam-method}
-\title{Group features based on similarity of abundances across samples}
+\title{Compounding/feature grouping based on similarity of abundances across samples}
 \usage{
 \S4method{groupFeatures}{XCMSnExp,AbundanceSimilarityParam}(
   object,
@@ -46,9 +46,10 @@ input \code{XCMSnExp} with feature group definitions added to a column
 \code{"feature_group"} in its \code{featureDefinitions} data frame.
 }
 \description{
-This method groups features based on similarity of abundances (i.e.
-\emph{feature values}) across samples. See also \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for
-additional information and details.
+Features from the same originating compound are expected to have similar
+intensities across samples. This method this groups features based on
+similarity of abundances (i.e. \emph{feature values}) across samples.
+See also \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for additional information and details.
 
 This help page lists parameters specific for \code{xcms} result objects (i.e. the
 \code{\link[=XCMSnExp]{XCMSnExp()}} object). Documentation of the parameters for the similarity
