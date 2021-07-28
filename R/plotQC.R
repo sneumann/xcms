@@ -60,7 +60,7 @@ plotQC <- function(object,
     deviations$mzdev <- deviations$mzs - groups(object)[,"mzmed"]
     deviations$rtdev <- deviations$rts - groups(object)[,"rtmed"]
 
-  } else if (inherits(objects, "XCMSnExp")) {
+  } else if (inherits(object, "XCMSnExp")) {
     deviations <- list(mzs=featureValues(object, value = "mz"),
                        rts=featureValues(object, value = "rt"))
     deviations$mzdev <- deviations$mzs - featureDefinitions(object)[,"mzmed"]
