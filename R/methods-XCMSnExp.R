@@ -211,6 +211,9 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' chromatographic peaks (rows) in the matrix returned by the
 #' \code{chromPeaks} method that belong to that feature group. The method
 #' returns \code{NULL} if no feature definitions are present.
+#' \code{featureDefinitions} supports also parameters \code{mz}, \code{rt},
+#' \code{ppm} and \code{type} to return only features within certain ranges (see
+#' description of \code{chromPeaks} for details).
 #'
 #' @rdname XCMSnExp-class
 setMethod("featureDefinitions", "XCMSnExp",
@@ -287,10 +290,14 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' only chromatographic peaks overlapping the defined retention time and/or
 #' m/z ranges. Argument \code{type} allows to define how \emph{overlapping} is
 #' determined: for \code{type == "any"} (the default), all peaks that are even
-#' partially overlapping the region are returned, for \code{type == "within"}
-#' the full peak has to be within the region and for
-#' \code{type == "apex_within"} the peak's apex position (highest signal of the
-#' peak) has to be within the region.
+#' partially overlapping the region are returned (i.e. for which either
+#' \code{"mzmin"} or \code{"mzmax"} of the \code{chromPeaks} or
+#' \code{featureDefinitions} matrix are within the provided m/z range), for
+#' \code{type == "within"} the full peak has to be within the region (i.e.
+#' both \code{"mzmin"} and \code{"mzmax"} have to be within the m/z range) and
+#' for \code{type == "apex_within"} the peak's apex position (highest signal
+#' of the peak) has to be within the region (i.e. the peak's or features m/z
+#' has to be within the m/z range).
 #' See description of the return value for details on the returned matrix.
 #' Users usually don't have to use the \code{chromPeaks<-} method directly
 #' as detected chromatographic peaks are added to the object by the
