@@ -1,0 +1,436 @@
+---
+title: "Compounding (grouping) of LC-MS features"
+package: xcms
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{LC-MS feature grouping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,msdata,BiocStyle,faahKO,pheatmap,MsFeatures}
+  %\VignettePackage{xcms}
+  %\VignetteKeywords{mass spectrometry, metabolomics}
+---
+
+```{r biocstyle, echo = FALSE, results = "asis"}
+BiocStyle::markdown()
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer<br />
+**Modified**: `r file.info("LC-MS-feature-grouping.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+
+```{r init, results = "hide", echo = FALSE}
+## Silently loading all packages
+library(BiocStyle)
+library(xcms)
+library(MsFeatures)
+register(SerialParam())
+
+```
+
+# Introduction
+
+In a typical LC-MS-based metabolomics experiment compounds eluting from the
+chromatography are first ionized before being measured by mass spectrometry
+(MS). During the ionization different (multiple) ions can be generated from the
+same compound which all will be measured by MS. In general, the resulting data
+is then pre-processed to identify chromatographic peaks in the data and to group
+these across samples in the correspondence analysis. The result are distinct
+LC-MS features, characterized by their specific m/z and retention time
+range. Different ions generated during ionization will be detected as different
+features. *Compounding* aims now at grouping such features presumably
+representing signal from the same originating compound to reduce data set
+complexity (and to aid in subsequent annotation steps). General MS feature
+grouping functionality if defined by the `r Biocpkg("MsFeatures")` package with
+additional functionality being implemented in the `xcms` package to enable the
+compounding of LC-MS data.
+
+This document provides a simple compounding workflow using `xcms`. Note that the
+present functionality does not (yet) *aggregate* or combine the actual features
+per values, but does only define the feature groups (one per compound).
+
+
+# Compounding of LC-MS data
+
+We demonstrate the compounding (feature grouping) functionality on the simple
+toy data set used also in the `r Biocpkg("xcms")` package and provided through
+the `faahKO` package. This data set consists of samples from 4 mice with
+knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type
+mice. Pre-processing of this data set is described in detail in the *xcms*
+vignette of the `xcms` package. Below we load all required packages and the
+result from this pre-processing updating also the location of the respective raw
+data files on the current machine.
+
+```{r load-data}
+library(xcms)
+library(faahKO)
+library(MsFeatures)
+
+data("xdata")
+## Update the path to the files for the local system
+dirname(xdata) <- c(rep(system.file("cdf", "KO", package = "faahKO"), 4),
+                    rep(system.file("cdf", "WT", package = "faahKO"), 4))
+```
+
+Before performing the feature grouping we inspect the result object. With
+`featureDefinitions` we can extract the results from the correspondence
+analysis.
+
+```{r fdev}
+featureDefinitions(xdata)
+```
+
+Each row in this data frame represents the definition of one feature, with its
+average and range of m/z and retention time. Column `"peakidx"` provides the
+index of each chromatographic peak which is assigned to the feature in the
+`chromPeaks` matrix of the result object. The `featureValues` function allows to
+extract *feature values*, i.e. a matrix with feature abundances, one row per
+feature and columns representing the samples of the present data set.
+
+Below we extract the feature values with and without *filled-in* peak
+data. Without the gap-filled data only abundances from **detected**
+chromatographic peaks are reported. In the gap-filled data, for samples in which
+no chromatographic peak for a feature was detected, all signal from the m/z -
+retention time range defined based on the detected chromatographic peaks was
+integrated.
+
+```{r filled-not-filled}
+head(featureValues(xdata, filled = FALSE))
+head(featureValues(xdata, filled = TRUE))
+```
+
+In total `r nrow(featureDefinitions(xdata))` features have been defined in the
+present data set, many of which most likely represent signal from different ions
+(adducts or isotopes) of the same compound. The aim of the grouping functions of
+are now to define which features most likely come from the same original
+compound. The feature grouping functions base on the following
+assumptions/properties of LC-MS data:
+
+- Features (ions) of the same compound should have similar retention time.
+- The abundance of features (ions) of the same compound should have a similar
+  pattern across samples, i.e. if a compound is highly concentrated in one
+  sample and low in another, all ions from it should follow the same pattern.
+- The peak shape of extracted ion chromatograms (EIC) of features of the same
+  compound should be similar as it should follow the elution pattern of the
+  original compound from the LC.
+
+The main method to perform the feature grouping is called `groupFeatures` which
+takes an `XCMSnExp` object (result object from the `xcms` pre-processing) as
+input as well as a parameter object to chose the grouping algorithm and specify
+its settings. `xcms` provides and supports the following grouping approaches:
+
+- `SimilarRtimeParam`: perform an initial grouping based on similar retention
+  time.
+- `AbundanceSimilarityParam`: perform a feature grouping based on correlation
+  of feature abundances (values) across samples.
+- `EicSimilarityParam`: perform a feature grouping based on correlation of
+  EICs.
+
+Calling `groupFeatures` on an `xcms` result object will perform a feature
+grouping assigning each feature in the data set to a *feature group*. These
+feature groups are stored as an additional column called `"feature_group"` in
+the `featureDefinition` data frame of the result object and can be accessed with
+the `featureGroups` function. Any subsequent `groupFeature` call will
+*sub-group* (refine) the identified feature groups further. It is thus possible
+to use a single grouping approach, or to combine multiple of them to generate
+the desired feature grouping. While the individual feature grouping algorithms
+can be called in any order, it is advisable to use the `EicSimilarityParam` as
+last refinement step, because it is the computationally most expensive one,
+especially if applied to a result object without any pre-defined feature groups
+or if the feature groups are very large. In the subsequent sections we will
+apply the various feature grouping approaches subsequently.
+
+Note also that we perform here a grouping of all defined features, but it would
+also be possible to *just* group a subset of interesting features (e.g. features
+found significant by a statistical analysis of the data set). This is described
+in the last section of this vignette.
+
+
+## Grouping of features by similar retention time
+
+The most intuitive and simple way to group features is based on their retention
+time. Before we perform this initial grouping we evaluate retention times and
+m/z of all features in the present data set.
+
+```{r feature-rt-mz-plot, fig.width = 8, fig.height = 6, fig.cap = "Plot of retention times and m/z for all features in the data set."}
+plot(featureDefinitions(xdata)$rtmed, featureDefinitions(xdata)$mzmed,
+     xlab = "retention time", ylab = "m/z", main = "features",
+     col = "#00000080")
+grid()
+```
+
+Several features with about the same retention time (but different m/z) can be
+seen, especially at the beginning of the LC. We thus below group features within
+a retention time window of 10 seconds into *feature groups*.
+
+```{r}
+xdata <- groupFeatures(xdata, param = SimilarRtimeParam(10))
+```
+
+The results from the feature grouping can be accessed with the `featureGroups`
+function. Below we determine the size of each of these feature groups (i.e. how
+many features are grouped together).
+
+```{r}
+table(featureGroups(xdata))
+```
+
+In addition we visualize these feature groups with the `plotFeatureGroups`
+function which shows all features in the m/z - retention time space with grouped
+features being connected with a line.
+
+```{r feature-groups-rtime-plot, fig.width = 8, fig.height = 6, fig.cap = "Feature groups defined with a rt window of 10 seconds"}
+plotFeatureGroups(xdata)
+grid()
+```
+
+Let's assume we don't agree with this feature grouping, also knowing that there
+were quite large shifts in retention times between runs. We thus re-perform the
+feature grouping based on similar retention time with a larger rt window. Prior
+to the `groupFeatures` call we have however to drop the previously defined
+feature groups as otherwise these would be simply *refined* (i.e. further
+subgrouped).
+
+```{r repeat}
+## Remove previous feature grouping results to repeat the rtime-based
+## feature grouping with different setting
+featureDefinitions(xdata)$feature_group <- NULL
+
+## Repeat the grouping
+xdata <- groupFeatures(xdata, SimilarRtimeParam(20))
+table(featureGroups(xdata))
+```
+
+```{r feature-groups-rtime-plot2, fig.width = 8, fig.height = 6, fig.cap = "Feature groups defined with a rt window of 20 seconds"}
+plotFeatureGroups(xdata)
+grid()
+```
+
+Grouping by similar retention time grouped the in total
+`r nrow(featureDefinitions(xdata))` features into
+`r length(unique(featureGroups(xdata)))` feature groups.
+
+
+## Grouping of features by abundance correlation across samples
+
+Assuming we are OK with the *crude* initial feature grouping from the previous
+section, we can next *refine* the feature groups considering also the feature
+abundances across samples. We can use the `groupFeatures` method with an
+`AbundanceSimilarityParam` object. This approach performs a pairwise
+correlation between the feature values (abundances; across samples) between all
+features of a predefined feature group (such as defined in the previous
+section). Features that have a correlation `>= threshold` are grouped
+together. Feature grouping based on this approach works best for features with a
+higher variability in their concentration across samples. Parameter `subset`
+allows to restrict the analysis to a subset of samples and allows thus to
+e.g. exclude QC sample pools from this correlation as these could artificially
+increase the correlation. Other parameters are passed directly to the internal
+`featureValues` call that extracts the feature values on which the correlation
+should be performed.
+
+Before performing the grouping we could also evaluate the correlation of
+features based on their (log2 transformed) abundances across samples with a
+heatmap.
+
+```{r abundance-correlation-heatmap, fig.cap = "Correlation of features based on feature abundances.", fig.width = 6, fig.height = 16}
+library(pheatmap)
+fvals <- log2(featureValues(xdata, filled = TRUE))
+
+cormat <- cor(t(fvals), use = "pairwise.complete.obs")
+ann <- data.frame(fgroup = featureGroups(xdata))
+rownames(ann) <- rownames(cormat)
+
+res <- pheatmap(cormat, annotation_row = ann, cluster_rows = TRUE,
+                cluster_cols = TRUE)
+```
+
+Some large correlations can be observed for several groups of features, but many
+of them are not within the same *feature group* that were defined in the
+previous section (i.e. are not eluting at the same time).
+
+Below we use the `groupFeatures` with the `AbundanceSimilarityParam` to group
+features with a correlation higher than 0.7 including both detected and
+filled-in signal. Whether filled-in or only detected signal should be used in
+the correlation analysis should be evaluated from data set to data set. By
+specifying `transform = log2` we tell the function to log2 transform the
+abundance prior to the correlation analysis. See the help page for
+`groupFeatures` with `AbundanceSimilarityParam` in the `xcms` package for
+details and options.
+
+```{r abundance-correlation}
+xdata <- groupFeatures(xdata, AbundanceSimilarityParam(threshold = 0.7,
+                                                       transform = log2),
+                       filled = TRUE)
+table(featureGroups(xdata))
+```
+
+Many of the larger retention time-based feature groups have been splitted into
+two or more sub-groups based on the correlation of their feature abundances. We
+evaluate this for one specific feature group `"FG.040"` by plotting their
+pairwise correlation.
+
+```{r abundance-correlation-fg040, fig.width = 8, fig.height = 8, fig.cap = "Pairwise correlation plot for all features initially grouped into the feature group FG.040."}
+fts <- grep("FG.040", featureGroups(xdata))
+pairs(t(fvals[fts, ]), gap = 0.1, main = "FG.040")
+```
+
+Indeed, correlations can be seen only between some of the features in this
+retention time feature group, e.g. between *FT117* and *FT120* and between
+*FT195* and *FT200*. Note however that this abundance correlation suffers from
+relatively few samples (8 in total), and a relatively small variance in
+abundances across these samples.
+
+After feature grouping by abundance correlation, the
+`r nrow(featureDefinitions(xdata))` features have been grouped into
+`r length(unique(featureGroups(xdata)))` feature groups.
+
+
+## Grouping of features by similarity of their EICs
+
+The chromatographic peak shape of an ion of a compound should be highly similar
+to the elution pattern of this compound. Thus, features from the same compound
+are assumed to have similar peak shapes of their EICs **within the same
+sample**. A grouping of features based on similarity of their EICs can be
+performed with the `groupFeatures` and the `EicSimilarityParam` object.  It is
+advisable to perform the peak shape correlation only on a subset of samples
+(because peak shape correlation is computationally intense and because
+chromatographic peaks of low intensity features are notoriously noisy).  The
+`EicSimilarityParam` approach has thus the parameter `n` which allows to select
+the number of top samples (ordered by total intensity of feature abundances per
+feature group) on which the correlation should be performed. With an value of `n
+= 3`, the 3 samples with the highest signal for all features in that group will
+be first identified for each feature group and then a pairwise similarity
+calculation will be performed within each of these samples. The resulting
+similarity score from these 3 samples will then be aggregated into a single
+score by taking the 75% quantile across the 3 samples. This value is then
+subsequently compared with the cut-off for similarity (parameter `threshold`)
+and features with a score `>= threshold` are grouped into the same feature
+group.
+
+Below we group the features based on similarity of their EICs in the two samples
+with the highest total signal for the respective feature groups. By default, a
+Pearson correlation coefficient is used as similarity score but any
+similarity/distance metric function could be used instead (parameter `FUN` of
+the `EicSimilarityParam` - see the respective help page `?EicSimilarityParam`
+for details and options). We define as a threshold a correlation coefficient of
+0.7.
+
+```{r correlate-eic, message = FALSE}
+xdata <- groupFeatures(xdata, EicSimilarityParam(threshold = 0.7, n = 2))
+```
+
+This is the most computationally intense approach since it involves also loading
+the raw MS data to extract the ion chromatograms for each feature. The results
+of the grouping are shown below.
+
+```{r correlate-eic-result}
+table(featureGroups(xdata))
+```
+
+In most cases, pre-defined feature groups (by the abundance correlation) were
+not further subdivided. Below we evaluate some of the feature groups, starting
+with *FG.008.001* which was split into two different feature groups based on EIC
+correlation. We first extract the EICs for all features from this initial
+feature group. With `n = 1` we specify to extract the EIC only from the sample
+with the highest intensity.
+
+```{r}
+fts <- grep("FG.008.001", featureGroups(xdata))
+eics <- featureChromatograms(xdata, features = fts,
+                             filled = TRUE, n = 1)
+```
+
+Next we plot the EICs using a different color for each of the subgroups. With
+`peakType = "none"` we disable the highlighting of the detected chromatographic
+peaks.
+
+```{r example-1-eic, fig.width = 8, fig.height = 6, fig.cap = "EICs of features from feature group FG.008.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color."}
+cols <- c("#ff000080", "#00ff0080")
+names(cols) <- unique(featureGroups(xdata)[fts])
+
+par(mfrow = c(1, 2))
+plotChromatogramsOverlay(eics, col = cols[featureGroups(xdata)[fts]],
+                         lwd = 2, peakType = "none")
+plotChromatogramsOverlay(normalize(eics),
+                         col = cols[featureGroups(xdata)[fts]],
+                         lwd = 2, peakType = "none")
+```
+
+One of the features within the original feature group was separated from the
+other two because of a low similarity of their EICs. In fact, the feature's EIC
+is shifted in retention time dimension and can thus not represent the signal
+from the same compound.
+
+We evaluate next the sub-grouping in another feature group.
+
+```{r}
+fts <- grep("FG.068.001", featureGroups(xdata))
+eics <- featureChromatograms(xdata, features = fts,
+                             filled = TRUE, n = 1)
+```
+
+Next we plot the EICs using a different color for each of the subgroups.
+
+```{r example-2-eic, fig.width = 8, fig.height = 6, fig.cap = "EICs for features from feature group FG.068.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color."}
+cols <- c("#ff000080", "#00ff0080")
+names(cols) <- unique(featureGroups(xdata)[fts])
+
+par(mfrow = c(1, 2))
+plotChromatogramsOverlay(eics, col = cols[featureGroups(xdata)[fts]],
+                         lwd = 2, peakType = "none")
+plotChromatogramsOverlay(normalize(eics),
+                         col = cols[featureGroups(xdata)[fts]],
+                         lwd = 2, peakType = "none")
+
+```
+
+Based on the EIC correlation, the initial feature group *FG.068.001* was grouped
+into two separate sub-groups.
+
+The grouping based on EIC correlation on the pre-defined feature groups from the
+previous sections grouped the `r nrow(featureDefinitions(xdata))` features into
+`r length(unique(featureGroups(xdata)))` feature groups.
+
+## Grouping of subsets of features
+
+In the previous sections we were always considering all features from the data
+set, but sometimes it could be desirable to just group a pre-defined set of
+features, for example features found to be of particular interest in a certain
+experiment (e.g. significant features). This can be easily achieved by assigning
+the features of interest to a initial feature group, using `NA` as group ID
+for all other features.
+
+To illustrate this we *reset* all feature groups by setting them to `NA` and
+assign our features of interest (in this example just 30 randomly selected
+features) to an initial feature group `"FG"`.
+
+```{r reset-feature-groups}
+featureDefinitions(xdata)$feature_group <- NA_character_
+
+set.seed(123)
+fts_idx <- sample(1:nrow(featureDefinitions(xdata)), 30)
+featureDefinitions(xdata)$feature_group[fts_idx] <- "FG"
+```
+
+Any call to `groupFeatures` would now simply sub-group this set of 30
+features. Any feature which has an `NA` in the `"feature_group"` column will be
+ignored.
+
+```{r rtime-grouping}
+xdata <- groupFeatures(xdata, SimilarRtimeParam(diffRt = 20))
+xdata <- groupFeatures(xdata, AbundanceSimilarityParam(threshold = 0.7))
+table(featureGroups(xdata))
+```
+
+
+# Session information
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+# References

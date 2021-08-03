@@ -1829,7 +1829,7 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
                                ppm = 0, skipFilled = FALSE,
                                peaks = character()) {
     if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
-        featureData(x)$retentionTime <- rtime(x)
+        fData(x)$retentionTime <- rtime(x)
     ## from_msl <- 1L
     method <- match.arg(method)
     if (msLevel == 1L && method %in% c("closest_mz", "signal")) {
@@ -3236,7 +3236,7 @@ featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
     keep_all
 }
 
-#' @title Manual peak integration
+#' @title Manual peak integration and feature definition
 #'
 #' @description
 #'
@@ -3252,12 +3252,20 @@ featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
 #' [MergeNeighboringPeaksParam()] approach to merge potentially overlapping
 #' peaks.
 #'
+#' The `manualFeatures` function allows to manually group identified
+#' chromatographic peaks into features by providing their index in the
+#' object's `chromPeaks` matrix.
+#'
 #' @param object `XCMSnExp` or `OnDiskMSnExp` object.
 #'
 #' @param chromPeaks `matrix` defining the boundaries of the chromatographic
 #'     peaks, one row per chromatographic peak, columns `"mzmin"`, `"mzmax"`,
 #'     `"rtmin"` and `"rtmax"` defining the m/z and retention time region of
 #'     each peak.
+#'
+#' @param peakIdx for `nabbyakFeatyres`: `list` of `integer` vectors with the
+#'     indices of chromatographic peaks in the object's `chromPeaks` matrix
+#'     that should be grouped into features.
 #'
 #' @param samples optional `integer` to select samples in which the peak
 #'     integration should be performed. By default performed in all samples.
@@ -3267,8 +3275,7 @@ featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
 #' @param msLevel `integer(1)` defining the MS level in which peak integration
 #'     should be performed.
 #'
-#' @return `XCMSnExp` with the manually defined peaks added to the `chromPeaks`
-#'     matrix.
+#' @return `XCMSnExp` with the manually added chromatographic peaks or features.
 #'
 #' @author Johannes Rainer
 #'
@@ -3346,5 +3353,63 @@ manualChromPeaks <- function(object, chromPeaks = matrix(),
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
     }
+    object
+}
+
+#' @rdname manualChromPeaks
+manualFeatures <- function(object, peakIdx = list(), msLevel = 1L) {
+    if (!length(peakIdx))
+        return(object)
+    if (length(msLevel) > 1L)
+        stop("Length 'msLevel' is > 1: can only add peaks for one MS level",
+             " at a time.")
+    if (!inherits(object, "XCMSnExp"))
+        stop("'object' has to be an XCMSnExp object")
+    if (!hasChromPeaks(object))
+        stop("No features present. Please run 'findChromPeaks' first.")
+    peakIdx <- lapply(peakIdx, as.integer)
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- xcms:::.copy_env(object@msFeatureData)
+    if (hasFeatures(newFd)) {
+        fnew <- as.data.frame(featureDefinitions(newFd))[1L, ]
+        fnew[] <- NA
+        rownames(fnew) <- NULL
+    } else {
+        cn <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax", "npeaks")
+        fnew <- as.data.frame(
+            matrix(ncol = 7, nrow = 1, dimnames = list(character(), cn)))
+    }
+    res <- lapply(peakIdx, function(z) {
+        cp <- chromPeaks(newFd)[z, , drop = FALSE]
+        if (any(is.na(cp[, "sample"])))
+            stop("Some of the provided indices are out of bounds. 'peakIdx' ",
+                 "needs to be a list of valid indices in the 'chromPeaks' ",
+                 "matrix.", call. = FALSE)
+        newf <- fnew
+        newf$mzmed <- median(cp[, "mz"])
+        newf$mzmin <- min(cp[, "mz"])
+        newf$mzmax <- max(cp[, "mz"])
+        newf$rtmed <- median(cp[, "rt"])
+        newf$rtmin <- min(cp[, "rt"])
+        newf$rtmax <- max(cp[, "rt"])
+        newf$npeaks <- length(z)
+        newf
+    })
+    res <- DataFrame(do.call(rbind, res))
+    res$peakidx <- peakIdx
+    res$ms_level <- msLevel
+    ## Define feature IDs
+    if (hasFeatures(newFd))
+        max_id <- max(
+            as.integer(sub("FT", "", rownames(featureDefinitions(newFd)))))
+    else max_id <- 0
+    rownames(res) <- sprintf(
+        paste0("FT", "%0", ceiling(log10(max_id + nrow(res) + 1L)), "d"),
+        (max_id + 1L):(max_id + nrow(res)))
+    suppressWarnings(
+        featureDefinitions(newFd) <- rbind(featureDefinitions(newFd), res)
+    )
+    lockEnvironment(newFd, bindings = TRUE)
+    object@msFeatureData <- newFd
     object
 }

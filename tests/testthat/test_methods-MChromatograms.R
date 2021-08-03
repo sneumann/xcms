@@ -20,75 +20,6 @@ test_that("findChromPeaks,MChromatograms works", {
     expect_equal(chromPeaks(res), chromPeaks(res_3))
 })
 
-test_that(".correlate_chromatograms_self works", {
-    set.seed(123)
-    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
-    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
-    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
-                         intensity = c(53, 80, 130, 15, 5, 3, 2))
-    res <- .correlate_chromatograms_self(list(chr1, chr2, chr3))
-
-    expect_equal(nrow(res), ncol(res))
-    expect_equal(nrow(res), 3)
-    expect_equal(res[c(1, 5, 9)], c(1, 1, 1))
-    expect_true(res[1, 3] > 0.9)
-    expect_true(res[1, 2] < 0.5)
-
-    chrs <- MChromatograms(list(chr1, chr2, chr3))
-    expect_equal(.correlate_chromatograms_self(chrs), res)
-
-    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
-    expect_error(.correlate_chromatograms_self(chrs), "single column")
-})
-
-test_that(".correlate_chromatograms works", {
-    set.seed(123)
-    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
-    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
-                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
-    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
-                         intensity = c(53, 80, 130, 15, 5, 3, 2))
-    res <- .correlate_chromatograms(list(chr1), list(chr2, chr3))
-    expect_equal(ncol(res), 2)
-    expect_equal(nrow(res), 1)
-    expect_true(res[1, 1] < 0.5)
-    expect_true(res[1, 2] > 0.9)
-    res2 <- .correlate_chromatograms(list(chr1), list(chr2, chr3),
-                                           tolerance = 0)
-    expect_true(all(is.na(res2)))
-
-    expect_equal(res, .correlate_chromatograms(list(chr1), list(chr2, chr3),
-                                               full = FALSE))
-
-    res <- .correlate_chromatograms(list(chr1, chr2, chr3),
-                                    list(chr1, chr2, chr3))
-    expect_equal(res[1, 2], correlate(chr1, chr2))
-    expect_equal(res[1, 3], correlate(chr1, chr3))
-    expect_equal(res[2, 1], correlate(chr2, chr1))
-    expect_equal(res[2, 3], correlate(chr2, chr3))
-    expect_equal(res[3, 1], correlate(chr3, chr1))
-
-    res <- .correlate_chromatograms(list(chr1, chr2, chr3),
-                                    list(chr1, chr2, chr3),
-                                    full = FALSE)
-    expect_equal(res[1, 2], correlate(chr1, chr2))
-    expect_equal(res[1, 3], correlate(chr1, chr3))
-    expect_equal(res[2, 1], NA_real_)
-    expect_equal(res[2, 3], correlate(chr2, chr3))
-    expect_equal(res[3, 1], NA_real_)
-
-    res <- .correlate_chromatograms(list(chr1, chr2, chr3),
-                                    list(chr1, chr2),
-                                    full = FALSE)
-
-    chrs <- MChromatograms(list(chr1, chr2, chr3, chr1), ncol = 2)
-    expect_error(.correlate_chromatograms(chrs, list(chr1, chr2)), "single column")
-    expect_error(.correlate_chromatograms(list(chr1, chr2), chrs), "single column")
-})
-
 test_that("correlate,MChromatograms works", {
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -108,9 +39,9 @@ test_that("correlate,MChromatograms works", {
     res_2 <- correlate(chrs, chrs)
     expect_equal(res_2, res)
 
-    res <- correlate(chrs, full = FALSE)
-    expect_true(is.na(res[2, 1]))
-    expect_true(is.na(res[3, 1]))
+    res <- correlate(chrs)
+    expect_equal(res[2, 1], res[1, 2])
+    expect_equal(res[3, 1], res[1, 3])
 
 })
 
@@ -233,4 +164,53 @@ test_that("normalize,MChromatograms works", {
 
     expect_equal(intensity(res[1, 2]) * max(intensity(chrs[1, 2]), na.rm = TRUE),
                  intensity(chrs[1, 2]))
+})
+
+test_that(".plot_xchromatograms_overlay works", {
+    set.seed(123)
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chrs <- MChromatograms(list(chr1, chr2), ncol = 1)
+    .plot_xchromatograms_overlay(chrs)
+    .plot_xchromatograms_overlay(chrs, xlim = c(-10, 20),
+                                 ylim = c(0, 150), fill = "red")
+    .plot_xchromatograms_overlay(chrs, xlim = c(-10, 20), ylim = c(0, 150),
+                                 yoffset = 10, fill = c("red", "blue"))
+
+})
+
+test_that("plotChromatogramsOverlay,MChromatograms,XChromatograms work", {
+    data(xdata)
+    dirname(xdata) <- c(rep(system.file("cdf", "KO", package = "faahKO"), 4),
+                        rep(system.file("cdf", "WT", package = "faahKO"), 4))
+    fts <- c("FT097", "FT163", "FT165")
+    xdata <- filterFile(xdata, file = 1:2, keepFeatures = TRUE)
+    chrs <- featureChromatograms(xdata, features = fts)
+
+    plotChromatogramsOverlay(chrs)
+    plotChromatogramsOverlay(chrs, transform = log10)
+    plotChromatogramsOverlay(chrs, peakType = "rectangle", peakBg = NA)
+    plotChromatogramsOverlay(chrs, peakType = "rectangle", peakBg = NA,
+                             transform = log2)
+    plotChromatogramsOverlay(
+        chrs, peakType = "rectangle", peakBg = NA, yoffset = 100000,
+        fill = c("#ff000040", "#00ff0040", "#0000ff40"))
+
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.5, bty = "n")
+    expect_equal(length(res), ncol(chrs))
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.5, bty = "n",
+                                    transform = log2)
+    res <- plotChromatogramsOverlay(chrs, stacked = 0.1, bty = "n")
+
+    plotChromatogramsOverlay(chrs[1, ])
+
+    chr <- chrs[, 1]
+    plotChromatogramsOverlay(chr, peakBg = c("red", "blue"))
+    plotChromatogramsOverlay(chr, peakBg = c("blue", "red"))
+
+    chrs <- as(chrs, "MChromatograms")
+    plotChromatogramsOverlay(chrs)
+    plotChromatogramsOverlay(chrs, transform = log2)
 })

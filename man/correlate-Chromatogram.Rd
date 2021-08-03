@@ -23,7 +23,6 @@
   use = "pairwise.complete.obs",
   method = c("pearson", "kendall", "spearman"),
   align = c("closest", "approx"),
-  full = TRUE,
   ...
 )
 
@@ -54,10 +53,6 @@ this parameter is passed to the \code{method} parameter of \code{alignRt}.}
 \item{...}{optional parameters passed along to the \code{alignRt} method such as
 \code{tolerance} that, if set to \code{0} requires the retention times to be
 identical.}
-
-\item{full}{\code{logical(1)} for \code{correlate} on a single \code{MChromatograms} object:
-whether the \emph{full} correlation matrix should be calculated (default) or
-just the upper triangular matrix (and diagonal).}
 }
 \value{
 \code{numeric(1)} or \code{matrix} (if called on \code{MChromatograms} objects)
@@ -66,6 +61,9 @@ represent the chromatograms in \code{x} and the columns the chromatograms in
 \code{y}.
 }
 \description{
+\strong{For \code{xcms} >= 3.15.3 please use \code{\link[=compareChromatograms]{compareChromatograms()}} instead of
+\code{correlate}}
+
 Correlate intensities of two chromatograms with each other. If the two
 \code{Chromatogram} objects have different retention times they are first
 \emph{aligned} to match data points in the first to data points in the second
@@ -80,10 +78,6 @@ Note that the correlation of two chromatograms depends also on their order,
 e.g. \code{correlate(chr1, chr2)} might not be identical to
 \code{correlate(chr2, chr1)}. The lower and upper triangular part of the
 correlation matrix might thus be different.
-
-For correlating elements of a \code{MChromatograms} with each other it might be
-sufficient to calculate just the upper triangular matrix. This can be done
-by setting \code{full = FALSE}.
 }
 \examples{
 
@@ -96,13 +90,11 @@ chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
 
 chrs <- MChromatograms(list(chr1, chr2, chr3))
 
-correlate(chr1, chr2)
-correlate(chr2, chr1)
+## Using `compareChromatograms` instead of `correlate`.
+compareChromatograms(chr1, chr2)
+compareChromatograms(chr2, chr1)
 
-## To only intensities larger than 5.
-correlate(chr1, chr2, useIntensitiesAbove = 5)
-
-correlate(chrs, chrs)
+compareChromatograms(chrs, chrs)
 }
 \author{
 Michael Witting, Johannes Rainer

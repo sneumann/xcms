@@ -149,6 +149,9 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
+#' **For `xcms` >= 3.15.3 please use [compareChromatograms()] instead of
+#' `correlate`**
+#'
 #' Correlate intensities of two chromatograms with each other. If the two
 #' `Chromatogram` objects have different retention times they are first
 #' *aligned* to match data points in the first to data points in the second
@@ -164,10 +167,6 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' `correlate(chr2, chr1)`. The lower and upper triangular part of the
 #' correlation matrix might thus be different.
 #'
-#' For correlating elements of a `MChromatograms` with each other it might be
-#' sufficient to calculate just the upper triangular matrix. This can be done
-#' by setting `full = FALSE`.
-#'
 #' @param x [Chromatogram()] or [MChromatograms()] object.
 #'
 #' @param y [Chromatogram()] or [MChromatograms()] object.
@@ -181,10 +180,6 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' @param align `character(1)` defining the alignment method to be used. See
 #'     help on `alignRt` in [MSnbase::Chromatogram()] for details. The value of
 #'     this parameter is passed to the `method` parameter of `alignRt`.
-#'
-#' @param full `logical(1)` for `correlate` on a single `MChromatograms` object:
-#'     whether the *full* correlation matrix should be calculated (default) or
-#'     just the upper triangular matrix (and diagonal).
 #'
 #' @param ... optional parameters passed along to the `alignRt` method such as
 #'     `tolerance` that, if set to `0` requires the retention times to be
@@ -210,19 +205,21 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' chrs <- MChromatograms(list(chr1, chr2, chr3))
 #'
-#' correlate(chr1, chr2)
-#' correlate(chr2, chr1)
+#' ## Using `compareChromatograms` instead of `correlate`.
+#' compareChromatograms(chr1, chr2)
+#' compareChromatograms(chr2, chr1)
 #'
-#' ## To only intensities larger than 5.
-#' correlate(chr1, chr2, useIntensitiesAbove = 5)
-#'
-#' correlate(chrs, chrs)
+#' compareChromatograms(chrs, chrs)
 setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
           function(x, y, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
                    align = c("closest", "approx"), ...) {
-              .correlate_chromatogram(
-                  x, y, use = use, method = method, align = align, ...)
+              .Deprecated(new = "compareChromatograms")
+              lst <- list(...)
+              compareChromatograms(
+                  x, y, ALIGNFUN = alignRt, FUN = cor,
+                  ALIGNFUNARGS = c(list(method = align), lst),
+                  FUNARGS = c(list(method = method, use = use), lst))
           })
 
 #' @title Remove intensities from chromatographic data
@@ -278,6 +275,7 @@ setMethod("removeIntensity", "Chromatogram",
           function(object, which = "below_threshold", threshold = 0) {
               which <- match.arg(which)
               if (which == "below_threshold")
-                  object@intensity[which(object@intensity < threshold)] <- NA_real_
+                  object@intensity[which(object@intensity < threshold)] <-
+                      NA_real_
               object
           })

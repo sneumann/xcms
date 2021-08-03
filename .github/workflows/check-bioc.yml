@@ -53,8 +53,8 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: '4.1', bioc: '3.14', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: '4.1', bioc: '3.13'}
-          - { os: windows-latest, r: '4.1', bioc: '3.13'}
+          - { os: macOS-latest, r: '4.1', bioc: 'devel'}
+          - { os: windows-latest, r: '4.1', bioc: 'devel'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -196,13 +196,15 @@ jobs:
           BiocManager::install(c("faahKO"))
           BiocManager::install("lgatto/ProtGenerics")
           BiocManager::install("lgatto/MSnbase")
+          ## BiocManager::install("sneumann/mzR")
           BiocManager::install("RforMassSpectrometry/Spectra")
           BiocManager::install("RforMassSpectrometry/MsBackendMgf")
+          BiocManager::install("magick")
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
-          BiocManager::install("BiocCheck")
+          BiocManager::install(c("BiocCheck", "DBI"))
         shell: Rscript {0}
 
       - name: Install BiocGenerics

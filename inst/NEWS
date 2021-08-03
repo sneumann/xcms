@@ -1,3 +1,16 @@
+Changes in version 3.15.3
+
+- Add `manualFeatures` allowing to manually define and add features to an
+  `XCMSnExp` object.
+- Add `plotChromatogramsOverlay` function to support plotting of multiple EICs
+  from the same sample into the same plot (eventually stacked).
+- Add feature grouping by EIC similarity: `EicSimilarityParam`.
+- Import `compareChromatograms` from `MSnbase`.
+- Add feature grouping by similar retention time: `SimilarRtimeParams.
+- Add feature grouping by similarity of feature abundances across samples:
+  `AbundanceSimilarityParam`.
+- Add feature grouping methodology based on `MsFeatures`.
+
 Changes in version 3.15.2
 
 - Fix LC-MS/MS vignette.

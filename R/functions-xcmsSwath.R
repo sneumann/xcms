@@ -172,8 +172,8 @@
         return(.data2spectra(fromFile = fromFile, rt = x["rt"], polarity = pol,
                              precursorIntensity = x[column],
                              precursorMz = x["mz"], return.type = return.type))
-    cors <- vapply(chr_2@.Data, .correlate_chromatogram, y = chr_1[1, 1],
-                   numeric(1), align = "approx")
+    cors <- vapply(chr_2@.Data, compareChromatograms, y = chr_1[1, 1],
+                   numeric(1), ALIGNFUNARGS = list(method = "approx"))
     pks <- pks[which(cors >= minCor), , drop = FALSE]
     if (nrow(pks))
         .data2spectra(fromFile = fromFile, polarity = pol,

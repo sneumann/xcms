@@ -4,7 +4,7 @@ importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
-    "isolationWindowTargetMz", "quantify")
+    "isolationWindowTargetMz", "quantify", "bin")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
@@ -18,7 +18,7 @@ importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
 importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
-           "grid", "mtext", "polygon")
+           "grid", "mtext", "polygon", "box", "plot.xy")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
            "level.colors", "do.breaks")
@@ -32,9 +32,7 @@ import("BiocParallel")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
-
 importFrom("SummarizedExperiment", "SummarizedExperiment")
-
 importFrom("MsCoreUtils", "rbindFill", "closest")
 
 ## Additional imports proposed by R CMD check:
@@ -44,7 +42,8 @@ importFrom("graphics", "abline", "barplot", "close.screen", "hist",
            "strwidth", "text", "title")
 importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
            "dev.list", "dev.off", "dev.set", "palette", "pdf", "png",
-           "rainbow", "rgb", "terrain.colors")
+           "rainbow", "rgb", "terrain.colors", "n2mfrow", "dev.flush",
+	   "dev.hold", "xy.coords")
 importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
@@ -64,14 +63,14 @@ importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
                   "MChromatograms", "MSpectra")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
-                  "spectra", "impute", "isCentroided", "polarity", "[", "bin",
+                  "spectra", "impute", "isCentroided", "polarity", "[",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData",
                   "filterIsolationWindow", "filterIntensity",
-		  "alignRt")
+		  "alignRt", "compareChromatograms")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -260,6 +259,7 @@ export(
     "groupOverlaps",
     "estimatePrecursorIntensity",
     "manualChromPeaks",
+    "manualFeatures",
     "featureArea"
 )
 
@@ -520,5 +520,25 @@ exportMethods("hasChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
               "filterColumnsKeepTop",
-	      "filterChromPeaks"
+	      "filterChromPeaks",
+	      "plotChromatogramsOverlay"
               )
+
+## feature grouping functions and methods.
+importFrom("MsCoreUtils",
+           "group")
+importMethodsFrom("MsFeatures",
+                  "featureGroups",
+		  "featureGroups<-",
+		  "groupFeatures")
+importClassesFrom("MsFeatures",
+                  "SimilarRtimeParam",
+		  "AbundanceSimilarityParam")
+importFrom("MsFeatures",
+           "SimilarRtimeParam",
+	   "AbundanceSimilarityParam",
+	   "groupSimilarityMatrix")
+exportMethods("featureGroups",
+              "featureGroups<-")
+export("plotFeatureGroups", "EicSimilarityParam")
+exportClasses("EicSimilarityParam")

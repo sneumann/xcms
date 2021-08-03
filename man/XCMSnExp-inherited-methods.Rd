@@ -10,7 +10,7 @@
 \alias{smooth,XCMSnExp-method}
 \title{XCMSnExp data manipulation methods inherited from MSnbase}
 \usage{
-\S4method{bin}{XCMSnExp}(object, binSize = 1L, msLevel.)
+\S4method{bin}{XCMSnExp}(x, binSize = 1L, msLevel.)
 
 \S4method{clean}{XCMSnExp}(object, all = FALSE, verbose = FALSE, msLevel.)
 
@@ -37,7 +37,7 @@
 )
 }
 \arguments{
-\item{object}{\code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
+\item{x}{\code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
 object.}
 
 \item{binSize}{\code{numeric(1)} defining the size of a bin (in Dalton).}
@@ -46,6 +46,9 @@ object.}
 \code{removePeaks}: \code{numeric(1)} defining the MS level(s)
 to which operations should be applied or to which the object should be
 subsetted.}
+
+\item{object}{\code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
+object.}
 
 \item{all}{For \code{clean}: \code{logical(1)}, if \code{TRUE} all zeros are
 removed.}
@@ -84,9 +87,6 @@ documentation for details.}
 \item{t}{For \code{removePeaks}: either a \code{numeric(1)} or \code{"min"}
 defining the threshold (method) to be used. See
 \code{\link{removePeaks}} for details.}
-
-\item{x}{\code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
-object.}
 }
 \value{
 For all methods: a \code{XCMSnExp} object.
