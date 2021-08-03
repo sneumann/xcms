@@ -111,7 +111,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.3</span>
       </span>
     </div>
 
@@ -130,6 +130,9 @@ from which the signal should be integrated.
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a>
+    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -475,7 +478,7 @@ region for each feature.</p></div>
 <span class='r-in'><span class='va'>ph</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Object of class "XProcessHistory"</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  type: Missing peak filling </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  date: Thu Jun 17 10:17:02 2021 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  date: Tue Aug  3 15:23:03 2021 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  info:  </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameter class: ChromPeakAreaParam </span>
@@ -487,16 +490,16 @@ region for each feature.</p></div>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  Parameters:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  - rtmin: function (z) </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x555c7151f7e0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x557f1bb26800&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  - rtmax: function (z) </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x555c7151f7e0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x557f1bb26800&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzmin: function (z) </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x555c7151f7e0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x557f1bb26800&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  - mzmax: function (z) </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x555c7151f7e0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x557f1bb26800&gt;</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'>## It is also possible to remove filled-in peaks:</span></span>
 <span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='XCMSnExp-class.html'>dropFilledChromPeaks</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>

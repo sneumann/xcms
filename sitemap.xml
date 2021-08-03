@@ -7,6 +7,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/LC-MS-feature-grouping.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -154,6 +157,9 @@
     <loc>/reference/extractMsData-method.html</loc>
   </url>
   <url>
+    <loc>/reference/feature-grouping.html</loc>
+  </url>
+  <url>
     <loc>/reference/featureChromatograms.html</loc>
   </url>
   <url>
@@ -277,6 +283,15 @@
     <loc>/reference/groupChromPeaks.html</loc>
   </url>
   <url>
+    <loc>/reference/groupFeatures-abundance-correlation.html</loc>
+  </url>
+  <url>
+    <loc>/reference/groupFeatures-eic-similarity.html</loc>
+  </url>
+  <url>
+    <loc>/reference/groupFeatures-similar-rtime.html</loc>
+  </url>
+  <url>
     <loc>/reference/groupOverlaps.html</loc>
   </url>
   <url>
@@ -364,7 +379,13 @@
     <loc>/reference/plotChromPeaks.html</loc>
   </url>
   <url>
+    <loc>/reference/plotChromatogramsOverlay.html</loc>
+  </url>
+  <url>
     <loc>/reference/plotEIC-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plotFeatureGroups.html</loc>
   </url>
   <url>
     <loc>/reference/plotMsData.html</loc>
@@ -548,5 +569,8 @@
   </url>
   <url>
     <loc>/reference/xcmsSource-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/xdata.html</loc>
   </url>
 </urlset>

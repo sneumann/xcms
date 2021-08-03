@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manual peak integration — manualChromPeaks • xcms</title>
+<title>Manual peak integration and feature definition — manualChromPeaks • xcms</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Manual peak integration — manualChromPeaks" />
+<meta property="og:title" content="Manual peak integration and feature definition — manualChromPeaks" />
 <meta property="og:description" content="The manualChromPeaks function allows to manually define chromatographic
 peaks which are added to the object's chromPeaks matrix. In contrast to
 findChromPeaks(), no peak detection is performed (e.g. using an
@@ -49,7 +49,10 @@ sample within the provided boundaries.
 Because chromatographic peaks are added to eventually previously identified
 peaks, it is suggested to run refineChromPeaks() with the
 MergeNeighboringPeaksParam() approach to merge potentially overlapping
-peaks." />
+peaks.
+The manualFeatures function allows to manually group identified
+chromatographic peaks into features by providing their index in the
+object's chromPeaks matrix." />
 
 
 
@@ -89,7 +92,7 @@ peaks." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.3</span>
       </span>
     </div>
 
@@ -108,6 +111,9 @@ peaks." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a>
+    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -137,7 +143,7 @@ peaks." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Manual peak integration</h1>
+    <h1>Manual peak integration and feature definition</h1>
     <small class="dont-index">Source: <a href='https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R'><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>manualChromPeaks.Rd</code></div>
     </div>
@@ -153,6 +159,9 @@ sample within the provided boundaries.</p>
 peaks, it is suggested to run <code><a href='refineChromPeaks-clean.html'>refineChromPeaks()</a></code> with the
 <code><a href='refineChromPeaks-merge.html'>MergeNeighboringPeaksParam()</a></code> approach to merge potentially overlapping
 peaks.</p>
+<p>The <code>manualFeatures</code> function allows to manually group identified
+chromatographic peaks into features by providing their index in the
+object's <code>chromPeaks</code> matrix.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>manualChromPeaks</span><span class='op'>(</span>
@@ -161,7 +170,9 @@ peaks.</p>
   samples <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span><span class='op'>(</span><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/pSet-class.html'>fileNames</a></span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span><span class='op'>)</span>,
   BPPARAM <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/BiocParallel/man/register.html'>bpparam</a></span><span class='op'>(</span><span class='op'>)</span>,
   msLevel <span class='op'>=</span> <span class='fl'>1L</span>
-<span class='op'>)</span></code></pre></div>
+<span class='op'>)</span>
+
+<span class='fu'>manualFeatures</span><span class='op'>(</span><span class='va'>object</span>, peakIdx <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, msLevel <span class='op'>=</span> <span class='fl'>1L</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,12 +202,17 @@ integration should be performed. By default performed in all samples.</p></td>
       <td><p><code>integer(1)</code> defining the MS level in which peak integration
 should be performed.</p></td>
     </tr>
+    <tr>
+      <th>peakIdx</th>
+      <td><p>for <code>nabbyakFeatyres</code>: <code>list</code> of <code>integer</code> vectors with the
+indices of chromatographic peaks in the object's <code>chromPeaks</code> matrix
+that should be grouped into features.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>XCMSnExp</code> with the manually defined peaks added to the <code>chromPeaks</code>
-matrix.</p>
+    <p><code>XCMSnExp</code> with the manually added chromatographic peaks or features.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Johannes Rainer</p>

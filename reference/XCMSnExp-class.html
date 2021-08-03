@@ -118,10 +118,14 @@ arguments rt, mz, ppm and type allow to extract
 only chromatographic peaks overlapping the defined retention time and/or
 m/z ranges. Argument type allows to define how overlapping is
 determined: for type == &quot;any&quot; (the default), all peaks that are even
-partially overlapping the region are returned, for type == &quot;within&quot;
-the full peak has to be within the region and for
-type == &quot;apex_within&quot; the peak's apex position (highest signal of the
-peak) has to be within the region.
+partially overlapping the region are returned (i.e. for which either
+&quot;mzmin&quot; or &quot;mzmax&quot; of the chromPeaks or
+featureDefinitions matrix are within the provided m/z range), for
+type == &quot;within&quot; the full peak has to be within the region (i.e.
+both &quot;mzmin&quot; and &quot;mzmax&quot; have to be within the m/z range) and
+for type == &quot;apex_within&quot; the peak's apex position (highest signal
+of the peak) has to be within the region (i.e. the peak's or features m/z
+has to be within the m/z range).
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the chromPeaks&amp;lt;- method directly
 as detected chromatographic peaks are added to the object by the
@@ -252,7 +256,7 @@ as rectangles with border color peakCol." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.3</span>
       </span>
     </div>
 
@@ -271,6 +275,9 @@ as rectangles with border color peakCol." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a>
+    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -384,10 +391,14 @@ arguments <code>rt</code>, <code>mz</code>, <code>ppm</code> and <code>type</cod
 only chromatographic peaks overlapping the defined retention time and/or
 m/z ranges. Argument <code>type</code> allows to define how <em>overlapping</em> is
 determined: for <code>type == "any"</code> (the default), all peaks that are even
-partially overlapping the region are returned, for <code>type == "within"</code>
-the full peak has to be within the region and for
-<code>type == "apex_within"</code> the peak's apex position (highest signal of the
-peak) has to be within the region.
+partially overlapping the region are returned (i.e. for which either
+<code>"mzmin"</code> or <code>"mzmax"</code> of the <code>chromPeaks</code> or
+<code>featureDefinitions</code> matrix are within the provided m/z range), for
+<code>type == "within"</code> the full peak has to be within the region (i.e.
+both <code>"mzmin"</code> and <code>"mzmax"</code> have to be within the m/z range) and
+for <code>type == "apex_within"</code> the peak's apex position (highest signal
+of the peak) has to be within the region (i.e. the peak's or features m/z
+has to be within the m/z range).
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the <code>chromPeaks&lt;-</code> method directly
 as detected chromatographic peaks are added to the object by the
@@ -853,7 +864,10 @@ time), <code>"rtmax"</code> (maximal retention time) and <code>"peakidx"</code>.
 Column <code>"peakidx"</code> contains a <code>list</code> with indices of
 chromatographic peaks (rows) in the matrix returned by the
 <code>chromPeaks</code> method that belong to that feature group. The method
-returns <code>NULL</code> if no feature definitions are present.</p>
+returns <code>NULL</code> if no feature definitions are present.
+<code>featureDefinitions</code> supports also parameters <code>mz</code>, <code>rt</code>,
+<code>ppm</code> and <code>type</code> to return only features within certain ranges (see
+description of <code>chromPeaks</code> for details).</p>
 <p>For <code>chromPeaks</code>: if <code>bySample = FALSE</code> a <code>matrix</code> (each row
 being a chromatographic peak, rownames representing unique IDs of the peaks)
 with at least the following columns:
@@ -1155,7 +1169,7 @@ with feature definitions and phenodata information, into a
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> - - - Processing information - - -</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Filter: select file(s) 2. [Thu Jun 17 10:16:26 2021] </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Filter: select file(s) 2. [Tue Aug  3 15:22:34 2021] </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  MSnbase version: 2.15.2 </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> - - - Meta data  - - -</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> phenoData</span>

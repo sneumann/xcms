@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="Correlate chromatograms — correlate,Chromatogram,Chromatogram-method" />
-<meta property="og:description" content="Correlate intensities of two chromatograms with each other. If the two
+<meta property="og:description" content="For xcms &amp;gt;= 3.15.3 please use compareChromatograms() instead of
+correlate
+Correlate intensities of two chromatograms with each other. If the two
 Chromatogram objects have different retention times they are first
 aligned to match data points in the first to data points in the second
 chromatogram. See help on alignRt in MSnbase::Chromatogram() for more
@@ -51,10 +53,7 @@ with the correlation coefficients is returned.
 Note that the correlation of two chromatograms depends also on their order,
 e.g. correlate(chr1, chr2) might not be identical to
 correlate(chr2, chr1). The lower and upper triangular part of the
-correlation matrix might thus be different.
-For correlating elements of a MChromatograms with each other it might be
-sufficient to calculate just the upper triangular matrix. This can be done
-by setting full = FALSE." />
+correlation matrix might thus be different." />
 
 
 
@@ -94,7 +93,7 @@ by setting full = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.3</span>
       </span>
     </div>
 
@@ -113,6 +112,9 @@ by setting full = FALSE." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a>
+    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -148,7 +150,9 @@ by setting full = FALSE." />
     </div>
 
     <div class="ref-description">
-    <p>Correlate intensities of two chromatograms with each other. If the two
+    <p><strong>For <code>xcms</code> &gt;= 3.15.3 please use <code><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>compareChromatograms()</a></code> instead of
+<code>correlate</code></strong></p>
+<p>Correlate intensities of two chromatograms with each other. If the two
 <code>Chromatogram</code> objects have different retention times they are first
 <em>aligned</em> to match data points in the first to data points in the second
 chromatogram. See help on <code>alignRt</code> in <code><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>MSnbase::Chromatogram()</a></code> for more
@@ -160,9 +164,6 @@ with the correlation coefficients is returned.</p>
 e.g. <code>correlate(chr1, chr2)</code> might not be identical to
 <code>correlate(chr2, chr1)</code>. The lower and upper triangular part of the
 correlation matrix might thus be different.</p>
-<p>For correlating elements of a <code>MChromatograms</code> with each other it might be
-sufficient to calculate just the upper triangular matrix. This can be done
-by setting <code>full = FALSE</code>.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='co'># S4 method for Chromatogram,Chromatogram</span>
@@ -182,7 +183,6 @@ by setting <code>full = FALSE</code>.</p>
   use <span class='op'>=</span> <span class='st'>"pairwise.complete.obs"</span>,
   method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"pearson"</span>, <span class='st'>"kendall"</span>, <span class='st'>"spearman"</span><span class='op'>)</span>,
   align <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"closest"</span>, <span class='st'>"approx"</span><span class='op'>)</span>,
-  full <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -229,12 +229,6 @@ this parameter is passed to the <code>method</code> parameter of <code>alignRt</
 <code>tolerance</code> that, if set to <code>0</code> requires the retention times to be
 identical.</p></td>
     </tr>
-    <tr>
-      <th>full</th>
-      <td><p><code>logical(1)</code> for <code>correlate</code> on a single <code>MChromatograms</code> object:
-whether the <em>full</em> correlation matrix should be calculated (default) or
-just the upper triangular matrix (and diagonal).</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -258,20 +252,17 @@ represent the chromatograms in <code>x</code> and the columns the chromatograms 
 <span class='r-in'></span>
 <span class='r-in'><span class='va'>chrs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html'>MChromatograms</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span>, <span class='va'>chr3</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Using `compareChromatograms` instead of `correlate`.</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>compareChromatograms</a></span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.03928289</span>
-<span class='r-in'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr2</span>, <span class='va'>chr1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>compareChromatograms</a></span><span class='op'>(</span><span class='va'>chr2</span>, <span class='va'>chr1</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.06267484</span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'>## To only intensities larger than 5.</span></span>
-<span class='r-in'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chr1</span>, <span class='va'>chr2</span>, useIntensitiesAbove <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.03928289</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>correlate</span><span class='op'>(</span><span class='va'>chrs</span>, <span class='va'>chrs</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html'>compareChromatograms</a></span><span class='op'>(</span><span class='va'>chrs</span>, <span class='va'>chrs</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>            [,1]       [,2]      [,3]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 1.00000000 0.03928289 0.9954195</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,] 0.06267484 1.00000000 0.6482310</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,] 0.99981446 0.64823104 1.0000000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,] 0.03928289 1.00000000 0.6482310</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,] 0.99541950 0.64823104 1.0000000</span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
