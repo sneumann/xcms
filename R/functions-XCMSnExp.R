@@ -2784,8 +2784,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         stop("No MS1 data available")
     pks <- chromPeaks(x)
     fls <- basename(fileNames(x))
-    suppressWarnings(x <- as(x, "data.frame"))
-    x <- split(x, x$file)
+    x <- .split_by_file2(x)
+    x <- lapply(x, as, "data.frame")
     ## Check if we are greedy and plot a too large area
     if (any(unlist(lapply(x, nrow)) > 20000))
         warning("The MS area to be plotted seems rather large. It is suggested",
