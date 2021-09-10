@@ -604,12 +604,17 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' @md
 #'
 #' @noRd
-.update_feature_definitions <- function(x, original_names, subset_names) {
-    x$peakidx <- lapply(x$peakidx, function(z) {
+.update_feature_definitions <- function(x, original_names, subset_names,
+                                         BPPARAM = bpparam()) {
+    ## Skip if they are the same.
+    if (length(original_names) == length(subset_names) &&
+        all.equal(original_names, subset_names))
+        return(x)
+    x$peakidx <- bplapply(x$peakidx, function(z) {
         idx <- base::match(original_names[z], subset_names)
         idx[!is.na(idx)]
-    })
-    x[lengths(x$peakidx) > 0, ]
+    }, BPPARAM = BPPARAM)
+    extractROWS(x, lengths(x$peakidx) > 0)
 }
 
 #' @description
