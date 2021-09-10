@@ -1,3 +1,8 @@
+Changes in version 3.14.2
+
+- Avoid re-indexing of peaks assigned to features if not necesssary. This
+  increases the performance for MS1-only data sets.
+
 Changes in version 3.14.1
 
 - Compatibility fix for nls() in R >= 4.1, contributed by Rick Helmus.
