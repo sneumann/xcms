@@ -2127,7 +2127,9 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' Parameter `msLevel` allows to define whether MS level 1 or 2
 #' spectra should be returned. For `msLevel = 1L` all MS1 spectra within the
 #' retention time range of each chromatographic peak (in that respective data
-#' file) associated with a feature are returned. For `msLevel = 2L` all MS2
+#' file) associated with a feature are returned. Note that for samples in which
+#' no peak was identified (or even filled-in) no spectra are returned.
+#' For `msLevel = 2L` all MS2
 #' spectra with a retention time within the retention time range and their
 #' precursor m/z within the m/z range of any chromatographic peak of a feature
 #' are returned. See also [chromPeakSpectra()] (used internally to extract
