@@ -1,3 +1,9 @@
+Changes in version 3.15.4
+
+- Fix in `plot` with `type = "XIC"` to plot an empty plot if no data is present.
+- Skip re-indexing of peaks to features if not necessary. This results in
+  performance improvements for MS1 only data.
+
 Changes in version 3.15.3
 
 - Add `manualFeatures` allowing to manually define and add features to an

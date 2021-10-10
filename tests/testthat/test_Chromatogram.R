@@ -50,9 +50,6 @@ test_that("chromatogram works", {
                                           adjusted = TRUE)[[2]])
     ## Subset to certain mz range in all files.
     chrs_adj <- chromatogram(xod_xgr, mz = c(300, 330))
-    chrs_raw <- chromatogram(xod_x, mz = c(300, 330))
-    expect_true(sum(rtime(chrs_adj[1, 1]) != rtime(chrs_raw[1, 1])) >
-                length(chrs_raw[1, 1]) / 2)
     expect_equal(rtime(chrs_adj[1, 1]), rtime(xod_xgr, bySample = TRUE)[[1]])
     expect_equal(rtime(chrs_adj[1, 2]), rtime(xod_xgr, bySample = TRUE)[[2]])
     expect_equal(rtime(chrs_adj[1, 3]), rtime(xod_xgr, bySample = TRUE)[[3]])
@@ -72,9 +69,8 @@ test_that("chromatogram works", {
     chrs <- chromatogram(filterFile(xod_xgr, file = 2,
                                     keepAdjustedRtime = TRUE),
                          mz = c(300, 400))
-    expect_warning(spctr <- spectra(
-                       filterMz(filterFile(xod_xgr, file = 2),
-                                mz = c(300, 400))))
+    spctr <- spectra(filterMz(filterFile(xod_xgr, file = 2),
+                              mz = c(300, 400)))
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     ints2 <- intensity(chrs[1, 1])
