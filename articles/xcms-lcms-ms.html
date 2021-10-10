@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.15.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
 
       
 
-      </header><script src="xcms-lcms-ms_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>LC-MS/MS data analysis with xcms</h1>
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-08-03 14:30:26<br><strong>Compiled</strong>: Tue Aug 3 15:26:04 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-10-10 17:49:04<br><strong>Compiled</strong>: Sun Oct 10 18:55:52 2021</p>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ## F1.S3505         2   418.926      3505
 ##  ... 38 more variables/columns.
 ## Processing:
-##  Switch backend from MsBackendMzR to MsBackendDataFrame [Tue Aug  3 15:26:18 2021]</code></pre>
+##  Switch backend from MsBackendMzR to MsBackendDataFrame [Sun Oct 10 18:56:08 2021]</code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20 ppm (parameter <code>ppm</code>) were combined into one peak and the median m/z and intensity is reported for these. Due to parameter <code>minProp = 0.8</code>, the resulting MS2 spectrum contains only peaks that were present in 80% of the input spectra.</p>
 <p>A plot of this <em>consensus</em> spectrum is shown below.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -490,7 +490,7 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 ## 62          2   574.942        NA
 ##  ... 20 more variables/columns.
 ## Processing:
-##  Merge 1 Spectra into one [Tue Aug  3 15:26:46 2021]</code></pre>
+##  Merge 1 Spectra into one [Sun Oct 10 18:56:37 2021]</code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">ms2_peak_id</span></code></pre></div>
@@ -646,9 +646,9 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.0 (2021-05-18)
+<pre><code>## R version 4.1.1 (2021-08-10)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.2 LTS
+## Running under: Ubuntu 20.04.3 LTS
 ## 
 ## Matrix products: default
 ## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
@@ -666,57 +666,59 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 ## [8] base     
 ## 
 ## other attached packages:
-##  [1] MsBackendMgf_1.1.2  magrittr_2.0.1      pander_0.6.4       
-##  [4] Spectra_1.3.6       xcms_3.15.3         MSnbase_2.19.2     
-##  [7] ProtGenerics_1.25.2 S4Vectors_0.31.0    mzR_2.27.1         
-## [10] Rcpp_1.0.7          Biobase_2.53.0      BiocGenerics_0.39.1
-## [13] BiocParallel_1.27.2 BiocStyle_2.21.3   
+##  [1] MsBackendMgf_1.1.3   magrittr_2.0.1       pander_0.6.4        
+##  [4] Spectra_1.3.11       xcms_3.15.4          MSnbase_2.19.3      
+##  [7] ProtGenerics_1.25.2  S4Vectors_0.31.5     mzR_2.27.1          
+## [10] Rcpp_1.0.7           Biobase_2.53.0       BiocGenerics_0.39.2 
+## [13] BiocParallel_1.27.16 BiocStyle_2.21.3    
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-7                matrixStats_0.60.0         
+##  [1] bitops_1.0-7                matrixStats_0.61.0         
 ##  [3] fs_1.5.0                    doParallel_1.0.16          
 ##  [5] RColorBrewer_1.1-2          rprojroot_2.0.2            
-##  [7] GenomeInfoDb_1.29.3         tools_4.1.0                
-##  [9] bslib_0.2.5.1               utf8_1.2.2                 
-## [11] R6_2.5.0                    affyio_1.63.1              
-## [13] colorspace_2.0-2            MassSpecWavelet_1.59.0     
-## [15] compiler_4.1.0              preprocessCore_1.55.2      
-## [17] textshaping_0.3.5           desc_1.3.0                 
-## [19] DelayedArray_0.19.1         bookdown_0.22              
-## [21] sass_0.4.0                  scales_1.1.1               
-## [23] DEoptimR_1.0-9              robustbase_0.93-8          
-## [25] affy_1.71.0                 pkgdown_1.6.1.9001         
-## [27] systemfonts_1.0.2           stringr_1.4.0              
-## [29] digest_0.6.27               rmarkdown_2.9              
-## [31] XVector_0.33.0              pkgconfig_2.0.3            
-## [33] htmltools_0.5.1.1           MatrixGenerics_1.5.1       
-## [35] highr_0.9                   fastmap_1.1.0              
-## [37] limma_3.49.1                rlang_0.4.11               
-## [39] impute_1.67.0               jquerylib_0.1.4            
-## [41] jsonlite_1.7.2              mzID_1.31.0                
-## [43] RCurl_1.98-1.3              GenomeInfoDbData_1.2.6     
-## [45] MALDIquant_1.20             Matrix_1.3-4               
-## [47] munsell_0.5.0               fansi_0.5.0                
-## [49] MsCoreUtils_1.5.0           lifecycle_1.0.0            
-## [51] vsn_3.61.2                  stringi_1.7.3              
-## [53] yaml_2.2.1                  MASS_7.3-54                
-## [55] SummarizedExperiment_1.23.1 zlibbioc_1.39.0            
-## [57] plyr_1.8.6                  grid_4.1.0                 
-## [59] parallel_4.1.0              crayon_1.4.1               
-## [61] lattice_0.20-44             MsFeatures_1.1.0           
-## [63] knitr_1.33                  pillar_1.6.2               
-## [65] GenomicRanges_1.45.0        codetools_0.2-18           
-## [67] XML_3.99-0.6                glue_1.4.2                 
-## [69] evaluate_0.14               pcaMethods_1.85.0          
-## [71] BiocManager_1.30.16         vctrs_0.3.8                
-## [73] foreach_1.5.1               gtable_0.3.0               
-## [75] RANN_2.6.1                  clue_0.3-59                
-## [77] cachem_1.0.5                ggplot2_3.3.5              
-## [79] xfun_0.24                   ragg_1.1.3                 
-## [81] ncdf4_1.17                  tibble_3.1.3               
-## [83] iterators_1.0.13            memoise_2.0.0              
-## [85] IRanges_2.27.0              cluster_2.1.2              
-## [87] ellipsis_0.3.2</code></pre>
+##  [7] GenomeInfoDb_1.29.8         tools_4.1.1                
+##  [9] bslib_0.3.1                 utf8_1.2.2                 
+## [11] R6_2.5.1                    affyio_1.63.2              
+## [13] colorspace_2.0-2            tidyselect_1.1.1           
+## [15] MassSpecWavelet_1.59.0      compiler_4.1.1             
+## [17] preprocessCore_1.55.2       textshaping_0.3.5          
+## [19] cli_3.0.1                   DelayedArray_0.19.4        
+## [21] desc_1.4.0                  bookdown_0.24              
+## [23] sass_0.4.0                  scales_1.1.1               
+## [25] DEoptimR_1.0-9              robustbase_0.93-9          
+## [27] affy_1.71.0                 pkgdown_1.9000.9000.9000   
+## [29] systemfonts_1.0.2           stringr_1.4.0              
+## [31] digest_0.6.28               rmarkdown_2.11             
+## [33] XVector_0.33.0              pkgconfig_2.0.3            
+## [35] htmltools_0.5.2             MatrixGenerics_1.5.4       
+## [37] highr_0.9                   fastmap_1.1.0              
+## [39] limma_3.49.4                rlang_0.99.0.9000          
+## [41] impute_1.67.0               jquerylib_0.1.4            
+## [43] generics_0.1.0              jsonlite_1.7.2             
+## [45] mzID_1.31.0                 dplyr_1.0.7                
+## [47] RCurl_1.98-1.5              GenomeInfoDbData_1.2.7     
+## [49] Matrix_1.3-4                MALDIquant_1.20            
+## [51] munsell_0.5.0               fansi_0.5.0                
+## [53] MsCoreUtils_1.5.0           lifecycle_1.0.1            
+## [55] vsn_3.61.2                  stringi_1.7.5              
+## [57] yaml_2.2.1                  MASS_7.3-54                
+## [59] SummarizedExperiment_1.23.5 zlibbioc_1.39.0            
+## [61] plyr_1.8.6                  grid_4.1.1                 
+## [63] parallel_4.1.1              crayon_1.4.1               
+## [65] lattice_0.20-45             MsFeatures_1.1.0           
+## [67] knitr_1.36                  pillar_1.6.3               
+## [69] GenomicRanges_1.45.0        codetools_0.2-18           
+## [71] XML_3.99-0.8                glue_1.4.2                 
+## [73] evaluate_0.14               pcaMethods_1.85.0          
+## [75] BiocManager_1.30.16         vctrs_0.3.8                
+## [77] foreach_1.5.1               RANN_2.6.1                 
+## [79] gtable_0.3.0                purrr_0.3.4                
+## [81] clue_0.3-59                 cachem_1.0.6               
+## [83] ggplot2_3.3.5               xfun_0.26                  
+## [85] ragg_1.1.3                  ncdf4_1.17                 
+## [87] tibble_3.1.5                iterators_1.0.13           
+## [89] memoise_2.0.0               IRanges_2.27.2             
+## [91] cluster_2.1.2               ellipsis_0.3.2</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -746,7 +748,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
