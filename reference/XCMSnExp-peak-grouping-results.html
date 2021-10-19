@@ -34,7 +34,7 @@ be passed to quantify with ...."><!-- mathjax --><script src="https://cdnjs.clou
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -116,7 +116,8 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
   msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object providing the feature
 definitions.</p></td>
@@ -157,8 +158,10 @@ half of the row's minimal (non-missing) value.</p></td>
       <td><p>for `featureValues`: `integer` defining the MS level(s) for
 which feature values should be returned. By default, values for features
 defined for all MS levels are returned.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>For <code>featureValues</code>: a <code>matrix</code> with
 feature values, columns representing samples, rows features. The order
 of the features matches the order found in the
@@ -168,14 +171,16 @@ of the features matches the order found in the
 corresponding chromatographic peak in the respective sample(s).</p>
 <p>For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
 the preprocessing results.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>This method is equivalent to the <code><a href="groupval-methods.html">groupval</a></code> for
 <code>xcmsSet</code> objects. Note that <code>missing = 0</code> should be used to
 get the same behaviour as <code>groupval</code>, i.e. report missing values as 0
 after a call to <code>fillPeaks</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> for information on the data object.</p>
 <p><code><a href="XCMSnExp-class.html">featureDefinitions</a></code> to extract the <code>DataFrame</code> with the
 feature definitions.</p>
@@ -184,9 +189,11 @@ feature.</p>
 <p><code><a href="XCMSnExp-class.html">hasFeatures</a></code> to evaluate whether the
 <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> provides feature definitions.</p>
 <p><code><a href="groupval-methods.html">groupval</a></code> for the equivalent method on <code>xcmsSet</code> objects.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

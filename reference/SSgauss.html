@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -76,7 +76,8 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">SSgauss</span><span class="op">(</span><span class="va">x</span>, <span class="va">mu</span>, <span class="va">sigma</span>, <span class="va">h</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p>a numeric vector of values at which to evaluate the model</p></td>
     </tr><tr><th>mu</th>
@@ -85,13 +86,16 @@
       <td><p>standard deviation of the distribution fuction</p></td>
     </tr><tr><th>h</th>
       <td><p>height of the distribution function</p></td>
-    </tr></table><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    </tr></table></div>
 
+    <div id="details">
+    <h2>Details</h2>
     <p>Initial values for <code>mu</code> and <code>h</code> are chosen from the
   maximal value of <code>x</code>. The initial value for <code>sigma</code> is
   determined from the area under <code>x</code> divided by <code>h*sqrt(2*pi)</code>.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A numeric vector of the same length as <code>x</code>. It is the value
   of the expression <code>h*exp(-(x-mu)^2/(2*sigma^2)</code>, which is a
   modified gaussian function where the maximum height is treated
@@ -99,13 +103,16 @@
   <code>mu</code>, <code>sigma</code>, and <code>h</code> are names of objects, the
   gradient matrix with respect to these names is attached as an
   attribute named <code>gradient</code>.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="https://rdrr.io/r/stats/nls.html">nls</a></code>,
   <code><a href="https://rdrr.io/r/stats/selfStart.html">selfStart</a></code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

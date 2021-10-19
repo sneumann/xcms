@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">specDist.cosine</span><span class="op">(</span><span class="va">peakTable1</span>, <span class="va">peakTable2</span>, mzabs<span class="op">=</span><span class="fl">0.001</span>, mzppm<span class="op">=</span><span class="fl">10</span>, mzExp<span class="op">=</span><span class="fl">0.6</span>,
                 intExp<span class="op">=</span><span class="fl">3</span>, nPdiff<span class="op">=</span><span class="fl">2</span>, nPmin<span class="op">=</span><span class="fl">8</span>, symmetric<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peakTable1</th>
       <td><p>a Matrix containing at least m/z-values,
 	row must be called "mz"</p></td>
@@ -93,8 +94,10 @@
       <td><p>the maximum nrow-difference of the two peaktables</p></td>
     </tr><tr><th>nPmin</th>
       <td><p>the minimum absolute sum of peaks from both praktables</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     
 <dl><dt>peakTable1 = "matrix", peakTable2 = "matrix"</dt><dd><p><code>
       specDist.cosine(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
@@ -102,16 +105,19 @@
       symmetric = FALSE)
     </code></p></dd>
 
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The result is the cosine-distance of the product from weighted factors
 of mz and intensity from matching peaks in the two peaktables.
 The factors are calculated as wFact = mz^mzExp * int^intExp.
 if no distance is calculated (for example because no matching
 peaks were found) the return-value is NA.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Joachim Kutzera, <a href="mailto:jkutzer@ipb-halle.de">jkutzer@ipb-halle.de</a></p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

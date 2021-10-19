@@ -24,7 +24,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -100,7 +100,8 @@
   returnX <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p>Numeric vector to be used for binning.</p></td>
     </tr><tr><th>y</th>
@@ -158,8 +159,10 @@ other than <code>"max"</code> or <code>"min"</code> this argument is ignored.</p
 mid-points of the bins. <code>returnX = FALSE</code> might be useful in cases
 where <code>breaks</code> are pre-defined as it considerably reduces the memory
 demand.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>Returns a list of length 2, the first element (named <code>"x"</code>)
     contains the bin mid-points, the second element (named <code>"y"</code>) the
     aggregated values from input vector <code>y</code> within each bin. For
@@ -167,8 +170,9 @@ demand.</p></td>
     <code>"index"</code> with the index of the max or min (depending on whether
     <code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
     input vector <code>x</code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The breaks defining the boundary of each bin can be either passed
     directly to the function with the argument <code>breaks</code>, or are
     calculated on the data based on arguments <code>nBins</code> or <code>binSize</code>
@@ -192,8 +196,9 @@ demand.</p></td>
     however in some instances be slightly larger than <code>binSize</code>. See
     <code><a href="breaks_on_binSize.html">breaks_on_binSize</a></code> and <code><a href="breaks_on_nBins.html">breaks_on_nBins</a></code> for
     more details.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The function ensures that all values within the range used to define
     the breaks are considered in the binning (and assigned to a bin). This
     means that for all bins except the last one values in <code>x</code> have to be
@@ -209,14 +214,18 @@ demand.</p></td>
 <p><code>NA</code> handling: by default the function ignores <code>NA</code> values in
     <code>y</code> (thus inherently assumes <code>na.rm = TRUE</code>). No <code>NA</code>
     values are allowed in <code>x</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">########</span></span>
 <span class="r-in"><span class="co">## Simple example illustrating the breaks and the binning.</span></span>
 <span class="r-in"><span class="co">##</span></span>
@@ -352,6 +361,7 @@ demand.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="co">## The same bins are thus used for each sub-set.</span></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

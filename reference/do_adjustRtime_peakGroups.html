@@ -26,7 +26,7 @@ spectrum in each sample.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -99,7 +99,8 @@ spectrum in each sample.</p>
   subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
       <td><p>a <code>matrix</code> or <code>data.frame</code> with the identified
 chromatographic peaks in the samples.</p></td>
@@ -157,12 +158,15 @@ See description above for more details.</p></td>
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
 for more information.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
     retention times grouped by sample.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The alignment bases on the presence of compounds that can be found
 in all/most samples of an experiment. The retention times of individual
 spectra are then adjusted based on the alignment of the features
@@ -176,19 +180,23 @@ will be aligned based on the adjustment of the closest sample within the
 subset. This allows to e.g. exclude blank samples from the alignment process
 with their retention times being still adjusted based on the alignment
 results of the <em>real</em> samples.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The method ensures that returned adjusted retention times are
     increasingly ordered, just as the raw retention times.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

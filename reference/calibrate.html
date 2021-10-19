@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -69,7 +69,8 @@
     </div>
 
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>a <code>xcmsSet</code> object with uncalibrated mz</p></td>
     </tr><tr><th>calibrants</th>
@@ -84,8 +85,10 @@
       <td><p>the number of neighbours from wich the one with the highest intensity is used (instead of the nearest)</p></td>
     </tr><tr><th>plotres</th>
       <td><p>can be set to TRUE if wanted a result-plot showing the found m/z with the distances and the regression</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     
 <dl><dt>object = "xcmsSet"</dt><dd><p><code>
     calibrate(object, calibrants,method="linear",
@@ -93,16 +96,19 @@
     neighbours=3, plotres=FALSE)
   </code></p></dd>
 
-</dl><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+</dl></div>
+    <div id="value">
+    <h2>Value</h2>
     <p></p>
 <dl><dt>object</dt><dd><p>a <code>xcmsSet</code> with one ore more samples</p></dd>
 </dl><dl><dt>calibrants</dt><dd><p>for each sample different calibrants can be used, if a list of m/z-vectors is given. The length of the list must be the same as the number of samples, alternatively a single vector of masses can be given which is used for all samples.</p></dd>
 </dl><p></p>
 <dl><dt>method</dt><dd><p>"shift" for shifting each m/z, "linear" does a linear regression and adds a linear term to each m/z. "edgeshift" does a linear regression within the range of the mz-calibrants and a shift outside.</p></dd>
-</dl><h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+</dl></div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,</p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -22,7 +22,7 @@ correspondence algorithm of mzMine (Katajamaa 2006)."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -86,7 +86,8 @@ correspondence algorithm of mzMine (Katajamaa 2006).</p>
   kNN <span class="op">=</span> <span class="fl">10</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
       <td><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
 retention times of the identified chromatographic peaks in all samples of an
@@ -111,8 +112,10 @@ two peaks.</p></td>
     </tr><tr><th>kNN</th>
       <td><p><code>numeric(1)</code> representing the number of nearest neighbors
 to check.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>list</code> with elements <code>"featureDefinitions"</code> and
 <code>"peakIndex"</code>. <code>"featureDefinitions"</code> is a <code>matrix</code>, each row
 representing an (mz-rt) feature (i.e. peak group) with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz values.</p></li>
@@ -124,16 +127,19 @@ representing an (mz-rt) feature (i.e. peak group) with columns:</p><ul><li><p><c
 <li><p><code>"npeaks"</code>: the total number of peaks assigned to the feature.</p></li>
 </ul><p><code>"peakIndex"</code> is a <code>list</code> with the indices of all peaks in a feature in the
 <code>peaks</code> input matrix.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
 data. Bioinformatics 2006, 22:634-636.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Other core peak grouping algorithms: 
 <code><a href="do_groupChromPeaks_density.html">do_groupChromPeaks_density</a>()</code>,
 <code><a href="do_groupPeaks_mzClust.html">do_groupPeaks_mzClust</a>()</code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

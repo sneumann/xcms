@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -107,14 +107,14 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+</script><div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
 </div>
-<div id="peak-detection" class="section level1">
-<h1 class="hasAnchor">
-<a href="#peak-detection" class="anchor" aria-hidden="true"></a>Peak detection</h1>
+<div class="section level1">
+<h1 id="peak-detection">Peak detection<a class="anchor" aria-label="anchor" href="#peak-detection"></a>
+</h1>
 <p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
 <p>Below we load the required packages. For information on the parallel processing setup please see the <code>BiocParallel</code> vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -170,9 +170,9 @@ document.addEventListener("DOMContentLoaded", function() {
 ## CP05 1125644.3      1
 ## CP06 1282906.5      1</code></pre>
 </div>
-<div id="calibration" class="section level1">
-<h1 class="hasAnchor">
-<a href="#calibration" class="anchor" aria-hidden="true"></a>Calibration</h1>
+<div class="section level1">
+<h1 id="calibration">Calibration<a class="anchor" aria-label="anchor" href="#calibration"></a>
+</h1>
 <p>The <code>calibrate</code> method can be used to correct the m/z values of identified peaks. The currently implemented method requires identified peaks and a list of m/z values for known calibrants. The identified peaks m/z values are then adjusted based on the differences between the calibrants’ m/z values and the m/z values of the closest peaks (within a user defined permitted maximal distance). Note that this method does presently only calibrate identified peaks, but not the original m/z values in the spectra.</p>
 <p>Below we demonstrate the <code>calibrate</code> method on one of the data files with artificially defined calibration m/z values. We first subset the data set to the first data file, extract the m/z values of 3 peaks and modify the values slightly.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -197,9 +197,9 @@ document.addEventListener("DOMContentLoaded", function() {
      y <span class="op">=</span> <span class="va">diffs</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">calibrated</span><span class="op">]</span> <span class="op">-</span> <span class="va">m</span><span class="op">/</span><span class="va">z</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="xcms-direct-injection_files/figure-html/calibrationresult-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
-<div id="correspondence" class="section level1">
-<h1 class="hasAnchor">
-<a href="#correspondence" class="anchor" aria-hidden="true"></a>Correspondence</h1>
+<div class="section level1">
+<h1 id="correspondence">Correspondence<a class="anchor" aria-label="anchor" href="#correspondence"></a>
+</h1>
 <p>Correspondence aims to group peaks across samples to define the <em>features</em> (ions with the same m/z values). Peaks from single spectrum, direct injection MS experiments can be grouped with the <em>MZclust</em> method. Below we perform the correspondence analysis with the <code>groupChromPeaks</code> method using default settings.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Using default settings but define sample group assignment</span>
@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function() {
 ##  Number of spectra: 4 
 ##  MSn retention times: 0:01 - 0:01 minutes
 ## - - - Processing information - - -
-## Data loaded [Sun Oct 10 18:55:41 2021] 
+## Data loaded [Tue Oct 19 16:57:47 2021] 
 ##  MSnbase version: 2.19.3 
 ## - - - Meta data  - - -
 ## phenoData
@@ -362,9 +362,9 @@ document.addEventListener("DOMContentLoaded", function() {
 ## FT05                                    2133219.4
 ## FT06                                     977694.5</code></pre>
 </div>
-<div id="further-analysis" class="section level1">
-<h1 class="hasAnchor">
-<a href="#further-analysis" class="anchor" aria-hidden="true"></a>Further analysis</h1>
+<div class="section level1">
+<h1 id="further-analysis">Further analysis<a class="anchor" aria-label="anchor" href="#further-analysis"></a>
+</h1>
 <p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.14/limma" class="external-link">limma</a></em>.</p>
 </div>
   </div>

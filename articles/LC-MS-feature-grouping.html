@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -105,16 +105,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-10 17:49:04<br><strong>Compiled</strong>: Sun Oct 10 18:54:45 2021</p>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-19 15:57:26<br><strong>Compiled</strong>: Tue Oct 19 16:56:58 2021</p>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>In a typical LC-MS-based metabolomics experiment compounds eluting from the chromatography are first ionized before being measured by mass spectrometry (MS). During the ionization different (multiple) ions can be generated from the same compound which all will be measured by MS. In general, the resulting data is then pre-processed to identify chromatographic peaks in the data and to group these across samples in the correspondence analysis. The result are distinct LC-MS features, characterized by their specific m/z and retention time range. Different ions generated during ionization will be detected as different features. <em>Compounding</em> aims now at grouping such features presumably representing signal from the same originating compound to reduce data set complexity (and to aid in subsequent annotation steps). General MS feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.14/MsFeatures" class="external-link">MsFeatures</a></em> package with additional functionality being implemented in the <code>xcms</code> package to enable the compounding of LC-MS data.</p>
 <p>This document provides a simple compounding workflow using <code>xcms</code>. Note that the present functionality does not (yet) <em>aggregate</em> or combine the actual features per values, but does only define the feature groups (one per compound).</p>
 </div>
-<div id="compounding-of-lc-ms-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#compounding-of-lc-ms-data" class="anchor" aria-hidden="true"></a>Compounding of LC-MS data</h1>
+<div class="section level1">
+<h1 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
+</h1>
 <p>We demonstrate the compounding (feature grouping) functionality on the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> package and provided through the <code>faahKO</code> package. This data set consists of samples from 4 mice with knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type mice. Pre-processing of this data set is described in detail in the <em>xcms</em> vignette of the <code>xcms</code> package. Below we load all required packages and the result from this pre-processing updating also the location of the respective raw data files on the current machine.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
@@ -206,9 +206,9 @@ document.addEventListener("DOMContentLoaded", function() {
 </ul>
 <p>Calling <code>groupFeatures</code> on an <code>xcms</code> result object will perform a feature grouping assigning each feature in the data set to a <em>feature group</em>. These feature groups are stored as an additional column called <code>"feature_group"</code> in the <code>featureDefinition</code> data frame of the result object and can be accessed with the <code>featureGroups</code> function. Any subsequent <code>groupFeature</code> call will <em>sub-group</em> (refine) the identified feature groups further. It is thus possible to use a single grouping approach, or to combine multiple of them to generate the desired feature grouping. While the individual feature grouping algorithms can be called in any order, it is advisable to use the <code>EicSimilarityParam</code> as last refinement step, because it is the computationally most expensive one, especially if applied to a result object without any pre-defined feature groups or if the feature groups are very large. In the subsequent sections we will apply the various feature grouping approaches subsequently.</p>
 <p>Note also that we perform here a grouping of all defined features, but it would also be possible to <em>just</em> group a subset of interesting features (e.g. features found significant by a statistical analysis of the data set). This is described in the last section of this vignette.</p>
-<div id="grouping-of-features-by-similar-retention-time" class="section level2">
-<h2 class="hasAnchor">
-<a href="#grouping-of-features-by-similar-retention-time" class="anchor" aria-hidden="true"></a>Grouping of features by similar retention time</h2>
+<div class="section level2">
+<h2 id="grouping-of-features-by-similar-retention-time">Grouping of features by similar retention time<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similar-retention-time"></a>
+</h2>
 <p>The most intuitive and simple way to group features is based on their retention time. Before we perform this initial grouping we evaluate retention times and m/z of all features in the present data set.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">rtmed</span>, <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">mzmed</span>,
@@ -286,9 +286,9 @@ Feature groups defined with a rt window of 20 seconds
 </div>
 <p>Grouping by similar retention time grouped the in total 225 features into 77 feature groups.</p>
 </div>
-<div id="grouping-of-features-by-abundance-correlation-across-samples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#grouping-of-features-by-abundance-correlation-across-samples" class="anchor" aria-hidden="true"></a>Grouping of features by abundance correlation across samples</h2>
+<div class="section level2">
+<h2 id="grouping-of-features-by-abundance-correlation-across-samples">Grouping of features by abundance correlation across samples<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-abundance-correlation-across-samples"></a>
+</h2>
 <p>Assuming we are OK with the <em>crude</em> initial feature grouping from the previous section, we can next <em>refine</em> the feature groups considering also the feature abundances across samples. We can use the <code>groupFeatures</code> method with an <code>AbundanceSimilarityParam</code> object. This approach performs a pairwise correlation between the feature values (abundances; across samples) between all features of a predefined feature group (such as defined in the previous section). Features that have a correlation <code>&gt;= threshold</code> are grouped together. Feature grouping based on this approach works best for features with a higher variability in their concentration across samples. Parameter <code>subset</code> allows to restrict the analysis to a subset of samples and allows thus to e.g. exclude QC sample pools from this correlation as these could artificially increase the correlation. Other parameters are passed directly to the internal <code>featureValues</code> call that extracts the feature values on which the correlation should be performed.</p>
 <p>Before performing the grouping we could also evaluate the correlation of features based on their (log2 transformed) abundances across samples with a heatmap.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -376,9 +376,9 @@ Pairwise correlation plot for all features initially grouped into the feature gr
 <p>Indeed, correlations can be seen only between some of the features in this retention time feature group, e.g. between <em>FT117</em> and <em>FT120</em> and between <em>FT195</em> and <em>FT200</em>. Note however that this abundance correlation suffers from relatively few samples (8 in total), and a relatively small variance in abundances across these samples.</p>
 <p>After feature grouping by abundance correlation, the 225 features have been grouped into 170 feature groups.</p>
 </div>
-<div id="grouping-of-features-by-similarity-of-their-eics" class="section level2">
-<h2 class="hasAnchor">
-<a href="#grouping-of-features-by-similarity-of-their-eics" class="anchor" aria-hidden="true"></a>Grouping of features by similarity of their EICs</h2>
+<div class="section level2">
+<h2 id="grouping-of-features-by-similarity-of-their-eics">Grouping of features by similarity of their EICs<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similarity-of-their-eics"></a>
+</h2>
 <p>The chromatographic peak shape of an ion of a compound should be highly similar to the elution pattern of this compound. Thus, features from the same compound are assumed to have similar peak shapes of their EICs <strong>within the same sample</strong>. A grouping of features based on similarity of their EICs can be performed with the <code>groupFeatures</code> and the <code>EicSimilarityParam</code> object. It is advisable to perform the peak shape correlation only on a subset of samples (because peak shape correlation is computationally intense and because chromatographic peaks of low intensity features are notoriously noisy). The <code>EicSimilarityParam</code> approach has thus the parameter <code>n</code> which allows to select the number of top samples (ordered by total intensity of feature abundances per feature group) on which the correlation should be performed. With an value of <code>n = 3</code>, the 3 samples with the highest signal for all features in that group will be first identified for each feature group and then a pairwise similarity calculation will be performed within each of these samples. The resulting similarity score from these 3 samples will then be aggregated into a single score by taking the 75% quantile across the 3 samples. This value is then subsequently compared with the cut-off for similarity (parameter <code>threshold</code>) and features with a score <code>&gt;= threshold</code> are grouped into the same feature group.</p>
 <p>Below we group the features based on similarity of their EICs in the two samples with the highest total signal for the respective feature groups. By default, a Pearson correlation coefficient is used as similarity score but any similarity/distance metric function could be used instead (parameter <code>FUN</code> of the <code>EicSimilarityParam</code> - see the respective help page <code><a href="../reference/groupFeatures-eic-similarity.html">?EicSimilarityParam</a></code> for details and options). We define as a threshold a correlation coefficient of 0.7.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -507,9 +507,9 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 <p>Based on the EIC correlation, the initial feature group <em>FG.068.001</em> was grouped into two separate sub-groups.</p>
 <p>The grouping based on EIC correlation on the pre-defined feature groups from the previous sections grouped the 225 features into 183 feature groups.</p>
 </div>
-<div id="grouping-of-subsets-of-features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#grouping-of-subsets-of-features" class="anchor" aria-hidden="true"></a>Grouping of subsets of features</h2>
+<div class="section level2">
+<h2 id="grouping-of-subsets-of-features">Grouping of subsets of features<a class="anchor" aria-label="anchor" href="#grouping-of-subsets-of-features"></a>
+</h2>
 <p>In the previous sections we were always considering all features from the data set, but sometimes it could be desirable to just group a pre-defined set of features, for example features found to be of particular interest in a certain experiment (e.g. significant features). This can be easily achieved by assigning the features of interest to a initial feature group, using <code>NA</code> as group ID for all other features.</p>
 <p>To illustrate this we <em>reset</em> all feature groups by setting them to <code>NA</code> and assign our features of interest (in this example just 30 randomly selected features) to an initial feature group <code>"FG"</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -534,9 +534,9 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 ##          1          1</code></pre>
 </div>
 </div>
-<div id="session-information" class="section level1">
-<h1 class="hasAnchor">
-<a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
+<div class="section level1">
+<h1 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h1>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.1.1 (2021-08-10)
@@ -560,10 +560,10 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 ## 
 ## other attached packages:
 ##  [1] pheatmap_1.0.12      faahKO_1.33.0        MsFeatures_1.1.0    
-##  [4] xcms_3.15.4          MSnbase_2.19.3       ProtGenerics_1.25.2 
+##  [4] xcms_3.15.5          MSnbase_2.19.3       ProtGenerics_1.25.2 
 ##  [7] S4Vectors_0.31.5     mzR_2.27.1           Rcpp_1.0.7          
-## [10] Biobase_2.53.0       BiocGenerics_0.39.2  BiocParallel_1.27.16
-## [13] BiocStyle_2.21.3    
+## [10] Biobase_2.53.0       BiocGenerics_0.39.2  BiocParallel_1.27.17
+## [13] BiocStyle_2.21.4    
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-7                matrixStats_0.61.0         
@@ -575,13 +575,13 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 ## [13] affyio_1.63.2               colorspace_2.0-2           
 ## [15] prettyunits_1.1.1           tidyselect_1.1.1           
 ## [17] MassSpecWavelet_1.59.0      compiler_4.1.1             
-## [19] preprocessCore_1.55.2       textshaping_0.3.5          
+## [19] preprocessCore_1.55.2       textshaping_0.3.6          
 ## [21] cli_3.0.1                   DelayedArray_0.19.4        
 ## [23] desc_1.4.0                  bookdown_0.24              
 ## [25] sass_0.4.0                  scales_1.1.1               
 ## [27] DEoptimR_1.0-9              robustbase_0.93-9          
 ## [29] affy_1.71.0                 pkgdown_1.9000.9000.9000   
-## [31] systemfonts_1.0.2           stringr_1.4.0              
+## [31] systemfonts_1.0.3           stringr_1.4.0              
 ## [33] digest_0.6.28               rmarkdown_2.11             
 ## [35] XVector_0.33.0              pkgconfig_2.0.3            
 ## [37] htmltools_0.5.2             MatrixGenerics_1.5.4       
@@ -608,16 +608,16 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 ## [79] BiocManager_1.30.16         vctrs_0.3.8                
 ## [81] foreach_1.5.1               RANN_2.6.1                 
 ## [83] gtable_0.3.0                purrr_0.3.4                
-## [85] clue_0.3-59                 cachem_1.0.6               
+## [85] clue_0.3-60                 cachem_1.0.6               
 ## [87] ggplot2_3.3.5               xfun_0.26                  
 ## [89] ragg_1.1.3                  ncdf4_1.17                 
 ## [91] tibble_3.1.5                iterators_1.0.13           
 ## [93] memoise_2.0.0               IRanges_2.27.2             
 ## [95] cluster_2.1.2               ellipsis_0.3.2</code></pre>
 </div>
-<div id="references" class="section level1">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
+<div class="section level1">
+<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h1>
 </div>
   </div>
 

@@ -18,7 +18,7 @@ them by returning their indices in xmin xmax."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -72,21 +72,27 @@ them by returning their indices in <code>xmin</code> <code>xmax</code>.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">groupOverlaps</span><span class="op">(</span><span class="va">xmin</span>, <span class="va">xmax</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>xmin</th>
       <td><p><code>numeric</code> (same length than <code>xmax</code>) with the lower boundary of
 the range.</p></td>
     </tr><tr><th>xmax</th>
       <td><p><code>numeric</code> (same length than <code>xmin</code>) with the upper boundary of
 the range.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p><code>list</code> with the indices of grouped elements.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">12</span>, <span class="fl">34.2</span>, <span class="fl">12.4</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">16</span>, <span class="fl">35</span>, <span class="fl">36</span><span class="op">)</span></span>
@@ -99,6 +105,7 @@ the range.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2 3 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

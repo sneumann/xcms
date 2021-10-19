@@ -19,7 +19,7 @@ without m/z values."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -87,7 +87,8 @@ without m/z values.</p>
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>int</th>
       <td><p><code>numeric</code> with intensity values.</p></td>
     </tr><tr><th>rt</th>
@@ -127,8 +128,10 @@ regions of interest is checked to be above the first baseline.</p></td>
 extension is used, rather than the default "reflect" method.</p></td>
     </tr><tr><th>...</th>
       <td><p>currently ignored.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak, with
 columns:</p><ul><li><p><code>"rt"</code>: retention time of the peak's midpoint (time of the maximum signal).</p></li>
 <li><p><code>"rtmin"</code>: minimum retention time of the peak.</p></li>
@@ -148,8 +151,9 @@ chromatographic noise.</p></li>
 <li><p><code>"scpos"</code>: peak position found by wavelet analysis (index in <code>int</code>).</p></li>
 <li><p><code>"scmin"</code>: left peak limit found by wavelet analysis (index in <code>int</code>).</p></li>
 <li><p><code>"scmax"</code>: right peak limit found by wavelet analysis (index in <code>int</code>).</p></li>
-</ul><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</ul></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The method uses the same algorithm for the peak detection than <a href="findChromPeaks-centWave.html">centWave</a>,
 employs however a different approach to identify the initial regions in
 which the peak detection is performed (i.e. the <em>regions of interest</em> ROI).
@@ -157,17 +161,21 @@ The method first identifies all local maxima in the chromatographic data and
 defines the corresponding positions +/- <code>peakwidth[2]</code> as the ROIs. Noise
 estimation bases also on these ROIs and can thus be different from <a href="findChromPeaks-centWave.html">centWave</a>
 resulting in different signal to noise ratios.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><a href="findChromPeaks-centWave.html">centWave</a> for a detailed description of the peak detection
 method.</p>
 <p>Other peak detection functions for chromatographic data: 
 <code><a href="peaksWithMatchedFilter.html">peaksWithMatchedFilter</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Reading a file</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms">xcms</a></span><span class="op">)</span></span>
@@ -197,6 +205,7 @@ method.</p>
 <span class="r-in">    border <span class="op">=</span> <span class="st">"#00000040"</span><span class="op">)</span></span>
 <span class="r-plt"><img src="peaksWithCentWave-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

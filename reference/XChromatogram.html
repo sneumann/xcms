@@ -26,7 +26,7 @@ Arguments section."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -260,7 +260,8 @@ refineChromPeaks(object, param = MergeNeighboringPeaksParam())
 # S4 method for XChromatograms
 filterChromPeaks(object, method = c("keepTop"), ...)</code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>data</th>
       <td><p>For <code>XChromatograms</code>: <code>list</code> of <code>Chromatogram</code> or
 <code>XChromatogram</code> objects.</p></td>
@@ -437,11 +438,14 @@ of the row's minimal (non-missing) value.</p></td>
 correspondence analysis should be <em>simulated</em> based on the available
 data and the provided <code><a href="groupChromPeaks-density.html">PeakDensityParam()</a></code> <code>param</code> argument. See
 section <em>Correspondence analysis</em> for details.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>See help of the individual functions.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>Highlighting the peak area(s) in an <code>XChromatogram</code> or <code>XChromatograms</code>
 object (<code>plot</code> with <code>peakType = "polygon"</code>) draws a polygon representing
 the displayed chromatogram from the peak's minimal retention time to the
@@ -449,8 +453,9 @@ maximal retention time. If the <code>XChromatograms</code> was extracted from an
 <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with the <code><a href="chromatogram-method.html">chromatogram()</a></code> function this might not
 represent the actual identified peak area if the m/z range that was
 used to extract the chromatogram was larger than the peak's m/z.</p>
-    <h2 class="hasAnchor" id="creation-of-objects"><a class="anchor" href="#creation-of-objects"></a>Creation of objects</h2>
-
+    </div>
+    <div id="creation-of-objects">
+    <h2>Creation of objects</h2>
     
 
 
@@ -458,8 +463,9 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
 <code>XChromatograms</code>, respectively. Also, they can be coerced from
 <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms()</a></code> objects using
 <code>as(object, "XChromatogram")</code> or <code>as(object, "XChromatograms")</code>.</p>
-    <h2 class="hasAnchor" id="filtering-and-subsetting"><a class="anchor" href="#filtering-and-subsetting"></a>Filtering and subsetting</h2>
-
+    </div>
+    <div id="filtering-and-subsetting">
+    <h2>Filtering and subsetting</h2>
     
 
 
@@ -483,8 +489,9 @@ All eventually present chromatographic peaks with their apex within the
 retention time range specified with <code>rt</code> will be retained. Also feature
 definitions, if present, will be filtered accordingly. The function
 returns a filtered <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></li>
-</ul><h2 class="hasAnchor" id="accessing-data"><a class="anchor" href="#accessing-data"></a>Accessing data</h2>
-
+</ul></div>
+    <div id="accessing-data">
+    <h2>Accessing data</h2>
     
 
 
@@ -555,8 +562,9 @@ smallest values, respectively.</p></li>
 <li><p><code>processHistory</code>: returns a <code>list</code> of <a href="ProcessHistory-class.html">ProcessHistory</a> objects representing
 the individual performed processing steps. Optional parameters <code>type</code> and
 <code>fileIndex</code> allow to further specify which processing steps to return.</p></li>
-</ul><h2 class="hasAnchor" id="plotting-and-visualizing"><a class="anchor" href="#plotting-and-visualizing"></a>Plotting and visualizing</h2>
-
+</ul></div>
+    <div id="plotting-and-visualizing">
+    <h2>Plotting and visualizing</h2>
     
 
 <ul><li><p><code>plot</code> draws the chromatogram and highlights in addition any
@@ -570,8 +578,9 @@ it might be better to set <code>peakType = "none"</code> to avoid generating bus
 plots.</p></li>
 <li><p><code>plotChromPeakDensity</code>: visualize <em>peak density</em>-based correspondence
 analysis results. See section <em>Correspondence analysis</em> for more details.</p></li>
-</ul><h2 class="hasAnchor" id="chromatographic-peak-detection"><a class="anchor" href="#chromatographic-peak-detection"></a>Chromatographic peak detection</h2>
-
+</ul></div>
+    <div id="chromatographic-peak-detection">
+    <h2>Chromatographic peak detection</h2>
     
 
 
@@ -581,8 +590,9 @@ identified chromatographic peaks with the <code>refineChromPeaks</code> method (
 reduce peak detection artifacts). Currently, only peak refinement using the
 <em>merge neighboring peaks</em> method is available (see
 <code><a href="refineChromPeaks-merge.html">MergeNeighboringPeaksParam()</a></code> for a detailed description of the approach.</p>
-    <h2 class="hasAnchor" id="correspondence-analysis"><a class="anchor" href="#correspondence-analysis"></a>Correspondence analysis</h2>
-
+    </div>
+    <div id="correspondence-analysis">
+    <h2>Correspondence analysis</h2>
     
 
 
@@ -617,15 +627,19 @@ See examples below.</p>
 <code>featureValues</code> function using parameter <code>value = "into"</code> to extract the
 integrated peak area for each feature. The result is a <code>matrix</code>, columns
 being samples and rows features.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><a href="findChromPeaks-Chromatogram-CentWaveParam.html">findChromPeaks-centWave</a> for peak
 detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms()</a></code> objects.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## ---- Creation of XChromatograms ----</span></span>
 <span class="r-in"><span class="co">##</span></span>
@@ -698,7 +712,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Oct 10 18:52:06 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:54:38 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -855,6 +869,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">xchr_sub</span><span class="op">)</span></span>
 <span class="r-plt"><img src="XChromatogram-8.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

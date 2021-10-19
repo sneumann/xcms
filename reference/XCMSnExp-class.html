@@ -193,7 +193,7 @@ as rectangles with border color peakCol."><!-- mathjax --><script src="https://c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -564,7 +564,8 @@ as rectangles with border color <code>peakCol</code>.</p>
 <span class="co"># S4 method for XCMSnExp,missing</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>For <code>adjustedRtime</code>, <code>featureDefinitions</code>,
 <code>chromPeaks</code>, <code>hasAdjustedRtime</code>, <code>hasFeatures</code> and
@@ -704,8 +705,10 @@ spectrum in the object.</p></td>
       <td><p>For <code>plot</code>: the color that should be used to indicate
 identified chromatographic peaks (only in combination with
 <code>type = "XIC"</code> and if chromatographic peaks are present).</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>For <code>profMat</code>: a <code>list</code> with a the profile matrix
     <code>matrix</code> (or matrices if <code>fileIndex</code> was not specified or if
     <code>length(fileIndex) &gt; 1</code>). See <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> for
@@ -767,8 +770,9 @@ of the specific file.</p>
 <p>For <code>processHistory</code>: a <code>list</code> of
 <code><a href="ProcessHistory-class.html">ProcessHistory</a></code> objects providing the details of the
 individual data processing steps that have been performed.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>.processHistory</code></dt><dd><p><code>list</code> with <code>XProcessHistory</code> objects
@@ -780,14 +784,16 @@ and containing the results from a chromatographic peak detection (element
 and retention time correction (element <code>"adjustedRtime"</code>) steps.
 This object should not be manipulated directly.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The <code>"chromPeaks"</code> element in the <code>msFeatureData</code> slot is
     equivalent to the <code>@peaks</code> slot of the <code>xcmsSet</code> object, the
     <code>"featureDefinitions"</code> contains information from the <code>@groups</code>
     and <code>@groupidx</code> slots from an <code>xcmsSet</code> object.</p>
-    <h2 class="hasAnchor" id="chromatographic-peak-data"><a class="anchor" href="#chromatographic-peak-data"></a>Chromatographic peak data</h2>
-
+    </div>
+    <div id="chromatographic-peak-data">
+    <h2>Chromatographic peak data</h2>
     
 
 
@@ -809,8 +815,9 @@ respective help page).</p></li>
 retention time axis (see respective help page).</p></li>
 <li><p><code><a href="highlightChromPeaks.html">highlightChromPeaks</a></code> add chromatographic peaks to an
 existing plot of a <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></code> (see respective help page).</p></li>
-</ul><h2 class="hasAnchor" id="adjusted-retention-times"><a class="anchor" href="#adjusted-retention-times"></a>Adjusted retention times</h2>
-
+</ul></div>
+    <div id="adjusted-retention-times">
+    <h2>Adjusted retention times</h2>
     
 
 
@@ -829,8 +836,9 @@ for help).</p></li>
 the adjusted ones (see respective help page).</p></li>
 <li><p><code><a href="plotAdjustedRtime.html">plotAdjustedRtime</a></code> plot differences between adjusted and
 raw retention times (see respective help page).</p></li>
-</ul><h2 class="hasAnchor" id="correspondence-results-features"><a class="anchor" href="#correspondence-results-features"></a>Correspondence results, features</h2>
-
+</ul></div>
+    <div id="correspondence-results-features">
+    <h2>Correspondence results, features</h2>
     
 
 
@@ -852,8 +860,9 @@ overlapping or close in the m/z - rt space (see respective help page).</p></li>
 <li><p><code><a href="https://lgatto.github.io/MSnbase/reference/quantify-methods.html">quantify</a></code> extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
 <code>SummarizedExperiment</code>. See help page for details.</p></li>
-</ul><h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+</ul></div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet</a></code> for the old implementation.
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">MSnExp</a></code>
     and <code><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">pSet</a></code> for a complete list of inherited methods.</p>
@@ -877,11 +886,14 @@ with feature definitions and phenodata information, into a
     identified features.</p>
 <p><code><a href="fillChromPeaks.html">fillChromPeaks</a></code> for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -1018,7 +1030,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Sun Oct 10 18:52:02 2021] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Tue Oct 19 16:54:35 2021] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
@@ -1078,6 +1090,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP005    49      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP006    87      1</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

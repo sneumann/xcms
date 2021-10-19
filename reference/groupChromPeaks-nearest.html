@@ -47,7 +47,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -169,7 +169,8 @@ already present feature definitions.</p>
 <span class="co"># S4 method for XCMSnExp,NearestPeaksParam</span>
 <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>sampleGroups</th>
       <td><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
@@ -205,33 +206,39 @@ the peak grouping algorithm.</p></td>
       <td><p><code>logical(1)</code> (default <code>add = FALSE</code>) allowing to perform an
 additional round of correspondence (e.g. on a different MS level) and
 add features to the already present feature definitions.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>NearestPeaksParam</code> function returns a
     <code>NearestPeaksParam</code> class instance with all of the settings
     specified for peak alignment based on peak proximity.</p>
 <p>For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the results of the peak
 grouping/correspondence step (i.e. the mz-rt features). These can be
 accessed with the <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> method.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>sampleGroups,mzVsRtBalance,absMz,absRt,kNN</code></dt><dd><p>See corresponding parameter
 above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface. All of the settings to the algorithm
 can be passed with a <code>NearestPeaksParam</code> object.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
 data. Bioinformatics 2006, 22:634-636.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>The <code><a href="do_groupChromPeaks_nearest.html">do_groupChromPeaks_nearest()</a></code> core API function.</p>
 <p><code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> and <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> for methods to access
 peak grouping results (i.e. the features).</p>
@@ -241,8 +248,10 @@ the peak grouping.</p>
 <code><a href="groupChromPeaks-density.html">groupChromPeaks-density</a></code>,
 <code><a href="groupChromPeaks-mzClust.html">groupChromPeaks-mzClust</a></code>,
 <code><a href="groupChromPeaks.html">groupChromPeaks</a>()</code></p></div>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a NearestPeaksParam object</span></span>
 <span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">NearestPeaksParam</span><span class="op">(</span>kNN <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
@@ -349,13 +358,14 @@ the peak grouping.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak grouping </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Oct 10 18:53:49 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:56:09 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: NearestPeaksParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MS level(s) 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

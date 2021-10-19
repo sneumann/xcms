@@ -25,7 +25,7 @@ time of the MS2 spectrum).'><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -91,7 +91,8 @@ time of the MS2 spectrum).</p>
   BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object.</p></td>
     </tr><tr><th>ppm</th>
@@ -104,14 +105,18 @@ should be determined (see description above for details). Defaults to
 <code>method = "previous"</code>.</p></td>
     </tr><tr><th>BPPARAM</th>
       <td><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam()</a></code> for details.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p><code>numeric</code> with length equal to the number of spectra in <code>x</code>. <code>NA</code> is
 returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
 found for an MS 2 spectrum</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

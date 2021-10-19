@@ -18,7 +18,7 @@ time or returns the object unchanged if none are present."><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -72,29 +72,35 @@ time or returns the object unchanged if none are present.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">applyAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>An <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>XCMSnExp</code> with the raw retention times being replaced with the
 adjusted retention time.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>Adjusted retention times are stored <em>in parallel</em> to the adjusted
 retention times in the <code>XCMSnExp</code>. The <code>applyAdjustedRtime</code> replaces the
 raw retention times (stored in the <em>feature data</em> (<code>fData</code> <code>data.frame</code>))
 with the adjusted retention times.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>Replacing the raw retention times with adjusted retention times
 disables the possibility to restore raw retention times using the
 <code><a href="XCMSnExp-class.html">dropAdjustedRtime()</a></code> method. This function does <strong>not</strong> remove the
 retention time processing step with the settings of the alignment from
 the <code><a href="XCMSnExp-class.html">processHistory()</a></code> of the <code>object</code> to ensure that the processing
 history is preserved.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="adjustRtime.html">adjustRtime()</a></code> for the function to perform the alignment (retention
 time correction).</p><pre><code>[adjustedRtime()] for the method to extract adjusted retention times from
 an [XCMSnExp] object.
@@ -103,11 +109,14 @@ an [XCMSnExp] object.
 restore the raw retention times.
 </code></pre>
 </div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -155,13 +164,14 @@ restore the raw retention times.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Retention time correction </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Oct 10 18:52:12 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:54:44 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: ObiwarpParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MS level(s) 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

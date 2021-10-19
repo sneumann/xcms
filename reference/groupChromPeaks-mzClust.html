@@ -33,7 +33,7 @@ grouping for single spectrum metabolomics data."><!-- mathjax --><script src="ht
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -141,7 +141,8 @@ grouping for single spectrum metabolomics data.</p>
 <span class="co"># S4 method for XCMSnExp,MzClustParam</span>
 <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>sampleGroups</th>
       <td><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
@@ -176,37 +177,43 @@ the peak grouping algorithm.</p></td>
     </tr><tr><th>msLevel</th>
       <td><p><code>integer(1)</code> defining the MS level. Currently only MS level
 1 is supported.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>MzClustParam</code> function returns a <code>MzClustParam</code> class instance with
 all of the settings specified for high resolution single spectra peak
 alignment.</p>
 <p>For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the results of the peak
 grouping step (i.e. the features). These can be accessed with the
 <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> method.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>sampleGroups,ppm,absMz,minFraction,minSamples</code></dt><dd><p>See corresponding
 parameter above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface which will eventually replace the
 <code><a href="group-methods.html">group()</a></code> methods. All of the settings to the algorithm
 can be passed with a MzClustParam object.</p>
 <p>Calling <code>groupChromPeaks</code> on an <code>XCMSnExp</code> object will cause
 all eventually present previous correspondence results to be dropped.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
 and David F. Grant<br> Alignment of high resolution mass spectra:
 development of a heuristic approach for metabolomics.<br> Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>The <code><a href="do_groupPeaks_mzClust.html">do_groupPeaks_mzClust()</a></code> core API function and <code><a href="group.mzClust.html">group.mzClust()</a></code> for
 the old user interface.</p>
 <p><code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> and <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> for methods to access peak
@@ -217,8 +224,10 @@ the peak grouping.</p>
 <code><a href="groupChromPeaks-density.html">groupChromPeaks-density</a></code>,
 <code><a href="groupChromPeaks-nearest.html">groupChromPeaks-nearest</a></code>,
 <code><a href="groupChromPeaks.html">groupChromPeaks</a>()</code></p></div>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Loading a small subset of direct injection, single spectrum files</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">msdata</span><span class="op">)</span></span>
@@ -287,6 +296,7 @@ the peak grouping.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT16         2   24,12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT17         1      25</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

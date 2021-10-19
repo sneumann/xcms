@@ -29,7 +29,7 @@ The do_findChromPeaks_centWaveAddPredIsoROIs performs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -140,7 +140,8 @@ The do_findChromPeaks_centWaveAddPredIsoROIs performs
   polarity <span class="op">=</span> <span class="st">"unknown"</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
       <td><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></td>
@@ -253,8 +254,10 @@ with the peaks for which isotopes should be predicted and used for an
 additional peak detectoin using the centWave method. Required columns
 are: <code>"mz"</code>, <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"scmin"</code>,
 <code>"scmax"</code>, <code>"scale"</code> and <code>"into"</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak.
     All non-overlapping peaks identified in both centWave runs are reported.
     The matrix columns are:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peaks across scans.</p></dd>
@@ -280,20 +283,24 @@ are: <code>"mz"</code>, <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"scmin
     <dt>scmin</dt><dd><p>Left peak limit found by wavelet analysis (scan number).</p></dd>
     <dt>scmax</dt><dd><p>Right peak limit found by wavelet analysis (scan numer).</p></dd>
     
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>For more details on the centWave algorithm see
     <code><a href="findChromPeaks-centWave.html">centWave</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Other core peak detection functions: 
 <code><a href="do_findChromPeaks_centWave.html">do_findChromPeaks_centWave</a>()</code>,
 <code><a href="do_findChromPeaks_massifquant.html">do_findChromPeaks_massifquant</a>()</code>,
 <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a>()</code>,
 <code><a href="do_findPeaks_MSW.html">do_findPeaks_MSW</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Hendrik Treutler, Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

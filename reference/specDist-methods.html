@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -71,15 +71,18 @@
     </div>
 
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>a xcmsSet or xcmsRaw.</p></td>
     </tr><tr><th>method</th>
       <td><p>Method to use for distance calculation. See details.</p></td>
     </tr><tr><th>...</th>
       <td><p>mzabs, mzppm and parameters for the distance function.</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     <p></p><dl><dt>object = "xcmsSet"</dt><dd><p><code>
 		specDist(object, peakIDs1, peakIDs2,...)
 		</code></p></dd>
@@ -88,8 +91,9 @@
 	specDist(object, PSpec1, PSpec2,...)
 		</code></p></dd>
 	
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>Different algorithms can be used by specifying them with the
   <code>method</code> argument. For example to use the "meanMZmatch"
   approach with xcmsSet one would use:
@@ -104,8 +108,9 @@
   If the nickname of a method is called "meanMZmatch",
   the help page for that specific method can
   be accessed with <code><a href="specDist.meanMZmatch-methods.html">?specDist.meanMZmatch</a></code>.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     
 
 <dl><dt>mzabs</dt><dd><p>maximum absolute deviation for two matching peaks</p></dd>
@@ -113,9 +118,11 @@
 <dl><dt>mzppm</dt><dd><p>relative deviations in ppm for two matching peaks</p></dd>
 </dl><p></p>
 <dl><dt>symmetric</dt><dd><p>use symmetric pairwise m/z-matches only, or each match</p></dd>
-</dl><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</dl></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Joachim Kutzera, <a href="mailto:jkutzer@ipb-halle.de">jkutzer@ipb-halle.de</a></p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -25,7 +25,7 @@ Also, for nValues &amp;gt; 1 parameter value is ignored.'><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -94,7 +94,8 @@ Also, for <code>nValues &gt; 1</code> parameter <code>value</code> is ignored.</
   BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>threshold</th>
       <td><p><code>numeric(1)</code> defining the minimal required intensity for
 a peak to be retained. Defaults to <code>threshold = 0</code>.</p></td>
@@ -117,19 +118,25 @@ filtered.</p></td>
       <td><p>parameter object to set up parallel processing. Uses the
 default parallel processing setup returned by <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam()</a></code>. See
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam()</a></code> for details and examples.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p><code>XCMSnExp</code> object with filtererd chromatographic peaks.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Other chromatographic peak refinement methods: 
 <code><a href="refineChromPeaks-clean.html">CleanPeaksParam</a></code>,
 <code><a href="refineChromPeaks-merge.html">MergeNeighboringPeaksParam</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -162,6 +169,7 @@ default parallel processing setup returned by <code><a href="https://rdrr.io/pkg
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 220</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

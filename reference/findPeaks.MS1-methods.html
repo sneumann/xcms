@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -71,18 +71,22 @@
     </div>
 
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p><code>xcmsRaw</code> object</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     
 <dl><dt>object = "xcmsRaw"</dt><dd><p><code>
     findPeaks.MS1(object)
     </code></p></dd>
 
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>Some mass spectrometers can acquire MS1 and MS2 (or MS$^n$ scans)
   quasi simultaneously, e.g. in data dependent tandem MS or DDIT mode.</p>
 <p>Since xcmsFragments attaches <em>all</em> MS$^n$ peaks to MS1 peaks in xcmsSet,
@@ -113,8 +117,9 @@
   files, either without intensities (they will be set to 0) or without
   the precursor retention time (then a reasonably close rt will be
   chosen. NYI).</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix with columns:</p>
 <p></p>
 <dl><dt>mz, mzmin, mzmax</dt><dd><p>annotated MS1 precursor selection mass</p></dd>
@@ -122,13 +127,16 @@
 <dl><dt>rt, rtmin, rtmax</dt><dd><p>annotated MS1 precursor retention time</p></dd>
 </dl><p></p>
 <dl><dt>into, maxo, sn</dt><dd><p>annotated MS1 precursor intensity</p></dd>
-</dl><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</dl></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Steffen Neumann, <a href="mailto:sneumann@ipb-halle.de">sneumann@ipb-halle.de</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findPeaks-methods.html">findPeaks-methods</a></code>
   <code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

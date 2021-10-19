@@ -46,7 +46,7 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -186,7 +186,8 @@ polarity,polarity&amp;lt;-: getter and
 <span class="co"># S4 method for CentWavePredIsoParam</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>ppm</th>
       <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
@@ -292,8 +293,10 @@ return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     </tr><tr><th>value</th>
       <td><p>The value for the slot.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>CentWavePredIsoParam</code> function returns a
     <code>CentWavePredIsoParam</code> class instance with all of the settings
     specified for the two-step centWave-based peak detection considering also
@@ -304,22 +307,25 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
     with the results of the peak detection.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>See <code><a href="findChromPeaks-centWave.html">centWave</a></code> for details on the centWave method.</p>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></code> method from the <code>BiocParallel</code>
     package.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity</code></dt><dd><p>See corresponding parameter above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
     <code><a href="findPeaks-methods.html">findPeaks</a></code> methods. It supports chromatographic peak
@@ -327,8 +333,9 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the algorithm can be
     passed with a <code>CentWavePredIsoParam</code> object.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>The <code><a href="do_findChromPeaks_centWaveWithPredIsoROIs.html">do_findChromPeaks_centWaveWithPredIsoROIs</a></code> core
     API function and <code><a href="findPeaks.centWave-methods.html">findPeaks.centWave</a></code> for the old user
     interface. <code><a href="findChromPeaks-centWave.html">CentWaveParam</a></code> for the class the
@@ -341,11 +348,14 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <code><a href="findChromPeaks-massifquant.html">findChromPeaks-massifquant</a></code>,
 <code><a href="findChromPeaks-matchedFilter.html">findChromPeaks-matchedFilter</a></code>,
 <code><a href="findPeaks-MSW.html">findPeaks-MSW</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Hendrik Treutler, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a param object</span></span>
 <span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">CentWavePredIsoParam</span><span class="op">(</span>maxCharge <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
@@ -375,6 +385,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - extendLengthMSW: [1] FALSE</span>
 <span class="r-in"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

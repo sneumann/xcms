@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -87,7 +87,8 @@
   scanrange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak detection
 should be performed.</p></td>
@@ -124,8 +125,10 @@ as it could cause problems in parallel processing mode.</p></td>
     </tr><tr><th>scanrange</th>
       <td><p>Numeric vector defining the range of scans to which the
 original <code>object</code> should be sub-setted before peak detection.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an intentified chromatographic peak,
     with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peak across
     scans.</p></dd>
@@ -141,22 +144,26 @@ original <code>object</code> should be sub-setted before peak detection.</p></td
     <dt>i</dt><dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
     <dt>sn</dt><dd><p>Signal to noise ratio of the peak.</p></dd>
     
-</dl><h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+</dl></div>
+    <div id="references">
+    <h2>References</h2>
     <p>Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
     Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
     Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <em>Anal. Chem.</em> 2006, 78:779-787.
     @family Old peak detection methods</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findChromPeaks-matchedFilter.html">matchedFilter</a></code> for the new user interface.
     <code><a href="xcmsRaw-class.html">xcmsRaw</a></code>,
     <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a></code> for the core function
     performing the peak detection.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

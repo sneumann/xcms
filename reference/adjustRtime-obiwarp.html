@@ -76,7 +76,7 @@ data using the obiwarp method.'><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -279,7 +279,8 @@ data using the <em>obiwarp</em> method.</p>
 <span class="co"># S4 method for XCMSnExp,ObiwarpParam</span>
 <span class="fu"><a href="adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>binSize</th>
       <td><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
@@ -348,8 +349,10 @@ time should be performed.</p></td>
       <td><p>The value for the slot.</p></td>
     </tr><tr><th>x</th>
       <td><p>a <code>PeakGroupsParam</code> object.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>ObiwarpParam</code> function returns a
     <code>ObiwarpParam</code> class instance with all of the settings
     specified for obiwarp retention time adjustment and alignment.</p>
@@ -364,15 +367,17 @@ object.</p>
 <p>For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
 the adjusted retention times per spectra (in the same order than
 <code>rtime</code>).</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust</code></dt><dd><p>See
 corresponding parameter above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface which will eventually replace the
 <code><a href="retcor-methods.html">retcor</a></code> methods. All of the settings to the alignment
@@ -384,16 +389,18 @@ retention times of the spectra of MS level <code>msLevel</code>.</p>
 <p>Calling <code>adjustRtime</code> on an <code>XCMSnExp</code> object will cause
 all peak grouping (correspondence) results and any previous retention
 time adjustment results to be dropped.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
 ESI-LC-MS Proteomics Data Sets by Ordered Bijective Interpolated Warping"
 <em>Anal. Chem.</em> 2006, 78(17):6140-6152.</p>
 <p>John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
 ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <em>Anal. Chem.</em> 2006, 78 (17), 6140-6152.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="retcor.obiwarp-methods.html">retcor.obiwarp</a></code> for the old user interface.
     <code><a href="plotAdjustedRtime.html">plotAdjustedRtime</a></code> for visualization of alignment results.</p>
 <p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> for the object containing the results of
@@ -401,11 +408,14 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <p>Other retention time correction methods: 
 <code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code>,
 <code><a href="adjustRtime.html">adjustRtime</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -457,6 +467,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <span class="r-in"><span class="va">resL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">fromFile</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

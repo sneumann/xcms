@@ -18,7 +18,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -72,7 +72,8 @@ from <code>fromX</code> to <code>toX</code>.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_nBins</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">nBins</span>, shiftByHalfBinSize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>fromX</th>
       <td><p>numeric(1) specifying the lowest value for the bins.</p></td>
     </tr><tr><th>toX</th>
@@ -83,26 +84,33 @@ from <code>fromX</code> to <code>toX</code>.</p>
       <td><p>Logical indicating whether the bins should be shifted
 left by half bin size. This results centered bins, i.e. the first bin being
 centered at <code>fromX</code> and the last around <code>toX</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A numeric vector of length <code>nBins + 1</code> defining the lower and
 upper bounds of the bins.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This generates bins such as a call to
 <code>seq(fromX, toX, length.out = nBins)</code> would. The first and second element
 in the result vector thus defines the lower and upper boundary for the first
 bin, the second and third value for the second bin and so on.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="binYonX.html">binYonX</a></code> for a binning function.</p>
 <p>Other functions to define bins: 
 <code><a href="breaks_on_binSize.html">breaks_on_binSize</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Create breaks to bin values from 3 to 20 into 20 bins</span></span>
 <span class="r-in"><span class="fu">breaks_on_nBins</span><span class="op">(</span><span class="fl">3</span>, <span class="fl">20</span>, nBins <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  3.00  3.85  4.70  5.55  6.40  7.25  8.10  8.95  9.80 10.65 11.50 12.35</span>
@@ -113,6 +121,7 @@ bin, the second and third value for the second bin and so on.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8]  8.815789  9.710526 10.605263 11.500000 12.394737 13.289474 14.184211</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [15] 15.078947 15.973684 16.868421 17.763158 18.657895 19.552632 20.447368</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

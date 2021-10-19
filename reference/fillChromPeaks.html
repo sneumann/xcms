@@ -48,7 +48,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -173,7 +173,8 @@ from which the signal should be integrated.</p></li>
 <span class="co"># S4 method for XCMSnExp,missing</span>
 <span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>expandMz</th>
       <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining the value
 by which the mz width of peaks should be expanded. Each peak is expanded
@@ -246,14 +247,17 @@ and 2 run first using <code>msLevel = 1</code> and then (on the returned
 result object) again with <code>msLevel = 2</code>.</p></td>
     </tr><tr><th>BPPARAM</th>
       <td><p>Parallel processing settings.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>FillChromPeaksParam</code> function returns a
     <code>FillChromPeaksParam</code> object.</p>
 <p>A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
 features filled into its <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> matrix.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>After correspondence (i.e. grouping of chromatographic peaks across
 samples) there will always be features (peak groups) that do not include
 peaks from every sample. The <code>fillChromPeaks</code> method defines
@@ -279,8 +283,9 @@ the same settings used also during peak finding (using the same
 identified with the <code>MSW</code> algorithm signal is integrated
 only along the mz dimension. For all other methods the complete (raw)
 signal within the area is used.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>expandMz,expandRt,ppm,fixedMz,fixedRt</code></dt><dd><p>See corresponding parameter
@@ -288,24 +293,29 @@ above.</p></dd>
 
 <dt><code>rtmin,rtmax,mzmin,mzmax</code></dt><dd><p>See corresponding parameter above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The reported <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"rtmin"</code> and
 <code>"rtmax"</code> for the filled peaks represents the actual MS area from
 which the signal was integrated.
 Note that no peak is filled in if no signal was present in a file/sample
 in the respective mz-rt area. These samples will still show a <code>NA</code>
 in the matrix returned by the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> method.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="groupChromPeaks.html">groupChromPeaks()</a></code> for methods to perform the correspondence.</p>
 <p><a href="XCMSnExp-class.html">featureArea</a> for the function to define the m/z-retention time
 region for each feature.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with identified chromatographic peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -369,7 +379,7 @@ region for each feature.</p></div>
 <span class="r-in"><span class="va">ph</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Missing peak filling </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Oct 10 18:52:32 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:55:02 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: ChromPeakAreaParam </span>
@@ -381,16 +391,16 @@ region for each feature.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd46d21608&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd46d21608&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd46d21608&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd46d21608&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## It is also possible to remove filled-in peaks:</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFilledChromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
@@ -398,6 +408,7 @@ region for each feature.</p></div>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 26</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

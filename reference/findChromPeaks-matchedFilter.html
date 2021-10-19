@@ -60,7 +60,7 @@ index,index&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -243,7 +243,8 @@ index,index&amp;lt;-: getter and setter for the
 <span class="co"># S4 method for MatchedFilterParam</span>
 <span class="fu">index</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>binSize</th>
       <td><p><code>numeric(1)</code> specifying the width of the
 bins/slices in m/z dimension.</p></td>
@@ -310,8 +311,10 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
       <td><p>The value for the slot.</p></td>
     </tr><tr><th>x</th>
       <td><p>For <code>max</code>: a <code>MatchedFilterParam</code> object.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>MatchedFilterParam</code> function returns a
     <code>MatchedFilterParam</code> class instance with all of the settings
     specified for chromatographic detection by the <em>matchedFilter</em>
@@ -322,8 +325,9 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
     with the results of the peak detection.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The intensities are binned by the provided m/z values within each
     spectrum (scan). Binning is performed such that the bins are centered
     around the m/z values (i.e. the first bin includes all m/z values between
@@ -335,16 +339,18 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     defining the parallel processing mode using the
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></code> method from the <code>BiocParallel</code>
     package.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index</code></dt><dd><p>See corresponding parameter above. Slots values should exclusively
 be accessed <em>via</em> the corresponding getter and setter methods listed
 above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
     <code>xcms</code> user interface which will eventually replace the
     <code><a href="findPeaks-methods.html">findPeaks</a></code> methods. It supports chromatographic peak
@@ -352,14 +358,16 @@ above.</p></dd>
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the matchedFilter
     algorithm can be passed with a <code>MatchedFilterParam</code> object.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 <em>Anal. Chem.</em> 2006, 78:779-787.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>The <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a></code> core API function
 and <code><a href="findPeaks.matchedFilter-xcmsRaw-method.html">findPeaks.matchedFilter</a></code> for the old user interface.</p>
 <p><code><a href="peaksWithMatchedFilter.html">peaksWithMatchedFilter</a></code> for functions to perform matchedFilter
@@ -372,11 +380,14 @@ peak detection in purely chromatographic data.</p>
 <code><a href="findChromPeaks-centWave.html">findChromPeaks-centWave</a></code>,
 <code><a href="findChromPeaks-massifquant.html">findChromPeaks-massifquant</a></code>,
 <code><a href="findPeaks-MSW.html">findPeaks-MSW</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A Smith, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a MatchedFilterParam object. Note that we use a unnecessarily large</span></span>
 <span class="r-in"><span class="co">## binSize parameter to reduce the run-time of the example.</span></span>
@@ -427,6 +438,7 @@ peak detection in purely chromatographic data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP005  64181.64 2 16.99513      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP006 104291.09 1 36.83500      1</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

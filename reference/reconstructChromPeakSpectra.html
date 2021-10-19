@@ -19,7 +19,7 @@ LC-MS/MS analysis vignette for more details and examples."><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -83,7 +83,8 @@ for data independent acquisition (DIA) data (such as SWATH). See the
   return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"MSpectra"</span>, <span class="st">"Spectra"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p><code>XCMSnExp</code> with identified chromatographic peaks.</p></td>
     </tr><tr><th>expandRt</th>
@@ -117,8 +118,10 @@ information.</p></td>
 Can be either <code>return.type = "MSpectra"</code> (the default) to return a
 <code><a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html">MSnbase::MSpectra</a></code> object or <code>return.type = "Spectra"</code> for the newer
 <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html">Spectra::Spectra</a></code> object.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>Depending on <code>return.type</code>:</p><ul><li><p><code><a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html">MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
 in <code>object</code>. Contains empty <a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html">Spectrum2</a> objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
@@ -134,8 +137,9 @@ chromatographic peak intensity is reported as the reconstructed
 spectrum's <code>precursorIntensity</code> value (see parameter <code>intensity</code> above).</p></li>
 <li><p><code>Spectra</code> object (defined in the <code>Spectra</code> package). The same content and
 information than above.</p></li>
-</ul><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</ul></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>In detail, the function performs for each MS1 chromatographic peak:</p><ul><li><p>Identify all MS2 chromatographic peaks from the isolation window
 containing the m/z of the ion (i.e. the MS1 chromatographic peak) with
 approximately the same retention time than the MS1 peak (accepted rt shift
@@ -149,13 +153,16 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
 </ul><p>The resulting <code>MSpectra</code> object provides also the peak IDs of the MS2
 chromatographic peaks for each spectrum as well as their correlation value.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findChromPeaksIsolationWindow.html">findChromPeaksIsolationWindow()</a></code> for the function to perform MS2
 peak detection in DIA isolation windows and for examples.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer, Michael Witting</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

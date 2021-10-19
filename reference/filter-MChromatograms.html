@@ -43,7 +43,7 @@ chromPeaks matrix.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -149,7 +149,8 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
   aggregationFun <span class="op">=</span> <span class="va">sum</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></td>
     </tr><tr><th>threshold</th>
@@ -187,16 +188,21 @@ aggregate (combine) the values from all chromatograms in each column.
 Defaults to <code>aggregationFun = sum</code> in which case the sum of the values
 is used to rank the columns. Alternatively the <code>mean</code>, <code>median</code> or
 similar function can be used.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
 same number of rows (EICs) but eventually a lower number of columns
 (samples).</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="va">chr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
 <span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">29</span>, <span class="fl">50</span>, <span class="cn">NA</span>, <span class="fl">100</span>, <span class="fl">12</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
@@ -273,6 +279,7 @@ same number of rows (EICs) but eventually a lower number of columns
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData with 0 variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData with 0 variables</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

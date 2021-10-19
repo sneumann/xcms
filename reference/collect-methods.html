@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
     </div>
 
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>(empty) <code><a href="xcmsFragments-class.html">xcmsFragments-class</a></code> object</p></td>
     </tr><tr><th>xs</th>
@@ -86,22 +87,26 @@
     </tr><tr><th>snthresh, mzgap, uniq</th>
       <td><p>these are the parameters for the
     getspec-peakpicker included in xcmsRaw.</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     
 <dl><dt>object = "xcmsFragments"</dt><dd><p><code>
     collect(object, ...)
    </code></p></dd>
 
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>After running collect(xFragments,xSet) The peak table of the
   xcmsFragments includes the ms1Peaks from all experiments stored in a
   xcmsSet-object. Further it contains the relevant msN-peaks from the
   xcmsRaw-objects, which were created temporarily with the paths in
   xcmsSet.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix with columns:</p>
 <dl><dt>peakID</dt><dd><p>unique identifier of every peak</p></dd>
 </dl><p></p>
@@ -121,6 +126,8 @@
 </dl><p></p>
 <dl><dt>CollisionEnergy</dt><dd><p>The collision energy of the fragment</p></dd>
 </dl></div>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
     </nav></div>

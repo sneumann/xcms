@@ -21,7 +21,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -78,12 +78,13 @@
 
 
 
-    <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
-
+    <div id="objects-from-the-class">
+    <h2>Objects from the Class</h2>
     <p>Objects can be created with the <code><a href="xcmsRaw.html">xcmsRaw</a></code> constructor
   which reads data from a NetCDF file into a new object.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     <p></p><dl><dt><code>acquisitionNum</code>:</dt><dd><p>Numeric representing the acquisition
       number of the individual scans/spectra. Length of
       <code>acquisitionNum</code> is equal to the number of spectra/scans in the
@@ -143,8 +144,9 @@
       original <em>position</em> of each scan in the mzML file.</p></dd>
 
   
-</dl><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
-
+</dl></div>
+    <div id="methods">
+    <h2>Methods</h2>
     <p></p><dl><dt><a href="findPeaks-methods.html">findPeaks</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: feature detection using
       matched filtration in the chromatographic time domain</p></dd>
     <dt><a href="getEIC-methods.html">getEIC</a></dt><dd><p><code>signature(object = "xcmsRaw")</code>: get extracted ion
@@ -203,13 +205,16 @@
 	internal function to identify regions of interest in the raw
 	data as part of the first step of centWave-based peak detection.</p></dd>
     
-</dl><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</dl></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a>,
   Johannes Rainer <a href="mailto:johannes.rainer@eurac.edu">johannes.rainer@eurac.edu</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw.html">xcmsRaw</a></code>, <code><a href="sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html">subset-xcmsRaw</a></code> for subsetting by spectra.</p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

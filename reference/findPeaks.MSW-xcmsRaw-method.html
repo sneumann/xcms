@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for xcmsRaw</span>
 <span class="fu">findPeaks.MSW</span><span class="op">(</span><span class="va">object</span>, snthresh <span class="op">=</span> <span class="fl">3</span>, verbose.columns <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak
 detection should be performed.</p></td>
@@ -87,8 +88,10 @@ should be returned.</p></td>
 <code>identifyMajorPeaks</code> and
 <code>sav.gol</code> functions from the
 <code>MassSpecWavelet</code> package.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an intentified peak, with columns:</p><dl><dt>mz</dt><dd><p>m/z value of the peak at the centroid position.</p></dd>
     <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
     <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
@@ -101,22 +104,26 @@ should be returned.</p></td>
     <dt>maxf</dt><dd><p>Maximum MSW-filter response of the peak.</p></dd>
     <dt>sn</dt><dd><p>Signal to noise ratio.</p></dd>
     
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This is a wrapper around the peak picker in Bioconductor's
     <code>MassSpecWavelet</code> package calling
     <code>peakDetectionCWT</code> and
     <code>tuneInPeakInfo</code> functions.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findPeaks-MSW.html">MSW</a></code> for the new user interface,
     <code><a href="do_findPeaks_MSW.html">do_findPeaks_MSW</a></code> for the downstream analysis
     function or <code>peakDetectionCWT</code> from the
     <code>MassSpecWavelet</code> for details on the algorithm and additionally
     supported parameters.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Joachim Kutzera, Steffen Neumann, Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

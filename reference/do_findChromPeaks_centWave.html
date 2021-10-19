@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -94,7 +94,8 @@
   extendLengthMSW <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
       <td><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></td>
@@ -183,8 +184,10 @@ running centWave rather than truncating with the EIC length. Uses the "open"
 method to extend the EIC to a integer base-2 length prior to being passed to
 <code>convolve</code> rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak,
     with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peak across
     scans.</p></dd>
@@ -210,8 +213,9 @@ https://github.com/sneumann/xcms/issues/445 for more information.</p></td>
     <dt>scmin</dt><dd><p>Left peak limit found by wavelet analysis (scan number).</p></dd>
     <dt>scmax</dt><dd><p>Right peak limit found by wavelet analysis (scan numer).</p></dd>
     
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This algorithm is most suitable for high resolution
 LC/{TOF,OrbiTrap,FTICR}-MS data in centroid mode. In the first phase
 the method identifies <em>regions of interest</em> (ROIs) representing
@@ -225,32 +229,38 @@ updated considering also the newly included m/z value.</p>
 transform (CWT) to locate chromatographic peaks on different scales. The
 first analysis step is skipped, if regions of interest are passed with
 the <code>roiList</code> parameter.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The <em>centWave</em> was designed to work on centroided mode, thus it
     is expected that such data is presented to the function.</p>
 <p>This function exposes core chromatographic peak detection functionality
     of the <em>centWave</em> method. While this function can be called
     directly, users will generally call the corresponding method for the
     data object instead.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Ralf Tautenhahn, Christoph B\"ottcher, and Steffen Neumann "Highly
     sensitive feature detection for high resolution LC/MS"
     <em>BMC Bioinformatics</em> 2008, 9:504</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findChromPeaks-centWave.html">centWave</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
 <code><a href="do_findChromPeaks_centWaveWithPredIsoROIs.html">do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
 <code><a href="do_findChromPeaks_massifquant.html">do_findChromPeaks_massifquant</a>()</code>,
 <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a>()</code>,
 <code><a href="do_findPeaks_MSW.html">do_findPeaks_MSW</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Ralf Tautenhahn, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Load the test file</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
@@ -292,6 +302,7 @@ the <code>roiList</code> parameter.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,]    11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]    11</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

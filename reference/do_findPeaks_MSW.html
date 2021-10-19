@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -75,7 +75,8 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">do_findPeaks_MSW</span><span class="op">(</span><span class="va">mz</span>, <span class="va">int</span>, snthresh <span class="op">=</span> <span class="fl">3</span>, verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
       <td><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></td>
@@ -90,8 +91,10 @@ columns should be returned.</p></td>
     </tr><tr><th>...</th>
       <td><p>Additional parameters to be passed to the
 <code>peakDetectionCWT</code> function.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an identified peak, with columns:</p><dl><dt>mz</dt><dd><p>m/z value of the peak at the centroid position.</p></dd>
     <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
     <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
@@ -104,15 +107,17 @@ columns should be returned.</p></td>
     <dt>maxf</dt><dd><p>Maximum MSW-filter response of the peak.</p></dd>
     <dt>sn</dt><dd><p>Signal to noise ratio.</p></dd>
     
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This is a wrapper around the peak picker in Bioconductor's
     <code>MassSpecWavelet</code> package calling
     <code>peakDetectionCWT</code> and
     <code>tuneInPeakInfo</code> functions. See the
     <em>xcmsDirect</em> vignette for more information.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findPeaks-MSW.html">MSW</a></code> for the standard user interface
     method. <code>peakDetectionCWT</code> from the
     <code>MassSpecWavelet</code> package.</p>
@@ -121,9 +126,11 @@ columns should be returned.</p></td>
 <code><a href="do_findChromPeaks_centWave.html">do_findChromPeaks_centWave</a>()</code>,
 <code><a href="do_findChromPeaks_massifquant.html">do_findChromPeaks_massifquant</a>()</code>,
 <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Joachim Kutzera, Steffen Neumann, Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

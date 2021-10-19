@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -82,7 +82,8 @@
   noInterpolAtEnds <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p>A numeric vector with eventual missing (<code>NA</code>) values.</p></td>
     </tr><tr><th>baseValue</th>
@@ -100,12 +101,15 @@ linear interpolation. See details section for more information.</p></td>
 whether linear interpolation should also be performed at the ends of the
 data vector (i.e. if missing values are present at the beginning or the
 end of the vector).</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A numeric vector with empty values imputed based on the selected
     <code>method</code>.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>Values for NAs in input vector <code>x</code> can be imputed using methods
     <code>"lin"</code> and <code>"linbase"</code>:</p>
 <p><code>impute = "lin"</code> uses simple linear imputation to derive a value
@@ -134,11 +138,14 @@ end of the vector).</p></td>
     also <code>NA</code>, it's vale is set to <code>baseValue</code>.
     This corresponds to the linear interpolation performed by the
     <code>profBinLinBase</code> method. For more details see examples below.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#######</span></span>
 <span class="r-in"><span class="co">## Impute missing values by linearly interpolating from neighboring</span></span>
 <span class="r-in"><span class="co">## non-empty elements</span></span>
@@ -198,6 +205,7 @@ end of the vector).</p></td>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">xInt</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
 <span class="r-plt"><img src="imputeLinInterpol-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

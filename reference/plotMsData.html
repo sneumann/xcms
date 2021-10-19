@@ -21,7 +21,7 @@ rt against m/z values at the bottom.'><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -85,7 +85,8 @@ rt against m/z values at the bottom.</p>
   colramp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rev</a></span><span class="op">(</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">9</span>, <span class="st">"YlGnBu"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><code>data.frame</code> such as returned by the <code><a href="extractMsData-method.html">extractMsData()</a></code> function.
 Only a single <code>data.frame</code> is supported.</p></td>
@@ -106,11 +107,15 @@ creating them).</p></td>
       <td><p>a <em>color ramp palette</em> to be used to color the data points
 based on their intensity. See argument <code>col.regions</code> in
 <a href="https://rdrr.io/pkg/lattice/man/level.colors.html">lattice::level.colors</a> documentation.</p></td>
-    </tr></table><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+    </tr></table></div>
 
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Read two files from the faahKO package</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
@@ -329,6 +334,7 @@ based on their intensity. See argument <code>col.regions</code> in
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> number 251. Returning empty spectrum.</span>
 <span class="r-plt"><img src="plotMsData-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

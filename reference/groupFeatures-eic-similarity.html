@@ -51,7 +51,7 @@ will be skipped/not considered for feature grouping."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -152,7 +152,8 @@ will be skipped/not considered for feature grouping.</p>
 <span class="co"># S4 method for XCMSnExp,EicSimilarityParam</span>
 <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>threshold</th>
       <td><p><code>numeric(1)</code> with the minimal required similarity score to
 group featues. This is passed to the <code>groupFun</code> function.</p></td>
@@ -199,12 +200,15 @@ retention time range of each feature).</p></td>
     </tr><tr><th>msLevel</th>
       <td><p><code>integer(1)</code> defining the MS level on which the features
 should be grouped.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>input <code>XCMSnExp</code> with feature groups added (i.e. in column
 <code>"feature_group"</code> of its <code>featureDefinitions</code> data frame.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>While being possible to be performed on the full data set without prior
 feature grouping, this is not suggested for the following reasons: I) the
 selection of the top <code>n</code> samples with the highest signal for the
@@ -222,17 +226,21 @@ original compound is highly abundant to avoid correlation of missing values
 or noisy peak shapes as much as possible.</p>
 <p>By default also the signal which is outside identified chromatographic peaks
 is excluded from the correlation.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>feature-grouping for a general overview.</p>
 <p>Other feature grouping methods: 
 <code><a href="groupFeatures-abundance-correlation.html">groupFeatures-abundance-correlation</a></code>,
 <code><a href="groupFeatures-similar-rtime.html">groupFeatures-similar-rtime</a></code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures">MsFeatures</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
@@ -317,25 +325,25 @@ is excluded from the correlation.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [======================================&gt;-----------------] 23/33 ( 70%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================&gt;---------------] 24/33 ( 73%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================&gt;---------------] 24/33 ( 73%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=========================================&gt;--------------] 25/33 ( 76%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=========================================&gt;--------------] 25/33 ( 76%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===========================================&gt;------------] 26/33 ( 79%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===========================================&gt;------------] 26/33 ( 79%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============================================&gt;----------] 27/33 ( 82%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============================================&gt;----------] 27/33 ( 82%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================================&gt;--------] 28/33 ( 85%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================================&gt;--------] 28/33 ( 85%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [================================================&gt;-------] 29/33 ( 88%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [================================================&gt;-------] 29/33 ( 88%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [==================================================&gt;-----] 30/33 ( 91%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [==================================================&gt;-----] 30/33 ( 91%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================================&gt;---] 31/33 ( 94%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================================&gt;---] 31/33 ( 94%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================================================&gt;--] 32/33 ( 97%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================================================&gt;--] 32/33 ( 97%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================================] 33/33 (100%) in  3s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================================] 33/33 (100%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
@@ -353,6 +361,7 @@ is excluded from the correlation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.031.001 FG.032.001 FG.033.001 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1 </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

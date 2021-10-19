@@ -46,7 +46,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><!-
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -135,7 +135,8 @@ deprecated (also, they do not support extracting MS1 spectra).</p>
   peaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks.</p></td>
     </tr><tr><th>msLevel</th>
@@ -169,8 +170,10 @@ be returned (providing either their ID, a logical vector same length
 than <code>nrow(chromPeaks(x))</code> or their index in <code>chromPeaks(x)</code>). This
 parameter overrides <code>skipFilled</code> and is only supported for <code>return.type</code>
 being either <code>"Spectra"</code> or <code>"List"</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html">MSpectra</a> object with elements being
 <a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">Spectrum</a> objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
@@ -186,11 +189,14 @@ length of the list matches the number of peaks.</p></li>
 <li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
 chromatographic peaks is returned with elements being either <code>NULL</code> (no
 spectrum found) or a <code>Spectra</code> object.</p></li>
-</ul><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</ul></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Read a file with DDA LC-MS/MS data</span></span>
 <span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span></span>
@@ -301,6 +307,7 @@ spectrum found) or a <code>Spectra</code> object.</p></li>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>msLevel = 1 is currently not supported forreturn.type = "MSpectra" or return.type = "list".</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSpectra with 0 spectra and 1 metadata column(s):</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

@@ -21,7 +21,7 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise."><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -89,7 +89,8 @@ peaks of the <a href="XCMSnExp-class.html">XCMSnExp</a> object <code>x</code> we
 <span class="co"># S4 method for XCMSnExp</span>
 <span class="fu"><a href="calibrate.html">calibrate</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
       <td><p>a <code>numeric</code> or <code>list</code> of <code>numeric</code> vectors with reference mz
 values. If a <code>numeric</code> vector is provided, this is used for each sample
@@ -114,8 +115,10 @@ or <code>"edgeshift"</code>.</p></td>
       <td><p>An <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></td>
     </tr><tr><th>param</th>
       <td><p>The <code>CalibrantMassParam</code> object with the calibration settings.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>For <code>CalibrantMassParam</code>: a <code>CalibrantMassParam</code> instance.
 For <code>calibrate</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object with chromatographic peaks being
 calibrated. <strong>Be aware</strong> that the actual raw mz values are not (yet)
@@ -125,8 +128,9 @@ the <code>CalibrantMassParam</code> class with all settings and properties set.<
 <p>The <code>calibrate</code> method returns an <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
 chromatographic peaks being calibrated. Note that <strong>only</strong> the detected
 peaks are calibrated, but not the individual mz values in each spectrum.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The method does first identify peaks that are close to the provided
 mz values and, given that there difference to the calibrants is smaller
 than the user provided cut off (based on arguments <code>mzabs</code> and <code>mzppm</code>),
@@ -146,13 +150,16 @@ using this.</p></li>
 within the mz range of the calibrants and shift outside of it.</p></li>
 </ul><p>For more information, details and examples refer to the
 <em>xcms-direct-injection</em> vignette.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p><code>CalibrantMassParam</code> classes don't have exported getter or setter
 methods.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Joachim Bargsten, Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

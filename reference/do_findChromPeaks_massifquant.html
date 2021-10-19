@@ -21,7 +21,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -98,7 +98,8 @@
   withWave <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
       <td><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></td>
@@ -200,8 +201,10 @@ to being turned off.</p></td>
       <td><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak,
     with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peaks across
     scans.</p></dd>
@@ -215,8 +218,9 @@ centWave algorithm, which includes wavelet estimation.</p></td>
     
 </dl><p>If <code>withWave</code> is set to <code>TRUE</code>, the result is the same as
     returned by the <code><a href="do_findChromPeaks_centWave.html">do_findChromPeaks_centWave</a></code> method.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This algorithm's performance has been tested rigorously
     on high resolution LC/OrbiTrap, TOF-MS data in centroid mode.
     Simultaneous kalman filters identify peaks and calculate their
@@ -233,24 +237,29 @@ centWave algorithm, which includes wavelet estimation.</p></td>
     The <code>ppm</code> and <code>checkBack</code> parameters have shown less influence
     than the other parameters and exist to give users flexibility and
     better accuracy.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
 detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findChromPeaks-massifquant.html">massifquant</a></code> for the standard user interface method.</p>
 <p>Other core peak detection functions: 
 <code><a href="do_findChromPeaks_centWaveWithPredIsoROIs.html">do_findChromPeaks_centWaveWithPredIsoROIs</a>()</code>,
 <code><a href="do_findChromPeaks_centWave.html">do_findChromPeaks_centWave</a>()</code>,
 <code><a href="do_findChromPeaks_matchedFilter.html">do_findChromPeaks_matchedFilter</a>()</code>,
 <code><a href="do_findPeaks_MSW.html">do_findPeaks_MSW</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Christopher Conley</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load the test file</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -288,6 +297,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 475.2 475.2 475.2 2880.097 2999.033 2934.870 2415224 37160</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 532.2 532.2 532.2 2853.493 2906.701 2878.532  232493 16480</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

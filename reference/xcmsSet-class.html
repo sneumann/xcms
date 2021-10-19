@@ -21,7 +21,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -78,13 +78,14 @@
 
 
 
-    <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
-
+    <div id="objects-from-the-class">
+    <h2>Objects from the Class</h2>
     <p>Objects can be created with the <code><a href="xcmsSet.html">xcmsSet</a></code> constructor
   which gathers peaks from a set NetCDF files. Objects can also be
   created by calls of the form <code>new("xcmsSet", ...)</code>.</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     <p></p><dl><dt>peaks</dt><dd><p><code>matrix</code> containing peak data.</p></dd>
     <dt>filled</dt><dd><p>A vector with peak indices of peaks which have been added by a
       <code><a href="fillPeaks-methods.html">fillPeaks</a></code> method.</p></dd>
@@ -113,8 +114,9 @@
     <dt>.processHistory</dt><dd><p>Internal slot to be used to keep track of performed processing
       steps. This slot should not be directly accessed by the user.</p></dd>
   
-</dl><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
-
+</dl></div>
+    <div id="methods">
+    <h2>Methods</h2>
     <p></p><dl><dt><a href="c.xcmsSet.html">c</a></dt><dd><p><code>signature("xcmsSet")</code>: combine objects together</p></dd>
     <dt>filepaths&lt;-</dt><dd><p><code>signature(object = "xcmsSet")</code>: set <code>filepaths</code> slot</p></dd>
     <dt>filepaths</dt><dd><p><code>signature(object = "xcmsSet")</code>: get <code>filepaths</code> slot</p></dd>
@@ -186,8 +188,9 @@
       <code>i</code> can be an integer vector, a logical vector or a character
       vector of sample names (matching <code>sampnames</code>).</p></dd>
   
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The <code>phenoData</code> slot (and <code>phenoData</code> parameter in the
   <code><a href="xcmsSet.html">xcmsSet</a></code> function) is intended to contain a <code>data.frame</code> describing
   all experimental factors, i.e. the samples along with their
@@ -204,12 +207,15 @@
   can be used to directly access all columns in the <code>phenoData</code>
   slot (e.g. use <code>xset$name</code> on a <code>xcmsSet</code> object called
   “xset” to extract the values from a column named “name” in the <code>phenoData</code> slot).</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a>, Johannes Rainer <a href="mailto:johannes.rainer@eurac.edu">johannes.rainer@eurac.edu</a></p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet.html">xcmsSet</a></code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

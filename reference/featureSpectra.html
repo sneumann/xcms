@@ -36,7 +36,7 @@ or return.type = "Spectra".'><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -118,7 +118,8 @@ or <code>return.type = "Spectra"</code>.</p>
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with feature defitions available.</p></td>
     </tr><tr><th>msLevel</th>
@@ -151,8 +152,10 @@ only supported for <code>return.type</code> being either <code>"Spectra"</code> 
     </tr><tr><th>...</th>
       <td><p>additional arguments to be passed along to <code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code>,
 such as <code>method</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html">MSpectra</a> object with elements being
 <a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">Spectrum</a> objects. The result objects contains all spectra
 for all features. Metadata column <code>"feature_id"</code> provides the ID of the
@@ -167,9 +170,11 @@ length of the list matches the number of features.</p></li>
 <li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
 features with MS level <code>msLevel</code> is returned with elements being either
 <code>NULL</code> (no spectrum found) or a <code>Spectra</code> object.</p></li>
-</ul><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</ul></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

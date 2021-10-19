@@ -70,7 +70,7 @@ provided.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -207,7 +207,8 @@ filterChromPeaks(
   ...
 )</code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p>For <code>[</code> and <code>[[</code>: an <code>XCMSnExp</code> object.</p></td>
     </tr><tr><th>features</th>
@@ -270,11 +271,14 @@ defining which chromatographic peaks should be retained.</p></td>
 method by which chromatographic peaks should be filtered. Currently only
 <code>method = "keep"</code> is supported (i.e. specify with parameter <code>keep</code> which
 chromatographic peaks should be retained).</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>All methods return an <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>All subsetting methods try to ensure that the returned data is
 consistent. Correspondence results for example are removed by default if the
 data set is sub-setted by file, since the correspondence results are
@@ -284,8 +288,9 @@ For adjusted retention times, most subsetting methods
 support the argument <code>keepAdjustedRtime</code> (even the <code>[</code> method)
 that forces the adjusted retention times to be retained even if the
 default would be to drop them.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The <code>filterFile</code> method removes also process history steps not
 related to the files to which the object should be sub-setted and updates
 the <code>fileIndex</code> attribute accordingly. Also, the method does not
@@ -297,16 +302,20 @@ consolidate the alignment results, i.e. ensure that adjusted retention
 times are always preserved, use the <code><a href="applyAdjustedRtime.html">applyAdjustedRtime()</a></code>
 function on the object that contains the alignment results. This replaces
 the raw retention times with the adjusted ones.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><a href="XCMSnExp-class.html">XCMSnExp</a> for base class documentation.</p>
 <p><code><a href="XChromatogram.html">XChromatograms()</a></code> for similar filter functions on
 <code>XChromatograms</code> objects.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Loading a test data set with identified chromatographic peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -507,6 +516,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

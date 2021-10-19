@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -105,16 +105,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-10 17:49:04<br><strong>Compiled</strong>: Sun Oct 10 18:56:44 2021</p>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h1>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-19 15:57:26<br><strong>Compiled</strong>: Tue Oct 19 16:58:42 2021</p>
+<div class="section level1">
+<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h1>
 <p>This documents describes data import, exploration, preprocessing and analysis of LCMS experiments with <code>xcms</code> version &gt;= 3. The examples and basic workflow was adapted from the original <em>LC/MS Preprocessing and Analysis with xcms</em> vignette from Colin A. Smith.</p>
 <p>The new user interface and methods use the <code>XCMSnExp</code> object (instead of the <em>old</em> <code>xcmsSet</code> object) as a container for the pre-processing results. To support packages and pipelines relying on the <code>xcmsSet</code> object, it is however possible to convert an <code>XCMSnExp</code> into a <code>xcmsSet</code> object using the <code>as</code> method (i.e.<code>xset &lt;- as(x, "xcmsSet")</code>, with <code>x</code> being an <code>XCMSnExp</code> object.</p>
 </div>
-<div id="data-import" class="section level1">
-<h1 class="hasAnchor">
-<a href="#data-import" class="anchor" aria-hidden="true"></a>Data import</h1>
+<div class="section level1">
+<h1 id="data-import">Data import<a class="anchor" aria-label="anchor" href="#data-import"></a>
+</h1>
 <p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.14/mzR" class="external-link">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
 <p>Below we load all required packages, locate the raw CDF files within the <code>faahKO</code> package and build a <em>phenodata</em> data frame describing the experimental setup. Note that for <em>real</em> experiments it is suggested to define a file (table) that contains the file names of the raw data files along with descriptions of the samples for each file as additional columns. Such a file could then be imported with e.g. <code>read.table</code> as variable <code>pd</code> (instead of being defined within R as in the example below) and the file names could be passed along to the <code>readMSData</code> function below with e.g. <code>files = paste0(MZML_PATH, "/", pd$mzML_file)</code> where <code>MZML_PATH</code> would be the path to directory in which the files are located and <code>"mzML_file"</code> the name of the column in the phenodata file that contains the file names.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -143,9 +143,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <code class="sourceCode R"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">raw_data</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>The resulting <code>OnDiskMSnExp</code> object contains general information about the number of spectra, retention times, the measured total ion current etc, but does not contain the full raw data (i.e. the m/z and intensity values from each measured spectrum). Its memory footprint is thus rather small making it an ideal object to represent large metabolomics experiments while allowing to perform simple quality controls, data inspection and exploration as well as data sub-setting operations. The m/z and intensity values are imported from the raw data files on demand, hence the location of the raw data files should not be changed after initial data import.</p>
 </div>
-<div id="initial-data-inspection" class="section level1">
-<h1 class="hasAnchor">
-<a href="#initial-data-inspection" class="anchor" aria-hidden="true"></a>Initial data inspection</h1>
+<div class="section level1">
+<h1 id="initial-data-inspection">Initial data inspection<a class="anchor" aria-label="anchor" href="#initial-data-inspection"></a>
+</h1>
 <p>The <code>OnDiskMSnExp</code> organizes the MS data by spectrum and provides the methods <code>intensity</code>, <code>mz</code> and <code>rtime</code> to access the raw data from the files (the measured intensity values, the corresponding m/z and retention time values). In addition, the <code>spectra</code> method could be used to return all data encapsulated in <code>Spectrum</code> objects. Below we extract the retention time values from the object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -217,9 +217,9 @@ Grouping of samples based on similarity of their base peak chromatogram.
 </div>
 <p>The samples cluster in a pairwise manner, the KO and WT samples for the sample index having the most similar BPC.</p>
 </div>
-<div id="chromatographic-peak-detection" class="section level1">
-<h1 class="hasAnchor">
-<a href="#chromatographic-peak-detection" class="anchor" aria-hidden="true"></a>Chromatographic peak detection</h1>
+<div class="section level1">
+<h1 id="chromatographic-peak-detection">Chromatographic peak detection<a class="anchor" aria-label="anchor" href="#chromatographic-peak-detection"></a>
+</h1>
 <p>Next we perform the chromatographic peak detection using the <em>centWave</em> algorithm <span class="citation">[2]</span>. Before running the peak detection it is however strongly suggested to visually inspect e.g. the extracted ion chromatogram of internal standards or known compounds to evaluate and adapt the peak detection settings since the default settings will not be appropriate for most LCMS experiments. The two most critical parameters for <em>centWave</em> are the <code>peakwidth</code> (expected range of chromatographic peak widths) and <code>ppm</code> (maximum expected deviation of m/z values of centroids corresponding to one chromatographic peak; this is usually much larger than the ppm specified by the manufacturer) parameters. To evaluate the typical chromatographic peak width we plot the EIC for one peak.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Define the rt and m/z range of the peak area</span>
@@ -683,9 +683,9 @@ Peak intensity distribution per sample.
 </div>
 <p>Note that in addition to the above described identification of chromatographic peaks, it is also possible to <em>manually</em> define and add chromatographic peaks with the <code>manualChromPeaks</code> function (see <code><a href="../reference/manualChromPeaks.html">?manualChromPeaks</a></code> help page for more information).</p>
 </div>
-<div id="alignment" class="section level1">
-<h1 class="hasAnchor">
-<a href="#alignment" class="anchor" aria-hidden="true"></a>Alignment</h1>
+<div class="section level1">
+<h1 id="alignment">Alignment<a class="anchor" aria-label="anchor" href="#alignment"></a>
+</h1>
 <p>The time at which analytes elute in the chromatography can vary between samples (and even compounds). Such a difference was already observable in the extracted ion chromatogram plot shown as an example in the previous section. The alignment step, also referred to as retention time correction, aims at adjusting this by shifting signals along the retention time axis to align the signals between different samples within an experiment.</p>
 <p>A plethora of alignment algorithms exist (see <span class="citation">[3]</span>), with some of them being implemented also in <code>xcms</code>. The method to perform the alignment/retention time correction in <code>xcms</code> is <code>adjustRtime</code> which uses different alignment algorithms depending on the provided parameter class.</p>
 <p>In the example below we use the <em>obiwarp</em> method <span class="citation">[4]</span> to align the samples. We use a <code>binSize = 0.6</code> which creates warping functions in mz bins of 0.6. Also here it is advisable to modify the settings for each experiment and evaluate if retention time correction did align internal controls or known compounds properly.</p>
@@ -733,9 +733,9 @@ Obiwarp aligned data. Base peak chromatogram after alignment (top) and differenc
 Example extracted ion chromatogram before (top) and after alignment (bottom).
 </p>
 </div>
-<div id="subset-based-alignment" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subset-based-alignment" class="anchor" aria-hidden="true"></a>Subset-based alignment</h2>
+<div class="section level2">
+<h2 id="subset-based-alignment">Subset-based alignment<a class="anchor" aria-label="anchor" href="#subset-based-alignment"></a>
+</h2>
 <p>In some experiments it might be helpful to perform the alignment based on only a subset of the samples, e.g. if QC samples were injected at regular intervals or if the experiment contains blanks. Alignment method in <code>xcms</code> allow to estimate retention time drifts on a subset of samples (either all samples excluding blanks or QC samples injected at regular intervals during a measurement run) and use these to adjust the full data set.</p>
 <p>Parameters <code>subset</code> (of the <code>PeakGroupsParam</code> or <code>ObiwarpParam</code> object) can be used to define the subset of samples on which the alignment of the full data set will be based (e.g. <code>subset</code> being the index of QC samples), and parameter <code>subsetAdjust</code> allows to specify the method by which the <em>left-out</em> samples will be adjusted. There are currently two options available:</p>
 <ul>
@@ -781,9 +781,9 @@ Subset-alignment results with option average. Difference between adjusted and ra
 <p>Option <code>subsetAdjust = "previous"</code> adjusts the retention times of a non-subset sample based on a single subset sample (the previous), which results in most cases in the adjusted retention times of the non-subset sample being highly similar to those of the subset sample which was used for adjustment.</p>
 </div>
 </div>
-<div id="correspondence" class="section level1">
-<h1 class="hasAnchor">
-<a href="#correspondence" class="anchor" aria-hidden="true"></a>Correspondence</h1>
+<div class="section level1">
+<h1 id="correspondence">Correspondence<a class="anchor" aria-label="anchor" href="#correspondence"></a>
+</h1>
 <p>The final step in the metabolomics preprocessing is the correspondence that matches detected chromatographic peaks between samples (and depending on the settings, also within samples if they are adjacent). The method to perform the correspondence in <code>xcms</code> is <code>groupChromPeaks</code>. We will use the <em>peak density</em> method <span class="citation">[5]</span> to group chromatographic peaks. The algorithm combines chromatographic peaks depending on the density of peaks along the retention time axis within small slices along the mz dimension. To illustrate this we plot below the chromatogram for an mz slice with multiple chromatographic peaks within each sample. We use below a value of 0.4 for the <code>minFraction</code> parameter hence only chromatographic peaks present in at least 40% of the samples per sample group are grouped into a feature. The sample group assignment is specified with the <code>sampleGroups</code> argument.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Define the mz slice.</span>
@@ -1107,25 +1107,25 @@ PCA for the faahKO data set, un-normalized intensities.
 </div>
 <p>We can see the expected separation between the KO and WT samples on PC2. On PC1 samples separate based on their ID, samples with an ID &lt;= 18 from samples with an ID &gt; 18. This separation might be caused by a technical bias (e.g. measurements performed on different days/weeks) or due to biological properties of the mice analyzed (sex, age, litter mates etc).</p>
 </div>
-<div id="further-data-processing-and-analysis" class="section level1">
-<h1 class="hasAnchor">
-<a href="#further-data-processing-and-analysis" class="anchor" aria-hidden="true"></a>Further data processing and analysis</h1>
+<div class="section level1">
+<h1 id="further-data-processing-and-analysis">Further data processing and analysis<a class="anchor" aria-label="anchor" href="#further-data-processing-and-analysis"></a>
+</h1>
 <p>Normalizing features’ signal intensities is required, but at present not (yet) supported in <code>xcms</code> (some methods might be added in near future). It is advised to use the <code>SummarizedExperiment</code> returned by the <code>quantify</code> method for any further data processing, as this type of object stores feature definitions, sample annotations as well as feature abundances in the same object. For the identification of e.g. features with significant different intensities/abundances it is suggested to use functionality provided in other R packages, such as Bioconductor’s excellent <code>limma</code> package. To enable support also for other packages that rely on the <em>old</em> <code>xcmsSet</code> result object, it is possible to coerce the new <code>XCMSnExp</code> object to an <code>xcmsSet</code> object using <code>xset &lt;- as(x, "xcmsSet")</code>, with <code>x</code> being an <code>XCMSnExp</code> object.</p>
 </div>
-<div id="additional-details-and-notes" class="section level1">
-<h1 class="hasAnchor">
-<a href="#additional-details-and-notes" class="anchor" aria-hidden="true"></a>Additional details and notes</h1>
+<div class="section level1">
+<h1 id="additional-details-and-notes">Additional details and notes<a class="anchor" aria-label="anchor" href="#additional-details-and-notes"></a>
+</h1>
 <p>For a detailed description of the new data objects and changes/improvements compared to the original user interface see the <em>new_functionality</em> vignette.</p>
-<div id="evaluating-the-process-history" class="section level2">
-<h2 class="hasAnchor">
-<a href="#evaluating-the-process-history" class="anchor" aria-hidden="true"></a>Evaluating the process history</h2>
+<div class="section level2">
+<h2 id="evaluating-the-process-history">Evaluating the process history<a class="anchor" aria-label="anchor" href="#evaluating-the-process-history"></a>
+</h2>
 <p><code>XCMSnExp</code> objects allow to capture all performed pre-processing steps along with the used parameter class within the <code>@processHistory</code> slot. Storing also the parameter class ensures the highest possible degree of analysis documentation and in future might enable to <em>replay</em> analyses or parts of it. The list of all performed preprocessings can be extracted using the <code>processHistory</code> method.</p>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Peak detection 
-##  date: Sun Oct 10 18:57:09 2021 
+##  date: Tue Oct 19 16:59:04 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: CentWaveParam 
@@ -1134,7 +1134,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[2]]
 ## Object of class "XProcessHistory"
 ##  type: Peak refinement 
-##  date: Sun Oct 10 18:57:29 2021 
+##  date: Tue Oct 19 16:59:22 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: MergeNeighboringPeaksParam 
@@ -1143,7 +1143,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[3]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Sun Oct 10 18:57:42 2021 
+##  date: Tue Oct 19 16:59:34 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1152,7 +1152,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[4]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Sun Oct 10 18:57:43 2021 
+##  date: Tue Oct 19 16:59:34 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1161,7 +1161,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[5]]
 ## Object of class "XProcessHistory"
 ##  type: Peak grouping 
-##  date: Sun Oct 10 18:57:49 2021 
+##  date: Tue Oct 19 16:59:40 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakDensityParam 
@@ -1170,7 +1170,7 @@ PCA for the faahKO data set, un-normalized intensities.
 ## [[6]]
 ## Object of class "XProcessHistory"
 ##  type: Missing peak filling 
-##  date: Sun Oct 10 18:57:51 2021 
+##  date: Tue Oct 19 16:59:42 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: ChromPeakAreaParam 
@@ -1183,7 +1183,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code>## [[1]]
 ## Object of class "XProcessHistory"
 ##  type: Retention time correction 
-##  date: Sun Oct 10 18:57:43 2021 
+##  date: Tue Oct 19 16:59:34 2021 
 ##  info:  
 ##  fileIndex: 1,2,3,4,5,6,7,8 
 ##  Parameter class: PeakGroupsParam 
@@ -1265,9 +1265,9 @@ PCA for the faahKO data set, un-normalized intensities.
 ##  - subset: [1] 1 4 7
 ##  - subsetAdjust: [1] "average"</code></pre>
 </div>
-<div id="subsetting-and-filtering" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subsetting-and-filtering" class="anchor" aria-hidden="true"></a>Subsetting and filtering</h2>
+<div class="section level2">
+<h2 id="subsetting-and-filtering">Subsetting and filtering<a class="anchor" aria-label="anchor" href="#subsetting-and-filtering"></a>
+</h2>
 <p><code>XCMSnEx</code> objects can be subsetted/filtered using the <code>[</code> method, or one of the many <code>filter*</code> methods. All these methods aim to ensure that the data in the returned object is consistent. This means for example that if the object is subsetted by selecting specific spectra (by using the <code>[</code> method) all identified chromatographic peaks are removed. Correspondence results (i.e. identified features) are removed if the object is subsetted to contain only data from selected files (using the <code>filterFile</code> method). This is because the correspondence results depend on the files on which the analysis was performed - running a correspondence on a subset of the files would lead to different results. Note that with <code>keepFeatures = TRUE</code> it would be possible to overwrite this and keep also correspondence results for the specified files.</p>
 <p>As an exception, it is possible to force keeping adjusted retention times in the subsetted object setting the <code>keepAdjustedRtime</code> argument to <code>TRUE</code> in any of the subsetting methods.</p>
 <p>Below we subset our results object the data for the files 2 and 4.</p>
@@ -1403,9 +1403,9 @@ PCA for the faahKO data set, un-normalized intensities.
 ## $`8`
 ## [1] TRUE</code></pre>
 </div>
-<div id="parallel-processing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#parallel-processing" class="anchor" aria-hidden="true"></a>Parallel processing</h2>
+<div class="section level2">
+<h2 id="parallel-processing">Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
+</h2>
 <p>Most methods in <code>xcms</code> support parallel processing. Parallel processing is handled and configured by the <code>BiocParallel</code> Bioconductor package and can be globally defined for an R session.</p>
 <p>Unix-based systems (Linux, macOS) support <code>multicore</code>-based parallel processing. To configure it globally we <code>register</code> the parameter class. Note also that <code>bpstart</code> is used below to initialize the parallel processes.</p>
 <div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
@@ -1417,9 +1417,9 @@ PCA for the faahKO data set, un-normalized intensities.
 <p>For other options and details see the vignettes from the <code>BiocParallel</code> package.</p>
 </div>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
+<div class="section level1 unnumbered">
+<h1 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h1>
 <div id="refs" class="references csl-bib-body">
 <div id="ref-Saghatelian04" class="csl-entry">
 1. Saghatelian A, Trauger SA, Want EJ, Hawkins EG, Siuzdak G, Cravatt BF: <strong>Assignment of endogenous substrates to enzymes by global metabolite profiling</strong>. <em>Biochemistry</em> 2004, <strong>43</strong>:14332–9.

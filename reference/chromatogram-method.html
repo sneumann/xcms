@@ -20,7 +20,7 @@ chromatogram function in the MSnbase package."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -88,7 +88,8 @@ an <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">
   include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"apex_within"</span>, <span class="st">"any"</span>, <span class="st">"none"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p>Either a <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a> or <a href="XCMSnExp-class.html">XCMSnExp</a> object from which the
 chromatograms should be extracted.</p></td>
@@ -135,8 +136,10 @@ returns chromatographic peaks that have their apex within the <code>mz</code> <c
 range, <code>include = "any"</code> to return all chromatographic peaks which
 m/z and rt ranges overlap the <code>mz</code> and <code>rt</code> or <code>include = "none"</code> to
 not include any chromatographic peaks.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p><code>chromatogram</code> returns a <a href="XChromatogram.html">XChromatograms</a> object with
 the number of columns corresponding to the number of files in
 <code>object</code> and number of rows the number of specified ranges (i.e.
@@ -144,8 +147,9 @@ number of rows of matrices provided with arguments <code>mz</code> and/or
 <code>rt</code>). All chromatographic peaks with their apex position within the
 m/z and retention time range are also retained as well as all feature
 definitions for these peaks.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>Arguments <code>rt</code> and <code>mz</code> allow to specify the MS data slice (i.e. the m/z
 range and retention time window) from which the chromatogram should be
 extracted. These parameters can be either a <code>numeric</code> of length 2 with the
@@ -160,14 +164,16 @@ to calculate the <strong>total ion chromatogram</strong> (TIC),
 <code>NA</code> intensity value is returned by default. This can be changed with the
 parameter <code>missing</code>, setting <code>missing = 0</code> would result in a <code>0</code> intensity
 being returned in these cases.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>For <a href="XCMSnExp-class.html">XCMSnExp</a> objects, if adjusted retention times are
 available, the <code>chromatogram</code> method will by default report
 and use these (for the subsetting based on the provided parameter
 <code>rt</code>). This can be changed by setting <code>adjustedRtime = FALSE</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><a href="XCMSnExp-class.html">XCMSnExp</a> for the data object.
 <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a> for the object representing chromatographic data.</p><pre><code>[XChromatograms] for the object allowing to arrange
 multiple [XChromatogram] objects.
@@ -178,11 +184,14 @@ multiple [XChromatogram] objects.
 the MS data as `data.frame`.
 </code></pre>
 </div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with identified chromatographic peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -252,6 +261,7 @@ the MS data as `data.frame`.
 <span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-plt"><img src="chromatogram-method-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

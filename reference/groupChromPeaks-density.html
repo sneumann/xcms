@@ -50,7 +50,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -182,7 +182,8 @@ already present feature definitions.</p>
 <span class="co"># S4 method for XCMSnExp,PeakDensityParam</span>
 <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>sampleGroups</th>
       <td><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
@@ -226,8 +227,10 @@ chromatographic peaks of the respective MS level are present.</p></td>
       <td><p><code>logical(1)</code> (default <code>add = FALSE</code>) allowing to perform an
 additional round of correspondence (e.g. on a different MS level) and
 add features to the already present feature definitions.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>The <code>PeakDensityParam</code> function returns a
 <code>PeakDensityParam</code> class instance with all of the settings
 specified for chromatographic peak alignment based on peak densities.
@@ -237,26 +240,30 @@ the number of sample in the experiments.</p>
 <p>For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
 results of the correspondence analysis. The definition of the resulting
 mz-rt features can be accessed with the <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> method</p>
-    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
-
+    </div>
+    <div id="slots">
+    <h2>Slots</h2>
     
 
 <dl><dt><code>sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures</code></dt><dd><p>See
 corresponding parameter above.</p></dd>
 
-</dl><h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+</dl></div>
+    <div id="note">
+    <h2>Note</h2>
     <p>These methods and classes are part of the updated and modernized
 <code>xcms</code> user interface. All of the settings to the algorithm
 can be passed with a <code>PeakDensityParam</code> object.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Anal. Chem. 2006, 78:779-787.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>The <code><a href="do_groupChromPeaks_density.html">do_groupChromPeaks_density()</a></code> core API function and <code><a href="group.density.html">group.density()</a></code>
 for the old user interface.</p>
 <p><code><a href="plotChromPeakDensity.html">plotChromPeakDensity()</a></code> to plot peak densities and evaluate different
@@ -270,11 +277,14 @@ possibility to test different parameter settings.</p>
 <code><a href="groupChromPeaks-mzClust.html">groupChromPeaks-mzClust</a></code>,
 <code><a href="groupChromPeaks-nearest.html">groupChromPeaks-nearest</a></code>,
 <code><a href="groupChromPeaks.html">groupChromPeaks</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a PeakDensityParam object</span></span>
 <span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">PeakDensityParam</span><span class="op">(</span>binSize <span class="op">=</span> <span class="fl">0.05</span>, sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -386,13 +396,14 @@ possibility to test different parameter settings.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak grouping </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sun Oct 10 18:53:46 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:56:05 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: PeakDensityParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MS level(s) 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

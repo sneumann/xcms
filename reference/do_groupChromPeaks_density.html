@@ -21,7 +21,7 @@ samples, along the retention time axis in slices of overlapping mz ranges."><!--
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -86,7 +86,8 @@ samples, along the retention time axis in slices of overlapping mz ranges.</p>
   sleep <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
       <td><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
 retention times of the identified chromatographic peaks in all samples of an
@@ -121,8 +122,10 @@ to be identified in a single mz slice.</p></td>
     </tr><tr><th>sleep</th>
       <td><p><code>numeric(1)</code> defining the time to <em>sleep</em> between
 iterations and plot the result from the current iteration.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>data.frame</code>, each row representing a (mz-rt) feature (i.e. a peak group)
 with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz values.</p></li>
 <li><p><code>"mzmin"</code>: smallest mz value of all peaks' apex within the feature.</p></li>
@@ -135,33 +138,40 @@ with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz v
 <code>peaks</code> input matrix.</p></li>
 </ul><p>Note that this number can be larger than the total number of samples, since
 multiple peaks from the same sample could be assigned to a feature.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>For overlapping slices along the mz dimension, the function
 calculates the density distribution of identified peaks along the
 retention time axis and groups peaks from the same or different samples
 that are close to each other. See (Smith 2006) for more details.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The default settings might not be appropriate for all LC/GC-MS setups,
 especially the <code>bw</code> and <code>binSize</code> parameter should be adjusted
 accordingly.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Anal. Chem. 2006, 78:779-787.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Other core peak grouping algorithms: 
 <code><a href="do_groupChromPeaks_nearest.html">do_groupChromPeaks_nearest</a>()</code>,
 <code><a href="do_groupPeaks_mzClust.html">do_groupPeaks_mzClust</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Load the test file</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
@@ -188,6 +198,7 @@ Anal. Chem. 2006, 78:779-787.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 305.1 305.1 305.1 2994.338 2994.338 2994.339      2 2           15, 203</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 305.1 305.1 305.1 2923.917 2923.916 2923.917      2 2           14, 202</span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

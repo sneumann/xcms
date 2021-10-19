@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
 <span class="fu">findEqualGreaterM</span><span class="op">(</span><span class="va">x</span>, <span class="va">values</span><span class="op">)</span>
 <span class="fu">findRange</span><span class="op">(</span><span class="va">x</span>, <span class="va">values</span>, NAOK <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p>numeric vector sorted in increasing order</p></td>
     </tr><tr><th>value</th>
@@ -82,8 +83,10 @@
       <td><p>numeric values to find in <code>x</code></p></td>
     </tr><tr><th>NAOK</th>
       <td><p>don't check for NA values in <code>x</code></p></td>
-    </tr></table><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    </tr></table></div>
 
+    <div id="details">
+    <h2>Details</h2>
     <p><code>findEqualGreater</code> finds the index of the first value in
   <code>x</code> that is equal or greater than <code>value</code>. <code>findEqualLess</code>
   does same except that it finds equal or less. <code>findEqualGreaterM</code>
@@ -94,12 +97,15 @@
   <code>findeEqualGreaterM</code> (when the length of values approaches
   the lenght of x) and <code>findRange</code> (when <code>NAOK</code> is set
   to TRUE). They run in log(N) and N time, respectively.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>An integer vector with the position(s) of the values(s).</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a></p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

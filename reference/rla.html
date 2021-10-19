@@ -26,7 +26,7 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -87,7 +87,8 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
 
 <span class="fu">rowRla</span><span class="op">(</span><span class="va">x</span>, <span class="va">group</span>, log.transform <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><code>numeric</code> (for <code>rla</code>) or <code>matrix</code> (for <code>rowRla</code>) with the
 abundances (in natural scale) on which the RLA should be calculated.</p></td>
@@ -98,24 +99,31 @@ to be from the same group.</p></td>
     </tr><tr><th>log.transform</th>
       <td><p><code>logical(1)</code> whether <code>x</code> should be log2 transformed.
 Set to <code>log.transform = FALSE</code> if <code>x</code> is already in log scale.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p><code>numeric</code> of the same length than <code>x</code> (for <code>rla</code>) or <code>matrix</code> with
 the same dimensions than <code>x</code> (for <code>rowRla</code>).</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The RLA is defines as the (log) abundance of an analyte relative
 to the median across all abundances of the same group.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
 McConville M, Speed TP. Normalizing and integrating metabolomics data.
 <em>Anal Chem</em> 2012 Dec 18;84(24):10768-76.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span class="r-in"></span>
@@ -127,6 +135,7 @@ McConville M, Speed TP. Normalizing and integrating metabolomics data.
 <span class="r-out co"><span class="r-pr">#&gt;</span>          3          3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0.0000000  0.1699250 </span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

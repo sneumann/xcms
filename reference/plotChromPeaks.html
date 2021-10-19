@@ -27,7 +27,7 @@ represented with the color of the respective cell."><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -113,7 +113,8 @@ represented with the color of the respective cell.</p>
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
       <td><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object.</p></td>
     </tr><tr><th>file</th>
@@ -162,21 +163,27 @@ counts should be log2 transformed before plotting.</p></td>
 whether y-axis labels should be added. To disable the y-axis use
 <code>yaxt = "n"</code>. For any other value of <code>yaxt</code> the axis will be
 drawn. See <code>par</code> help page for more details.</p></td>
-    </tr></table><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    </tr></table></div>
 
+    <div id="details">
+    <h2>Details</h2>
     <p>The width and line type of the rectangles indicating the detected
 chromatographic peaks for the <code>plotChromPeaks</code> function can be
 specified using the <code>par</code> function, i.e. with <code>par(lwd = 3)</code>
 and <code>par(lty = 2)</code>, respectively.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="highlightChromPeaks.html">highlightChromPeaks</a></code> for the function to highlight
     detected chromatographic peaks in extracted ion chromatogram plots.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
@@ -196,6 +203,7 @@ and <code>par(lty = 2)</code>, respectively.</p>
 <span class="r-in"><span class="fu">plotChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fl">2</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">3500</span>, <span class="fl">3600</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">600</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-plt"><img src="plotChromPeaks-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

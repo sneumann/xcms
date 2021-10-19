@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -69,7 +69,8 @@
     </div>
 
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
       <td><p><code>xcmsSet</code> object</p></td>
     </tr><tr><th>ppm</th>
@@ -120,8 +121,10 @@
       <td><p>max. number of the isotope peaks to predict for each detected feature.</p></td>
     </tr><tr><th>mzIntervalExtension</th>
       <td><p>logical, if TRUE predicted isotope ROIs (regions of interest) are extended in the m/z dimension to increase the detection of low intensity and hence noisy peaks.</p></td>
-    </tr></table><h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+    </tr></table></div>
 
+    <div id="methods">
+    <h2>Methods</h2>
     
 <dl><dt>object = "xcmsRaw"</dt><dd><p><code>
     findPeaks.centWaveWithPredictedIsotopeROIs(object, ppm=25, peakwidth=c(20,50), snthresh=10,
@@ -130,14 +133,16 @@
     firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
   </code></p></dd>
 
-</dl><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+</dl></div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This algorithm is most suitable for high resolution LC/{TOF,OrbiTrap,FTICR}-MS data in centroid mode.
   The <code>centWave</code> algorithm is applied in two peak picking steps as follows. In the first peak picking step ROIs (regions of interest, characterised as regions with less than <code>ppm</code> m/z deviation in consecutive scans) in the LC/MS map are located and further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
   In the second peak picking step isotope ROIs in the LC/MS map are predicted further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
   The peak lists resulting from both peak picking steps are merged and redundant peaks are removed.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A matrix with columns:</p>
 <p></p>
 <dl><dt>mz</dt><dd><p>weighted (by intensity) mean of peak m/z across scans</p></dd>
@@ -181,25 +186,29 @@
 <dl><dt>scmin</dt><dd><p>Left peak limit found by wavelet analysis (scan number)</p></dd>
 </dl><p></p>
 <dl><dt>scmax</dt><dd><p>Right peak limit found by wavelet analysis (scan number)</p></dd>
-</dl><h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+</dl></div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Ralf Tautenhahn</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Ralf Tautenhahn, Christoph B\"ottcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
   BMC Bioinformatics 2008, 9:504\
   Hendrik Treutler and Steffen Neumann.
   "Prediction, detection, and validation of isotope clusters in mass spectrometry data"
   Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="do_findChromPeaks_centWaveWithPredIsoROIs.html">do_findChromPeaks_centWaveWithPredIsoROIs</a></code> for the
   corresponding core API function.
   <code><a href="findPeaks.addPredictedIsotopeFeatures-methods.html">findPeaks.addPredictedIsotopeFeatures</a></code>
   <code><a href="findPeaks.centWave-methods.html">findPeaks.centWave</a></code>
   <code><a href="findPeaks-methods.html">findPeaks-methods</a></code>
   <code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

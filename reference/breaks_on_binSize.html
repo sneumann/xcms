@@ -18,7 +18,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -72,34 +72,42 @@ from <code>fromX</code> to <code>toX</code>.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">binSize</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>fromX</th>
       <td><p>numeric(1) specifying the lowest value for the bins.</p></td>
     </tr><tr><th>toX</th>
       <td><p>numeric(1) specifying the largest value for the bins.</p></td>
     </tr><tr><th>binSize</th>
       <td><p>numeric(1) defining the size of a bin.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A numeric vector defining the lower and upper bounds of the bins.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>This function creates breaks for bins of size <code>binSize</code>. The
 function ensures that the full data range is included in the bins, i.e. the
 last value (upper boundary of the last bin) is always equal <code>toX</code>. This
 however means that the size of the last bin will not always be equal to the
 desired bin size.
 See examples for more details and a comparisom to R's <code>seq</code> function.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="binYonX.html">binYonX</a></code> for a binning function.</p>
 <p>Other functions to define bins: 
 <code><a href="breaks_on_nBins.html">breaks_on_nBins</a>()</code></p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <div id="examples">
+    <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Define breaks with a size of 0.13 for a data range from 1 to 10:</span></span>
 <span class="r-in"><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1.00  1.13  1.26  1.39  1.52  1.65  1.78  1.91  2.04  2.17  2.30  2.43</span>
@@ -138,6 +146,7 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16] 8.65 9.16 9.67</span>
 <span class="r-in"><span class="co">## Thus it defines one bin (break) less.</span></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

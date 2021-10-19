@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -79,7 +79,8 @@
         scanrange <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
         stopOnError <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>files</th>
       <td><p>path names of the NetCDF/mzXML files to read</p></td>
     </tr><tr><th>snames</th>
@@ -131,8 +132,10 @@
     </tr><tr><th>...</th>
       <td><p>further arguments to the <code>findPeaks</code> method of the
     <code>xcmsRaw</code> class</p></td>
-    </tr></table><h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    </tr></table></div>
 
+    <div id="details">
+    <h2>Details</h2>
     <p>The default values of the <code>files</code>, <code>snames</code>, <code>sclass</code>, and
   <code>phenoData</code> arguments cause the function to recursively search
   for readable files. The filename without extention is used for the
@@ -157,25 +160,30 @@
 <p>The lock mass correction allows for the lock mass scan to be added back in
   with the last working scan. This correction gives better reproducibility
   between sample sets.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+    </div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>xcmsSet</code> object.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
+    </div>
+    <div id="author">
+    <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a></p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
+    </div>
+    <div id="note">
+    <h2>Note</h2>
     <p>The arguments <code>profmethod</code> and <code>profparam</code> have no influence
   on the feature/peak detection. The step size parameter <code>step</code> for
   the profile generation in the <code><a href="findPeaks.matchedFilter-xcmsRaw-method.html">findPeaks.matchedFilter</a></code>
   peak detection algorithm can be passed using the <code>...</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
   <code><a href="findPeaks-methods.html">findPeaks</a></code>,
   <code><a href="profStep-methods.html">profStep</a></code>,
   <code><a href="profMethod-methods.html">profMethod</a></code>,
   <code><a href="profGenerate.html">profBin</a></code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

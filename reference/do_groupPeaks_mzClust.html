@@ -18,7 +18,7 @@ correspondence on single spectra samples."><!-- mathjax --><script src="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
       </span>
     </div>
 
@@ -79,7 +79,8 @@ correspondence on single spectra samples.</p>
   minSamples <span class="op">=</span> <span class="fl">1</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <div id="arguments">
+    <h2>Arguments</h2>
     <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
       <td><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
 retention times of the identified chromatographic peaks in all samples of an
@@ -107,8 +108,10 @@ considered as a peak group (feature).</p></td>
       <td><p><code>numeric(1)</code> with the minimum number of samples in at
 least one sample group in which the peaks have to be detected to be
 considered a peak group (feature).</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    </tr></table></div>
 
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>list</code> with elements <code>"featureDefinitions"</code> and
 <code>"peakIndex"</code>. <code>"featureDefinitions"</code> is a <code>matrix</code>, each row
 representing an (mz-rt) feature (i.e. peak group) with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz values.</p></li>
@@ -122,17 +125,20 @@ this number can be larger than the total number of samples, since
 multiple peaks from the same sample could be assigned to a group.</p></li>
 </ul><p><code>"peakIndex"</code> is a <code>list</code> with the indices of all peaks in a peak group in
 the <code>peaks</code> input matrix.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
 and David F. Grant<br><em>Alignment of high resolution mass spectra:
 development of a heuristic approach for metabolomics</em>.<br> Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p>Other core peak grouping algorithms: 
 <code><a href="do_groupChromPeaks_density.html">do_groupChromPeaks_density</a>()</code>,
 <code><a href="do_groupChromPeaks_nearest.html">do_groupChromPeaks_nearest</a>()</code></p></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
