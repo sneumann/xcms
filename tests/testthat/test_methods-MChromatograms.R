@@ -1,4 +1,6 @@
 test_that("findChromPeaks,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- chromatogram(od_x, mz = mzr)
     res <- findChromPeaks(chrs, param = CentWaveParam())
@@ -21,6 +23,8 @@ test_that("findChromPeaks,MChromatograms works", {
 })
 
 test_that("correlate,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -46,6 +50,8 @@ test_that("correlate,MChromatograms works", {
 })
 
 test_that("removeIntensity,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -72,6 +78,8 @@ test_that("removeIntensity,MChromatograms works", {
 })
 
 test_that("filterColumnsIntensityAbove,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -105,6 +113,8 @@ test_that("filterColumnsIntensityAbove,MChromatograms works", {
 })
 
 test_that("filterChromatogramsKeepTop,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -147,6 +157,8 @@ test_that("filterChromatogramsKeepTop,MChromatograms works", {
 })
 
 test_that("normalize,MChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -167,6 +179,8 @@ test_that("normalize,MChromatograms works", {
 })
 
 test_that(".plot_xchromatograms_overlay works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -182,6 +196,8 @@ test_that(".plot_xchromatograms_overlay works", {
 })
 
 test_that("plotChromatogramsOverlay,MChromatograms,XChromatograms work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     data(xdata)
     dirname(xdata) <- c(rep(system.file("cdf", "KO", package = "faahKO"), 4),
                         rep(system.file("cdf", "WT", package = "faahKO"), 4))

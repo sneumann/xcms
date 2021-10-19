@@ -1,4 +1,6 @@
 test_that("binYonX NA handling works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## NA values in y should be ignored internally.
     X <- 1:10
     Y <- X
@@ -21,6 +23,8 @@ test_that("binYonX NA handling works", {
 })
 
 test_that("binYonX max works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     Y <- 1:10
     breakMidPoint <- function(x) {
@@ -201,6 +205,8 @@ test_that("binYonX max works", {
 
 ## Test binning using min
 test_that("binYonX min works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -257,6 +263,8 @@ test_that("binYonX min works", {
 
 ## Test binning using sum
 test_that("binYonX sum works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -312,6 +320,8 @@ test_that("binYonX sum works", {
 
 ## Test binning using mean
 test_that("binYonX mean works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -342,6 +352,8 @@ test_that("binYonX mean works", {
 })
 
 test_that("breaks defining functions work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Test generation of breaks for binning.
     ## o nBins
     res <- breaks_on_nBins(1, 10, 4)
@@ -393,6 +405,8 @@ test_that("breaks defining functions work", {
 })
 
 test_that("binYonX with imputation_lin works",  {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:11
     brks <- breaks_on_nBins(1, 11, 5L)
     Y <- c(1, NA, NA, NA, 5, 6, NA, NA, 9, 10, 11)
@@ -463,6 +477,8 @@ test_that("binYonX with imputation_lin works",  {
 })
 
 test_that("binYonX with imputation_linbin works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     doPlot <- FALSE
     ## Construct example:
     ## We're using the same test than we did for profBinLinBase.
@@ -559,6 +575,8 @@ test_that("binYonX with imputation_linbin works", {
 })
 
 ## test_that("testIntegerInput and testDoubleInput works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 
 ##     xcms:::testIntegerInput(4)
 ##     xcms:::testIntegerInput(c(4, 5))
@@ -569,6 +587,8 @@ test_that("binYonX with imputation_linbin works", {
 ## })
 
 test_that("binYonX on subsets works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Simple test without actually needing subsets.
     X <- 1:11
     Y <- 1:11

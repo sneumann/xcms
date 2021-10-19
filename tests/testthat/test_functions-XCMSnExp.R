@@ -1,4 +1,6 @@
 test_that("XCMSnExp new works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Basic contructor.
     x <- new("XCMSnExp")
     x@.processHistory <- list("a")
@@ -14,6 +16,8 @@ test_that("XCMSnExp new works", {
 })
 
 test_that("adjustRtimePeakGroups works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pkGrp <- adjustRtimePeakGroups(xod_xg,
                                    param = PeakGroupsParam(minFraction = 1))
     expect_equal(colnames(pkGrp), basename(fileNames(xod_xg)))
@@ -43,6 +47,8 @@ test_that("adjustRtimePeakGroups works", {
 })
 
 test_that("plotAdjustedRtime works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     plotAdjustedRtime(xod_xgr, ylim = c(-20, 40))
     plotAdjustedRtime(xod_xgrg)
     expect_warning(plotAdjustedRtime(xod_x))
@@ -50,6 +56,8 @@ test_that("plotAdjustedRtime works", {
 })
 
 test_that("plotChromPeakDensity works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(305.05, 305.15)
     .plotChromPeakDensity(xod_x, mz = mzr)
     plotChromPeakDensity(xod_x, mz = mzr)
@@ -70,6 +78,8 @@ test_that("plotChromPeakDensity works", {
 })
 
 test_that("plotChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Plot the full range.
     plotChromPeaks(xod_x)
 
@@ -79,6 +89,8 @@ test_that("plotChromPeaks works", {
 })
 
 test_that("plotChromPeakImage works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     plotChromPeakImage(xod_x, binSize = 30, log = FALSE)
     ## Check that it works if no peaks were found in one sample.
     tmp <- xod_x
@@ -91,6 +103,8 @@ test_that("plotChromPeakImage works", {
 })
 
 test_that("applyAdjustedRtime works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(applyAdjustedRtime(faahko_od))
     expect_equal(applyAdjustedRtime(faahko_xod), faahko_xod)
     ## Now really replacing the stuff.
@@ -105,6 +119,8 @@ test_that("applyAdjustedRtime works", {
 })
 
 test_that(".concatenate_XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod1 <- filterFile(faahko_xod, 1)
     xod2 <- filterFile(faahko_xod, 2)
     xod3 <- filterFile(faahko_xod, 3)
@@ -119,6 +135,8 @@ test_that(".concatenate_XCMSnExp works", {
 })
 
 test_that("filterFeatureDefinitions works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- xod_xgrg
     expect_error(filterFeatureDefinitions("a"))
     expect_error(filterFeatureDefinitions(xod_xgr, 1:3))
@@ -139,6 +157,8 @@ test_that("filterFeatureDefinitions works", {
 })
 
 test_that("featureSummary works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(featureSummary(1:3))
     expect_error(featureSummary(xod_xgrg, group = 1:5))
     expect_error(featureSummary(xod_xgr))
@@ -181,6 +201,8 @@ test_that("featureSummary works", {
 })
 
 test_that("overlappingFeatures works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Errors
     expect_error(overlappingFeatures())
     expect_error(overlappingFeatures(4))
@@ -192,6 +214,8 @@ test_that("overlappingFeatures works", {
 })
 
 test_that("exportMetaboAnalyst works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(exportMetaboAnalyst(xod_x))
     expect_error(exportMetaboAnalyst(4))
     expect_error(exportMetaboAnalyst(xod_xg))
@@ -219,6 +243,8 @@ test_that("exportMetaboAnalyst works", {
 })
 
 test_that("chromPeakSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
     expect_error(ms2_mspectrum_for_all_peaks(xod_x, method = "other"))
     expect_error(res <- chromPeakSpectra(od_x))
@@ -272,6 +298,8 @@ test_that("chromPeakSpectra works", {
 })
 
 test_that("featureSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
     expect_error(ms2_mspectrum_for_features(xod_x, method = "other"))
     expect_error(res <- featureSpectra(xod_x))
@@ -296,6 +324,8 @@ test_that("featureSpectra works", {
 })
 
 test_that("featureChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(featureChromatograms(xod_x))
 
     fts <- rownames(featureDefinitions(xod_xgrg))
@@ -367,6 +397,8 @@ test_that("featureChromatograms works", {
 })
 
 test_that("highlightChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(279, 279)
     rtr <- c(2700, 2850)
     chr <- chromatogram(xod_xgrg, mz = mzr, rt = rtr)
@@ -386,6 +418,8 @@ test_that("highlightChromPeaks works", {
 })
 
 test_that(".swath_collect_chrom_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     obj <- dropChromPeaks(pest_swth)
     msf <- new("MsFeatureData")
     ## msf@.xData <- .copy_env(obj@msFeatureData)
@@ -453,6 +487,8 @@ test_that(".swath_collect_chrom_peaks works", {
 })
 
 test_that("findChromPeaksIsolationWindow works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     obj <- filterRt(as(pest_swth, "OnDiskMSnExp"), rt = c(0, 300))
     cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                          peakwidth = c(3, 30), prefilter = c(2, 1000))
@@ -488,6 +524,8 @@ test_that("findChromPeaksIsolationWindow works", {
 })
 
 test_that("reconstructChromPeakSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- reconstructChromPeakSpectra(
         pest_swth, peakId = rownames(chromPeaks(pest_swth))[5:6])
     expect_true(length(res) == 2)
@@ -508,6 +546,8 @@ test_that("reconstructChromPeakSpectra works", {
 })
 
 test_that(".plot_XIC works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(453, 453.5)
     rtr <- c(2400, 2700)
 
@@ -521,6 +561,8 @@ test_that(".plot_XIC works", {
 })
 
 test_that(".group_overlapping_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzmin <- c(123.3, 123.35, 123.5, 341, 342.1, 343.2, 564, 564.3)
     mzmax <- c(123.4, 123.5, 124, 342, 343, 344, 564.1, 566)
     pks <- cbind(mzmin, mzmax)
@@ -544,6 +586,8 @@ test_that(".group_overlapping_peaks works", {
 })
 
 test_that(".merge_neighboring_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod_x1 <- filterFile(xod_x, 1L)
     res <- .merge_neighboring_peaks(xod_x1, expandRt = 4)
     expect_true(is.list(res))
@@ -591,6 +635,8 @@ test_that(".merge_neighboring_peaks works", {
 })
 
 test_that(".XCMSnExp2SummarizedExperiment works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(.XCMSnExp2SummarizedExperiment(xod_x), "No correspondence")
 
     res <- .XCMSnExp2SummarizedExperiment(xod_xgrg)
@@ -606,6 +652,8 @@ test_that(".XCMSnExp2SummarizedExperiment works", {
 })
 
 test_that(".features_ms_region works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- .features_ms_region(xod_xgrg, msLevel = 1L)
     expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
     expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
@@ -617,6 +665,8 @@ test_that(".features_ms_region works", {
 })
 
 test_that(".which_peaks_above_threshold works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xsub <- filterRt(filterFile(xod_x, 1L), rt = c(2500, 3500))
     pks <- chromPeaks(xsub)
     res <- .chrom_peaks_above_threshold(xsub, threshold = 100, nValues = 4)
@@ -630,6 +680,8 @@ test_that(".which_peaks_above_threshold works", {
 })
 
 test_that("manualChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     cp <- cbind(mzmin = c(453, 301.9, 100),
                 mzmax = c(453.5, 302.1, 102),
                 rtmin = c(2400, 2500, 2460),
@@ -654,6 +706,8 @@ test_that("manualChromPeaks works", {
 })
 
 test_that(".spectra_for_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res_all <- .spectra_for_peaks(pest_dda, method = "all")
         expect_true(length(res_all) == nrow(chromPeaks(pest_dda)))
@@ -677,6 +731,8 @@ test_that(".spectra_for_peaks works", {
 })
 
 test_that(".spectra_for_features works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
                                      msLevel = 2L)
@@ -715,6 +771,8 @@ test_that(".spectra_for_features works", {
 })
 
 test_that("manualFeatures works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     idx <- list(1:4, c(4, "a"))
     expect_error(manualFeatures(od_x, idx), "XCMSnExp")
     ## Add features to an XCMSnExp without features.

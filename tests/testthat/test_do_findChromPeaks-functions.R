@@ -1,4 +1,6 @@
 test_that("do_findPeaks_MSW works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     first_file <- filterFile(fticr, file = 1)
     spctr <- spectra(first_file)
     expect_true(length(spctr) == 1)
@@ -14,6 +16,8 @@ test_that("do_findPeaks_MSW works", {
 })
 
 test_that("do_findChromPeaks_centWave works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## We expect that changing a parameter has an influence on the result.
     mzVals <- mz(xod_x)
     intVals <- unlist(intensity(xod_x), use.names = FALSE)
@@ -38,6 +42,8 @@ test_that("do_findChromPeaks_centWave works", {
 })
 
 test_that("do_findChromPeaks_centWaveWithPredIsoROIs works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterFile(od_x, 1)
     mzVals <- mz(tmp)
     intVals <- unlist(intensity(tmp), use.names = FALSE)
@@ -62,6 +68,8 @@ test_that("do_findChromPeaks_centWaveWithPredIsoROIs works", {
 })
 
 test_that("do_findChromPeaks_massifquant works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterFile(od_x, 1)
     mz <- mz(tmp)
     valsPerSpect <- lengths(mz)
@@ -81,6 +89,8 @@ test_that("do_findChromPeaks_massifquant works", {
 })
 
 test_that("do_findChromPeaks_matchedFilter works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterFile(od_x, 1)
     mzVals <- mz(tmp)
     valsPerSpect <- lengths(mzVals)
@@ -138,6 +148,8 @@ test_that("do_findChromPeaks_matchedFilter works", {
 })
 
 test_that("peaksWithMatchedFilter is working", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- filterFile(faahko_od, file = 1)
     od_mf <- findChromPeaks(od, param = MatchedFilterParam())
 
@@ -160,6 +172,8 @@ test_that("peaksWithMatchedFilter is working", {
 })
 
 test_that(".getRtROI works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- filterFile(faahko_od, file = 1)
     expect_error(.getRtROI())
     expect_error(.getRtROI(1:3))
@@ -218,6 +232,8 @@ test_that(".getRtROI works", {
 })
 
 test_that("peaksWithCentWave works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- filterFile(faahko_od, file = 1)
     mzr <- c(272.1, 272.2)
 
@@ -286,6 +302,8 @@ test_that("peaksWithCentWave works", {
 })
 
 test_that(".narrow_rt_boundaries works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     d <- c(0, 0, 1, 2, 1, 3, 4, 6, 4, 3, 2, 0, 1, 0, 2, 0)
 
     ## Full range

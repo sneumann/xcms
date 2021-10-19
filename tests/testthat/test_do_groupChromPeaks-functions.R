@@ -1,4 +1,6 @@
 test_that("do_groupChromPeaks_density works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fts <- chromPeaks(xod_xg)
     grps <- rep(1, 3)
     res <- do_groupChromPeaks_density(fts, sampleGroups = grps)
@@ -8,6 +10,8 @@ test_that("do_groupChromPeaks_density works", {
 })
 
 test_that("do_groupPeaks_mzClust works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fts <- chromPeaks(fticr_xod)
     res <- do_groupPeaks_mzClust(peaks = fts,
                                  sampleGroups = c(1, 1))
@@ -26,6 +30,8 @@ test_that("do_groupPeaks_mzClust works", {
 })
 
 test_that("do_groupChromPeaks_nearest works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterFile(xod_xg)
     features <- chromPeaks(tmp)
     sampleGroups <- rep(1, length(fileNames(tmp)))
@@ -40,6 +46,8 @@ test_that("do_groupChromPeaks_nearest works", {
 })
 
 test_that(".group_peaks_density works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     x <- rbind(c(rt = 3.1, mz = 3, index = 1, sample = 1, into = 120),
                c(rt = 3.2, mz = 3, index = 2, sample = 2, into = 130),
                c(rt = 3.15, mz = 3, index = 3, sample = 3, into = 29),

@@ -1,4 +1,6 @@
 test_that("fitModel works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     vals <- featureValues(xod_xgrg)
     dat <- data.frame(injection_idx = 1:length(fileNames(xod_xgrg)))
     fits <- rowFitModel(formula = y ~ injection_idx, y = vals,
@@ -15,6 +17,8 @@ test_that("fitModel works", {
 
 
 test_that("model adjustment with batch works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Here we test that linear model based adjustment with a batch is
     ## working.
     y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1, 8.1, 8.9,
@@ -55,6 +59,8 @@ test_that("model adjustment with batch works", {
 })
 
 test_that("fitModel, rowFitModel works on matrix and vector", {
+    skip_on_os(os = "windows", arch = "i386")
+
     y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1)
     inj_idx <- 1:length(y)
     dta <- data.frame(inj_idx = inj_idx)
@@ -125,6 +131,8 @@ test_that("fitModel, rowFitModel works on matrix and vector", {
 })
 
 test_that("applyModelAdjustment works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1)
     inj_idx <- 1:length(y)
     btch <- c(rep("a", 8), rep("b", 5))
@@ -186,6 +194,8 @@ test_that("applyModelAdjustment works", {
 })
 
 test_that("replaceNaOnEnds works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     x <- c(NA, 3, 4, 6, 4, 2, NA, 3, NA, 4, 5, 6, NA)
     expect_equal(replaceNaOnEnds(x), c(3, 3, 4, 6, 4, 2, NA, 3, NA, 4, 5, 6, 6))
 

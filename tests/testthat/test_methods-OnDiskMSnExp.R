@@ -1,4 +1,6 @@
 test_that("profMat,OnDiskMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Get it from all 3 files in one go.
     res <- profMat(filterRt(faahko_od, c(2500, 3000)), step = 2)
     res_2 <- profMat(filterRt(faahko_xod, c(2500, 3000)), step = 2)
@@ -11,6 +13,8 @@ test_that("profMat,OnDiskMSnExp works", {
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Reproduce with msdata files:
     fl <- system.file("microtofq/MM14.mzML", package = "msdata")
     raw <- readMSData(fl, mode = "onDisk")
@@ -88,6 +92,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     onDisk <- filterFile(faahko_od, file = 1)
     ppm <- 40
     snthresh <- 40
@@ -108,6 +114,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## OnDiskMSnExp
     onDisk <- filterFile(faahko_od, file = 1)
     cwp <- CentWavePredIsoParam(snthresh = 20, noise = 2500,
@@ -123,6 +131,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     onDisk <- filterFile(microtofq_od, 1)
     res_o <- findChromPeaks(onDisk, param = MassifquantParam(prefilter = c(5, 5000)))
     expect_true(hasChromPeaks(res_o))
@@ -132,6 +142,8 @@ test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,MatchedFilterParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
     onDisk <- filterFile(faahko_od, file = 1)
     res_o <- findChromPeaks(onDisk, param = mfp)
@@ -142,6 +154,8 @@ test_that("findChromPeaks,OnDiskMSnExp,MatchedFilterParam works", {
 })
 
 test_that("isolationWindowTargetMz,OnDiskMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- isolationWindowTargetMz(xod_x)
     expect_true(all(is.na(res)))
     expect_true(length(res) == length(xod_x))

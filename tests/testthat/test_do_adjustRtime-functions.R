@@ -1,4 +1,6 @@
 test_that("getPeakGroupsRtMatrix works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     param <- PeakGroupsParam()
     nSamples <- length(fileNames(xod_xg))
     pkGrp <- .getPeakGroupsRtMatrix(
@@ -16,6 +18,8 @@ test_that("getPeakGroupsRtMatrix works", {
 })
 
 test_that("do_adjustRtime_peakGroups works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xsa <- xod_xgr
     xsg <- xod_xg
     misSamp <- 1
@@ -51,6 +55,8 @@ test_that("do_adjustRtime_peakGroups works", {
 })
 
 test_that("applyRtAdjustment works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xs <- faahko
     ## group em.
     ## xsg <- group(xs)
@@ -90,6 +96,8 @@ test_that("applyRtAdjustment works", {
 })
 
 test_that(".get_closest_index works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7)), 3)
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "previous"), 1)
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "closest"), 1)
@@ -123,6 +131,8 @@ test_that(".get_closest_index works", {
 })
 
 test_that(".match_trim_vectors and index works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- .match_trim_vectors(list(1:10, 3:10))
     expect_equal(res, list(3:10, 3:10))
     res <- .match_trim_vectors(list(3:10, 4:15))
@@ -136,6 +146,8 @@ test_that(".match_trim_vectors and index works", {
 })
 
 test_that("adjustRtimeSubset works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)
     rt_adj <- rtime(xod_xgr, adjusted = TRUE, bySample = TRUE)
 

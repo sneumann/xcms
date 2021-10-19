@@ -1,4 +1,6 @@
 test_that("ProcessHistory constructor and class works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ph <- ProcessHistory()
     expect_true(inherits(ph, "ProcessHistory"))
 
@@ -21,6 +23,8 @@ test_that("ProcessHistory constructor and class works", {
 })
 
 test_that("XProcessHistory works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ph <- XProcessHistory()
     expect_true(is(ph, "XProcessHistory"))
     expect_true(inherits(ph, "ProcessHistory"))
@@ -42,6 +46,8 @@ test_that("XProcessHistory works", {
 })
 
 test_that("GenericProcessHistory works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xs <- list()
     xs <- c(xs, GenericProcessHistory(fun = "mean"))
     xs <- c(xs, GenericProcessHistory(fun = "median"))
@@ -55,6 +61,8 @@ test_that("GenericProcessHistory works", {
 })
 
 test_that(".process_history_subset_samples works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ph <- list(XProcessHistory(CentWaveParam()))
     expect_equal(.process_history_subset_samples(ph), ph)
     ph <- list(XProcessHistory(CentWaveParam(), fileIndex = 1:10))

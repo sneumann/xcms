@@ -1,8 +1,12 @@
 test_that("show,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     show(XChromatogram())
 })
 
 test_that("chromPeaks and chromPeakData for XChromatogram work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr <- Chromatogram(rtime = 1:10,
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
@@ -54,6 +58,8 @@ test_that("chromPeaks and chromPeakData for XChromatogram work", {
 })
 
 test_that("plot,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr <- Chromatogram(rtime = 1:10,
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
@@ -81,6 +87,8 @@ test_that("plot,XChromatogram works", {
 })
 
 test_that("filterMz,filterRt,XChromatogram work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr <- Chromatogram(rtime = 1:10,
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
@@ -108,6 +116,8 @@ test_that("filterMz,filterRt,XChromatogram work", {
 })
 
 test_that("hasChromPeaks,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr <- Chromatogram(rtime = 1:10,
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
@@ -125,6 +135,8 @@ test_that("hasChromPeaks,XChromatogram works", {
 })
 
 test_that("removeIntensity,XChromatogram(s) works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -175,6 +187,8 @@ test_that("removeIntensity,XChromatogram(s) works", {
 })
 
 test_that("filterChromPeaks,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
                                            462.2 + c(-0.04, 0.04)))
     res <- filterChromPeaks(chrs[1, 1], n = 1L, by = "keepTop")

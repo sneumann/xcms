@@ -1,4 +1,6 @@
 test_that("XChromatograms, as, validator, hasChromPeaks work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr1 <- Chromatogram(rtime = 1:8,
                          intensity = c(3, 24.2, 343, 32, 3.3, 5, 2, 9))
     chr2 <- Chromatogram(rtime = 1:4, intensity = c(45, 3, 34, 2))
@@ -61,6 +63,8 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
 })
 
 test_that(".subset_chrom_peaks_xchromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Matrix is:    with elements
     ## A B C D       2 1 3 1
     ## E F G H       1 4 0 2
@@ -119,6 +123,8 @@ test_that(".subset_chrom_peaks_xchromatograms works", {
 })
 
 test_that(".subset_features_on_chrom_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
     prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -156,6 +162,8 @@ test_that(".subset_features_on_chrom_peaks works", {
 })
 
 test_that(".plot_chrom_peak_density works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
 

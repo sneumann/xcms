@@ -1,4 +1,6 @@
 test_that(".which_mz_in_range works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mz <- 3.4
     lowerMz <- c(1, 3, 8, 12)
     upperMz <- c(3, 7, 11, 15)
@@ -9,6 +11,8 @@ test_that(".which_mz_in_range works", {
 })
 
 test_that(".which_chrom_peak_overlap_rt works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pks <- cbind(rtmin = c(1, 2, 3, 4, 5), rtmax = c(2, 3, 4, 5, 6))
     res <- .which_chrom_peak_overlap_rt(c(rtmin = 1.1, rtmax = 2.2), pks)
     expect_equal(res, c(1L, 2L))
@@ -17,6 +21,8 @@ test_that(".which_chrom_peak_overlap_rt works", {
 })
 
 test_that(".which_chrom_peak_diff_rt works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pks <- cbind(rt = c(1, 2, 3, 4, 5), rtmax = c(2, 3, 4, 5, 6))
     res <- .which_chrom_peak_diff_rt(c(rt = 1.1), pks, diffRt = 2)
     expect_equal(res, c(1L, 2L, 3L))
@@ -25,6 +31,8 @@ test_that(".which_chrom_peak_diff_rt works", {
 })
 
 test_that(".reconstruct_ms2_for_chrom_peak works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
     pk <- chromPeaks(pest_swth, mz = 382.972706, ppm = 10)
     res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
@@ -62,6 +70,8 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
 })
 
 test_that(".reconstruct_ms2_for_peaks_file works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## No MS2 level peaks: expect empty.
     tmp <- filterRt(filterFile(xod_x, 1), rt = c(2500, 3000))
     res <- xcms:::.reconstruct_ms2_for_peaks_file(tmp)
@@ -116,6 +126,8 @@ test_that(".reconstruct_ms2_for_peaks_file works", {
 })
 
 test_that(".data2spectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## empty one, no mz, no intensity, just rt fromFile etc.
     res <- .data2spectra(rt = 3.2, polarity = 1L, precursorMz = 12.3,
                          precursorIntensity = 1234, return.type = "MSpectra")
