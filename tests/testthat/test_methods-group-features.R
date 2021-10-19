@@ -5,6 +5,8 @@ xodgg <- groupFeatures(xodgg, param = AbundanceSimilarityParam(threshold = 0.3))
 
 
 test_that("featureGroups,featureGroups<-,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(featureGroups(xod_x), "Please run")
     res <- featureGroups(xodg)
     expect_true(all(is.na(res)))
@@ -17,6 +19,8 @@ test_that("featureGroups,featureGroups<-,XCMSnExp works", {
 })
 
 test_that("SimilarRtimeParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     prm <- SimilarRtimeParam(3)
 
     expect_error(groupFeatures(xod_x, prm), "No feature definitions")
@@ -53,6 +57,8 @@ test_that("SimilarRtimeParam works", {
 })
 
 test_that("AbundanceSimilarityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     prm <- AbundanceSimilarityParam(threshold = 0.5, value = "maxo")
     expect_equal(prm@threshold, 0.5)
     expect_equal(prm@dots, list(value = "maxo"))
@@ -95,6 +101,8 @@ test_that("AbundanceSimilarityParam works", {
 })
 
 ## test_that("featureGroupPseudoSpectrum works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 ##     fvals <- featureValues(xodgg, method = "maxint", value = "maxo")
 ##     ## 3 feature
 ##     ft_idx <- which(featureGroups(xodgg) == "FG.010.001")
@@ -126,6 +134,8 @@ test_that("AbundanceSimilarityParam works", {
 ## })
 
 ## test_that("featureGroupFullScan works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 ##     fvals <- featureValues(xodgg, method = "maxint", value = "maxo")
 ##     ## 3 feature
 ##     res <- featureGroupFullScan("FG.010.001", xodgg, fvals = fvals)
@@ -147,6 +157,8 @@ test_that("AbundanceSimilarityParam works", {
 ## })
 
 ## test_that("featureGroupSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 ##     ## Errors
 ##     expect_error(featureGroupSpectra(xodgg, subset = 1:5), "an integer")
 ##     expect_error(featureGroupSpectra(xod), "feature definitions")
@@ -174,6 +186,8 @@ test_that("AbundanceSimilarityParam works", {
 ## })
 
 test_that(".group_eic_similarity works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
@@ -220,6 +234,8 @@ test_that(".group_eic_similarity works", {
 })
 
 test_that("EicSimilarityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- EicSimilarityParam()
     expect_equal(res@threshold, 0.9)
     expect_equal(res@ALIGNFUNARGS, list(tolerance = 0, method = "closest"))
@@ -255,6 +271,8 @@ test_that("EicSimilarityParam works", {
 })
 
 test_that("groupFeatures,EicSimilarityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## n bigger than 3
     expect_error(groupFeatures(xodg, param = EicSimilarityParam(n = 5)),
                  "smaller than or")

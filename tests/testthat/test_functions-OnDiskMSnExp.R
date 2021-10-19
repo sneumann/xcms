@@ -1,4 +1,6 @@
 test_that(".obiwarp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 
     od <- faahko_od
     xod <- faahko_xod
@@ -48,6 +50,8 @@ test_that(".obiwarp works", {
 })
 
 test_that(".concatenate_OnDiskMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od1 <- filterFile(od_x, 1)
     od2 <- filterFile(od_x, 2:3)
     res <- .concatenate_OnDiskMSnExp(od1, od2)
@@ -77,6 +81,8 @@ test_that(".concatenate_OnDiskMSnExp works", {
 })
 
 test_that(".split_by_file and .split_bu_file2 work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     a <- lapply(seq_along(fileNames(od_x)), filterFile, object = od_x)
     b <- .split_by_file(od_x, subsetFeatureData = FALSE)
     expect_equal(a[[2]][[19]], b[[2]][[19]])
@@ -109,6 +115,8 @@ test_that(".split_by_file and .split_bu_file2 work", {
 })
 
 test_that(".estimate_prec_intensity works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterRt(as(pest_dda, "OnDiskMSnExp"), c(300, 400))
     res <- .estimate_prec_intensity(tmp, method = "previous")
     expect_true(length(res) == length(tmp))
@@ -120,6 +128,8 @@ test_that(".estimate_prec_intensity works", {
 })
 
 test_that("estimatePrecursorIntensity,OnDiskMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- filterRt(pest_dda, c(300, 400))
     res <- estimatePrecursorIntensity(tmp, BPPARAM = SerialParam())
     expect_true(length(res) == length(tmp))
@@ -129,6 +139,8 @@ test_that("estimatePrecursorIntensity,OnDiskMSnExp works", {
 })
 
 test_that(".OnDiskMSnExp2MsBackendMzR works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res <- .OnDiskMSnExp2MsBackendMzR(xod_x)
         expect_equal(Spectra::rtime(res), unname(rtime(xod_x)))
@@ -136,6 +148,8 @@ test_that(".OnDiskMSnExp2MsBackendMzR works", {
 })
 
 test_that(".fData2MsBackendMzR works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     if (requireNamespace("Spectra", quietly = TRUE)) {
         res <- .fData2MsBackendMzR(fData(xod_x), fileNames(xod_x))
         expect_true(is(res, "MsBackendMzR"))

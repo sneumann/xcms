@@ -1,4 +1,6 @@
 test_that("XCMSnExp, XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     rts <- rtime(faahko_od)
     rts_2 <- rtime(od_x)
     expect_equal(rts, rts_2)
@@ -13,6 +15,8 @@ test_that("XCMSnExp, XCMSnExp works", {
 })
 
 test_that("mz,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp_od <- filterRt(faahko_od, rt = c(3500, 3800))
     tmp_xod <- filterRt(xod_x, rt = c(3500, 3800))
     mzs <- mz(tmp_od)
@@ -23,6 +27,8 @@ test_that("mz,XCMSnExp works", {
 })
 
 test_that("intensity,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp_od <- filterRt(faahko_od, rt = c(3500, 3800))
     tmp_xod <- filterRt(xod_x, rt = c(3500, 3800))
     ints <- intensity(tmp_od)
@@ -35,6 +41,8 @@ test_that("intensity,XCMSnExp works", {
 })
 
 test_that("spectra,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## xod_x
     tmp <- filterRt(xod_x, rt = c(2700, 2900))
     res <- spectra(tmp)
@@ -68,6 +76,8 @@ test_that("spectra,XCMSnExp works", {
 })
 
 test_that("XCMSnExp accessors work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Filling with data...
     xod <- as(faahko_od, "XCMSnExp")
     ## peaks
@@ -207,6 +217,8 @@ test_that("XCMSnExp accessors work", {
 })
 
 test_that("findChromPeaks,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Call findChromPeaks on an XCMSnExp
     tmp <- findChromPeaks(filterFile(xod_x, 1),
                           param = CentWaveParam(noise = 10000,
@@ -252,6 +264,8 @@ test_that("findChromPeaks,XCMSnExp works", {
 })
 
 test_that("processHistory,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ph <- ProcessHistory(fileIndex. = 2, info. = "For file 2")
     ph_2 <- ProcessHistory(fileIndex. = 1:2, info. = "For files 1 to 2")
     xod <- as(od_x, "XCMSnExp")
@@ -270,6 +284,8 @@ test_that("processHistory,XCMSnExp works", {
 })
 
 test_that("dropChromPeaks,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropChromPeaks(xod_x)
     expect_true(!hasChromPeaks(res))
@@ -319,6 +335,8 @@ test_that("dropChromPeaks,XCMSnExp works", {
 })
 
 test_that("dropFeatureDefinitions,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history
     ##    b) if retention time correction was performed AFTER the latest feature
@@ -339,6 +357,8 @@ test_that("dropFeatureDefinitions,XCMSnExp works", {
 })
 
 test_that("dropAdjustedRtime,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## 3) dropAdjustedRtime:
     ##    a) drop the retention time adjustment and related process histories
     ##    b) if grouping has been performed AFTER retention time correction,
@@ -371,6 +391,8 @@ test_that("dropAdjustedRtime,XCMSnExp works", {
 })
 
 test_that("XCMSnExp inherited methods work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## [
     tmp_1 <- faahko_od[1:10]
     tmp_2 <- xod_x[1:10]
@@ -484,6 +506,8 @@ test_that("XCMSnExp inherited methods work", {
 })
 
 test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## filterFile
     tmp <- filterFile(xod_x, file = 2)
     expect_error(tmp@msFeatureData$bla <- 3)
@@ -630,6 +654,8 @@ test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
 })
 
 test_that("filterMz,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## subset on xod_x
     res <- filterMz(xod_x, mz = c(300, 400))
     expect_true(length(res[[1]]) == 1)
@@ -713,6 +739,8 @@ test_that("filterMz,XCMSnExp works", {
 })
 
 test_that("filterRt,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## xod_x
     res <- filterRt(xod_x, rt = c(2700, 2900))
     ## Check if the object is OK:
@@ -874,6 +902,8 @@ test_that("filterRt,XCMSnExp works", {
 
 ## Test the coercion method.
 test_that("as,XCMSnExp,xcmsSet works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od_x <- faahko_xod
     res <- .XCMSnExp2xcmsSet(od_x)
     res <- as(od_x, "xcmsSet")
@@ -938,6 +968,8 @@ test_that("as,XCMSnExp,xcmsSet works", {
 })
 
 test_that("chromatogram,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Have: od_x: OnDiskMSNnExp
     ## xod_x: XCMSnExp, with detected chromPeaks.
     ## xod_xg: with feature groups.
@@ -1099,6 +1131,8 @@ test_that("chromatogram,XCMSnExp works", {
 })
 
 test_that("signal integration is correct", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Testing the signal integration of peaks.
     ## For centWave
     tmp <- xod_xgrg
@@ -1158,6 +1192,8 @@ test_that("signal integration is correct", {
 })
 
 test_that("featureValues,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fdp <- PeakDensityParam(sampleGroups = rep(1, 3))
     od_x <- groupChromPeaks(faahko_xod, param = fdp)
     fvs <- featureValues(od_x, value = "into")
@@ -1252,12 +1288,16 @@ test_that("featureValues,XCMSnExp works", {
 })
 
 test_that("peakIndex,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pkI <- .peakIndex(xod_xg)
     expect_equal(names(pkI), rownames(featureDefinitions(xod_xg)))
     expect_equal(unname(pkI), featureDefinitions(xod_xg)$peakidx)
 })
 
 test_that("MS1 MS2 data works on XCMSnExp", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## That's to test stuff for issues #208 and related (also issue #214).
     ## Set every other spectra in the original files to MS2.
 
@@ -1364,6 +1404,8 @@ test_that("MS1 MS2 data works on XCMSnExp", {
 })
 
 test_that("extractMsData,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## All the data
     ## all <- extractMsData(od_x)
     ## expect_equal(length(all), length(fileNames(od_x)))
@@ -1432,6 +1474,8 @@ test_that("extractMsData,XCMSnExp works", {
 })
 
 test_that("spectrapply and spectra,XCMSnExp work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## With adjusted retention time
     tmp <- filterFile(xod_r, file = 3, keepAdjustedRtime = TRUE)
     expect_true(hasAdjustedRtime(tmp))
@@ -1454,6 +1498,8 @@ test_that("spectrapply and spectra,XCMSnExp work", {
 })
 
 test_that("processHistory,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     type_peak_det <- .PROCSTEP.PEAK.DETECTION
     type_align <- .PROCSTEP.RTIME.CORRECTION
     type_corr <- .PROCSTEP.PEAK.GROUPING
@@ -1469,6 +1515,8 @@ test_that("processHistory,XCMSnExp works", {
 })
 
 test_that("split,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod <- as(faahko_od, "XCMSnExp")
     tmp <- split(xod_xgr, f = fromFile(xod_xgr))
     ## Split by file.
@@ -1496,11 +1544,15 @@ test_that("split,XCMSnExp works", {
 })
 
 test_that("groupnames,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     gn <- groupnames(xod_xgrg)
     expect_error(groupnames(xod_x))
 })
 
 test_that("calibrate,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     do_plot <- FALSE
     tmp <- filterFile(faahko_xod, file = 1)
 
@@ -1567,6 +1619,8 @@ test_that("calibrate,XCMSnExp works", {
 })
 
 test_that("adjustRtime,peakGroups works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod <- faahko_xod
     xodg <- groupChromPeaks(xod,
                             param = PeakDensityParam(sampleGroups = rep(1, 3)))
@@ -1668,6 +1722,8 @@ test_that("adjustRtime,peakGroups works", {
 })
 
 test_that("findChromPeaks,MSWParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- microtofq_od
     ## Restrict to first spectrum
     od1 <- od[1]
@@ -1710,6 +1766,8 @@ test_that("findChromPeaks,MSWParam works", {
 })
 
 test_that("featureValues,XCMSnExp works as with groupval", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fval <- featureValues(xod_xg)
     expect_true(nrow(fval) == nrow(featureDefinitions(xod_xg)))
     expect_true(ncol(fval) == length(fileNames(xod_xg)))
@@ -1721,6 +1779,8 @@ test_that("featureValues,XCMSnExp works as with groupval", {
 })
 
 test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check error if no features were found. issue #273
     pdp <- PeakDensityParam(sampleGroups = rep(1, 3), minSamples = 30)
     expect_warning(groupChromPeaks(faahko_xod, param = pdp), "Unable to group any chromatographic peaks.")
@@ -1764,6 +1824,8 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
 })
 
 test_that("groupPeaks,XCMSnExp,MzClustParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- MzClustParam(sampleGroups = rep(1, length(fileNames(fticr_xod))))
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p)
     expect_true(hasFeatures(fticr_xod2))
@@ -1785,6 +1847,8 @@ test_that("groupPeaks,XCMSnExp,MzClustParam works", {
 })
 
 test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- NearestPeaksParam(sampleGroups = rep(1, 3))
     res <- groupChromPeaks(faahko_xod, param = p)
     expect_true(hasFeatures(res))
@@ -1818,6 +1882,8 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
 })
 
 test_that("fillChromPeaks,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## No adjusted retention times
     expect_true(!.hasFilledPeaks(xod_xg))
     expect_false(hasFilledChromPeaks(xod_xg))
@@ -1977,6 +2043,8 @@ test_that("fillChromPeaks,XCMSnExp works", {
 })
 
 test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- xod_xgrg
     fData(tmp)[fromFile(tmp) == 2, "msLevel"] <- 2L
     res <- fillChromPeaks(tmp, FillChromPeaksParam(fixedRt = 2))
@@ -1988,11 +2056,15 @@ test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {
 })
 
 test_that("fillChomPeaks,ChromPeakAreaParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- fillChromPeaks(xod_xgrg, ChromPeakAreaParam())
     expect_true(hasFilledChromPeaks(res))
 })
 
 test_that("fillChromPeaks,XCMSnExp with MSW works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- MzClustParam()
     fticr_xodg <- groupChromPeaks(fticr_xod, param = p)
     expect_error(res <- fillChromPeaks(fticr_xod))
@@ -2033,6 +2105,8 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
 })
 
 test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- findChromPeaks(faahko_od, param = MatchedFilterParam())
     sg <- rep(1, length(fileNames(tmp)))
     tmp <- groupChromPeaks(tmp, param = PeakDensityParam(sampleGroups = sg))
@@ -2084,6 +2158,8 @@ test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
 })
 
 test_that("writeMSData,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Write adjusted retention times
     tmp_path <- tempdir()
     nfls <- paste0(tmp_path, "/",
@@ -2095,6 +2171,8 @@ test_that("writeMSData,XCMSnExp works", {
 })
 
 test_that("adjustRtime,XCMSnExp,Obiwarp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     prm <- ObiwarpParam(centerSample = 3, subset = c(1, 2), binSize = 10)
     expect_error(adjustRtime(xod_x, param = prm))
     prm <- ObiwarpParam(centerSample = 2, subset = c(1, 2), binSize = 10)
@@ -2113,6 +2191,8 @@ test_that("adjustRtime,XCMSnExp,Obiwarp works", {
 })
 
 test_that("dropFilledChromPeaks,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod_tmp <- groupChromPeaks(
         xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
                                           minFraction = 0.25))
@@ -2123,6 +2203,8 @@ test_that("dropFilledChromPeaks,XCMSnExp works", {
 })
 
 test_that("updateObject,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- faahko_xod
     en <- new("MsFeatureData")
     en@.xData <- .copy_env(tmp@msFeatureData@.xData)
@@ -2134,6 +2216,8 @@ test_that("updateObject,XCMSnExp works", {
 })
 
 test_that("filterMsLevel works with MS>1", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ms2 <- filterRt(as(pest_dda, "OnDiskMSnExp"), rt = c(200, 600))
     res <- findChromPeaks(ms2, param = CentWaveParam(
                                    prefilter = c(3, 1000)),
@@ -2151,6 +2235,8 @@ test_that("filterMsLevel works with MS>1", {
 })
 
 test_that("chromPeakData,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- xod_x
     expect_error(chromPeakData(tmp) <- 5, "'chromPeakData' is supposed")
     chromPeakData(tmp)$other_column <- "b"
@@ -2190,6 +2276,8 @@ test_that("chromPeakData,XCMSnExp works", {
 })
 
 test_that("plot,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(301.9, 302.1)
     rtr <- c(2500, 2650)
     tmp <- filterMz(filterRt(xod_x, rtr), mzr)
@@ -2201,6 +2289,8 @@ test_that("plot,XCMSnExp works", {
 })
 
 test_that("refineChromPeaks,CleanPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     rtw <- chromPeaks(xod_x)[, "rtmax"] - chromPeaks(xod_x)[, "rtmin"]
     res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20))
     rtw2 <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
@@ -2243,6 +2333,8 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
 })
 
 test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     prm <- MergeNeighboringPeaksParam(expandRt = 4)
     res <- refineChromPeaks(xod_xgr, param = prm)
     expect_true(hasAdjustedRtime(res))
@@ -2285,6 +2377,8 @@ test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
 })
 
 test_that("refineChromPeaks,FilterIntensityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pks <- chromPeaks(xod_x)
     prm <- FilterIntensityParam(nValues = 1, threshold = 50000)
     res <- refineChromPeaks(xod_x, param = prm, msLevel = 2L)
@@ -2312,6 +2406,8 @@ test_that("refineChromPeaks,FilterIntensityParam works", {
 })
 
 test_that("filterChromPeaks,XCMSnExp works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- filterChromPeaks(xod_x, keep = c(5, 23, 3))
     expect_true(nrow(chromPeaks(res)) == 3)
     expect_equal(chromPeaks(res), chromPeaks(xod_x)[c(3, 5, 23), ])

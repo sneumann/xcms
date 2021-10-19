@@ -1,4 +1,6 @@
 test_that(".createProfileMatrix works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xr <- filterFile(faahko_od, 1)
     mz <- mz(xr)
     int <- unlist(intensity(xr), use.names = FALSE)
@@ -45,11 +47,15 @@ test_that(".createProfileMatrix works", {
 })
 
 test_that("plotMsData works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     msd <- extractMsData(faahko_od, mz = c(334.9, 335.1), rt = c(2700, 2900))
     plotMsData(msd[[1]])
 })
 
 test_that(".featureIDs works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- .featureIDs(200)
     expect_equal(length(res), 200)
     expect_true(length(unique(res)) == 200)
@@ -58,6 +64,8 @@ test_that(".featureIDs works", {
 })
 
 test_that("rla, rowRla work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     x <- c(3, 4, 5, 1, 2, 3, 7, 8, 9)
     grp <- c(1, 1, 1, 2, 2, 2, 3, 3, 3)
     res <- rla(x, grp)
@@ -79,6 +87,8 @@ test_that("rla, rowRla work", {
 })
 
 test_that(".rect_overlap works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xl <- c(1, 3, 1.5, 4, 4, 5.5, 7, 6)
     xr <- c(2, 4, 3.5, 5, 5, 6.5, 8, 7.5)
     yb <- c(1, 2, 3.5, 4.5, 7, 8, 9.5, 10.5)
@@ -173,6 +183,8 @@ test_that(".rect_overlap works", {
 })
 
 test_that(".insertColumn works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mat <- matrix(1:100, ncol = 5)
     expect_equal(.insertColumn(mat), mat)
 
@@ -196,6 +208,8 @@ test_that(".insertColumn works", {
 })
 
 test_that(".ppm_range works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- .ppm_range(100)
     expect_equal(res[1], 100)
     expect_equal(res[2], 100)
@@ -205,6 +219,8 @@ test_that(".ppm_range works", {
 })
 
 test_that(".update_feature_definitions works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     cps <- matrix(nrow = 22, ncol = 3)
     rownames(cps) <- 1:22
     fts <- DataFrame(a = letters[1:6])
@@ -234,6 +250,8 @@ test_that(".update_feature_definitions works", {
 })
 
 ## test_that(".chrom_peak_id works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 ##     res <- .chrom_peak_id(matrix(nrow = 0, ncol = 5))
 ##     expect_equal(res, character())
 ##     cpks <- rbind(c(3, 2, 4, 12, 13),
@@ -249,6 +267,8 @@ test_that(".update_feature_definitions works", {
 ## })
 
 test_that(".rbind_fill works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## matrix
     a <- matrix(1:9, nrow = 3, ncol = 3)
     colnames(a) <- c("a", "b", "c")
@@ -275,6 +295,8 @@ test_that(".rbind_fill works", {
 })
 
 test_that(".reduce works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     a <- c(1.23, 1.431, 2.43, 5.44, 6)
     b <- c(1.33, 2.43, 5, 6, 7)
     res <- .reduce(a, b)
@@ -317,6 +339,8 @@ test_that(".reduce works", {
 })
 
 test_that("groupOverlaps works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     x <- c(12.2, 13, 5)
     y <- c(16, 15, 6)
     res <- groupOverlaps(x, y)
@@ -328,12 +352,16 @@ test_that("groupOverlaps works", {
 })
 
 test_that(".require_spectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     if (requireNamespace("Spectra", quietly = TRUE))
         expect_true(.require_spectra())
     else expect_error("installed.")
 })
 
 test_that(".i2index works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ids <- c("a", "b", "c", "d")
     res <- .i2index(c("c", "d"), ids)
     expect_equal(res, c(3L, 4L))

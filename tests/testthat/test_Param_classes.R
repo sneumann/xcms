@@ -1,4 +1,6 @@
 test_that("CentWaveParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- new("CentWaveParam")
     checkDefaultValues <- function(x) {
         expect_equal(x@ppm, 25)
@@ -71,6 +73,8 @@ test_that("CentWaveParam works", {
 })
 
 test_that("MatchedFilterParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- new("MatchedFilterParam")
     checkDefaultValues <- function(x) {
         expect_equal(x@binSize, 0.1)
@@ -157,6 +161,8 @@ test_that("MatchedFilterParam works", {
 })
 
 test_that("MassifquantParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("MassifquantParam")
     ppm(p) <- 1
@@ -237,6 +243,8 @@ test_that("MassifquantParam works", {
 })
 
 test_that("MSWParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("MSWParam", snthresh = 14)
     expect_equal(snthresh(p), 14)
@@ -337,6 +345,8 @@ test_that("MSWParam works", {
 })
 
 test_that("CentWavePredIsoParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("CentWavePredIsoParam", ppm = 14)
     expect_equal(ppm(p), 14)
@@ -473,6 +483,8 @@ test_that("CentWavePredIsoParam works", {
 })
 
 test_that("PeakDensityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("PeakDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     expect_equal(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
@@ -533,6 +545,8 @@ test_that("PeakDensityParam works", {
 })
 
 test_that("MzClustParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("MzClustParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     expect_equal(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
@@ -579,6 +593,8 @@ test_that("MzClustParam works", {
 })
 
 test_that("NearestPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("NearestPeaksParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     expect_equal(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
@@ -625,6 +641,8 @@ test_that("NearestPeaksParam works", {
 })
 
 test_that("PeakGroupsParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("PeakGroupsParam", minFraction = 0.8)
     expect_equal(minFraction(p), 0.8)
@@ -696,6 +714,8 @@ test_that("PeakGroupsParam works", {
 })
 
 test_that("ObiwarpParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("ObiwarpParam", binSize = 0.8)
     expect_equal(binSize(p), 0.8)
@@ -815,6 +835,8 @@ test_that("ObiwarpParam works", {
 })
 
 test_that("GenericParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     prm <- GenericParam(fun = "mean")
     expect_equal(prm@fun, "mean")
     ## Errors
@@ -823,6 +845,8 @@ test_that("GenericParam works", {
 })
 
 test_that("FillChromPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Check getter/setter methods:
     p <- new("FillChromPeaksParam", expandMz = 0.8)
     expect_equal(expandMz(p), 0.8)
@@ -869,6 +893,8 @@ test_that("FillChromPeaksParam works", {
 })
 
 test_that("CalibrantMassParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- new("CalibrantMassParam")
     expect_true(validObject(p))
     p@method <- "other"
@@ -889,6 +915,8 @@ test_that("CalibrantMassParam works", {
 })
 
 test_that("CleanPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- new("CleanPeaksParam")
     expect_true(validObject(p))
     p@maxPeakwidth <- c(1, 4)
@@ -901,6 +929,8 @@ test_that("CleanPeaksParam works", {
 })
 
 test_that("MergeNeighboringPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     p <- new("MergeNeighboringPeaksParam")
     expect_true(validObject(p))
     p@expandRt <- c(1, 4)
@@ -936,6 +966,8 @@ test_that("MergeNeighboringPeaksParam works", {
 })
 
 test_that("ChromPeakAreaParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- ChromPeakAreaParam()
     expect_true(is(res, "ChromPeakAreaParam"))
     res <- ChromPeakAreaParam(mzmin = median)
@@ -943,6 +975,8 @@ test_that("ChromPeakAreaParam works", {
 })
 
 test_that("FilterIntensityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- FilterIntensityParam()
     expect_true(is(res, "FilterIntensityParam"))
     res <- FilterIntensityParam(threshold = 100)

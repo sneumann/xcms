@@ -1,4 +1,6 @@
 test_that("findChromPeaks,Chromatogram,MatchedFilterParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- filterFile(faahko_od, file = 1)
     mzr <- c(272.1, 272.2)
 
@@ -16,6 +18,8 @@ test_that("findChromPeaks,Chromatogram,MatchedFilterParam works", {
 })
 
 test_that("findChromPeaks,Chromatogram,CentWaveParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     od <- filterFile(faahko_od, file = 1)
     mzr <- c(272.1, 272.2)
 
@@ -41,6 +45,8 @@ test_that("findChromPeaks,Chromatogram,CentWaveParam works", {
 })
 
 test_that("removeIntensity,Chromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr <- Chromatogram(rtime = c(1, 2, 3, 4, 5, 6, 7),
                         intensity = c(NA_real_, 13, 16, 22, 34, 15, 6))
     res <- removeIntensity(chr)

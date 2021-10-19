@@ -1,4 +1,6 @@
 test_that("matchpeaks doesn't fail", {
+    skip_on_os(os = "windows", arch = "i386")
+
     faahko_file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 
     faahko_xs <- xcmsSet(faahko_file, profparam = list(step = 0),

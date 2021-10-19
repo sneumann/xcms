@@ -6,10 +6,10 @@ library(msdata)
 if (.Platform$OS.type == "unix") {
     prm <- MulticoreParam(3)
 } else {
-    prm <- SnowParam(3)
+    # prm <- SnowParam(3)
+    prm <- SerialParam()
 }
 register(bpstart(prm))
-## register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -64,3 +64,6 @@ pest_dda <- findChromPeaks(pest_dda, param = cwp)
 ## sciex_data <- pickPeaks(sciex_data)
 
 test_check("xcms")
+
+bpstop(prm)
+

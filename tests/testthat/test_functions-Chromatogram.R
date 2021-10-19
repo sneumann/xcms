@@ -1,4 +1,6 @@
 test_that(".chrom_merge_neighboring_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ints <- c(0.5, 1, 1, 3, 6, 9, 12, 13, 11, 6, 5, 3, 1, 1, 1.5, 1, 4, 6,
               8, 9, 8, 6, 3, 2, 1.3, 1, 0.7, 0.5, 1, 1, 1, 0.5, 3, 5, 8,
               12, 10, 9, 6, 3, 2, 1, 1, 1)

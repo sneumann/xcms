@@ -1,4 +1,6 @@
 test_that("MsFeatureData class validation works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fd <- new("MsFeatureData")
     ## Check error for wrong elements.
     fd$a <- 5
@@ -70,6 +72,8 @@ test_that("MsFeatureData class validation works", {
 })
 
 test_that("MsFeatureData class_accessors work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fd <- new("MsFeatureData")
     expect_true(!hasChromPeaks(fd))
     expect_true(!hasAdjustedRtime(fd))
