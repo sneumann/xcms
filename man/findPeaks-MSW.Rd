@@ -69,7 +69,8 @@ MSWParam(
   param,
   BPPARAM = bpparam(),
   return.type = "XCMSnExp",
-  msLevel = 1L
+  msLevel = 1L,
+  ...
 )
 
 \S4method{snthresh}{MSWParam}(object)
