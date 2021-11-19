@@ -294,8 +294,10 @@ test_that("groupFeatures,EicSimilarityParam works", {
     res <- groupFeatures(tmp, param = EicSimilarityParam())
     expect_true(all(is.na(featureGroups(res)[-idx])))
     expect_true(length(unique(featureGroups(res))) < length(idx))
-    expect_equal(as.integer(factor(featureGroups(res)[idx])),
-                 as.integer(factor(featureGroups(res_all)[idx])))
+    a <- featureGroups(res)[idx]
+    b <- featureGroups(res_all)[idx]
+    expect_equal(as.integer(factor(a, levels = unique(a))),
+                 as.integer(factor(b, levels = unique(b))))
 
     featureDefinitions(tmp)$feature_group <- NULL
     featureDefinitions(tmp)$ms_level[idx] <- 2
