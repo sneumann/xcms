@@ -1,7 +1,12 @@
+Changes in version 3.16.1
+
+- Fix bug in feature grouping by EIC correlation resulting in a non-symmetric
+  similarity matrix.
+
 Changes in version 3.15.5
 
 - Disable testing on windows i386, providing some speedup
-- Disable parallel processing on Windows, causing an issue in testthat on BioC build check  
+- Disable parallel processing on Windows, causing an issue in testthat on BioC build check
 
 Changes in version 3.15.4
 

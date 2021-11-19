@@ -1041,14 +1041,13 @@ setMethod(
     nc <- ncol(x)
     res <- array(NA_real_, dim = c(nr, nr, nc))
     for (i in seq_len(nc))
-        res[, , i] <- compareChromatograms(x[, i], full = FALSE,
+        res[, , i] <- compareChromatograms(x[, i],
                                            ALIGNFUN = ALIGNFUN,
                                            ALIGNFUNARGS = ALIGNFUNARGS,
                                            FUN = FUN, FUNARGS = FUNARGS)
     suppressWarnings(
         res <- apply(res, c(1, 2), aggregationFun, na.rm = TRUE)
     )
-    res[lower.tri(res)] <- res[upper.tri(res)]
     ## Ensure diagonal is always TRUE to not drop any features!
     res[cbind(1:nr, 1:nr)] <- 1
     as.factor(do.call(groupFun,
