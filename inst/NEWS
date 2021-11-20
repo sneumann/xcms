@@ -1,7 +1,13 @@
+Changes in version 3.17.1
+
+- Fix bug in feature grouping by EIC correlation that would return a
+  non-symmetric similarity matrix.
+- Fix error message from issue [584](https://github.com/sneumann/xcms/issues/584).
+
 Changes in version 3.15.5
 
 - Disable testing on windows i386, providing some speedup
-- Disable parallel processing on Windows, causing an issue in testthat on BioC build check  
+- Disable parallel processing on Windows, causing an issue in testthat on BioC build check
 
 Changes in version 3.15.4
 

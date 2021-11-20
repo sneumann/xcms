@@ -44,6 +44,8 @@
 #' @param msLevel \code{integer(1)} defining the MS level on which the peak
 #'     detection should be performed. Defaults to \code{msLevel = 1}.
 #'
+#' @param ... ignored.
+#'
 #' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
 #'     \code{\link{XCMSnExp}} object with the results of the peak detection.
 #'     If \code{return.type = "list"} a list of length equal to the number of
@@ -58,7 +60,7 @@
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "CentWaveParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp",
-                   msLevel = 1L) {
+                   msLevel = 1L, ...) {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
@@ -137,7 +139,7 @@ setMethod("findChromPeaks",
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MatchedFilterParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp",
-                   msLevel = 1L) {
+                   msLevel = 1L, ...) {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
@@ -230,7 +232,7 @@ setMethod("findChromPeaks",
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MassifquantParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp",
-                   msLevel = 1L) {
+                   msLevel = 1L, ...) {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
@@ -299,7 +301,7 @@ setMethod("findChromPeaks",
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MSWParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp",
-                   msLevel = 1L) {
+                   msLevel = 1L, ...) {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
@@ -370,7 +372,7 @@ setMethod("findChromPeaks",
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "CentWavePredIsoParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp",
-                   msLevel = 1L) {
+                   msLevel = 1L, ...) {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()

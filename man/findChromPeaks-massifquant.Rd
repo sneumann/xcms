@@ -73,7 +73,8 @@ MassifquantParam(
   param,
   BPPARAM = bpparam(),
   return.type = "XCMSnExp",
-  msLevel = 1L
+  msLevel = 1L,
+  ...
 )
 
 \S4method{ppm}{MassifquantParam}(object)
@@ -249,6 +250,8 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
+
+\item{...}{ignored.}
 
 \item{value}{The value for the slot.}
 
