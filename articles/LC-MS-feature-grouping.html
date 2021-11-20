@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
       <h1 data-toc-skip>Compounding (grouping) of LC-MS features</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/vignettes/LC-MS-feature-grouping.Rmd" class="external-link"><code>vignettes/LC-MS-feature-grouping.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/vignettes/LC-MS-feature-grouping.Rmd" class="external-link"><code>vignettes/LC-MS-feature-grouping.Rmd</code></a></small>
       <div class="hidden name"><code>LC-MS-feature-grouping.Rmd</code></div>
 
     </div>
@@ -105,17 +105,17 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-19 15:57:26<br><strong>Compiled</strong>: Tue Oct 19 16:56:58 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-11-20 11:11:36<br><strong>Compiled</strong>: Sat Nov 20 12:24:34 2021</p>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
-<p>In a typical LC-MS-based metabolomics experiment compounds eluting from the chromatography are first ionized before being measured by mass spectrometry (MS). During the ionization different (multiple) ions can be generated from the same compound which all will be measured by MS. In general, the resulting data is then pre-processed to identify chromatographic peaks in the data and to group these across samples in the correspondence analysis. The result are distinct LC-MS features, characterized by their specific m/z and retention time range. Different ions generated during ionization will be detected as different features. <em>Compounding</em> aims now at grouping such features presumably representing signal from the same originating compound to reduce data set complexity (and to aid in subsequent annotation steps). General MS feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.14/MsFeatures" class="external-link">MsFeatures</a></em> package with additional functionality being implemented in the <code>xcms</code> package to enable the compounding of LC-MS data.</p>
+<p>In a typical LC-MS-based metabolomics experiment compounds eluting from the chromatography are first ionized before being measured by mass spectrometry (MS). During the ionization different (multiple) ions can be generated from the same compound which all will be measured by MS. In general, the resulting data is then pre-processed to identify chromatographic peaks in the data and to group these across samples in the correspondence analysis. The result are distinct LC-MS features, characterized by their specific m/z and retention time range. Different ions generated during ionization will be detected as different features. <em>Compounding</em> aims now at grouping such features presumably representing signal from the same originating compound to reduce data set complexity (and to aid in subsequent annotation steps). General MS feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.15/MsFeatures" class="external-link">MsFeatures</a></em> package with additional functionality being implemented in the <code>xcms</code> package to enable the compounding of LC-MS data.</p>
 <p>This document provides a simple compounding workflow using <code>xcms</code>. Note that the present functionality does not (yet) <em>aggregate</em> or combine the actual features per values, but does only define the feature groups (one per compound).</p>
 </div>
 <div class="section level1">
 <h1 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
 </h1>
-<p>We demonstrate the compounding (feature grouping) functionality on the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> package and provided through the <code>faahKO</code> package. This data set consists of samples from 4 mice with knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type mice. Pre-processing of this data set is described in detail in the <em>xcms</em> vignette of the <code>xcms</code> package. Below we load all required packages and the result from this pre-processing updating also the location of the respective raw data files on the current machine.</p>
+<p>We demonstrate the compounding (feature grouping) functionality on the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> package and provided through the <code>faahKO</code> package. This data set consists of samples from 4 mice with knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type mice. Pre-processing of this data set is described in detail in the <em>xcms</em> vignette of the <code>xcms</code> package. Below we load all required packages and the result from this pre-processing updating also the location of the respective raw data files on the current machine.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span>
@@ -128,67 +128,67 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Before performing the feature grouping we inspect the result object. With <code>featureDefinitions</code> we can extract the results from the correspondence analysis.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 225 rows and 11 columns
-##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2
-## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8
-## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7
-## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7
-## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3
-## ...         ...       ...       ...       ...       ...       ...       ...
-## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5
-## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6
-## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3
-## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6
-## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2
-##              KO        WT            peakidx  ms_level
-##       &lt;numeric&gt; &lt;numeric&gt;             &lt;list&gt; &lt;integer&gt;
-## FT001         2         0  287, 679,1577,...         1
-## FT002         4         4     47,272,542,...         1
-## FT003         3         4     32,259,663,...         1
-## FT004         4         3     19,249,525,...         1
-## FT005         1         2  639, 788,1376,...         1
-## ...         ...       ...                ...       ...
-## FT221         2         3    349,684,880,...         1
-## FT222         1         3     86,861,862,...         1
-## FT223         1         2  604, 985,1543,...         1
-## FT224         2         3     67,353,876,...         1
-## FT225         0         2  866,1447,1643,...         1</code></pre>
+<pre><code><span class="co">## DataFrame with 225 rows and 11 columns</span>
+<span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="co">## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2</span>
+<span class="co">## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8</span>
+<span class="co">## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7</span>
+<span class="co">## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7</span>
+<span class="co">## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3</span>
+<span class="co">## ...         ...       ...       ...       ...       ...       ...       ...</span>
+<span class="co">## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5</span>
+<span class="co">## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6</span>
+<span class="co">## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3</span>
+<span class="co">## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6</span>
+<span class="co">## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2</span>
+<span class="co">##              KO        WT            peakidx  ms_level</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt;             &lt;list&gt; &lt;integer&gt;</span>
+<span class="co">## FT001         2         0  287, 679,1577,...         1</span>
+<span class="co">## FT002         4         4     47,272,542,...         1</span>
+<span class="co">## FT003         3         4     32,259,663,...         1</span>
+<span class="co">## FT004         4         3     19,249,525,...         1</span>
+<span class="co">## FT005         1         2  639, 788,1376,...         1</span>
+<span class="co">## ...         ...       ...                ...       ...</span>
+<span class="co">## FT221         2         3    349,684,880,...         1</span>
+<span class="co">## FT222         1         3     86,861,862,...         1</span>
+<span class="co">## FT223         1         2  604, 985,1543,...         1</span>
+<span class="co">## FT224         2         3     67,353,876,...         1</span>
+<span class="co">## FT225         0         2  866,1447,1643,...         1</span></code></pre>
 <p>Each row in this data frame represents the definition of one feature, with its average and range of m/z and retention time. Column <code>"peakidx"</code> provides the index of each chromatographic peak which is assigned to the feature in the <code>chromPeaks</code> matrix of the result object. The <code>featureValues</code> function allows to extract <em>feature values</em>, i.e. a matrix with feature abundances, one row per feature and columns representing the samples of the present data set.</p>
 <p>Below we extract the feature values with and without <em>filled-in</em> peak data. Without the gap-filled data only abundances from <strong>detected</strong> chromatographic peaks are reported. In the gap-filled data, for samples in which no chromatographic peak for a feature was detected, all signal from the m/z - retention time range defined based on the detected chromatographic peaks was integrated.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
-## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA
-## FT005        NA        NA        NA  107348.5  223951.8        NA        NA
-## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001         NA
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span>
+<span class="co">## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA</span>
+<span class="co">## FT005        NA        NA        NA  107348.5  223951.8        NA        NA</span>
+<span class="co">## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001         NA</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9
-## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5
-## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8
-## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001  140551.30
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9</span>
+<span class="co">## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5</span>
+<span class="co">## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8</span>
+<span class="co">## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001  140551.30</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <p>In total 225 features have been defined in the present data set, many of which most likely represent signal from different ions (adducts or isotopes) of the same compound. The aim of the grouping functions of are now to define which features most likely come from the same original compound. The feature grouping functions base on the following assumptions/properties of LC-MS data:</p>
 <ul>
 <li>Features (ions) of the same compound should have similar retention time.</li>
@@ -226,23 +226,23 @@ Plot of retention times and m/z for all features in the data set.
 <p>The results from the feature grouping can be accessed with the <code>featureGroups</code> function. Below we determine the size of each of these feature groups (i.e. how many features are grouped together).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 
-##      3      3      3      3      2      4      5      6      4      2      5 
-## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 
-##      3      4      3      5      3      3      5      3      3      3      3 
-## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 
-##      3      3      6      3      3      3      3      2      3      3      4 
-## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 
-##      3      2      2      3      2      2      4      2      2      2      3 
-## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 
-##      4      2      3      3      3      2      2      3      4      2      3 
-## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 
-##      2      2      2      3      2      3      2      2      2      3      2 
-## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 
-##      2      3      2      2      2      3      2      2      1      1      1 
-## FG.078 FG.079 FG.080 FG.081 FG.082 FG.083 FG.084 
-##      1      1      1      1      1      1      1</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span>
+<span class="co">##      3      3      3      3      2      4      5      6      4      2      5 </span>
+<span class="co">## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span>
+<span class="co">##      3      4      3      5      3      3      5      3      3      3      3 </span>
+<span class="co">## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span>
+<span class="co">##      3      3      6      3      3      3      3      2      3      3      4 </span>
+<span class="co">## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 </span>
+<span class="co">##      3      2      2      3      2      2      4      2      2      2      3 </span>
+<span class="co">## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 </span>
+<span class="co">##      4      2      3      3      3      2      2      3      4      2      3 </span>
+<span class="co">## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 </span>
+<span class="co">##      2      2      2      3      2      3      2      2      2      3      2 </span>
+<span class="co">## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 </span>
+<span class="co">##      2      3      2      2      2      3      2      2      1      1      1 </span>
+<span class="co">## FG.078 FG.079 FG.080 FG.081 FG.082 FG.083 FG.084 </span>
+<span class="co">##      1      1      1      1      1      1      1</span></code></pre>
 <p>In addition we visualize these feature groups with the <code>plotFeatureGroups</code> function which shows all features in the m/z - retention time space with grouped features being connected with a line.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotFeatureGroups.html">plotFeatureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>
@@ -261,21 +261,21 @@ Feature groups defined with a rt window of 10 seconds
 <span class="co">## Repeat the grouping</span>
 <span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 
-##      3      3      3      3      2      4      5      6      4      2      5 
-## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 
-##      3      4      3      5      3      3      5      3      3      3      3 
-## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 
-##      3      3      6      3      3      3      4      2      3      3      4 
-## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 
-##      3      2      3      3      2      2      4      3      2      2      4 
-## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 
-##      4      2      3      3      3      2      2      3      4      2      3 
-## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 
-##      3      2      2      3      3      3      2      2      2      3      2 
-## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 
-##      2      3      2      2      3      3      2      2      1      1      1</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span>
+<span class="co">##      3      3      3      3      2      4      5      6      4      2      5 </span>
+<span class="co">## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span>
+<span class="co">##      3      4      3      5      3      3      5      3      3      3      3 </span>
+<span class="co">## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span>
+<span class="co">##      3      3      6      3      3      3      4      2      3      3      4 </span>
+<span class="co">## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 </span>
+<span class="co">##      3      2      3      3      2      2      4      3      2      2      4 </span>
+<span class="co">## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 </span>
+<span class="co">##      4      2      3      3      3      2      2      3      4      2      3 </span>
+<span class="co">## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 </span>
+<span class="co">##      3      2      2      3      3      3      2      2      2      3      2 </span>
+<span class="co">## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 </span>
+<span class="co">##      2      3      2      2      3      3      2      2      1      1      1</span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotFeatureGroups.html">plotFeatureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -313,57 +313,57 @@ Correlation of features based on feature abundances.
                                                        transform <span class="op">=</span> <span class="va">log2</span><span class="op">)</span>,
                        filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.002.003 FG.003.001 FG.003.002 
-##          2          1          1          1          1          2          1 
-## FG.004.001 FG.005.001 FG.006.001 FG.006.002 FG.007.001 FG.007.002 FG.007.003 
-##          3          2          3          1          2          1          1 
-## FG.007.004 FG.008.001 FG.008.002 FG.008.003 FG.008.004 FG.009.001 FG.009.002 
-##          1          3          1          1          1          3          1 
-## FG.010.001 FG.011.001 FG.011.002 FG.011.003 FG.012.001 FG.013.001 FG.013.002 
-##          2          2          2          1          3          2          1 
-## FG.013.003 FG.014.001 FG.014.002 FG.015.001 FG.015.002 FG.015.003 FG.015.004 
-##          1          2          1          2          1          1          1 
-## FG.016.001 FG.016.002 FG.017.001 FG.017.002 FG.018.001 FG.018.002 FG.018.003 
-##          2          1          2          1          2          1          1 
-## FG.018.004 FG.019.001 FG.019.002 FG.019.003 FG.020.001 FG.020.002 FG.021.001 
-##          1          1          1          1          2          1          1 
-## FG.021.002 FG.021.003 FG.022.001 FG.022.002 FG.022.003 FG.023.001 FG.023.002 
-##          1          1          1          1          1          2          1 
-## FG.024.001 FG.024.002 FG.024.003 FG.025.001 FG.025.002 FG.025.003 FG.025.004 
-##          1          1          1          2          1          1          1 
-## FG.025.005 FG.026.001 FG.026.002 FG.026.003 FG.027.001 FG.027.002 FG.027.003 
-##          1          1          1          1          1          1          1 
-## FG.028.001 FG.028.002 FG.029.001 FG.029.002 FG.030.001 FG.030.002 FG.031.001 
-##          2          1          2          2          1          1          3 
-## FG.032.001 FG.032.002 FG.032.003 FG.033.001 FG.033.002 FG.033.003 FG.033.004 
-##          1          1          1          1          1          1          1 
-## FG.034.001 FG.034.002 FG.034.003 FG.035.001 FG.035.002 FG.036.001 FG.036.002 
-##          1          1          1          1          1          2          1 
-## FG.037.001 FG.037.002 FG.038.001 FG.039.001 FG.040.001 FG.040.002 FG.041.001 
-##          2          1          2          2          2          2          1 
-## FG.041.002 FG.041.003 FG.042.001 FG.042.002 FG.043.001 FG.044.001 FG.044.002 
-##          1          1          1          1          2          2          1 
-## FG.044.003 FG.045.001 FG.045.002 FG.045.003 FG.045.004 FG.046.001 FG.047.001 
-##          1          1          1          1          1          2          1 
-## FG.047.002 FG.047.003 FG.048.001 FG.048.002 FG.048.003 FG.049.001 FG.049.002 
-##          1          1          1          1          1          2          1 
-## FG.050.001 FG.050.002 FG.051.001 FG.052.001 FG.052.002 FG.053.001 FG.053.002 
-##          1          1          2          2          1          2          1 
-## FG.053.003 FG.054.001 FG.054.002 FG.055.001 FG.055.002 FG.055.003 FG.056.001 
-##          1          1          1          1          1          1          1 
-## FG.056.002 FG.056.003 FG.057.001 FG.058.001 FG.058.002 FG.059.001 FG.059.002 
-##          1          1          2          1          1          1          1 
-## FG.059.003 FG.060.001 FG.060.002 FG.061.001 FG.061.002 FG.062.001 FG.062.002 
-##          1          2          1          2          1          1          1 
-## FG.063.001 FG.064.001 FG.064.002 FG.065.001 FG.065.002 FG.066.001 FG.066.002 
-##          2          1          1          2          1          1          1 
-## FG.067.001 FG.067.002 FG.068.001 FG.069.001 FG.070.001 FG.070.002 FG.071.001 
-##          1          1          3          2          1          1          2 
-## FG.071.002 FG.072.001 FG.072.002 FG.073.001 FG.073.002 FG.074.001 FG.075.001 
-##          1          2          1          1          1          2          1 
-## FG.076.001 FG.077.001 
-##          1          1</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.002.003 FG.003.001 FG.003.002 </span>
+<span class="co">##          2          1          1          1          1          2          1 </span>
+<span class="co">## FG.004.001 FG.005.001 FG.006.001 FG.006.002 FG.007.001 FG.007.002 FG.007.003 </span>
+<span class="co">##          3          2          3          1          2          1          1 </span>
+<span class="co">## FG.007.004 FG.008.001 FG.008.002 FG.008.003 FG.008.004 FG.009.001 FG.009.002 </span>
+<span class="co">##          1          3          1          1          1          3          1 </span>
+<span class="co">## FG.010.001 FG.011.001 FG.011.002 FG.011.003 FG.012.001 FG.013.001 FG.013.002 </span>
+<span class="co">##          2          2          2          1          3          2          1 </span>
+<span class="co">## FG.013.003 FG.014.001 FG.014.002 FG.015.001 FG.015.002 FG.015.003 FG.015.004 </span>
+<span class="co">##          1          2          1          2          1          1          1 </span>
+<span class="co">## FG.016.001 FG.016.002 FG.017.001 FG.017.002 FG.018.001 FG.018.002 FG.018.003 </span>
+<span class="co">##          2          1          2          1          2          1          1 </span>
+<span class="co">## FG.018.004 FG.019.001 FG.019.002 FG.019.003 FG.020.001 FG.020.002 FG.021.001 </span>
+<span class="co">##          1          1          1          1          2          1          1 </span>
+<span class="co">## FG.021.002 FG.021.003 FG.022.001 FG.022.002 FG.022.003 FG.023.001 FG.023.002 </span>
+<span class="co">##          1          1          1          1          1          2          1 </span>
+<span class="co">## FG.024.001 FG.024.002 FG.024.003 FG.025.001 FG.025.002 FG.025.003 FG.025.004 </span>
+<span class="co">##          1          1          1          2          1          1          1 </span>
+<span class="co">## FG.025.005 FG.026.001 FG.026.002 FG.026.003 FG.027.001 FG.027.002 FG.027.003 </span>
+<span class="co">##          1          1          1          1          1          1          1 </span>
+<span class="co">## FG.028.001 FG.028.002 FG.029.001 FG.029.002 FG.030.001 FG.030.002 FG.031.001 </span>
+<span class="co">##          2          1          2          2          1          1          3 </span>
+<span class="co">## FG.032.001 FG.032.002 FG.032.003 FG.033.001 FG.033.002 FG.033.003 FG.033.004 </span>
+<span class="co">##          1          1          1          1          1          1          1 </span>
+<span class="co">## FG.034.001 FG.034.002 FG.034.003 FG.035.001 FG.035.002 FG.036.001 FG.036.002 </span>
+<span class="co">##          1          1          1          1          1          2          1 </span>
+<span class="co">## FG.037.001 FG.037.002 FG.038.001 FG.039.001 FG.040.001 FG.040.002 FG.041.001 </span>
+<span class="co">##          2          1          2          2          2          2          1 </span>
+<span class="co">## FG.041.002 FG.041.003 FG.042.001 FG.042.002 FG.043.001 FG.044.001 FG.044.002 </span>
+<span class="co">##          1          1          1          1          2          2          1 </span>
+<span class="co">## FG.044.003 FG.045.001 FG.045.002 FG.045.003 FG.045.004 FG.046.001 FG.047.001 </span>
+<span class="co">##          1          1          1          1          1          2          1 </span>
+<span class="co">## FG.047.002 FG.047.003 FG.048.001 FG.048.002 FG.048.003 FG.049.001 FG.049.002 </span>
+<span class="co">##          1          1          1          1          1          2          1 </span>
+<span class="co">## FG.050.001 FG.050.002 FG.051.001 FG.052.001 FG.052.002 FG.053.001 FG.053.002 </span>
+<span class="co">##          1          1          2          2          1          2          1 </span>
+<span class="co">## FG.053.003 FG.054.001 FG.054.002 FG.055.001 FG.055.002 FG.055.003 FG.056.001 </span>
+<span class="co">##          1          1          1          1          1          1          1 </span>
+<span class="co">## FG.056.002 FG.056.003 FG.057.001 FG.058.001 FG.058.002 FG.059.001 FG.059.002 </span>
+<span class="co">##          1          1          2          1          1          1          1 </span>
+<span class="co">## FG.059.003 FG.060.001 FG.060.002 FG.061.001 FG.061.002 FG.062.001 FG.062.002 </span>
+<span class="co">##          1          2          1          2          1          1          1 </span>
+<span class="co">## FG.063.001 FG.064.001 FG.064.002 FG.065.001 FG.065.002 FG.066.001 FG.066.002 </span>
+<span class="co">##          2          1          1          2          1          1          1 </span>
+<span class="co">## FG.067.001 FG.067.002 FG.068.001 FG.069.001 FG.070.001 FG.070.002 FG.071.001 </span>
+<span class="co">##          1          1          3          2          1          1          2 </span>
+<span class="co">## FG.071.002 FG.072.001 FG.072.002 FG.073.001 FG.073.002 FG.074.001 FG.075.001 </span>
+<span class="co">##          1          2          1          1          1          2          1 </span>
+<span class="co">## FG.076.001 FG.077.001 </span>
+<span class="co">##          1          1</span></code></pre>
 <p>Many of the larger retention time-based feature groups have been splitted into two or more sub-groups based on the correlation of their feature abundances. We evaluate this for one specific feature group <code>"FG.040"</code> by plotting their pairwise correlation.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.040"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>
@@ -386,81 +386,81 @@ Pairwise correlation plot for all features initially grouped into the feature gr
 <p>This is the most computationally intense approach since it involves also loading the raw MS data to extract the ion chromatograms for each feature. The results of the grouping are shown below.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## FG.001.001.001 FG.001.002.001 FG.002.001.001 FG.002.002.001 FG.002.003.001 
-##              2              1              1              1              1 
-## FG.003.001.001 FG.003.002.001 FG.004.001.001 FG.005.001.001 FG.006.001.001 
-##              2              1              3              2              3 
-## FG.006.002.001 FG.007.001.001 FG.007.002.001 FG.007.003.001 FG.007.004.001 
-##              1              2              1              1              1 
-## FG.008.001.001 FG.008.001.002 FG.008.002.001 FG.008.003.001 FG.008.004.001 
-##              2              1              1              1              1 
-## FG.009.001.001 FG.009.002.001 FG.010.001.001 FG.010.001.002 FG.011.001.001 
-##              3              1              1              1              2 
-## FG.011.002.001 FG.011.003.001 FG.012.001.001 FG.013.001.001 FG.013.002.001 
-##              2              1              3              2              1 
-## FG.013.003.001 FG.014.001.001 FG.014.002.001 FG.015.001.001 FG.015.002.001 
-##              1              2              1              2              1 
-## FG.015.003.001 FG.015.004.001 FG.016.001.001 FG.016.002.001 FG.017.001.001 
-##              1              1              2              1              2 
-## FG.017.002.001 FG.018.001.001 FG.018.002.001 FG.018.003.001 FG.018.004.001 
-##              1              2              1              1              1 
-## FG.019.001.001 FG.019.002.001 FG.019.003.001 FG.020.001.001 FG.020.001.002 
-##              1              1              1              1              1 
-## FG.020.002.001 FG.021.001.001 FG.021.002.001 FG.021.003.001 FG.022.001.001 
-##              1              1              1              1              1 
-## FG.022.002.001 FG.022.003.001 FG.023.001.001 FG.023.002.001 FG.024.001.001 
-##              1              1              2              1              1 
-## FG.024.002.001 FG.024.003.001 FG.025.001.001 FG.025.001.002 FG.025.002.001 
-##              1              1              1              1              1 
-## FG.025.003.001 FG.025.004.001 FG.025.005.001 FG.026.001.001 FG.026.002.001 
-##              1              1              1              1              1 
-## FG.026.003.001 FG.027.001.001 FG.027.002.001 FG.027.003.001 FG.028.001.001 
-##              1              1              1              1              2 
-## FG.028.002.001 FG.029.001.001 FG.029.002.001 FG.029.002.002 FG.030.001.001 
-##              1              2              1              1              1 
-## FG.030.002.001 FG.031.001.001 FG.032.001.001 FG.032.002.001 FG.032.003.001 
-##              1              3              1              1              1 
-## FG.033.001.001 FG.033.002.001 FG.033.003.001 FG.033.004.001 FG.034.001.001 
-##              1              1              1              1              1 
-## FG.034.002.001 FG.034.003.001 FG.035.001.001 FG.035.002.001 FG.036.001.001 
-##              1              1              1              1              1 
-## FG.036.001.002 FG.036.002.001 FG.037.001.001 FG.037.002.001 FG.038.001.001 
-##              1              1              2              1              2 
-## FG.039.001.001 FG.039.001.002 FG.040.001.001 FG.040.002.001 FG.041.001.001 
-##              1              1              2              2              1 
-## FG.041.002.001 FG.041.003.001 FG.042.001.001 FG.042.002.001 FG.043.001.001 
-##              1              1              1              1              2 
-## FG.044.001.001 FG.044.001.002 FG.044.002.001 FG.044.003.001 FG.045.001.001 
-##              1              1              1              1              1 
-## FG.045.002.001 FG.045.003.001 FG.045.004.001 FG.046.001.001 FG.047.001.001 
-##              1              1              1              2              1 
-## FG.047.002.001 FG.047.003.001 FG.048.001.001 FG.048.002.001 FG.048.003.001 
-##              1              1              1              1              1 
-## FG.049.001.001 FG.049.002.001 FG.050.001.001 FG.050.002.001 FG.051.001.001 
-##              2              1              1              1              2 
-## FG.052.001.001 FG.052.002.001 FG.053.001.001 FG.053.001.002 FG.053.002.001 
-##              2              1              1              1              1 
-## FG.053.003.001 FG.054.001.001 FG.054.002.001 FG.055.001.001 FG.055.002.001 
-##              1              1              1              1              1 
-## FG.055.003.001 FG.056.001.001 FG.056.002.001 FG.056.003.001 FG.057.001.001 
-##              1              1              1              1              2 
-## FG.058.001.001 FG.058.002.001 FG.059.001.001 FG.059.002.001 FG.059.003.001 
-##              1              1              1              1              1 
-## FG.060.001.001 FG.060.001.002 FG.060.002.001 FG.061.001.001 FG.061.002.001 
-##              1              1              1              2              1 
-## FG.062.001.001 FG.062.002.001 FG.063.001.001 FG.064.001.001 FG.064.002.001 
-##              1              1              2              1              1 
-## FG.065.001.001 FG.065.002.001 FG.066.001.001 FG.066.002.001 FG.067.001.001 
-##              2              1              1              1              1 
-## FG.067.002.001 FG.068.001.001 FG.068.001.002 FG.069.001.001 FG.070.001.001 
-##              1              2              1              2              1 
-## FG.070.002.001 FG.071.001.001 FG.071.001.002 FG.071.002.001 FG.072.001.001 
-##              1              1              1              1              1 
-## FG.072.001.002 FG.072.002.001 FG.073.001.001 FG.073.002.001 FG.074.001.001 
-##              1              1              1              1              2 
-## FG.075.001.001 FG.076.001.001 FG.077.001.001 
-##              1              1              1</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## FG.001.001.001 FG.001.002.001 FG.002.001.001 FG.002.002.001 FG.002.003.001 </span>
+<span class="co">##              2              1              1              1              1 </span>
+<span class="co">## FG.003.001.001 FG.003.002.001 FG.004.001.001 FG.005.001.001 FG.006.001.001 </span>
+<span class="co">##              2              1              3              2              3 </span>
+<span class="co">## FG.006.002.001 FG.007.001.001 FG.007.002.001 FG.007.003.001 FG.007.004.001 </span>
+<span class="co">##              1              2              1              1              1 </span>
+<span class="co">## FG.008.001.001 FG.008.001.002 FG.008.002.001 FG.008.003.001 FG.008.004.001 </span>
+<span class="co">##              2              1              1              1              1 </span>
+<span class="co">## FG.009.001.001 FG.009.002.001 FG.010.001.001 FG.010.001.002 FG.011.001.001 </span>
+<span class="co">##              3              1              1              1              2 </span>
+<span class="co">## FG.011.002.001 FG.011.003.001 FG.012.001.001 FG.013.001.001 FG.013.002.001 </span>
+<span class="co">##              2              1              3              2              1 </span>
+<span class="co">## FG.013.003.001 FG.014.001.001 FG.014.002.001 FG.015.001.001 FG.015.002.001 </span>
+<span class="co">##              1              2              1              2              1 </span>
+<span class="co">## FG.015.003.001 FG.015.004.001 FG.016.001.001 FG.016.002.001 FG.017.001.001 </span>
+<span class="co">##              1              1              2              1              2 </span>
+<span class="co">## FG.017.002.001 FG.018.001.001 FG.018.002.001 FG.018.003.001 FG.018.004.001 </span>
+<span class="co">##              1              2              1              1              1 </span>
+<span class="co">## FG.019.001.001 FG.019.002.001 FG.019.003.001 FG.020.001.001 FG.020.001.002 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.020.002.001 FG.021.001.001 FG.021.002.001 FG.021.003.001 FG.022.001.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.022.002.001 FG.022.003.001 FG.023.001.001 FG.023.002.001 FG.024.001.001 </span>
+<span class="co">##              1              1              2              1              1 </span>
+<span class="co">## FG.024.002.001 FG.024.003.001 FG.025.001.001 FG.025.001.002 FG.025.002.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.025.003.001 FG.025.004.001 FG.025.005.001 FG.026.001.001 FG.026.002.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.026.003.001 FG.027.001.001 FG.027.002.001 FG.027.003.001 FG.028.001.001 </span>
+<span class="co">##              1              1              1              1              2 </span>
+<span class="co">## FG.028.002.001 FG.029.001.001 FG.029.002.001 FG.029.002.002 FG.030.001.001 </span>
+<span class="co">##              1              2              1              1              1 </span>
+<span class="co">## FG.030.002.001 FG.031.001.001 FG.032.001.001 FG.032.002.001 FG.032.003.001 </span>
+<span class="co">##              1              3              1              1              1 </span>
+<span class="co">## FG.033.001.001 FG.033.002.001 FG.033.003.001 FG.033.004.001 FG.034.001.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.034.002.001 FG.034.003.001 FG.035.001.001 FG.035.002.001 FG.036.001.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.036.001.002 FG.036.002.001 FG.037.001.001 FG.037.002.001 FG.038.001.001 </span>
+<span class="co">##              1              1              2              1              2 </span>
+<span class="co">## FG.039.001.001 FG.039.001.002 FG.040.001.001 FG.040.002.001 FG.041.001.001 </span>
+<span class="co">##              1              1              2              2              1 </span>
+<span class="co">## FG.041.002.001 FG.041.003.001 FG.042.001.001 FG.042.002.001 FG.043.001.001 </span>
+<span class="co">##              1              1              1              1              2 </span>
+<span class="co">## FG.044.001.001 FG.044.001.002 FG.044.002.001 FG.044.003.001 FG.045.001.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.045.002.001 FG.045.003.001 FG.045.004.001 FG.046.001.001 FG.047.001.001 </span>
+<span class="co">##              1              1              1              2              1 </span>
+<span class="co">## FG.047.002.001 FG.047.003.001 FG.048.001.001 FG.048.002.001 FG.048.003.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.049.001.001 FG.049.002.001 FG.050.001.001 FG.050.002.001 FG.051.001.001 </span>
+<span class="co">##              2              1              1              1              2 </span>
+<span class="co">## FG.052.001.001 FG.052.002.001 FG.053.001.001 FG.053.001.002 FG.053.002.001 </span>
+<span class="co">##              2              1              1              1              1 </span>
+<span class="co">## FG.053.003.001 FG.054.001.001 FG.054.002.001 FG.055.001.001 FG.055.002.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.055.003.001 FG.056.001.001 FG.056.002.001 FG.056.003.001 FG.057.001.001 </span>
+<span class="co">##              1              1              1              1              2 </span>
+<span class="co">## FG.058.001.001 FG.058.002.001 FG.059.001.001 FG.059.002.001 FG.059.003.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.060.001.001 FG.060.001.002 FG.060.002.001 FG.061.001.001 FG.061.002.001 </span>
+<span class="co">##              1              1              1              2              1 </span>
+<span class="co">## FG.062.001.001 FG.062.002.001 FG.063.001.001 FG.064.001.001 FG.064.002.001 </span>
+<span class="co">##              1              1              2              1              1 </span>
+<span class="co">## FG.065.001.001 FG.065.002.001 FG.066.001.001 FG.066.002.001 FG.067.001.001 </span>
+<span class="co">##              2              1              1              1              1 </span>
+<span class="co">## FG.067.002.001 FG.068.001.001 FG.068.001.002 FG.069.001.001 FG.070.001.001 </span>
+<span class="co">##              1              2              1              2              1 </span>
+<span class="co">## FG.070.002.001 FG.071.001.001 FG.071.001.002 FG.071.002.001 FG.072.001.001 </span>
+<span class="co">##              1              1              1              1              1 </span>
+<span class="co">## FG.072.001.002 FG.072.002.001 FG.073.001.001 FG.073.002.001 FG.074.001.001 </span>
+<span class="co">##              1              1              1              1              2 </span>
+<span class="co">## FG.075.001.001 FG.076.001.001 FG.077.001.001 </span>
+<span class="co">##              1              1              1</span></code></pre>
 <p>In most cases, pre-defined feature groups (by the abundance correlation) were not further subdivided. Below we evaluate some of the feature groups, starting with <em>FG.008.001</em> which was split into two different feature groups based on EIC correlation. We first extract the EICs for all features from this initial feature group. With <code>n = 1</code> we specify to extract the EIC only from the sample with the highest intensity.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.008.001"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>
@@ -523,15 +523,15 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## FG.001.001 FG.001.002 FG.002.001 FG.003.001 FG.003.002 FG.004.001 FG.004.002 
-##          2          2          4          2          1          1          1 
-## FG.004.003 FG.005.001 FG.005.002 FG.006.001 FG.006.002 FG.007.001 FG.008.001 
-##          1          1          1          1          1          2          1 
-## FG.009.001 FG.010.001 FG.011.001 FG.012.001 FG.013.001 FG.014.001 FG.015.001 
-##          1          1          1          1          1          1          1 
-## FG.016.001 FG.017.001 
-##          1          1</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.003.001 FG.003.002 FG.004.001 FG.004.002 </span>
+<span class="co">##          2          2          4          2          1          1          1 </span>
+<span class="co">## FG.004.003 FG.005.001 FG.005.002 FG.006.001 FG.006.002 FG.007.001 FG.008.001 </span>
+<span class="co">##          1          1          1          1          1          2          1 </span>
+<span class="co">## FG.009.001 FG.010.001 FG.011.001 FG.012.001 FG.013.001 FG.014.001 FG.015.001 </span>
+<span class="co">##          1          1          1          1          1          1          1 </span>
+<span class="co">## FG.016.001 FG.017.001 </span>
+<span class="co">##          1          1</span></code></pre>
 </div>
 </div>
 <div class="section level1">
@@ -539,81 +539,81 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 </h1>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.1 (2021-08-10)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.3 LTS
-## 
-## Matrix products: default
-## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
-## 
-## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-## 
-## attached base packages:
-## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
-## 
-## other attached packages:
-##  [1] pheatmap_1.0.12      faahKO_1.33.0        MsFeatures_1.1.0    
-##  [4] xcms_3.15.5          MSnbase_2.19.3       ProtGenerics_1.25.2 
-##  [7] S4Vectors_0.31.5     mzR_2.27.1           Rcpp_1.0.7          
-## [10] Biobase_2.53.0       BiocGenerics_0.39.2  BiocParallel_1.27.17
-## [13] BiocStyle_2.21.4    
-## 
-## loaded via a namespace (and not attached):
-##  [1] bitops_1.0-7                matrixStats_0.61.0         
-##  [3] fs_1.5.0                    progress_1.2.2             
-##  [5] doParallel_1.0.16           RColorBrewer_1.1-2         
-##  [7] rprojroot_2.0.2             GenomeInfoDb_1.29.8        
-##  [9] tools_4.1.1                 bslib_0.3.1                
-## [11] utf8_1.2.2                  R6_2.5.1                   
-## [13] affyio_1.63.2               colorspace_2.0-2           
-## [15] prettyunits_1.1.1           tidyselect_1.1.1           
-## [17] MassSpecWavelet_1.59.0      compiler_4.1.1             
-## [19] preprocessCore_1.55.2       textshaping_0.3.6          
-## [21] cli_3.0.1                   DelayedArray_0.19.4        
-## [23] desc_1.4.0                  bookdown_0.24              
-## [25] sass_0.4.0                  scales_1.1.1               
-## [27] DEoptimR_1.0-9              robustbase_0.93-9          
-## [29] affy_1.71.0                 pkgdown_1.9000.9000.9000   
-## [31] systemfonts_1.0.3           stringr_1.4.0              
-## [33] digest_0.6.28               rmarkdown_2.11             
-## [35] XVector_0.33.0              pkgconfig_2.0.3            
-## [37] htmltools_0.5.2             MatrixGenerics_1.5.4       
-## [39] highr_0.9                   fastmap_1.1.0              
-## [41] limma_3.49.4                rlang_0.99.0.9000          
-## [43] impute_1.67.0               farver_2.1.0               
-## [45] jquerylib_0.1.4             generics_0.1.0             
-## [47] jsonlite_1.7.2              mzID_1.31.0                
-## [49] dplyr_1.0.7                 RCurl_1.98-1.5             
-## [51] magrittr_2.0.1              GenomeInfoDbData_1.2.7     
-## [53] Matrix_1.3-4                MALDIquant_1.20            
-## [55] munsell_0.5.0               fansi_0.5.0                
-## [57] MsCoreUtils_1.5.0           lifecycle_1.0.1            
-## [59] vsn_3.61.2                  stringi_1.7.5              
-## [61] yaml_2.2.1                  MASS_7.3-54                
-## [63] SummarizedExperiment_1.23.5 zlibbioc_1.39.0            
-## [65] plyr_1.8.6                  grid_4.1.1                 
-## [67] parallel_4.1.1              crayon_1.4.1               
-## [69] lattice_0.20-45             hms_1.1.1                  
-## [71] knitr_1.36                  pillar_1.6.3               
-## [73] GenomicRanges_1.45.0        codetools_0.2-18           
-## [75] XML_3.99-0.8                glue_1.4.2                 
-## [77] evaluate_0.14               pcaMethods_1.85.0          
-## [79] BiocManager_1.30.16         vctrs_0.3.8                
-## [81] foreach_1.5.1               RANN_2.6.1                 
-## [83] gtable_0.3.0                purrr_0.3.4                
-## [85] clue_0.3-60                 cachem_1.0.6               
-## [87] ggplot2_3.3.5               xfun_0.26                  
-## [89] ragg_1.1.3                  ncdf4_1.17                 
-## [91] tibble_3.1.5                iterators_1.0.13           
-## [93] memoise_2.0.0               IRanges_2.27.2             
-## [95] cluster_2.1.2               ellipsis_0.3.2</code></pre>
+<pre><code><span class="co">## R Under development (unstable) (2021-11-16 r81199)</span>
+<span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
+<span class="co">## Running under: Ubuntu 20.04.3 LTS</span>
+<span class="co">## </span>
+<span class="co">## Matrix products: default</span>
+<span class="co">## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
+<span class="co">## </span>
+<span class="co">## locale:</span>
+<span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
+<span class="co">##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
+<span class="co">##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             </span>
+<span class="co">##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
+<span class="co">##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
+<span class="co">## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
+<span class="co">## </span>
+<span class="co">## attached base packages:</span>
+<span class="co">## [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span>
+<span class="co">## [8] base     </span>
+<span class="co">## </span>
+<span class="co">## other attached packages:</span>
+<span class="co">##  [1] pheatmap_1.0.12     faahKO_1.35.0       MsFeatures_1.3.0   </span>
+<span class="co">##  [4] xcms_3.17.1         MSnbase_2.21.2      ProtGenerics_1.27.0</span>
+<span class="co">##  [7] S4Vectors_0.33.4    mzR_2.29.0          Rcpp_1.0.7         </span>
+<span class="co">## [10] Biobase_2.55.0      BiocGenerics_0.41.2 BiocParallel_1.29.2</span>
+<span class="co">## [13] BiocStyle_2.23.0   </span>
+<span class="co">## </span>
+<span class="co">## loaded via a namespace (and not attached):</span>
+<span class="co">##  [1] bitops_1.0-7                matrixStats_0.61.0         </span>
+<span class="co">##  [3] fs_1.5.0                    progress_1.2.2             </span>
+<span class="co">##  [5] doParallel_1.0.16           RColorBrewer_1.1-2         </span>
+<span class="co">##  [7] rprojroot_2.0.2             GenomeInfoDb_1.31.1        </span>
+<span class="co">##  [9] tools_4.2.0                 bslib_0.3.1                </span>
+<span class="co">## [11] utf8_1.2.2                  R6_2.5.1                   </span>
+<span class="co">## [13] affyio_1.65.0               colorspace_2.0-2           </span>
+<span class="co">## [15] prettyunits_1.1.1           tidyselect_1.1.1           </span>
+<span class="co">## [17] MassSpecWavelet_1.61.0      compiler_4.2.0             </span>
+<span class="co">## [19] preprocessCore_1.57.0       textshaping_0.3.6          </span>
+<span class="co">## [21] DelayedArray_0.21.2         desc_1.4.0                 </span>
+<span class="co">## [23] bookdown_0.24               sass_0.4.0                 </span>
+<span class="co">## [25] scales_1.1.1                DEoptimR_1.0-9             </span>
+<span class="co">## [27] robustbase_0.93-9           affy_1.73.0                </span>
+<span class="co">## [29] pkgdown_1.9000.9000.9000    systemfonts_1.0.3          </span>
+<span class="co">## [31] stringr_1.4.0               digest_0.6.28              </span>
+<span class="co">## [33] rmarkdown_2.11              XVector_0.35.0             </span>
+<span class="co">## [35] pkgconfig_2.0.3             htmltools_0.5.2            </span>
+<span class="co">## [37] MatrixGenerics_1.7.0        highr_0.9                  </span>
+<span class="co">## [39] fastmap_1.1.0               limma_3.51.0               </span>
+<span class="co">## [41] rlang_0.4.12                impute_1.69.0              </span>
+<span class="co">## [43] farver_2.1.0                jquerylib_0.1.4            </span>
+<span class="co">## [45] generics_0.1.1              jsonlite_1.7.2             </span>
+<span class="co">## [47] mzID_1.33.0                 dplyr_1.0.7                </span>
+<span class="co">## [49] RCurl_1.98-1.5              magrittr_2.0.1             </span>
+<span class="co">## [51] GenomeInfoDbData_1.2.7      Matrix_1.3-4               </span>
+<span class="co">## [53] MALDIquant_1.20             munsell_0.5.0              </span>
+<span class="co">## [55] fansi_0.5.0                 MsCoreUtils_1.7.0          </span>
+<span class="co">## [57] lifecycle_1.0.1             vsn_3.63.0                 </span>
+<span class="co">## [59] stringi_1.7.5               yaml_2.2.1                 </span>
+<span class="co">## [61] MASS_7.3-54                 SummarizedExperiment_1.25.2</span>
+<span class="co">## [63] zlibbioc_1.41.0             plyr_1.8.6                 </span>
+<span class="co">## [65] grid_4.2.0                  parallel_4.2.0             </span>
+<span class="co">## [67] crayon_1.4.2                lattice_0.20-45            </span>
+<span class="co">## [69] hms_1.1.1                   knitr_1.36                 </span>
+<span class="co">## [71] pillar_1.6.4                GenomicRanges_1.47.5       </span>
+<span class="co">## [73] codetools_0.2-18            XML_3.99-0.8               </span>
+<span class="co">## [75] glue_1.5.0                  evaluate_0.14              </span>
+<span class="co">## [77] pcaMethods_1.87.0           BiocManager_1.30.16        </span>
+<span class="co">## [79] vctrs_0.3.8                 foreach_1.5.1              </span>
+<span class="co">## [81] RANN_2.6.1                  gtable_0.3.0               </span>
+<span class="co">## [83] purrr_0.3.4                 clue_0.3-60                </span>
+<span class="co">## [85] cachem_1.0.6                ggplot2_3.3.5              </span>
+<span class="co">## [87] xfun_0.28                   ragg_1.2.0                 </span>
+<span class="co">## [89] ncdf4_1.17.1                tibble_3.1.6               </span>
+<span class="co">## [91] iterators_1.0.13            memoise_2.0.0              </span>
+<span class="co">## [93] IRanges_2.29.1              cluster_2.1.2              </span>
+<span class="co">## [95] ellipsis_0.3.2</span></code></pre>
 </div>
 <div class="section level1">
 <h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -638,7 +638,7 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>

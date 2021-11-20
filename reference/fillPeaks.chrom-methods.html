@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,36 +73,38 @@
     </div>
 
 
+    <div id="ref-sections">
+    <div id="methods">
+    <h2>Methods</h2>
+    
+<dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>fillPeaks.chrom(object, nSlaves=0,expand.mz=1,expand.rt=1,
+    BPPARAM = bpparam())</code></p></dd>
+
+
+</dl></div>
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>nSlaves</th>
-      <td><p>(DEPRECATED): number of slaves/cores to be used for
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>nSlaves</dt>
+<dd><p>(DEPRECATED): number of slaves/cores to be used for
     parallel peak filling.
     MPI is used if installed, otherwise the snow package is employed for
     multicore support. If none of the two packages is available it uses
     the parallel package for parallel processing on multiple CPUs of the
     current machine. Users are advised to use the <code>BPPARAM</code>
-    parameter instead.</p></td>
-    </tr><tr><th>expand.mz</th>
-      <td><p>Expansion factor for the m/z range used for integration.</p></td>
-    </tr><tr><th>expand.rt</th>
-      <td><p>Expansion factor for the rentention time range used
-    for integration.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>allows to define a specific parallel processing setup
-  for the current task (see <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></code> from the
+    parameter instead.</p></dd>
+<dt>expand.mz</dt>
+<dd><p>Expansion factor for the m/z range used for integration.</p></dd>
+<dt>expand.rt</dt>
+<dd><p>Expansion factor for the rentention time range used
+    for integration.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>allows to define a specific parallel processing setup
+  for the current task (see <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code> from the
   <code>BiocParallel</code> package help more information). The default uses
-  the globally defined parallel setup.</p></td>
-    </tr></table></div>
-
-    <div id="methods">
-    <h2>Methods</h2>
-    
-<dl><dt>object = "xcmsSet"</dt><dd><p><code>fillPeaks.chrom(object, nSlaves=0,expand.mz=1,expand.rt=1,
-    BPPARAM = bpparam())</code></p></dd>
-
+  the globally defined parallel setup.</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -132,6 +134,7 @@
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
   <code><a href="getPeaks-methods.html">getPeaks</a></code>
   <code><a href="fillPeaks-methods.html">fillPeaks</a></code></p></div>
+    </div>
     </div>
 
   </div>

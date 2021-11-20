@@ -43,7 +43,7 @@ chromPeaks matrix.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -71,7 +71,7 @@ chromPeaks matrix.
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -86,15 +86,15 @@ chromPeaks matrix.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Filtering sets of chromatographic data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-MChromatograms.R"><code>R/methods-MChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-XChromatograms.R"><code>R/methods-XChromatograms.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-MChromatograms.R" class="external-link"><code>R/methods-MChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XChromatograms.R" class="external-link"><code>R/methods-XChromatograms.R</code></a></small>
     <div class="hidden name"><code>filter-MChromatograms.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>These functions allow to filter (subset) <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms()</a></code> or
+    <p>These functions allow to filter (subset) <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or
 <code><a href="XChromatogram.html">XChromatograms()</a></code> objects, i.e. sets of chromatographic data, without
 changing the data (intensity and retention times) within the individual
-chromatograms (<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram()</a></code> objects).</p><ul><li><p><code>filterColumnsIntensityAbove</code>: subsets a <code>MChromatograms</code> objects keeping
+chromatograms (<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code> objects).</p><ul><li><p><code>filterColumnsIntensityAbove</code>: subsets a <code>MChromatograms</code> objects keeping
 only columns (samples) for which <code>value</code> is larger than the provided
 <code>threshold</code> in <code>which</code> rows (i.e. if <code>which = "any"</code> a
 column is kept if <strong>any</strong> of the chromatograms in that column have a
@@ -121,15 +121,15 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span class="fu">filterColumnsIntensityAbove</span><span class="op">(</span>
   <span class="va">object</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>,
-  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span><span class="op">)</span>,
-  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"all"</span><span class="op">)</span>
+  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span><span class="op">)</span>,
+  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"all"</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for MChromatograms</span>
 <span class="fu">filterColumnsKeepTop</span><span class="op">(</span>
   <span class="va">object</span>,
   n <span class="op">=</span> <span class="fl">1L</span>,
-  sortBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span><span class="op">)</span>,
+  sortBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span><span class="op">)</span>,
   aggregationFun <span class="op">=</span> <span class="va">sum</span>
 <span class="op">)</span>
 
@@ -137,59 +137,59 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span class="fu">filterColumnsIntensityAbove</span><span class="op">(</span>
   <span class="va">object</span>,
   threshold <span class="op">=</span> <span class="fl">0</span>,
-  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span>, <span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
-  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"all"</span><span class="op">)</span>
+  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span>, <span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
+  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"all"</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for XChromatograms</span>
 <span class="fu">filterColumnsKeepTop</span><span class="op">(</span>
   <span class="va">object</span>,
   n <span class="op">=</span> <span class="fl">1L</span>,
-  sortBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span>, <span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
+  sortBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bpi"</span>, <span class="st">"tic"</span>, <span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
   aggregationFun <span class="op">=</span> <span class="va">sum</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></td>
-    </tr><tr><th>threshold</th>
-      <td><p>for <code>filterColumnsIntensityAbove</code>: <code>numeric(1)</code> with the
-threshold value to compare against.</p></td>
-    </tr><tr><th>value</th>
-      <td><p><code>character(1)</code> defining which value should be used in the
+    <dl><dt>object</dt>
+<dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+<dt>threshold</dt>
+<dd><p>for <code>filterColumnsIntensityAbove</code>: <code>numeric(1)</code> with the
+threshold value to compare against.</p></dd>
+<dt>value</dt>
+<dd><p><code>character(1)</code> defining which value should be used in the
 comparison or sorting. Can be <code>value = "bpi"</code> (default) to use the
 maximum intensity per chromatogram or <code>value = "tic"</code> to use the sum
 of intensities per chromatogram. For <code><a href="XChromatogram.html">XChromatograms()</a></code> objects also
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
-in each chromatogram.</p></td>
-    </tr><tr><th>which</th>
-      <td><p>for <code>filterColumnsIntensityAbove</code>: <code>character(1)</code> defining
+in each chromatogram.</p></dd>
+<dt>which</dt>
+<dd><p>for <code>filterColumnsIntensityAbove</code>: <code>character(1)</code> defining
 whether <strong>any</strong> (<code>which = "any"</code>, default) or <strong>all</strong> (<code>which = "all"</code>)
 chromatograms in a column have to fulfill the criteria for the column
-to be kept.</p></td>
-    </tr><tr><th>n</th>
-      <td><p>for <code>filterColumnsKeepTop</code>: <code>integer(1)</code> specifying the number of
+to be kept.</p></dd>
+<dt>n</dt>
+<dd><p>for <code>filterColumnsKeepTop</code>: <code>integer(1)</code> specifying the number of
 columns that should be returned. <code>n</code> will be rounded to the closest
-(larger) integer value.</p></td>
-    </tr><tr><th>sortBy</th>
-      <td><p>for <code>filterColumnsKeepTop</code>: the value by which columns should
+(larger) integer value.</p></dd>
+<dt>sortBy</dt>
+<dd><p>for <code>filterColumnsKeepTop</code>: the value by which columns should
 be ordered to determine the top n columns. Can be either <code>sortBy = "bpi"</code>
 (the default), in which case the maximum intensity of each column's
 chromatograms is used, or <code>sortBy = "tic"</code> to use the total intensity
 sum of all chromatograms. For <code><a href="XChromatogram.html">XChromatograms()</a></code> objects also
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
-in each chromatogram.</p></td>
-    </tr><tr><th>aggregationFun</th>
-      <td><p>for <code>filterColumnsKeepTop</code>: function to be used to
+in each chromatogram.</p></dd>
+<dt>aggregationFun</dt>
+<dd><p>for <code>filterColumnsKeepTop</code>: function to be used to
 aggregate (combine) the values from all chromatograms in each column.
 Defaults to <code>aggregationFun = sum</code> in which case the sum of the values
 is used to rank the columns. Alternatively the <code>mean</code>, <code>median</code> or
-similar function can be used.</p></td>
-    </tr></table></div>
-
+similar function can be used.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
@@ -200,18 +200,19 @@ same number of rows (EICs) but eventually a lower number of columns
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">chr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">29</span>, <span class="fl">50</span>, <span class="cn">NA</span>, <span class="fl">100</span>, <span class="fl">12</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">80</span>, <span class="fl">50</span>, <span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">9</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chr3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">9</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">7</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
-<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">53</span>, <span class="fl">80</span>, <span class="fl">130</span>, <span class="fl">15</span>, <span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">chr1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">29</span>, <span class="fl">50</span>, <span class="cn">NA</span>, <span class="fl">100</span>, <span class="fl">12</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">chr2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>, <span class="fl">50</span>, <span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">9</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">chr3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">9</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">7</span>, sd <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>,</span>
+<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">53</span>, <span class="fl">80</span>, <span class="fl">130</span>, <span class="fl">15</span>, <span class="fl">5</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">chr2</span>, <span class="va">chr1</span>, <span class="va">chr3</span>, <span class="va">chr2</span>, <span class="va">chr3</span><span class="op">)</span>,</span>
+<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">chr2</span>, <span class="va">chr1</span>, <span class="va">chr3</span>, <span class="va">chr2</span>, <span class="va">chr3</span><span class="op">)</span>,</span>
 <span class="r-in">    ncol <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">chrs</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MChromatograms with 2 rows and 3 columns</span>
@@ -270,7 +271,7 @@ same number of rows (EICs) but eventually a lower number of columns
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Keep the 50 percent of columns with the highest total sum of signal. Note</span></span>
 <span class="r-in"><span class="co">## that n will be rounded to the next larger integer value</span></span>
-<span class="r-in"><span class="fu">filterColumnsKeepTop</span><span class="op">(</span><span class="va">chrs</span>, n <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span>, sortBy <span class="op">=</span> <span class="st">"tic"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">filterColumnsKeepTop</span><span class="op">(</span><span class="va">chrs</span>, n <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span>, sortBy <span class="op">=</span> <span class="st">"tic"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MChromatograms with 2 rows and 2 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   2              3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;Chromatogram&gt; &lt;Chromatogram&gt;</span>

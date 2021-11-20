@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,33 +75,35 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>xcmsRaw</code> object</p></td>
-    </tr><tr><th>mzrange</th>
-      <td><p>m/z range for EIC</p></td>
-    </tr><tr><th>rtrange</th>
-      <td><p>retention time range for EIC</p></td>
-    </tr><tr><th>scanrange</th>
-      <td><p>scan range for EIC</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>
     rawEIC(object, mzrange = numeric(), rtrange = numeric(), scanrange = numeric())
   </code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p><code>xcmsRaw</code> object</p></dd>
+<dt>mzrange</dt>
+<dd><p>m/z range for EIC</p></dd>
+<dt>rtrange</dt>
+<dd><p>retention time range for EIC</p></dd>
+<dt>scanrange</dt>
+<dd><p>scan range for EIC</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A list of :</p>
-<p></p>
-<dl><dt>scan</dt><dd><p>scan number</p></dd>
-</dl><p></p>
-<dl><dt>intensity</dt><dd><p>added intensity values</p></dd>
+<dl><dt>scan</dt>
+<dd><p>scan number</p></dd>
+<dt>intensity</dt>
+<dd><p>added intensity values</p></dd>
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -110,6 +112,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

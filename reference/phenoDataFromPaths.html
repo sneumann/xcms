@@ -19,7 +19,7 @@ the files of the experiment are located."><!-- mathjax --><script src="https://c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ the files of the experiment are located."><!-- mathjax --><script src="https://c
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,7 +62,7 @@ the files of the experiment are located."><!-- mathjax --><script src="https://c
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Derive experimental design from file paths</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-xcmsSet.R"><code>R/functions-xcmsSet.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-xcmsSet.R" class="external-link"><code>R/functions-xcmsSet.R</code></a></small>
     <div class="hidden name"><code>phenoDataFromPaths.Rd</code></div>
     </div>
 
@@ -74,25 +74,26 @@ the files of the experiment are located.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">phenoDataFromPaths</span><span class="op">(</span><span class="va">paths</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>paths</th>
-      <td><p><code>character</code> representing the file names (including the full
-path) of the experiment's files.</p></td>
-    </tr></table></div>
-
+    <dl><dt>paths</dt>
+<dd><p><code>character</code> representing the file names (including the full
+path) of the experiment's files.</p></dd>
+</dl></div>
     <div id="note">
     <h2>Note</h2>
     <p>This function is used by the <em>old</em> <code>xcmsSet</code> function to guess
 the experimental design (i.e. group assignment of the files) from the
 folders in which the files of the experiment can be found.</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## List the files available in the faahKO package</span></span>
-<span class="r-in"><span class="va">base_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cdf_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">base_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">base_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">cdf_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">base_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 </code></pre></div>
     </div>
   </div>

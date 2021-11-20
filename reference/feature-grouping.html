@@ -41,7 +41,7 @@ Compounded feature groups can be accessed with the featureGroups function."><!--
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@ Compounded feature groups can be accessed with the featureGroups function."><!--
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -84,7 +84,7 @@ Compounded feature groups can be accessed with the featureGroups function."><!--
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compounding of LC-MS features</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-group-features.R"><code>R/methods-group-features.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-group-features.R" class="external-link"><code>R/methods-group-features.R</code></a></small>
     <div class="hidden name"><code>feature-grouping.Rd</code></div>
     </div>
 
@@ -92,13 +92,13 @@ Compounded feature groups can be accessed with the featureGroups function."><!--
     <p>Feature <em>compounding</em> aims at identifying and grouping LC-MS features
 representing different ions or adducts (including isotopes) of the same
 originating compound.
-The <a href="https://bioconductor.org/packages/MsFeatures">MsFeatures</a> package
+The <a href="https://bioconductor.org/packages/MsFeatures" class="external-link">MsFeatures</a> package
 provides a general framework and functionality to group features based on
 different properties. The <code>groupFeatures</code> methods for <a href="XCMSnExp-class.html">XCMSnExp</a>
 objects implemented in <code>xcms</code> extend these to enable the <em>compounding</em> of
 LC-MS data. Note that these functions simply define feature groups but don't
 actually <em>aggregate</em> or combine the features.</p>
-<p>See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">MsFeatures::groupFeatures()</a></code> for an overview on the general feature
+<p>See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">MsFeatures::groupFeatures()</a></code> for an overview on the general feature
 grouping concept as well as details on the individual settings and
 parameters.</p>
 <p>The available options for <code>groupFeatures</code> on <code>xcms</code> preprocessing results
@@ -119,16 +119,16 @@ methods (in the listed order).</p>
 <span class="co"># S4 method for XCMSnExp</span>
 <span class="fu">featureGroups</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>an <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>for <code>featureGroups&lt;-</code>: replacement for the feature groups in
+    <dl><dt>object</dt>
+<dd><p>an <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object.</p></dd>
+<dt>value</dt>
+<dd><p>for <code>featureGroups&lt;-</code>: replacement for the feature groups in
 <code>object</code>. Has to be of length 1 or length equal to the number of features
-in <code>object</code>.</p></td>
-    </tr></table></div>
-
+in <code>object</code>.</p></dd>
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="plotFeatureGroups.html">plotFeatureGroups()</a></code> for visualization of grouped features.</p></div>
@@ -136,6 +136,7 @@ in <code>object</code>.</p></td>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer, Mar Garcia-Aloy, Vinicius Veri Hernandes</p>
+    </div>
     </div>
 
   </div>

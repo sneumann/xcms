@@ -18,7 +18,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z'><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z'><!-- mathjax --
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -61,7 +61,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z'><!-- mathjax --
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot m/z and RT deviations for QC purposes without external reference data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/plotQC.R"><code>R/plotQC.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/plotQC.R" class="external-link"><code>R/plotQC.R</code></a></small>
     <div class="hidden name"><code>plotQC.Rd</code></div>
     </div>
 
@@ -72,27 +72,27 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">plotQC</span><span class="op">(</span><span class="va">object</span>, <span class="va">sampNames</span>, <span class="va">sampColors</span>, <span class="va">sampOrder</span>, <span class="va">what</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A grouped <code><a href="xcmsSet.html">xcmsSet</a></code></p></td>
-    </tr><tr><th>sampNames</th>
-      <td><p>Override sample names (e.g. with simplified names)</p></td>
-    </tr><tr><th>sampColors</th>
-      <td><p>Provide a set of colors (default: monochrome ?)</p></td>
-    </tr><tr><th>sampOrder</th>
-      <td><p>Override the order of samples, e.g. to bring them in order
-of measurement to detect time drift</p></td>
-    </tr><tr><th>what</th>
-      <td><p>A vector of which QC plots to generate.
+    <dl><dt>object</dt>
+<dd><p>A grouped <code><a href="xcmsSet.html">xcmsSet</a></code></p></dd>
+<dt>sampNames</dt>
+<dd><p>Override sample names (e.g. with simplified names)</p></dd>
+<dt>sampColors</dt>
+<dd><p>Provide a set of colors (default: monochrome ?)</p></dd>
+<dt>sampOrder</dt>
+<dd><p>Override the order of samples, e.g. to bring them in order
+of measurement to detect time drift</p></dd>
+<dt>what</dt>
+<dd><p>A vector of which QC plots to generate.
 "mzdevhist": histogram of mz deviations. Should be gaussian shaped. If it is multimodal, then some peaks seem to have a systematically higher m/z deviation
 "rtdevhist":  histogram of RT deviations. Should be gaussian shaped. If it is multimodal, then some peaks seem to have a systematically higher RT deviation
 "mzdevmass": Shows whether m/z deviations are absolute m/z dependent, could indicate miscalibration
 "mzdevtime": Shows whether m/z deviations are RT dependent, could indicate instrument drift
 "mzdevsample": median mz deviation for each sample, indicates outliers
-"rtdevsample": median RT deviation for each sample, indicates outliers</p></td>
-    </tr></table></div>
-
+"rtdevsample": median RT deviation for each sample, indicates outliers</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>List with four matrices, each of dimension features * samples:
@@ -110,26 +110,27 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
     <h2>Author</h2>
     <p>Michael Wenk, Michael Wenk &lt;michael.wenk@student.uni-halle.de&gt;</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
+    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="va">xsg</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 3195 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevhist"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevhist"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevmass"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevtime"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevsample"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-5.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevsample"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotQC-6.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotQC-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

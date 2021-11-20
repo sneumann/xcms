@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,32 +75,34 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>sampleidx</th>
-      <td><p>The index of the sample for which the raw data should be
-    returned. Can be a single number or a numeric vector with the
-    indices. Alternatively, the file name can be specified.</p></td>
-    </tr><tr><th>profmethod</th>
-      <td><p>The profile method.</p></td>
-    </tr><tr><th>profstep</th>
-      <td><p>The profile step.</p></td>
-    </tr><tr><th>rt</th>
-      <td><p>Whether corrected or raw retention times should be returned.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional arguments submitted to the <code><a href="xcmsRaw.html">xcmsRaw</a></code> function.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsSet"</dt><dd><p><code>getXcmsRaw(object, sampleidx=1,
+<dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>getXcmsRaw(object, sampleidx=1,
     profmethod=profinfo(object)$method, profstep=profinfo(object)$step,
     rt=c("corrected", "raw"), ...
   )</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>sampleidx</dt>
+<dd><p>The index of the sample for which the raw data should be
+    returned. Can be a single number or a numeric vector with the
+    indices. Alternatively, the file name can be specified.</p></dd>
+<dt>profmethod</dt>
+<dd><p>The profile method.</p></dd>
+<dt>profstep</dt>
+<dd><p>The profile step.</p></dd>
+<dt>rt</dt>
+<dd><p>Whether corrected or raw retention times should be returned.</p></dd>
+<dt>...</dt>
+<dd><p>Additional arguments submitted to the <code><a href="xcmsRaw.html">xcmsRaw</a></code> function.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -113,6 +115,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code>,</p></div>
+    </div>
     </div>
 
   </div>

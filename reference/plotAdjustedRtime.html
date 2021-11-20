@@ -21,7 +21,7 @@ groups) used for the alignment are shown."><!-- mathjax --><script src="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ groups) used for the alignment are shown."><!-- mathjax --><script src="https://
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -64,7 +64,7 @@ groups) used for the alignment are shown."><!-- mathjax --><script src="https://
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Visualization of alignment results</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>plotAdjustedRtime.Rd</code></div>
     </div>
 
@@ -83,8 +83,8 @@ groups) used for the alignment are shown.</p>
   lwd <span class="op">=</span> <span class="fl">1</span>,
   type <span class="op">=</span> <span class="st">"l"</span>,
   adjustedRtime <span class="op">=</span> <span class="cn">TRUE</span>,
-  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">adjustedRtime</span>, yes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">adj</span><span class="op">]</span><span class="op">)</span>, no <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,
-  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">adj</span><span class="op">]</span> <span class="op">-</span> <span class="va">rt</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span>,
+  xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">adjustedRtime</span>, yes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">adj</span><span class="op">]</span><span class="op">)</span>, no <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,
+  ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">rt</span><span class="op">[</span><span class="va">adj</span><span class="op">]</span> <span class="op">-</span> <span class="va">rt</span><span class="op">[</span><span class="va">raw</span><span class="op">]</span><span class="op">)</span>,
   peakGroupsCol <span class="op">=</span> <span class="st">"#00000060"</span>,
   peakGroupsPch <span class="op">=</span> <span class="fl">16</span>,
   peakGroupsLty <span class="op">=</span> <span class="fl">3</span>,
@@ -92,47 +92,47 @@ groups) used for the alignment are shown.</p>
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the alignment results.</p></td>
-    </tr><tr><th>col</th>
-      <td><p>colors to be used for the lines corresponding to the individual
-samples.</p></td>
-    </tr><tr><th>lty</th>
-      <td><p>line type to be used for the lines of the individual samples.</p></td>
-    </tr><tr><th>lwd</th>
-      <td><p>line width to be used for the lines of the individual samples.</p></td>
-    </tr><tr><th>type</th>
-      <td><p>plot type to be used. See help on the <code>par</code> function for
-supported values.</p></td>
-    </tr><tr><th>adjustedRtime</th>
-      <td><p>logical(1) whether adjusted or raw retention times
-should be shown on the x-axis.</p></td>
-    </tr><tr><th>xlab</th>
-      <td><p>the label for the x-axis.</p></td>
-    </tr><tr><th>ylab</th>
-      <td><p>the label for the y-axis.</p></td>
-    </tr><tr><th>peakGroupsCol</th>
-      <td><p>color to be used for the peak groups (only used if
+    <dl><dt>object</dt>
+<dd><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the alignment results.</p></dd>
+<dt>col</dt>
+<dd><p>colors to be used for the lines corresponding to the individual
+samples.</p></dd>
+<dt>lty</dt>
+<dd><p>line type to be used for the lines of the individual samples.</p></dd>
+<dt>lwd</dt>
+<dd><p>line width to be used for the lines of the individual samples.</p></dd>
+<dt>type</dt>
+<dd><p>plot type to be used. See help on the <code>par</code> function for
+supported values.</p></dd>
+<dt>adjustedRtime</dt>
+<dd><p>logical(1) whether adjusted or raw retention times
+should be shown on the x-axis.</p></dd>
+<dt>xlab</dt>
+<dd><p>the label for the x-axis.</p></dd>
+<dt>ylab</dt>
+<dd><p>the label for the y-axis.</p></dd>
+<dt>peakGroupsCol</dt>
+<dd><p>color to be used for the peak groups (only used if
 alignment was performed using the <code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code>
-method.</p></td>
-    </tr><tr><th>peakGroupsPch</th>
-      <td><p>point character (<code>pch</code>) to be used for the peak
+method.</p></dd>
+<dt>peakGroupsPch</dt>
+<dd><p>point character (<code>pch</code>) to be used for the peak
 groups (only used if alignment was performed using the
-<code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code> method.</p></td>
-    </tr><tr><th>peakGroupsLty</th>
-      <td><p>line type (<code>lty</code>) to be used to connect points for
+<code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code> method.</p></dd>
+<dt>peakGroupsLty</dt>
+<dd><p>line type (<code>lty</code>) to be used to connect points for
 each peak groups (only used if alignment was performed using the
-<code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code> method.</p></td>
-    </tr><tr><th>ylim</th>
-      <td><p>optional <code>numeric(2)</code> with the upper and lower limits on
-the y-axis.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional arguments to be passed down to the <code>plot</code>
-function.</p></td>
-    </tr></table></div>
-
+<code><a href="adjustRtime-peakGroups.html">adjustRtime-peakGroups</a></code> method.</p></dd>
+<dt>ylim</dt>
+<dd><p>optional <code>numeric(2)</code> with the upper and lower limits on
+the y-axis.</p></dd>
+<dt>...</dt>
+<dd><p>Additional arguments to be passed down to the <code>plot</code>
+function.</p></dd>
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="adjustRtime.html">adjustRtime</a></code> for all retention time correction/
@@ -142,20 +142,21 @@ function.</p></td>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Performing the peak grouping using the "peak density" method.</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 2572 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
@@ -172,8 +173,8 @@ function.</p></td>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Visualize the impact of the alignment.</span></span>
 <span class="r-in"><span class="fu">plotAdjustedRtime</span><span class="op">(</span><span class="va">res</span>, adjusted <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html">grid</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-plt"><img src="plotAdjustedRtime-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="plotAdjustedRtime-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

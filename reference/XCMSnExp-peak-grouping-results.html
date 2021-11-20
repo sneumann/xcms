@@ -34,7 +34,7 @@ be passed to quantify with ...."><!-- mathjax --><script src="https://cdnjs.clou
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@ be passed to quantify with ...."><!-- mathjax --><script src="https://cdnjs.clou
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -77,7 +77,7 @@ be passed to quantify with ...."><!-- mathjax --><script src="https://cdnjs.clou
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Accessing mz-rt feature data values</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-XCMSnExp.R"><code>R/methods-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>XCMSnExp-peak-grouping-results.Rd</code></div>
     </div>
 
@@ -103,73 +103,72 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/quantify-methods.html">quantify</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/quantify-methods.html" class="external-link">quantify</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for XCMSnExp</span>
 <span class="fu">featureValues</span><span class="op">(</span>
   <span class="va">object</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"medret"</span>, <span class="st">"maxint"</span>, <span class="st">"sum"</span><span class="op">)</span>,
+  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"medret"</span>, <span class="st">"maxint"</span>, <span class="st">"sum"</span><span class="op">)</span>,
   value <span class="op">=</span> <span class="st">"into"</span>,
   intensity <span class="op">=</span> <span class="st">"into"</span>,
   filled <span class="op">=</span> <span class="cn">TRUE</span>,
   missing <span class="op">=</span> <span class="cn">NA</span>,
-  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>
+  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object providing the feature
-definitions.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>For <code>quantify</code>: additional parameters to be passed on to the
-<code>featureValues</code> method.</p></td>
-    </tr><tr><th>method</th>
-      <td><p><code>character</code> specifying the method to resolve
+    <dl><dt>object</dt>
+<dd><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object providing the feature
+definitions.</p></dd>
+<dt>...</dt>
+<dd><p>For <code>quantify</code>: additional parameters to be passed on to the
+<code>featureValues</code> method.</p></dd>
+<dt>method</dt>
+<dd><p><code>character</code> specifying the method to resolve
 multi-peak mappings within the same sample, i.e. to define the
 <em>representative</em> peak for a feature in samples where more than
 one peak was assigned to the feature. If <code>"medret"</code>: select the
 peak closest to the median retention time of the feature.
 If <code>"maxint"</code>: select the peak yielding the largest signal. If
 <code>"sum"</code>: sum the values (only if <code>value</code> is <code>"into"</code> or
-<code>"maxo"</code>.</p></td>
-    </tr><tr><th>value</th>
-      <td><p><code>character</code> specifying the name of the column in
+<code>"maxo"</code>.</p></dd>
+<dt>value</dt>
+<dd><p><code>character</code> specifying the name of the column in
 <code>chromPeaks(object)</code> that should be returned. Defaults to
 <code>"into"</code> in which case the integrated peak area is returned. To
 get the index of the peak in the <code>chromPeaks(object)</code> matrix use
-<code>"index"</code>.</p></td>
-    </tr><tr><th>intensity</th>
-      <td><p><code>character</code> specifying the name of the column in the
+<code>"index"</code>.</p></dd>
+<dt>intensity</dt>
+<dd><p><code>character</code> specifying the name of the column in the
 <code>chromPeaks(objects)</code> matrix containing the intensity value of the
 peak that should be used for the conflict resolution if
-<code>method = "maxint"</code>.</p></td>
-    </tr><tr><th>filled</th>
-      <td><p><code>logical(1)</code> specifying whether values for filled-in
+<code>method = "maxint"</code>.</p></dd>
+<dt>filled</dt>
+<dd><p><code>logical(1)</code> specifying whether values for filled-in
 peaks should be returned or not. If <code>filled = FALSE</code>, an <code>NA</code>
 is returned in the matrix for the respective peak. See
-<code><a href="fillChromPeaks.html">fillChromPeaks</a></code> for details on peak filling.</p></td>
-    </tr><tr><th>missing</th>
-      <td><p>how missing values should be reported. Allowed values are
+<code><a href="fillChromPeaks.html">fillChromPeaks</a></code> for details on peak filling.</p></dd>
+<dt>missing</dt>
+<dd><p>how missing values should be reported. Allowed values are
 <code>NA</code> (the default), a <code>numeric</code> or
 <code>missing = "rowmin_half"</code>. The latter replaces any <code>NA</code> with
-half of the row's minimal (non-missing) value.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p>for `featureValues`: `integer` defining the MS level(s) for
+half of the row's minimal (non-missing) value.</p></dd>
+<dt>msLevel</dt>
+<dd><p>for `featureValues`: `integer` defining the MS level(s) for
 which feature values should be returned. By default, values for features
-defined for all MS levels are returned.</p></td>
-    </tr></table></div>
-
+defined for all MS levels are returned.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>For <code>featureValues</code>: a <code>matrix</code> with
 feature values, columns representing samples, rows features. The order
 of the features matches the order found in the
-<code>featureDefinitions(object)</code> <code>DataFrame</code>. The rownames of the
-<code>matrix</code> are the same than those of the <code>featureDefinitions</code>
-<code>DataFrame</code>. <code>NA</code> is reported for features without
-corresponding chromatographic peak in the respective sample(s).</p>
-<p>For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
+<code>featureDefinitions(object)</code><code>DataFrame</code>. The rownames of the
+<code>matrix</code> are the same than those of the <code>featureDefinitions</code><code>DataFrame</code>. <code>NA</code> is reported for features without
+corresponding chromatographic peak in the respective sample(s).
+For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
 the preprocessing results.</p>
     </div>
     <div id="note">
@@ -193,6 +192,7 @@ feature.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

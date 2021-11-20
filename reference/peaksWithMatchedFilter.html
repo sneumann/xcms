@@ -18,7 +18,7 @@ on chromatographic data (i.e. with only intensities and retention time)."><!-- m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ on chromatographic data (i.e. with only intensities and retention time)."><!-- m
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -61,7 +61,7 @@ on chromatographic data (i.e. with only intensities and retention time)."><!-- m
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Identify peaks in chromatographic data using matchedFilter</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_findChromPeaks-functions.R"><code>R/do_findChromPeaks-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
     <div class="hidden name"><code>peaksWithMatchedFilter.Rd</code></div>
     </div>
 
@@ -80,30 +80,30 @@ on chromatographic data (i.e. with only intensities and retention time).</p>
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>int</th>
-      <td><p><code>numeric</code> with intensity values.</p></td>
-    </tr><tr><th>rt</th>
-      <td><p><code>numeric</code> with the retention time for the intensities. Length has
-to be equal to <code>length(int)</code>.</p></td>
-    </tr><tr><th>fwhm</th>
-      <td><p><code>numeric(1)</code> specifying the full width at half maximum
+    <dl><dt>int</dt>
+<dd><p><code>numeric</code> with intensity values.</p></dd>
+<dt>rt</dt>
+<dd><p><code>numeric</code> with the retention time for the intensities. Length has
+to be equal to <code>length(int)</code>.</p></dd>
+<dt>fwhm</dt>
+<dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
-actual sigma, see below.</p></td>
-    </tr><tr><th>sigma</th>
-      <td><p><code>numeric(1)</code> specifying the standard deviation (width)
-of the matched filtration model peak.</p></td>
-    </tr><tr><th>max</th>
-      <td><p><code>numeric(1)</code> with the maximal number of peaks that are expected/
-will bbe detected in the data</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise cut-off to be used
-in the peak detection step.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>currently ignored.</p></td>
-    </tr></table></div>
-
+actual sigma, see below.</p></dd>
+<dt>sigma</dt>
+<dd><p><code>numeric(1)</code> specifying the standard deviation (width)
+of the matched filtration model peak.</p></dd>
+<dt>max</dt>
+<dd><p><code>numeric(1)</code> with the maximal number of peaks that are expected/
+will bbe detected in the data</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise cut-off to be used
+in the peak detection step.</p></dd>
+<dt>...</dt>
+<dd><p>currently ignored.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak, with
@@ -127,31 +127,32 @@ method.</p>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load the test file</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset to one file and drop identified chromatographic peaks</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropChromPeaks</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropChromPeaks</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Extract chromatographic data for a small m/z range</span></span>
-<span class="r-in"><span class="va">chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">data</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">272.1</span>, <span class="fl">272.3</span><span class="op">)</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">3000</span>, <span class="fl">3200</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span>
+<span class="r-in"><span class="va">chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">data</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">272.1</span>, <span class="fl">272.3</span><span class="op">)</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3000</span>, <span class="fl">3200</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu">peaksWithMatchedFilter</span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu">peaksWithMatchedFilter</span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">pks</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            rt   rtmin    rtmax     into     intf  maxo     maxf       sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 3119.535 3105.45 3133.619 332583.6 668444.6 16496 36129.39 12.33813</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Plotting the data</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/rect.html">rect</a></span><span class="op">(</span>xleft <span class="op">=</span> <span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span>, xright <span class="op">=</span> <span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span>, ybottom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">chr</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"h"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/rect.html" class="external-link">rect</a></span><span class="op">(</span>xleft <span class="op">=</span> <span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span>, xright <span class="op">=</span> <span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span>, ybottom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span class="r-in">    ytop <span class="op">=</span> <span class="va">pks</span><span class="op">[</span>, <span class="st">"maxo"</span><span class="op">]</span>, border <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="peaksWithMatchedFilter-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="peaksWithMatchedFilter-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

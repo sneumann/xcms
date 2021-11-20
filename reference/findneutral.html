@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -70,18 +70,18 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">findneutral</span><span class="op">(</span><span class="va">object</span>, <span class="va">find</span>, ppmE<span class="op">=</span><span class="fl">25</span>, print<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>xcmsFragment object type</p></td>
-    </tr><tr><th>find</th>
-      <td><p>The neutral loss to be found</p></td>
-    </tr><tr><th>ppmE</th>
-      <td><p>the ppm error window for searching</p></td>
-    </tr><tr><th>print</th>
-      <td><p>If we should print a nice little report</p></td>
-    </tr></table></div>
-
+    <dl><dt>object</dt>
+<dd><p>xcmsFragment object type</p></dd>
+<dt>find</dt>
+<dd><p>The neutral loss to be found</p></dd>
+<dt>ppmE</dt>
+<dd><p>the ppm error window for searching</p></dd>
+<dt>print</dt>
+<dd><p>If we should print a nice little report</p></dd>
+</dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>The method searches for a given neutral loss in an xcmsFragment object type given a certain ppm error window. The neutral losses are generated between neighbouring ions. The resulting data frame shows the whole scan in which the neutral loss was found.</p>
@@ -89,15 +89,24 @@
     <div id="value">
     <h2>Value</h2>
     <p>A data frame with the following columns:</p>
-<dl><dt>PrecursorMz</dt><dd><p>The precursor m/z of the neutral losses</p></dd>
-</dl><dl><dt>MSnParentPeakID</dt><dd><p>An index ID of the location of the precursor peak in the xcmsFragment object</p></dd>
-</dl><dl><dt>msLevel</dt><dd><p>The level of the found fragment ion</p></dd>
-</dl><dl><dt>rt</dt><dd><p>the Retention time of the found ion</p></dd>
-</dl><dl><dt>mz</dt><dd><p>the actual m/z of the found fragment ion</p></dd>
-</dl><dl><dt>intensity</dt><dd><p>The intensity of the fragment ion</p></dd>
-</dl><dl><dt>sample</dt><dd><p>Which sample the fragment ion came from</p></dd>
-</dl><dl><dt>GroupPeakMSn</dt><dd><p>an ID if the peaks were grouped by an xcmsSet grouping</p></dd>
-</dl><dl><dt>CollisionEnergy</dt><dd><p>The collision energy of the precursor scan</p></dd>
+<dl><dt>PrecursorMz</dt>
+<dd><p>The precursor m/z of the neutral losses</p></dd>
+<dt>MSnParentPeakID</dt>
+<dd><p>An index ID of the location of the precursor peak in the xcmsFragment object</p></dd>
+<dt>msLevel</dt>
+<dd><p>The level of the found fragment ion</p></dd>
+<dt>rt</dt>
+<dd><p>the Retention time of the found ion</p></dd>
+<dt>mz</dt>
+<dd><p>the actual m/z of the found fragment ion</p></dd>
+<dt>intensity</dt>
+<dd><p>The intensity of the fragment ion</p></dd>
+<dt>sample</dt>
+<dd><p>Which sample the fragment ion came from</p></dd>
+<dt>GroupPeakMSn</dt>
+<dd><p>an ID if the peaks were grouped by an xcmsSet grouping</p></dd>
+<dt>CollisionEnergy</dt>
+<dd><p>The collision energy of the precursor scan</p></dd>
 </dl></div>
     <div id="references">
     <h2>References</h2>
@@ -112,13 +121,14 @@
     <h2>Author</h2>
     <p>H. Paul Benton, <a href="mailto:hpbenton@scripps.edu">hpbenton@scripps.edu</a></p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">msdata</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">mzdatapath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"iontrap"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">mzdatafiles</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span><span class="op">(</span><span class="va">mzdatapath</span>, pattern <span class="op">=</span> <span class="st">"extracted.mzData"</span>,</span>
+<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">msdata</span><span class="op">)</span></span>
+<span class="r-in">    <span class="va">mzdatapath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"iontrap"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span></span>
+<span class="r-in">    <span class="va">mzdatafiles</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">mzdatapath</span>, pattern <span class="op">=</span> <span class="st">"extracted.mzData"</span>,</span>
 <span class="r-in">                            recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in">    <span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsSet.html">xcmsSet</a></span><span class="op">(</span><span class="va">mzdatafiles</span>, method <span class="op">=</span> <span class="st">"MS1"</span><span class="op">)</span></span>
 <span class="r-in">    <span class="co">##takes only one file from the file set</span></span>

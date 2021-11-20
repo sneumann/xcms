@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -61,7 +61,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Peak detection for single-spectrum non-chromatography MS data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-xcmsRaw.R"><code>R/methods-xcmsRaw.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-xcmsRaw.R" class="external-link"><code>R/methods-xcmsRaw.R</code></a></small>
     <div class="hidden name"><code>findPeaks.MSW-xcmsRaw-method.Rd</code></div>
     </div>
 
@@ -73,36 +73,58 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for xcmsRaw</span>
 <span class="fu">findPeaks.MSW</span><span class="op">(</span><span class="va">object</span>, snthresh <span class="op">=</span> <span class="fl">3</span>, verbose.columns <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak
-detection should be performed.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
-    </tr><tr><th>verbose.columns</th>
-      <td><p>Logical whether additional peak meta data columns
-should be returned.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional parameters to be passed to the
+    <dl><dt>object</dt>
+<dd><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak
+detection should be performed.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+<dt>verbose.columns</dt>
+<dd><p>Logical whether additional peak meta data columns
+should be returned.</p></dd>
+<dt>...</dt>
+<dd><p>Additional parameters to be passed to the
 <code>identifyMajorPeaks</code> and
 <code>sav.gol</code> functions from the
-<code>MassSpecWavelet</code> package.</p></td>
-    </tr></table></div>
-
+<code>MassSpecWavelet</code> package.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix, each row representing an intentified peak, with columns:</p><dl><dt>mz</dt><dd><p>m/z value of the peak at the centroid position.</p></dd>
-    <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
-    <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
-    <dt>rt</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>rtmin</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>rtmax</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>into</dt><dd><p>Integrated (original) intensity of the peak.</p></dd>
-    <dt>maxo</dt><dd><p>Maximum intensity of the peak.</p></dd>
-    <dt>intf</dt><dd><p>Always <code>NA</code>.</p></dd>
-    <dt>maxf</dt><dd><p>Maximum MSW-filter response of the peak.</p></dd>
-    <dt>sn</dt><dd><p>Signal to noise ratio.</p></dd>
+    <p>A matrix, each row representing an intentified peak, with columns:</p><dl><dt>mz</dt>
+<dd><p>m/z value of the peak at the centroid position.</p></dd>
+
+    <dt>mzmin</dt>
+<dd><p>Minimum m/z of the peak.</p></dd>
+
+    <dt>mzmax</dt>
+<dd><p>Maximum m/z of the peak.</p></dd>
+
+    <dt>rt</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>rtmin</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>rtmax</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>into</dt>
+<dd><p>Integrated (original) intensity of the peak.</p></dd>
+
+    <dt>maxo</dt>
+<dd><p>Maximum intensity of the peak.</p></dd>
+
+    <dt>intf</dt>
+<dd><p>Always <code>NA</code>.</p></dd>
+
+    <dt>maxf</dt>
+<dd><p>Maximum MSW-filter response of the peak.</p></dd>
+
+    <dt>sn</dt>
+<dd><p>Signal to noise ratio.</p></dd>
+
     
 </dl></div>
     <div id="details">
@@ -123,6 +145,7 @@ should be returned.</p></td>
     <div id="author">
     <h2>Author</h2>
     <p>Joachim Kutzera, Steffen Neumann, Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

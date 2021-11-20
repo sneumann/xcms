@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,19 +73,21 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>Specification of a data source (such as a file name or
-    database query)</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
-    <p></p><dl><dt><code>signature(object = "xcmsSource")</code></dt><dd><p>Uses <code>loadRaw,xcmsSource-method</code> to extract raw data.
+    <p></p><dl><dt><code>signature(object = "xcmsSource")</code></dt>
+<dd><p>Uses <code>loadRaw,xcmsSource-method</code> to extract raw data.
       Subclasses of <code><a href="xcmsSource-class.html">xcmsSource</a></code> can provide different
       ways of fetching data.</p></dd>
+
   
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>Specification of a data source (such as a file name or
+    database query)</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -93,28 +95,26 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A list containing elements describing the data source. The <code>rt</code>,
-  <code>scanindex</code>, <code>tic</code>, and <code>acquisitionNum</code> components
+    <p>A list containing elements describing the data source. The <code>rt</code>,
+<code>scanindex</code>, <code>tic</code>, and <code>acquisitionNum</code> components
   each have one entry per scan. They are <em>parallel</em> in the sense that
-  <code>rt[1]</code>, <code>scanindex[1]</code>, and <code>acquisitionNum[1]</code> all
+<code>rt[1]</code>, <code>scanindex[1]</code>, and <code>acquisitionNum[1]</code> all
   refer to the same scan. The list containst the following components:</p>
-<p></p>
-<dl><dt><code>rt</code></dt><dd><p>Numeric vector with acquisition time (in seconds) for each scan</p></dd>
-</dl><p></p>
-<dl><dt><code>tic</code></dt><dd><p>Numeric vector with Total Ion Count for each scan</p></dd>
-</dl><p></p>
-<dl><dt><code>scanindex</code></dt><dd><p>Integer vector with starting positions of each scan in the <code>mz</code>
+<dl><dt><code>rt</code></dt>
+<dd><p>Numeric vector with acquisition time (in seconds) for each scan</p></dd>
+<dt><code>tic</code></dt>
+<dd><p>Numeric vector with Total Ion Count for each scan</p></dd>
+<dt><code>scanindex</code></dt>
+<dd><p>Integer vector with starting positions of each scan in the <code>mz</code>
     and <code>intensity</code> components. It is an exclusive offset, so
     <code>scanindex[i]</code> is the offset in <code>mz</code> and <code>intensity</code>
     <em>before</em> the beginning of scan <code>i</code>. This means that the
     <code>mz</code> (respectively <code>intensity</code>) values for scan <code>i</code>
     would be from <code>scanindex[i] + 1</code> to <code>scanindex[i + 1]</code></p></dd>
-</dl><p></p>
-<dl><dt><code>mz</code></dt><dd><p>Concatenated vector of m/z values for all scans</p></dd>
-</dl><p></p>
-<dl><dt><code>intensity</code></dt><dd><p>Concatenated vector of intensity values for all scans</p></dd>
+<dt><code>mz</code></dt>
+<dd><p>Concatenated vector of m/z values for all scans</p></dd>
+<dt><code>intensity</code></dt>
+<dd><p>Concatenated vector of intensity values for all scans</p></dd>
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -124,6 +124,7 @@
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code>,
   <code><a href="xcmsSource-class.html">xcmsSource</a></code></p></div>
+    </div>
     </div>
 
   </div>

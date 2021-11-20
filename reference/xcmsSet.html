@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,67 +73,67 @@
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">xcmsSet</span><span class="op">(</span>files <span class="op">=</span> <span class="cn">NULL</span>, snames <span class="op">=</span> <span class="cn">NULL</span>, sclass <span class="op">=</span> <span class="cn">NULL</span>, phenoData <span class="op">=</span> <span class="cn">NULL</span>,
-        profmethod <span class="op">=</span> <span class="st">"bin"</span>, profparam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>,
+        profmethod <span class="op">=</span> <span class="st">"bin"</span>, profparam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
         polarity <span class="op">=</span> <span class="cn">NULL</span>, lockMassFreq<span class="op">=</span><span class="cn">FALSE</span>,
   mslevel<span class="op">=</span><span class="cn">NULL</span>, nSlaves<span class="op">=</span><span class="fl">0</span>, progressCallback<span class="op">=</span><span class="cn">NULL</span>,
-        scanrange <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
+        scanrange <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
         stopOnError <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>files</th>
-      <td><p>path names of the NetCDF/mzXML files to read</p></td>
-    </tr><tr><th>snames</th>
-      <td><p>sample names. By default the file name without extension
-    is used.</p></td>
-    </tr><tr><th>sclass</th>
-      <td><p>sample classes.</p></td>
-    </tr><tr><th>phenoData</th>
-      <td><p><code>data.frame</code> or <code>AnnotatedDataFrame</code>
+    <dl><dt>files</dt>
+<dd><p>path names of the NetCDF/mzXML files to read</p></dd>
+<dt>snames</dt>
+<dd><p>sample names. By default the file name without extension
+    is used.</p></dd>
+<dt>sclass</dt>
+<dd><p>sample classes.</p></dd>
+<dt>phenoData</dt>
+<dd><p><code>data.frame</code> or <code>AnnotatedDataFrame</code>
     defining the sample names and classes and other sample related
     properties. If not provided, the argument <code>sclass</code> or the
     subdirectories in which the samples are stored will be
-    used to specify sample grouping.</p></td>
-    </tr><tr><th>profmethod</th>
-      <td><p>Method to use for profile generation. Supported
+    used to specify sample grouping.</p></dd>
+<dt>profmethod</dt>
+<dd><p>Method to use for profile generation. Supported
     values are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and
     <code>"intlin"</code> (for methods <code><a href="profGenerate.html">profBin</a></code>,
     <code><a href="profGenerate.html">profBinLin</a></code>, <code><a href="profGenerate.html">profBinLinBase</a></code> and
     <code><a href="profGenerate.html">profIntLin</a></code>, respectively). See help on
     <code><a href="profGenerate.html">profBin</a></code> for a complete list of available methods and
-    their supported parameters.</p></td>
-    </tr><tr><th>profparam</th>
-      <td><p>parameters to use for profile generation.</p></td>
-    </tr><tr><th>polarity</th>
-      <td><p>filter raw data for positive/negative scans</p></td>
-    </tr><tr><th>lockMassFreq</th>
-      <td><p>Performs correction for Waters LockMass function</p></td>
-    </tr><tr><th>mslevel</th>
-      <td><p>perform peak picking on data of given mslevel</p></td>
-    </tr><tr><th>nSlaves</th>
-      <td><p><em>DEPRECATED</em>, use <code>BPPARAM</code> argument
-      instead.</p></td>
-    </tr><tr><th>progressCallback</th>
-      <td><p>function to be called, when progressInfo changes (useful for GUIs)</p></td>
-    </tr><tr><th>scanrange</th>
-      <td><p>scan range to read</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>a <code>BiocParallel</code> parameter object to control how
+    their supported parameters.</p></dd>
+<dt>profparam</dt>
+<dd><p>parameters to use for profile generation.</p></dd>
+<dt>polarity</dt>
+<dd><p>filter raw data for positive/negative scans</p></dd>
+<dt>lockMassFreq</dt>
+<dd><p>Performs correction for Waters LockMass function</p></dd>
+<dt>mslevel</dt>
+<dd><p>perform peak picking on data of given mslevel</p></dd>
+<dt>nSlaves</dt>
+<dd><p><em>DEPRECATED</em>, use <code>BPPARAM</code> argument
+      instead.</p></dd>
+<dt>progressCallback</dt>
+<dd><p>function to be called, when progressInfo changes (useful for GUIs)</p></dd>
+<dt>scanrange</dt>
+<dd><p>scan range to read</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>a <code>BiocParallel</code> parameter object to control how
     and if parallel processing should be performed. Such objects can be
-    created by the <code><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></code>,
-    <code><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html">MulticoreParam</a></code> or
-    <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html">SnowParam</a></code> functions.</p></td>
-    </tr><tr><th>stopOnError</th>
-      <td><p>Logical specifying whether the feature detection
+    created by the <code><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></code>,
+    <code><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></code> or
+    <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></code> functions.</p></dd>
+<dt>stopOnError</dt>
+<dd><p>Logical specifying whether the feature detection
     call should stop on the first encountered error (the default), or
     whether feature detection is performed in all files regardless
     eventual failures for individual files in which case all errors are
-    reported as <code>warnings</code>.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>further arguments to the <code>findPeaks</code> method of the
-    <code>xcmsRaw</code> class</p></td>
-    </tr></table></div>
-
+    reported as <code>warnings</code>.</p></dd>
+<dt>...</dt>
+<dd><p>further arguments to the <code>findPeaks</code> method of the
+    <code>xcmsRaw</code> class</p></dd>
+</dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>The default values of the <code>files</code>, <code>snames</code>, <code>sclass</code>, and
@@ -183,6 +183,7 @@
   <code><a href="profStep-methods.html">profStep</a></code>,
   <code><a href="profMethod-methods.html">profMethod</a></code>,
   <code><a href="profGenerate.html">profBin</a></code></p></div>
+    </div>
     </div>
 
   </div>

@@ -21,7 +21,7 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise."><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise."><!-- mathja
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -64,7 +64,7 @@ peaks of the XCMSnExp object x were calibrated and FALSE otherwise."><!-- mathja
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Calibrant mass based calibration of chromatgraphic peaks</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>calibrate-calibrant-mass.Rd</code></div>
     </div>
 
@@ -77,7 +77,7 @@ peaks of the <a href="XCMSnExp-class.html">XCMSnExp</a> object <code>x</code> we
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">CalibrantMassParam</span><span class="op">(</span>
-  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>,
+  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
   mzabs <span class="op">=</span> <span class="fl">1e-04</span>,
   mzppm <span class="op">=</span> <span class="fl">5</span>,
   neighbors <span class="op">=</span> <span class="fl">3</span>,
@@ -89,43 +89,43 @@ peaks of the <a href="XCMSnExp-class.html">XCMSnExp</a> object <code>x</code> we
 <span class="co"># S4 method for XCMSnExp</span>
 <span class="fu"><a href="calibrate.html">calibrate</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
-      <td><p>a <code>numeric</code> or <code>list</code> of <code>numeric</code> vectors with reference mz
+    <dl><dt>mz</dt>
+<dd><p>a <code>numeric</code> or <code>list</code> of <code>numeric</code> vectors with reference mz
 values. If a <code>numeric</code> vector is provided, this is used for each sample
 in the <code>XCMSnExp</code> object. If a <code>list</code> is provided, it's length has to be
-equal to the number of samples in the experiment.</p></td>
-    </tr><tr><th>mzabs</th>
-      <td><p><code>numeric(1)</code> the absolute error/deviation for matching peaks to
-calibrants (in Da).</p></td>
-    </tr><tr><th>mzppm</th>
-      <td><p><code>numeric(1)</code> the relative error for matching peaks to calibrants
-in ppm (parts per million).</p></td>
-    </tr><tr><th>neighbors</th>
-      <td><p><code>integer(1)</code> with the maximal number of peaks within the
+equal to the number of samples in the experiment.</p></dd>
+<dt>mzabs</dt>
+<dd><p><code>numeric(1)</code> the absolute error/deviation for matching peaks to
+calibrants (in Da).</p></dd>
+<dt>mzppm</dt>
+<dd><p><code>numeric(1)</code> the relative error for matching peaks to calibrants
+in ppm (parts per million).</p></dd>
+<dt>neighbors</dt>
+<dd><p><code>integer(1)</code> with the maximal number of peaks within the
 permitted distance to the calibrants that are considered. Among these the
 mz value of the peak with the largest intensity is used in the
-calibration function estimation.</p></td>
-    </tr><tr><th>method</th>
-      <td><p><code>character(1)</code> defining the method that should be used to
+calibration function estimation.</p></dd>
+<dt>method</dt>
+<dd><p><code>character(1)</code> defining the method that should be used to
 estimate the calibration function. Can be <code>"shift"</code>, <code>"linear"</code> (default)
-or <code>"edgeshift"</code>.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>An <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>The <code>CalibrantMassParam</code> object with the calibration settings.</p></td>
-    </tr></table></div>
-
+or <code>"edgeshift"</code>.</p></dd>
+<dt>object</dt>
+<dd><p>An <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></dd>
+<dt>param</dt>
+<dd><p>The <code>CalibrantMassParam</code> object with the calibration settings.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>For <code>CalibrantMassParam</code>: a <code>CalibrantMassParam</code> instance.
 For <code>calibrate</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object with chromatographic peaks being
 calibrated. <strong>Be aware</strong> that the actual raw mz values are not (yet)
-calibrated, but <strong>only</strong> the identified chromatographic peaks.</p>
-<p>The <code>CalibrantMassParam</code> function returns an instance of
-the <code>CalibrantMassParam</code> class with all settings and properties set.</p>
-<p>The <code>calibrate</code> method returns an <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
+calibrated, but <strong>only</strong> the identified chromatographic peaks.
+The <code>CalibrantMassParam</code> function returns an instance of
+the <code>CalibrantMassParam</code> class with all settings and properties set.
+The <code>calibrate</code> method returns an <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
 chromatographic peaks being calibrated. Note that <strong>only</strong> the detected
 peaks are calibrated, but not the individual mz values in each spectrum.</p>
     </div>
@@ -159,6 +159,7 @@ methods.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Joachim Bargsten, Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

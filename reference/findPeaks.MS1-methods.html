@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,18 +71,15 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>xcmsRaw</code> object</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>
     findPeaks.MS1(object)
     </code></p></dd>
+
 
 </dl></div>
     <div id="details">
@@ -118,15 +115,20 @@
   the precursor retention time (then a reasonably close rt will be
   chosen. NYI).</p>
     </div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p><code>xcmsRaw</code> object</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix with columns:</p>
-<p></p>
-<dl><dt>mz, mzmin, mzmax</dt><dd><p>annotated MS1 precursor selection mass</p></dd>
-</dl><p></p>
-<dl><dt>rt, rtmin, rtmax</dt><dd><p>annotated MS1 precursor retention time</p></dd>
-</dl><p></p>
-<dl><dt>into, maxo, sn</dt><dd><p>annotated MS1 precursor intensity</p></dd>
+<dl><dt>mz, mzmin, mzmax</dt>
+<dd><p>annotated MS1 precursor selection mass</p></dd>
+<dt>rt, rtmin, rtmax</dt>
+<dd><p>annotated MS1 precursor retention time</p></dd>
+<dt>into, maxo, sn</dt>
+<dd><p>annotated MS1 precursor intensity</p></dd>
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -136,6 +138,7 @@
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="findPeaks-methods.html">findPeaks-methods</a></code>
   <code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

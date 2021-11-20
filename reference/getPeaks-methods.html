@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,51 +71,55 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>peakrange</th>
-      <td><p>matrix or data frame with 4 columns: <code>mzmin</code>, <code>mzmax</code>,
-    <code>rtmin</code>, <code>rtmax</code> (they must be in that order or named)</p></td>
-    </tr><tr><th>step</th>
-      <td><p>step size to use for profile generation</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>getPeaks(object, peakrange, step = 0.1)</code></p></dd>
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>getPeaks(object, peakrange, step = 0.1)</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>peakrange</dt>
+<dd><p>matrix or data frame with 4 columns: <code>mzmin</code>, <code>mzmax</code>,
+    <code>rtmin</code>, <code>rtmax</code> (they must be in that order or named)</p></dd>
+<dt>step</dt>
+<dd><p>step size to use for profile generation</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix with columns:</p>
-<dl><dt>i</dt><dd><p>rank of peak identified in merged EIC (&lt;= <code>max</code>), always <code>NA</code></p></dd>
-</dl><p></p>
-<dl><dt>mz</dt><dd><p>weighted (by intensity) mean of peak m/z across scans</p></dd>
-</dl><p></p>
-<dl><dt>mzmin</dt><dd><p>m/z of minimum step</p></dd>
-</dl><p></p>
-<dl><dt>mzmax</dt><dd><p>m/z of maximum step</p></dd>
-</dl><p></p>
-<dl><dt>ret</dt><dd><p>retention time of peak midpoint</p></dd>
-</dl><p></p>
-<dl><dt>retmin</dt><dd><p>leading edge of peak retention time</p></dd>
-</dl><p></p>
-<dl><dt>retmax</dt><dd><p>trailing edge of peak retention time</p></dd>
-</dl><p></p>
-<dl><dt>into</dt><dd><p>integrated area of original (raw) peak</p></dd>
-</dl><p></p>
-<dl><dt>intf</dt><dd><p>integrated area of filtered peak, always <code>NA</code></p></dd>
-</dl><p></p>
-<dl><dt>maxo</dt><dd><p>maximum intensity of original (raw) peak</p></dd>
-</dl><p></p>
-<dl><dt>maxf</dt><dd><p>maximum intensity of filtered peak, always <code>NA</code></p></dd>
+<dl><dt>i</dt>
+<dd><p>rank of peak identified in merged EIC (&lt;= <code>max</code>), always <code>NA</code></p></dd>
+<dt>mz</dt>
+<dd><p>weighted (by intensity) mean of peak m/z across scans</p></dd>
+<dt>mzmin</dt>
+<dd><p>m/z of minimum step</p></dd>
+<dt>mzmax</dt>
+<dd><p>m/z of maximum step</p></dd>
+<dt>ret</dt>
+<dd><p>retention time of peak midpoint</p></dd>
+<dt>retmin</dt>
+<dd><p>leading edge of peak retention time</p></dd>
+<dt>retmax</dt>
+<dd><p>trailing edge of peak retention time</p></dd>
+<dt>into</dt>
+<dd><p>integrated area of original (raw) peak</p></dd>
+<dt>intf</dt>
+<dd><p>integrated area of filtered peak, always <code>NA</code></p></dd>
+<dt>maxo</dt>
+<dd><p>maximum intensity of original (raw) peak</p></dd>
+<dt>maxf</dt>
+<dd><p>maximum intensity of filtered peak, always <code>NA</code></p></dd>
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -72,18 +72,18 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">medianFilter</span><span class="op">(</span><span class="va">x</span>, <span class="va">mrad</span>, <span class="va">nrad</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>numeric matrix to median filter</p></td>
-    </tr><tr><th>mrad</th>
-      <td><p>number of rows on either side of the value to use for median
-    calculation</p></td>
-    </tr><tr><th>nrad</th>
-      <td><p>number of rows on either side of the value to use for median
-    calculation</p></td>
-    </tr></table></div>
-
+    <dl><dt>x</dt>
+<dd><p>numeric matrix to median filter</p></dd>
+<dt>mrad</dt>
+<dd><p>number of rows on either side of the value to use for median
+    calculation</p></dd>
+<dt>nrad</dt>
+<dd><p>number of rows on either side of the value to use for median
+    calculation</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix whose values have been median filtered</p>
@@ -92,10 +92,11 @@
     <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a></p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, nrow<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
+    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">25</span>, nrow<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">mat</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2] [,3] [,4] [,5]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    1    6   11   16   21</span>

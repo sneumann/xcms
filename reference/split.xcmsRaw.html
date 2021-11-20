@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,27 +71,29 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>xcmsRaw</code> object</p></td>
-    </tr><tr><th>f</th>
-      <td><p>factor such that <code>factor(f)</code> defines the scans which go
-    into the new <code>xcmsRaw</code> objects</p></td>
-    </tr><tr><th>drop</th>
-      <td><p>logical indicating if levels that do not occur should be dropped
-    (if 'f' is a 'factor' or a list).</p></td>
-    </tr><tr><th>...</th>
-      <td><p>further potential arguments passed to methods.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>xr = "xcmsRaw"</dt><dd><p><code>
+<dl><dt>xr = "xcmsRaw"</dt>
+<dd><p><code>
     split(x, f, drop = TRUE, ...)
   </code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>x</dt>
+<dd><p><code>xcmsRaw</code> object</p></dd>
+<dt>f</dt>
+<dd><p>factor such that <code>factor(f)</code> defines the scans which go
+    into the new <code>xcmsRaw</code> objects</p></dd>
+<dt>drop</dt>
+<dd><p>logical indicating if levels that do not occur should be dropped
+    (if 'f' is a 'factor' or a list).</p></dd>
+<dt>...</dt>
+<dd><p>further potential arguments passed to methods.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -104,6 +106,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

@@ -22,7 +22,7 @@ correspondence algorithm of mzMine (Katajamaa 2006)."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ correspondence algorithm of mzMine (Katajamaa 2006)."><!-- mathjax --><script sr
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -66,7 +66,7 @@ correspondence algorithm of mzMine (Katajamaa 2006)."><!-- mathjax --><script sr
     <div class="page-header">
     <h1>Core API function for chromatic peak grouping using a nearest
 neighbor approach</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_groupChromPeaks-functions.R"><code>R/do_groupChromPeaks-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_groupChromPeaks-functions.R" class="external-link"><code>R/do_groupChromPeaks-functions.R</code></a></small>
     <div class="hidden name"><code>do_groupChromPeaks_nearest.Rd</code></div>
     </div>
 
@@ -86,34 +86,34 @@ correspondence algorithm of mzMine (Katajamaa 2006).</p>
   kNN <span class="op">=</span> <span class="fl">10</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
-      <td><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
+    <dl><dt>peaks</dt>
+<dd><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
 retention times of the identified chromatographic peaks in all samples of an
 experiment. Required columns are <code>"mz"</code>, <code>"rt"</code> and
 <code>"sample"</code>. The latter should contain <code>numeric</code> values representing
-the index of the sample in which the peak was found.</p></td>
-    </tr><tr><th>sampleGroups</th>
-      <td><p>A vector of the same length than samples defining the
+the index of the sample in which the peak was found.</p></dd>
+<dt>sampleGroups</dt>
+<dd><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
 group). This parameter is mandatory for the <code>PeakDensityParam</code>
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
-same group).</p></td>
-    </tr><tr><th>mzVsRtBalance</th>
-      <td><p><code>numeric(1)</code> representing the factor by which mz
+same group).</p></dd>
+<dt>mzVsRtBalance</dt>
+<dd><p><code>numeric(1)</code> representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between
-two peaks.</p></td>
-    </tr><tr><th>absMz</th>
-      <td><p><code>numeric(1)</code> maximum tolerated distance for mz values.</p></td>
-    </tr><tr><th>absRt</th>
-      <td><p><code>numeric(1)</code> maximum tolerated distance for rt values.</p></td>
-    </tr><tr><th>kNN</th>
-      <td><p><code>numeric(1)</code> representing the number of nearest neighbors
-to check.</p></td>
-    </tr></table></div>
-
+two peaks.</p></dd>
+<dt>absMz</dt>
+<dd><p><code>numeric(1)</code> maximum tolerated distance for mz values.</p></dd>
+<dt>absRt</dt>
+<dd><p><code>numeric(1)</code> maximum tolerated distance for rt values.</p></dd>
+<dt>kNN</dt>
+<dd><p><code>numeric(1)</code> representing the number of nearest neighbors
+to check.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code>list</code> with elements <code>"featureDefinitions"</code> and
@@ -139,6 +139,7 @@ data. Bioinformatics 2006, 22:634-636.</p>
     <div class="dont-index"><p>Other core peak grouping algorithms: 
 <code><a href="do_groupChromPeaks_density.html">do_groupChromPeaks_density</a>()</code>,
 <code><a href="do_groupPeaks_mzClust.html">do_groupPeaks_mzClust</a>()</code></p></div>
+    </div>
     </div>
 
   </div>

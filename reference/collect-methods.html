@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,29 +73,31 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>(empty) <code><a href="xcmsFragments-class.html">xcmsFragments-class</a></code> object</p></td>
-    </tr><tr><th>xs</th>
-      <td><p>A <code><a href="xcmsSet-class.html">xcmsSet-class</a></code> object which contains
-    picked ms1-peaks from several experiments</p></td>
-    </tr><tr><th>compMethod</th>
-      <td><p>("floor", "round", "none"): compare-method which is
-    used to find the parent peak of a MSnpeak through comparing the
-    MZ-values of the  MS1peaks with the MSnParentPeaks.</p></td>
-    </tr><tr><th>snthresh, mzgap, uniq</th>
-      <td><p>these are the parameters for the
-    getspec-peakpicker included in xcmsRaw.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsFragments"</dt><dd><p><code>
+<dl><dt>object = "xcmsFragments"</dt>
+<dd><p><code>
     collect(object, ...)
    </code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>(empty) <code><a href="xcmsFragments-class.html">xcmsFragments-class</a></code> object</p></dd>
+<dt>xs</dt>
+<dd><p>A <code><a href="xcmsSet-class.html">xcmsSet-class</a></code> object which contains
+    picked ms1-peaks from several experiments</p></dd>
+<dt>compMethod</dt>
+<dd><p>("floor", "round", "none"): compare-method which is
+    used to find the parent peak of a MSnpeak through comparing the
+    MZ-values of the  MS1peaks with the MSnParentPeaks.</p></dd>
+<dt>snthresh, mzgap, uniq</dt>
+<dd><p>these are the parameters for the
+    getspec-peakpicker included in xcmsRaw.</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -108,24 +110,26 @@
     <div id="value">
     <h2>Value</h2>
     <p>A matrix with columns:</p>
-<dl><dt>peakID</dt><dd><p>unique identifier of every peak</p></dd>
-</dl><p></p>
-<dl><dt>MSnParentPeakID</dt><dd><p>PeakID of the parent peak of a msLevel&gt;1 - peak, it is 0 if the peak is msLevel 1.</p></dd>
-</dl><p></p>
-<dl><dt>msLevel</dt><dd><p>The msLevel of the peak.</p></dd>
-</dl><p></p>
-<dl><dt>rt</dt><dd><p>retention time of the peak midpoint</p></dd>
-</dl><p></p>
-<dl><dt>mz</dt><dd><p>the mz-Value of the peak</p></dd>
-</dl><p></p>
-<dl><dt>intensity</dt><dd><p>the intensity of the peak</p></dd>
-</dl><p></p>
-<dl><dt>sample</dt><dd><p>the number of the sample from the xcmsSet</p></dd>
-</dl><p></p>
-<dl><dt>GroupPeakMSn</dt><dd><p>Used for grouped xcmsSet groups</p></dd>
-</dl><p></p>
-<dl><dt>CollisionEnergy</dt><dd><p>The collision energy of the fragment</p></dd>
+<dl><dt>peakID</dt>
+<dd><p>unique identifier of every peak</p></dd>
+<dt>MSnParentPeakID</dt>
+<dd><p>PeakID of the parent peak of a msLevel&gt;1 - peak, it is 0 if the peak is msLevel 1.</p></dd>
+<dt>msLevel</dt>
+<dd><p>The msLevel of the peak.</p></dd>
+<dt>rt</dt>
+<dd><p>retention time of the peak midpoint</p></dd>
+<dt>mz</dt>
+<dd><p>the mz-Value of the peak</p></dd>
+<dt>intensity</dt>
+<dd><p>the intensity of the peak</p></dd>
+<dt>sample</dt>
+<dd><p>the number of the sample from the xcmsSet</p></dd>
+<dt>GroupPeakMSn</dt>
+<dd><p>Used for grouped xcmsSet groups</p></dd>
+<dt>CollisionEnergy</dt>
+<dd><p>The collision energy of the fragment</p></dd>
 </dl></div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

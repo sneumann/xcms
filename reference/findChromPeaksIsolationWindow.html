@@ -32,7 +32,7 @@ findChromPeaks() for more information)."><!-- mathjax --><script src="https://cd
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -60,7 +60,7 @@ findChromPeaks() for more information)."><!-- mathjax --><script src="https://cd
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,7 +75,7 @@ findChromPeaks() for more information)."><!-- mathjax --><script src="https://cd
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Data independent acquisition (DIA): peak detection in isolation windows</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>findChromPeaksIsolationWindow.Rd</code></div>
     </div>
 
@@ -106,26 +106,26 @@ isolation window target m/z (seprarately for each file). The parameter
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object with the DIA data.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>Peak detection parameter object, such as a
+    <dl><dt>object</dt>
+<dd><p><code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object with the DIA data.</p></dd>
+<dt>param</dt>
+<dd><p>Peak detection parameter object, such as a
 <a href="findChromPeaks-centWave.html">CentWaveParam</a> object defining and configuring the chromographic
 peak detection algorithm.
-See also <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code> for more details.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> specifying the MS level in which the peak
-detection should be performed. By default <code>msLevel = 2L</code>.</p></td>
-    </tr><tr><th>isolationWindow</th>
-      <td><p><code>factor</code> or similar defining the isolation windows in
+See also <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code> for more details.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> specifying the MS level in which the peak
+detection should be performed. By default <code>msLevel = 2L</code>.</p></dd>
+<dt>isolationWindow</dt>
+<dd><p><code>factor</code> or similar defining the isolation windows in
 which the peak detection should be performed with length equal to the
-number of spectra in <code>object</code>.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>currently not used.</p></td>
-    </tr></table></div>
-
+number of spectra in <code>object</code>.</p></dd>
+<dt>...</dt>
+<dd><p>currently not used.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An <code>XCMSnExp</code> object with the chromatographic peaks identified in spectra of
@@ -141,6 +141,7 @@ MS2 spectra for each MS1 chromatographic peak.</p></div>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer, Michael Witting</p>
+    </div>
     </div>
 
   </div>

@@ -24,7 +24,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -67,7 +67,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Aggregate values in y for bins defined on x</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-binning.R"><code>R/functions-binning.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-binning.R" class="external-link"><code>R/functions-binning.R</code></a></small>
     <div class="hidden name"><code>binYonX.Rd</code></div>
     </div>
 
@@ -91,84 +91,84 @@
   <span class="va">binFromX</span>,
   <span class="va">binToX</span>,
   fromIdx <span class="op">=</span> <span class="fl">1L</span>,
-  toIdx <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
+  toIdx <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
   method <span class="op">=</span> <span class="st">"max"</span>,
   <span class="va">baseValue</span>,
-  sortedX <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/is.unsorted.html">is.unsorted</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
+  sortedX <span class="op">=</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/is.unsorted.html" class="external-link">is.unsorted</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,
   shiftByHalfBinSize <span class="op">=</span> <span class="cn">FALSE</span>,
   returnIndex <span class="op">=</span> <span class="cn">FALSE</span>,
   returnX <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>Numeric vector to be used for binning.</p></td>
-    </tr><tr><th>y</th>
-      <td><p>Numeric vector (same length than <code>x</code>) from which the maximum
+    <dl><dt>x</dt>
+<dd><p>Numeric vector to be used for binning.</p></dd>
+<dt>y</dt>
+<dd><p>Numeric vector (same length than <code>x</code>) from which the maximum
 values for each bin should be defined. If not provided, <code>x</code> will
-be used.</p></td>
-    </tr><tr><th>breaks</th>
-      <td><p>Numeric vector defining the breaks for the bins, i.e. the
-lower and upper values for each bin. See examples below.</p></td>
-    </tr><tr><th>nBins</th>
-      <td><p>integer(1) defining the number of desired bins.</p></td>
-    </tr><tr><th>binSize</th>
-      <td><p>numeric(1) defining the desired bin size.</p></td>
-    </tr><tr><th>binFromX</th>
-      <td><p>Optional numeric(1) allowing to manually specify
+be used.</p></dd>
+<dt>breaks</dt>
+<dd><p>Numeric vector defining the breaks for the bins, i.e. the
+lower and upper values for each bin. See examples below.</p></dd>
+<dt>nBins</dt>
+<dd><p>integer(1) defining the number of desired bins.</p></dd>
+<dt>binSize</dt>
+<dd><p>numeric(1) defining the desired bin size.</p></dd>
+<dt>binFromX</dt>
+<dd><p>Optional numeric(1) allowing to manually specify
 the range of x-values to be used for binning.
 This will affect only the calculation of the breaks for the bins
 (i.e. if <code>nBins</code> or <code>binSize</code> is provided).
 If not provided the minimal value in the sub-set
-<code>fromIdx</code>-<code>toIdx</code> in input vector <code>x</code> will be used.</p></td>
-    </tr><tr><th>binToX</th>
-      <td><p>Same as <code>binFromX</code>, but defining the maximum x-value to be
-used for binning.</p></td>
-    </tr><tr><th>fromIdx</th>
-      <td><p>Integer vector defining the start position of one or multiple
-sub-sets of input vector <code>x</code> that should be used for binning.</p></td>
-    </tr><tr><th>toIdx</th>
-      <td><p>Same as <code>toIdx</code>, but defining the maximum index (or indices)
-in x to be used for binning.</p></td>
-    </tr><tr><th>method</th>
-      <td><p>A character string specifying the method that should be used to
+<code>fromIdx</code>-<code>toIdx</code> in input vector <code>x</code> will be used.</p></dd>
+<dt>binToX</dt>
+<dd><p>Same as <code>binFromX</code>, but defining the maximum x-value to be
+used for binning.</p></dd>
+<dt>fromIdx</dt>
+<dd><p>Integer vector defining the start position of one or multiple
+sub-sets of input vector <code>x</code> that should be used for binning.</p></dd>
+<dt>toIdx</dt>
+<dd><p>Same as <code>toIdx</code>, but defining the maximum index (or indices)
+in x to be used for binning.</p></dd>
+<dt>method</dt>
+<dd><p>A character string specifying the method that should be used to
 aggregate values in <code>y</code>. Allowed are <code>"max"</code>, <code>"min"</code>,
 <code>"sum"</code> and <code>"mean"</code> to identify the maximal or minimal value
-or to sum all values within a bin or calculate their mean value.</p></td>
-    </tr><tr><th>baseValue</th>
-      <td><p>The base value for empty bins (i.e. bins into which either
+or to sum all values within a bin or calculate their mean value.</p></dd>
+<dt>baseValue</dt>
+<dd><p>The base value for empty bins (i.e. bins into which either
 no values in <code>x</code> did fall, or to which only <code>NA</code> values in
 <code>y</code> were assigned). By default (i.e. if not specified), <code>NA</code>
-is assigned to such bins.</p></td>
-    </tr><tr><th>sortedX</th>
-      <td><p>Whether <code>x</code> is sorted.</p></td>
-    </tr><tr><th>shiftByHalfBinSize</th>
-      <td><p>Logical specifying whether the bins should be
+is assigned to such bins.</p></dd>
+<dt>sortedX</dt>
+<dd><p>Whether <code>x</code> is sorted.</p></dd>
+<dt>shiftByHalfBinSize</dt>
+<dd><p>Logical specifying whether the bins should be
 shifted by half the bin size to the left. Thus, the first bin will have
 its center at <code>fromX</code> and its lower and upper boundary are
 <code>fromX - binSize/2</code> and <code>fromX + binSize/2</code>. This argument is
-ignored if <code>breaks</code> are provided.</p></td>
-    </tr><tr><th>returnIndex</th>
-      <td><p>Logical indicating whether the index of the max (if
+ignored if <code>breaks</code> are provided.</p></dd>
+<dt>returnIndex</dt>
+<dd><p>Logical indicating whether the index of the max (if
 <code>method = "max"</code>) or min (if <code>method = "min"</code>) value within
 each bin in input vector <code>x</code> should also be reported. For methods
-other than <code>"max"</code> or <code>"min"</code> this argument is ignored.</p></td>
-    </tr><tr><th>returnX</th>
-      <td><p><code>logical</code> allowing to avoid returning <code>$x</code>, i.e. the
+other than <code>"max"</code> or <code>"min"</code> this argument is ignored.</p></dd>
+<dt>returnX</dt>
+<dd><p><code>logical</code> allowing to avoid returning <code>$x</code>, i.e. the
 mid-points of the bins. <code>returnX = FALSE</code> might be useful in cases
 where <code>breaks</code> are pre-defined as it considerably reduces the memory
-demand.</p></td>
-    </tr></table></div>
-
+demand.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>Returns a list of length 2, the first element (named <code>"x"</code>)
     contains the bin mid-points, the second element (named <code>"y"</code>) the
     aggregated values from input vector <code>y</code> within each bin. For
-    <code>returnIndex = TRUE</code> the list contains an additional element
-    <code>"index"</code> with the index of the max or min (depending on whether
-    <code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
+<code>returnIndex = TRUE</code> the list contains an additional element
+<code>"index"</code> with the index of the max or min (depending on whether
+<code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
     input vector <code>x</code>.</p>
     </div>
     <div id="details">
@@ -223,6 +223,7 @@ demand.</p></td>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
@@ -230,7 +231,7 @@ demand.</p></td>
 <span class="r-in"><span class="co">## Simple example illustrating the breaks and the binning.</span></span>
 <span class="r-in"><span class="co">##</span></span>
 <span class="r-in"><span class="co">## Define breaks for 5 bins:</span></span>
-<span class="r-in"><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">12</span>, length.out <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">brks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">12</span>, length.out <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## The first bin is then [2,4), the second [4,6) and so on.</span></span>
 <span class="r-in"><span class="va">brks</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  2  4  6  8 10 12</span>
@@ -286,7 +287,7 @@ demand.</p></td>
 <span class="r-in"><span class="co">## each scan. We want to get the maximum intensities for M/Z value bins only</span></span>
 <span class="r-in"><span class="co">## for the second scan, and thus we use fromIdx = 11 and toIdx = 20. The breaks</span></span>
 <span class="r-in"><span class="co">## for the bins are defined with the nBins, binFromX and binToX.</span></span>
-<span class="r-in"><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">30</span></span>
 <span class="r-in"><span class="co">## Bin the M/Z values in the second scan into 5 bins and get the maximum</span></span>
 <span class="r-in"><span class="co">## intensity for each bin. Note that we have to specify sortedX = TRUE as</span></span>
@@ -306,8 +307,8 @@ demand.</p></td>
 <span class="r-in"><span class="co">## within these.</span></span>
 <span class="r-in"><span class="va">X</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">30</span></span>
 <span class="r-in"><span class="co">## Define the start and end indices of the sub-sets.</span></span>
-<span class="r-in"><span class="va">fIdx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">21</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tIdx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, <span class="fl">30</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fIdx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">21</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tIdx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">25</span>, <span class="fl">30</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">binYonX</span><span class="op">(</span><span class="va">X</span>, nBins <span class="op">=</span> <span class="fl">5L</span>, fromIdx <span class="op">=</span> <span class="va">fIdx</span>, toIdx <span class="op">=</span> <span class="va">tIdx</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]$x</span>

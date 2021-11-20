@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -64,7 +64,7 @@
     <div class="page-header">
     <h1>Core API function for single-spectrum non-chromatography MS data
     peak detection</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_findChromPeaks-functions.R"><code>R/do_findChromPeaks-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
     <div class="hidden name"><code>do_findPeaks_MSW.Rd</code></div>
     </div>
 
@@ -75,37 +75,59 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">do_findPeaks_MSW</span><span class="op">(</span><span class="va">mz</span>, <span class="va">int</span>, snthresh <span class="op">=</span> <span class="fl">3</span>, verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
-      <td><p>Numeric vector with the individual m/z values from all scans/
-spectra of one file/sample.</p></td>
-    </tr><tr><th>int</th>
-      <td><p>Numeric vector with the individual intensity values from all
-scans/spectra of one file/sample.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
-    </tr><tr><th>verboseColumns</th>
-      <td><p><code>logical(1)</code> whether additional peak meta data
-columns should be returned.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional parameters to be passed to the
-<code>peakDetectionCWT</code> function.</p></td>
-    </tr></table></div>
-
+    <dl><dt>mz</dt>
+<dd><p>Numeric vector with the individual m/z values from all scans/
+spectra of one file/sample.</p></dd>
+<dt>int</dt>
+<dd><p>Numeric vector with the individual intensity values from all
+scans/spectra of one file/sample.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+<dt>verboseColumns</dt>
+<dd><p><code>logical(1)</code> whether additional peak meta data
+columns should be returned.</p></dd>
+<dt>...</dt>
+<dd><p>Additional parameters to be passed to the
+<code>peakDetectionCWT</code> function.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix, each row representing an identified peak, with columns:</p><dl><dt>mz</dt><dd><p>m/z value of the peak at the centroid position.</p></dd>
-    <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
-    <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
-    <dt>rt</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>rtmin</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>rtmax</dt><dd><p>Always <code>-1</code>.</p></dd>
-    <dt>into</dt><dd><p>Integrated (original) intensity of the peak.</p></dd>
-    <dt>maxo</dt><dd><p>Maximum intensity of the peak.</p></dd>
-    <dt>intf</dt><dd><p>Always <code>NA</code>.</p></dd>
-    <dt>maxf</dt><dd><p>Maximum MSW-filter response of the peak.</p></dd>
-    <dt>sn</dt><dd><p>Signal to noise ratio.</p></dd>
+    <p>A matrix, each row representing an identified peak, with columns:</p><dl><dt>mz</dt>
+<dd><p>m/z value of the peak at the centroid position.</p></dd>
+
+    <dt>mzmin</dt>
+<dd><p>Minimum m/z of the peak.</p></dd>
+
+    <dt>mzmax</dt>
+<dd><p>Maximum m/z of the peak.</p></dd>
+
+    <dt>rt</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>rtmin</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>rtmax</dt>
+<dd><p>Always <code>-1</code>.</p></dd>
+
+    <dt>into</dt>
+<dd><p>Integrated (original) intensity of the peak.</p></dd>
+
+    <dt>maxo</dt>
+<dd><p>Maximum intensity of the peak.</p></dd>
+
+    <dt>intf</dt>
+<dd><p>Always <code>NA</code>.</p></dd>
+
+    <dt>maxf</dt>
+<dd><p>Maximum MSW-filter response of the peak.</p></dd>
+
+    <dt>sn</dt>
+<dd><p>Signal to noise ratio.</p></dd>
+
     
 </dl></div>
     <div id="details">
@@ -130,6 +152,7 @@ columns should be returned.</p></td>
     <div id="author">
     <h2>Author</h2>
     <p>Joachim Kutzera, Steffen Neumann, Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

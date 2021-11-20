@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -69,35 +69,37 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>xcmsRaw</code> object</p></td>
-    </tr><tr><th>mzrange</th>
-      <td><p>m/z range for EIC. Uses the full m/z range by default.</p></td>
-    </tr><tr><th>rtrange</th>
-      <td><p>retention time range for EIC. Uses the full retention time range by default.</p></td>
-    </tr><tr><th>scanrange</th>
-      <td><p>scan range for EIC</p></td>
-    </tr><tr><th>mzdec</th>
-      <td><p>Number of decimal places of title m/z values in the eic plot.</p></td>
-    </tr><tr><th>type</th>
-      <td><p>Speficies how the data should be plotted (by default as a line).</p></td>
-    </tr><tr><th>add</th>
-      <td><p>If the EIC should be added to an existing plot.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Additional parameters passed to the plotting function
-    (e.g. <code>col</code> etc).</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>
     plotEIC(object, mzrange = numeric(), rtrange = numeric(),
     scanrange = numeric(), mzdec=2, type="l", add=FALSE, ...)
   </code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p><code>xcmsRaw</code> object</p></dd>
+<dt>mzrange</dt>
+<dd><p>m/z range for EIC. Uses the full m/z range by default.</p></dd>
+<dt>rtrange</dt>
+<dd><p>retention time range for EIC. Uses the full retention time range by default.</p></dd>
+<dt>scanrange</dt>
+<dd><p>scan range for EIC</p></dd>
+<dt>mzdec</dt>
+<dd><p>Number of decimal places of title m/z values in the eic plot.</p></dd>
+<dt>type</dt>
+<dd><p>Speficies how the data should be plotted (by default as a line).</p></dd>
+<dt>add</dt>
+<dd><p>If the EIC should be added to an existing plot.</p></dd>
+<dt>...</dt>
+<dd><p>Additional parameters passed to the plotting function
+    (e.g. <code>col</code> etc).</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -110,6 +112,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="rawEIC-methods.html">rawEIC</a>,<a href="xcmsRaw-class.html">xcmsRaw-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

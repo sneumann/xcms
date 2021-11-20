@@ -25,7 +25,7 @@ will be generated.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@ will be generated.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@ will be generated.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Impute missing values with random numbers based on the row minimum</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-imputation.R"><code>R/functions-imputation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-imputation.R" class="external-link"><code>R/functions-imputation.R</code></a></small>
     <div class="hidden name"><code>imputeRowMinRand.Rd</code></div>
     </div>
 
@@ -86,39 +86,39 @@ will be generated.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">imputeRowMinRand</span><span class="op">(</span>
   <span class="va">x</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"mean_sd"</span>, <span class="st">"from_to"</span><span class="op">)</span>,
+  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean_sd"</span>, <span class="st">"from_to"</span><span class="op">)</span>,
   min_fraction <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,
   min_fraction_from <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">1000</span>,
   sd_fraction <span class="op">=</span> <span class="fl">1</span>,
   abs <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>matrix</code> with abundances, rows being features/metabolites and
-columns samples.</p></td>
-    </tr><tr><th>method</th>
-      <td><p>method <code>character(1)</code> defining the imputation method.
-See description for details. Defaults to <code>method = "mean_sd"</code>.</p></td>
-    </tr><tr><th>min_fraction</th>
-      <td><p><code>numeric(1)</code> with the fraction of the row minimum that
+    <dl><dt>x</dt>
+<dd><p><code>matrix</code> with abundances, rows being features/metabolites and
+columns samples.</p></dd>
+<dt>method</dt>
+<dd><p>method <code>character(1)</code> defining the imputation method.
+See description for details. Defaults to <code>method = "mean_sd"</code>.</p></dd>
+<dt>min_fraction</dt>
+<dd><p><code>numeric(1)</code> with the fraction of the row minimum that
 should be used to replace <code>NA</code> values in that row in case that <code>mean_sd</code>
 method is specified. When  using <code>from_to</code> method, this value will be the
-one used to calculate the maximum value for replace <code>NA</code> values in that row.</p></td>
-    </tr><tr><th>min_fraction_from</th>
-      <td><p><code>numeric(1)</code> with the fraction of the row minimum
+one used to calculate the maximum value for replace <code>NA</code> values in that row.</p></dd>
+<dt>min_fraction_from</dt>
+<dd><p><code>numeric(1)</code> with the fraction of the row minimum
 that should be used to calculate the minimum value for replace <code>NA</code> values
 in that row. This parameter is used only in case that <code>from_to</code> method is
-specified.</p></td>
-    </tr><tr><th>sd_fraction</th>
-      <td><p><code>numeric(1)</code> factor to reduce the estimated standard
+specified.</p></dd>
+<dt>sd_fraction</dt>
+<dd><p><code>numeric(1)</code> factor to reduce the estimated standard
 deviation. This parameter is used only in case that <code>mean_sd</code> method is
-specified.</p></td>
-    </tr><tr><th>abs</th>
-      <td><p><code>logical(1)</code> to force imputed values to be strictly positive.</p></td>
-    </tr></table></div>
-
+specified.</p></dd>
+<dt>abs</dt>
+<dd><p><code>logical(1)</code> to force imputed values to be strictly positive.</p></dd>
+</dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>For method <strong>mean_sd</strong>, imputed
@@ -144,12 +144,13 @@ fractions of the row minimum.</p>
     <h2>Author</h2>
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"faahko"</span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"faahko"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">xset</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 3195 mz slices ... </span>
@@ -158,16 +159,16 @@ fractions of the row minimum.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Estimate the relationship between row sd and mean. The standard deviation</span></span>
 <span class="r-in"><span class="co">## of the random distribution is estimated on this relationship.</span></span>
-<span class="r-in"><span class="va">mns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html">rowMeans</a></span><span class="op">(</span><span class="va">mat</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">sds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">mat</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, <span class="va">sd</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">mns</span>, <span class="va">sds</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">sds</span> <span class="op">~</span> <span class="va">mns</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-plt"><img src="imputeRowMinRand-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="va">mns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">mat</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">sds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">mat</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, <span class="va">sd</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mns</span>, <span class="va">sds</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">sds</span> <span class="op">~</span> <span class="va">mns</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="imputeRowMinRand-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">mat_imp_meansd</span> <span class="op">&lt;-</span> <span class="fu">imputeRowMinRand</span><span class="op">(</span><span class="va">mat</span>, method <span class="op">=</span> <span class="st">"mean_sd"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">mat_imp_fromto</span> <span class="op">&lt;-</span> <span class="fu">imputeRowMinRand</span><span class="op">(</span><span class="va">mat</span>, method <span class="op">=</span> <span class="st">"from_to"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15      ko16       ko18      ko19       ko21      ko22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.7   65290.38        NA   91635.45  162012.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.1 1482796.38 1039129.8 1223132.35 1072037.7</span>
@@ -182,36 +183,36 @@ fractions of the row minimum.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.6  324892.46  277990.70  220972.35  252874.0  236728.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38         NA  238194.4  173829.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">mat_imp_meansd</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15       ko16       ko18       ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.71   65290.38   23393.26   91635.45  162012.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269713.98  201393.42  150107.31  176989.65  156797.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.74  351750.14  219287.97  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.38   50818.15   28071.02  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     95344.85   92158.25  222609.07  286232.15  435094.49   81200.72</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16       wt18        wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   21849.98   69198.222  153273.5   98144.28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.16 1275312.758 1356014.3 1231442.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.71  186850.878  188285.9  172348.76</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.70  220972.352  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38    9632.091  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     96559.17  103520.30  105134.38  240261.212  201316.2  179437.72</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">mat_imp_fromto</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15      ko16       ko18        ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.7   65290.38   11624.188   91635.45  162012.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.1 1482796.38 1039129.818 1223132.35 1072037.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269714.0  201393.42  150107.310  176989.65  156797.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.7  351750.14  219287.968  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.4   16841.79    4303.235  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     43155.84   31287.8  222609.07  286232.146  435094.49   45213.72</span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_meansd</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15       ko16       ko18       ko19       ko21       ko22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   23001.62   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.6  269713.98  201393.42  150107.31  176989.65  156797.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.0  460629.74  351750.14  219287.97  286848.56  235022.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   26088.25   38518.62  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     87301.6   68659.75  222609.07  286232.15  435094.49   55005.71</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16       wt18       wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   10849.88   69198.22  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   27823.68   69198.22  153273.5   98144.28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.16 1275312.76 1356014.3 1231442.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.71  186850.88  188285.9  172348.76</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.70  220972.35  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38   16665.23  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     11827.83   77561.37   81236.32  240261.21  201316.2  179437.72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38   28848.70  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     83472.51  116779.74  143570.30  240261.21  201316.2  179437.72</span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_fromto</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15        ko16       ko18        ko19       ko21       ko22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.713   65290.38   31722.004   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.138 1482796.38 1039129.818 1223132.35 1072037.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269713.984  201393.42  150107.310  176989.65  156797.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.738  351750.14  219287.968  286848.56  235022.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.378    5930.46    7576.641  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     35059.84    4039.242  222609.07  286232.146  435094.49   16152.27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16        wt18       wt19      wt21       wt22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   32497.890   69198.22  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.161 1275312.76 1356014.3 1231442.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.713  186850.88  188285.9  172348.76</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.701  220972.35  252874.0  236728.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.378   15677.38  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     29730.34   36268.15    5751.042  240261.21  201316.2  179437.72</span>
 </code></pre></div>
     </div>
   </div>

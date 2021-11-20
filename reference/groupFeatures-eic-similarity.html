@@ -51,7 +51,7 @@ will be skipped/not considered for feature grouping."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -79,7 +79,7 @@ will be skipped/not considered for feature grouping."><!-- mathjax --><script sr
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -94,7 +94,7 @@ will be skipped/not considered for feature grouping."><!-- mathjax --><script sr
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compounding/feature grouping based on similarity of extracted ion chromatograms</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-group-features.R"><code>R/methods-group-features.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-group-features.R" class="external-link"><code>R/methods-group-features.R</code></a></small>
     <div class="hidden name"><code>groupFeatures-eic-similarity.Rd</code></div>
     </div>
 
@@ -106,11 +106,11 @@ extracted ion chromatograms (EICs). The similarity calculation is performed
 separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter <code>threshold</code>) will be performed.</p>
-<p>The <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">compareChromatograms()</a></code> function is used for similarity calculation
+<p>The <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> function is used for similarity calculation
 which by default calculates the Pearson's correlation coefficient. The
 settings for <code>compareChromatograms</code> can be specified with parameters
 <code>ALIGNFUN</code>, <code>ALIGNFUNARGS</code>, <code>FUN</code> and <code>FUNARGS</code>. <code>ALIGNFUN</code> defaults to
-<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html">alignRt()</a></code> and is the function used to <em>align</em> the chromatograms before
+<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and is the function used to <em>align</em> the chromatograms before
 comparison. <code>ALIGNFUNARGS</code> allows to specify additional arguments for the
 <code>ALIGNFUN</code> function. It defaults to
 <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code> which ensures that
@@ -119,17 +119,17 @@ are compared between the EICs from the same sample. Parameter <code>FUN</code> d
 the function to calculate the similarity score and defaults to <code>FUN = cor</code>
 and <code>FUNARGS</code> allows to pass additional arguments to this function (defaults
 to <code>FUNARGS = list(use = "pairwise.complete.obs")</code>. See also
-<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">compareChromatograms()</a></code> for more information.</p>
+<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> for more information.</p>
 <p>The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter <code>groupFun</code> which defaults to
 <code>groupFun = groupSimilarityMatrix</code> which groups all rows (features) in the
 similarity matrix with a similarity score larger than <code>threshold</code> into the
 same cluster. This creates clusters of features in which <strong>all</strong> features
 have a similarity score <code>&gt;= threshold</code> with <strong>any</strong> other feature in that
-cluster. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html">groupSimilarityMatrix()</a></code> for details. Additional parameters to
+cluster. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code> for details. Additional parameters to
 that function can be passed with the <code>...</code> argument.</p>
 <p>This feature grouping should be called <strong>after</strong> an initial feature
-grouping by retention time (see <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">SimilarRtimeParam()</a></code>). The feature groups
+grouping by retention time (see <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam()</a></code>). The feature groups
 defined in columns <code>"feature_group"</code> of <code>featureDefinitions(object)</code> (for
 features matching <code>msLevel</code>) will be used and refined by this method.
 Features with a value of <code>NA</code> in <code>featureDefinitions(object)$feature_group</code>
@@ -140,68 +140,68 @@ will be skipped/not considered for feature grouping.</p>
   threshold <span class="op">=</span> <span class="fl">0.9</span>,
   n <span class="op">=</span> <span class="fl">1</span>,
   onlyPeak <span class="op">=</span> <span class="cn">TRUE</span>,
-  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
+  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
   groupFun <span class="op">=</span> <span class="va">groupSimilarityMatrix</span>,
   ALIGNFUN <span class="op">=</span> <span class="va">alignRt</span>,
-  ALIGNFUNARGS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>tolerance <span class="op">=</span> <span class="fl">0</span>, method <span class="op">=</span> <span class="st">"closest"</span><span class="op">)</span>,
+  ALIGNFUNARGS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tolerance <span class="op">=</span> <span class="fl">0</span>, method <span class="op">=</span> <span class="st">"closest"</span><span class="op">)</span>,
   FUN <span class="op">=</span> <span class="va">cor</span>,
-  FUNARGS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span>,
+  FUNARGS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span>,
   <span class="va">...</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for XCMSnExp,EicSimilarityParam</span>
-<span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>threshold</th>
-      <td><p><code>numeric(1)</code> with the minimal required similarity score to
-group featues. This is passed to the <code>groupFun</code> function.</p></td>
-    </tr><tr><th>n</th>
-      <td><p><code>numeric(1)</code> defining the total number of samples per feature group
+    <dl><dt>threshold</dt>
+<dd><p><code>numeric(1)</code> with the minimal required similarity score to
+group featues. This is passed to the <code>groupFun</code> function.</p></dd>
+<dt>n</dt>
+<dd><p><code>numeric(1)</code> defining the total number of samples per feature group
 on which this similarity calculation should be performed. This value is
-rounded up to the next larger integer value.</p></td>
-    </tr><tr><th>onlyPeak</th>
-      <td><p><code>logical(1)</code> whether the correlation should be performed only
+rounded up to the next larger integer value.</p></dd>
+<dt>onlyPeak</dt>
+<dd><p><code>logical(1)</code> whether the correlation should be performed only
 on the signals within the identified chromatographic peaks
 (<code>onlyPeak = TRUE</code>, default) or all the signal from the extracted ion
-chromatogram.</p></td>
-    </tr><tr><th>value</th>
-      <td><p><code>character(1)</code> defining whether samples should be grouped based
+chromatogram.</p></dd>
+<dt>value</dt>
+<dd><p><code>character(1)</code> defining whether samples should be grouped based
 on the sum of the maximal peak intensity (<code>value = "maxo"</code>, the default)
-or the integrated peak area (<code>value = "into"</code>) for a feature.</p></td>
-    </tr><tr><th>groupFun</th>
-      <td><p><code>function</code> defining the function to be used to group rows
+or the integrated peak area (<code>value = "into"</code>) for a feature.</p></dd>
+<dt>groupFun</dt>
+<dd><p><code>function</code> defining the function to be used to group rows
 based on a pairwise similarity matrix. Defaults to
-<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html">groupSimilarityMatrix()</a></code>.</p></td>
-    </tr><tr><th>ALIGNFUN</th>
-      <td><p><code>function</code> defining the function to be used to <em>align</em>
+<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code>.</p></dd>
+<dt>ALIGNFUN</dt>
+<dd><p><code>function</code> defining the function to be used to <em>align</em>
 chromatograms prior similarity calculation. Defaults to
-<code>ALIGNFUN = alignRt</code>. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html">alignRt()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">compareChromatograms()</a></code> for
-more information.</p></td>
-    </tr><tr><th>ALIGNFUNARGS</th>
-      <td><p><strong>named</strong> <code>list</code> with arguments for <code>ALIGNFUN</code>.
-Defaults to <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code>.</p></td>
-    </tr><tr><th>FUN</th>
-      <td><p><code>function</code> defining the function to be used to calculate a
+<code>ALIGNFUN = alignRt</code>. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> for
+more information.</p></dd>
+<dt>ALIGNFUNARGS</dt>
+<dd><p><strong>named</strong> <code>list</code> with arguments for <code>ALIGNFUN</code>.
+Defaults to <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code>.</p></dd>
+<dt>FUN</dt>
+<dd><p><code>function</code> defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to <code>FUN = cor</code>.
-See <code><a href="https://rdrr.io/r/stats/cor.html">cor()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">compareChromatograms()</a></code> for more information.</p></td>
-    </tr><tr><th>FUNARGS</th>
-      <td><p><strong>named</strong> <code>list</code> with arguments for <code>FUN</code>. Defaults to
-<code>FUN = list(use = "pairwise.complete.obs")</code>.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>for <code>EicSimilarityParam</code>: additional arguments to be passed to
+See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> for more information.</p></dd>
+<dt>FUNARGS</dt>
+<dd><p><strong>named</strong> <code>list</code> with arguments for <code>FUN</code>. Defaults to
+<code>FUN = list(use = "pairwise.complete.obs")</code>.</p></dd>
+<dt>...</dt>
+<dd><p>for <code>EicSimilarityParam</code>: additional arguments to be passed to
 <code>groupFun</code> and <code>featureChromatograms</code> (such as <code>expandRt</code> to expand the
-retention time range of each feature).</p></td>
-    </tr><tr><th>object</th>
-      <td><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object containing also correspondence results.</p></td>
-    </tr><tr><th>param</th>
-      <td><p><code>EicSimilarityParam</code> object with the settings for the method.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level on which the features
-should be grouped.</p></td>
-    </tr></table></div>
-
+retention time range of each feature).</p></dd>
+<dt>object</dt>
+<dd><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object containing also correspondence results.</p></dd>
+<dt>param</dt>
+<dd><p><code>EicSimilarityParam</code> object with the settings for the method.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level on which the features
+should be grouped.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>input <code>XCMSnExp</code> with feature groups added (i.e. in column
@@ -238,46 +238,47 @@ is excluded from the correlation.</p>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures">MsFeatures</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures" class="external-link">MsFeatures</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Group chromatographic peaks across samples</span></span>
-<span class="r-in"><span class="va">xodg</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 2572 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Performing a feature grouping based on EIC similarities on a single</span></span>
 <span class="r-in"><span class="co">## sample</span></span>
-<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu">EicSimilarityParam</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu">EicSimilarityParam</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [==========================================================] 1/1 (100%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [==========================================================] 1/1 (100%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      2      2      2      2      2      2      2      2      2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      2      3      4      2      3      2      1      1      1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      1      1      1      1      1      1      1      1      1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1      1      1      1      1      1      1      1      1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1      1      1      1      1      1      1      1      1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.034 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.034 FG.035 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      1      1 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Usually it is better to perform this correlation on pre-grouped features</span></span>
 <span class="r-in"><span class="co">## e.g. based on similar retention time.</span></span>
-<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">xodg_grp</span>, param <span class="op">=</span> <span class="fu">EicSimilarityParam</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xodg_grp</span>, param <span class="op">=</span> <span class="fu">EicSimilarityParam</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [=&gt;-------------------------------------------------------] 1/33 (  3%) in  0s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -297,7 +298,7 @@ is excluded from the correlation.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [===============&gt;-----------------------------------------] 9/33 ( 27%) in  1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [================&gt;---------------------------------------] 10/33 ( 30%) in  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [================&gt;---------------------------------------] 10/33 ( 30%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [==================&gt;-------------------------------------] 11/33 ( 33%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -323,43 +324,43 @@ is excluded from the correlation.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================&gt;-------------------] 22/33 ( 67%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [======================================&gt;-----------------] 23/33 ( 70%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [======================================&gt;-----------------] 23/33 ( 70%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================&gt;---------------] 24/33 ( 73%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================&gt;---------------] 24/33 ( 73%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=========================================&gt;--------------] 25/33 ( 76%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=========================================&gt;--------------] 25/33 ( 76%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===========================================&gt;------------] 26/33 ( 79%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===========================================&gt;------------] 26/33 ( 79%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============================================&gt;----------] 27/33 ( 82%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============================================&gt;----------] 27/33 ( 82%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================================&gt;--------] 28/33 ( 85%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================================&gt;--------] 28/33 ( 85%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [================================================&gt;-------] 29/33 ( 88%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [================================================&gt;-------] 29/33 ( 88%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [==================================================&gt;-----] 30/33 ( 91%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [==================================================&gt;-----] 30/33 ( 91%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================================&gt;---] 31/33 ( 94%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================================&gt;---] 31/33 ( 94%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================================================&gt;--] 32/33 ( 97%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================================================&gt;--] 32/33 ( 97%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================================] 33/33 (100%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================================================] 33/33 (100%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.001.001 FG.002.001 FG.003.001 FG.003.002 FG.004.001 FG.004.002 FG.004.003 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          2          2          2          1          2          1          1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.005.001 FG.006.001 FG.006.002 FG.007.001 FG.008.001 FG.009.001 FG.009.002 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          3          1          1          2          2          1          1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.010.001 FG.011.001 FG.012.001 FG.013.001 FG.014.001 FG.015.001 FG.016.001 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          2          1          1          1          1          1          1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.017.001 FG.018.001 FG.019.001 FG.020.001 FG.021.001 FG.022.001 FG.023.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.001.001 FG.002.001 FG.003.001 FG.003.002 FG.004.001 FG.004.002 FG.005.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          2          2          2          1          3          1          3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.006.001 FG.006.002 FG.007.001 FG.008.001 FG.009.001 FG.009.002 FG.010.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          2          2          1          1          2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.011.001 FG.012.001 FG.013.001 FG.014.001 FG.015.001 FG.016.001 FG.017.001 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1          1          1          1          1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.024.001 FG.025.001 FG.026.001 FG.027.001 FG.028.001 FG.029.001 FG.030.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.018.001 FG.019.001 FG.020.001 FG.021.001 FG.022.001 FG.023.001 FG.024.001 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1          1          1          1          1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FG.031.001 FG.032.001 FG.033.001 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.025.001 FG.026.001 FG.027.001 FG.028.001 FG.029.001 FG.030.001 FG.031.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1          1          1          1          1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FG.032.001 FG.033.001 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          1          1 </span>
 </code></pre></div>
     </div>
   </div>

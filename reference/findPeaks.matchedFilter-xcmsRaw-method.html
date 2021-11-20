@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,7 +62,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Peak detection in the chromatographic time domain</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-xcmsRaw.R"><code>R/methods-xcmsRaw.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-xcmsRaw.R" class="external-link"><code>R/methods-xcmsRaw.R</code></a></small>
     <div class="hidden name"><code>findPeaks.matchedFilter-xcmsRaw-method.Rd</code></div>
     </div>
 
@@ -84,65 +84,89 @@
   mzdiff <span class="op">=</span> <span class="fl">0.8</span> <span class="op">-</span> <span class="va">step</span> <span class="op">*</span> <span class="va">steps</span>,
   index <span class="op">=</span> <span class="cn">FALSE</span>,
   sleep <span class="op">=</span> <span class="fl">0</span>,
-  scanrange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>
+  scanrange <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak detection
-should be performed.</p></td>
-    </tr><tr><th>fwhm</th>
-      <td><p><code>numeric(1)</code> specifying the full width at half maximum
+    <dl><dt>object</dt>
+<dd><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak detection
+should be performed.</p></dd>
+<dt>fwhm</dt>
+<dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
-actual sigma, see below.</p></td>
-    </tr><tr><th>sigma</th>
-      <td><p><code>numeric(1)</code> specifying the standard deviation (width)
-of the matched filtration model peak.</p></td>
-    </tr><tr><th>max</th>
-      <td><p><code>numeric(1)</code> representing the maximum number of peaks
-that are expected/will be identified per slice.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise cutoff
-to be used in the chromatographic peak detection step.</p></td>
-    </tr><tr><th>step</th>
-      <td><p>numeric(1) specifying the width of the bins/slices in m/z
-dimension.</p></td>
-    </tr><tr><th>steps</th>
-      <td><p><code>numeric(1)</code> defining the number of bins to be
+actual sigma, see below.</p></dd>
+<dt>sigma</dt>
+<dd><p><code>numeric(1)</code> specifying the standard deviation (width)
+of the matched filtration model peak.</p></dd>
+<dt>max</dt>
+<dd><p><code>numeric(1)</code> representing the maximum number of peaks
+that are expected/will be identified per slice.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise cutoff
+to be used in the chromatographic peak detection step.</p></dd>
+<dt>step</dt>
+<dd><p>numeric(1) specifying the width of the bins/slices in m/z
+dimension.</p></dd>
+<dt>steps</dt>
+<dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
-performed).</p></td>
-    </tr><tr><th>mzdiff</th>
-      <td><p><code>numeric(1)</code> defining the minimum difference
-in m/z for peaks with overlapping retention times</p></td>
-    </tr><tr><th>index</th>
-      <td><p><code>logical(1)</code> specifying whether indicies should be
-returned instead of values for m/z and retention times.</p></td>
-    </tr><tr><th>sleep</th>
-      <td><p>(DEPRECATED). The use of this parameter is highly discouraged,
-as it could cause problems in parallel processing mode.</p></td>
-    </tr><tr><th>scanrange</th>
-      <td><p>Numeric vector defining the range of scans to which the
-original <code>object</code> should be sub-setted before peak detection.</p></td>
-    </tr></table></div>
-
+performed).</p></dd>
+<dt>mzdiff</dt>
+<dd><p><code>numeric(1)</code> defining the minimum difference
+in m/z for peaks with overlapping retention times</p></dd>
+<dt>index</dt>
+<dd><p><code>logical(1)</code> specifying whether indicies should be
+returned instead of values for m/z and retention times.</p></dd>
+<dt>sleep</dt>
+<dd><p>(DEPRECATED). The use of this parameter is highly discouraged,
+as it could cause problems in parallel processing mode.</p></dd>
+<dt>scanrange</dt>
+<dd><p>Numeric vector defining the range of scans to which the
+original <code>object</code> should be sub-setted before peak detection.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix, each row representing an intentified chromatographic peak,
-    with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peak across
+    with columns:</p><dl><dt>mz</dt>
+<dd><p>Intensity weighted mean of m/z values of the peak across
     scans.</p></dd>
-    <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
-    <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
-    <dt>rt</dt><dd><p>Retention time of the peak's midpoint.</p></dd>
-    <dt>rtmin</dt><dd><p>Minimum retention time of the peak.</p></dd>
-    <dt>rtmax</dt><dd><p>Maximum retention time of the peak.</p></dd>
-    <dt>into</dt><dd><p>Integrated (original) intensity of the peak.</p></dd>
-    <dt>intf</dt><dd><p>Integrated intensity of the filtered peak.</p></dd>
-    <dt>maxo</dt><dd><p>Maximum intensity of the peak.</p></dd>
-    <dt>maxf</dt><dd><p>Maximum intensity of the filtered peak.</p></dd>
-    <dt>i</dt><dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
-    <dt>sn</dt><dd><p>Signal to noise ratio of the peak.</p></dd>
+
+    <dt>mzmin</dt>
+<dd><p>Minimum m/z of the peak.</p></dd>
+
+    <dt>mzmax</dt>
+<dd><p>Maximum m/z of the peak.</p></dd>
+
+    <dt>rt</dt>
+<dd><p>Retention time of the peak's midpoint.</p></dd>
+
+    <dt>rtmin</dt>
+<dd><p>Minimum retention time of the peak.</p></dd>
+
+    <dt>rtmax</dt>
+<dd><p>Maximum retention time of the peak.</p></dd>
+
+    <dt>into</dt>
+<dd><p>Integrated (original) intensity of the peak.</p></dd>
+
+    <dt>intf</dt>
+<dd><p>Integrated intensity of the filtered peak.</p></dd>
+
+    <dt>maxo</dt>
+<dd><p>Maximum intensity of the peak.</p></dd>
+
+    <dt>maxf</dt>
+<dd><p>Maximum intensity of the filtered peak.</p></dd>
+
+    <dt>i</dt>
+<dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
+
+    <dt>sn</dt>
+<dd><p>Signal to noise ratio of the peak.</p></dd>
+
     
 </dl></div>
     <div id="references">
@@ -163,6 +187,7 @@ original <code>object</code> should be sub-setted before peak detection.</p></td
     <div id="author">
     <h2>Author</h2>
     <p>Colin A. Smith</p>
+    </div>
     </div>
 
   </div>

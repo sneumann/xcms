@@ -70,7 +70,7 @@ provided.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ provided.
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -113,13 +113,13 @@ provided.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>XCMSnExp filtering and subsetting</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-XCMSnExp.R"><code>R/methods-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>XCMSnExp-filter-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>The methods listed on this page allow to filter and subset <a href="XCMSnExp-class.html">XCMSnExp</a>
-objects. Most of them are inherited from the <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a> object defined
+objects. Most of them are inherited from the <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a> object defined
 in the <code>MSnbase</code> package and have been adapted for <code>XCMSnExp</code> to enable
 correct subsetting of preprocessing results.</p><ul><li><p><code>[</code>: subset a <code>XCMSnExp</code> object by spectra. Be aware that this removes
 <strong>all</strong> preprocessing results, except adjusted retention times if
@@ -207,72 +207,72 @@ filterChromPeaks(
   ...
 )</code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>For <code>[</code> and <code>[[</code>: an <code>XCMSnExp</code> object.</p></td>
-    </tr><tr><th>features</th>
-      <td><p>For <code>filterFeatureDefinitions</code>: either a <code>integer</code>
+    <dl><dt>x</dt>
+<dd><p>For <code>[</code> and <code>[[</code>: an <code>XCMSnExp</code> object.</p></dd>
+<dt>features</dt>
+<dd><p>For <code>filterFeatureDefinitions</code>: either a <code>integer</code>
 specifying the indices of the features (rows) to keep, a <code>logical</code>
 with a length matching the number of rows of <code>featureDefinitions</code>
-or a <code>character</code> with the feature (row) names.</p></td>
-    </tr><tr><th>i</th>
-      <td><p>For <code>[</code>: <code>numeric</code> or <code>logical</code> vector specifying to
+or a <code>character</code> with the feature (row) names.</p></dd>
+<dt>i</dt>
+<dd><p>For <code>[</code>: <code>numeric</code> or <code>logical</code> vector specifying to
 which spectra the data set should be reduced.
-For <code>[[</code>: a single integer or character.</p></td>
-    </tr><tr><th>j</th>
-      <td><p>For <code>[</code> and <code>[[</code>: not supported.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>Optional additional arguments.</p></td>
-    </tr><tr><th>drop</th>
-      <td><p>For <code>[</code> and <code>[[</code>: not supported.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>A <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></td>
-    </tr><tr><th>msLevel.</th>
-      <td><p>For <code>filterMz</code>, <code>filterRt</code>: <code>numeric</code>
+For <code>[[</code>: a single integer or character.</p></dd>
+<dt>j</dt>
+<dd><p>For <code>[</code> and <code>[[</code>: not supported.</p></dd>
+<dt>...</dt>
+<dd><p>Optional additional arguments.</p></dd>
+<dt>drop</dt>
+<dd><p>For <code>[</code> and <code>[[</code>: not supported.</p></dd>
+<dt>object</dt>
+<dd><p>A <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p></dd>
+<dt>msLevel.</dt>
+<dd><p>For <code>filterMz</code>, <code>filterRt</code>: <code>numeric</code>
 defining the MS level(s) to which operations should be applied or to
-which the object should be subsetted.</p></td>
-    </tr><tr><th>keepAdjustedRtime</th>
-      <td><p>For <code>filterFile</code>, <code>filterMsLevel</code>,
+which the object should be subsetted.</p></dd>
+<dt>keepAdjustedRtime</dt>
+<dd><p>For <code>filterFile</code>, <code>filterMsLevel</code>,
 <code>[</code>, <code>split</code>: <code>logical(1)</code> defining whether the adjusted
 retention times should be kept, even if e.g. features are being removed
-(and the retention time correction was performed on these features).</p></td>
-    </tr><tr><th>file</th>
-      <td><p>For <code>filterFile</code>: <code>integer</code> defining the file index
+(and the retention time correction was performed on these features).</p></dd>
+<dt>file</dt>
+<dd><p>For <code>filterFile</code>: <code>integer</code> defining the file index
 within the object to subset the object by file or <code>character</code>
 specifying the file names to sub set. The indices are expected to be
-increasingly ordered, if not they are ordered internally.</p></td>
-    </tr><tr><th>keepFeatures</th>
-      <td><p>For <code>filterFile</code>: <code>logical(1)</code> whether
+increasingly ordered, if not they are ordered internally.</p></dd>
+<dt>keepFeatures</dt>
+<dd><p>For <code>filterFile</code>: <code>logical(1)</code> whether
 correspondence results (feature definitions) should be kept or dropped.
 Defaults to <code>keepFeatures = FALSE</code> hence feature definitions are removed
-from the returned object by default.</p></td>
-    </tr><tr><th>mz</th>
-      <td><p>For <code>filterMz</code>: <code>numeric(2)</code> defining the lower and upper
-mz value for the filtering.</p></td>
-    </tr><tr><th>rt</th>
-      <td><p>For <code>filterRt</code>: <code>numeric(2)</code> defining the retention time
-window (lower and upper bound) for the filtering.</p></td>
-    </tr><tr><th>adjusted</th>
-      <td><p>For <code>filterRt</code>: <code>logical</code> indicating whether the
+from the returned object by default.</p></dd>
+<dt>mz</dt>
+<dd><p>For <code>filterMz</code>: <code>numeric(2)</code> defining the lower and upper
+mz value for the filtering.</p></dd>
+<dt>rt</dt>
+<dd><p>For <code>filterRt</code>: <code>numeric(2)</code> defining the retention time
+window (lower and upper bound) for the filtering.</p></dd>
+<dt>adjusted</dt>
+<dd><p>For <code>filterRt</code>: <code>logical</code> indicating whether the
 object should be filtered by original (<code>adjusted = FALSE</code>) or
 adjusted retention times (<code>adjusted = TRUE</code>).
 For <code>spectra</code>: whether the retention times in the individual
-<code>Spectrum</code> objects should be the adjusted or raw retention times.</p></td>
-    </tr><tr><th>f</th>
-      <td><p>For <code>split</code> a vector of length equal to the length of x
+<code>Spectrum</code> objects should be the adjusted or raw retention times.</p></dd>
+<dt>f</dt>
+<dd><p>For <code>split</code> a vector of length equal to the length of x
 defining how <code>x</code> should be splitted. It is converted internally to
-a <code>factor</code>.</p></td>
-    </tr><tr><th>keep</th>
-      <td><p>For <code>filterChromPeaks</code>: <code>logical</code>, <code>integer</code> or <code>character</code>
-defining which chromatographic peaks should be retained.</p></td>
-    </tr><tr><th>method</th>
-      <td><p>For <code>filterChromPeaks</code>: <code>character(1)</code> allowing to specify the
+a <code>factor</code>.</p></dd>
+<dt>keep</dt>
+<dd><p>For <code>filterChromPeaks</code>: <code>logical</code>, <code>integer</code> or <code>character</code>
+defining which chromatographic peaks should be retained.</p></dd>
+<dt>method</dt>
+<dd><p>For <code>filterChromPeaks</code>: <code>character(1)</code> allowing to specify the
 method by which chromatographic peaks should be filtered. Currently only
 <code>method = "keep"</code> is supported (i.e. specify with parameter <code>keep</code> which
-chromatographic peaks should be retained).</p></td>
-    </tr></table></div>
-
+chromatographic peaks should be retained).</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>All methods return an <a href="XCMSnExp-class.html">XCMSnExp</a> object.</p>
@@ -313,42 +313,43 @@ the raw retention times with the adjusted ones.</p>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Loading a test data set with identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset the dataset to the first and third file.</span></span>
-<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## The number of chromatographic peaks per file for the full object</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1   2   3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  87 100  61 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## The number of chromatographic peaks per file for the subset</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1  2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 87 61 </span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ko15.CDF" "ko16.CDF" "ko18.CDF"</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/basename.html">basename</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ko15.CDF" "ko18.CDF"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Filter on mz values; chromatographic peaks and features within the</span></span>
 <span class="r-in"><span class="co">## mz range are retained (as well as adjusted retention times).</span></span>
-<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html">filterMz</a></span><span class="op">(</span><span class="va">faahko_sub</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">300</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html" class="external-link">filterMz</a></span><span class="op">(</span><span class="va">faahko_sub</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">300</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 302   302   302 2617.185 2595.275 2640.659   687146.6   671297.8  30552</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP003 344   344   344 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320</span>
@@ -363,19 +364,19 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP006  87      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP007 111      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP009  44      1</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 89</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 248</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Filter on rt values. All chromatographic peaks and features within the</span></span>
 <span class="r-in"><span class="co">## retention time range are retained. Filtering is performed by default on</span></span>
 <span class="r-in"><span class="co">## adjusted retention times, if present.</span></span>
-<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2700.127 2898.877</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP008 579.1 579.1 579.1 2786.200 2765.855 2806.544  1669436.8  1642951.6  87656</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP009 313.0 313.0 313.0 2783.070 2768.985 2806.544  1744615.5  1698756.0  74080</span>
@@ -390,12 +391,12 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP011    45      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP012 17759      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP018 33983      1</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2701.693 2895.746</span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 248</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xod_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 21</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Extract a single Spectrum</span></span>
@@ -408,7 +409,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subsetting using [ removes all preprocessing results - using</span></span>
 <span class="r-in"><span class="co">## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.</span></span>
-<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="va">faahko_sub</span><span class="op">[</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">fromFile</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span></span>
+<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="va">faahko_sub</span><span class="op">[</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">fromFile</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed preprocessing results</span>
 <span class="r-in"><span class="va">xod_sub</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSn experiment data ("XCMSnExp")</span>
@@ -438,7 +439,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-in"><span class="co">## Using split does also remove preprocessing results, but it supports the</span></span>
 <span class="r-in"><span class="co">## optional parameter keepAdjustedRtime.</span></span>
 <span class="r-in"><span class="co">## Split the object into a list of XCMSnExp objects, one per file</span></span>
-<span class="r-in"><span class="va">xod_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">faahko_sub</span>, f <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">fromFile</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xod_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">faahko_sub</span>, f <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">fromFile</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">xod_list</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSn experiment data ("XCMSnExp")</span>

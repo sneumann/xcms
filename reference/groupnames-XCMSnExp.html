@@ -20,7 +20,7 @@ user interface (aka xcms1)."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@ user interface (aka xcms1)."><!-- mathjax --><script src="https://cdnjs.cloudfla
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -63,7 +63,7 @@ user interface (aka xcms1)."><!-- mathjax --><script src="https://cdnjs.cloudfla
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generate unique group (feature) names based on mass and retention time</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-XCMSnExp.R"><code>R/methods-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>groupnames-XCMSnExp.Rd</code></div>
     </div>
 
@@ -77,21 +77,21 @@ user interface (aka xcms1).</p>
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp</span>
 <span class="fu"><a href="groupnames-methods.html">groupnames</a></span><span class="op">(</span><span class="va">object</span>, mzdec <span class="op">=</span> <span class="fl">0</span>, rtdec <span class="op">=</span> <span class="fl">0</span>, template <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>XCMSnExp</code> object containing correspondence results.</p></td>
-    </tr><tr><th>mzdec</th>
-      <td><p><code>integer(1)</code> with the number of decimal places to use for m/z (
-defaults to <code>0</code>).</p></td>
-    </tr><tr><th>rtdec</th>
-      <td><p><code>integer(1)</code> with the number of decimal places to use for the
-retention time (defaults to <code>0</code>).</p></td>
-    </tr><tr><th>template</th>
-      <td><p><code>character</code> with existing group names whose format should
-be emulated.</p></td>
-    </tr></table></div>
-
+    <dl><dt>object</dt>
+<dd><p><code>XCMSnExp</code> object containing correspondence results.</p></dd>
+<dt>mzdec</dt>
+<dd><p><code>integer(1)</code> with the number of decimal places to use for m/z (
+defaults to <code>0</code>).</p></dd>
+<dt>rtdec</dt>
+<dd><p><code>integer(1)</code> with the number of decimal places to use for the
+retention time (defaults to <code>0</code>).</p></dd>
+<dt>template</dt>
+<dd><p><code>character</code> with existing group names whose format should
+be emulated.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p><code>character</code> with unique names for each feature in <code>object</code>. The
@@ -100,6 +100,7 @@ format is <code>M(m/z)T(time in seconds)</code>.</p>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><a href="XCMSnExp-class.html">XCMSnExp</a>.</p></div>
+    </div>
     </div>
 
   </div>

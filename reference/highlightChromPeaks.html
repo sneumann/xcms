@@ -22,7 +22,7 @@ MChromatograms object."><!-- mathjax --><script src="https://cdnjs.cloudflare.co
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ MChromatograms object."><!-- mathjax --><script src="https://cdnjs.cloudflare.co
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -66,56 +66,57 @@ MChromatograms object."><!-- mathjax --><script src="https://cdnjs.cloudflare.co
     <div class="page-header">
     <h1>Add definition of chromatographic peaks to an extracted chromatogram
     plot</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>highlightChromPeaks.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>The <code>highlightChromPeaks</code> function adds chromatographic
 peak definitions to an existing plot, such as one created by the
-<code>plot</code> method on a <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html">Chromatogram</a></code> or
-<code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html">MChromatograms</a></code> object.</p>
+<code>plot</code> method on a <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></code> or
+<code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms</a></code> object.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">highlightChromPeaks</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">rt</span>,
   <span class="va">mz</span>,
-  peakIds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
-  border <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rep</a></span><span class="op">(</span><span class="st">"00000040"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
+  peakIds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
+  border <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"00000040"</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,
   lwd <span class="op">=</span> <span class="fl">1</span>,
   col <span class="op">=</span> <span class="cn">NA</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"rect"</span>, <span class="st">"point"</span>, <span class="st">"polygon"</span><span class="op">)</span>,
-  whichPeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,
+  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rect"</span>, <span class="st">"point"</span>, <span class="st">"polygon"</span><span class="op">)</span>,
+  whichPeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>For <code>highlightChromPeaks</code>: <code>XCMSnExp</code> object with the
-detected peaks.</p></td>
-    </tr><tr><th>rt</th>
-      <td><p>For <code>highlightChromPeaks</code>: <code>numeric(2)</code> with the
-retention time range from which peaks should be extracted and plotted.</p></td>
-    </tr><tr><th>mz</th>
-      <td><p><code>numeric(2)</code> with the mz range from which the peaks should
-be extracted and plotted.</p></td>
-    </tr><tr><th>peakIds</th>
-      <td><p><code>character</code> defining the IDs (i.e. rownames of the peak
+    <dl><dt>x</dt>
+<dd><p>For <code>highlightChromPeaks</code>: <code>XCMSnExp</code> object with the
+detected peaks.</p></dd>
+<dt>rt</dt>
+<dd><p>For <code>highlightChromPeaks</code>: <code>numeric(2)</code> with the
+retention time range from which peaks should be extracted and plotted.</p></dd>
+<dt>mz</dt>
+<dd><p><code>numeric(2)</code> with the mz range from which the peaks should
+be extracted and plotted.</p></dd>
+<dt>peakIds</dt>
+<dd><p><code>character</code> defining the IDs (i.e. rownames of the peak
 in the <code>chromPeaks</code> table) of the chromatographic peaks to be
-highlighted in a plot.</p></td>
-    </tr><tr><th>border</th>
-      <td><p>colors to be used to color the border of the rectangles/peaks.
-Has to be equal to the number of samples in <code>x</code>.</p></td>
-    </tr><tr><th>lwd</th>
-      <td><p><code>numeric(1)</code> defining the width of the line/border.</p></td>
-    </tr><tr><th>col</th>
-      <td><p>For <code>highlightChromPeaks</code>: color to be used to fill the
+highlighted in a plot.</p></dd>
+<dt>border</dt>
+<dd><p>colors to be used to color the border of the rectangles/peaks.
+Has to be equal to the number of samples in <code>x</code>.</p></dd>
+<dt>lwd</dt>
+<dd><p><code>numeric(1)</code> defining the width of the line/border.</p></dd>
+<dt>col</dt>
+<dd><p>For <code>highlightChromPeaks</code>: color to be used to fill the
 rectangle (if <code>type = "rect"</code>) or the peak
-(for <code>type = "polygon"</code>).</p></td>
-    </tr><tr><th>type</th>
-      <td><p>the plotting type. See <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></code> in base grapics for
+(for <code>type = "polygon"</code>).</p></dd>
+<dt>type</dt>
+<dd><p>the plotting type. See <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></code> in base grapics for
 more details.
 For <code>highlightChromPeaks</code>: <code>character(1)</code> defining how the peak
 should be highlighted: <code>type = "rect"</code> draws a rectangle
@@ -124,55 +125,55 @@ chromatographic peak with a single point at the position of the peak's
 <code>"rt"</code> and <code>"maxo"</code> and <code>type = "polygon"</code> will highlight
 the peak shape. For <code>type = "polygon"</code> the color of the border and
 area can be defined with parameters <code>"border"</code> and <code>"col"</code>,
-respectively.</p></td>
-    </tr><tr><th>whichPeaks</th>
-      <td><p><code>character(1)</code> specifying how peaks are called to be
+respectively.</p></dd>
+<dt>whichPeaks</dt>
+<dd><p><code>character(1)</code> specifying how peaks are called to be
 located within the region defined by <code>mz</code> and <code>rt</code>. Can be
 one of <code>"any"</code>, <code>"within"</code>, and <code>"apex_within"</code> for all
 peaks that are even partially overlapping the region, peaks that are
 completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the <code>type</code> argument of the
 <code><a href="XCMSnExp-class.html">chromPeaks</a></code> function. See related documentation for more
-information and examples.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>additional parameters to the <code><a href="https://rdrr.io/r/graphics/matplot.html">matplot</a></code> or <code>plot</code>
-function.</p></td>
-    </tr></table></div>
-
+information and examples.</p></dd>
+<dt>...</dt>
+<dd><p>additional parameters to the <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></code> or <code>plot</code>
+function.</p></dd>
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Extract the ion chromatogram for one chromatographic peak in the data.</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Extract chromatographic peaks for the mz/rt range (if any).</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Highlight the chromatographic peaks in the area</span></span>
 <span class="r-in"><span class="co">## Show the peak definition with a rectangle</span></span>
-<span class="r-in"><span class="fu">highlightChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">highlightChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Color the actual peak</span></span>
-<span class="r-in"><span class="fu">highlightChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="st">"#ff000020"</span>, <span class="st">"#00ff0020"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"polygon"</span><span class="op">)</span></span>
-<span class="r-plt"><img src="highlightChromPeaks-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="fu">highlightChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span>,</span>
+<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000020"</span>, <span class="st">"#00ff0020"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"polygon"</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="highlightChromPeaks-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

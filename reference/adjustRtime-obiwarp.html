@@ -76,7 +76,7 @@ data using the obiwarp method.'><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@ data using the obiwarp method.'><!-- mathjax --><script src="https://cdnjs.cloud
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -119,14 +119,14 @@ data using the obiwarp method.'><!-- mathjax --><script src="https://cdnjs.cloud
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Align retention times across samples using Obiwarp</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-OnDiskMSnExp.R"><code>R/methods-OnDiskMSnExp.R</code></a>, and 2 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, and 2 more</small>
     <div class="hidden name"><code>adjustRtime-obiwarp.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>This method performs retention time adjustment using the
 Obiwarp method [Prince 2006]. It is based on the code at
-<a href="http://obi-warp.sourceforge.net">http://obi-warp.sourceforge.net</a> but supports alignment of multiple
+<a href="http://obi-warp.sourceforge.net" class="external-link">http://obi-warp.sourceforge.net</a> but supports alignment of multiple
 samples by aligning each against a <em>center</em> sample. The alignment is
 performed directly on the <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> and can hence be
 performed independently of the peak detection or peak grouping.</p>
@@ -188,17 +188,17 @@ data using the <em>obiwarp</em> method.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">ObiwarpParam</span><span class="op">(</span>
   binSize <span class="op">=</span> <span class="fl">1</span>,
-  centerSample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>,
+  centerSample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,
   response <span class="op">=</span> <span class="fl">1L</span>,
   distFun <span class="op">=</span> <span class="st">"cor_opt"</span>,
-  gapInit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  gapExtend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  gapInit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  gapExtend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   factorDiag <span class="op">=</span> <span class="fl">2</span>,
   factorGap <span class="op">=</span> <span class="fl">1</span>,
   localAlignment <span class="op">=</span> <span class="cn">FALSE</span>,
   initPenalty <span class="op">=</span> <span class="fl">0</span>,
-  subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>,
-  subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span>
+  subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,
+  subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for OnDiskMSnExp,ObiwarpParam</span>
@@ -279,92 +279,92 @@ data using the <em>obiwarp</em> method.</p>
 <span class="co"># S4 method for XCMSnExp,ObiwarpParam</span>
 <span class="fu"><a href="adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>binSize</th>
-      <td><p><code>numeric(1)</code> defining the bin size (in mz dimension)
+    <dl><dt>binSize</dt>
+<dd><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
-parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></td>
-    </tr><tr><th>centerSample</th>
-      <td><p><code>integer(1)</code> defining the index of the center sample
+parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></dd>
+<dt>centerSample</dt>
+<dd><p><code>integer(1)</code> defining the index of the center sample
 in the experiment. It defaults to
 <code>floor(median(1:length(fileNames(object))))</code>. Note that if
 <code>subset</code> is used, the index passed with <code>centerSample</code> is
-within these subset samples.</p></td>
-    </tr><tr><th>response</th>
-      <td><p><code>numeric(1)</code> defining the <em>responsiveness</em> of
+within these subset samples.</p></dd>
+<dt>response</dt>
+<dd><p><code>numeric(1)</code> defining the <em>responsiveness</em> of
 warping with <code>response = 0</code> giving linear warping on start and end
-points and <code>response = 100</code> warping using all bijective anchors.</p></td>
-    </tr><tr><th>distFun</th>
-      <td><p>character defining the distance function to be used. Allowed
+points and <code>response = 100</code> warping using all bijective anchors.</p></dd>
+<dt>distFun</dt>
+<dd><p>character defining the distance function to be used. Allowed
 values are <code>"cor"</code> (Pearson's correlation), <code>"cor_opt"</code>
 (calculate only 10% diagonal band of distance matrix; better runtime),
 <code>"cov"</code> (covariance), <code>"prd"</code> (product) and <code>"euc"</code>
-(Euclidian distance). The default value is <code>distFun = "cor_opt"</code>.</p></td>
-    </tr><tr><th>gapInit</th>
-      <td><p><code>numeric(1)</code> defining the penalty for gap opening. The
+(Euclidian distance). The default value is <code>distFun = "cor_opt"</code>.</p></dd>
+<dt>gapInit</dt>
+<dd><p><code>numeric(1)</code> defining the penalty for gap opening. The
 default value for <code>gapInit</code> depends on the value of <code>distFun</code>:
 for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
 <code>0.3</code>, for <code>distFun = "cov"</code> and <code>distFun = "prd"</code>
-<code>0.0</code> and for <code>distFun = "euc"</code> <code>0.9</code>.</p></td>
-    </tr><tr><th>gapExtend</th>
-      <td><p><code>numeric(1)</code> defining the penalty for gap enlargement.
+<code>0.0</code> and for <code>distFun = "euc"</code> <code>0.9</code>.</p></dd>
+<dt>gapExtend</dt>
+<dd><p><code>numeric(1)</code> defining the penalty for gap enlargement.
 The default value for <code>gapExtend</code> depends on the value of
 <code>distFun</code>, for <code>distFun = "cor"</code> and
 <code>distFun = "cor_opt"</code> it is <code>2.4</code>, for <code>distFun = "cov"</code>
 <code>11.7</code>, for <code>distFun = "euc"</code> <code>1.8</code> and for
-<code>distFun = "prd"</code> 7.8.</p></td>
-    </tr><tr><th>factorDiag</th>
-      <td><p><code>numeric(1)</code> defining the local weight applied to
-diagonal moves in the alignment.</p></td>
-    </tr><tr><th>factorGap</th>
-      <td><p><code>numeric(1)</code> defining the local weight for gap moves
-in the alignment.</p></td>
-    </tr><tr><th>localAlignment</th>
-      <td><p><code>logical(1)</code> whether a local alignment should be
-performed instead of the default global alignment.</p></td>
-    </tr><tr><th>initPenalty</th>
-      <td><p><code>numeric(1)</code> defining the penalty for initiating an
-alignment (for local alignment only).</p></td>
-    </tr><tr><th>subset</th>
-      <td><p><code>integer</code> with the indices of samples within the
+<code>distFun = "prd"</code> 7.8.</p></dd>
+<dt>factorDiag</dt>
+<dd><p><code>numeric(1)</code> defining the local weight applied to
+diagonal moves in the alignment.</p></dd>
+<dt>factorGap</dt>
+<dd><p><code>numeric(1)</code> defining the local weight for gap moves
+in the alignment.</p></dd>
+<dt>localAlignment</dt>
+<dd><p><code>logical(1)</code> whether a local alignment should be
+performed instead of the default global alignment.</p></dd>
+<dt>initPenalty</dt>
+<dd><p><code>numeric(1)</code> defining the penalty for initiating an
+alignment (for local alignment only).</p></dd>
+<dt>subset</dt>
+<dd><p><code>integer</code> with the indices of samples within the
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
-See description above for more details.</p></td>
-    </tr><tr><th>subsetAdjust</th>
-      <td><p><code>character</code> specifying the method with which
+See description above for more details.</p></dd>
+<dt>subsetAdjust</dt>
+<dd><p><code>character</code> specifying the method with which
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
-for more information.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>For <code>adjustRtime</code>: an <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object.</p>
-<p>For all other methods: a <code>ObiwarpParam</code> object.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>A <code>ObiwarpParam</code> object containing all settings for
-the alignment method.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer</code> defining the MS level on which the retention
-time should be performed.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>The value for the slot.</p></td>
-    </tr><tr><th>x</th>
-      <td><p>a <code>PeakGroupsParam</code> object.</p></td>
-    </tr></table></div>
-
+for more information.</p></dd>
+<dt>object</dt>
+<dd><p>For <code>adjustRtime</code>: an <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object.</p>
+<p>For all other methods: a <code>ObiwarpParam</code> object.</p></dd>
+<dt>param</dt>
+<dd><p>A <code>ObiwarpParam</code> object containing all settings for
+the alignment method.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer</code> defining the MS level on which the retention
+time should be performed.</p></dd>
+<dt>value</dt>
+<dd><p>The value for the slot.</p></dd>
+<dt>x</dt>
+<dd><p>a <code>PeakGroupsParam</code> object.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>The <code>ObiwarpParam</code> function returns a
-    <code>ObiwarpParam</code> class instance with all of the settings
-    specified for obiwarp retention time adjustment and alignment.</p>
-<p>For <code>adjustRtime,XCMSnExp,ObiwarpParam</code>: a
+<code>ObiwarpParam</code> class instance with all of the settings
+    specified for obiwarp retention time adjustment and alignment.
+For <code>adjustRtime,XCMSnExp,ObiwarpParam</code>: a
 <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the retention time
 adjustment step. These can be accessed with the
 <code><a href="XCMSnExp-class.html">adjustedRtime</a></code> method. Retention time correction does also
 adjust the retention time of the identified chromatographic peaks
-(accessed <em>via</em> <code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention time
+(accessed <em>via</em><code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention time
 correction drops all previous peak grouping results from the result
-object.</p>
-<p>For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
+object.
+For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
 the adjusted retention times per spectra (in the same order than
 <code>rtime</code>).</p>
     </div>
@@ -372,8 +372,10 @@ the adjusted retention times per spectra (in the same order than
     <h2>Slots</h2>
     
 
-<dl><dt><code>binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust</code></dt><dd><p>See
+<dl><dt><code>binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust</code></dt>
+<dd><p>See
 corresponding parameter above.</p></dd>
+
 
 </dl></div>
     <div id="note">
@@ -413,17 +415,18 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
     <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Perform retention time correction:</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="fu">ObiwarpParam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -437,7 +440,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## As a result we get a numeric vector with the adjusted retention times for</span></span>
 <span class="r-in"><span class="co">## all spectra.</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSn experiment data ("XCMSnExp")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object size in memory: 0.03 Mb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Spectra data - - -</span>
@@ -464,7 +467,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## We can split this by file to get the adjusted retention times for each</span></span>
 <span class="r-in"><span class="co">## file</span></span>
-<span class="r-in"><span class="va">resL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">fromFile</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">resL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">fromFile</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

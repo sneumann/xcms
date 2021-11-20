@@ -19,7 +19,7 @@ for functions affected."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ for functions affected."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,7 +62,7 @@ for functions affected."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Enable usage of old xcms code</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-utils.R"><code>R/functions-utils.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-utils.R" class="external-link"><code>R/functions-utils.R</code></a></small>
     <div class="hidden name"><code>useOriginalCode.Rd</code></div>
     </div>
 
@@ -74,14 +74,14 @@ for functions affected.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">useOriginalCode</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>logical(1)</code> to specify whether or not original
+    <dl><dt>x</dt>
+<dd><p><code>logical(1)</code> to specify whether or not original
 old code should be used in corresponding functions. If not provided the
-function simply returns the value of the global option.</p></td>
-    </tr></table></div>
-
+function simply returns the value of the global option.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p><code>logical(1)</code> indicating whether old code is being used.</p>
@@ -96,14 +96,14 @@ matchedFilter settings with a very small bin size.</p></li>
 </ul></div>
     <div id="note">
     <h2>Note</h2>
-    <p>For parallel processing using the SOCKS method (e.g. by <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html">SnowParam()</a></code> on
+    <p>For parallel processing using the SOCKS method (e.g. by <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam()</a></code> on
 Windows computers) this option might not be passed to the individual R
 processes performing the calculations. In such cases it is suggested to
 specify the option manually and system-wide by adding the line
 <code>options(XCMSuseOriginalCode = TRUE)</code> in a file called <em>.Rprofile</em> in the
 folder in which new R processes are started (usually the user's
 home directory; to ensure that the option is correctly read add a new line
-to the file too). See also <a href="https://rdrr.io/r/base/Startup.html">Startup</a> from the base R documentation on how to
+to the file too). See also <a href="https://rdrr.io/r/base/Startup.html" class="external-link">Startup</a> from the base R documentation on how to
 specify system-wide options for R.</p>
 <p>Usage of old code is strongly dicouraged. This function is thought
 to be used mainly in the transition phase from xcms to xcms version 3.</p>
@@ -111,6 +111,7 @@ to be used mainly in the transition phase from xcms to xcms version 3.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

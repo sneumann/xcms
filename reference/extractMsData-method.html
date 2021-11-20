@@ -25,7 +25,7 @@ data range if rt and mz are not defined).'><!-- mathjax --><script src="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@ data range if rt and mz are not defined).'><!-- mathjax --><script src="https://
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@ data range if rt and mz are not defined).'><!-- mathjax --><script src="https://
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>DEPRECATED: Extract a <code>data.frame</code> containing MS data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-OnDiskMSnExp.R"><code>R/methods-OnDiskMSnExp.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-XCMSnExp.R"><code>R/methods-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>extractMsData-method.Rd</code></div>
     </div>
 
@@ -96,26 +96,26 @@ data range if <code>rt</code> and <code>mz</code> are not defined).</p>
   adjustedRtime <span class="op">=</span> <span class="fu"><a href="XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A <code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></td>
-    </tr><tr><th>rt</th>
-      <td><p><code>numeric(2)</code> with the retention time range from which the
-data should be extracted.</p></td>
-    </tr><tr><th>mz</th>
-      <td><p><code>numeric(2)</code> with the mz range.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer</code> defining the MS level(s) to which the data
+    <dl><dt>object</dt>
+<dd><p>A <code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></dd>
+<dt>rt</dt>
+<dd><p><code>numeric(2)</code> with the retention time range from which the
+data should be extracted.</p></dd>
+<dt>mz</dt>
+<dd><p><code>numeric(2)</code> with the mz range.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer</code> defining the MS level(s) to which the data
 should be sub-setted prior to extraction; defaults to
-<code>msLevel = 1L</code>.</p></td>
-    </tr><tr><th>adjustedRtime</th>
-      <td><p>(for <code>extractMsData,XCMSnExp</code>): <code>logical(1)</code>
+<code>msLevel = 1L</code>.</p></dd>
+<dt>adjustedRtime</dt>
+<dd><p>(for <code>extractMsData,XCMSnExp</code>): <code>logical(1)</code>
 specifying if adjusted or raw retention times should be reported.
 Defaults to adjusted retention times, if these are present in
-<code>object</code>.</p></td>
-    </tr></table></div>
-
+<code>object</code>.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code>list</code> of length equal to the number of samples/files in
@@ -132,23 +132,24 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Extract the full MS data for a certain retention time range</span></span>
 <span class="r-in"><span class="co">## as a data.frame</span></span>
-<span class="r-in"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2800</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ms_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html">as</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"data.frame"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ms_all</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2800</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">ms_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html" class="external-link">as</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"data.frame"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ms_all</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   file       rt    mz     i</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    1 2800.284 200.1   968</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    1 2800.284 201.0  1273</span>
@@ -156,7 +157,7 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    1 2800.284 203.0   859</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5    1 2800.284 205.0 24136</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6    1 2800.284 206.0  3913</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ms_all</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ms_all</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 79960</span>
 </code></pre></div>
     </div>

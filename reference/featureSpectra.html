@@ -36,7 +36,7 @@ or return.type = "Spectra".'><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@ or return.type = "Spectra".'><!-- mathjax --><script src="https://cdnjs.cloudfla
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,7 +79,7 @@ or return.type = "Spectra".'><!-- mathjax --><script src="https://cdnjs.cloudfla
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Extract spectra associated with features</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>featureSpectra.Rd</code></div>
     </div>
 
@@ -113,51 +113,51 @@ or <code>return.type = "Spectra"</code>.</p>
   expandMz <span class="op">=</span> <span class="fl">0</span>,
   ppm <span class="op">=</span> <span class="fl">0</span>,
   skipFilled <span class="op">=</span> <span class="cn">FALSE</span>,
-  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"MSpectra"</span>, <span class="st">"Spectra"</span>, <span class="st">"list"</span>, <span class="st">"List"</span><span class="op">)</span>,
-  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>,
+  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSpectra"</span>, <span class="st">"Spectra"</span>, <span class="st">"list"</span>, <span class="st">"List"</span><span class="op">)</span>,
+  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with feature defitions available.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining whether MS1 or MS2 spectra should be
+    <dl><dt>x</dt>
+<dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with feature defitions available.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining whether MS1 or MS2 spectra should be
 returned. <code>msLevel = 1</code> is currently only supported for <code>return.type</code>
-being <code>"Spectra"</code> or <code>"List"</code>.</p></td>
-    </tr><tr><th>expandRt</th>
-      <td><p><code>numeric(1)</code> to expand the retention time range of each
-peak by a constant value on each side.</p></td>
-    </tr><tr><th>expandMz</th>
-      <td><p><code>numeric(1)</code> to expand the m/z range of each peak by a
-constant value on each side.</p></td>
-    </tr><tr><th>ppm</th>
-      <td><p><code>numeric(1)</code> to expand the m/z range of each peak (on each side)
-by a value dependent on the peak's m/z.</p></td>
-    </tr><tr><th>skipFilled</th>
-      <td><p><code>logical(1)</code> whether spectra for filled-in peaks should
-be reported or not.</p></td>
-    </tr><tr><th>return.type</th>
-      <td><p><code>character(1)</code> defining the result type. Defaults to
+being <code>"Spectra"</code> or <code>"List"</code>.</p></dd>
+<dt>expandRt</dt>
+<dd><p><code>numeric(1)</code> to expand the retention time range of each
+peak by a constant value on each side.</p></dd>
+<dt>expandMz</dt>
+<dd><p><code>numeric(1)</code> to expand the m/z range of each peak by a
+constant value on each side.</p></dd>
+<dt>ppm</dt>
+<dd><p><code>numeric(1)</code> to expand the m/z range of each peak (on each side)
+by a value dependent on the peak's m/z.</p></dd>
+<dt>skipFilled</dt>
+<dd><p><code>logical(1)</code> whether spectra for filled-in peaks should
+be reported or not.</p></dd>
+<dt>return.type</dt>
+<dd><p><code>character(1)</code> defining the result type. Defaults to
 <code>return.type = "MSpectra"</code> but <code>return.type = "Spectra"</code> or
-<code>return.type = "List"</code> are preferred. See below for more information.</p></td>
-    </tr><tr><th>features</th>
-      <td><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
+<code>return.type = "List"</code> are preferred. See below for more information.</p></dd>
+<dt>features</dt>
+<dd><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
 subset of features in <code>featureDefinitions</code> for which spectra should
 be returned (providing either their ID, a logical vector same length
 than <code>nrow(featureDefinitions(x))</code> or their index in
 <code>featureDefinitions(x)</code>). This parameter overrides <code>skipFilled</code> and is
-only supported for <code>return.type</code> being either <code>"Spectra"</code> or <code>"List"</code>.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>additional arguments to be passed along to <code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code>,
-such as <code>method</code>.</p></td>
-    </tr></table></div>
-
+only supported for <code>return.type</code> being either <code>"Spectra"</code> or <code>"List"</code>.</p></dd>
+<dt>...</dt>
+<dd><p>additional arguments to be passed along to <code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code>,
+such as <code>method</code>.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html">MSpectra</a> object with elements being
-<a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">Spectrum</a> objects. The result objects contains all spectra
+    <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSpectra</a> object with elements being
+<a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">Spectrum</a> objects. The result objects contains all spectra
 for all features. Metadata column <code>"feature_id"</code> provides the ID of the
 respective feature (i.e. its rowname in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>).</p></li>
 <li><p><code>return.type = "Spectra"</code>: a <code>Spectra</code> object (defined in the <code>Spectra</code>
@@ -165,7 +165,7 @@ package). The result contains all spectra for all features. Metadata column
 <code>"feature_id"</code> provides the ID of the respective feature (i.e. its rowname
 in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>.</p></li>
 <li><p><code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
-0 or contain <a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html">Spectrum2</a> object(s) within the m/z-rt range. The
+0 or contain <a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html" class="external-link">Spectrum2</a> object(s) within the m/z-rt range. The
 length of the list matches the number of features.</p></li>
 <li><p><code>return.type = "List"</code>: <code>List</code> of length equal to the number of
 features with MS level <code>msLevel</code> is returned with elements being either
@@ -174,6 +174,7 @@ features with MS level <code>msLevel</code> is returned with elements being eith
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

@@ -22,7 +22,7 @@ Note that this method will always return profile, not raw
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ Note that this method will always return profile, not raw
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,47 +79,51 @@ Note that this method will always return profile, not raw
     </div>
 
 
+    <div id="ref-sections">
+    <div id="methods">
+    <h2>Methods</h2>
+    
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>getEIC(object, mzrange, rtrange = NULL, step = 0.1)</code></p></dd>
+
+<dt>object = "xcmsSet"</dt>
+<dd><p><code>getEIC(object, mzrange, rtrange = 200, groupidx,
+               sampleidx = sampnames(object), rt = c("corrected", "raw"))</code></p></dd>
+
+
+</dl></div>
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsRaw</code> or <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>mzrange</th>
-      <td><p>Either a two column matrix with minimum or maximum m/z or a
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsRaw</code> or <code>xcmsSet</code> object</p></dd>
+<dt>mzrange</dt>
+<dd><p>Either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns <code>mzmin</code> and
     <code>mzmax</code>. If not specified, the method for <code>xcmsRaw</code> returns
     the base peak chromatogram (BPC, i.e. the most intense signal for
     each RT across all m/z).</p>
 <p>For <code>xcmsSet</code> objects the group data will be used if
-    <code>mzrange</code> is not provided.</p></td>
-    </tr><tr><th>rtrange</th>
-      <td><p>A two column matrix the same size as <code>mzrange</code> with minimum
+    <code>mzrange</code> is not provided.</p></dd>
+<dt>rtrange</dt>
+<dd><p>A two column matrix the same size as <code>mzrange</code> with minimum
     and maximum retention times between which to return EIC data
     points. If not specified, the method returns the chromatogram for
     the full RT range.</p>
 <p>For <code>xcmsSet</code> objects, it may also be a single number
     specifying the time window around the peak to return EIC data
-    points</p></td>
-    </tr><tr><th>step</th>
-      <td><p>step (bin) size to use for profile generation. Note that a
-    value of <code>step = 0</code> is not supported.</p></td>
-    </tr><tr><th>groupidx</th>
-      <td><p>either character vector with names or integer vector with
-    indicies of peak groups for which to get EICs</p></td>
-    </tr><tr><th>sampleidx</th>
-      <td><p>either character vector with names or integer vector with
-    indicies of samples for which to get EICs</p></td>
-    </tr><tr><th>rt</th>
-      <td><p><code>"corrected"</code> for using corrected retention times, or
-    <code>"raw"</code> for using raw retention times</p></td>
-    </tr></table></div>
-
-    <div id="methods">
-    <h2>Methods</h2>
-    
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>getEIC(object, mzrange, rtrange = NULL, step = 0.1)</code></p></dd>
-<dt>object = "xcmsSet"</dt><dd><p><code>getEIC(object, mzrange, rtrange = 200, groupidx,
-               sampleidx = sampnames(object), rt = c("corrected", "raw"))</code></p></dd>
-
+    points</p></dd>
+<dt>step</dt>
+<dd><p>step (bin) size to use for profile generation. Note that a
+    value of <code>step = 0</code> is not supported.</p></dd>
+<dt>groupidx</dt>
+<dd><p>either character vector with names or integer vector with
+    indicies of peak groups for which to get EICs</p></dd>
+<dt>sampleidx</dt>
+<dd><p>either character vector with names or integer vector with
+    indicies of samples for which to get EICs</p></dd>
+<dt>rt</dt>
+<dd><p><code>"corrected"</code> for using corrected retention times, or
+    <code>"raw"</code> for using raw retention times</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -139,6 +143,7 @@ Note that this method will always return profile, not raw
   <code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
   <code><a href="xcmsEIC-class.html">xcmsEIC-class</a></code>,
   <code><a href="rawEIC-methods.html">rawEIC</a></code></p></div>
+    </div>
     </div>
 
   </div>

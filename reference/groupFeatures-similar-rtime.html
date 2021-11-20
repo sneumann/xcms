@@ -23,7 +23,7 @@ See MsFeatures::SimilarRtimeParam() in MsFeatures for more details.'><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@ See MsFeatures::SimilarRtimeParam() in MsFeatures for more details.'><!-- mathja
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -66,7 +66,7 @@ See MsFeatures::SimilarRtimeParam() in MsFeatures for more details.'><!-- mathja
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compounding/feature grouping based on similar retention times</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-group-features.R"><code>R/methods-group-features.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-group-features.R" class="external-link"><code>R/methods-group-features.R</code></a></small>
     <div class="hidden name"><code>groupFeatures-similar-rtime.Rd</code></div>
     </div>
 
@@ -77,26 +77,26 @@ time of all their chromatographic peaks. All features with a difference in
 their retention time which is <code>&lt;=</code> parameter <code>diffRt</code> of the parameter object
 are grouped together. If a column <code>"feature_group"</code> is found in
 <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> this is further sub-grouped by this method.</p>
-<p>See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">MsFeatures::SimilarRtimeParam()</a></code> in <code>MsFeatures</code> for more details.</p>
+<p>See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">MsFeatures::SimilarRtimeParam()</a></code> in <code>MsFeatures</code> for more details.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp,SimilarRtimeParam</span>
-<span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object containing also correspondence results.</p></td>
-    </tr><tr><th>param</th>
-      <td><p><code>SimilarRtimeParam</code> object with the settings for the method. See
-<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">MsFeatures::SimilarRtimeParam()</a></code> for details and options.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level on which the features
-should be grouped.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>passed to the <code>groupFeatures</code> function on numeric values.</p></td>
-    </tr></table></div>
-
+    <dl><dt>object</dt>
+<dd><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object containing also correspondence results.</p></dd>
+<dt>param</dt>
+<dd><p><code>SimilarRtimeParam</code> object with the settings for the method. See
+<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">MsFeatures::SimilarRtimeParam()</a></code> for details and options.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level on which the features
+should be grouped.</p></dd>
+<dt>...</dt>
+<dd><p>passed to the <code>groupFeatures</code> function on numeric values.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>input <code>XCMSnExp</code> with feature groups added (i.e. in column
@@ -112,32 +112,33 @@ should be grouped.</p></td>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures">MsFeatures</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures" class="external-link">MsFeatures</a></span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Group chromatographic peaks across samples</span></span>
-<span class="r-in"><span class="va">xodg</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko_sub</span>, param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 2572 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Group features based on similar retention time (i.e. difference &lt;= 2 seconds)</span></span>
-<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Feature grouping get added to the featureDefinitions in column "feature_group"</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FG.004" "FG.009" "FG.003" "FG.004" "FG.010" "FG.011"</span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      3      3      3      2      2      2      1      1      1 </span>
@@ -147,14 +148,14 @@ should be grouped.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1      1      1      1      1      1      1      1      1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.034 FG.035 FG.036 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1 </span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 36</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Using an alternative groupiing method that creates larger groups</span></span>
-<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>,</span>
-<span class="r-in">    param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">2</span>, groupFun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/group.html">group</a></span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">xodg_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xodg</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">2</span>, groupFun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/group.html" class="external-link">group</a></span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 35</span>
 </code></pre></div>
     </div>

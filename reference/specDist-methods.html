@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,26 +71,30 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>a xcmsSet or xcmsRaw.</p></td>
-    </tr><tr><th>method</th>
-      <td><p>Method to use for distance calculation. See details.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>mzabs, mzppm and parameters for the distance function.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
-    <p></p><dl><dt>object = "xcmsSet"</dt><dd><p><code>
+    <p></p><dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>
 		specDist(object, peakIDs1, peakIDs2,...)
 		</code></p></dd>
+
 	
-</dl><p></p><dl><dt>object = "xsAnnotate"</dt><dd><p><code>
+</dl><p></p><dl><dt>object = "xsAnnotate"</dt>
+<dd><p><code>
 	specDist(object, PSpec1, PSpec2,...)
 		</code></p></dd>
+
 	
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>a xcmsSet or xcmsRaw.</p></dd>
+<dt>method</dt>
+<dd><p>Method to use for distance calculation. See details.</p></dd>
+<dt>...</dt>
+<dd><p>mzabs, mzppm and parameters for the distance function.</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -111,17 +115,17 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<dl><dt>mzabs</dt><dd><p>maximum absolute deviation for two matching peaks</p></dd>
-</dl><p></p>
-<dl><dt>mzppm</dt><dd><p>relative deviations in ppm for two matching peaks</p></dd>
-</dl><p></p>
-<dl><dt>symmetric</dt><dd><p>use symmetric pairwise m/z-matches only, or each match</p></dd>
+    <dl><dt>mzabs</dt>
+<dd><p>maximum absolute deviation for two matching peaks</p></dd>
+<dt>mzppm</dt>
+<dd><p>relative deviations in ppm for two matching peaks</p></dd>
+<dt>symmetric</dt>
+<dd><p>use symmetric pairwise m/z-matches only, or each match</p></dd>
 </dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Joachim Kutzera, <a href="mailto:jkutzer@ipb-halle.de">jkutzer@ipb-halle.de</a></p>
+    </div>
     </div>
 
   </div>

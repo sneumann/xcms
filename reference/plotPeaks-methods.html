@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,25 +73,27 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsRaw</code> object</p></td>
-    </tr><tr><th>peaks</th>
-      <td><p>matrix with peak information as produced by <code><a href="findPeaks-methods.html">findPeaks</a></code></p></td>
-    </tr><tr><th>figs</th>
-      <td><p>two-element vector describing the number of rows and the number
-    of columns of peaks to plot, if missing then an approximately
-    square grid that will fit the number of peaks supplied</p></td>
-    </tr><tr><th>width</th>
-      <td><p>width of chromatogram retention time to plot for each peak</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>plotPeaks(object, peaks, figs, width = 200)</code></p></dd>
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>plotPeaks(object, peaks, figs, width = 200)</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsRaw</code> object</p></dd>
+<dt>peaks</dt>
+<dd><p>matrix with peak information as produced by <code><a href="findPeaks-methods.html">findPeaks</a></code></p></dd>
+<dt>figs</dt>
+<dd><p>two-element vector describing the number of rows and the number
+    of columns of peaks to plot, if missing then an approximately
+    square grid that will fit the number of peaks supplied</p></dd>
+<dt>width</dt>
+<dd><p>width of chromatogram retention time to plot for each peak</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -106,7 +108,8 @@
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw-class.html">xcmsRaw-class</a></code>,
   <code><a href="findPeaks-methods.html">findPeaks</a></code>,
-  <code><a href="https://rdrr.io/r/graphics/screen.html">split.screen</a></code></p></div>
+  <code><a href="https://rdrr.io/r/graphics/screen.html" class="external-link">split.screen</a></code></p></div>
+    </div>
     </div>
 
   </div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,33 +71,17 @@
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">specDist.meanMZmatch</span><span class="op">(</span><span class="va">peakTable1</span>, <span class="va">peakTable2</span>, matchdist<span class="op">=</span><span class="fl">1</span>, matchrate<span class="op">=</span><span class="fl">1</span>,
                      mzabs<span class="op">=</span><span class="fl">0.001</span>, mzppm<span class="op">=</span><span class="fl">10</span>, symmetric<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peakTable1</th>
-      <td><p>a Matrix containing at least m/z-values,
-	row must be called "mz"</p></td>
-    </tr><tr><th>peakTable2</th>
-      <td><p>the matrix for the other mz-values</p></td>
-    </tr><tr><th>mzabs</th>
-      <td><p>maximum absolute deviation for two matching peaks</p></td>
-    </tr><tr><th>mzppm</th>
-      <td><p>relative deviations in ppm for two matching peaks</p></td>
-    </tr><tr><th>symmetric</th>
-      <td><p>use symmetric pairwise m/z-matches only, or each match</p></td>
-    </tr><tr><th>matchdist</th>
-      <td><p>the weight for value one (see details)</p></td>
-    </tr><tr><th>matchrate</th>
-      <td><p>the weight for value two</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>peakTable1 = "matrix", peakTable2 = "matrix"</dt><dd><p><code>
+<dl><dt>peakTable1 = "matrix", peakTable2 = "matrix"</dt>
+<dd><p><code>
     specDist.meanMZmatch(peakTable1, peakTable2,
     matchdist=1, matchrate=1,
     mzabs=0.001, mzppm=10, symmetric=TRUE)
     </code></p></dd>
+
 
 </dl></div>
     <div id="details">
@@ -108,9 +92,28 @@ value two is the relation of matching peaks and non matching peaks.
 if no distance is calculated (for example because no matching peaks
 were found) the return-value is NA.</p>
     </div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>peakTable1</dt>
+<dd><p>a Matrix containing at least m/z-values,
+	row must be called "mz"</p></dd>
+<dt>peakTable2</dt>
+<dd><p>the matrix for the other mz-values</p></dd>
+<dt>mzabs</dt>
+<dd><p>maximum absolute deviation for two matching peaks</p></dd>
+<dt>mzppm</dt>
+<dd><p>relative deviations in ppm for two matching peaks</p></dd>
+<dt>symmetric</dt>
+<dd><p>use symmetric pairwise m/z-matches only, or each match</p></dd>
+<dt>matchdist</dt>
+<dd><p>the weight for value one (see details)</p></dd>
+<dt>matchrate</dt>
+<dd><p>the weight for value two</p></dd>
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Joachim Kutzera, <a href="mailto:jkutzer@ipb-halle.de">jkutzer@ipb-halle.de</a></p>
+    </div>
     </div>
 
   </div>

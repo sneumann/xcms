@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,7 +75,7 @@
     </div>
 
 
-
+    <div id="ref-sections">
     <div id="objects-from-the-class">
     <h2>Objects from the Class</h2>
     <p>Objects can be created with the <code><a href="getEIC-methods.html">getEIC</a></code> method of
@@ -84,24 +84,44 @@
     </div>
     <div id="slots">
     <h2>Slots</h2>
-    <p></p><dl><dt><code>eic</code>:</dt><dd><p>list containing named entries for every sample. for each entry, a
+    <p></p><dl><dt><code>eic</code>:</dt>
+<dd><p>list containing named entries for every sample. for each entry, a
       list of two column EIC matricies with retention time and intensity</p></dd>
-    <dt><code>mzrange</code>:</dt><dd><p>two column matrix containing starting and ending m/z for each EIC</p></dd>
-    <dt><code>rtrange</code>:</dt><dd><p>two column matrix containing starting and ending time for
+
+    <dt><code>mzrange</code>:</dt>
+<dd><p>two column matrix containing starting and ending m/z for each EIC</p></dd>
+
+    <dt><code>rtrange</code>:</dt>
+<dd><p>two column matrix containing starting and ending time for
       each EIC</p></dd>
-    <dt><code>rt</code>:</dt><dd><p>either <code>"raw"</code> or <code>"corrected"</code> to specify retention
+
+    <dt><code>rt</code>:</dt>
+<dd><p>either <code>"raw"</code> or <code>"corrected"</code> to specify retention
       times contained in the object</p></dd>
-    <dt><code>groupnames</code>:</dt><dd><p>group names from <code>xcmsSet</code> object used to generate EICs</p></dd>
+
+    <dt><code>groupnames</code>:</dt>
+<dd><p>group names from <code>xcmsSet</code> object used to generate EICs</p></dd>
+
   
 </dl></div>
     <div id="methods">
     <h2>Methods</h2>
-    <p></p><dl><dt><a href="groupnames-methods.html">groupnames</a></dt><dd><p><code>signature(object = "xcmsEIC")</code>: get <code>groupnames</code> slot</p></dd>
-    <dt>mzrange</dt><dd><p><code>signature(object = "xcmsEIC")</code>: get <code>mzrange</code> slot</p></dd>
-    <dt><a href="plot.xcmsEIC.html">plot</a></dt><dd><p><code>signature(x = "xcmsEIC")</code>: plot the extracted ion
+    <p></p><dl><dt><a href="groupnames-methods.html">groupnames</a></dt>
+<dd><p><code>signature(object = "xcmsEIC")</code>: get <code>groupnames</code> slot</p></dd>
+
+    <dt>mzrange</dt>
+<dd><p><code>signature(object = "xcmsEIC")</code>: get <code>mzrange</code> slot</p></dd>
+
+    <dt><a href="plot.xcmsEIC.html">plot</a></dt>
+<dd><p><code>signature(x = "xcmsEIC")</code>: plot the extracted ion
       chromatograms</p></dd>
-    <dt>rtrange</dt><dd><p><code>signature(object = "xcmsEIC")</code>: get <code>rtrange</code> slot</p></dd>
-    <dt><a href="sampnames-methods.html">sampnames</a></dt><dd><p><code>signature(object = "xcmsEIC")</code>: get sample names</p></dd>
+
+    <dt>rtrange</dt>
+<dd><p><code>signature(object = "xcmsEIC")</code>: get <code>rtrange</code> slot</p></dd>
+
+    <dt><a href="sampnames-methods.html">sampnames</a></dt>
+<dd><p><code>signature(object = "xcmsEIC")</code>: get sample names</p></dd>
+
   
 </dl></div>
     <div id="author">
@@ -115,6 +135,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="getEIC-methods.html">getEIC</a></code></p></div>
+    </div>
     </div>
 
   </div>

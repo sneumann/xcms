@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,7 +75,7 @@
     </div>
 
 
-
+    <div id="ref-sections">
     <div id="objects-from-the-class">
     <h2>Objects from the Class</h2>
     <p>Objects can be created with the <code><a href="xcmsFragments.html">xcmsFragments</a></code>
@@ -83,21 +83,33 @@
     </div>
     <div id="slots">
     <h2>Slots</h2>
-    <p></p><dl><dt><code>peaks</code>:</dt><dd><p>matrix with colmns peakID (MS1 parent in corresponding xcmsSet),
+    <p></p><dl><dt><code>peaks</code>:</dt>
+<dd><p>matrix with colmns peakID (MS1 parent in corresponding xcmsSet),
       MSnParentPeakID (parent peak within this xcmsFragments), msLevel
       (e.g. 2 for Tandem MS), rt (retention time in case of LC data), mz
       (fragment mass-to-charge), intensity (peak intensity extracted
       from the original <code>xcmsSet</code>), sample (the index of the rawData-file).</p></dd>
-    <dt><code>MS2spec</code>:</dt><dd><p>This is a list of matrixes. Each matrix in the list is a single collected spectra from <code>collect</code>. The column ID's are mz, intensity, and full width half maximum(fwhm). The fwhm column is only relevant if the spectra came from profile data.</p></dd>
-    <dt><code>specinfo</code>:</dt><dd><p>This is a matrix with reference data for the spectra in MS2spec. The column id's are preMZ, AccMZ, rtmin, rtmax, ref, CollisionEnergy. The preMZ is precursor mass from the MS1 scan. This mass is given by the XML file. With some instruments this mass is only given as nominal mass, therefore a AccMZ is given which is a weighted average mass from the MS1 scan of the collected spectra. The retention time is given by rtmin and rtmax. The ref column is a pointer to the MS2spec matrix spectra. The collisionEnergy column is the collision Energy for the spectra.</p></dd>
+
+    <dt><code>MS2spec</code>:</dt>
+<dd><p>This is a list of matrixes. Each matrix in the list is a single collected spectra from <code>collect</code>. The column ID's are mz, intensity, and full width half maximum(fwhm). The fwhm column is only relevant if the spectra came from profile data.</p></dd>
+
+    <dt><code>specinfo</code>:</dt>
+<dd><p>This is a matrix with reference data for the spectra in MS2spec. The column id's are preMZ, AccMZ, rtmin, rtmax, ref, CollisionEnergy. The preMZ is precursor mass from the MS1 scan. This mass is given by the XML file. With some instruments this mass is only given as nominal mass, therefore a AccMZ is given which is a weighted average mass from the MS1 scan of the collected spectra. The retention time is given by rtmin and rtmax. The ref column is a pointer to the MS2spec matrix spectra. The collisionEnergy column is the collision Energy for the spectra.</p></dd>
+
   
 </dl></div>
     <div id="methods">
     <h2>Methods</h2>
-    <p></p><dl><dt><a href="collect-methods.html">collect</a></dt><dd><p><code>signature(object = "xcmsFragments")</code>: gets a xcmsSet-object, collects ms1-peaks from it and the msn-peaks from the corresponding xcmsRaw-files.</p></dd>
-    <dt>plotTree</dt><dd><p><code>signature(object = "xcmsFragments")</code>: prints a (text based) pseudo-tree of the peaktable to display the dependencies of the peaks among each other.</p></dd>
-    <dt><a href="https://rdrr.io/r/methods/show.html">show</a></dt><dd><p><code>signature(object = "xcmsFragments")</code>: print a human-readable
+    <p></p><dl><dt><a href="collect-methods.html">collect</a></dt>
+<dd><p><code>signature(object = "xcmsFragments")</code>: gets a xcmsSet-object, collects ms1-peaks from it and the msn-peaks from the corresponding xcmsRaw-files.</p></dd>
+
+    <dt>plotTree</dt>
+<dd><p><code>signature(object = "xcmsFragments")</code>: prints a (text based) pseudo-tree of the peaktable to display the dependencies of the peaks among each other.</p></dd>
+
+    <dt><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></dt>
+<dd><p><code>signature(object = "xcmsFragments")</code>: print a human-readable
       description of this object to the console.</p></dd>
+
   
 </dl></div>
     <div id="author">
@@ -107,6 +119,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsRaw.html">xcmsRaw</a></code></p></div>
+    </div>
     </div>
 
   </div>

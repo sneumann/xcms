@@ -19,7 +19,7 @@ min_fraction * min(x[i, ]))."><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@ min_fraction * min(x[i, ]))."><!-- mathjax --><script src="https://cdnjs.cloudfl
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,7 +62,7 @@ min_fraction * min(x[i, ]))."><!-- mathjax --><script src="https://cdnjs.cloudfl
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Replace missing values with a proportion of the row minimum</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-imputation.R"><code>R/functions-imputation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-imputation.R" class="external-link"><code>R/functions-imputation.R</code></a></small>
     <div class="hidden name"><code>imputeRowMin.Rd</code></div>
     </div>
 
@@ -74,16 +74,16 @@ with a proportion of the minimal value for that row (i.e.
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">imputeRowMin</span><span class="op">(</span><span class="va">x</span>, min_fraction <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>matrix</code> with abundances, rows being features/metabolites and
-columns samples.</p></td>
-    </tr><tr><th>min_fraction</th>
-      <td><p><code>numeric(1)</code> with the fraction of the row minimum that
-should be used to replace <code>NA</code> values in that row.</p></td>
-    </tr></table></div>
-
+    <dl><dt>x</dt>
+<dd><p><code>matrix</code> with abundances, rows being features/metabolites and
+columns samples.</p></dd>
+<dt>min_fraction</dt>
+<dd><p><code>numeric(1)</code> with the fraction of the row minimum that
+should be used to replace <code>NA</code> values in that row.</p></dd>
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code>imputeLCMD</code> package for more left censored imputation functions.</p>
@@ -94,12 +94,13 @@ should be used to replace <code>NA</code> values in that row.</p></td>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"faahko"</span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"faahko"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">xset</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 3195 mz slices ... </span>
@@ -108,7 +109,7 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">mat_imp</span> <span class="op">&lt;-</span> <span class="fu">imputeRowMin</span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15      ko16       ko18      ko19       ko21      ko22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.7   65290.38        NA   91635.45  162012.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.1 1482796.38 1039129.8 1223132.35 1072037.7</span>
@@ -123,7 +124,7 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.6  324892.46  277990.70  220972.35  252874.0  236728.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38         NA  238194.4  173829.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="va">mat_imp</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15       ko16       ko18       ko19       ko21       ko22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.71   65290.38   32645.19   91635.45  162012.44</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
@@ -140,7 +141,7 @@ should be used to replace <code>NA</code> values in that row.</p></td>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     89718.86   89718.86   89718.86  240261.21  201316.2  179437.72</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Replace with 1/8 of the row mimimum</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="fu">imputeRowMin</span><span class="op">(</span><span class="va">mat</span>, min_fraction <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">imputeRowMin</span><span class="op">(</span><span class="va">mat</span>, min_fraction <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15       ko16        ko18        ko19       ko21       ko22</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.71   65290.385    8161.298   91635.45  162012.44</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.14 1482796.385 1039129.818 1223132.35 1072037.70</span>

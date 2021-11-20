@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -51,7 +51,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -66,7 +66,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generic parameter class</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a></small>
     <div class="hidden name"><code>GenericParam.Rd</code></div>
     </div>
 
@@ -80,29 +80,32 @@
     processing method.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">GenericParam</span><span class="op">(</span>fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">GenericParam</span><span class="op">(</span>fun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>fun</th>
-      <td><p><code>character</code> representing the name of the function.</p></td>
-    </tr><tr><th>args</th>
-      <td><p><code>list</code> (ideally named) with the arguments to the function.</p></td>
-    </tr></table></div>
-
+    <dl><dt>fun</dt>
+<dd><p><code>character</code> representing the name of the function.</p></dd>
+<dt>args</dt>
+<dd><p><code>list</code> (ideally named) with the arguments to the function.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>GenericParam</code> function returns a <code>GenericParam</code>
-    object.</p>
+    <p>The <code>GenericParam</code> function returns a <code>GenericParam</code>    object.</p>
     </div>
     <div id="slots">
     <h2>Slots</h2>
     
 
-<dl><dt><code>fun</code></dt><dd><p><code>character</code> specifying the function name.</p></dd>
+<dl><dt><code>fun</code></dt>
+<dd><p><code>character</code> specifying the function name.</p></dd>
 
-<dt><code>args</code></dt><dd><p><code>list</code> (ideally named) with the arguments to the
+
+<dt><code>args</code></dt>
+<dd><p><code>list</code> (ideally named) with the arguments to the
 function.</p></dd>
+
 
 </dl></div>
     <div id="see-also">
@@ -114,12 +117,13 @@ function.</p></dd>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu">GenericParam</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu">GenericParam</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu">GenericParam</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 </code></pre></div>
     </div>
   </div>

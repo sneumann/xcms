@@ -26,7 +26,7 @@ spectrum in each sample.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@ spectrum in each sample.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -70,7 +70,7 @@ spectrum in each sample.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
     <div class="page-header">
     <h1>Align spectrum retention times across samples using peak groups
 found in most samples</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_adjustRtime-functions.R"><code>R/do_adjustRtime-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_adjustRtime-functions.R" class="external-link"><code>R/do_adjustRtime-functions.R</code></a></small>
     <div class="hidden name"><code>do_adjustRtime_peakGroups.Rd</code></div>
     </div>
 
@@ -91,27 +91,28 @@ spectrum in each sample.</p>
   <span class="va">rtime</span>,
   minFraction <span class="op">=</span> <span class="fl">0.9</span>,
   extraPeaks <span class="op">=</span> <span class="fl">1</span>,
-  smooth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"loess"</span>, <span class="st">"linear"</span><span class="op">)</span>,
+  smooth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"loess"</span>, <span class="st">"linear"</span><span class="op">)</span>,
   span <span class="op">=</span> <span class="fl">0.2</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"symmetric"</span><span class="op">)</span>,
-  peakGroupsMatrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
-  subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>,
-  subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span>
+  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"symmetric"</span><span class="op">)</span>,
+  peakGroupsMatrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
+  subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,
+  subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>peaks</th>
-      <td><p>a <code>matrix</code> or <code>data.frame</code> with the identified
-chromatographic peaks in the samples.</p></td>
-    </tr><tr><th>peakIndex</th>
-      <td><p>a <code>list</code> of indices that provides the grouping
-information of the chromatographic peaks (across and within samples).</p></td>
-    </tr><tr><th>rtime</th>
-      <td><p>a <code>list</code> of <code>numeric</code> vectors with the retention
-times per file/sample.</p></td>
-    </tr><tr><th>minFraction</th>
-      <td><p><code>numeric(1)</code> between 0 and 1 defining the minimum
+    <dl><dt>peaks</dt>
+<dd><p>a <code>matrix</code> or <code>data.frame</code> with the identified
+chromatographic peaks in the samples.</p></dd>
+<dt>peakIndex</dt>
+<dd><p>a <code>list</code> of indices that provides the grouping
+information of the chromatographic peaks (across and within samples).</p></dd>
+<dt>rtime</dt>
+<dd><p>a <code>list</code> of <code>numeric</code> vectors with the retention
+times per file/sample.</p></dd>
+<dt>minFraction</dt>
+<dd><p><code>numeric(1)</code> between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
 identified. Peak groups passing this criteria will aligned across
 samples and retention times of individual spectra will be adjusted
@@ -120,46 +121,45 @@ has to contain peaks in all samples of the experiment. Note that if
 <code>subset</code> is provided, the specified fraction is relative to the
 defined subset of samples and not to the total number of samples within
 the experiment (i.e. a peak has to be present in the specified
-proportion of subset samples).</p></td>
-    </tr><tr><th>extraPeaks</th>
-      <td><p><code>numeric(1)</code> defining the maximal number of
+proportion of subset samples).</p></dd>
+<dt>extraPeaks</dt>
+<dd><p><code>numeric(1)</code> defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
 feature) for retention time correction. For a data set with 6 samples,
 <code>extraPeaks = 1</code> uses all peak groups with a total peak count
 <code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
-sample being assigned to the group.</p></td>
-    </tr><tr><th>smooth</th>
-      <td><p>character defining the function to be used, to interpolate
+sample being assigned to the group.</p></dd>
+<dt>smooth</dt>
+<dd><p>character defining the function to be used, to interpolate
 corrected retention times for all peak groups. Either <code>"loess"</code> or
-<code>"linear"</code>.</p></td>
-    </tr><tr><th>span</th>
-      <td><p><code>numeric(1)</code> defining the degree of smoothing (if
+<code>"linear"</code>.</p></dd>
+<dt>span</dt>
+<dd><p><code>numeric(1)</code> defining the degree of smoothing (if
 <code>smooth = "loess"</code>). This parameter is passed to the internal call
-to <code><a href="https://rdrr.io/r/stats/loess.html">loess</a></code>.</p></td>
-    </tr><tr><th>family</th>
-      <td><p>character defining the method to be used for loess smoothing.
+to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code>.</p></dd>
+<dt>family</dt>
+<dd><p>character defining the method to be used for loess smoothing.
 Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>.See
-<code><a href="https://rdrr.io/r/stats/loess.html">loess</a></code> for more information.</p></td>
-    </tr><tr><th>peakGroupsMatrix</th>
-      <td><p>optional <code>matrix</code> of (raw) retention times for
+<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code> for more information.</p></dd>
+<dt>peakGroupsMatrix</dt>
+<dd><p>optional <code>matrix</code> of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
 represents a sample, each row a feature/peak group. If not provided,
 this matrix will be determined depending on parameters
 <code>minFraction</code> and <code>extraPeaks</code>. If provided,
-<code>minFraction</code> and <code>extraPeaks</code> will be ignored.</p></td>
-    </tr><tr><th>subset</th>
-      <td><p><code>integer</code> with the indices of samples within the
+<code>minFraction</code> and <code>extraPeaks</code> will be ignored.</p></dd>
+<dt>subset</dt>
+<dd><p><code>integer</code> with the indices of samples within the
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
-See description above for more details.</p></td>
-    </tr><tr><th>subsetAdjust</th>
-      <td><p><code>character</code> specifying the method with which
+See description above for more details.</p></dd>
+<dt>subsetAdjust</dt>
+<dd><p><code>character</code> specifying the method with which
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
-for more information.</p></td>
-    </tr></table></div>
-
+for more information.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
@@ -196,6 +196,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <div id="author">
     <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

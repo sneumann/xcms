@@ -46,7 +46,7 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -74,7 +74,7 @@ polarity,polarity&amp;lt;-: getter and
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -89,7 +89,7 @@ polarity,polarity&amp;lt;-: getter and
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Two-step centWave peak detection considering also isotopes</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-OnDiskMSnExp.R"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>findChromPeaks-centWaveWithPredIsoROIs.Rd</code></div>
     </div>
 
@@ -109,8 +109,8 @@ polarity,polarity&amp;lt;-: getter and
     inherits.</p>
 <p>The <code>findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam</code>
     method performs a two-step centWave-based chromatographic peak detection
-    on all samples from an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> object.
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects encapsule all experiment
+    on all samples from an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object.
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -128,18 +128,18 @@ polarity,polarity&amp;lt;-: getter and
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">CentWavePredIsoParam</span><span class="op">(</span>
   ppm <span class="op">=</span> <span class="fl">25</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
+  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
   snthresh <span class="op">=</span> <span class="fl">10</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
+  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
   mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
   integrate <span class="op">=</span> <span class="fl">1L</span>,
   mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
   fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,
   noise <span class="op">=</span> <span class="fl">0</span>,
   verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,
-  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>,
+  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
   firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,
-  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   snthreshIsoROIs <span class="op">=</span> <span class="fl">6.25</span>,
   maxCharge <span class="op">=</span> <span class="fl">3</span>,
   maxIso <span class="op">=</span> <span class="fl">5</span>,
@@ -151,9 +151,10 @@ polarity,polarity&amp;lt;-: getter and
 <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span>
   <span class="va">object</span>,
   <span class="va">param</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
+  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
   return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>
+  msLevel <span class="op">=</span> <span class="fl">1L</span>,
+  <span class="va">...</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for CentWavePredIsoParam</span>
@@ -181,62 +182,63 @@ polarity,polarity&amp;lt;-: getter and
 <span class="fu">mzIntervalExtension</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
 <span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>ppm</th>
-      <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
+    <dl><dt>ppm</dt>
+<dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
-definition.</p></td>
-    </tr><tr><th>peakwidth</th>
-      <td><p><code>numeric(2)</code> with the expected approximate
+definition.</p></dd>
+<dt>peakwidth</dt>
+<dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
-in seconds.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
-    </tr><tr><th>prefilter</th>
-      <td><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
+in seconds.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+<dt>prefilter</dt>
+<dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
-<code>&gt;= I</code>.</p></td>
-    </tr><tr><th>mzCenterFun</th>
-      <td><p>Name of the function to calculate the m/z center of the
+<code>&gt;= I</code>.</p></dd>
+<dt>mzCenterFun</dt>
+<dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
 mean of the peak's m/z values, <code>"mean"</code>: mean of the peak's m/z
 values, <code>"apex"</code>: use the m/z value at the peak apex,
 <code>"wMeanApex3"</code>: intensity weighted mean of the m/z value at the
 peak apex and the m/z values left and right of it and <code>"meanApex3"</code>:
 mean of the m/z value of the peak apex and the m/z values left and right
-of it.</p></td>
-    </tr><tr><th>integrate</th>
-      <td><p>Integration method. For <code>integrate = 1</code> peak limits
+of it.</p></dd>
+<dt>integrate</dt>
+<dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
-robust, but less exact.</p></td>
-    </tr><tr><th>mzdiff</th>
-      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
+robust, but less exact.</p></dd>
+<dt>mzdiff</dt>
+<dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
-signal.</p></td>
-    </tr><tr><th>fitgauss</th>
-      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
+signal.</p></dd>
+<dt>fitgauss</dt>
+<dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
-peak.</p></td>
-    </tr><tr><th>noise</th>
-      <td><p><code>numeric(1)</code> allowing to set a minimum intensity required
+peak.</p></dd>
+<dt>noise</dt>
+<dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity <code>&lt; noise</code> are omitted from ROI detection).</p></td>
-    </tr><tr><th>verboseColumns</th>
-      <td><p><code>logical(1)</code> whether additional peak meta data
-columns should be returned.</p></td>
-    </tr><tr><th>roiList</th>
-      <td><p>An optional list of regions-of-interest (ROI) representing
+intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
+<dt>verboseColumns</dt>
+<dd><p><code>logical(1)</code> whether additional peak meta data
+columns should be returned.</p></dd>
+<dt>roiList</dt>
+<dd><p>An optional list of regions-of-interest (ROI) representing
 detected mass traces. If ROIs are submitted the first analysis step is
 omitted and chromatographic peak detection is performed on the submitted
 ROIs. Each ROI is expected to have the following elements specified:
@@ -244,65 +246,66 @@ ROIs. Each ROI is expected to have the following elements specified:
 <code>mzmin</code> (minimum m/z), <code>mzmax</code> (maximum m/z), <code>length</code>
 (number of scans), <code>intensity</code> (summed intensity). Each ROI should
 be represented by a <code>list</code> of elements or a single row
-<code>data.frame</code>.</p></td>
-    </tr><tr><th>firstBaselineCheck</th>
-      <td><p><code>logical(1)</code>. If <code>TRUE</code> continuous
-data within regions of interest is checked to be above the first baseline.</p></td>
-    </tr><tr><th>roiScales</th>
-      <td><p>Optional numeric vector with length equal to <code>roiList</code>
+<code>data.frame</code>.</p></dd>
+<dt>firstBaselineCheck</dt>
+<dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
+data within regions of interest is checked to be above the first baseline.</p></dd>
+<dt>roiScales</dt>
+<dd><p>Optional numeric vector with length equal to <code>roiList</code>
 defining the scale for each region of interest in <code>roiList</code> that
-should be used for the centWave-wavelets.</p></td>
-    </tr><tr><th>snthreshIsoROIs</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio
+should be used for the centWave-wavelets.</p></dd>
+<dt>snthreshIsoROIs</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio
 cutoff to be used in the second centWave run to identify peaks for
-predicted isotope ROIs.</p></td>
-    </tr><tr><th>maxCharge</th>
-      <td><p><code>integer(1)</code> defining the maximal isotope charge.
-Isotopes will be defined for charges <code>1:maxCharge</code>.</p></td>
-    </tr><tr><th>maxIso</th>
-      <td><p><code>integer(1)</code> defining the number of isotope peaks that
-should be predicted for each peak identified in the first centWave run.</p></td>
-    </tr><tr><th>mzIntervalExtension</th>
-      <td><p><code>logical(1)</code> whether the mz range for the
+predicted isotope ROIs.</p></dd>
+<dt>maxCharge</dt>
+<dd><p><code>integer(1)</code> defining the maximal isotope charge.
+Isotopes will be defined for charges <code>1:maxCharge</code>.</p></dd>
+<dt>maxIso</dt>
+<dd><p><code>integer(1)</code> defining the number of isotope peaks that
+should be predicted for each peak identified in the first centWave run.</p></dd>
+<dt>mzIntervalExtension</dt>
+<dd><p><code>logical(1)</code> whether the mz range for the
 predicted isotope ROIs should be extended to increase detection of low
-intensity peaks.</p></td>
-    </tr><tr><th>polarity</th>
-      <td><p><code>character(1)</code> specifying the polarity of the data.
+intensity peaks.</p></dd>
+<dt>polarity</dt>
+<dd><p><code>character(1)</code> specifying the polarity of the data.
 Currently not used, but has to be <code>"positive"</code>, <code>"negative"</code> or
-<code>"unknown"</code> if provided.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>For <code>findChromPeaks</code>: an
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code>  object containing the MS- and all
+<code>"unknown"</code> if provided.</p></dd>
+<dt>object</dt>
+<dd><p>For <code>findChromPeaks</code>: an
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>  object containing the MS- and all
     other experiment-relevant data.</p>
-<p>For all other methods: a parameter object.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>An <code>CentWavePredIsoParam</code> object with the settings for the
-chromatographic peak detection algorithm.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>A parameter class specifying if and how parallel processing
-should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></code>.
+<p>For all other methods: a parameter object.</p></dd>
+<dt>param</dt>
+<dd><p>An <code>CentWavePredIsoParam</code> object with the settings for the
+chromatographic peak detection algorithm.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>A parameter class specifying if and how parallel processing
+should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
-on several of the input samples.</p></td>
-    </tr><tr><th>return.type</th>
-      <td><p>Character specifying what type of object the method should
+on several of the input samples.</p></dd>
+<dt>return.type</dt>
+<dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
-<code>"xcmsSet"</code>.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level on which the peak
-detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>The value for the slot.</p></td>
-    </tr></table></div>
-
+<code>"xcmsSet"</code>.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level on which the peak
+detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
+<dt>...</dt>
+<dd><p>ignored.</p></dd>
+<dt>value</dt>
+<dd><p>The value for the slot.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>The <code>CentWavePredIsoParam</code> function returns a
-    <code>CentWavePredIsoParam</code> class instance with all of the settings
+<code>CentWavePredIsoParam</code> class instance with all of the settings
     specified for the two-step centWave-based peak detection considering also
-    isotopes.</p>
-<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
+    isotopes.
+For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
+<code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
@@ -314,14 +317,16 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
-    <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></code> method from the <code>BiocParallel</code>
+    <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></code> method from the <code>BiocParallel</code>
     package.</p>
     </div>
     <div id="slots">
     <h2>Slots</h2>
     
 
-<dl><dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity</code></dt><dd><p>See corresponding parameter above.</p></dd>
+<dl><dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity</code></dt>
+<dd><p>See corresponding parameter above.</p></dd>
+
 
 </dl></div>
     <div id="note">
@@ -330,7 +335,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     <code>xcms</code> user interface which will eventually replace the
     <code><a href="findPeaks-methods.html">findPeaks</a></code> methods. It supports chromatographic peak
     detection on
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects (defined in the
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the algorithm can be
     passed with a <code>CentWavePredIsoParam</code> object.</p>
     </div>
@@ -352,6 +357,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
     <div id="author">
     <h2>Author</h2>
     <p>Hendrik Treutler, Johannes Rainer</p>
+    </div>
     </div>
 
     <div id="examples">

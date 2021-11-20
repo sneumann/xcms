@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -76,18 +76,18 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">SSgauss</span><span class="op">(</span><span class="va">x</span>, <span class="va">mu</span>, <span class="va">sigma</span>, <span class="va">h</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>a numeric vector of values at which to evaluate the model</p></td>
-    </tr><tr><th>mu</th>
-      <td><p>mean  of the distribution function</p></td>
-    </tr><tr><th>sigma</th>
-      <td><p>standard deviation of the distribution fuction</p></td>
-    </tr><tr><th>h</th>
-      <td><p>height of the distribution function</p></td>
-    </tr></table></div>
-
+    <dl><dt>x</dt>
+<dd><p>a numeric vector of values at which to evaluate the model</p></dd>
+<dt>mu</dt>
+<dd><p>mean  of the distribution function</p></dd>
+<dt>sigma</dt>
+<dd><p>standard deviation of the distribution fuction</p></dd>
+<dt>h</dt>
+<dd><p>height of the distribution function</p></dd>
+</dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>Initial values for <code>mu</code> and <code>h</code> are chosen from the
@@ -100,7 +100,7 @@
   of the expression <code>h*exp(-(x-mu)^2/(2*sigma^2)</code>, which is a
   modified gaussian function where the maximum height is treated
   as a separate parameter not dependent on <code>sigma</code>. If arguments
-  <code>mu</code>, <code>sigma</code>, and <code>h</code> are names of objects, the
+<code>mu</code>, <code>sigma</code>, and <code>h</code> are names of objects, the
   gradient matrix with respect to these names is attached as an
   attribute named <code>gradient</code>.</p>
     </div>
@@ -110,8 +110,9 @@
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/r/stats/nls.html">nls</a></code>,
-  <code><a href="https://rdrr.io/r/stats/selfStart.html">selfStart</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/r/stats/nls.html" class="external-link">nls</a></code>,
+  <code><a href="https://rdrr.io/r/stats/selfStart.html" class="external-link">selfStart</a></code></p></div>
+    </div>
     </div>
 
   </div>

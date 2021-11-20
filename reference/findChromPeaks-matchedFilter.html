@@ -60,7 +60,7 @@ index,index&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@ index,index&amp;lt;-: getter and setter for the
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -103,7 +103,7 @@ index,index&amp;lt;-: getter and setter for the
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Peak detection in the chromatographic time domain</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-OnDiskMSnExp.R"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>findChromPeaks-matchedFilter.Rd</code></div>
     </div>
 
@@ -125,8 +125,8 @@ index,index&amp;lt;-: getter and setter for the
     constructor.</p>
 <p>The <code>findChromPeaks,OnDiskMSnExp,MatchedFilterParam</code>
     method performs peak detection using the <em>matchedFilter</em> algorithm
-    on all samples from an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> object.
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects encapsule all experiment
+    on all samples from an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object.
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.</p>
@@ -157,8 +157,8 @@ index,index&amp;lt;-: getter and setter for the
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">MatchedFilterParam</span><span class="op">(</span>
   binSize <span class="op">=</span> <span class="fl">0.1</span>,
   impute <span class="op">=</span> <span class="st">"none"</span>,
-  baseValue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  baseValue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   fwhm <span class="op">=</span> <span class="fl">30</span>,
   sigma <span class="op">=</span> <span class="va">fwhm</span><span class="op">/</span><span class="fl">2.3548</span>,
   max <span class="op">=</span> <span class="fl">5</span>,
@@ -172,9 +172,10 @@ index,index&amp;lt;-: getter and setter for the
 <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span>
   <span class="va">object</span>,
   <span class="va">param</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
+  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
   return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>
+  msLevel <span class="op">=</span> <span class="fl">1L</span>,
+  <span class="va">...</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
@@ -184,10 +185,10 @@ index,index&amp;lt;-: getter and setter for the
 <span class="fu">binSize</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
-<span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html">impute</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
-<span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html">impute</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
+<span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
 <span class="fu">baseValue</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
@@ -214,10 +215,10 @@ index,index&amp;lt;-: getter and setter for the
 <span class="fu">sigma</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for MatchedFilterParam</span>
 <span class="fu"><a href="findChromPeaks-centWave.html">snthresh</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
@@ -243,84 +244,85 @@ index,index&amp;lt;-: getter and setter for the
 <span class="co"># S4 method for MatchedFilterParam</span>
 <span class="fu">index</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>binSize</th>
-      <td><p><code>numeric(1)</code> specifying the width of the
-bins/slices in m/z dimension.</p></td>
-    </tr><tr><th>impute</th>
-      <td><p>Character string specifying the method to be used for missing
+    <dl><dt>binSize</dt>
+<dd><p><code>numeric(1)</code> specifying the width of the
+bins/slices in m/z dimension.</p></dd>
+<dt>impute</dt>
+<dd><p>Character string specifying the method to be used for missing
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
-<code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></td>
-    </tr><tr><th>baseValue</th>
-      <td><p>The base value to which empty elements should be set. This
+<code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></dd>
+<dt>baseValue</dt>
+<dd><p>The base value to which empty elements should be set. This
 is only considered for <code>method = "linbase"</code> and corresponds to the
-<code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></td>
-    </tr><tr><th>distance</th>
-      <td><p>For <code>method = "linbase"</code>: number of non-empty
+<code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></dd>
+<dt>distance</dt>
+<dd><p>For <code>method = "linbase"</code>: number of non-empty
 neighboring element of an empty element that should be considered for
-linear interpolation. See details section for more information.</p></td>
-    </tr><tr><th>fwhm</th>
-      <td><p><code>numeric(1)</code> specifying the full width at half maximum
+linear interpolation. See details section for more information.</p></dd>
+<dt>fwhm</dt>
+<dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
-actual sigma, see below.</p></td>
-    </tr><tr><th>sigma</th>
-      <td><p><code>numeric(1)</code> specifying the standard deviation (width)
-of the matched filtration model peak.</p></td>
-    </tr><tr><th>max</th>
-      <td><p><code>numeric(1)</code> representing the maximum number of peaks
-that are expected/will be identified per slice.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise cutoff
-to be used in the chromatographic peak detection step.</p></td>
-    </tr><tr><th>steps</th>
-      <td><p><code>numeric(1)</code> defining the number of bins to be
+actual sigma, see below.</p></dd>
+<dt>sigma</dt>
+<dd><p><code>numeric(1)</code> specifying the standard deviation (width)
+of the matched filtration model peak.</p></dd>
+<dt>max</dt>
+<dd><p><code>numeric(1)</code> representing the maximum number of peaks
+that are expected/will be identified per slice.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise cutoff
+to be used in the chromatographic peak detection step.</p></dd>
+<dt>steps</dt>
+<dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
-performed).</p></td>
-    </tr><tr><th>mzdiff</th>
-      <td><p><code>numeric(1)</code> defining the minimum difference
-in m/z for peaks with overlapping retention times</p></td>
-    </tr><tr><th>index</th>
-      <td><p><code>logical(1)</code> specifying whether indicies should be
-returned instead of values for m/z and retention times.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>For <code>findChromPeaks</code>: an
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> object containing the MS- and all
+performed).</p></dd>
+<dt>mzdiff</dt>
+<dd><p><code>numeric(1)</code> defining the minimum difference
+in m/z for peaks with overlapping retention times</p></dd>
+<dt>index</dt>
+<dd><p><code>logical(1)</code> specifying whether indicies should be
+returned instead of values for m/z and retention times.</p></dd>
+<dt>object</dt>
+<dd><p>For <code>findChromPeaks</code>: an
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
-<p>For all other methods: a parameter object.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>An <code>MatchedFilterParam</code> object containing all settings for
-the matchedFilter algorithm.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>A parameter class specifying if and how parallel processing
-should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></code>.
+<p>For all other methods: a parameter object.</p></dd>
+<dt>param</dt>
+<dd><p>An <code>MatchedFilterParam</code> object containing all settings for
+the matchedFilter algorithm.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>A parameter class specifying if and how parallel processing
+should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
-on several of the input samples.</p></td>
-    </tr><tr><th>return.type</th>
-      <td><p>Character specifying what type of object the method should
+on several of the input samples.</p></dd>
+<dt>return.type</dt>
+<dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
-<code>"xcmsSet"</code>.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level on which the peak
-detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>The value for the slot.</p></td>
-    </tr><tr><th>x</th>
-      <td><p>For <code>max</code>: a <code>MatchedFilterParam</code> object.</p></td>
-    </tr></table></div>
-
+<code>"xcmsSet"</code>.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level on which the peak
+detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
+<dt>...</dt>
+<dd><p>ignored.</p></dd>
+<dt>value</dt>
+<dd><p>The value for the slot.</p></dd>
+<dt>x</dt>
+<dd><p>For <code>max</code>: a <code>MatchedFilterParam</code> object.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>The <code>MatchedFilterParam</code> function returns a
-    <code>MatchedFilterParam</code> class instance with all of the settings
-    specified for chromatographic detection by the <em>matchedFilter</em>
-    method.</p>
-<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-    <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
+<code>MatchedFilterParam</code> class instance with all of the settings
+    specified for chromatographic detection by the <em>matchedFilter</em>    method.
+For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
+<code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
@@ -337,16 +339,18 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></td>
 <p>Parallel processing (one process per sample) is supported and can
     be configured either by the <code>BPPARAM</code> parameter or by globally
     defining the parallel processing mode using the
-    <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></code> method from the <code>BiocParallel</code>
+    <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></code> method from the <code>BiocParallel</code>
     package.</p>
     </div>
     <div id="slots">
     <h2>Slots</h2>
     
 
-<dl><dt><code>binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index</code></dt><dd><p>See corresponding parameter above. Slots values should exclusively
+<dl><dt><code>binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index</code></dt>
+<dd><p>See corresponding parameter above. Slots values should exclusively
 be accessed <em>via</em> the corresponding getter and setter methods listed
 above.</p></dd>
+
 
 </dl></div>
     <div id="note">
@@ -355,7 +359,7 @@ above.</p></dd>
     <code>xcms</code> user interface which will eventually replace the
     <code><a href="findPeaks-methods.html">findPeaks</a></code> methods. It supports chromatographic peak
     detection on
-    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html">OnDiskMSnExp</a></code> objects (defined in the
+    <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> objects (defined in the
     <code>MSnbase</code> package). All of the settings to the matchedFilter
     algorithm can be passed with a <code>MatchedFilterParam</code> object.</p>
     </div>
@@ -385,6 +389,7 @@ peak detection in purely chromatographic data.</p>
     <h2>Author</h2>
     <p>Colin A Smith, Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
@@ -412,17 +417,17 @@ peak detection in purely chromatographic data.</p>
 <span class="r-in"><span class="co">## Perform the peak detection using matchecFilter on the files from the</span></span>
 <span class="r-in"><span class="co">## faahKO package. Files are read using the readMSData from the MSnbase</span></span>
 <span class="r-in"><span class="co">## package</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase">MSnbase</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span class="r-in">           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html">readMSData</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="r-in"><span class="co">## Perform the chromatographic peak detection using the settings defined</span></span>
 <span class="r-in"><span class="co">## above. Note that we are also disabling parallel processing in this</span></span>
 <span class="r-in"><span class="co">## example by registering a "SerialParam"</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">raw_data</span>, param <span class="op">=</span> <span class="va">mfp</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             mz mzmin mzmax       rt    rtmin    rtmax      into    intf  maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP001 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3580020 84280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3577971 84280</span>

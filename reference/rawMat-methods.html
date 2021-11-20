@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,26 +71,28 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>The container of the raw data</p></td>
-    </tr><tr><th>mzrange</th>
-      <td><p>Subset by m/z range</p></td>
-    </tr><tr><th>rtrange</th>
-      <td><p>Subset by retention time range</p></td>
-    </tr><tr><th>scanrange</th>
-      <td><p>Subset by scan index range</p></td>
-    </tr><tr><th>log</th>
-      <td><p>Whether to log transform the intensities</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsRaw"</dt><dd><p><code>rawMat(object, mzrange = numeric(), rtrange = numeric(),
+<dl><dt>object = "xcmsRaw"</dt>
+<dd><p><code>rawMat(object, mzrange = numeric(), rtrange = numeric(),
       scanrange = numeric(), log=FALSE)</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>The container of the raw data</p></dd>
+<dt>mzrange</dt>
+<dd><p>Subset by m/z range</p></dd>
+<dt>rtrange</dt>
+<dd><p>Subset by retention time range</p></dd>
+<dt>scanrange</dt>
+<dd><p>Subset by scan index range</p></dd>
+<dt>log</dt>
+<dd><p>Whether to log transform the intensities</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -103,6 +105,7 @@
     <div id="author">
     <h2>Author</h2>
     <p>Michael Lawrence</p>
+    </div>
     </div>
 
   </div>

@@ -21,7 +21,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -64,7 +64,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Core API function for massifquant peak detection</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_findChromPeaks-functions.R"><code>R/do_findChromPeaks-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
     <div class="hidden name"><code>do_findChromPeaks_massifquant.Rd</code></div>
     </div>
 
@@ -82,9 +82,9 @@
   <span class="va">scantime</span>,
   <span class="va">valsPerSpect</span>,
   ppm <span class="op">=</span> <span class="fl">10</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
+  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
   snthresh <span class="op">=</span> <span class="fl">10</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
+  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
   mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
   integrate <span class="op">=</span> <span class="fl">1</span>,
   mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
@@ -98,69 +98,70 @@
   withWave <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
-      <td><p>Numeric vector with the individual m/z values from all scans/
-spectra of one file/sample.</p></td>
-    </tr><tr><th>int</th>
-      <td><p>Numeric vector with the individual intensity values from all
-scans/spectra of one file/sample.</p></td>
-    </tr><tr><th>scantime</th>
-      <td><p>Numeric vector of length equal to the number of
-spectra/scans of the data representing the retention time of each scan.</p></td>
-    </tr><tr><th>valsPerSpect</th>
-      <td><p>Numeric vector with the number of values for each
-spectrum.</p></td>
-    </tr><tr><th>ppm</th>
-      <td><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
+    <dl><dt>mz</dt>
+<dd><p>Numeric vector with the individual m/z values from all scans/
+spectra of one file/sample.</p></dd>
+<dt>int</dt>
+<dd><p>Numeric vector with the individual intensity values from all
+scans/spectra of one file/sample.</p></dd>
+<dt>scantime</dt>
+<dd><p>Numeric vector of length equal to the number of
+spectra/scans of the data representing the retention time of each scan.</p></dd>
+<dt>valsPerSpect</dt>
+<dd><p>Numeric vector with the number of values for each
+spectrum.</p></dd>
+<dt>ppm</dt>
+<dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
-definition.</p></td>
-    </tr><tr><th>peakwidth</th>
-      <td><p><code>numeric(2)</code> with the expected approximate
+definition.</p></dd>
+<dt>peakwidth</dt>
+<dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
-in seconds.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
-    </tr><tr><th>prefilter</th>
-      <td><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
+in seconds.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+<dt>prefilter</dt>
+<dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
-<code>&gt;= I</code>.</p></td>
-    </tr><tr><th>mzCenterFun</th>
-      <td><p>Name of the function to calculate the m/z center of the
+<code>&gt;= I</code>.</p></dd>
+<dt>mzCenterFun</dt>
+<dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
 mean of the peak's m/z values, <code>"mean"</code>: mean of the peak's m/z
 values, <code>"apex"</code>: use the m/z value at the peak apex,
 <code>"wMeanApex3"</code>: intensity weighted mean of the m/z value at the
 peak apex and the m/z values left and right of it and <code>"meanApex3"</code>:
 mean of the m/z value of the peak apex and the m/z values left and right
-of it.</p></td>
-    </tr><tr><th>integrate</th>
-      <td><p>Integration method. For <code>integrate = 1</code> peak limits
+of it.</p></dd>
+<dt>integrate</dt>
+<dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
-robust, but less exact.</p></td>
-    </tr><tr><th>mzdiff</th>
-      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
+robust, but less exact.</p></dd>
+<dt>mzdiff</dt>
+<dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
-signal.</p></td>
-    </tr><tr><th>fitgauss</th>
-      <td><p><code>logical(1)</code> whether or not a Gaussian should be fitted
+signal.</p></dd>
+<dt>fitgauss</dt>
+<dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
-peak.</p></td>
-    </tr><tr><th>noise</th>
-      <td><p><code>numeric(1)</code> allowing to set a minimum intensity required
+peak.</p></dd>
+<dt>noise</dt>
+<dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity <code>&lt; noise</code> are omitted from ROI detection).</p></td>
-    </tr><tr><th>verboseColumns</th>
-      <td><p><code>logical(1)</code> whether additional peak meta data
-columns should be returned.</p></td>
-    </tr><tr><th>criticalValue</th>
-      <td><p><code>numeric(1)</code>. Suggested values:
+intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
+<dt>verboseColumns</dt>
+<dd><p><code>logical(1)</code> whether additional peak meta data
+columns should be returned.</p></dd>
+<dt>criticalValue</dt>
+<dd><p><code>numeric(1)</code>. Suggested values:
 (<code>0.1-3.0</code>). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
 peak must fall within the KF prediction margin of error. Much like
@@ -168,15 +169,15 @@ in the construction of a confidence interval, <code>criticalVal</code> loosely
 translates to be a multiplier of the standard error of the prediction
 reported by the Kalman Filter. If the peak in the XC-MS sample have
 a small mass deviance in ppm error, a smaller critical value might be
-better and vice versa.</p></td>
-    </tr><tr><th>consecMissedLimit</th>
-      <td><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
+better and vice versa.</p></dd>
+<dt>consecMissedLimit</dt>
+<dd><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
 or more consecutive failed predictions, this setting informs Massifquant
-when to stop a Kalman Filter from following a candidate peak.</p></td>
-    </tr><tr><th>unions</th>
-      <td><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
+when to stop a Kalman Filter from following a candidate peak.</p></dd>
+<dt>unions</dt>
+<dd><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
 segmentation; set to <code>0</code> if no t-test to be applied on
 chromatographically continous peaks sharing same m/z range.
 Explanation: With very few data points, sometimes a Kalman Filter stops
@@ -186,9 +187,9 @@ backwards to forwards, this algorithmic defect leaves a real peak
 divided into two segments or more. With this option turned on, the
 program identifies segmented peaks and combines them (merges them)
 into one with a two sample t-test. The potential danger of this option
-is that some truly distinct peaks may be merged.</p></td>
-    </tr><tr><th>checkBack</th>
-      <td><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
+is that some truly distinct peaks may be merged.</p></dd>
+<dt>checkBack</dt>
+<dd><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
 <code>0</code> if turned off. The convergence of a Kalman Filter to a peak's
 precise m/z mapping is very fast, but sometimes it incorporates erroneous
 centroids as part of a peak (especially early on). The <code>scanBack</code>
@@ -196,25 +197,40 @@ option is an attempt to remove the occasional outlier that lies beyond
 the converged bounds of the Kalman Filter. The option does not directly
 affect identification of a peak because it is a postprocessing measure;
 it has not shown to be a extremely useful thus far and the default is set
-to being turned off.</p></td>
-    </tr><tr><th>withWave</th>
-      <td><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
+to being turned off.</p></dd>
+<dt>withWave</dt>
+<dd><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
-centWave algorithm, which includes wavelet estimation.</p></td>
-    </tr></table></div>
-
+centWave algorithm, which includes wavelet estimation.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak,
-    with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peaks across
+    with columns:</p><dl><dt>mz</dt>
+<dd><p>Intensity weighted mean of m/z values of the peaks across
     scans.</p></dd>
-    <dt>mzmin</dt><dd><p>Minumum m/z of the peak.</p></dd>
-    <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
-    <dt>rtmin</dt><dd><p>Minimum retention time of the peak.</p></dd>
-    <dt>rtmax</dt><dd><p>Maximum retention time of the peak.</p></dd>
-    <dt>rt</dt><dd><p>Retention time of the peak's midpoint.</p></dd>
-    <dt>into</dt><dd><p>Integrated (original) intensity of the peak.</p></dd>
-    <dt>maxo</dt><dd><p>Maximum intensity of the peak.</p></dd>
+
+    <dt>mzmin</dt>
+<dd><p>Minumum m/z of the peak.</p></dd>
+
+    <dt>mzmax</dt>
+<dd><p>Maximum m/z of the peak.</p></dd>
+
+    <dt>rtmin</dt>
+<dd><p>Minimum retention time of the peak.</p></dd>
+
+    <dt>rtmax</dt>
+<dd><p>Maximum retention time of the peak.</p></dd>
+
+    <dt>rt</dt>
+<dd><p>Retention time of the peak's midpoint.</p></dd>
+
+    <dt>into</dt>
+<dd><p>Integrated (original) intensity of the peak.</p></dd>
+
+    <dt>maxo</dt>
+<dd><p>Maximum intensity of the peak.</p></dd>
+
     
 </dl><p>If <code>withWave</code> is set to <code>TRUE</code>, the result is the same as
     returned by the <code><a href="do_findChromPeaks_centWave.html">do_findChromPeaks_centWave</a></code> method.</p>
@@ -257,30 +273,31 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
     <h2>Author</h2>
     <p>Christopher Conley</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load the test file</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset to one file and restrict to a certain retention time range</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Get m/z and intensity values</span></span>
-<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Define the values per spectrum:</span></span>
-<span class="r-in"><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Perform the peak detection using massifquant - setting prefilter to</span></span>
 <span class="r-in"><span class="co">## a high value to speed up the call for the example</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_massifquant</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span>
-<span class="r-in">    scantime <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span>,</span>
-<span class="r-in">    prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_massifquant</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span>
+<span class="r-in">    scantime <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span>,</span>
+<span class="r-in">    prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Massifquant, Copyright (C) 2013 Brigham Young University.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span>
@@ -288,7 +305,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Detecting  mass traces at 10ppm ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  69 Peaks.</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         mz mzmin mzmax    rtmin    rtmax       rt    into  maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 426.1 426.1 426.1 2963.039 2999.033 2977.124  129958 29408</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 590.3 590.3 590.3 2963.039 2999.033 2978.689  255317 19072</span>

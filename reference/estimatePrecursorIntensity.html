@@ -25,7 +25,7 @@ time of the MS2 spectrum).'><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@ time of the MS2 spectrum).'><!-- mathjax --><script src="https://cdnjs.cloudflar
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@ time of the MS2 spectrum).'><!-- mathjax --><script src="https://cdnjs.cloudflar
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Estimate precursor intensity for MS level 2 spectra</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-OnDiskMSnExp.R"><code>R/functions-OnDiskMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-OnDiskMSnExp.R" class="external-link"><code>R/functions-OnDiskMSnExp.R</code></a></small>
     <div class="hidden name"><code>estimatePrecursorIntensity.Rd</code></div>
     </div>
 
@@ -87,26 +87,26 @@ time of the MS2 spectrum).</p>
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">estimatePrecursorIntensity</span><span class="op">(</span>
   <span class="va">x</span>,
   ppm <span class="op">=</span> <span class="fl">10</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"previous"</span>, <span class="st">"interpolation"</span><span class="op">)</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>
+  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"previous"</span>, <span class="st">"interpolation"</span><span class="op">)</span>,
+  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object.</p></td>
-    </tr><tr><th>ppm</th>
-      <td><p><code>numeric(1)</code> defining the maximal acceptable difference (in ppm)
+    <dl><dt>x</dt>
+<dd><p><code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object.</p></dd>
+<dt>ppm</dt>
+<dd><p><code>numeric(1)</code> defining the maximal acceptable difference (in ppm)
 of the precursor m/z and the m/z of the corresponding peak in the MS 1
-scan.</p></td>
-    </tr><tr><th>method</th>
-      <td><p><code>character(1)</code> defining the method how the precursor intensity
+scan.</p></dd>
+<dt>method</dt>
+<dd><p><code>character(1)</code> defining the method how the precursor intensity
 should be determined (see description above for details). Defaults to
-<code>method = "previous"</code>.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam()</a></code> for details.</p></td>
-    </tr></table></div>
-
+<code>method = "previous"</code>.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p><code>numeric</code> with length equal to the number of spectra in <code>x</code>. <code>NA</code> is
@@ -116,6 +116,7 @@ found for an MS 2 spectrum</p>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

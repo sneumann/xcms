@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -72,17 +72,17 @@
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">specPeaks</span><span class="op">(</span><span class="va">spec</span>, sn <span class="op">=</span> <span class="fl">20</span>, mzgap <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>spec</th>
-      <td><p>matrix with named columns <code>mz</code> and <code>intensity</code></p></td>
-    </tr><tr><th>sn</th>
-      <td><p>minimum signal to noise ratio</p></td>
-    </tr><tr><th>mzgap</th>
-      <td><p>minimal distance between adjacent peaks, with smaller peaks
-    being excluded</p></td>
-    </tr></table></div>
-
+    <dl><dt>spec</dt>
+<dd><p>matrix with named columns <code>mz</code> and <code>intensity</code></p></dd>
+<dt>sn</dt>
+<dd><p>minimum signal to noise ratio</p></dd>
+<dt>mzgap</dt>
+<dd><p>minimal distance between adjacent peaks, with smaller peaks
+    being excluded</p></dd>
+</dl></div>
     <div id="details">
     <h2>Details</h2>
     <p>Peaks must meet two criteria to be considered peaks: 1) Their
@@ -92,12 +92,12 @@
     <div id="value">
     <h2>Value</h2>
     <p>A matrix with columns:</p>
-<p></p>
-<dl><dt>mz</dt><dd><p>m/z at maximum peak intensity</p></dd>
-</dl><p></p>
-<dl><dt>intensity</dt><dd><p>maximum intensity of the peak</p></dd>
-</dl><p></p>
-<dl><dt>fwhm</dt><dd><p>full width at half max of the peak</p></dd>
+<dl><dt>mz</dt>
+<dd><p>m/z at maximum peak intensity</p></dd>
+<dt>intensity</dt>
+<dd><p>maximum intensity of the peak</p></dd>
+<dt>fwhm</dt>
+<dd><p>full width at half max of the peak</p></dd>
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -107,6 +107,7 @@
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="getSpec-methods.html">getSpec</a></code>,
   <code><a href="specNoise.html">specNoise</a></code></p></div>
+    </div>
     </div>
 
   </div>

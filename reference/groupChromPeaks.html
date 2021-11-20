@@ -7,16 +7,22 @@
     result object.
 The implemented peak grouping methods are:
 
-    densitypeak grouping based on time dimension peak densities.
+    density
+peak grouping based on time dimension peak densities.
     See groupChromPeaks-density for more details.
 
-    mzClusthigh resolution peak grouping for single spectra (direct
+
+    mzClust
+high resolution peak grouping for single spectra (direct
     infusion) MS data. See groupChromPeaks-mzClust for more
     details.
 
-    nearestchromatographic peak grouping based on their proximity in
+
+    nearest
+chromatographic peak grouping based on their proximity in
     the mz-rt space. See groupChromPeaks-nearest for more
     details.
+
 
 
 
@@ -38,7 +44,7 @@ The implemented peak grouping methods are:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -66,7 +72,7 @@ The implemented peak grouping methods are:
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -81,7 +87,7 @@ The implemented peak grouping methods are:
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Correspondence: Chromatographic peak grouping methods.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a></small>
     <div class="hidden name"><code>groupChromPeaks.Rd</code></div>
     </div>
 
@@ -92,22 +98,28 @@ The implemented peak grouping methods are:
     The resulting peak groups are referred to as (mz-rt) features and can be
     accessed <em>via</em> the <code><a href="XCMSnExp-class.html">featureDefinitions</a></code> method on the
     result object.</p>
-<p>The implemented peak grouping methods are:</p><dl><dt>density</dt><dd><p>peak grouping based on time dimension peak densities.
+<p>The implemented peak grouping methods are:</p><dl><dt>density</dt>
+<dd><p>peak grouping based on time dimension peak densities.
     See <code><a href="groupChromPeaks-density.html">groupChromPeaks-density</a></code> for more details.</p></dd>
 
-    <dt>mzClust</dt><dd><p>high resolution peak grouping for single spectra (direct
+
+    <dt>mzClust</dt>
+<dd><p>high resolution peak grouping for single spectra (direct
     infusion) MS data. See <code><a href="groupChromPeaks-mzClust.html">groupChromPeaks-mzClust</a></code> for more
     details.</p></dd>
 
-    <dt>nearest</dt><dd><p>chromatographic peak grouping based on their proximity in
+
+    <dt>nearest</dt>
+<dd><p>chromatographic peak grouping based on their proximity in
     the mz-rt space. See <code><a href="groupChromPeaks-nearest.html">groupChromPeaks-nearest</a></code> for more
     details.</p></dd>
+
 
 
 </dl></div>
 
 
-
+    <div id="ref-sections">
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="XCMSnExp-class.html">featureDefinitions</a></code> and
@@ -124,6 +136,7 @@ feature.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

@@ -28,7 +28,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -56,7 +56,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,7 +71,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Core API function for matchedFilter peak detection</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/do_findChromPeaks-functions.R"><code>R/do_findChromPeaks-functions.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
     <div class="hidden name"><code>do_findChromPeaks_matchedFilter.Rd</code></div>
     </div>
 
@@ -109,86 +109,110 @@
   sleep <span class="op">=</span> <span class="fl">0</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>mz</th>
-      <td><p>Numeric vector with the individual m/z values from all scans/
-spectra of one file/sample.</p></td>
-    </tr><tr><th>int</th>
-      <td><p>Numeric vector with the individual intensity values from all
-scans/spectra of one file/sample.</p></td>
-    </tr><tr><th>scantime</th>
-      <td><p>Numeric vector of length equal to the number of
-spectra/scans of the data representing the retention time of each scan.</p></td>
-    </tr><tr><th>valsPerSpect</th>
-      <td><p>Numeric vector with the number of values for each
-spectrum.</p></td>
-    </tr><tr><th>binSize</th>
-      <td><p><code>numeric(1)</code> specifying the width of the
-bins/slices in m/z dimension.</p></td>
-    </tr><tr><th>impute</th>
-      <td><p>Character string specifying the method to be used for missing
+    <dl><dt>mz</dt>
+<dd><p>Numeric vector with the individual m/z values from all scans/
+spectra of one file/sample.</p></dd>
+<dt>int</dt>
+<dd><p>Numeric vector with the individual intensity values from all
+scans/spectra of one file/sample.</p></dd>
+<dt>scantime</dt>
+<dd><p>Numeric vector of length equal to the number of
+spectra/scans of the data representing the retention time of each scan.</p></dd>
+<dt>valsPerSpect</dt>
+<dd><p>Numeric vector with the number of values for each
+spectrum.</p></dd>
+<dt>binSize</dt>
+<dd><p><code>numeric(1)</code> specifying the width of the
+bins/slices in m/z dimension.</p></dd>
+<dt>impute</dt>
+<dd><p>Character string specifying the method to be used for missing
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
-<code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></td>
-    </tr><tr><th>baseValue</th>
-      <td><p>The base value to which empty elements should be set. This
+<code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></dd>
+<dt>baseValue</dt>
+<dd><p>The base value to which empty elements should be set. This
 is only considered for <code>method = "linbase"</code> and corresponds to the
-<code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></td>
-    </tr><tr><th>distance</th>
-      <td><p>For <code>method = "linbase"</code>: number of non-empty
+<code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></dd>
+<dt>distance</dt>
+<dd><p>For <code>method = "linbase"</code>: number of non-empty
 neighboring element of an empty element that should be considered for
-linear interpolation. See details section for more information.</p></td>
-    </tr><tr><th>fwhm</th>
-      <td><p><code>numeric(1)</code> specifying the full width at half maximum
+linear interpolation. See details section for more information.</p></dd>
+<dt>fwhm</dt>
+<dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
-actual sigma, see below.</p></td>
-    </tr><tr><th>sigma</th>
-      <td><p><code>numeric(1)</code> specifying the standard deviation (width)
-of the matched filtration model peak.</p></td>
-    </tr><tr><th>max</th>
-      <td><p><code>numeric(1)</code> representing the maximum number of peaks
-that are expected/will be identified per slice.</p></td>
-    </tr><tr><th>snthresh</th>
-      <td><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></td>
-    </tr><tr><th>steps</th>
-      <td><p><code>numeric(1)</code> defining the number of bins to be
+actual sigma, see below.</p></dd>
+<dt>sigma</dt>
+<dd><p><code>numeric(1)</code> specifying the standard deviation (width)
+of the matched filtration model peak.</p></dd>
+<dt>max</dt>
+<dd><p><code>numeric(1)</code> representing the maximum number of peaks
+that are expected/will be identified per slice.</p></dd>
+<dt>snthresh</dt>
+<dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+<dt>steps</dt>
+<dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
-performed).</p></td>
-    </tr><tr><th>mzdiff</th>
-      <td><p><code>numeric(1)</code> representing the minimum difference in m/z
+performed).</p></dd>
+<dt>mzdiff</dt>
+<dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
-signal.</p></td>
-    </tr><tr><th>index</th>
-      <td><p><code>logical(1)</code> specifying whether indicies should be
-returned instead of values for m/z and retention times.</p></td>
-    </tr><tr><th>sleep</th>
-      <td><p><code>numeric(1)</code> defining the number of seconds to wait between
+signal.</p></dd>
+<dt>index</dt>
+<dd><p><code>logical(1)</code> specifying whether indicies should be
+returned instead of values for m/z and retention times.</p></dd>
+<dt>sleep</dt>
+<dd><p><code>numeric(1)</code> defining the number of seconds to wait between
 iterations. Defaults to <code>sleep = 0</code>. If <code>&gt; 0</code> a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
-future.</p></td>
-    </tr></table></div>
-
+future.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A matrix, each row representing an identified chromatographic peak,
-    with columns:</p><dl><dt>mz</dt><dd><p>Intensity weighted mean of m/z values of the peak across scans.</p></dd>
-    <dt>mzmin</dt><dd><p>Minimum m/z of the peak.</p></dd>
-    <dt>mzmax</dt><dd><p>Maximum m/z of the peak.</p></dd>
-    <dt>rt</dt><dd><p>Retention time of the peak's midpoint.</p></dd>
-    <dt>rtmin</dt><dd><p>Minimum retention time of the peak.</p></dd>
-    <dt>rtmax</dt><dd><p>Maximum retention time of the peak.</p></dd>
-    <dt>into</dt><dd><p>Integrated (original) intensity of the peak.</p></dd>
-    <dt>intf</dt><dd><p>Integrated intensity of the filtered peak.</p></dd>
-    <dt>maxo</dt><dd><p>Maximum intensity of the peak.</p></dd>
-    <dt>maxf</dt><dd><p>Maximum intensity of the filtered peak.</p></dd>
-    <dt>i</dt><dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
-    <dt>sn</dt><dd><p>Signal to noise ratio of the peak</p></dd>
+    with columns:</p><dl><dt>mz</dt>
+<dd><p>Intensity weighted mean of m/z values of the peak across scans.</p></dd>
+
+    <dt>mzmin</dt>
+<dd><p>Minimum m/z of the peak.</p></dd>
+
+    <dt>mzmax</dt>
+<dd><p>Maximum m/z of the peak.</p></dd>
+
+    <dt>rt</dt>
+<dd><p>Retention time of the peak's midpoint.</p></dd>
+
+    <dt>rtmin</dt>
+<dd><p>Minimum retention time of the peak.</p></dd>
+
+    <dt>rtmax</dt>
+<dd><p>Maximum retention time of the peak.</p></dd>
+
+    <dt>into</dt>
+<dd><p>Integrated (original) intensity of the peak.</p></dd>
+
+    <dt>intf</dt>
+<dd><p>Integrated intensity of the filtered peak.</p></dd>
+
+    <dt>maxo</dt>
+<dd><p>Maximum intensity of the peak.</p></dd>
+
+    <dt>maxf</dt>
+<dd><p>Maximum intensity of the filtered peak.</p></dd>
+
+    <dt>i</dt>
+<dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
+
+    <dt>sn</dt>
+<dd><p>Signal to noise ratio of the peak</p></dd>
+
     
 </dl></div>
     <div id="details">
@@ -230,28 +254,29 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <h2>Author</h2>
     <p>Colin A Smith, Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load the test file</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset to one file and restrict to a certain retention time range</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Get m/z and intensity values</span></span>
-<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Define the values per spectrum:</span></span>
-<span class="r-in"><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span>
-<span class="r-in">    scantime <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span>
+<span class="r-in">    scantime <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 205.9819 205.9 206.0 2786.200 2772.115 2800.284  237993.6  448580.3 10681</span>

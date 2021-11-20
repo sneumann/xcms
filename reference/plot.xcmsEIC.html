@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,52 +71,15 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p>the <code>xcmsEIC</code> object</p></td>
-    </tr><tr><th>y</th>
-      <td><p>optional <code>xcmsSet</code> object with peak integration data</p></td>
-    </tr><tr><th>groupidx</th>
-      <td><p>either character vector with names or integer vector with
-    indicies of peak groups for which to plot EICs</p></td>
-    </tr><tr><th>sampleidx</th>
-      <td><p>either character vector with names or integer vector with
-    indicies of samples for which to plot EICs</p></td>
-    </tr><tr><th>rtrange</th>
-      <td><p>a two column matrix with minimum and maximum retention times
-    between which to return EIC data points</p>
-<p>if it has the same number of rows as the number groups in the
-    <code>xcmsEIC</code> object, then <code>sampleidx</code> is used to subset
-    it. otherwise, it is repeated over the length of <code>sampleidx</code></p>
-<p>it may also be a single number specifying the time window around
-    the peak for which to plot EIC data</p></td>
-    </tr><tr><th>col</th>
-      <td><p>color to use for plotting extracted ion chromatograms. if missing
-    and <code>y</code> is specified, colors are taken from
-    <code>unclass(sampclass(y))</code> and the default palette</p>
-<p>if it is the same length as the number groups in the <code>xcmsEIC</code>
-    object, then <code>sampleidx</code> is used to subset it. otherwise,
-    it is repeated over the length of <code>sampleidx</code></p></td>
-    </tr><tr><th>legtext</th>
-      <td><p>text to use for legend. if <code>NULL</code> and <code>y</code> is specified,
-    legend text is taken from the sample class information found
-    in the <code>xcmsSet</code></p></td>
-    </tr><tr><th>peakint</th>
-      <td><p>logical, plot integrated peak area with darkened lines (requires
-    that <code>y</code> also be specified)</p></td>
-    </tr><tr><th>sleep</th>
-      <td><p>seconds to pause between plotting EICs</p></td>
-    </tr><tr><th>...</th>
-      <td><p>other graphical parameters</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>x = "xcmsEIC"</dt><dd><p><code>
+<dl><dt>x = "xcmsEIC"</dt>
+<dd><p><code>
 plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange,
              col = rep(1, length(sampleidx)), legtext = NULL, peakint = TRUE, sleep = 0, ...)</code></p></dd>
+
 
 
 </dl></div>
@@ -124,6 +87,45 @@ plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange =
     <h2>Value</h2>
     <p>A <code>xcmsSet</code> object.</p>
     </div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>x</dt>
+<dd><p>the <code>xcmsEIC</code> object</p></dd>
+<dt>y</dt>
+<dd><p>optional <code>xcmsSet</code> object with peak integration data</p></dd>
+<dt>groupidx</dt>
+<dd><p>either character vector with names or integer vector with
+    indicies of peak groups for which to plot EICs</p></dd>
+<dt>sampleidx</dt>
+<dd><p>either character vector with names or integer vector with
+    indicies of samples for which to plot EICs</p></dd>
+<dt>rtrange</dt>
+<dd><p>a two column matrix with minimum and maximum retention times
+    between which to return EIC data points</p>
+<p>if it has the same number of rows as the number groups in the
+    <code>xcmsEIC</code> object, then <code>sampleidx</code> is used to subset
+    it. otherwise, it is repeated over the length of <code>sampleidx</code></p>
+<p>it may also be a single number specifying the time window around
+    the peak for which to plot EIC data</p></dd>
+<dt>col</dt>
+<dd><p>color to use for plotting extracted ion chromatograms. if missing
+    and <code>y</code> is specified, colors are taken from
+    <code>unclass(sampclass(y))</code> and the default palette</p>
+<p>if it is the same length as the number groups in the <code>xcmsEIC</code>
+    object, then <code>sampleidx</code> is used to subset it. otherwise,
+    it is repeated over the length of <code>sampleidx</code></p></dd>
+<dt>legtext</dt>
+<dd><p>text to use for legend. if <code>NULL</code> and <code>y</code> is specified,
+    legend text is taken from the sample class information found
+    in the <code>xcmsSet</code></p></dd>
+<dt>peakint</dt>
+<dd><p>logical, plot integrated peak area with darkened lines (requires
+    that <code>y</code> also be specified)</p></dd>
+<dt>sleep</dt>
+<dd><p>seconds to pause between plotting EICs</p></dd>
+<dt>...</dt>
+<dd><p>other graphical parameters</p></dd>
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Colin A. Smith, <a href="mailto:csmith@scripps.edu">csmith@scripps.edu</a></p>
@@ -131,9 +133,10 @@ plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange =
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsEIC-class.html">xcmsEIC-class</a></code>,
-  <code><a href="https://rdrr.io/r/grDevices/png.html">png</a></code>,
-  <code><a href="https://rdrr.io/r/grDevices/pdf.html">pdf</a></code>,
-  <code><a href="https://rdrr.io/r/grDevices/postscript.html">postscript</a></code>,</p></div>
+  <code><a href="https://rdrr.io/r/grDevices/png.html" class="external-link">png</a></code>,
+  <code><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></code>,
+  <code><a href="https://rdrr.io/r/grDevices/postscript.html" class="external-link">postscript</a></code>,</p></div>
+    </div>
     </div>
 
   </div>

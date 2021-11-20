@@ -18,7 +18,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -71,40 +71,42 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>minfrac</th>
-      <td><p>minimum fraction of samples necessary in at least one of the sample
-    groups for it to be a valid group</p></td>
-    </tr><tr><th>minsamp</th>
-      <td><p>minimum number of samples necessary in at least one of the sample
-    groups for it to be a valid group</p></td>
-    </tr><tr><th>bw</th>
-      <td><p>bandwidth (standard deviation or half width at half maximum)
-    of gaussian smoothing kernel to apply to the peak density
-    chromatogram</p></td>
-    </tr><tr><th>mzwid</th>
-      <td><p>width of overlapping m/z slices to use for creating peak density
-    chromatograms and grouping peaks across samples</p></td>
-    </tr><tr><th>max</th>
-      <td><p>maximum number of groups to identify in a single m/z slice</p></td>
-    </tr><tr><th>sleep</th>
-      <td><p>seconds to pause between plotting successive steps of the peak
-    grouping algorithm. peaks are plotted as points showing relative
-    intensity. identified groups are flanked by dotted vertical
-    lines.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsSet"</dt><dd><p><code>
+<dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>
     group(object, bw = 30, minfrac = 0.5, minsamp = 1,
     mzwid = 0.25, max = 50, sleep = 0)
   </code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>minfrac</dt>
+<dd><p>minimum fraction of samples necessary in at least one of the sample
+    groups for it to be a valid group</p></dd>
+<dt>minsamp</dt>
+<dd><p>minimum number of samples necessary in at least one of the sample
+    groups for it to be a valid group</p></dd>
+<dt>bw</dt>
+<dd><p>bandwidth (standard deviation or half width at half maximum)
+    of gaussian smoothing kernel to apply to the peak density
+    chromatogram</p></dd>
+<dt>mzwid</dt>
+<dd><p>width of overlapping m/z slices to use for creating peak density
+    chromatograms and grouping peaks across samples</p></dd>
+<dt>max</dt>
+<dd><p>maximum number of groups to identify in a single m/z slice</p></dd>
+<dt>sleep</dt>
+<dd><p>seconds to pause between plotting successive steps of the peak
+    grouping algorithm. peaks are plotted as points showing relative
+    intensity. identified groups are flanked by dotted vertical
+    lines.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -115,7 +117,8 @@
     <div class="dont-index"><p><code><a href="do_groupChromPeaks_density.html">do_groupChromPeaks_density</a></code> for the core API function
   performing the analysis.
   <code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
-  <code><a href="https://rdrr.io/pkg/BiocGenerics/man/density.html">density</a></code></p></div>
+  <code><a href="https://rdrr.io/pkg/BiocGenerics/man/density.html" class="external-link">density</a></code></p></div>
+    </div>
     </div>
 
   </div>

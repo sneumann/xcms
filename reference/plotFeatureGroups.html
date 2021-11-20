@@ -20,7 +20,7 @@ for details on and options for feature grouping."><!-- mathjax --><script src="h
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@ for details on and options for feature grouping."><!-- mathjax --><script src="h
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -63,64 +63,65 @@ for details on and options for feature grouping."><!-- mathjax --><script src="h
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot feature groups in the m/z-retention time space</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/methods-group-features.R"><code>R/methods-group-features.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-group-features.R" class="external-link"><code>R/methods-group-features.R</code></a></small>
     <div class="hidden name"><code>plotFeatureGroups.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p><code>plotFeatureGroups</code> visualizes defined feature groups in the m/z by
 retention time space. Features are indicated by points with features from
-the same feature group being connected by a line. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html">featureGroups()</a></code>
+the same feature group being connected by a line. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups()</a></code>
 for details on and options for feature grouping.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">plotFeatureGroups</span><span class="op">(</span>
   <span class="va">x</span>,
-  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   xlab <span class="op">=</span> <span class="st">"retention time"</span>,
   ylab <span class="op">=</span> <span class="st">"m/z"</span>,
   pch <span class="op">=</span> <span class="fl">4</span>,
   col <span class="op">=</span> <span class="st">"#00000060"</span>,
   type <span class="op">=</span> <span class="st">"o"</span>,
   main <span class="op">=</span> <span class="st">"Feature groups"</span>,
-  featureGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span>
+  featureGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with grouped features (i.e. after calling
-<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html">groupFeatures()</a></code>.</p></td>
-    </tr><tr><th>xlim</th>
-      <td><p><code>numeric(2)</code> with the lower and upper limit for the x-axis.</p></td>
-    </tr><tr><th>ylim</th>
-      <td><p><code>numeric(2)</code> with the lower and upper limit for the y-axis.</p></td>
-    </tr><tr><th>xlab</th>
-      <td><p><code>character(1)</code> with the label for the x-axis.</p></td>
-    </tr><tr><th>ylab</th>
-      <td><p><code>character(1)</code> with the label for the y-axis.</p></td>
-    </tr><tr><th>pch</th>
-      <td><p>the plotting character. Defaults to <code>pch = 4</code> i.e. plotting
-features as crosses. See <code><a href="https://rdrr.io/r/graphics/par.html">par()</a></code> for more information.</p></td>
-    </tr><tr><th>col</th>
-      <td><p>color to be used to draw the features. At present only a single
-color is supported.</p></td>
-    </tr><tr><th>type</th>
-      <td><p>plotting type (see <code><a href="https://rdrr.io/r/graphics/par.html">par()</a></code>). Defaults to <code>type = "o"</code> which
+    <dl><dt>x</dt>
+<dd><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with grouped features (i.e. after calling
+<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures()</a></code>.</p></dd>
+<dt>xlim</dt>
+<dd><p><code>numeric(2)</code> with the lower and upper limit for the x-axis.</p></dd>
+<dt>ylim</dt>
+<dd><p><code>numeric(2)</code> with the lower and upper limit for the y-axis.</p></dd>
+<dt>xlab</dt>
+<dd><p><code>character(1)</code> with the label for the x-axis.</p></dd>
+<dt>ylab</dt>
+<dd><p><code>character(1)</code> with the label for the y-axis.</p></dd>
+<dt>pch</dt>
+<dd><p>the plotting character. Defaults to <code>pch = 4</code> i.e. plotting
+features as crosses. See <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par()</a></code> for more information.</p></dd>
+<dt>col</dt>
+<dd><p>color to be used to draw the features. At present only a single
+color is supported.</p></dd>
+<dt>type</dt>
+<dd><p>plotting type (see <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par()</a></code>). Defaults to <code>type = "o"</code> which
 draws each feature as a point and connecting the features of the same
-feature group with a line.</p></td>
-    </tr><tr><th>main</th>
-      <td><p><code>character(1)</code> with the title of the plot.</p></td>
-    </tr><tr><th>featureGroups</th>
-      <td><p>optional <code>character</code> of feature group IDs to draw only
+feature group with a line.</p></dd>
+<dt>main</dt>
+<dd><p><code>character(1)</code> with the title of the plot.</p></dd>
+<dt>featureGroups</dt>
+<dd><p>optional <code>character</code> of feature group IDs to draw only
 specified feature group(s). If not provided, all feature groups are
-drawn.</p></td>
-    </tr></table></div>
-
+drawn.</p></dd>
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

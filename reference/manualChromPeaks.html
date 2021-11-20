@@ -29,7 +29,7 @@ object's chromPeaks matrix."><!-- mathjax --><script src="https://cdnjs.cloudfla
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@ object's chromPeaks matrix."><!-- mathjax --><script src="https://cdnjs.cloudfla
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -72,7 +72,7 @@ object's chromPeaks matrix."><!-- mathjax --><script src="https://cdnjs.cloudfla
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Manual peak integration and feature definition</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-XCMSnExp.R"><code>R/functions-XCMSnExp.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
     <div class="hidden name"><code>manualChromPeaks.Rd</code></div>
     </div>
 
@@ -94,37 +94,37 @@ object's <code>chromPeaks</code> matrix.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">manualChromPeaks</span><span class="op">(</span>
   <span class="va">object</span>,
-  chromPeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="op">)</span>,
-  samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
+  chromPeaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="op">)</span>,
+  samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,
+  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
   msLevel <span class="op">=</span> <span class="fl">1L</span>
 <span class="op">)</span>
 
-<span class="fu">manualFeatures</span><span class="op">(</span><span class="va">object</span>, peakIdx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
+<span class="fu">manualFeatures</span><span class="op">(</span><span class="va">object</span>, peakIdx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p><code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></td>
-    </tr><tr><th>chromPeaks</th>
-      <td><p><code>matrix</code> defining the boundaries of the chromatographic
+    <dl><dt>object</dt>
+<dd><p><code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></dd>
+<dt>chromPeaks</dt>
+<dd><p><code>matrix</code> defining the boundaries of the chromatographic
 peaks, one row per chromatographic peak, columns <code>"mzmin"</code>, <code>"mzmax"</code>,
 <code>"rtmin"</code> and <code>"rtmax"</code> defining the m/z and retention time region of
-each peak.</p></td>
-    </tr><tr><th>samples</th>
-      <td><p>optional <code>integer</code> to select samples in which the peak
-integration should be performed. By default performed in all samples.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>parallel processing settings (see <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam()</a></code> for details).</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level in which peak integration
-should be performed.</p></td>
-    </tr><tr><th>peakIdx</th>
-      <td><p>for <code>nabbyakFeatyres</code>: <code>list</code> of <code>integer</code> vectors with the
+each peak.</p></dd>
+<dt>samples</dt>
+<dd><p>optional <code>integer</code> to select samples in which the peak
+integration should be performed. By default performed in all samples.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>parallel processing settings (see <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details).</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level in which peak integration
+should be performed.</p></dd>
+<dt>peakIdx</dt>
+<dd><p>for <code>nabbyakFeatyres</code>: <code>list</code> of <code>integer</code> vectors with the
 indices of chromatographic peaks in the object's <code>chromPeaks</code> matrix
-that should be grouped into features.</p></td>
-    </tr></table></div>
-
+that should be grouped into features.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p><code>XCMSnExp</code> with the manually added chromatographic peaks or features.</p>
@@ -132,6 +132,7 @@ that should be grouped into features.</p></td>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

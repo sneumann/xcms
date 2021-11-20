@@ -18,7 +18,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -61,7 +61,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generate breaks for binning</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-binning.R"><code>R/functions-binning.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-binning.R" class="external-link"><code>R/functions-binning.R</code></a></small>
     <div class="hidden name"><code>breaks_on_nBins.Rd</code></div>
     </div>
 
@@ -72,20 +72,20 @@ from <code>fromX</code> to <code>toX</code>.</p>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_nBins</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">nBins</span>, shiftByHalfBinSize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>fromX</th>
-      <td><p>numeric(1) specifying the lowest value for the bins.</p></td>
-    </tr><tr><th>toX</th>
-      <td><p>numeric(1) specifying the largest value for the bins.</p></td>
-    </tr><tr><th>nBins</th>
-      <td><p>numeric(1) defining the number of bins.</p></td>
-    </tr><tr><th>shiftByHalfBinSize</th>
-      <td><p>Logical indicating whether the bins should be shifted
+    <dl><dt>fromX</dt>
+<dd><p>numeric(1) specifying the lowest value for the bins.</p></dd>
+<dt>toX</dt>
+<dd><p>numeric(1) specifying the largest value for the bins.</p></dd>
+<dt>nBins</dt>
+<dd><p>numeric(1) defining the number of bins.</p></dd>
+<dt>shiftByHalfBinSize</dt>
+<dd><p>Logical indicating whether the bins should be shifted
 left by half bin size. This results centered bins, i.e. the first bin being
-centered at <code>fromX</code> and the last around <code>toX</code>.</p></td>
-    </tr></table></div>
-
+centered at <code>fromX</code> and the last around <code>toX</code>.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A numeric vector of length <code>nBins + 1</code> defining the lower and
@@ -107,6 +107,7 @@ bin, the second and third value for the second bin and so on.</p>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
     <div id="examples">

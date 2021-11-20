@@ -26,7 +26,7 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -72,7 +72,7 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
 
 <code>rla</code> calculates the relative log abundances (RLA, see reference) on a
 <code>numeric</code> vector.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-utils.R"><code>R/functions-utils.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-utils.R" class="external-link"><code>R/functions-utils.R</code></a></small>
     <div class="hidden name"><code>rla.Rd</code></div>
     </div>
 
@@ -87,20 +87,20 @@ rowRla calculates row-wise RLAs."><!-- mathjax --><script src="https://cdnjs.clo
 
 <span class="fu">rowRla</span><span class="op">(</span><span class="va">x</span>, <span class="va">group</span>, log.transform <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>numeric</code> (for <code>rla</code>) or <code>matrix</code> (for <code>rowRla</code>) with the
-abundances (in natural scale) on which the RLA should be calculated.</p></td>
-    </tr><tr><th>group</th>
-      <td><p><code>factor</code>, <code>numeric</code> or <code>character</code> with the same length
+    <dl><dt>x</dt>
+<dd><p><code>numeric</code> (for <code>rla</code>) or <code>matrix</code> (for <code>rowRla</code>) with the
+abundances (in natural scale) on which the RLA should be calculated.</p></dd>
+<dt>group</dt>
+<dd><p><code>factor</code>, <code>numeric</code> or <code>character</code> with the same length
 than <code>x</code> that groups values in <code>x</code>. If omitted all values are considered
-to be from the same group.</p></td>
-    </tr><tr><th>log.transform</th>
-      <td><p><code>logical(1)</code> whether <code>x</code> should be log2 transformed.
-Set to <code>log.transform = FALSE</code> if <code>x</code> is already in log scale.</p></td>
-    </tr></table></div>
-
+to be from the same group.</p></dd>
+<dt>log.transform</dt>
+<dd><p><code>logical(1)</code> whether <code>x</code> should be log2 transformed.
+Set to <code>log.transform = FALSE</code> if <code>x</code> is already in log scale.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p><code>numeric</code> of the same length than <code>x</code> (for <code>rla</code>) or <code>matrix</code> with
@@ -121,13 +121,14 @@ McConville M, Speed TP. Normalizing and integrating metabolomics data.
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">rla</span><span class="op">(</span><span class="va">x</span>, <span class="va">grp</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          1          1          1          2          2          2          3 </span>

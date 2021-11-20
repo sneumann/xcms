@@ -48,7 +48,7 @@ from which the signal should be integrated.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -76,7 +76,7 @@ from which the signal should be integrated.
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,7 +91,7 @@ from which the signal should be integrated.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Integrate areas of missing peaks</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-Params.R"><code>R/methods-Params.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-Params.R" class="external-link"><code>R/methods-Params.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>fillChromPeaks.Rd</code></div>
     </div>
 
@@ -140,10 +140,10 @@ from which the signal should be integrated.</p></li>
 <span class="fu">fixedMz</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
 <span class="fu">ChromPeakAreaParam</span><span class="op">(</span>
-  mzmin <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>,
-  mzmax <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span>,
-  rtmin <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>,
-  rtmax <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span>
+  mzmin <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>,
+  mzmax <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span>,
+  rtmin <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span>,
+  rtmax <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="co"># S4 method for FillChromPeaksParam</span>
@@ -165,28 +165,29 @@ from which the signal should be integrated.</p></li>
 <span class="fu"><a href="findChromPeaks-centWave.html">ppm</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
 
 <span class="co"># S4 method for XCMSnExp,FillChromPeaksParam</span>
-<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># S4 method for XCMSnExp,ChromPeakAreaParam</span>
-<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># S4 method for XCMSnExp,missing</span>
-<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">bpparam</a></span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
+<span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>expandMz</th>
-      <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining the value
+    <dl><dt>expandMz</dt>
+<dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining the value
 by which the mz width of peaks should be expanded. Each peak is expanded
 in mz direction by <code>expandMz *</code> their original m/z width. A value of
 <code>0</code> means no expansion, a value of <code>1</code> grows each peak by <code>1 *</code> the m/z
 width of the peak resulting in peaks with twice their original size in
-m/z direction (expansion by half m/z width to both sides).</p></td>
-    </tr><tr><th>expandRt</th>
-      <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code>, same as <code>expandMz</code>
-but for the retention time width.</p></td>
-    </tr><tr><th>ppm</th>
-      <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> optionally specifying a
+m/z direction (expansion by half m/z width to both sides).</p></dd>
+<dt>expandRt</dt>
+<dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code>, same as <code>expandMz</code>
+but for the retention time width.</p></dd>
+<dt>ppm</dt>
+<dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> optionally specifying a
 <em>ppm</em> by which the m/z width of the peak region should be expanded. For
 peaks with an m/z width smaller than <code>mean(c(mzmin, mzmax)) * ppm / 1e6</code>,
 the <code>mzmin</code> will be replaced by
@@ -194,66 +195,65 @@ the <code>mzmin</code> will be replaced by
 <code>mzmax</code> by
 <code>mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)</code>.
 This is applied before eventually expanding the m/z width using the
-<code>expandMz</code> parameter.</p></td>
-    </tr><tr><th>fixedMz</th>
-      <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
+<code>expandMz</code> parameter.</p></dd>
+<dt>fixedMz</dt>
+<dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
 factor by which the m/z width of each feature is to be expanded.
 The m/z width is expanded on both sides by <code>fixedMz</code> (i.e. <code>fixedMz</code>
 is subtracted from the lower m/z and added to the upper m/z). This
-expansion is applied <em>after</em> <code>expandMz</code> and <code>ppm</code>.</p></td>
-    </tr><tr><th>fixedRt</th>
-      <td><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
+expansion is applied <em>after</em> <code>expandMz</code> and <code>ppm</code>.</p></dd>
+<dt>fixedRt</dt>
+<dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
 factor by which the retention time width of each factor is to be
 expanded. The rt width is expanded on both sides by <code>fixedRt</code> (i.e.
 <code>fixedRt</code> is subtracted from the lower rt and added to the upper rt).
-This expansion is applied <em>after</em> <code>expandRt</code>.</p></td>
-    </tr><tr><th>object</th>
-      <td><p><code>XCMSnExp</code> object with identified and grouped chromatographic
-peaks.</p></td>
-    </tr><tr><th>mzmin</th>
-      <td><p><code>function</code> to be applied to values in the <code>"mzmin"</code> column of all
+This expansion is applied <em>after</em> <code>expandRt</code>.</p></dd>
+<dt>object</dt>
+<dd><p><code>XCMSnExp</code> object with identified and grouped chromatographic
+peaks.</p></dd>
+<dt>mzmin</dt>
+<dd><p><code>function</code> to be applied to values in the <code>"mzmin"</code> column of all
 chromatographic peaks of a feature to define the lower m/z value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>mzmin = function(z) quantile(z, probs = 0.25)</code> hence using the 25%
-quantile of all values.</p></td>
-    </tr><tr><th>mzmax</th>
-      <td><p><code>function</code> to be applied to values in the <code>"mzmax"</code> column of all
+quantile of all values.</p></dd>
+<dt>mzmax</dt>
+<dd><p><code>function</code> to be applied to values in the <code>"mzmax"</code> column of all
 chromatographic peaks of a feature to define the upper m/z value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>mzmax = function(z) quantile(z, probs = 0.75)</code> hence using the 75%
-quantile of all values.</p></td>
-    </tr><tr><th>rtmin</th>
-      <td><p><code>function</code> to be applied to values in the <code>"rtmin"</code> column of all
+quantile of all values.</p></dd>
+<dt>rtmin</dt>
+<dd><p><code>function</code> to be applied to values in the <code>"rtmin"</code> column of all
 chromatographic peaks of a feature to define the lower rt value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>rtmin = function(z) quantile(z, probs = 0.25)</code> hence using the 25%
-quantile of all values.</p></td>
-    </tr><tr><th>rtmax</th>
-      <td><p><code>function</code> to be applied to values in the <code>"rtmax"</code> column of all
+quantile of all values.</p></dd>
+<dt>rtmax</dt>
+<dd><p><code>function</code> to be applied to values in the <code>"rtmax"</code> column of all
 chromatographic peaks of a feature to define the upper rt value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>rtmax = function(z) quantile(z, probs = 0.75)</code> hence using the 75%
-quantile of all values.</p></td>
-    </tr><tr><th>value</th>
-      <td><p>The value for the slot.</p></td>
-    </tr><tr><th>param</th>
-      <td><p><code>FillChromPeaksParam</code> or <code>ChromPeakAreaParam</code> object
-defining which approach should be used (see details section).</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> defining the MS level on which peak filling
+quantile of all values.</p></dd>
+<dt>value</dt>
+<dd><p>The value for the slot.</p></dd>
+<dt>param</dt>
+<dd><p><code>FillChromPeaksParam</code> or <code>ChromPeakAreaParam</code> object
+defining which approach should be used (see details section).</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> defining the MS level on which peak filling
 should be performed (defaults to <code>msLevel = 1L</code>). Only peak filling
 on one MS level at a time is supported, to fill in peaks for MS level 1
 and 2 run first using <code>msLevel = 1</code> and then (on the returned
-result object) again with <code>msLevel = 2</code>.</p></td>
-    </tr><tr><th>BPPARAM</th>
-      <td><p>Parallel processing settings.</p></td>
-    </tr></table></div>
-
+result object) again with <code>msLevel = 2</code>.</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>Parallel processing settings.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>The <code>FillChromPeaksParam</code> function returns a
-    <code>FillChromPeaksParam</code> object.</p>
-<p>A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
+<code>FillChromPeaksParam</code> object.
+A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
 features filled into its <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> matrix.</p>
     </div>
     <div id="details">
@@ -288,10 +288,14 @@ signal within the area is used.</p>
     <h2>Slots</h2>
     
 
-<dl><dt><code>expandMz,expandRt,ppm,fixedMz,fixedRt</code></dt><dd><p>See corresponding parameter
+<dl><dt><code>expandMz,expandRt,ppm,fixedMz,fixedRt</code></dt>
+<dd><p>See corresponding parameter
 above.</p></dd>
 
-<dt><code>rtmin,rtmax,mzmin,mzmax</code></dt><dd><p>See corresponding parameter above.</p></dd>
+
+<dt><code>rtmin,rtmax,mzmin,mzmax</code></dt>
+<dd><p>See corresponding parameter above.</p></dd>
+
 
 </dl></div>
     <div id="note">
@@ -313,27 +317,28 @@ region for each feature.</p></div>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">faahko_sub</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Perform the correspondence. We assign all samples to the same group.</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">res</span>,</span>
-<span class="r-in">    param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in">    param <span class="op">=</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 2572 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## For how many features do we lack an integrated peak signal?</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 26</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Filling missing peak data using the peak area from identified</span></span>
@@ -352,12 +357,12 @@ region for each feature.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> got 6.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## How many missing values do we have after peak filling?</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Get the peaks that have been filled in:</span></span>
 <span class="r-in"><span class="va">fp</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">$</span><span class="va">is_filled</span>, <span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">fp</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fp</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax      into intb   maxo sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP249 286.2 286.2 286.2 3252.556 3236.907 3274.857 1288521.3   NA  78048 NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP250 380.1 380.1 380.1 3172.743 3129.707 3173.526  677133.8   NA  27040 NA</span>
@@ -379,7 +384,7 @@ region for each feature.</p></div>
 <span class="r-in"><span class="va">ph</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Missing peak filling </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:55:02 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sat Nov 20 12:22:18 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: ChromPeakAreaParam </span>
@@ -391,21 +396,21 @@ region for each feature.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c2a3502d90&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c2a3502d90&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c2a3502d90&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5557c35f2ea0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55c2a3502d90&gt;</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## It is also possible to remove filled-in peaks:</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFilledChromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 26</span>
 </code></pre></div>
     </div>

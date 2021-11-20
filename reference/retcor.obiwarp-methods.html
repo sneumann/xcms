@@ -24,7 +24,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -52,7 +52,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,7 +73,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
 
     <div class="ref-description">
     <p>Calculate retention time deviations for each sample.
-  It is based on the code at <a href="http://obi-warp.sourceforge.net/">http://obi-warp.sourceforge.net/</a>.
+  It is based on the code at <a href="http://obi-warp.sourceforge.net/" class="external-link">http://obi-warp.sourceforge.net/</a>.
   However, this function is able to align multiple samples, by a
   center-star strategy.</p>
 <p>For the original publication see</p>
@@ -83,52 +83,59 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>plottype</th>
-      <td><p>if <code>deviation</code> plot retention time deviation</p></td>
-    </tr><tr><th>profStep</th>
-      <td><p>step size (in m/z) to use for profile generation from
-    the raw data files</p></td>
-    </tr><tr><th>center</th>
-      <td><p>the index of the sample all others will be aligned
-  to. If center==NULL, the sample with the most peaks is chosen as default.</p></td>
-    </tr><tr><th>col</th>
-      <td><p>vector of colors for plotting each sample</p></td>
-    </tr><tr><th>ty</th>
-      <td><p>vector of line and point types for plotting each sample</p></td>
-    </tr><tr><th>response</th>
-      <td><p>Responsiveness of warping.  0 will give a linear warp based
-    on start and end points.  100 will use all bijective anchors</p></td>
-    </tr><tr><th>distFunc</th>
-      <td><p>DistFunc function: cor (Pearson's R) or cor_opt (default,
-    calculate only 10% diagonal band of distance matrix, better
-    runtime), cov (covariance), prd (product), euc (Euclidean distance)</p></td>
-    </tr><tr><th>gapInit</th>
-      <td><p>Penalty for Gap opening, see below</p></td>
-    </tr><tr><th>gapExtend</th>
-      <td><p>Penalty for Gap enlargement, see below</p></td>
-    </tr><tr><th>factorDiag</th>
-      <td><p>Local weighting applied to diagonal moves in alignment.</p></td>
-    </tr><tr><th>factorGap</th>
-      <td><p>Local weighting applied to gap moves in alignment.</p></td>
-    </tr><tr><th>localAlignment</th>
-      <td><p>Local rather than global alignment</p></td>
-    </tr><tr><th>initPenalty</th>
-      <td><p>Penalty for initiating alignment (for local
-  alignment only) Default: 0</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
-    <p></p><dl><dt>object = "xcmsSet"</dt><dd><p>retcor(object, method="obiwarp", plottype = c("none", "deviation"),
+    <p></p><dl><dt>object = "xcmsSet"</dt>
+<dd><p>retcor(object, method="obiwarp", plottype = c("none", "deviation"),
              profStep=1, center=NULL, col = NULL, ty = NULL,
              response=1, distFunc="cor_opt", gapInit=NULL, gapExtend=NULL,
             factorDiag=2, factorGap=1, localAlignment=0, initPenalty=0)</p></dd>
 
+
 </dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>plottype</dt>
+<dd><p>if <code>deviation</code> plot retention time deviation</p></dd>
+<dt>profStep</dt>
+<dd><p>step size (in m/z) to use for profile generation from
+    the raw data files</p></dd>
+<dt>center</dt>
+<dd><p>the index of the sample all others will be aligned
+  to. If center==NULL, the sample with the most peaks is chosen as default.</p></dd>
+<dt>col</dt>
+<dd><p>vector of colors for plotting each sample</p></dd>
+<dt>ty</dt>
+<dd><p>vector of line and point types for plotting each sample</p></dd>
+<dt>response</dt>
+<dd><p>Responsiveness of warping.  0 will give a linear warp based
+    on start and end points.  100 will use all bijective anchors</p></dd>
+<dt>distFunc</dt>
+<dd><p>DistFunc function: cor (Pearson's R) or cor_opt (default,
+    calculate only 10% diagonal band of distance matrix, better
+    runtime), cov (covariance), prd (product), euc (Euclidean distance)</p></dd>
+<dt>gapInit</dt>
+<dd><p>Penalty for Gap opening, see below</p></dd>
+<dt>gapExtend</dt>
+<dd><p>Penalty for Gap enlargement, see below</p></dd>
+<dt>factorDiag</dt>
+<dd><p>Local weighting applied to diagonal moves in alignment.</p></dd>
+<dt>factorGap</dt>
+<dd><p>Local weighting applied to gap moves in alignment.</p></dd>
+<dt>localAlignment</dt>
+<dd><p>Local rather than global alignment</p></dd>
+<dt>initPenalty</dt>
+<dd><p>Penalty for initiating alignment (for local
+  alignment only) Default: 0</p></dd>
+</dl><p>Default gap penalties: (gapInit, gapExtend) [by distFunc type]:
+'cor' = '0.3,2.4'
+'cov' = '0,11.7'
+'prd' = '0,7.8'
+'euc' = '0.9,1.8'</p>
+    </div>
     <div id="value">
     <h2>Value</h2>
     <p>An <code>xcmsSet</code> object</p>
@@ -136,6 +143,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,</p></div>
+    </div>
     </div>
 
   </div>

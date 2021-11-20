@@ -50,7 +50,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -93,7 +93,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Peak grouping based on time dimension peak densities</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/functions-Params.R"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-Params.R"><code>R/methods-Params.R</code></a>, and 1 more</small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-Params.R" class="external-link"><code>R/methods-Params.R</code></a>, and 1 more</small>
     <div class="hidden name"><code>groupChromPeaks-density.Rd</code></div>
     </div>
 
@@ -135,7 +135,7 @@ already present feature definitions.</p>
     </div>
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">PeakDensityParam</span><span class="op">(</span>
-  sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="op">)</span>,
+  sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   bw <span class="op">=</span> <span class="fl">30</span>,
   minFraction <span class="op">=</span> <span class="fl">0.5</span>,
   minSamples <span class="op">=</span> <span class="fl">1</span>,
@@ -182,53 +182,53 @@ already present feature definitions.</p>
 <span class="co"># S4 method for XCMSnExp,PeakDensityParam</span>
 <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>sampleGroups</th>
-      <td><p>A vector of the same length than samples defining the
+    <dl><dt>sampleGroups</dt>
+<dd><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
 group). This parameter is mandatory for the <code>PeakDensityParam</code>
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
-same group).</p></td>
-    </tr><tr><th>bw</th>
-      <td><p><code>numeric(1)</code> defining the bandwidth (standard deviation ot the
+same group).</p></dd>
+<dt>bw</dt>
+<dd><p><code>numeric(1)</code> defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
-[density() method.</p></td>
-    </tr><tr><th>minFraction</th>
-      <td><p><code>numeric(1)</code> defining the minimum fraction of samples
+[density() method.</p></dd>
+<dt>minFraction</dt>
+<dd><p><code>numeric(1)</code> defining the minimum fraction of samples
 in at least one sample group in which the peaks have to be present to be
-considered as a peak group (feature).</p></td>
-    </tr><tr><th>minSamples</th>
-      <td><p><code>numeric(1)</code> with the minimum number of samples in at
+considered as a peak group (feature).</p></dd>
+<dt>minSamples</dt>
+<dd><p><code>numeric(1)</code> with the minimum number of samples in at
 least one sample group in which the peaks have to be detected to be
-considered a peak group (feature).</p></td>
-    </tr><tr><th>binSize</th>
-      <td><p><code>numeric(1)</code> defining the size of the overlapping slices
-in mz dimension.</p></td>
-    </tr><tr><th>maxFeatures</th>
-      <td><p><code>numeric(1)</code> with the maximum number of peak groups
-to be identified in a single mz slice.</p></td>
-    </tr><tr><th>object</th>
-      <td><p>For <code>groupChromPeaks</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object
+considered a peak group (feature).</p></dd>
+<dt>binSize</dt>
+<dd><p><code>numeric(1)</code> defining the size of the overlapping slices
+in mz dimension.</p></dd>
+<dt>maxFeatures</dt>
+<dd><p><code>numeric(1)</code> with the maximum number of peak groups
+to be identified in a single mz slice.</p></dd>
+<dt>object</dt>
+<dd><p>For <code>groupChromPeaks</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object
 containing the results from a previous peak detection analysis (see
 <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code>).</p><pre><code>For all other methods: a `PeakDensityParam` object.
-</code></pre></td>
-    </tr><tr><th>value</th>
-      <td><p>The value for the slot.</p></td>
-    </tr><tr><th>param</th>
-      <td><p>A <code>PeakDensityParam</code> object containing all settings for
-the peak grouping algorithm.</p></td>
-    </tr><tr><th>msLevel</th>
-      <td><p><code>integer(1)</code> (default <code>msLevel = 1L</code>) defining the MS level
+</code></pre></dd>
+<dt>value</dt>
+<dd><p>The value for the slot.</p></dd>
+<dt>param</dt>
+<dd><p>A <code>PeakDensityParam</code> object containing all settings for
+the peak grouping algorithm.</p></dd>
+<dt>msLevel</dt>
+<dd><p><code>integer(1)</code> (default <code>msLevel = 1L</code>) defining the MS level
 on which the correspondence should be performed. It is required that
-chromatographic peaks of the respective MS level are present.</p></td>
-    </tr><tr><th>add</th>
-      <td><p><code>logical(1)</code> (default <code>add = FALSE</code>) allowing to perform an
+chromatographic peaks of the respective MS level are present.</p></dd>
+<dt>add</dt>
+<dd><p><code>logical(1)</code> (default <code>add = FALSE</code>) allowing to perform an
 additional round of correspondence (e.g. on a different MS level) and
-add features to the already present feature definitions.</p></td>
-    </tr></table></div>
-
+add features to the already present feature definitions.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>The <code>PeakDensityParam</code> function returns a
@@ -236,8 +236,8 @@ add features to the already present feature definitions.</p></td>
 specified for chromatographic peak alignment based on peak densities.
 Note that argument <code>sampleGroups</code> is mandatory and should represent
 either the sample grouping in the experiment. It's length has to match
-the number of sample in the experiments.</p>
-<p>For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
+the number of sample in the experiments.
+For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the
 results of the correspondence analysis. The definition of the resulting
 mz-rt features can be accessed with the <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> method</p>
     </div>
@@ -245,8 +245,10 @@ mz-rt features can be accessed with the <code><a href="XCMSnExp-class.html">feat
     <h2>Slots</h2>
     
 
-<dl><dt><code>sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures</code></dt><dd><p>See
+<dl><dt><code>sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures</code></dt>
+<dd><p>See
 corresponding parameter above.</p></dd>
+
 
 </dl></div>
     <div id="note">
@@ -282,12 +284,13 @@ possibility to test different parameter settings.</p>
     <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
     </div>
+    </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a PeakDensityParam object</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">PeakDensityParam</span><span class="op">(</span>binSize <span class="op">=</span> <span class="fl">0.05</span>, sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">PeakDensityParam</span><span class="op">(</span>binSize <span class="op">=</span> <span class="fl">0.05</span>, sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Change hte minSamples slot</span></span>
 <span class="r-in"><span class="fu">minSamples</span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
 <span class="r-in"><span class="va">p</span></span>
@@ -304,16 +307,16 @@ possibility to test different parameter settings.</p>
 <span class="r-in"><span class="co">## Chromatographic peak detection and grouping.</span></span>
 <span class="r-in"><span class="co">##</span></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">faahko_sub</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552</span>
@@ -329,14 +332,14 @@ possibility to test different parameter settings.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP005    49      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP006    87      1</span>
 <span class="r-in"><span class="co">## The number of peaks identified per sample:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1   2   3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  87 100  61 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Performing the chromatographic peak grouping. Assigning all samples to</span></span>
 <span class="r-in"><span class="co">## the same sample group.</span></span>
-<span class="r-in"><span class="va">fdp</span> <span class="op">&lt;-</span> <span class="fu">PeakDensityParam</span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html">fileNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">fdp</span> <span class="op">&lt;-</span> <span class="fu">PeakDensityParam</span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">fdp</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 2572 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
@@ -373,7 +376,7 @@ possibility to test different parameter settings.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Using the featureValues method to extract a matrix with the</span></span>
 <span class="r-in"><span class="co">## intensities of the features per sample.</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        ko15.CDF ko16.CDF   ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT01 17140627.0       NA 16919266.9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT02         NA  1264119   732016.2</span>
@@ -396,7 +399,7 @@ possibility to test different parameter settings.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak grouping </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Oct 19 16:56:05 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Sat Nov 20 12:23:31 2021 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: PeakDensityParam </span>

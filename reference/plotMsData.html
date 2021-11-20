@@ -21,7 +21,7 @@ rt against m/z values at the bottom.'><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -49,7 +49,7 @@ rt against m/z values at the bottom.'><!-- mathjax --><script src="https://cdnjs
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -64,7 +64,7 @@ rt against m/z values at the bottom.'><!-- mathjax --><script src="https://cdnjs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/functions-utils.R"><code>R/functions-utils.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-utils.R" class="external-link"><code>R/functions-utils.R</code></a></small>
     <div class="hidden name"><code>plotMsData.Rd</code></div>
     </div>
 
@@ -80,56 +80,57 @@ rt against m/z values at the bottom.</p>
   <span class="va">x</span>,
   main <span class="op">=</span> <span class="st">""</span>,
   cex <span class="op">=</span> <span class="fl">1</span>,
-  mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>,
+  mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>,
   grid.color <span class="op">=</span> <span class="st">"lightgrey"</span>,
-  colramp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">rev</a></span><span class="op">(</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">9</span>, <span class="st">"YlGnBu"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  colramp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html" class="external-link">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu">brewer.pal</span><span class="op">(</span><span class="fl">9</span>, <span class="st">"YlGnBu"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>x</th>
-      <td><p><code>data.frame</code> such as returned by the <code><a href="extractMsData-method.html">extractMsData()</a></code> function.
-Only a single <code>data.frame</code> is supported.</p></td>
-    </tr><tr><th>main</th>
-      <td><p><code>character(1)</code> specifying the title.</p></td>
-    </tr><tr><th>cex</th>
-      <td><p><code>numeric(1)</code> defining the size of points. Passed directly to the
-<code>plot</code> function.</p></td>
-    </tr><tr><th>mfrow</th>
-      <td><p><code>numeric(2)</code> defining the plot layout. This will be passed
+    <dl><dt>x</dt>
+<dd><p><code>data.frame</code> such as returned by the <code><a href="extractMsData-method.html">extractMsData()</a></code> function.
+Only a single <code>data.frame</code> is supported.</p></dd>
+<dt>main</dt>
+<dd><p><code>character(1)</code> specifying the title.</p></dd>
+<dt>cex</dt>
+<dd><p><code>numeric(1)</code> defining the size of points. Passed directly to the
+<code>plot</code> function.</p></dd>
+<dt>mfrow</dt>
+<dd><p><code>numeric(2)</code> defining the plot layout. This will be passed
 directly to <code>par(mfrow = mfrow)</code>. See <code>par</code> for more information. Setting
 <code>mfrow = NULL</code> avoids calling <code>par(mfrow = mfrow)</code> hence allowing to
-pre-define the plot layout.</p></td>
-    </tr><tr><th>grid.color</th>
-      <td><p>a color definition for the grid line (or <code>NA</code> to skip
-creating them).</p></td>
-    </tr><tr><th>colramp</th>
-      <td><p>a <em>color ramp palette</em> to be used to color the data points
+pre-define the plot layout.</p></dd>
+<dt>grid.color</dt>
+<dd><p>a color definition for the grid line (or <code>NA</code> to skip
+creating them).</p></dd>
+<dt>colramp</dt>
+<dd><p>a <em>color ramp palette</em> to be used to color the data points
 based on their intensity. See argument <code>col.regions</code> in
-<a href="https://rdrr.io/pkg/lattice/man/level.colors.html">lattice::level.colors</a> documentation.</p></td>
-    </tr></table></div>
-
+<a href="https://rdrr.io/pkg/lattice/man/level.colors.html" class="external-link">lattice::level.colors</a> documentation.</p></dd>
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
     <div id="examples">
     <h2>Examples</h2>
     <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Read two files from the faahKO package</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cdfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="va">cdfs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span class="r-in">    recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html">readMSData</a></span><span class="op">(</span><span class="va">cdfs</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">cdfs</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Subset the object to a rt and mz range and plot the data.</span></span>
-<span class="r-in"><span class="va">raw_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html">filterRt</a></span><span class="op">(</span>rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html">filterMz</a></span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html">c</a></span><span class="op">(</span><span class="fl">334.9</span>, <span class="fl">335.1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html">plot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"XIC"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">raw_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span>rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/trimMz-methods.html" class="external-link">filterMz</a></span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">334.9</span>, <span class="fl">335.1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"XIC"</span><span class="op">)</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> number 128. Returning empty spectrum.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No data points between 334.9 and 335.1 for spectrum with acquisition</span>
@@ -332,7 +333,7 @@ based on their intensity. See argument <code>col.regions</code> in
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> number 250. Returning empty spectrum.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No data points between 334.9 and 335.1 for spectrum with acquisition</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> number 251. Returning empty spectrum.</span>
-<span class="r-plt"><img src="plotMsData-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotMsData-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>

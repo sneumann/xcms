@@ -22,7 +22,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,29 +79,31 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>method</th>
-      <td><p>conflict resolution method, <code>"medret"</code> to use the peak
-    closest to the median retention time or <code>"maxint"</code> to use
-    the peak with the highest intensity</p></td>
-    </tr><tr><th>value</th>
-      <td><p>name of peak column to enter into returned matrix, or <code>"index"</code>
-    for index to the corresponding row in the <code>peaks</code> slot
-    matrix</p></td>
-    </tr><tr><th>intensity</th>
-      <td><p>if <code>method == "maxint"</code>, name of peak column to use for
-    intensity</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsSet"</dt><dd><p><code>groupval(object, method = c("medret", "maxint"),
+<dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>groupval(object, method = c("medret", "maxint"),
                  value = "index", intensity = "into")</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>method</dt>
+<dd><p>conflict resolution method, <code>"medret"</code> to use the peak
+    closest to the median retention time or <code>"maxint"</code> to use
+    the peak with the highest intensity</p></dd>
+<dt>value</dt>
+<dd><p>name of peak column to enter into returned matrix, or <code>"index"</code>
+    for index to the corresponding row in the <code>peaks</code> slot
+    matrix</p></dd>
+<dt>intensity</dt>
+<dd><p>if <code>method == "maxint"</code>, name of peak column to use for
+    intensity</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -111,6 +113,7 @@
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code></p></div>
+    </div>
     </div>
 
   </div>

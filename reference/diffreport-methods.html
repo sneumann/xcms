@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -73,61 +73,12 @@
     </div>
 
 
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>the <code>xcmsSet</code> object</p></td>
-    </tr><tr><th>class1</th>
-      <td><p>character vector with the first set of sample classes to be
-    compared</p></td>
-    </tr><tr><th>class2</th>
-      <td><p>character vector with the second set of sample classes to be
-    compared</p></td>
-    </tr><tr><th>filebase</th>
-      <td><p>base file name to save report, <code>.tsv</code> file and <code>_eic</code>
-    will be appended to this name for the tabular report and EIC
-    directory, respectively. if blank nothing will be saved</p></td>
-    </tr><tr><th>eicmax</th>
-      <td><p>number of the most significantly different analytes to create
-    EICs for</p></td>
-    </tr><tr><th>eicwidth</th>
-      <td><p>width (in seconds) of EICs produced</p></td>
-    </tr><tr><th>sortpval</th>
-      <td><p>logical indicating whether the reports should be sorted by
-    p-value</p></td>
-    </tr><tr><th>classeic</th>
-      <td><p>character vector with the sample classes to include in the EICs</p></td>
-    </tr><tr><th>value</th>
-      <td><p>intensity values to be used for the diffreport. <br>
-    If <code>value="into"</code>, integrated peak intensities are used. <br>
-    If <code>value="maxo"</code>, maximum peak intensities are used. <br>
-    If <code>value="intb"</code>, baseline corrected integrated peak intensities are used (only available if peak detection was done by <code><a href="findPeaks.centWave-methods.html">findPeaks.centWave</a></code>).</p></td>
-    </tr><tr><th>metlin</th>
-      <td><p>mass uncertainty to use for generating link to Metlin metabolite
-    database. the sign of the uncertainty indicates negative or
-    positive mode data for M+H or M-H calculation. a value of FALSE
-    or 0 removes the column</p></td>
-    </tr><tr><th>h</th>
-      <td><p>Numeric variable for the height of the eic and boxplots that are printed out.</p></td>
-    </tr><tr><th>w</th>
-      <td><p>Numeric variable for the width of the eic and boxplots print out made.</p></td>
-    </tr><tr><th>mzdec</th>
-      <td><p>Number of decimal places of title m/z values in the eic plot.</p></td>
-    </tr><tr><th>missing</th>
-      <td><p><code>numeric(1)</code> defining an optional value for missing
-    values. <code>missing = 0</code> would e.g. replace all <code>NA</code> values
-    in the feature matrix with <code>0</code>. Note that also a call to
-    <code><a href="fillPeaks-methods.html">fillPeaks</a></code> results in a feature matrix in which
-    <code>NA</code> values are replaced by <code>0</code>.</p></td>
-    </tr><tr><th>...</th>
-      <td><p>optional arguments to be passed to <code>mt.teststat</code> from the
-    <code>multtest</code> package.</p></td>
-    </tr></table></div>
-
+    <div id="ref-sections">
     <div id="methods">
     <h2>Methods</h2>
     
-<dl><dt>object = "xcmsSet"</dt><dd><p><code>diffreport(object, class1 = levels(sampclass(object))[1],
+<dl><dt>object = "xcmsSet"</dt>
+<dd><p><code>diffreport(object, class1 = levels(sampclass(object))[1],
                    class2 = levels(sampclass(object))[2],
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2),
@@ -135,6 +86,57 @@
 				   h=480,w=640, mzdec=2, missing =
 				   numeric(), ...)</code></p></dd>
 
+
+</dl></div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>the <code>xcmsSet</code> object</p></dd>
+<dt>class1</dt>
+<dd><p>character vector with the first set of sample classes to be
+    compared</p></dd>
+<dt>class2</dt>
+<dd><p>character vector with the second set of sample classes to be
+    compared</p></dd>
+<dt>filebase</dt>
+<dd><p>base file name to save report, <code>.tsv</code> file and <code>_eic</code>
+    will be appended to this name for the tabular report and EIC
+    directory, respectively. if blank nothing will be saved</p></dd>
+<dt>eicmax</dt>
+<dd><p>number of the most significantly different analytes to create
+    EICs for</p></dd>
+<dt>eicwidth</dt>
+<dd><p>width (in seconds) of EICs produced</p></dd>
+<dt>sortpval</dt>
+<dd><p>logical indicating whether the reports should be sorted by
+    p-value</p></dd>
+<dt>classeic</dt>
+<dd><p>character vector with the sample classes to include in the EICs</p></dd>
+<dt>value</dt>
+<dd><p>intensity values to be used for the diffreport. <br>
+    If <code>value="into"</code>, integrated peak intensities are used. <br>
+    If <code>value="maxo"</code>, maximum peak intensities are used. <br>
+    If <code>value="intb"</code>, baseline corrected integrated peak intensities are used (only available if peak detection was done by <code><a href="findPeaks.centWave-methods.html">findPeaks.centWave</a></code>).</p></dd>
+<dt>metlin</dt>
+<dd><p>mass uncertainty to use for generating link to Metlin metabolite
+    database. the sign of the uncertainty indicates negative or
+    positive mode data for M+H or M-H calculation. a value of FALSE
+    or 0 removes the column</p></dd>
+<dt>h</dt>
+<dd><p>Numeric variable for the height of the eic and boxplots that are printed out.</p></dd>
+<dt>w</dt>
+<dd><p>Numeric variable for the width of the eic and boxplots print out made.</p></dd>
+<dt>mzdec</dt>
+<dd><p>Number of decimal places of title m/z values in the eic plot.</p></dd>
+<dt>missing</dt>
+<dd><p><code>numeric(1)</code> defining an optional value for missing
+    values. <code>missing = 0</code> would e.g. replace all <code>NA</code> values
+    in the feature matrix with <code>0</code>. Note that also a call to
+    <code><a href="fillPeaks-methods.html">fillPeaks</a></code> results in a feature matrix in which
+    <code>NA</code> values are replaced by <code>0</code>.</p></dd>
+<dt>...</dt>
+<dd><p>optional arguments to be passed to <code>mt.teststat</code> from the
+    <code>multtest</code> package.</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -172,46 +174,47 @@
     <div id="value">
     <h2>Value</h2>
     <p>A data frame with the following columns:</p>
-<p></p>
-<dl><dt>fold</dt><dd><p>mean fold change (always greater than 1, see <code>tstat</code> for
+<dl><dt>fold</dt>
+<dd><p>mean fold change (always greater than 1, see <code>tstat</code> for
     which set of sample classes was higher)</p></dd>
-</dl><p></p>
-<dl><dt>tstat</dt><dd><p>Welch's two sample t-statistic, positive for analytes having
+<dt>tstat</dt>
+<dd><p>Welch's two sample t-statistic, positive for analytes having
     greater intensity in <code>class2</code>, negative for analytes having
     greater intensity in <code>class1</code></p></dd>
-</dl><p></p>
-<dl><dt>pvalue</dt><dd><p>p-value of t-statistic</p></dd>
-</dl><p></p>
-<dl><dt>anova</dt><dd><p>p-value of the anova statistic if there are multiple classes</p></dd>
-</dl><p></p>
-<dl><dt>mzmed</dt><dd><p>median m/z of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>mzmin</dt><dd><p>minimum m/z of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>mzmax</dt><dd><p>maximum m/z of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>rtmed</dt><dd><p>median retention time of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>rtmin</dt><dd><p>minimum retention time of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>rtmax</dt><dd><p>maximum retention time of peaks in the group</p></dd>
-</dl><p></p>
-<dl><dt>npeaks</dt><dd><p>number of peaks assigned to the group</p></dd>
-</dl><p></p>
-<dl><dt>Sample Classes</dt><dd><p>number samples from each sample class represented in the group</p></dd>
-</dl><p></p>
-<dl><dt>metlin</dt><dd><p>A URL to metlin for that mass</p></dd>
-</dl><p></p>
-<dl><dt>...</dt><dd><p>one column for every sample class</p></dd>
-</dl><p></p>
-<dl><dt>Sample Names</dt><dd><p>integrated intensity value for every sample</p></dd>
-</dl><p></p>
-<dl><dt>...</dt><dd><p>one column for every sample</p></dd>
+<dt>pvalue</dt>
+<dd><p>p-value of t-statistic</p></dd>
+<dt>anova</dt>
+<dd><p>p-value of the anova statistic if there are multiple classes</p></dd>
+<dt>mzmed</dt>
+<dd><p>median m/z of peaks in the group</p></dd>
+<dt>mzmin</dt>
+<dd><p>minimum m/z of peaks in the group</p></dd>
+<dt>mzmax</dt>
+<dd><p>maximum m/z of peaks in the group</p></dd>
+<dt>rtmed</dt>
+<dd><p>median retention time of peaks in the group</p></dd>
+<dt>rtmin</dt>
+<dd><p>minimum retention time of peaks in the group</p></dd>
+<dt>rtmax</dt>
+<dd><p>maximum retention time of peaks in the group</p></dd>
+<dt>npeaks</dt>
+<dd><p>number of peaks assigned to the group</p></dd>
+<dt>Sample Classes</dt>
+<dd><p>number samples from each sample class represented in the group</p></dd>
+<dt>metlin</dt>
+<dd><p>A URL to metlin for that mass</p></dd>
+<dt>...</dt>
+<dd><p>one column for every sample class</p></dd>
+<dt>Sample Names</dt>
+<dd><p>integrated intensity value for every sample</p></dd>
+<dt>...</dt>
+<dd><p>one column for every sample</p></dd>
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
-  <code><a href="https://rdrr.io/r/grDevices/palette.html">palette</a></code></p></div>
+  <code><a href="https://rdrr.io/r/grDevices/palette.html" class="external-link">palette</a></code></p></div>
+    </div>
     </div>
 
   </div>

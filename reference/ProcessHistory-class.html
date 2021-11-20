@@ -36,7 +36,7 @@ The fileIndex extracts the indices of the files on which
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -64,7 +64,7 @@ The fileIndex extracts the indices of the files on which
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/sneumann/xcms/">
+  <a href="https://github.com/sneumann/xcms/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,7 +79,7 @@ The fileIndex extracts the indices of the files on which
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Tracking data processing</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/R/DataClasses.R"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/master/R/methods-ProcessHistory.R"><code>R/methods-ProcessHistory.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-ProcessHistory.R" class="external-link"><code>R/methods-ProcessHistory.R</code></a></small>
     <div class="hidden name"><code>ProcessHistory-class.Rd</code></div>
     </div>
 
@@ -116,7 +116,7 @@ The fileIndex extracts the indices of the files on which
 <span class="fu">processParam</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
 <span class="co"># S4 method for XProcessHistory</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html">msLevel</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
+<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
 <span class="co"># S4 method for ProcessHistory</span>
 <span class="fu">processType</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
@@ -130,53 +130,68 @@ The fileIndex extracts the indices of the files on which
 <span class="co"># S4 method for ProcessHistory</span>
 <span class="fu">fileIndex</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A <code>ProcessHistory</code> or <code>XProcessHistory</code> object.</p></td>
-    </tr></table></div>
-
+    <dl><dt>object</dt>
+<dd><p>A <code>ProcessHistory</code> or <code>XProcessHistory</code> object.</p></dd>
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>For <code>processParam</code>: a parameter object extending the
-    <code>Param</code> class.</p>
-<p>The <code>processType</code> method returns a character string with the
-    processing step type.</p>
-<p>The <code>processDate</code> method returns a character string with the
-    time stamp of the processing step start.</p>
-<p>The <code>processInfo</code> method returns a character string with
-    optional additional informations.</p>
-<p>The <code>fileIndex</code> method returns a integer vector with the index
+<code>Param</code> class.
+The <code>processType</code> method returns a character string with the
+    processing step type.
+The <code>processDate</code> method returns a character string with the
+    time stamp of the processing step start.
+The <code>processInfo</code> method returns a character string with
+    optional additional informations.
+The <code>fileIndex</code> method returns a integer vector with the index
     of the files/samples on which the processing step was applied.</p>
     </div>
     <div id="slots">
     <h2>Slots</h2>
     
 
-<dl><dt><code>type</code></dt><dd><p>character(1): string defining the type of the processing step.
+<dl><dt><code>type</code></dt>
+<dd><p>character(1): string defining the type of the processing step.
 This string has to match predefined values. Use
 <code><a href="XCMSnExp-class.html">processHistoryTypes</a></code> to list them.</p></dd>
 
-<dt><code>date</code></dt><dd><p>character(1): date time stamp when the processing step was started.</p></dd>
 
-<dt><code>info</code></dt><dd><p>character(1): optional additional information.</p></dd>
+<dt><code>date</code></dt>
+<dd><p>character(1): date time stamp when the processing step was started.</p></dd>
 
-<dt><code>fileIndex</code></dt><dd><p>integer of length 1 or &gt; 1 to specify on which
+
+<dt><code>info</code></dt>
+<dd><p>character(1): optional additional information.</p></dd>
+
+
+<dt><code>fileIndex</code></dt>
+<dd><p>integer of length 1 or &gt; 1 to specify on which
 samples of the object the processing was performed.</p></dd>
 
-<dt><code>error</code></dt><dd><p>(ANY): used to store eventual calculation errors.</p></dd>
 
-<dt><code>param</code></dt><dd><p>(Param): an object of type <code>Param</code> (e.g.
+<dt><code>error</code></dt>
+<dd><p>(ANY): used to store eventual calculation errors.</p></dd>
+
+
+<dt><code>param</code></dt>
+<dd><p>(Param): an object of type <code>Param</code> (e.g.
 <code><a href="findChromPeaks-centWave.html">CentWaveParam</a></code>) specifying the settings of the processing
 step.</p></dd>
 
-<dt><code>msLevel:</code></dt><dd><p><code>integer</code> definining the MS level(s) on which the
+
+<dt><code>msLevel:</code></dt>
+<dd><p><code>integer</code> definining the MS level(s) on which the
 analysis was performed.</p></dd>
+
 
 </dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Johannes Rainer</p>
+    </div>
     </div>
 
   </div>

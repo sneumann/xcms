@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
       <h1 data-toc-skip>LCMS data preprocessing and analysis with xcms</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/vignettes/xcms.Rmd" class="external-link"><code>vignettes/xcms.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/vignettes/xcms.Rmd" class="external-link"><code>vignettes/xcms.Rmd</code></a></small>
       <div class="hidden name"><code>xcms.Rmd</code></div>
 
     </div>
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-10-19 15:57:26<br><strong>Compiled</strong>: Tue Oct 19 16:58:42 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-11-20 11:11:36<br><strong>Compiled</strong>: Sat Nov 20 12:26:38 2021</p>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="section level1">
 <h1 id="data-import">Data import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h1>
-<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.14/mzR" class="external-link">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
+<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.15/mzR" class="external-link">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
 <p>Below we load all required packages, locate the raw CDF files within the <code>faahKO</code> package and build a <em>phenodata</em> data frame describing the experimental setup. Note that for <em>real</em> experiments it is suggested to define a file (table) that contains the file names of the raw data files along with descriptions of the samples for each file as additional columns. Such a file could then be imported with e.g. <code>read.table</code> as variable <code>pd</code> (instead of being defined within R as in the example below) and the file names could be passed along to the <code>readMSData</code> function below with e.g. <code>files = paste0(MZML_PATH, "/", pd$mzML_file)</code> where <code>MZML_PATH</code> would be the path to directory in which the files are located and <code>"mzML_file"</code> the name of the column in the phenodata file that contains the file names.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                    replacement <span class="op">=</span> <span class="st">""</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
                  sample_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"KO"</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"WT"</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,
                  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<p>Subsequently we load the raw data as an <code>OnDiskMSnExp</code> object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.14/MSnbase" class="external-link">MSnbase</a></em> package. The <code>MSnbase</code> provides based structures and infrastructure for the processing of mass spectrometry data. Also, <code>MSnbase</code> can be used to <em>centroid</em> profile-mode MS data (see the corresponding vignette in the <code>MSnbase</code> package).</p>
+<p>Subsequently we load the raw data as an <code>OnDiskMSnExp</code> object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.15/MSnbase" class="external-link">MSnbase</a></em> package. The <code>MSnbase</code> provides based structures and infrastructure for the processing of mass spectrometry data. Also, <code>MSnbase</code> can be used to <em>centroid</em> profile-mode MS data (see the corresponding vignette in the <code>MSnbase</code> package).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span>files <span class="op">=</span> <span class="va">cdfs</span>, pdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/methods/new.html" class="external-link">new</a></span><span class="op">(</span><span class="st">"NAnnotatedDataFrame"</span>, <span class="va">pd</span><span class="op">)</span>,
                        mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></code></pre></div>
@@ -149,8 +149,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>The <code>OnDiskMSnExp</code> organizes the MS data by spectrum and provides the methods <code>intensity</code>, <code>mz</code> and <code>rtime</code> to access the raw data from the files (the measured intensity values, the corresponding m/z and retention time values). In addition, the <code>spectra</code> method could be used to return all data encapsulated in <code>Spectrum</code> objects. Below we extract the retention time values from the object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
-## 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203</code></pre>
+<pre><code><span class="co">## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
+<span class="co">## 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203</span></code></pre>
 <p>All data is returned as one-dimensional vectors (a numeric vector for <code>rtime</code> and a <code>list</code> of numeric vectors for <code>mz</code> and <code>intensity</code>, each containing the values from one spectrum), even if the experiment consists of multiple files/samples. The <code>fromFile</code> function returns an integer vector providing the mapping of the values to the originating file. Below we use the <code>fromFile</code> indices to organize the <code>mz</code> values by file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span>
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">mzs_by_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">split</a></span><span class="op">(</span><span class="va">mzs</span>, f <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">fromFile</a></span><span class="op">(</span><span class="va">raw_data</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mzs_by_file</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 8</code></pre>
+<pre><code><span class="co">## [1] 8</span></code></pre>
 <p>As a first evaluation of the data we plot below the base peak chromatogram (BPC) for each file in our experiment. We use the <code>chromatogram</code> method and set the <code>aggregationFun</code> to <code>"max"</code> to return for each spectrum the maximal intensity and hence create the BPC from the raw data. To create a total ion chromatogram we could set <code>aggregationFun</code> to <code>sum</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Get the base peak chromatograms. This reads data from the files.</span>
@@ -175,12 +175,12 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bpi_1</span> <span class="op">&lt;-</span> <span class="va">bpis</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpi_1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
-## 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203</code></pre>
+<pre><code><span class="co">## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
+<span class="co">## 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203</span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpi_1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
-##    43888    43960    43392    42632    42200    42288</code></pre>
+<pre><code><span class="co">## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
+<span class="co">##    43888    43960    43392    42632    42200    42288</span></code></pre>
 <p>The <code>chromatogram</code> method supports also extraction of chromatographic data from a m/z-rt slice of the MS data. In the next section we will use this method to create an extracted ion chromatogram (EIC) for a selected peak.</p>
 <p>Note that <code>chromatogram</code> reads the raw data from each file to calculate the chromatogram. The <code>bpi</code> and <code>tic</code> methods on the other hand do not read any data from the raw files but use the respective information that was provided in the header definition of the input files (which might be different from the actual data).</p>
 <p>Below we create boxplots representing the distribution of total ion currents per file. Such plots can be very useful to spot problematic or failing MS runs.</p>
@@ -253,30 +253,30 @@ Visualization of the raw MS data for one peak. For each plot: upper panel: chrom
 <p>We can access the identified chromatographic peaks with the <code>chromPeaks</code> function.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##            rt    rtmin    rtmax       into       intb  maxo  sn row column
-## [1,] 2781.505 2761.160 2809.674  412134.25  355516.37 16856  13   1      1
-## [2,] 2786.199 2764.290 2812.803 1496244.21 1391821.33 58736  20   1      2
-## [3,] 2734.556 2714.211 2765.855   21579.37   18449.43   899   4   1      3
-## [4,] 2797.154 2775.245 2815.933  159058.78  150289.31  6295  12   1      3
-## [5,] 2784.635 2761.160 2808.109   54947.54   37923.53  2715   2   1      4
-## [6,] 2859.752 2845.668 2878.532   13895.21   13874.87   905 904   1      4</code></pre>
+<pre><code><span class="co">##            rt    rtmin    rtmax       into       intb  maxo  sn row column</span>
+<span class="co">## [1,] 2781.505 2761.160 2809.674  412134.25  355516.37 16856  13   1      1</span>
+<span class="co">## [2,] 2786.199 2764.290 2812.803 1496244.21 1391821.33 58736  20   1      2</span>
+<span class="co">## [3,] 2734.556 2714.211 2765.855   21579.37   18449.43   899   4   1      3</span>
+<span class="co">## [4,] 2797.154 2775.245 2815.933  159058.78  150289.31  6295  12   1      3</span>
+<span class="co">## [5,] 2784.635 2761.160 2808.109   54947.54   37923.53  2715   2   1      4</span>
+<span class="co">## [6,] 2859.752 2845.668 2878.532   13895.21   13874.87   905 904   1      4</span></code></pre>
 <p>Parallel to the <code>chromPeaks</code> matrix there is also a data frame <code>chromPeakData</code> that allows to add arbitrary annotations to each chromatographic peak. Below we extract this data frame that by default contains only the MS level in which the peak was identified.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 12 rows and 4 columns
-##      ms_level is_filled       row    column
-##     &lt;integer&gt; &lt;logical&gt; &lt;integer&gt; &lt;integer&gt;
-## 1           1     FALSE         1         1
-## 2           1     FALSE         1         2
-## 3           1     FALSE         1         3
-## 4           1     FALSE         1         3
-## 5           1     FALSE         1         4
-## ...       ...       ...       ...       ...
-## 8           1     FALSE         1         4
-## 9           1     FALSE         1         5
-## 10          1     FALSE         1         6
-## 11          1     FALSE         1         7
-## 12          1     FALSE         1         8</code></pre>
+<pre><code><span class="co">## DataFrame with 12 rows and 4 columns</span>
+<span class="co">##      ms_level is_filled       row    column</span>
+<span class="co">##     &lt;integer&gt; &lt;logical&gt; &lt;integer&gt; &lt;integer&gt;</span>
+<span class="co">## 1           1     FALSE         1         1</span>
+<span class="co">## 2           1     FALSE         1         2</span>
+<span class="co">## 3           1     FALSE         1         3</span>
+<span class="co">## 4           1     FALSE         1         3</span>
+<span class="co">## 5           1     FALSE         1         4</span>
+<span class="co">## ...       ...       ...       ...       ...</span>
+<span class="co">## 8           1     FALSE         1         4</span>
+<span class="co">## 9           1     FALSE         1         5</span>
+<span class="co">## 10          1     FALSE         1         6</span>
+<span class="co">## 11          1     FALSE         1         7</span>
+<span class="co">## 12          1     FALSE         1         8</span></code></pre>
 <p>Next we plot the identified chromatographic peaks in the extracted ion chromatogram. We use the <code>col</code> parameter to color the individual chromatogram lines. Colors can also be specified for the identified peaks, <code>peakCol</code> for the foreground/border color, <code>peakBg</code> for the background/fill color. One color has to be provided for each chromatographic peak listed by <code>chromPeaks</code>. Below we define a color to indicate the sample group from which the sample is and use the sample information in the peaks’ <code>"sample"</code> column to assign the correct color to each chromatographic peak. More peak highlighting options are described further below.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sample_colors</span> <span class="op">&lt;-</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">xchr</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span>
@@ -296,38 +296,38 @@ Signal for an example peak. Red and blue colors represent KO and wild type sampl
 <p>The results from the chromatographic peak detection can be accessed with the <code>chromPeaks</code> method.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##           mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo
-## CP0001 453.2 453.2 453.2 2509.203 2501.378 2527.982 1007409.0 1007380.8 38152
-## CP0002 236.1 236.1 236.1 2518.593 2501.378 2537.372  253501.0  226896.3 12957
-## CP0003 594.0 594.0 594.0 2601.535 2581.191 2637.529  161042.2  149297.3  7850
-## CP0004 577.0 577.0 577.0 2604.665 2581.191 2626.574  136105.2  129195.5  6215
-## CP0005 369.2 369.2 369.2 2587.451 2556.151 2631.269  483852.3  483777.1  7215
-## CP0006 369.2 369.2 369.2 2568.671 2557.716 2578.061  144624.8  144602.9  7033
-##           sn sample
-## CP0001 38151      1
-## CP0002    11      1
-## CP0003    13      1
-## CP0004    13      1
-## CP0005  7214      1
-## CP0006  7032      1</code></pre>
+<pre><code><span class="co">##           mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo</span>
+<span class="co">## CP0001 453.2 453.2 453.2 2509.203 2501.378 2527.982 1007409.0 1007380.8 38152</span>
+<span class="co">## CP0002 236.1 236.1 236.1 2518.593 2501.378 2537.372  253501.0  226896.3 12957</span>
+<span class="co">## CP0003 594.0 594.0 594.0 2601.535 2581.191 2637.529  161042.2  149297.3  7850</span>
+<span class="co">## CP0004 577.0 577.0 577.0 2604.665 2581.191 2626.574  136105.2  129195.5  6215</span>
+<span class="co">## CP0005 369.2 369.2 369.2 2587.451 2556.151 2631.269  483852.3  483777.1  7215</span>
+<span class="co">## CP0006 369.2 369.2 369.2 2568.671 2557.716 2578.061  144624.8  144602.9  7033</span>
+<span class="co">##           sn sample</span>
+<span class="co">## CP0001 38151      1</span>
+<span class="co">## CP0002    11      1</span>
+<span class="co">## CP0003    13      1</span>
+<span class="co">## CP0004    13      1</span>
+<span class="co">## CP0005  7214      1</span>
+<span class="co">## CP0006  7032      1</span></code></pre>
 <p>The returned <code>matrix</code> provides the m/z and retention time range for each identified chromatographic peak as well as the integrated signal intensity (“into”) and the maximal peak intensitity (“maxo”). Columns “sample” contains the index of the sample in the object/experiment in which the peak was identified.</p>
 <p>Annotations for each individual peak can be extracted with the <code>chromPeakData</code> function. This data frame could also be used to add/store arbitrary annotations for each detected peak.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 1707 rows and 2 columns
-##         ms_level is_filled
-##        &lt;integer&gt; &lt;logical&gt;
-## CP0001         1     FALSE
-## CP0002         1     FALSE
-## CP0003         1     FALSE
-## CP0004         1     FALSE
-## CP0005         1     FALSE
-## ...          ...       ...
-## CP1703         1     FALSE
-## CP1704         1     FALSE
-## CP1705         1     FALSE
-## CP1706         1     FALSE
-## CP1707         1     FALSE</code></pre>
+<pre><code><span class="co">## DataFrame with 1707 rows and 2 columns</span>
+<span class="co">##         ms_level is_filled</span>
+<span class="co">##        &lt;integer&gt; &lt;logical&gt;</span>
+<span class="co">## CP0001         1     FALSE</span>
+<span class="co">## CP0002         1     FALSE</span>
+<span class="co">## CP0003         1     FALSE</span>
+<span class="co">## CP0004         1     FALSE</span>
+<span class="co">## CP0005         1     FALSE</span>
+<span class="co">## ...          ...       ...</span>
+<span class="co">## CP1703         1     FALSE</span>
+<span class="co">## CP1704         1     FALSE</span>
+<span class="co">## CP1705         1     FALSE</span>
+<span class="co">## CP1706         1     FALSE</span>
+<span class="co">## CP1707         1     FALSE</span></code></pre>
 <p>Peak detection will not always work perfectly leading to peak detection artifacts, such as overlapping peaks or artificially split peaks. The <code>refineChromPeaks</code> function allows to <em>refine</em> peak detection results by either removing identified peaks not passing a certain criteria or by merging artificially split chromatographic peaks. With parameter objects <code>CleanPeaksParam</code> and <code>FilterIntensityParam</code> it is possible to remove peaks with a retention time range or intensities below a threshold, respectively (see their respective help pages for more details and examples). With <code>MergeNeighboringPeaksParam</code> it is possible to merge chromatographic peaks. Below we post-process the peak detection results merging peaks overlapping in a 4 second window per file if the signal between in between them is lower than 75% of the smaller peak’s maximal intensity. See the <code>MergeNeighboringPeaksParam</code> help page for a detailed description of the settings and the approach.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mpp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/refineChromPeaks-merge.html">MergeNeighboringPeaksParam</a></span><span class="op">(</span>expandRt <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
@@ -362,10 +362,10 @@ Result from the peak refinement step. Left: data before processing, right: after
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/refineChromPeaks-clean.html">refineChromPeaks</a></span><span class="op">(</span><span class="va">chr_1</span>, <span class="fu"><a href="../reference/refineChromPeaks-merge.html">MergeNeighboringPeaksParam</a></span><span class="op">(</span>minProp <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
-<pre><code>##         mz mzmin mzmax       rt    rtmin    rtmax     into intb    maxo   sn
-## CPM1 496.2 496.2 496.2 3384.012 3294.809 3412.181 45940118   NA 1128960 1255
-##      sample row column
-## CPM1      1   1      1</code></pre>
+<pre><code><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax     into intb    maxo   sn</span>
+<span class="co">## CPM1 496.2 496.2 496.2 3384.012 3294.809 3412.181 45940118   NA 1128960 1255</span>
+<span class="co">##      sample row column</span>
+<span class="co">## CPM1      1   1      1</span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
 <p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" width="700"></p>
@@ -503,18 +503,18 @@ Frequency of identified chromatographic peaks along the retention time axis. The
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">chr_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">xdata</span>, mz <span class="op">=</span> <span class="va">mzr</span>, rt <span class="op">=</span> <span class="va">rtr</span><span class="op">)</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span></code></pre></div>
-<pre><code>##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn
-## CP0045 335   335   335 2781.505 2761.160 2809.674  412134.3  383167.4 16856 23
-## CP0309 335   335   335 2786.199 2764.290 2812.803 1496244.2 1461187.3 58736 72
-## CP0587 335   335   335 2797.154 2775.245 2815.933  159058.8  149229.6  6295 13
-## CP1194 335   335   335 2786.199 2764.290 2812.803  932645.2  915333.8 35856 66
-## CP1378 335   335   335 2792.461 2768.987 2823.760  876585.5  848569.1 27200 36
-##        sample row column
-## CP0045      1   1      1
-## CP0309      2   1      2
-## CP0587      3   1      3
-## CP1194      6   1      6
-## CP1378      7   1      7</code></pre>
+<pre><code><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn</span>
+<span class="co">## CP0045 335   335   335 2781.505 2761.160 2809.674  412134.3  383167.4 16856 23</span>
+<span class="co">## CP0309 335   335   335 2786.199 2764.290 2812.803 1496244.2 1461187.3 58736 72</span>
+<span class="co">## CP0587 335   335   335 2797.154 2775.245 2815.933  159058.8  149229.6  6295 13</span>
+<span class="co">## CP1194 335   335   335 2786.199 2764.290 2812.803  932645.2  915333.8 35856 66</span>
+<span class="co">## CP1378 335   335   335 2792.461 2768.987 2823.760  876585.5  848569.1 27200 36</span>
+<span class="co">##        sample row column</span>
+<span class="co">## CP0045      1   1      1</span>
+<span class="co">## CP0309      2   1      2</span>
+<span class="co">## CP0587      3   1      3</span>
+<span class="co">## CP1194      6   1      6</span>
+<span class="co">## CP1378      7   1      7</span></code></pre>
 <p>We can also plot the extracted ion chromatogram. Identified chromatographic peaks will be automatically highlighted in the plot. Below we highlight chromatographic peaks with a rectangle from the peak’s minimal to maximal rt and from an intensity of 0 to the maximal signal of the peak.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sample_colors</span> <span class="op">&lt;-</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">chr_ex</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span>
@@ -696,13 +696,13 @@ Peak intensity distribution per sample.
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract adjusted retention times</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">adjustedRtime</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
-## 2501.378 2502.958 2504.538 2506.118 2507.699 2509.280</code></pre>
+<pre><code><span class="co">## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
+<span class="co">## 2501.378 2502.958 2504.538 2506.118 2507.699 2509.280</span></code></pre>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Or simply use the rtime method</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 
-## 2501.378 2502.958 2504.538 2506.118 2507.699 2509.280</code></pre>
+<pre><code><span class="co">## F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
+<span class="co">## 2501.378 2502.958 2504.538 2506.118 2507.699 2509.280</span></code></pre>
 <p><em>Raw</em> retention times can be extracted from an <code>XCMSnExp</code> containing aligned data with <code>rtime(xdata, adjusted = FALSE)</code>.</p>
 <p>To evaluate the impact of the alignment we plot the BPC on the adjusted data. In addition we plot the differences of the adjusted- to the raw retention times per sample using the <code>plotAdjustedRtime</code> function. For a base peak chromatogram it makes no sense to also extract identified chromatographic peaks from the result object. We thus use parameter <code>include = "none"</code> in the <code>chromatogram</code> call to not include chromatographic peaks in the returned object. Note that alternatively it would also be possible to simply avoid plotting them by setting <code>peakType = "none"</code> in the <code>plot</code> call.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
@@ -810,139 +810,139 @@ Example for peak density correspondence. Upper panel: chromatogram for an mz sli
 <span class="va">pdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="va">xdata</span><span class="op">$</span><span class="va">sample_group</span>,
                         minFraction <span class="op">=</span> <span class="fl">0.4</span>, bw <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
 <span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">xdata</span>, param <span class="op">=</span> <span class="va">pdp</span><span class="op">)</span></code></pre></div>
-<p>Results from the xcms-based preprocessing can be summarized into a <code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.14/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em> package with the <code>quantify</code> method. This object will contain the feature abundances as the <em>assay matrix</em>, the feature definition (their m/z, retention time and other metadata) as <code>rowData</code> (i.e. row annotations) and the sample/phenotype information as <code>colData</code> (i.e. column annotations). All the processing history will be put into the object’s <code>metadata</code>. This object can then be used for any further (<code>xcms</code>-independent) processing and analysis.</p>
+<p>Results from the xcms-based preprocessing can be summarized into a <code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.15/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em> package with the <code>quantify</code> method. This object will contain the feature abundances as the <em>assay matrix</em>, the feature definition (their m/z, retention time and other metadata) as <code>rowData</code> (i.e. row annotations) and the sample/phenotype information as <code>colData</code> (i.e. column annotations). All the processing history will be put into the object’s <code>metadata</code>. This object can then be used for any further (<code>xcms</code>-independent) processing and analysis.</p>
 <p>Below we use <code>quantify</code> to generate the result object for the present analysis. The parameters <code>value</code> and any other additional parameters are passed along to the <code>featureValues</code> method that is used internally to create the feature abundance matrix.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/quantify-methods.html" class="external-link">quantify</a></span><span class="op">(</span><span class="va">xdata</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span></code></pre></div>
 <p>Sample annotations can be accessed with the <code>colData</code> method.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 8 rows and 3 columns
-##          sample_name sample_group sample_type
-##          &lt;character&gt;  &lt;character&gt; &lt;character&gt;
-## ko15.CDF        ko15           KO          QC
-## ko16.CDF        ko16           KO       study
-## ko21.CDF        ko21           KO       study
-## ko22.CDF        ko22           KO          QC
-## wt15.CDF        wt15           WT       study
-## wt16.CDF        wt16           WT       study
-## wt21.CDF        wt21           WT          QC
-## wt22.CDF        wt22           WT       study</code></pre>
+<pre><code><span class="co">## DataFrame with 8 rows and 3 columns</span>
+<span class="co">##          sample_name sample_group sample_type</span>
+<span class="co">##          &lt;character&gt;  &lt;character&gt; &lt;character&gt;</span>
+<span class="co">## ko15.CDF        ko15           KO          QC</span>
+<span class="co">## ko16.CDF        ko16           KO       study</span>
+<span class="co">## ko21.CDF        ko21           KO       study</span>
+<span class="co">## ko22.CDF        ko22           KO          QC</span>
+<span class="co">## wt15.CDF        wt15           WT       study</span>
+<span class="co">## wt16.CDF        wt16           WT       study</span>
+<span class="co">## wt21.CDF        wt21           WT          QC</span>
+<span class="co">## wt22.CDF        wt22           WT       study</span></code></pre>
 <p>Feature annotations with <code>rowData</code>:</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 225 rows and 11 columns
-##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2
-## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8
-## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7
-## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7
-## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3
-## ...         ...       ...       ...       ...       ...       ...       ...
-## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5
-## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6
-## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3
-## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6
-## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2
-##              KO        WT         peakidx  ms_level
-##       &lt;numeric&gt; &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
-## FT001         2         0         287,679         1
-## FT002         4         4  47,272,542,...         1
-## FT003         3         4  32,259,663,...         1
-## FT004         4         3  19,249,525,...         1
-## FT005         1         2   639, 788,1376         1
-## ...         ...       ...             ...       ...
-## FT221         2         3 349,684,880,...         1
-## FT222         1         3  86,861,862,...         1
-## FT223         1         2   604, 985,1543         1
-## FT224         2         3  67,353,876,...         1
-## FT225         0         2        866,1447         1</code></pre>
+<pre><code><span class="co">## DataFrame with 225 rows and 11 columns</span>
+<span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="co">## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2</span>
+<span class="co">## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8</span>
+<span class="co">## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7</span>
+<span class="co">## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7</span>
+<span class="co">## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3</span>
+<span class="co">## ...         ...       ...       ...       ...       ...       ...       ...</span>
+<span class="co">## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5</span>
+<span class="co">## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6</span>
+<span class="co">## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3</span>
+<span class="co">## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6</span>
+<span class="co">## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2</span>
+<span class="co">##              KO        WT         peakidx  ms_level</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;</span>
+<span class="co">## FT001         2         0         287,679         1</span>
+<span class="co">## FT002         4         4  47,272,542,...         1</span>
+<span class="co">## FT003         3         4  32,259,663,...         1</span>
+<span class="co">## FT004         4         3  19,249,525,...         1</span>
+<span class="co">## FT005         1         2   639, 788,1376         1</span>
+<span class="co">## ...         ...       ...             ...       ...</span>
+<span class="co">## FT221         2         3 349,684,880,...         1</span>
+<span class="co">## FT222         1         3  86,861,862,...         1</span>
+<span class="co">## FT223         1         2   604, 985,1543         1</span>
+<span class="co">## FT224         2         3  67,353,876,...         1</span>
+<span class="co">## FT225         0         2        866,1447         1</span></code></pre>
 <p>The feature abundances can be accessed with the <code>assay</code> method. Note also that a <code>SummarizedExperiment</code> supports multiple such assay matrices.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
-## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA
-## FT005        NA        NA        NA  107348.5  223951.8        NA        NA
-## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001         NA
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span>
+<span class="co">## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA</span>
+<span class="co">## FT005        NA        NA        NA  107348.5  223951.8        NA        NA</span>
+<span class="co">## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001         NA</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <p>In addition it is possible to extract the results from the correspondence analysis individually using the <code>featureDefinitions</code> and <code>featureValues</code> methods, the former returning a <code>DataFrame</code> with the definition of the features (i.e. the mz and rt ranges and, in column <code>peakidx</code>, the index of the chromatographic peaks in the <code>chromPeaks</code> matrix for each feature), the latter the feature abundances.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract the feature definitions</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 225 rows and 11 columns
-##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2
-## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8
-## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7
-## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7
-## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3
-## ...         ...       ...       ...       ...       ...       ...       ...
-## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5
-## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6
-## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3
-## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6
-## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2
-##              KO        WT         peakidx  ms_level
-##       &lt;numeric&gt; &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
-## FT001         2         0         287,679         1
-## FT002         4         4  47,272,542,...         1
-## FT003         3         4  32,259,663,...         1
-## FT004         4         3  19,249,525,...         1
-## FT005         1         2   639, 788,1376         1
-## ...         ...       ...             ...       ...
-## FT221         2         3 349,684,880,...         1
-## FT222         1         3  86,861,862,...         1
-## FT223         1         2   604, 985,1543         1
-## FT224         2         3  67,353,876,...         1
-## FT225         0         2        866,1447         1</code></pre>
+<pre><code><span class="co">## DataFrame with 225 rows and 11 columns</span>
+<span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="co">## FT001     200.1     200.1     200.1   2901.63   2880.73   2922.53         2</span>
+<span class="co">## FT002     205.0     205.0     205.0   2789.39   2782.30   2795.36         8</span>
+<span class="co">## FT003     206.0     206.0     206.0   2788.73   2780.73   2792.86         7</span>
+<span class="co">## FT004     207.1     207.1     207.1   2718.12   2713.21   2726.70         7</span>
+<span class="co">## FT005     219.1     219.1     219.1   2518.82   2517.40   2520.81         3</span>
+<span class="co">## ...         ...       ...       ...       ...       ...       ...       ...</span>
+<span class="co">## FT221    591.30     591.3     591.3   3005.03   2992.87   3006.05         5</span>
+<span class="co">## FT222    592.15     592.1     592.3   3022.11   2981.91   3107.59         6</span>
+<span class="co">## FT223    594.20     594.2     594.2   3418.16   3359.10   3427.90         3</span>
+<span class="co">## FT224    595.25     595.2     595.3   3010.15   2992.87   3013.77         6</span>
+<span class="co">## FT225    596.20     596.2     596.2   2997.91   2992.87   3002.95         2</span>
+<span class="co">##              KO        WT         peakidx  ms_level</span>
+<span class="co">##       &lt;numeric&gt; &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;</span>
+<span class="co">## FT001         2         0         287,679         1</span>
+<span class="co">## FT002         4         4  47,272,542,...         1</span>
+<span class="co">## FT003         3         4  32,259,663,...         1</span>
+<span class="co">## FT004         4         3  19,249,525,...         1</span>
+<span class="co">## FT005         1         2   639, 788,1376         1</span>
+<span class="co">## ...         ...       ...             ...       ...</span>
+<span class="co">## FT221         2         3 349,684,880,...         1</span>
+<span class="co">## FT222         1         3  86,861,862,...         1</span>
+<span class="co">## FT223         1         2   604, 985,1543         1</span>
+<span class="co">## FT224         2         3  67,353,876,...         1</span>
+<span class="co">## FT225         0         2        866,1447         1</span></code></pre>
 <p>The <code>featureValues</code> method returns a <code>matrix</code> with rows being features and columns samples. The content of this matrix can be defined using the <code>value</code> argument. The default <code>value = "into"</code> returns a matrix with the integrated signal of the peaks corresponding to a feature in a sample. Any column name of the <code>chromPeaks</code> matrix can be passed to the argument <code>value</code>. Below we extract the integrated peak intensity per feature/sample.</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract the into column for each feature.</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
-## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA
-## FT005        NA        NA        NA  107348.5  223951.8        NA        NA
-## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001         NA
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span>
+<span class="co">## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA</span>
+<span class="co">## FT005        NA        NA        NA  107348.5  223951.8        NA        NA</span>
+<span class="co">## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001         NA</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <p>This feature matrix contains <code>NA</code> for samples in which no chromatographic peak was detected in the feature’s m/z-rt region. While in many cases there might indeed be no peak signal in the respective region, it might also be that there is signal, but the peak detection algorithm failed to detect a chromatographic peak (e.g. because the signal was too low or too noisy). <code>xcms</code> provides the <code>fillChromPeaks</code> method to <em>fill in</em> intensity data for such missing values from the original files. The <em>filled in</em> peaks are added to the <code>chromPeaks</code> matrix and indicated with a value <code>TRUE</code> in the <code>"is_filled"</code> column of the <code>chromPeakData</code> data frame. Below we perform such a gap filling.</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">xdata</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">ChromPeakAreaParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9
-## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5
-## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8
-## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001  140551.30
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9</span>
+<span class="co">## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5</span>
+<span class="co">## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8</span>
+<span class="co">## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001  140551.30</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <p>For features without detected peaks in a sample, the method extracts all intensities in the mz-rt region of the feature, integrates the signal and adds a <em>filled-in</em> peak to the <code>chromPeaks</code> matrix. No peak is added if no signal is measured/available for the mz-rt region of the feature. For these, even after filling in missing peak data, a <code>NA</code> is reported in the <code>featureValues</code> matrix.</p>
 <p>Different options to define the mz-rt region of the features are available. With the <code><a href="../reference/fillChromPeaks.html">ChromPeakAreaParam()</a></code> parameter object used above, the feature area is defined using the m/z and rt ranges of all of its (detected) chromatographic peaks: the lower m/z value of the area is defined as the lower quartile (25% quantile) of the <code>"mzmin"</code> values of all peaks of the feature, the upper m/z value as the upper quartile (75% quantile) of the <code>"mzmax"</code> values, the lower rt value as the lower quartile (25% quantile) of the <code>"rtmin"</code> and the upper rt value as the upper quartile (75% quantile) of the <code>"rtmax"</code> values. This ensures that the signal is integrated from a feature-specific area.</p>
 <p>Alternatively, it is possible to use the <code>FillChromPeaksParam</code> parameter object in the <code>fillChromPeaks</code> call, which resembles the approach of the original (old) <code>xcms</code> implementation.</p>
@@ -951,103 +951,103 @@ Example for peak density correspondence. Upper panel: chromatogram for an mz sli
 <code class="sourceCode R"><span class="co">## Missing values before filling in peaks</span>
 <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>,
       FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## ko15.CDF ko16.CDF ko21.CDF ko22.CDF wt15.CDF wt16.CDF wt21.CDF wt22.CDF 
-##       71       69      114      102       54       89      104       75</code></pre>
+<pre><code><span class="co">## ko15.CDF ko16.CDF ko21.CDF ko22.CDF wt15.CDF wt16.CDF wt21.CDF wt22.CDF </span>
+<span class="co">##       71       69      114      102       54       89      104       75</span></code></pre>
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Missing values after filling in peaks</span>
 <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>, MARGIN <span class="op">=</span> <span class="fl">2</span>,
       FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## ko15.CDF ko16.CDF ko21.CDF ko22.CDF wt15.CDF wt16.CDF wt21.CDF wt22.CDF 
-##        4        4        6        6        2        6        6        3</code></pre>
+<pre><code><span class="co">## ko15.CDF ko16.CDF ko21.CDF ko22.CDF wt15.CDF wt16.CDF wt21.CDF wt22.CDF </span>
+<span class="co">##        4        4        6        6        2        6        6        3</span></code></pre>
 <p>Next we use the <code>featureSummary</code> function to get a general per-feature summary that includes the number of samples in which a peak was found or the number of samples in which more than one peak was assigned to the feature. Specifying also sample groups breaks down these summary statistics for each individual sample group.</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/featureSummary.html">featureSummary</a></span><span class="op">(</span><span class="va">xdata</span>, group <span class="op">=</span> <span class="va">xdata</span><span class="op">$</span><span class="va">sample_group</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##       count  perc multi_count multi_perc       rsd KO_count KO_perc
-## FT001     2  25.0           0          0 0.7039537        2      50
-## FT002     8 100.0           0          0 0.1936518        4     100
-## FT003     7  87.5           0          0 0.1717662        3      75
-## FT004     7  87.5           0          0 0.2609145        4     100
-## FT005     3  37.5           0          0 0.5385767        1      25
-## FT006     7  87.5           0          0 0.3016973        3      75
-##       KO_multi_count KO_multi_perc    KO_rsd WT_count WT_perc WT_multi_count
-## FT001              0             0 0.7039537        0       0              0
-## FT002              0             0 0.2178920        4     100              0
-## FT003              0             0 0.2501505        4     100              0
-## FT004              0             0 0.2957873        3      75              0
-## FT005              0             0        NA        2      50              0
-## FT006              0             0 0.3765933        4     100              0
-##       WT_multi_perc    WT_rsd
-## FT001             0        NA
-## FT002             0 0.1918936
-## FT003             0 0.1327983
-## FT004             0 0.2575039
-## FT005             0 0.6375539
-## FT006             0 0.1641781</code></pre>
+<pre><code><span class="co">##       count  perc multi_count multi_perc       rsd KO_count KO_perc</span>
+<span class="co">## FT001     2  25.0           0          0 0.7039537        2      50</span>
+<span class="co">## FT002     8 100.0           0          0 0.1936518        4     100</span>
+<span class="co">## FT003     7  87.5           0          0 0.1717662        3      75</span>
+<span class="co">## FT004     7  87.5           0          0 0.2609145        4     100</span>
+<span class="co">## FT005     3  37.5           0          0 0.5385767        1      25</span>
+<span class="co">## FT006     7  87.5           0          0 0.3016973        3      75</span>
+<span class="co">##       KO_multi_count KO_multi_perc    KO_rsd WT_count WT_perc WT_multi_count</span>
+<span class="co">## FT001              0             0 0.7039537        0       0              0</span>
+<span class="co">## FT002              0             0 0.2178920        4     100              0</span>
+<span class="co">## FT003              0             0 0.2501505        4     100              0</span>
+<span class="co">## FT004              0             0 0.2957873        3      75              0</span>
+<span class="co">## FT005              0             0        NA        2      50              0</span>
+<span class="co">## FT006              0             0 0.3765933        4     100              0</span>
+<span class="co">##       WT_multi_perc    WT_rsd</span>
+<span class="co">## FT001             0        NA</span>
+<span class="co">## FT002             0 0.1918936</span>
+<span class="co">## FT003             0 0.1327983</span>
+<span class="co">## FT004             0 0.2575039</span>
+<span class="co">## FT005             0 0.6375539</span>
+<span class="co">## FT006             0 0.1641781</span></code></pre>
 <p>We can add the feature value matrix with the filled-in data for missing peaks also to our <code>SummarizedExperiment</code> object <code>res</code> as an additional <em>assay</em>:</p>
 <div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">$</span><span class="va">raw_filled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>We have now two matrices (assays) available, the matrix with the detected and the matrix with the detected and filled-in values, each can be accessed by their name.</p>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "raw"        "raw_filled"</code></pre>
+<pre><code><span class="co">## [1] "raw"        "raw_filled"</span></code></pre>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001        NA  506848.9        NA  169955.6        NA        NA        NA
-## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA
-## FT005        NA        NA        NA  107348.5  223951.8        NA        NA
-## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001         NA
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span>
+<span class="co">## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.7        NA  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9        NA</span>
+<span class="co">## FT005        NA        NA        NA  107348.5  223951.8        NA        NA</span>
+<span class="co">## FT006  286221.4        NA  164009.0  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001         NA</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw_filled"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF
-## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9
-## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2
-## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0
-## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5
-## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8
-## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5
-##         wt22.CDF
-## FT001  140551.30
-## FT002 1354004.93
-## FT003  185399.47
-## FT004  221937.53
-## FT005   84772.92
-## FT006  271128.02</code></pre>
+<pre><code><span class="co">##        ko15.CDF   ko16.CDF   ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
+<span class="co">## FT001  159738.1  506848.88  113441.08  169955.6  216096.6  145509.7  230477.9</span>
+<span class="co">## FT002 1924712.0 1757150.96 1383416.72 1180288.2 2129885.1 1634342.0 1623589.2</span>
+<span class="co">## FT003  213659.3  289500.67  162897.19  178285.7  253825.6  241844.4  240606.0</span>
+<span class="co">## FT004  349011.5  451863.66  343897.76  208002.8  364609.8  360908.9  223322.5</span>
+<span class="co">## FT005  135978.5   25524.79   71530.84  107348.5  223951.8  134398.9  190203.8</span>
+<span class="co">## FT006  286221.4  289908.23  164008.97  149097.6  255697.7  311296.8  366441.5</span>
+<span class="co">##         wt22.CDF</span>
+<span class="co">## FT001  140551.30</span>
+<span class="co">## FT002 1354004.93</span>
+<span class="co">## FT003  185399.47</span>
+<span class="co">## FT004  221937.53</span>
+<span class="co">## FT005   84772.92</span>
+<span class="co">## FT006  271128.02</span></code></pre>
 <p>The performance of peak detection, alignment and correspondence should always be evaluated by inspecting extracted ion chromatograms e.g. of known compounds, internal standards or identified features in general. The <code>featureChromatograms</code> function allows to extract chromatograms for each feature present in <code>featureDefinitions</code>. The returned <code>MChromatograms</code> object contains an ion chromatogram for each feature (each row containing the data for one feature) and sample (each column representing containing data for one sample). Below we extract the chromatograms for the first 4 features.</p>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">feature_chroms</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>
 
 <span class="va">feature_chroms</span></code></pre></div>
-<pre><code>## XChromatograms with 4 rows and 8 columns
-##                    1               2               3               4
-##      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;
-## [1,]        peaks: 0        peaks: 1        peaks: 0        peaks: 1
-## [2,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1
-## [3,]        peaks: 1        peaks: 1        peaks: 0        peaks: 1
-## [4,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1
-##                    5               6               7               8
-##      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;
-## [1,]        peaks: 0        peaks: 0        peaks: 0        peaks: 0
-## [2,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1
-## [3,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1
-## [4,]        peaks: 1        peaks: 1        peaks: 0        peaks: 1
-## phenoData with 3 variables
-## featureData with 5 variables
-## - - - xcms preprocessing - - -
-## Chromatographic peak detection:
-##  method: centWave 
-## Correspondence:
-##  method: chromatographic peak density 
-##  4 feature(s) identified.</code></pre>
+<pre><code><span class="co">## XChromatograms with 4 rows and 8 columns</span>
+<span class="co">##                    1               2               3               4</span>
+<span class="co">##      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
+<span class="co">## [1,]        peaks: 0        peaks: 1        peaks: 0        peaks: 1</span>
+<span class="co">## [2,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1</span>
+<span class="co">## [3,]        peaks: 1        peaks: 1        peaks: 0        peaks: 1</span>
+<span class="co">## [4,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1</span>
+<span class="co">##                    5               6               7               8</span>
+<span class="co">##      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
+<span class="co">## [1,]        peaks: 0        peaks: 0        peaks: 0        peaks: 0</span>
+<span class="co">## [2,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1</span>
+<span class="co">## [3,]        peaks: 1        peaks: 1        peaks: 1        peaks: 1</span>
+<span class="co">## [4,]        peaks: 1        peaks: 1        peaks: 0        peaks: 1</span>
+<span class="co">## phenoData with 3 variables</span>
+<span class="co">## featureData with 5 variables</span>
+<span class="co">## - - - xcms preprocessing - - -</span>
+<span class="co">## Chromatographic peak detection:</span>
+<span class="co">##  method: centWave </span>
+<span class="co">## Correspondence:</span>
+<span class="co">##  method: chromatographic peak density </span>
+<span class="co">##  4 feature(s) identified.</span></code></pre>
 <p>And plot the extracted ion chromatograms. We again use the group color for each identified peak to fill the area.</p>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feature_chroms</span>, col <span class="op">=</span> <span class="va">sample_colors</span>,
@@ -1061,24 +1061,24 @@ Extracted ion chromatograms for features 1 to 4.
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">eic_2</span> <span class="op">&lt;-</span> <span class="va">feature_chroms</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">eic_2</span><span class="op">)</span></code></pre></div>
-<pre><code>##         mz mzmin mzmax       rt    rtmin    rtmax    into    intb  maxo sn
-## CP0055 205   205   205 2790.427 2770.441 2813.596 1924712 1850331 84280 64
-## CP0310 205   205   205 2794.406 2772.731 2819.327 1757151 1711473 68384 69
-## CP0595 205   205   205 2795.358 2773.524 2820.417 1383417 1334570 47384 54
-## CP0736 205   205   205 2788.495 2768.076 2812.080 1180288 1126958 48336 32
-## CP0921 205   205   205 2782.296 2761.887 2805.849 2129885 2054677 93312 44
-## CP1197 205   205   205 2787.083 2766.688 2812.188 1634342 1566379 67984 53
-## CP1379 205   205   205 2790.294 2763.639 2821.635 1623589 1531573 49208 28
-## CP1542 205   205   205 2787.159 2766.777 2812.235 1354005 1299188 55712 35
-##        sample row column
-## CP0055      1   1      1
-## CP0310      2   1      2
-## CP0595      3   1      3
-## CP0736      4   1      4
-## CP0921      5   1      5
-## CP1197      6   1      6
-## CP1379      7   1      7
-## CP1542      8   1      8</code></pre>
+<pre><code><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax    into    intb  maxo sn</span>
+<span class="co">## CP0055 205   205   205 2790.427 2770.441 2813.596 1924712 1850331 84280 64</span>
+<span class="co">## CP0310 205   205   205 2794.406 2772.731 2819.327 1757151 1711473 68384 69</span>
+<span class="co">## CP0595 205   205   205 2795.358 2773.524 2820.417 1383417 1334570 47384 54</span>
+<span class="co">## CP0736 205   205   205 2788.495 2768.076 2812.080 1180288 1126958 48336 32</span>
+<span class="co">## CP0921 205   205   205 2782.296 2761.887 2805.849 2129885 2054677 93312 44</span>
+<span class="co">## CP1197 205   205   205 2787.083 2766.688 2812.188 1634342 1566379 67984 53</span>
+<span class="co">## CP1379 205   205   205 2790.294 2763.639 2821.635 1623589 1531573 49208 28</span>
+<span class="co">## CP1542 205   205   205 2787.159 2766.777 2812.235 1354005 1299188 55712 35</span>
+<span class="co">##        sample row column</span>
+<span class="co">## CP0055      1   1      1</span>
+<span class="co">## CP0310      2   1      2</span>
+<span class="co">## CP0595      3   1      3</span>
+<span class="co">## CP0736      4   1      4</span>
+<span class="co">## CP0921      5   1      5</span>
+<span class="co">## CP1197      6   1      6</span>
+<span class="co">## CP1379      7   1      7</span>
+<span class="co">## CP1542      8   1      8</span></code></pre>
 <p>At last we perform a principal component analysis to evaluate the grouping of the samples in this experiment. Note that we did not perform any data normalization hence the grouping might (and will) also be influenced by technical biases.</p>
 <div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract the features and log2 transform them</span>
@@ -1122,148 +1122,148 @@ PCA for the faahKO data set, un-normalized intensities.
 <p><code>XCMSnExp</code> objects allow to capture all performed pre-processing steps along with the used parameter class within the <code>@processHistory</code> slot. Storing also the parameter class ensures the highest possible degree of analysis documentation and in future might enable to <em>replay</em> analyses or parts of it. The list of all performed preprocessings can be extracted using the <code>processHistory</code> method.</p>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
-<pre><code>## [[1]]
-## Object of class "XProcessHistory"
-##  type: Peak detection 
-##  date: Tue Oct 19 16:59:04 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: CentWaveParam 
-##  MS level(s) 1 
-## 
-## [[2]]
-## Object of class "XProcessHistory"
-##  type: Peak refinement 
-##  date: Tue Oct 19 16:59:22 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: MergeNeighboringPeaksParam 
-##  MS level(s) 1 
-## 
-## [[3]]
-## Object of class "XProcessHistory"
-##  type: Peak grouping 
-##  date: Tue Oct 19 16:59:34 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: PeakDensityParam 
-##  MS level(s) 1 
-## 
-## [[4]]
-## Object of class "XProcessHistory"
-##  type: Retention time correction 
-##  date: Tue Oct 19 16:59:34 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: PeakGroupsParam 
-##  MS level(s) 1 
-## 
-## [[5]]
-## Object of class "XProcessHistory"
-##  type: Peak grouping 
-##  date: Tue Oct 19 16:59:40 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: PeakDensityParam 
-##  MS level(s) 1 
-## 
-## [[6]]
-## Object of class "XProcessHistory"
-##  type: Missing peak filling 
-##  date: Tue Oct 19 16:59:42 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: ChromPeakAreaParam 
-##  MS level(s) 1</code></pre>
+<pre><code><span class="co">## [[1]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Peak detection </span>
+<span class="co">##  date: Sat Nov 20 12:27:04 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: CentWaveParam </span>
+<span class="co">##  MS level(s) 1 </span>
+<span class="co">## </span>
+<span class="co">## [[2]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Peak refinement </span>
+<span class="co">##  date: Sat Nov 20 12:27:24 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: MergeNeighboringPeaksParam </span>
+<span class="co">##  MS level(s) 1 </span>
+<span class="co">## </span>
+<span class="co">## [[3]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Peak grouping </span>
+<span class="co">##  date: Sat Nov 20 12:27:38 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: PeakDensityParam </span>
+<span class="co">##  MS level(s) 1 </span>
+<span class="co">## </span>
+<span class="co">## [[4]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Retention time correction </span>
+<span class="co">##  date: Sat Nov 20 12:27:39 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: PeakGroupsParam </span>
+<span class="co">##  MS level(s) 1 </span>
+<span class="co">## </span>
+<span class="co">## [[5]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Peak grouping </span>
+<span class="co">##  date: Sat Nov 20 12:27:46 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: PeakDensityParam </span>
+<span class="co">##  MS level(s) 1 </span>
+<span class="co">## </span>
+<span class="co">## [[6]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Missing peak filling </span>
+<span class="co">##  date: Sat Nov 20 12:27:47 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: ChromPeakAreaParam </span>
+<span class="co">##  MS level(s) 1</span></code></pre>
 <p>It is also possible to extract specific processing steps by specifying its type. Available <em>types</em> can be listed with the <code>processHistoryTypes</code> function. Below we extract the parameter class for the alignment/retention time adjustment step.</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xdata</span>, type <span class="op">=</span> <span class="st">"Retention time correction"</span><span class="op">)</span>
 
 <span class="va">ph</span></code></pre></div>
-<pre><code>## [[1]]
-## Object of class "XProcessHistory"
-##  type: Retention time correction 
-##  date: Tue Oct 19 16:59:34 2021 
-##  info:  
-##  fileIndex: 1,2,3,4,5,6,7,8 
-##  Parameter class: PeakGroupsParam 
-##  MS level(s) 1</code></pre>
+<pre><code><span class="co">## [[1]]</span>
+<span class="co">## Object of class "XProcessHistory"</span>
+<span class="co">##  type: Retention time correction </span>
+<span class="co">##  date: Sat Nov 20 12:27:39 2021 </span>
+<span class="co">##  info:  </span>
+<span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
+<span class="co">##  Parameter class: PeakGroupsParam </span>
+<span class="co">##  MS level(s) 1</span></code></pre>
 <p>And we can also extract the parameter class used in this preprocessing step.</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Access the parameter</span>
 <span class="fu"><a href="../reference/ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="va">ph</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code>## Object of class:  PeakGroupsParam 
-##  Parameters:
-##  - minFraction: [1] 0.85
-##  - extraPeaks: [1] 1
-##  - smooth: [1] "loess"
-##  - span: [1] 0.4
-##  - family: [1] "gaussian"
-##  - peakGroupsMatrix:      ko15.CDF ko22.CDF wt21.CDF
-## FT12 2617.185 2623.444       NA
-## FT26 2679.783 2686.043       NA
-## FT25 2679.783 2686.043 2690.739
-## FT30 2676.653 2687.608 2695.434
-## FT31 2679.783 2687.608 2693.869
-## FT32 2679.783 2689.172 2692.304
-## FT42 2681.348 2689.172 2696.999
-## FT43 2678.218 2689.172 2700.129
-## FT45 2678.218 2689.172 2692.304
-## FT03 2711.082 2723.601       NA
-## FT07 2712.647 2720.472 2723.603
-## FT20 2784.635       NA       NA
-## FT13 2784.635 2790.894       NA
-## FT06 2784.635 2794.024       NA
-## FT01 2784.635 2789.330 2795.591
-## FT02 2783.070 2789.330 2794.026
-## FT18 2783.070 2790.894 2792.461
-## FT79 2784.635 2790.894 2792.461
-## FT09 2792.459 2801.849 2809.676
-## FT75 2903.571 2914.526 2922.352
-## FT14 2923.916 2923.916 2928.612
-## FT16 2923.916 2922.351 2928.612
-## FT15 2923.916 2927.045 2933.307
-## FT17 2995.903 2995.903 3002.165
-## FT80 2992.773 3008.423 3011.555
-## FT22 3019.378 3020.943 3031.899
-## FT04 3024.073 3014.683 3033.464
-## FT41 3005.293 3027.202 3028.769
-## FT40 3053.807 3069.456 3063.198
-## FT46 3064.761 3085.106 3089.802
-## FT51 3128.924 3146.139 3153.966
-## FT35 3194.652 3158.659 3163.355
-## FT60 3155.529 3171.178 3177.440
-## FT69 3166.483 3179.003 3204.044
-## FT70 3168.048       NA 3208.739
-## FT73 3185.263 3224.387 3225.953
-## FT74 3185.263 3227.516 3227.518
-## FT76 3189.958 3230.646 3233.778
-## FT77 3191.523 3230.646 3233.778
-## FT36 3258.816 3260.381       NA
-## FT08 3255.686 3260.381 3269.772
-## FT19 3276.030 3297.939 3304.201
-## FT47 3276.030 3297.939 3304.201
-## FT53 3318.284 3316.719 3333.935
-## FT52 3302.634 3324.544 3326.110
-## FT54 3297.939 3324.544 3330.805
-## FT39 3324.544 3327.674 3337.065
-## FT23 3299.504 3333.933 3332.370
-## FT71 3341.758 3357.408 3362.104
-## FT72 3341.758 3358.973 3362.104
-## FT37       NA 3355.843 3362.104
-## FT38 3341.758 3360.538 3362.104
-## FT10 3379.317 3398.096 3412.183
-## FT63       NA 3402.791 3410.618
-## FT21 3415.311 3421.571 3426.267
-## FT78 3374.622 3427.831 3427.832
-## FT55 3416.876 3429.395 3432.527
-## FT64 3377.752 3446.610 3446.612
-## FT65 3377.752 3448.175 3449.742
-## FT58 3384.012 3449.740 3449.742
-## FT49 3454.435 3470.084 3474.781
-## FT27 3490.429 3498.253 3498.255
-##  - subset: [1] 1 4 7
-##  - subsetAdjust: [1] "average"</code></pre>
+<pre><code><span class="co">## Object of class:  PeakGroupsParam </span>
+<span class="co">##  Parameters:</span>
+<span class="co">##  - minFraction: [1] 0.85</span>
+<span class="co">##  - extraPeaks: [1] 1</span>
+<span class="co">##  - smooth: [1] "loess"</span>
+<span class="co">##  - span: [1] 0.4</span>
+<span class="co">##  - family: [1] "gaussian"</span>
+<span class="co">##  - peakGroupsMatrix:      ko15.CDF ko22.CDF wt21.CDF</span>
+<span class="co">## FT12 2617.185 2623.444       NA</span>
+<span class="co">## FT26 2679.783 2686.043       NA</span>
+<span class="co">## FT25 2679.783 2686.043 2690.739</span>
+<span class="co">## FT30 2676.653 2687.608 2695.434</span>
+<span class="co">## FT31 2679.783 2687.608 2693.869</span>
+<span class="co">## FT32 2679.783 2689.172 2692.304</span>
+<span class="co">## FT42 2681.348 2689.172 2696.999</span>
+<span class="co">## FT43 2678.218 2689.172 2700.129</span>
+<span class="co">## FT45 2678.218 2689.172 2692.304</span>
+<span class="co">## FT03 2711.082 2723.601       NA</span>
+<span class="co">## FT07 2712.647 2720.472 2723.603</span>
+<span class="co">## FT20 2784.635       NA       NA</span>
+<span class="co">## FT13 2784.635 2790.894       NA</span>
+<span class="co">## FT06 2784.635 2794.024       NA</span>
+<span class="co">## FT01 2784.635 2789.330 2795.591</span>
+<span class="co">## FT02 2783.070 2789.330 2794.026</span>
+<span class="co">## FT18 2783.070 2790.894 2792.461</span>
+<span class="co">## FT79 2784.635 2790.894 2792.461</span>
+<span class="co">## FT09 2792.459 2801.849 2809.676</span>
+<span class="co">## FT75 2903.571 2914.526 2922.352</span>
+<span class="co">## FT14 2923.916 2923.916 2928.612</span>
+<span class="co">## FT16 2923.916 2922.351 2928.612</span>
+<span class="co">## FT15 2923.916 2927.045 2933.307</span>
+<span class="co">## FT17 2995.903 2995.903 3002.165</span>
+<span class="co">## FT80 2992.773 3008.423 3011.555</span>
+<span class="co">## FT22 3019.378 3020.943 3031.899</span>
+<span class="co">## FT04 3024.073 3014.683 3033.464</span>
+<span class="co">## FT41 3005.293 3027.202 3028.769</span>
+<span class="co">## FT40 3053.807 3069.456 3063.198</span>
+<span class="co">## FT46 3064.761 3085.106 3089.802</span>
+<span class="co">## FT51 3128.924 3146.139 3153.966</span>
+<span class="co">## FT35 3194.652 3158.659 3163.355</span>
+<span class="co">## FT60 3155.529 3171.178 3177.440</span>
+<span class="co">## FT69 3166.483 3179.003 3204.044</span>
+<span class="co">## FT70 3168.048       NA 3208.739</span>
+<span class="co">## FT73 3185.263 3224.387 3225.953</span>
+<span class="co">## FT74 3185.263 3227.516 3227.518</span>
+<span class="co">## FT76 3189.958 3230.646 3233.778</span>
+<span class="co">## FT77 3191.523 3230.646 3233.778</span>
+<span class="co">## FT36 3258.816 3260.381       NA</span>
+<span class="co">## FT08 3255.686 3260.381 3269.772</span>
+<span class="co">## FT19 3276.030 3297.939 3304.201</span>
+<span class="co">## FT47 3276.030 3297.939 3304.201</span>
+<span class="co">## FT53 3318.284 3316.719 3333.935</span>
+<span class="co">## FT52 3302.634 3324.544 3326.110</span>
+<span class="co">## FT54 3297.939 3324.544 3330.805</span>
+<span class="co">## FT39 3324.544 3327.674 3337.065</span>
+<span class="co">## FT23 3299.504 3333.933 3332.370</span>
+<span class="co">## FT71 3341.758 3357.408 3362.104</span>
+<span class="co">## FT72 3341.758 3358.973 3362.104</span>
+<span class="co">## FT37       NA 3355.843 3362.104</span>
+<span class="co">## FT38 3341.758 3360.538 3362.104</span>
+<span class="co">## FT10 3379.317 3398.096 3412.183</span>
+<span class="co">## FT63       NA 3402.791 3410.618</span>
+<span class="co">## FT21 3415.311 3421.571 3426.267</span>
+<span class="co">## FT78 3374.622 3427.831 3427.832</span>
+<span class="co">## FT55 3416.876 3429.395 3432.527</span>
+<span class="co">## FT64 3377.752 3446.610 3446.612</span>
+<span class="co">## FT65 3377.752 3448.175 3449.742</span>
+<span class="co">## FT58 3384.012 3449.740 3449.742</span>
+<span class="co">## FT49 3454.435 3470.084 3474.781</span>
+<span class="co">## FT27 3490.429 3498.253 3498.255</span>
+<span class="co">##  - subset: [1] 1 4 7</span>
+<span class="co">##  - subsetAdjust: [1] "average"</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="subsetting-and-filtering">Subsetting and filtering<a class="anchor" aria-label="anchor" href="#subsetting-and-filtering"></a>
@@ -1276,39 +1276,39 @@ PCA for the faahKO data set, un-normalized intensities.
 
 <span class="co">## Do we have identified chromatographic peaks?</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <p>Peak detection is performed separately on each file, thus the subsetted object contains all identified chromatographic peaks from the two files. However, we used a retention time adjustment (alignment) that was based on available features. All features have however been removed and also the adjusted retention times (since the alignment based on features that were identified on chromatographic peaks on all files).</p>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Do we still have features?</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">hasFeatures</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] FALSE</code></pre>
+<pre><code><span class="co">## [1] FALSE</span></code></pre>
 <div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Do we still have adjusted retention times?</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <p>We can however use the <code>keepAdjustedRtime</code> argument to force keeping the adjusted retention times, <code>keepFeatures</code> would even keep correspondence results.</p>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">subs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">xdata</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <p>The <code>filterRt</code> method can be used to subset the object to spectra within a certain retention time range.</p>
 <div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">subs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">xdata</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3000</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 3000.186 3499.956</code></pre>
+<pre><code><span class="co">## [1] 3000.186 3499.956</span></code></pre>
 <p>Filtering by retention time does not change/affect adjusted retention times (also, if adjusted retention times are present, the filtering is performed <strong>on</strong> the adjusted retention times).</p>
 <div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <p>Also, we have all identified chromatographic peaks within the specified retention time range:</p>
 <div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 3000.712 3499.399</code></pre>
+<pre><code><span class="co">## [1] 3000.712 3499.399</span></code></pre>
 <p>The most natural way to subset any object in R is with <code>[</code>. Using <code>[</code> on an <code>XCMSnExp</code> object subsets it keeping only the selected spectra. The index <code>i</code> used in <code>[</code> has thus to be an integer between 1 and the total number of spectra (across all files). Below we subset <code>xdata</code> using both <code>[</code> and <code>filterFile</code> to keep all spectra from one file.</p>
 <div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract all data from the 3rd file.</span>
@@ -1318,90 +1318,90 @@ PCA for the faahKO data set, un-normalized intensities.
 
 <span class="co">## Is the content the same?</span>
 <span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">one_file</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="va">one_file_2</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] "Attributes: &lt; Component \"rt\": Mean relative difference: 0.0007411294 &gt;"</code></pre>
+<pre><code><span class="co">## [1] "Attributes: &lt; Component \"rt\": Mean relative difference: 0.0007411294 &gt;"</span></code></pre>
 <p>While the spectra-content is the same in both objects, <code>one_file</code> contains also the identified chromatographic peaks while <code>one_file_2</code> does not. Thus, in most situations subsetting using one of the filter functions is preferred over the use of <code>[</code>.</p>
 <div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Subsetting with filterFile preserves chromatographic peaks</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">one_file</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo sn
-## CP0555 231   231   231 2509.494 2503.234 2515.754  184167.0  165087.9  15818 11
-## CP0556 334   334   334 2514.189 2504.799 2520.449  107281.7  104197.1   7976 14
-## CP0557 337   337   337 2515.754 2503.234 2553.313 4381724.8 4040088.7 123448 21
-## CP0558 333   333   333 2515.754 2503.234 2545.488  934386.2  877441.9  27944 15
-## CP0559 316   316   316 2520.449 2503.234 2556.443  863947.7  832855.2  24496 29
-## CP0560 332   332   332 2518.884 2503.234 2553.313 4835730.4 4644120.0 131520 41
-##        sample
-## CP0555      1
-## CP0556      1
-## CP0557      1
-## CP0558      1
-## CP0559      1
-## CP0560      1</code></pre>
+<pre><code><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo sn</span>
+<span class="co">## CP0555 231   231   231 2509.494 2503.234 2515.754  184167.0  165087.9  15818 11</span>
+<span class="co">## CP0556 334   334   334 2514.189 2504.799 2520.449  107281.7  104197.1   7976 14</span>
+<span class="co">## CP0557 337   337   337 2515.754 2503.234 2553.313 4381724.8 4040088.7 123448 21</span>
+<span class="co">## CP0558 333   333   333 2515.754 2503.234 2545.488  934386.2  877441.9  27944 15</span>
+<span class="co">## CP0559 316   316   316 2520.449 2503.234 2556.443  863947.7  832855.2  24496 29</span>
+<span class="co">## CP0560 332   332   332 2518.884 2503.234 2553.313 4835730.4 4644120.0 131520 41</span>
+<span class="co">##        sample</span>
+<span class="co">## CP0555      1</span>
+<span class="co">## CP0556      1</span>
+<span class="co">## CP0557      1</span>
+<span class="co">## CP0558      1</span>
+<span class="co">## CP0559      1</span>
+<span class="co">## CP0560      1</span></code></pre>
 <div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Subsetting with [ not</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">one_file_2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## NULL</code></pre>
+<pre><code><span class="co">## NULL</span></code></pre>
 <p>Note however that also <code>[</code> does support the <code>keepAdjustedRtime</code> argument. Below we subset the object to spectra 20:30.</p>
 <div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">subs</span> <span class="op">&lt;-</span> <span class="va">xdata</span><span class="op">[</span><span class="fl">20</span><span class="op">:</span><span class="fl">30</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span>
 
 <span class="fu"><a href="../reference/XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
 <div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Access adjusted retention times:</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">subs</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0020 F1.S0021 F1.S0022 F1.S0023 F1.S0024 F1.S0025 F1.S0026 F1.S0027 
-## 2539.356 2540.921 2542.486 2544.051 2545.616 2547.181 2548.746 2550.311 
-## F1.S0028 F1.S0029 F1.S0030 
-## 2551.876 2553.441 2555.006</code></pre>
+<pre><code><span class="co">## F1.S0020 F1.S0021 F1.S0022 F1.S0023 F1.S0024 F1.S0025 F1.S0026 F1.S0027 </span>
+<span class="co">## 2539.356 2540.921 2542.486 2544.051 2545.616 2547.181 2548.746 2550.311 </span>
+<span class="co">## F1.S0028 F1.S0029 F1.S0030 </span>
+<span class="co">## 2551.876 2553.441 2555.006</span></code></pre>
 <div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Access raw retention times:</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">subs</span>, adjusted <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S0020 F1.S0021 F1.S0022 F1.S0023 F1.S0024 F1.S0025 F1.S0026 F1.S0027 
-## 2531.112 2532.677 2534.242 2535.807 2537.372 2538.937 2540.502 2542.067 
-## F1.S0028 F1.S0029 F1.S0030 
-## 2543.632 2545.197 2546.762</code></pre>
+<pre><code><span class="co">## F1.S0020 F1.S0021 F1.S0022 F1.S0023 F1.S0024 F1.S0025 F1.S0026 F1.S0027 </span>
+<span class="co">## 2531.112 2532.677 2534.242 2535.807 2537.372 2538.937 2540.502 2542.067 </span>
+<span class="co">## F1.S0028 F1.S0029 F1.S0030 </span>
+<span class="co">## 2543.632 2545.197 2546.762</span></code></pre>
 <p>As with <code>MSnExp</code> and <code>OnDiskMSnExp</code> objects, <code>[[</code> can be used to extract a single spectrum object from an <code>XCMSnExp</code> object. The retention time of the spectrum corresponds to the adjusted retention time if present.</p>
 <div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Extract a single spectrum</span>
 <span class="va">xdata</span><span class="op">[[</span><span class="fl">14</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<pre><code>## Object of class "Spectrum1"
-##  Retention time: 42:10 
-##  MSn level: 1 
-##  Total ion count: 445 
-##  Polarity: -1</code></pre>
+<pre><code><span class="co">## Object of class "Spectrum1"</span>
+<span class="co">##  Retention time: 42:10 </span>
+<span class="co">##  MSn level: 1 </span>
+<span class="co">##  Total ion count: 445 </span>
+<span class="co">##  Polarity: -1</span></code></pre>
 <p>At last we can also use the <code>split</code> method that allows to split an <code>XCMSnExp</code> based on a provided factor <code>f</code>. Below we split <code>xdata</code> per file. Using <code>keepAdjustedRtime = TRUE</code> ensures that adjusted retention times are not removed.</p>
 <div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">split</a></span><span class="op">(</span><span class="va">xdata</span>, f <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">fromFile</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">x_list</span><span class="op">)</span></code></pre></div>
-<pre><code>##   1   2   3   4   5   6   7   8 
-## 639 639 639 639 639 639 639 639</code></pre>
+<pre><code><span class="co">##   1   2   3   4   5   6   7   8 </span>
+<span class="co">## 639 639 639 639 639 639 639 639</span></code></pre>
 <div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">x_list</span>, <span class="va">hasAdjustedRtime</span><span class="op">)</span></code></pre></div>
-<pre><code>## $`1`
-## [1] TRUE
-## 
-## $`2`
-## [1] TRUE
-## 
-## $`3`
-## [1] TRUE
-## 
-## $`4`
-## [1] TRUE
-## 
-## $`5`
-## [1] TRUE
-## 
-## $`6`
-## [1] TRUE
-## 
-## $`7`
-## [1] TRUE
-## 
-## $`8`
-## [1] TRUE</code></pre>
+<pre><code><span class="co">## $`1`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`2`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`3`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`4`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`5`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`6`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`7`</span>
+<span class="co">## [1] TRUE</span>
+<span class="co">## </span>
+<span class="co">## $`8`</span>
+<span class="co">## [1] TRUE</span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="parallel-processing">Parallel processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a>
@@ -1457,7 +1457,7 @@ PCA for the faahKO data set, un-normalized intensities.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>

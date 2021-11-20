@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.15.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
                                     <h4 data-toc-skip class="author">Johannes Rainer</h4>
                         
       
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/master/vignettes/xcms-direct-injection.Rmd" class="external-link"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/vignettes/xcms-direct-injection.Rmd" class="external-link"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
       <div class="hidden name"><code>xcms-direct-injection.Rmd</code></div>
 
     </div>
@@ -110,19 +110,19 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> for the analysis of direct injection mass spec data, including peak detection, calibration and correspondence (grouping of peaks across samples).</p>
 </div>
 <div class="section level1">
 <h1 id="peak-detection">Peak detection<a class="anchor" aria-label="anchor" href="#peak-detection"></a>
 </h1>
-<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.14/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
+<p>Prior to any other analysis step, peaks have to be identified in the mass spec data. In contrast to the typical metabolomics workflow, in which peaks are identified in the chromatographic (time) dimension, in direct injection mass spec data sets peaks are identified in the m/z dimension. <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> uses functionality from the <code>MassSpecWavelet</code> package to identify such peaks.</p>
 <p>Below we load the required packages. For information on the parallel processing setup please see the <code>BiocParallel</code> vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MassSpecWavelet</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.14/msdata" class="external-link">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.14/msdata" class="external-link">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.15/msdata" class="external-link">msdata</a></em> package. Assuming that <em><a href="https://bioconductor.org/packages/3.15/msdata" class="external-link">msdata</a></em> is installed, we locate the path of the package and load the data set. We create also a <code>data.frame</code> describing the experimental setup based on the file names.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mzdata_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>
 <span class="va">mzdata_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">mzdata_path</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -144,8 +144,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <code class="sourceCode R"><span class="co">## Only a single spectrum with an *artificial* retention time is available</span>
 <span class="co">## for each sample</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">ham_raw</span><span class="op">)</span></code></pre></div>
-<pre><code>## F1.S1 F2.S1 F3.S1 F4.S1 
-##     1     1     1     1</code></pre>
+<pre><code><span class="co">## F1.S1 F2.S1 F3.S1 F4.S1 </span>
+<span class="co">##     1     1     1     1</span></code></pre>
 <p>Peaks are identified within each spectrum using the <em>mass spec wavelet</em> method.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Define the parameters for the peak detection</span>
@@ -155,20 +155,20 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">ham_raw</span>, param <span class="op">=</span> <span class="va">msw</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##            mz    mzmin    mzmax rt rtmin rtmax    into     maxo       sn intf
-## CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.97534   NA
-## CP02 409.1845 409.1747 409.1936 -1    -1    -1 4158404 310572.1 20.61382   NA
-## CP03 413.2677 413.2585 413.2769 -1    -1    -1 6099006 435462.6 27.21723   NA
-## CP04 423.2363 423.2266 423.2459 -1    -1    -1 2708391 174252.7 14.74527   NA
-## CP05 427.2681 427.2574 427.2779 -1    -1    -1 6302089 461385.6 32.50050   NA
-## CP06 437.2375 437.2254 437.2488 -1    -1    -1 7523070 517917.6 34.37645   NA
-##           maxf sample
-## CP01  814693.1      1
-## CP02  732119.9      1
-## CP03 1018994.8      1
-## CP04  435858.5      1
-## CP05 1125644.3      1
-## CP06 1282906.5      1</code></pre>
+<pre><code><span class="co">##            mz    mzmin    mzmax rt rtmin rtmax    into     maxo       sn intf</span>
+<span class="co">## CP01 403.2367 403.2279 403.2447 -1    -1    -1 4735258 372259.4 22.97534   NA</span>
+<span class="co">## CP02 409.1845 409.1747 409.1936 -1    -1    -1 4158404 310572.1 20.61382   NA</span>
+<span class="co">## CP03 413.2677 413.2585 413.2769 -1    -1    -1 6099006 435462.6 27.21723   NA</span>
+<span class="co">## CP04 423.2363 423.2266 423.2459 -1    -1    -1 2708391 174252.7 14.74527   NA</span>
+<span class="co">## CP05 427.2681 427.2574 427.2779 -1    -1    -1 6302089 461385.6 32.50050   NA</span>
+<span class="co">## CP06 437.2375 437.2254 437.2488 -1    -1    -1 7523070 517917.6 34.37645   NA</span>
+<span class="co">##           maxf sample</span>
+<span class="co">## CP01  814693.1      1</span>
+<span class="co">## CP02  732119.9      1</span>
+<span class="co">## CP03 1018994.8      1</span>
+<span class="co">## CP04  435858.5      1</span>
+<span class="co">## CP05 1125644.3      1</span>
+<span class="co">## CP06 1282906.5      1</span></code></pre>
 </div>
 <div class="section level1">
 <h1 id="calibration">Calibration<a class="anchor" aria-label="anchor" href="#calibration"></a>
@@ -208,69 +208,69 @@ document.addEventListener("DOMContentLoaded", function() {
 <p>Getting an overview of the performed processings:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ham_prep</span></code></pre></div>
-<pre><code>## MSn experiment data ("XCMSnExp")
-## Object size in memory: 0.04 Mb
-## - - - Spectra data - - -
-##  MS level(s): 1 
-##  Number of spectra: 4 
-##  MSn retention times: 0:01 - 0:01 minutes
-## - - - Processing information - - -
-## Data loaded [Tue Oct 19 16:57:47 2021] 
-##  MSnbase version: 2.19.3 
-## - - - Meta data  - - -
-## phenoData
-##   rowNames: 1 2 3 4
-##   varLabels: filename sample_group
-##   varMetadata: labelDescription
-## Loaded from:
-##   [1] HAM004_641fE_14-11-07--Exp1.extracted.mzdata...  [4] HAM005_641fE_14-11-07--Exp2.extracted.mzdata
-##   Use 'fileNames(.)' to see all files.
-## protocolData: none
-## featureData
-##   featureNames: F1.S1 F2.S1 F3.S1 F4.S1
-##   fvarLabels: fileIdx spIdx ... spectrum (35 total)
-##   fvarMetadata: labelDescription
-## experimentData: use 'experimentData(object)'
-## - - - xcms preprocessing - - -
-## Chromatographic peak detection:
-##  method: MSW 
-##  38 peaks identified in 4 samples.
-##  On average 9.5 chromatographic peaks per sample.
-## Correspondence:
-##  method: mzClust 
-##  20 features identified.
-##  Median mz range of features: 9.1553e-05
-##  Median rt range of features: 0</code></pre>
+<pre><code><span class="co">## MSn experiment data ("XCMSnExp")</span>
+<span class="co">## Object size in memory: 0.04 Mb</span>
+<span class="co">## - - - Spectra data - - -</span>
+<span class="co">##  MS level(s): 1 </span>
+<span class="co">##  Number of spectra: 4 </span>
+<span class="co">##  MSn retention times: 0:01 - 0:01 minutes</span>
+<span class="co">## - - - Processing information - - -</span>
+<span class="co">## Data loaded [Sat Nov 20 12:25:33 2021] </span>
+<span class="co">##  MSnbase version: 2.21.2 </span>
+<span class="co">## - - - Meta data  - - -</span>
+<span class="co">## phenoData</span>
+<span class="co">##   rowNames: 1 2 3 4</span>
+<span class="co">##   varLabels: filename sample_group</span>
+<span class="co">##   varMetadata: labelDescription</span>
+<span class="co">## Loaded from:</span>
+<span class="co">##   [1] HAM004_641fE_14-11-07--Exp1.extracted.mzdata...  [4] HAM005_641fE_14-11-07--Exp2.extracted.mzdata</span>
+<span class="co">##   Use 'fileNames(.)' to see all files.</span>
+<span class="co">## protocolData: none</span>
+<span class="co">## featureData</span>
+<span class="co">##   featureNames: F1.S1 F2.S1 F3.S1 F4.S1</span>
+<span class="co">##   fvarLabels: fileIdx spIdx ... spectrum (35 total)</span>
+<span class="co">##   fvarMetadata: labelDescription</span>
+<span class="co">## experimentData: use 'experimentData(object)'</span>
+<span class="co">## - - - xcms preprocessing - - -</span>
+<span class="co">## Chromatographic peak detection:</span>
+<span class="co">##  method: MSW </span>
+<span class="co">##  38 peaks identified in 4 samples.</span>
+<span class="co">##  On average 9.5 chromatographic peaks per sample.</span>
+<span class="co">## Correspondence:</span>
+<span class="co">##  method: mzClust </span>
+<span class="co">##  20 features identified.</span>
+<span class="co">##  Median mz range of features: 9.1553e-05</span>
+<span class="co">##  Median rt range of features: 0</span></code></pre>
 <p>The peak group information, i.e. the <em>feature</em> definitions can be accessed with the <code>featureDefinitions</code> method.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">ham_prep</span><span class="op">)</span></code></pre></div>
-<pre><code>## DataFrame with 20 rows and 10 columns
-##          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-##      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-## FT01   402.285   402.285   402.286        -1        -1        -1         2
-## FT02   403.237   403.237   403.237        -1        -1        -1         4
-## FT03   405.109   405.109   405.109        -1        -1        -1         2
-## FT04   409.184   409.184   409.185        -1        -1        -1         2
-## FT05   410.144   410.144   410.145        -1        -1        -1         2
-## ...        ...       ...       ...       ...       ...       ...       ...
-## FT16   437.238   437.238   437.238        -1        -1        -1         2
-## FT17   438.240   438.240   438.240        -1        -1        -1         2
-## FT18   439.151   439.151   439.151        -1        -1        -1         2
-## FT19   441.130   441.130   441.131        -1        -1        -1         2
-## FT20   445.293   445.292   445.293        -1        -1        -1         2
-##           ham4      ham5     peakidx
-##      &lt;numeric&gt; &lt;numeric&gt;      &lt;list&gt;
-## FT01         0         2       16,28
-## FT02         2         2 17,29,1,...
-## FT03         0         2       18,30
-## FT04         2         0        10,2
-## FT05         0         2       19,31
-## ...        ...       ...         ...
-## FT16         2         0        6,13
-## FT17         2         0        7,14
-## FT18         0         2       26,37
-## FT19         0         2       38,27
-## FT20         2         0        15,8</code></pre>
+<pre><code><span class="co">## DataFrame with 20 rows and 10 columns</span>
+<span class="co">##          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
+<span class="co">##      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="co">## FT01   402.285   402.285   402.286        -1        -1        -1         2</span>
+<span class="co">## FT02   403.237   403.237   403.237        -1        -1        -1         4</span>
+<span class="co">## FT03   405.109   405.109   405.109        -1        -1        -1         2</span>
+<span class="co">## FT04   409.184   409.184   409.185        -1        -1        -1         2</span>
+<span class="co">## FT05   410.144   410.144   410.145        -1        -1        -1         2</span>
+<span class="co">## ...        ...       ...       ...       ...       ...       ...       ...</span>
+<span class="co">## FT16   437.238   437.238   437.238        -1        -1        -1         2</span>
+<span class="co">## FT17   438.240   438.240   438.240        -1        -1        -1         2</span>
+<span class="co">## FT18   439.151   439.151   439.151        -1        -1        -1         2</span>
+<span class="co">## FT19   441.130   441.130   441.131        -1        -1        -1         2</span>
+<span class="co">## FT20   445.293   445.292   445.293        -1        -1        -1         2</span>
+<span class="co">##           ham4      ham5     peakidx</span>
+<span class="co">##      &lt;numeric&gt; &lt;numeric&gt;      &lt;list&gt;</span>
+<span class="co">## FT01         0         2       16,28</span>
+<span class="co">## FT02         2         2 17,29,1,...</span>
+<span class="co">## FT03         0         2       18,30</span>
+<span class="co">## FT04         2         0        10,2</span>
+<span class="co">## FT05         0         2       19,31</span>
+<span class="co">## ...        ...       ...         ...</span>
+<span class="co">## FT16         2         0        6,13</span>
+<span class="co">## FT17         2         0        7,14</span>
+<span class="co">## FT18         0         2       26,37</span>
+<span class="co">## FT19         0         2       38,27</span>
+<span class="co">## FT20         2         0        15,8</span></code></pre>
 <p>Plotting the raw data for direct injection samples involves a little more processing than for LC/GC-MS data in which we can simply use the <code>chromatogram</code> method to extract the data. Below we extract the m/z-intensity pairs for the peaks associated with the first feature. We thus first identify the peaks for that feature and define their m/z values range. Using this range we can subsequently use the <code>filterMz</code> function to sub-set the full data set to the signal associated with the feature’s peaks. On that object we can then call the <code>mz</code> and <code>intensity</code> functions to extract the data.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Get the peaks belonging to the first feature</span>
@@ -300,72 +300,72 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">feat_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feat_vals</span><span class="op">)</span></code></pre></div>
-<pre><code>##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata
-## FT01                                           NA
-## FT02                                      4735258
-## FT03                                           NA
-## FT04                                      4158404
-## FT05                                           NA
-## FT06                                      6099006
-##      HAM004_641fE_14-11-07--Exp2.extracted.mzdata
-## FT01                                           NA
-## FT02                                      6202418
-## FT03                                           NA
-## FT04                                      5004546
-## FT05                                           NA
-## FT06                                      4950642
-##      HAM005_641fE_14-11-07--Exp1.extracted.mzdata
-## FT01                                      4095293
-## FT02                                      4811391
-## FT03                                      2982453
-## FT04                                           NA
-## FT05                                      2872023
-## FT06                                           NA
-##      HAM005_641fE_14-11-07--Exp2.extracted.mzdata
-## FT01                                      4804763
-## FT02                                      2581183
-## FT03                                      2268984
-## FT04                                           NA
-## FT05                                      2133219
-## FT06                                           NA</code></pre>
+<pre><code><span class="co">##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata</span>
+<span class="co">## FT01                                           NA</span>
+<span class="co">## FT02                                      4735258</span>
+<span class="co">## FT03                                           NA</span>
+<span class="co">## FT04                                      4158404</span>
+<span class="co">## FT05                                           NA</span>
+<span class="co">## FT06                                      6099006</span>
+<span class="co">##      HAM004_641fE_14-11-07--Exp2.extracted.mzdata</span>
+<span class="co">## FT01                                           NA</span>
+<span class="co">## FT02                                      6202418</span>
+<span class="co">## FT03                                           NA</span>
+<span class="co">## FT04                                      5004546</span>
+<span class="co">## FT05                                           NA</span>
+<span class="co">## FT06                                      4950642</span>
+<span class="co">##      HAM005_641fE_14-11-07--Exp1.extracted.mzdata</span>
+<span class="co">## FT01                                      4095293</span>
+<span class="co">## FT02                                      4811391</span>
+<span class="co">## FT03                                      2982453</span>
+<span class="co">## FT04                                           NA</span>
+<span class="co">## FT05                                      2872023</span>
+<span class="co">## FT06                                           NA</span>
+<span class="co">##      HAM005_641fE_14-11-07--Exp2.extracted.mzdata</span>
+<span class="co">## FT01                                      4804763</span>
+<span class="co">## FT02                                      2581183</span>
+<span class="co">## FT03                                      2268984</span>
+<span class="co">## FT04                                           NA</span>
+<span class="co">## FT05                                      2133219</span>
+<span class="co">## FT06                                           NA</span></code></pre>
 <p><code>NA</code> is reported for features in samples for which no peak was identified at the feature’s m/z value. In some instances there might still be a signal at the feature’s position in the raw data files, but the peak detection failed to identify a peak. For these cases signal can be recovered using the <code>fillChromPeaks</code> method that integrates all raw signal at the feature’s location. If there is no signal at that location an <code>NA</code> is reported.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ham_prep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">ham_prep</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">FillChromPeaksParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">ham_prep</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata
-## FT01                                     768754.0
-## FT02                                    4735257.5
-## FT03                                     652566.6
-## FT04                                    4158404.5
-## FT05                                     652201.1
-## FT06                                    6099006.3
-##      HAM004_641fE_14-11-07--Exp2.extracted.mzdata
-## FT01                                    1230140.4
-## FT02                                    6202417.6
-## FT03                                     374109.9
-## FT04                                    5004546.3
-## FT05                                     403448.4
-## FT06                                    4950641.7
-##      HAM005_641fE_14-11-07--Exp1.extracted.mzdata
-## FT01                                      4095293
-## FT02                                      4811391
-## FT03                                      2982453
-## FT04                                      1221031
-## FT05                                      2872023
-## FT06                                      1573988
-##      HAM005_641fE_14-11-07--Exp2.extracted.mzdata
-## FT01                                    4804762.5
-## FT02                                    2581183.1
-## FT03                                    2268984.5
-## FT04                                    1241294.4
-## FT05                                    2133219.4
-## FT06                                     977694.5</code></pre>
+<pre><code><span class="co">##      HAM004_641fE_14-11-07--Exp1.extracted.mzdata</span>
+<span class="co">## FT01                                     768754.0</span>
+<span class="co">## FT02                                    4735257.5</span>
+<span class="co">## FT03                                     652566.6</span>
+<span class="co">## FT04                                    4158404.5</span>
+<span class="co">## FT05                                     652201.1</span>
+<span class="co">## FT06                                    6099006.3</span>
+<span class="co">##      HAM004_641fE_14-11-07--Exp2.extracted.mzdata</span>
+<span class="co">## FT01                                    1230140.4</span>
+<span class="co">## FT02                                    6202417.6</span>
+<span class="co">## FT03                                     374109.9</span>
+<span class="co">## FT04                                    5004546.3</span>
+<span class="co">## FT05                                     403448.4</span>
+<span class="co">## FT06                                    4950641.7</span>
+<span class="co">##      HAM005_641fE_14-11-07--Exp1.extracted.mzdata</span>
+<span class="co">## FT01                                      4095293</span>
+<span class="co">## FT02                                      4811391</span>
+<span class="co">## FT03                                      2982453</span>
+<span class="co">## FT04                                      1221031</span>
+<span class="co">## FT05                                      2872023</span>
+<span class="co">## FT06                                      1573988</span>
+<span class="co">##      HAM005_641fE_14-11-07--Exp2.extracted.mzdata</span>
+<span class="co">## FT01                                    4804762.5</span>
+<span class="co">## FT02                                    2581183.1</span>
+<span class="co">## FT03                                    2268984.5</span>
+<span class="co">## FT04                                    1241294.4</span>
+<span class="co">## FT05                                    2133219.4</span>
+<span class="co">## FT06                                     977694.5</span></code></pre>
 </div>
 <div class="section level1">
 <h1 id="further-analysis">Further analysis<a class="anchor" aria-label="anchor" href="#further-analysis"></a>
 </h1>
-<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.14/limma" class="external-link">limma</a></em>.</p>
+<p>Further analysis, i.e. detection of features/metabolites with significantly different abundances, or PCA analyses can be performed on the feature matrix using functionality from other R packages, such as <em><a href="https://bioconductor.org/packages/3.15/limma" class="external-link">limma</a></em>.</p>
 </div>
   </div>
 
@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
