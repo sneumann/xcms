@@ -60,7 +60,7 @@ possible to convert an `XCMSnExp` into a `xcmsSet` object using the `as` method
 # Data import
 
 `xcms` supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF,
-mzML/mzXML and mzData format. For the actual data import Bioconductor's
+mzXML and mzML format. For the actual data import Bioconductor's
 `r Biocpkg("mzR")` is used. For demonstration purpose we will analyze a
 subset of the data from [@Saghatelian04] in which the metabolic consequences of
 knocking out the fatty acid amide hydrolase (FAAH) gene in mice was

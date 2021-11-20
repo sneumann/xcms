@@ -1,3 +1,8 @@
+Changes in version 3.17.2
+
+- Use mzML instead of mzData files in testing and vignettes, 
+  since mzR drop mzData reading and msdata package will drop mzData files as well
+
 Changes in version 3.17.1
 
 - Fix bug in feature grouping by EIC correlation that would return a
