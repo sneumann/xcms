@@ -50,7 +50,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         message("Provided scanrange was adjusted to ", scanrange[1]," - ", scanrange[2])
     }
     if (!is.null(rawdata$acquisitionNum)) {
-        ## defined only for mzData and mzXML
+        ## defined only for mzXML
         object@acquisitionNum <- rawdata$acquisitionNum
     }
     if (!is.null(rawdata$polarity)) {

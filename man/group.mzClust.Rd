@@ -33,10 +33,10 @@
 \examples{
 \dontrun{
 library(msdata)
-mzdatapath <- system.file("fticr", package = "msdata")
-mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+mzMLpath <- system.file("fticr-mzML", package = "msdata")
+mzMLfiles <- list.files(mzMLpath, recursive = TRUE, full.names = TRUE)
 
-xs <- xcmsSet(method="MSW", files=mzdatafiles, scales=c(1,7),
+xs <- xcmsSet(method="MSW", files=mzMLfiles, scales=c(1,7),
               SNR.method='data.mean' , winSize.noise=500,
               peakThr=80000,  amp.Th=0.005)
 

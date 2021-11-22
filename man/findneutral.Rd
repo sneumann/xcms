@@ -41,10 +41,10 @@ findneutral(object, find, ppmE=25, print=TRUE)
 \examples{
 \dontrun{
     library(msdata)
-    mzdatapath <- system.file("iontrap", package = "msdata")
-    mzdatafiles<-list.files(mzdatapath, pattern = "extracted.mzData",
+    mzMLpath <- system.file("iontrap", package = "msdata")
+    mzMLfiles<-list.files(mzMLpath, pattern = "extracted.mzML",
                             recursive = TRUE, full.names = TRUE)
-    xs <- xcmsSet(mzdatafiles, method = "MS1")
+    xs <- xcmsSet(mzMLfiles, method = "MS1")
     ##takes only one file from the file set
     xfrag <- xcmsFragments(xs)
     found<-findneutral(xfrag, 58.1455, 50)

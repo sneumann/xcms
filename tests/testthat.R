@@ -39,7 +39,7 @@ microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
 microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
 
 ## Direct injection data:
-fticrf <- list.files(system.file("fticr", package = "msdata"),
+fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
                      recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
