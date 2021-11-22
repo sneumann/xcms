@@ -281,7 +281,7 @@ mp
 
 ## Loading a small subset of direct injection, single spectrum files
 library(msdata)
-fticrf <- list.files(system.file("fticr", package = "msdata"),
+fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
                     recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
 

@@ -56,7 +56,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
     if (length(files) == 0 | all(is.na(files)))
-        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
+        stop("No NetCDF/mzXML/mzML files were found.\n")
 
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
