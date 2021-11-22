@@ -55,7 +55,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.2</span>
       </span>
     </div>
 
@@ -381,7 +381,7 @@ For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Loading a small subset of direct injection, single spectrum files</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">msdata</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fticrf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>,</span>
+<span class="r-in"><span class="va">fticrf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr-mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>,</span>
 <span class="r-in">                    recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">fticr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fticrf</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, msLevel. <span class="op">=</span> <span class="fl">1</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
 <span class="r-in"></span>

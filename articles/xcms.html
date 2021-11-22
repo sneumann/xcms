@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.2</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-11-20 11:11:36<br><strong>Compiled</strong>: Sat Nov 20 12:26:38 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-11-22 22:49:33<br><strong>Compiled</strong>: Mon Nov 22 23:25:00 2021</p>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="section level1">
 <h1 id="data-import">Data import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h1>
-<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML and mzData format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.15/mzR" class="external-link">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
+<p><code>xcms</code> supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzXML and mzML format. For the actual data import Bioconductor’s <em><a href="https://bioconductor.org/packages/3.15/mzR" class="external-link">mzR</a></em> is used. For demonstration purpose we will analyze a subset of the data from <span class="citation">[1]</span> in which the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was investigated. The raw data files (in NetCDF format) are provided with the <code>faahKO</code> data package. The data set consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds. To speed up processing of this vignette we will restrict the analysis to only 8 files and to the retention time range from 2500 to 3500 seconds.</p>
 <p>Below we load all required packages, locate the raw CDF files within the <code>faahKO</code> package and build a <em>phenodata</em> data frame describing the experimental setup. Note that for <em>real</em> experiments it is suggested to define a file (table) that contains the file names of the raw data files along with descriptions of the samples for each file as additional columns. Such a file could then be imported with e.g. <code>read.table</code> as variable <code>pd</code> (instead of being defined within R as in the example below) and the file names could be passed along to the <code>readMSData</code> function below with e.g. <code>files = paste0(MZML_PATH, "/", pd$mzML_file)</code> where <code>MZML_PATH</code> would be the path to directory in which the files are located and <code>"mzML_file"</code> the name of the column in the phenodata file that contains the file names.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
@@ -1125,7 +1125,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code><span class="co">## [[1]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak detection </span>
-<span class="co">##  date: Sat Nov 20 12:27:04 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:25:24 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: CentWaveParam </span>
@@ -1134,7 +1134,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <span class="co">## [[2]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak refinement </span>
-<span class="co">##  date: Sat Nov 20 12:27:24 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:25:43 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: MergeNeighboringPeaksParam </span>
@@ -1143,7 +1143,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <span class="co">## [[3]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak grouping </span>
-<span class="co">##  date: Sat Nov 20 12:27:38 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:25:57 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakDensityParam </span>
@@ -1152,7 +1152,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <span class="co">## [[4]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Retention time correction </span>
-<span class="co">##  date: Sat Nov 20 12:27:39 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:25:57 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakGroupsParam </span>
@@ -1161,7 +1161,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <span class="co">## [[5]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak grouping </span>
-<span class="co">##  date: Sat Nov 20 12:27:46 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:26:04 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakDensityParam </span>
@@ -1170,7 +1170,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <span class="co">## [[6]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Missing peak filling </span>
-<span class="co">##  date: Sat Nov 20 12:27:47 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:26:05 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: ChromPeakAreaParam </span>
@@ -1183,7 +1183,7 @@ PCA for the faahKO data set, un-normalized intensities.
 <pre><code><span class="co">## [[1]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Retention time correction </span>
-<span class="co">##  date: Sat Nov 20 12:27:39 2021 </span>
+<span class="co">##  date: Mon Nov 22 23:25:57 2021 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakGroupsParam </span>
