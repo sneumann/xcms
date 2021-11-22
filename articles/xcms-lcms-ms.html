@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-11-22 22:49:33<br><strong>Compiled</strong>: Mon Nov 22 23:24:09 2021</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2021-11-22 22:51:14<br><strong>Compiled</strong>: Mon Nov 22 23:31:48 2021</p>
 <div class="section level1">
 <h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h1>
@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## F1.S3505         2   418.926      3505</span>
 <span class="co">##  ... 38 more variables/columns.</span>
 <span class="co">## Processing:</span>
-<span class="co">##  Switch backend from MsBackendMzR to MsBackendDataFrame [Mon Nov 22 23:24:24 2021]</span></code></pre>
+<span class="co">##  Switch backend from MsBackendMzR to MsBackendDataFrame [Mon Nov 22 23:32:05 2021]</span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20 ppm (parameter <code>ppm</code>) were combined into one peak and the median m/z and intensity is reported for these. Due to parameter <code>minProp = 0.8</code>, the resulting MS2 spectrum contains only peaks that were present in 80% of the input spectra.</p>
 <p>A plot of this <em>consensus</em> spectrum is shown below.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -490,7 +490,7 @@ Extracted ion chromatograms for Fenamiphos from MS1 (blue) and potentially relat
 <span class="co">## 62          2   574.942        NA</span>
 <span class="co">##  ... 20 more variables/columns.</span>
 <span class="co">## Processing:</span>
-<span class="co">##  Merge 1 Spectra into one [Mon Nov 22 23:24:52 2021]</span></code></pre>
+<span class="co">##  Merge 1 Spectra into one [Mon Nov 22 23:32:37 2021]</span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to the number of MS1 peaks in our data. A <code>peaksCount</code> of <code>0</code> indicates that no MS2 spectrum could be defined based on the used settings. For reconstructed spectra additional annotations are available such as the IDs of the MS2 chromatographic peaks from which the spectrum was reconstructed (<code>"ms2_peak_id"</code>) as well as the correlation coefficient of their chromatographic peak shape with the precursor’s shape (<code>"ms2_peak_cor"</code>). Metadata column <code>"peak_id"</code> contains the ID of the MS1 chromatographic peak:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">swath_spectra</span><span class="op">$</span><span class="va">ms2_peak_id</span></code></pre></div>
@@ -667,7 +667,7 @@ Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
 <span class="co">##  [1] MsBackendMgf_1.1.3  magrittr_2.0.1      pander_0.6.4       </span>
-<span class="co">##  [4] Spectra_1.5.1       xcms_3.17.2         MSnbase_2.21.2     </span>
+<span class="co">##  [4] Spectra_1.5.1       xcms_3.17.3         MSnbase_2.21.2     </span>
 <span class="co">##  [7] ProtGenerics_1.27.0 S4Vectors_0.33.4    mzR_2.29.0         </span>
 <span class="co">## [10] Rcpp_1.0.7          Biobase_2.55.0      BiocGenerics_0.41.2</span>
 <span class="co">## [13] BiocParallel_1.29.2 BiocStyle_2.23.0   </span>
