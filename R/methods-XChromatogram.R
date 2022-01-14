@@ -121,6 +121,9 @@ setMethod("show", "XChromatogram", function(object) {
 #'     if length of `i` or `j` is larger than 1, thus a `XChromatograms` is
 #'     returned.
 #'
+#' @param FUN For `transformIntensity`: a function to transform the intensity
+#'     values of `object`.
+#'
 #' @param method For `featureValues`: `character(1)` specifying the method to
 #'     resolve multi-peak mappings within the sample sample, i.e. to select
 #'     the *representative* peak for a feature for which more than one peak

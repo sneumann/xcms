@@ -342,6 +342,9 @@ For \code{filterChromPeaks}: \code{character(1)} defining the method that should
 be used to filter chromatographic peaks. See help on \code{filterChromPeaks}
 below for details.}
 
+\item{FUN}{For \code{transformIntensity}: a function to transform the intensity
+values of \code{object}.}
+
 \item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
 index of the files/samples for which the \link{ProcessHistory} objects should
 be returned.}
