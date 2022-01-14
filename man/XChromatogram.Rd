@@ -21,6 +21,7 @@
 \alias{chromPeakData<-,XChromatogram-method}
 \alias{refineChromPeaks,XChromatogram,MergeNeighboringPeaksParam-method}
 \alias{filterChromPeaks,XChromatogram-method}
+\alias{transformIntensity,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{hasFilledChromPeaks,XChromatograms-method}
@@ -40,6 +41,7 @@
 \alias{dropFilledChromPeaks,XChromatograms-method}
 \alias{refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam-method}
 \alias{filterChromPeaks,XChromatograms-method}
+\alias{transformIntensity,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
@@ -101,6 +103,8 @@ XChromatogram(
 \S4method{refineChromPeaks}{XChromatogram,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
 
 \S4method{filterChromPeaks}{XChromatogram}(object, method = c("keepTop"), ...)
+
+\S4method{transformIntensity}{XChromatogram}(object, FUN = identity)
 
 \S4method{show}{XChromatograms}(object)
 
@@ -184,6 +188,8 @@ XChromatogram(
 \S4method{refineChromPeaks}{XChromatograms,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
 
 \S4method{filterChromPeaks}{XChromatograms}(object, method = c("keepTop"), ...)
+
+\S4method{transformIntensity}{XChromatograms}(object, FUN = identity)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -499,6 +505,17 @@ smallest values, respectively.
 \item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
 the individual performed processing steps. Optional parameters \code{type} and
 \code{fileIndex} allow to further specify which processing steps to return.
+}
+}
+
+\section{Manipulating data}{
+
+\itemize{
+\item \code{transformIntensity}: transforms the intensity values of the chromatograms
+with provided function \code{FUN}. See \code{\link[=transformIntensity]{transformIntensity()}} in the \code{MSnbase}
+package for details. For \code{XChromatogram} and \code{XChromatograms} in addition
+to the intensity values also columns \code{"into"} and \code{"maxo"} in the object's
+\code{chromPeaks} matrix are transformed by the same function.
 }
 }
 

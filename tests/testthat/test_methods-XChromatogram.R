@@ -194,3 +194,33 @@ test_that("filterChromPeaks,XChromatogram works", {
     res <- filterChromPeaks(chrs[1, 1], n = 1L, by = "keepTop")
     expect_true(nrow(chromPeaks(res)) == 1L)
 })
+
+test_that("transformIntensity,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+
+    chr <- chrs[1L, 1L]
+    res <- transformIntensity(chr)
+
+    expect_equal(intensity(res), intensity(chr))
+    expect_equal(chromPeaks(res)[, "into"], chromPeaks(chr)[, "into"])
+    expect_equal(chromPeaks(res)[, "maxo"], chromPeaks(chr)[, "maxo"])
+
+    res <- transformIntensity(chr, log2)
+    expect_equal(intensity(res), log2(intensity(chr)))
+    expect_equal(chromPeaks(res)[, "into"], log2(chromPeaks(chr)[, "into"]))
+    expect_equal(chromPeaks(res)[, "maxo"], log2(chromPeaks(chr)[, "maxo"]))
+
+    chr <- XChromatogram()
+    res <- transformIntensity(chr)
+    expect_equal(intensity(res), intensity(chr))
+    expect_equal(chromPeaks(res)[, "into"], chromPeaks(chr)[, "into"])
+    expect_equal(chromPeaks(res)[, "maxo"], chromPeaks(chr)[, "maxo"])
+
+    res <- transformIntensity(chr, log2)
+    expect_equal(intensity(res), log2(intensity(chr)))
+    expect_equal(chromPeaks(res)[, "into"], log2(chromPeaks(chr)[, "into"]))
+    expect_equal(chromPeaks(res)[, "maxo"], log2(chromPeaks(chr)[, "maxo"]))
+})

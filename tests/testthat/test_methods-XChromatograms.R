@@ -577,3 +577,25 @@ test_that("filterChromPeaks,XChromatograms works", {
     b <- featureValues(chrs)
     expect_equal(a, b[2:3, ])
 })
+
+test_that("transformIntensity,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+
+    res <- transformIntensity(chrs)
+
+    expect_equal(intensity(res[1, 2]), intensity(chrs[1, 2]))
+    expect_equal(chromPeaks(res[1, 2])[, "into"],
+                 chromPeaks(chrs[1, 2])[, "into"])
+    expect_equal(chromPeaks(res[1, 2])[, "maxo"],
+                 chromPeaks(chrs[1, 2])[, "maxo"])
+
+    res <- transformIntensity(chrs, log2)
+    expect_equal(intensity(res[1, 2]), log2(intensity(chrs[1, 2])))
+    expect_equal(chromPeaks(res[1, 2])[, "into"],
+                 log2(chromPeaks(chrs[1, 2])[, "into"]))
+    expect_equal(chromPeaks(res[1, 2])[, "maxo"],
+                 log2(chromPeaks(chrs[1, 2])[, "maxo"]))
+})

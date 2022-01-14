@@ -667,3 +667,12 @@ setMethod("filterChromPeaks", "XChromatograms",
               validObject(object)
               object
           })
+
+#' @rdname XChromatogram
+setMethod("transformIntensity", "XChromatograms", function(object,
+                                                           FUN = identity) {
+    object@.Data <- matrix(lapply(object, FUN = transformIntensity, FUN),
+                           nrow = nrow(object),
+                           dimnames = dimnames(object))
+    object
+})
