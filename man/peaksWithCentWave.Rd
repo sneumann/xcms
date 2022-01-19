@@ -4,9 +4,20 @@
 \alias{peaksWithCentWave}
 \title{Identify peaks in chromatographic data using centWave}
 \usage{
-peaksWithCentWave(int, rt, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), integrate = 1, fitgauss = FALSE,
-  noise = 0, verboseColumns = FALSE, firstBaselineCheck = TRUE, ...)
+peaksWithCentWave(
+  int,
+  rt,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  integrate = 1,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  firstBaselineCheck = TRUE,
+  extendLengthMSW = FALSE,
+  ...
+)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -21,7 +32,7 @@ expected peak width.}
 Peaks with a signal to noise ratio < \code{snthresh} are omitted.}
 
 \item{prefilter}{\code{numeric(2)} (\code{c(k, I)}): only regions of interest with at
-least \code{k} centroids with signal \code{>= I} are returned in the first
+least \code{k} centroids with signal \verb{>= I} are returned in the first
 step.}
 
 \item{integrate}{\code{numeric(1)}, integration method. For \code{integrate = 1} peak
@@ -43,6 +54,9 @@ columns should be returned.}
 \item{firstBaselineCheck}{\code{logical(1)}. If \code{TRUE} continuous data within
 regions of interest is checked to be above the first baseline.}
 
+\item{extendLengthMSW}{\code{logical(1)}. If \code{TRUE} the "open" method of EIC
+extension is used, rather than the default "reflect" method.}
+
 \item{...}{currently ignored.}
 }
 \value{
@@ -56,7 +70,7 @@ columns:
 \item \code{"intb"}: per-peak baseline corrected integrated peak intensity.
 \item \code{"maxo"}: maximum (original) intensity of the peak.
 \item \code{"sn"}: signal to noise ratio of the peak defined as
-\code{(maxo - baseline)/sd} with \code{sd} being the standard defiatio of the local
+\code{(maxo - baseline)/sd} with \code{sd} being the standard deviation of the local
 chromatographic noise.
 }
 
@@ -96,7 +110,7 @@ od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 
 ## Extract chromatographic data for a small m/z range
 mzr <- c(272.1, 272.2)
-chr <- chromatogram(od, mz = mzr)[1, 1]
+chr <- chromatogram(od, mz = mzr, rt = c(3000, 3300))[1, 1]
 
 int <- intensity(chr)
 rt <- rtime(chr)
@@ -117,7 +131,8 @@ rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
 \link{centWave} for a detailed description of the peak detection
 method.
 
-Other peak detection functions for chromatographic data: \code{\link{peaksWithMatchedFilter}}
+Other peak detection functions for chromatographic data: 
+\code{\link{peaksWithMatchedFilter}()}
 }
 \author{
 Johannes Rainer

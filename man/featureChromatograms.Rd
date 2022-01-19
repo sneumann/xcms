@@ -4,8 +4,17 @@
 \alias{featureChromatograms}
 \title{Extract ion chromatograms for each feature}
 \usage{
-featureChromatograms(x, expandRt = 0, aggregationFun = "max", features,
-  include = c("feature_only", "all"), filled = FALSE, ...)
+featureChromatograms(
+  x,
+  expandRt = 0,
+  aggregationFun = "max",
+  features,
+  include = c("feature_only", "apex_within", "any", "all"),
+  filled = FALSE,
+  n = length(fileNames(x)),
+  value = c("maxo", "into"),
+  ...
+)
 }
 \arguments{
 \item{x}{\code{XCMSnExp} object with grouped chromatographic peaks.}
@@ -23,13 +32,21 @@ features for which chromatograms should be returned. Can be the index
 of the features in \code{featureDefinitions}, feature IDs (row names of
 \code{featureDefinitions}) or a logical vector.}
 
-\item{include}{\code{character(1)} defining which chromatographic peaks and
-feature definitions should be included in the returned
-\code{\link[=XChromatograms]{XChromatograms()}}. See description above for details.}
+\item{include}{\code{character(1)} defining which chromatographic peaks (and
+related feature definitions) should be included in the returned
+\code{\link[=XChromatograms]{XChromatograms()}}. Defaults to \code{"feature_only"}; See description above
+for options and details.}
 
 \item{filled}{\code{logical(1)} whether filled-in peaks should be included in
 the result object. The default is \code{filled = FALSE}, i.e. only detected
 peaks are reported.}
+
+\item{n}{\code{integer(1)} to optionally specify the number of \emph{top n} samples
+from which the EIC should be extracted.}
+
+\item{value}{\code{character(1)} specifying the column to be used to sort the
+samples. Can be either \code{"maxo"} (the default) or \code{"into"} to use the
+maximal peak intensity or the integrated peak area, respectively.}
 
 \item{...}{optional arguments to be passed along to the \code{\link[=chromatogram]{chromatogram()}}
 function.}
@@ -40,36 +57,56 @@ function.}
 \description{
 Extract ion chromatograms for features in an \linkS4class{XCMSnExp} object. The
 function returns for each feature its extracted ion chromatogram and all
-associated peaks with it.
+associated peaks with it. The chromatogram is extracted from the m/z - rt
+region including all chromatographic peaks of that features (i.e. based on
+the ranges of \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}, \code{"rtmax"} of all
+chromatographic peaks of the feature).
 
 By default only chromatographic peaks associated with a feature are included
-for an extracted ion chromatogram. Setting \code{include = "all"} (instead of
-the default \code{include = "feature_only"}) will return all chromatographic peaks
-identified in the m/z - rt data slice of a feature (and eventually also other
-features within that region).
+for an extracted ion chromatogram (parameter \code{include = "feature_only"}). By
+setting \code{include = "apex_within"} all chromatographic peaks (and eventually
+the feature which they are part of - if feature definitions are present)
+that have their apex position within the m/z - rt range from which the
+chromatogram is extracted are returned too.
+With \code{include = "any"} or \code{include = "all"} all chromatographic peaks (and
+eventually the feature in which they are present) overlapping the m/z and rt
+range will be returned.
+}
+\note{
+When extracting EICs from only the top \code{n} samples it can happen that one
+or more of the features specified with \code{features} are dropped because they
+have no detected peak in the \emph{top n} samples. The chance for this to happen
+is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}).
 }
 \examples{
 
-library(xcms)
-library(faahKO)
-faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Do a simple and fast preprocessing on a subset of the test data
-od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
-od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-    noise = 1000))
-od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
-od <- groupChromPeaks(od,
+## Disable parallel processing for this example
+register(SerialParam())
+
+## Subset the object to a smaller retention time range
+xdata <- filterRt(faahko_sub, c(2500, 3500))
+
+xdata <- groupChromPeaks(xdata,
     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 
-## Extract ion chromatograms for each feature
-chrs <- featureChromatograms(od)
+## Get the feature definitions
+featureDefinitions(xdata)
+
+## Extract ion chromatograms for the first 3 features. Parameter
+## `features` can be either the feature IDs or feature indices.
+chrs <- featureChromatograms(xdata, features = 1:3)
 
 ## Plot the XIC for the first feature using different colors for each file
-par(mfrow = c(1, 2))
 plot(chrs[1, ], col = c("red", "green", "blue"))
+}
+\seealso{
+\code{\link[=filterColumnsKeepTop]{filterColumnsKeepTop()}} to filter the extracted EICs keeping only
+the \emph{top n} columns (samples) with the highest intensity.
 }
 \author{
 Johannes Rainer

@@ -1,5 +1,5 @@
-## Put all deprecated methods/functions in here, so they will be
-## easier to defunct/remove later.
+## ## Put all deprecated methods/functions in here, so they will be
+## ## easier to defunct/remove later.
 
 xcmsParallelSetup <- function(nSlaves) {
     .Deprecated(msg = "Use of 'xcmsParallelSetup' is deprecated! Use 'BPPARAM' arguments instead.")
@@ -333,105 +333,104 @@ xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
 
 }
 
-setMethod("extractChromatograms",
-          signature(object = "OnDiskMSnExp"),
-          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_) {
-              .Deprecated(msg = paste0("Use of 'extractChromatograms' is ",
-                                       "deprecated, please use 'chromatogram' ",
-                                       "instead."))
-              chromatogram(object, rt = rt, mz = mz,
-                           aggregationFun = aggregationFun, missing = missing)
-          })
+## setMethod("extractChromatograms",
+##           signature(object = "OnDiskMSnExp"),
+##           function(object, rt, mz, aggregationFun = "sum", missing = NA_real_) {
+##               .Deprecated(msg = paste0("Use of 'extractChromatograms' is ",
+##                                        "deprecated, please use 'chromatogram' ",
+##                                        "instead."))
+##               chromatogram(object, rt = rt, mz = mz,
+##                            aggregationFun = aggregationFun, missing = missing)
+##           })
 
-plotChromatogram <- function(x, rt, col = "#00000060",
-                             lty = 1, type = "l", xlab = "retention time",
-                             ylab = "intensity", main = NULL, ...) {
-    .Deprecated(msg = paste0("Use of 'plotChromatogram' is deprecated, please ",
-                             "use 'plot' instead."))
-    if (!is.list(x) & !is(x, "Chromatogram"))
-        stop("'x' should be a Chromatogram object or a list of Chromatogram",
-             " objects.")
-    if (is(x, "Chromatogram"))
-        x <- list(x)
-    isOK <- lapply(x, function(z) {
-        if (is(z, "Chromatogram")) {
-            return(TRUE)
-        } else {
-            if (is.na(z))
-                return(TRUE)
-        }
-        FALSE
-    })
-    if (any(!unlist(isOK)))
-        stop("if 'x' is a list it should only contain Chromatogram objects")
-    ## Subset the Chromatogram objects if rt provided.
-    if (!missing(rt)) {
-        rt <- range(rt)
-        x <- lapply(x, function(z) {
-            if (is(z, "Chromatogram"))
-                filterRt(z, rt = rt)
-        })
-    }
-    if (length(col) != length(x)) {
-        col <- rep(col[1], length(x))
-    }
-    ## If main is NULL use the mz range.
-    if (is.null(main)) {
-        mzr <- range(lapply(x, mz), na.rm = TRUE, finite = TRUE)
-        main <- paste0(format(mzr, digits = 7), collapse = " - ")
-    }
-    ## Number of measurements we've got per chromatogram. This can be different
-    ## between samples, from none (if not a single measurement in the rt/mz)
-    ## to the number of data points that were actually measured.
-    lens <- unique(lengths(x))
-    max_len <- max(lens)
-    max_len_vec <- rep_len(NA, max_len)
-    ## Generate the matrix of rt values, columns are samples, rows retention
-    ## time values. Fill each column with NAs up to the maximum number of values
-    ## we've got in a sample/file.
-    rts <- do.call(cbind, lapply(x, function(z) {
-        cur_len <- length(z)
-        if (cur_len == 0)
-            max_len_vec
-        else {
-            ## max_len_vec[,] <- NA  ## don't need that. get's copied.
-            max_len_vec[seq_len(cur_len)] <- rtime(z)
-            max_len_vec
-        }
-    }))
-    ## Same for the intensities.
-    ints <- do.call(cbind, lapply(x, function(z) {
-        cur_len <- length(z)
-        if (length(z) == 0)
-            max_len_vec
-        else {
-            ## max_len_vec[,] <- NA  ## don't need that. get's copied.
-            max_len_vec[seq_len(cur_len)] <- intensity(z)
-            max_len_vec
-        }
-    }))
-    ## Define the x and y limits
-    x_lim <- c(0, 1)
-    y_lim <- c(0, 1)
-    if (all(is.na(rts)))
-        if (!missing(rt))
-            x_lim <- range(rt)
-    else
-        x_lim <- range(rts, na.rm = TRUE, finite = TRUE)
-    if (!all(is.na(ints)))
-        y_lim <- range(ints, na.rm = TRUE, finite = TRUE)
-    ## Identify columns that have only NAs in either intensity or rt - these
-    ## will not be plotted.
-    keepCol <- which(apply(ints, MARGIN = 2, function(z) any(!is.na(z))) |
-                     apply(rts, MARGIN = 2, function(z) any(!is.na(z))))
-    ## Finally plot the data.
-    if (length(keepCol)) {
-        matplot(x = rts[, keepCol, drop = FALSE],
-                y = ints[, keepCol, drop = FALSE], type = type, lty = lty,
-                col = col[keepCol], xlab = xlab, ylab = ylab, main = main,
-                ...)
-    } else
-        plot(x = 3, y = 3, pch = NA, xlab = xlab, ylab = ylab, main = main,
-             xlim = x_lim, ylim = y_lim)
-}
-
+## plotChromatogram <- function(x, rt, col = "#00000060",
+##                              lty = 1, type = "l", xlab = "retention time",
+##                              ylab = "intensity", main = NULL, ...) {
+##     .Deprecated(msg = paste0("Use of 'plotChromatogram' is deprecated, please ",
+##                              "use 'plot' instead."))
+##     if (!is.list(x) & !is(x, "Chromatogram"))
+##         stop("'x' should be a Chromatogram object or a list of Chromatogram",
+##              " objects.")
+##     if (is(x, "Chromatogram"))
+##         x <- list(x)
+##     isOK <- lapply(x, function(z) {
+##         if (is(z, "Chromatogram")) {
+##             return(TRUE)
+##         } else {
+##             if (is.na(z))
+##                 return(TRUE)
+##         }
+##         FALSE
+##     })
+##     if (any(!unlist(isOK)))
+##         stop("if 'x' is a list it should only contain Chromatogram objects")
+##     ## Subset the Chromatogram objects if rt provided.
+##     if (!missing(rt)) {
+##         rt <- range(rt)
+##         x <- lapply(x, function(z) {
+##             if (is(z, "Chromatogram"))
+##                 filterRt(z, rt = rt)
+##         })
+##     }
+##     if (length(col) != length(x)) {
+##         col <- rep(col[1], length(x))
+##     }
+##     ## If main is NULL use the mz range.
+##     if (is.null(main)) {
+##         mzr <- range(lapply(x, mz), na.rm = TRUE, finite = TRUE)
+##         main <- paste0(format(mzr, digits = 7), collapse = " - ")
+##     }
+##     ## Number of measurements we've got per chromatogram. This can be different
+##     ## between samples, from none (if not a single measurement in the rt/mz)
+##     ## to the number of data points that were actually measured.
+##     lens <- unique(lengths(x))
+##     max_len <- max(lens)
+##     max_len_vec <- rep_len(NA, max_len)
+##     ## Generate the matrix of rt values, columns are samples, rows retention
+##     ## time values. Fill each column with NAs up to the maximum number of values
+##     ## we've got in a sample/file.
+##     rts <- do.call(cbind, lapply(x, function(z) {
+##         cur_len <- length(z)
+##         if (cur_len == 0)
+##             max_len_vec
+##         else {
+##             ## max_len_vec[,] <- NA  ## don't need that. get's copied.
+##             max_len_vec[seq_len(cur_len)] <- rtime(z)
+##             max_len_vec
+##         }
+##     }))
+##     ## Same for the intensities.
+##     ints <- do.call(cbind, lapply(x, function(z) {
+##         cur_len <- length(z)
+##         if (length(z) == 0)
+##             max_len_vec
+##         else {
+##             ## max_len_vec[,] <- NA  ## don't need that. get's copied.
+##             max_len_vec[seq_len(cur_len)] <- intensity(z)
+##             max_len_vec
+##         }
+##     }))
+##     ## Define the x and y limits
+##     x_lim <- c(0, 1)
+##     y_lim <- c(0, 1)
+##     if (all(is.na(rts)))
+##         if (!missing(rt))
+##             x_lim <- range(rt)
+##     else
+##         x_lim <- range(rts, na.rm = TRUE, finite = TRUE)
+##     if (!all(is.na(ints)))
+##         y_lim <- range(ints, na.rm = TRUE, finite = TRUE)
+##     ## Identify columns that have only NAs in either intensity or rt - these
+##     ## will not be plotted.
+##     keepCol <- which(apply(ints, MARGIN = 2, function(z) any(!is.na(z))) |
+##                      apply(rts, MARGIN = 2, function(z) any(!is.na(z))))
+##     ## Finally plot the data.
+##     if (length(keepCol)) {
+##         matplot(x = rts[, keepCol, drop = FALSE],
+##                 y = ints[, keepCol, drop = FALSE], type = type, lty = lty,
+##                 col = col[keepCol], xlab = xlab, ylab = ylab, main = main,
+##                 ...)
+##     } else
+##         plot(x = 3, y = 3, pch = NA, xlab = xlab, ylab = ylab, main = main,
+##              xlim = x_lim, ylim = y_lim)
+## }

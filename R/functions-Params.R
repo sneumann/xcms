@@ -85,13 +85,15 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           prefilter = c(3, 100), mzCenterFun = "wMean",
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
                           noise = 0, verboseColumns = FALSE, roiList = list(),
-                          firstBaselineCheck = TRUE, roiScales = numeric()) {
+                          firstBaselineCheck = TRUE, roiScales = numeric(),
+                          extendLengthMSW = FALSE) {
     return(new("CentWaveParam", ppm = ppm, peakwidth = peakwidth,
                snthresh = snthresh, prefilter = prefilter,
                mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
-               firstBaselineCheck = firstBaselineCheck, roiScales = roiScales))
+               firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
+               extendLengthMSW = extendLengthMSW))
 }
 
 #' @return The \code{MatchedFilterParam} function returns a
@@ -374,4 +376,21 @@ MergeNeighboringPeaksParam <- function(expandRt = 2, expandMz = 0, ppm = 10,
     new("MergeNeighboringPeaksParam", expandRt = as.numeric(expandRt),
         expandMz = as.numeric(expandMz), ppm = as.numeric(ppm),
         minProp = as.numeric(minProp))
+}
+
+#' @rdname fillChromPeaks
+ChromPeakAreaParam <- function(mzmin = function(z) quantile(z, probs = 0.25),
+                               mzmax = function(z) quantile(z, probs = 0.75),
+                               rtmin = function(z) quantile(z, probs = 0.25),
+                               rtmax = function(z) quantile(z, probs = 0.75)) {
+    new("ChromPeakAreaParam", mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+        rtmax = rtmax)
+}
+
+#' @rdname refineChromPeaks-filter-intensity
+#'
+#' @md
+FilterIntensityParam <- function(threshold = 0, nValues = 1L, value = "maxo") {
+    new("FilterIntensityParam", threshold = as.numeric(threshold),
+        nValues = as.integer(nValues), value = value)
 }

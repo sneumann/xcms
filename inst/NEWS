@@ -1,5 +1,231 @@
+Changes in version 3.17.3
+
+- 
+
+Changes in version 3.17.2
+
+- Use mzML instead of mzData files in testing and vignettes, 
+  since mzR drop mzData reading and msdata package will drop mzData files as well
+
+Changes in version 3.17.1
+
+- Fix bug in feature grouping by EIC correlation that would return a
+  non-symmetric similarity matrix.
+- Fix error message from issue [584](https://github.com/sneumann/xcms/issues/584).
+
+Changes in version 3.15.5
+
+- Disable testing on windows i386, providing some speedup
+- Disable parallel processing on Windows, causing an issue in testthat on BioC build check
+
+Changes in version 3.15.4
+
+- Fix in `plot` with `type = "XIC"` to plot an empty plot if no data is present.
+- Skip re-indexing of peaks to features if not necessary. This results in
+  performance improvements for MS1 only data.
+
+Changes in version 3.15.3
+
+- Add `manualFeatures` allowing to manually define and add features to an
+  `XCMSnExp` object.
+- Add `plotChromatogramsOverlay` function to support plotting of multiple EICs
+  from the same sample into the same plot (eventually stacked).
+- Add feature grouping by EIC similarity: `EicSimilarityParam`.
+- Import `compareChromatograms` from `MSnbase`.
+- Add feature grouping by similar retention time: `SimilarRtimeParams.
+- Add feature grouping by similarity of feature abundances across samples:
+  `AbundanceSimilarityParam`.
+- Add feature grouping methodology based on `MsFeatures`.
+
+Changes in version 3.15.2
+
+- Fix LC-MS/MS vignette.
+
+Changes in version 3.15.1
+
+- Compatibility fix for nls() in R >= 4.1, contributed by Rick Helmus.
+
+Changes in version 3.13.8
+
+- Fix plotQC() for XCMSnExp objects
+
+Changes in version 3.13.7
+
+- Add `featureArea` function to extract the m/z-rt region for features.
+- Fix `featureSpectra` function.
+- Re-add the LC-MS/MS vignette.
+- Feature: plotQC() supports XCMSnExp objects now
+
+Changes in version 3.13.6
+
+- Fix issue #545: skip second centWave run with CentWavePredIsoParam in regions
+  of interest with undefined peak boundaries/scan ranges.
+- Temporarily remove the LC-MS/MS vignette (until MsBackendMgf is added to
+  Bioconductor).
+
+Changes in version 3.13.5
+
+- Add `filterChromPeaks` method to filter chromatographic peaks in a
+  `XChromatogram` or `XChromatograms` object.
+- Add `filterChromPeaks` method for `XCMSnExp` (issue #541).
+- Support return of `Spectra` objects by `chromPeakSpectra`, `featureSpectra`
+  and `reconstructChromPeakSpectra`.
+- Support extraction of MS1 spectra with `chromPeakSpectra`.
+- Support extraction of the spectrum with the largest total signal or largest
+  base peak signal in `chromPeakSpectra`.
+- Add support for extraction of spectra for selected/individual peaks/features
+  using the `peaks` and `features` parameter in `chromPeakSpectra` and
+  `featureSpectra`, respectively.
+
+Changes in version 3.13.4
+
+- Import `Param` object from `ProtGenerics`.
+- Import `filterIntensity`, `normalize` and `alignRt` for `Chromatogram` and
+  `MChromatograms` from `MSnbase`.
+
+
+Changes in version 3.13.3
+
+- `align,Chromatogram` gains new method `"none"` which will only keep values
+  with identical retention times. For `method = "matchRtime"` the (much faster)
+  matching function `closest` from the `MsCoreUtils` package is used.
+- Method `correlate,Chromatogram` gains parameter `useIntensitiesAbove` to
+  perform the correlation only with values larger than this threshold
+  (avoiding thus high correlation because of many 0-values).
+- Add method `filterIntensity,Chromatogram` that allows to filter a chromatogram
+  object keeping only data points with an intensity above a user provided
+  threshold.
+
+
+Changes in version 3.13.2
+
+- Add new function `manualChromPeaks` allowing to manually add and integrate
+  chromatographic peaks.
+
+
+Changes in version 3.13.1
+
+- Support subsetting of `XChromatograms` with `drop = FALSE`.
+
+
+Changes in version 3.11.8
+
+- Disable parallel processing in vignettes.
+
+
+Changes in version 3.11.7
+
+- More efficient splitting data per file especially for larger data sets.
+- Disable parallel processing in examples.
+
+
+Changes in version 3.11.6
+
+- Add `FilterIntensityParam` to filter chromatographic peaks on intensity
+  (issue #502).
+- Add `estimatePrecursorIntensity` function to determine the precursor intensity
+  for MS2 spectra from the neighboring MS1 spectra.
+
+
+Changes in version 3.11.4
+
+- Change from `Spectra` and `Chromatograms` to `MSpectra` and `MChromatograms`
+  from MSnbase version >= 2.15.3.
+
+
+Changes in version 3.11.3
+
+- `reconstructChromPeakSpectra`: report also polarity and `precusorIntensity`.
+- `reconstructChromPeakSpectra`: ensure a retention time is reported for
+  reconstructed MS2 spectra (issue #485).
+- Change default for `expandRt` to `0` in `reconstructChromPeakSpectra`.
+- Fix error in `refineChromPeaks,MergeNeighboringPeaksParam` if no peaks found
+  to be merged.
+
+
+Changes in version 3.11.2
+
+- Add `fillChromPeaks,ChromPeakAreaParam` to base the area from which missing
+  peak data should be filled-in on the actually detected chromatographic peaks
+  of a feature.
+- Potential fix for issue #481: function should no longer throw an error because
+  retention times are of length 0.
+- More efficient splitting of processing which should increase the speed of
+  the findChromPeaks, refineChromPeaks, reconstructChromPeakSpectra and
+  chromPeakSpectra calls.
+
+
+Changes in version 3.11.1
+
+- Fix issue #471: conversion from `XCMSnExp` to `xcmsSet` looses phenodata
+  (thanks to Andris Jankevics for reporting and providing a solution).
+- Add `normalize` method for `Chromatogram` and `Chromatograms` objects.
+- `featureChromatograms` gets new parameter `n` and `value` to extract EICs
+  only from the top n samples with highest intensities.
+- `filterFile` gets new parameter `keepFeatures` to support retaining
+  correspondence results even if a data set is filtered by file.
+- Export the virtual `Param` class.
+- Add filterColumnsIntensityAbove method for Chromatograms object that allows
+  to select columns (samples) of an Chromatograms object for which intensities
+  of its chromatographic data are higher than a threshold.
+- Add removeIntensity method for Chromatogram, Chromatograms, XChromatogram
+  and XChromatograms objects allowing to *remove* intensities based on different
+  criteria.
+- Add correlate method for Chromatograms allowing to correlate multiple
+  chromatograms with each other.
+
+
+Changes in version 3.9.4
+
+- Fix issue in centWave which skips peak detection depending on minimum
+  peakwidth (issue #445): add parameter `extendLengthMSW` in `CentWaveParam`.
+  Thanks to William Kumler for contributing the fix.
+- Tentatively reduce memory requirements in `fillChromPeaks`.
+- Fix issue #467 for fillPeaks() of an xcmsSet converted from an XCMSnSet
+
+Changes in version 3.9.3
+
+- Move multtest from Imports to Suggests to avoid duplicated method definition
+  for plot (issue #459).
+- Add support for peak filling from MS level > 1 to fillChromPeaks.
+- featureValues gains parameter msLevel to extract feature values for features
+  of all, or from a specific MS level.
+- refineChromPeaks supports different MS levels.
+- Added support to perform correspondence analysis on MS level > 1 and add the
+  respective results to already present feature definitions.
+- hasChromPeaks and hasFeatures gain parameter msLevel to check for presence of
+  chromatographic peaks or features from a specific MS level.
+
+
+Changes in version 3.9.2
+
+- Fix featureChromatograms and chromatograms on a XCMSnExp object with features:
+  features can be duplicated across rows (EICs).
+- findChromPeaks: add parameter `add` to allow several rounds of peak detections
+  on the same object.
+- Small performance enhancement in fillChromPeaks.
+- Better support for MS > 1 data in fillChromPeaks: skip MS level 2 spectra for
+  filling in.
+- Add refineChromPeaks for XChromatogram and XChromatograms objects.
+- Add groupOverlaps function to group arbitrary ranges.
+- Add quantify,XCMSnExp object to quantify an XCMSnExp into a
+  SummarizedExperiment.
+- Fine-tune MergeNeighboringPeaks peak refinement method: the average of the
+  3 data points between candidate peaks is used to evaluate whether the peaks
+  should be merged making the approach more robust against outliers. In
+  addition, an ion chromatogram for candidate peaks is extracted with an m/z
+  range expanded depending on the expandMz and ppm setting ensuring that low
+  intensity data points between candidate peaks are not missed out (because
+  their m/z might be slightly shifted on ToF instruments). The mzmin and mzmax
+  of the merged peak represents also the minimum and maximum m/z of all data
+  points in that extracted ion chromatogram.
+
+
 Changes in version 3.9.1
 
+- Fix problem of not shown/plotted peak positions in plotChromPeakSpectra
+  for experiments in which peaks were not detected in the first sample(s).
+- Add method *from_to* to missing value imputation method `imputeRowMinRand`.
 - Show warning in findChromPeaks if empty spectra are detected.
 - Add refineChromPeaks method and CleanPeaksParam class to allow removal of
   chromatographic peaks exceeding a user-definable maximal peak width.

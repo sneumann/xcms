@@ -4,10 +4,24 @@
 \alias{do_findChromPeaks_matchedFilter}
 \title{Core API function for matchedFilter peak detection}
 \usage{
-do_findChromPeaks_matchedFilter(mz, int, scantime, valsPerSpect,
-  binSize = 0.1, impute = "none", baseValue, distance, fwhm = 30,
-  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
-  mzdiff = 0.8 - binSize * steps, index = FALSE, sleep = 0)
+do_findChromPeaks_matchedFilter(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  binSize = 0.1,
+  impute = "none",
+  baseValue,
+  distance,
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 5,
+  snthresh = 10,
+  steps = 2,
+  mzdiff = 0.8 - binSize * steps,
+  index = FALSE,
+  sleep = 0
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -120,19 +134,24 @@ This function exposes core peak detection functionality of
     method).
 }
 \examples{
+
 ## Load the test file
-library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xr <- xcmsRaw(fs)
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-mzVals <- xr@env$mz
-intVals <- xr@env$intensity
+## Subset to one file and restrict to a certain retention time range
+data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+
+## Get m/z and intensity values
+mzs <- mz(data)
+ints <- intensity(data)
+
 ## Define the values per spectrum:
-valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+valsPerSpect <- lengths(mzs)
 
-res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
-scantime = xr@scantime, valsPerSpect = valsPerSpect)
+res <- do_findChromPeaks_matchedFilter(mz = unlist(mzs), int = unlist(ints),
+    scantime = rtime(data), valsPerSpect = valsPerSpect)
 head(res)
 }
 \references{
@@ -146,10 +165,11 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     \code{\link{imputeLinInterpol}} for the interpolation of missing values.
     \code{\link{matchedFilter}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_centWave}},
-  \code{\link{do_findChromPeaks_massifquant}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_massifquant}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Colin A Smith, Johannes Rainer

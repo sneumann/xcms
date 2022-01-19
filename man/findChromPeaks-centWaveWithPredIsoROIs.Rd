@@ -8,7 +8,6 @@
 \alias{CentWavePredIsoParam-class}
 \alias{CentWavePredIsoParam}
 \alias{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam-method}
-\alias{show,CentWavePredIsoParam-method}
 \alias{snthreshIsoROIs,CentWavePredIsoParam-method}
 \alias{snthreshIsoROIs}
 \alias{snthreshIsoROIs<-,CentWavePredIsoParam-method}
@@ -30,18 +29,35 @@
 \alias{polarity<-}
 \title{Two-step centWave peak detection considering also isotopes}
 \usage{
-CentWavePredIsoParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, roiList = list(),
-  firstBaselineCheck = TRUE, roiScales = numeric(),
-  snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
-  mzIntervalExtension = TRUE, polarity = "unknown")
+CentWavePredIsoParam(
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1L,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  roiList = list(),
+  firstBaselineCheck = TRUE,
+  roiScales = numeric(),
+  snthreshIsoROIs = 6.25,
+  maxCharge = 3,
+  maxIso = 5,
+  mzIntervalExtension = TRUE,
+  polarity = "unknown"
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,CentWavePredIsoParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
-
-\S4method{show}{CentWavePredIsoParam}(object)
+\S4method{findChromPeaks}{OnDiskMSnExp,CentWavePredIsoParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L,
+  ...
+)
 
 \S4method{snthreshIsoROIs}{CentWavePredIsoParam}(object)
 
@@ -168,6 +184,8 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
 
+\item{...}{ignored.}
+
 \item{value}{The value for the slot.}
 }
 \value{
@@ -234,9 +252,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above.}
 }}
 
 \note{
@@ -266,11 +282,12 @@ The \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} core
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-massifquant}},
-  \code{\link{findChromPeaks-matchedFilter}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-massifquant}},
+\code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Hendrik Treutler, Johannes Rainer

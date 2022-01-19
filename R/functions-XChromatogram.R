@@ -38,7 +38,7 @@
 
 #' @title Containers for chromatographic and peak detection data
 #'
-#' @aliases XChromatogram-class XChromatograms-class coerce,Chromatograms,XChromatograms-method
+#' @aliases XChromatogram-class XChromatograms-class coerce,MChromatograms,XChromatograms-method
 #'
 #' @description
 #'
@@ -48,7 +48,7 @@
 #' object in the `MSnbase` package.
 #'
 #' Multiple `XChromatogram` objects can be stored in a `XChromatograms` object.
-#' This class extends [Chromatograms()] from the `MSnbase` package and allows
+#' This class extends [MChromatograms()] from the `MSnbase` package and allows
 #' thus to arrange chromatograms in a matrix-like structure, columns
 #' representing samples and rows m/z-retention time ranges.
 #'
@@ -59,8 +59,14 @@
 #'
 #' Objects can be created with the contructor function `XChromatogram` and
 #' `XChromatograms`, respectively. Also, they can be coerced from
-#' [Chromatogram] or [Chromatograms()] objects using
+#' [Chromatogram] or [MChromatograms()] objects using
 #' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
+#'
+#' @section Filtering and subsetting:
+#'
+#' Besides classical subsetting with `[` specific filter operations on
+#' [MChromatograms()] and `XChromatograms` objects are available. See
+#' [filterColumnsIntensityAbove()] for more details.
 #'
 #' @param rtime For `XChromatogram`: `numeric` with the retention times
 #'     (length has to be equal to the length of `intensity`).
@@ -197,26 +203,28 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
 #' @param pks chromatographic peaks as returned by `chromPeaks(x)`.
 #'
 #' @noRd
-.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch, ...) {
+.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch,
+                                    yoffset = 0, transform = identity, ...) {
     switch(type,
            point = {
-               points(pks[, "rt"], pks[, "maxo"], pch = pch, col = col,
-                      bg = bg, ...)
+               points(pks[, "rt"], transform(pks[, "maxo"]) + yoffset,
+                      pch = pch, col = col, bg = bg, ...)
            },
            rectangle = {
                rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-                    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
+                    ybottom = rep(yoffset, nrow(pks)),
+                    ytop = transform(pks[, "maxo"]) + yoffset,
                     col = bg, border = col, ...)
            },
            polygon = {
-               ordr <- order(pks[, "maxo"], decreasing = TRUE)
+               ordr <- order(transform(pks[, "maxo"]), decreasing = TRUE)
                pks <- pks[ordr, , drop = FALSE]
                col <- col[ordr]
                bg <- bg[ordr]
                xs_all <- numeric()
                ys_all <- numeric()
                for (i in seq_len(nrow(pks))) {
-                   if (inherits(x, "XChromatograms")) {
+                   if (inherits(x, "MChromatograms")) {
                        chr <- filterRt(x[pks[i, "row"], pks[i, "column"]],
                                        rt = pks[i, c("rtmin", "rtmax")])
                    } else
@@ -228,7 +236,9 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                        bg <- bg[-i]
                    }
                    xs <- c(xs[1], xs, xs[length(xs)])
-                   ys <- c(0, intensity(chr), 0)
+                   ints <- transform(intensity(chr))
+                   ints[is.infinite(ints)] <- 0
+                   ys <- c(yoffset, ints + yoffset, yoffset)
                    nona <- !is.na(ys)
                    if (length(xs_all)) {
                        xs_all <- c(xs_all, NA)
@@ -241,4 +251,38 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                }
                polygon(xs_all, ys_all, border = col, col = bg, ...)
            })
+}
+
+.xchrom_merge_neighboring_peaks <- function(x, minProp = 0.75, diffRt = 0) {
+    if (nrow(x@chromPeaks)) {
+        res <- .chrom_merge_neighboring_peaks(
+            x, x@chromPeaks, x@chromPeakData,
+            minProp = minProp, diffRt = diffRt)
+        x@chromPeaks <- res$chromPeaks
+        x@chromPeakData <- res$chromPeakData
+        if (is.null(rownames(x@chromPeaks)))
+            are_new <- rep(TRUE, nrow(x@chromPeaks))
+        else
+            are_new <- is.na(rownames(x@chromPeaks))
+        if (any(are_new)) {
+            rownames(x@chromPeaks)[are_new] <- .featureIDs(sum(are_new),
+                                                           prefix = "CPM")
+            rownames(x@chromPeakData) <- rownames(x@chromPeaks)
+        }
+        x@chromPeakData$merged <- are_new
+    }
+    x
+}
+
+.filter_chrom_peaks_keep_top <- function(x, order = c("maxo", "into"),
+                                         n = 1L, decreasing = TRUE, ...) {
+    order <- match.arg(order)
+    ncp <- nrow(x@chromPeaks)
+    if (ncp && ncp > n) {
+        sn <- seq_len(n)
+        idx <- sort(order(chromPeaks(x)[, order], decreasing = decreasing)[sn])
+        x@chromPeaks <- x@chromPeaks[idx, , drop = FALSE]
+        x@chromPeakData <- x@chromPeakData[idx, ]
+    }
+    x
 }

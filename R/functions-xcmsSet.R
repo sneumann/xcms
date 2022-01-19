@@ -56,8 +56,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
     if (length(files) == 0 | all(is.na(files)))
-        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
-    
+        stop("No NetCDF/mzXML/mzML files were found.\n")
+
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
         lockMass.files<-grep("02.CDF", files)
@@ -374,7 +374,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 #' @note This function is used by the *old* `xcmsSet` function to guess
 #'     the experimental design (i.e. group assignment of the files) from the
 #'     folders in which the files of the experiment can be found.
-#' 
+#'
 #' @param paths `character` representing the file names (including the full
 #'     path) of the experiment's files.
 #'
@@ -407,7 +407,8 @@ phenoDataFromPaths <- function(paths) {
         i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
         if (i > 1 && i <= nrow(scomp))
             sclass <- substr(sclass, i, max(nchar(sclass)))
-        pdata <- data.frame(class = sclass)
+        pdata <- data.frame(factor(sclass))
+        colnames(pdata) <- "class"
     }
     rownames(pdata) <- gsub("\\.[^.]*$", "", basename(paths))
     pdata
@@ -436,7 +437,7 @@ patternVsRowScore <- function(currPeak, parameters, mplenv)
     for (mplRow in 1:length(nnDist$nn.idx)) {
         mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "mz"]
         mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "rt"]
-        
+
         ## Calculate differences between M/Z and RT values of current peak and
         ## median of the row
         diffMZ = abs(mplistMZ - mplenv$peakmat[[currPeak, "mz"]])
@@ -593,7 +594,7 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1){
 ############################################################
 ## xcmsBoxPlot
 xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480){
-    
+
     if (pic == "png"){
         png(filename = file.path(dirpath, "%003d.png"), width = width,
             height = height, units = "px")

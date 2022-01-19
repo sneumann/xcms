@@ -1,4 +1,6 @@
 test_that("binYonX NA handling works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## NA values in y should be ignored internally.
     X <- 1:10
     Y <- X
@@ -21,12 +23,14 @@ test_that("binYonX NA handling works", {
 })
 
 test_that("binYonX max works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     Y <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
     }
-    
+
     ## o nBins
     res <- binYonX(X, Y, nBins = 5L)
     expect_equal(res$y, c(2, 4, 6, 8, 10))
@@ -141,67 +145,68 @@ test_that("binYonX max works", {
     expect_equal(res$x, breakMidPoint(brks))
 
     ## Test on real data:
-    xr <- deepCopy(faahko_xr_1)
-    X <- xr@env$mz
-    Y <- xr@env$intensity
+    xr <- filterFile(faahko_od, 1)
+    X <- mz(xr)
+    Y <- intensity(xr)
     xRangeFull <- range(X)
-    scanidx <- xr@scanindex
     ## Get the data from the first spectrum:
-    X1 <- X[1:scanidx[2]]
-    Y1 <- Y[1:scanidx[2]]
+    X1 <- X[[1]]
+    Y1 <- Y[[2]]
 
     ## ####
     ## Define the number of bins.
-    step <- 0.1
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## step <- 0.1
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 
-    ## Next
-    step <- 0.2
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
-    shift <- FALSE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## ## Next
+    ## step <- 0.2
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
+    ## shift <- FALSE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 
-    step <- 0.13
-    shift <- TRUE
-    mass <- seq(floor(min(xRangeFull)/step)*step,
-                ceiling(max(xRangeFull)/step)*step, by = step)
-    nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
-                            toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                   baseValue = 0)
-    expect_equal(res$y, resR)
+    ## step <- 0.13
+    ## shift <- TRUE
+    ## mass <- seq(floor(min(xRangeFull)/step)*step,
+    ##             ceiling(max(xRangeFull)/step)*step, by = step)
+    ## nBins <- length(mass)
+    ## resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    ##                         toX = max(xRangeFull), shiftByHalfBinSize = shift)
+    ## res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+    ##                binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+    ##                baseValue = 0)
+    ## expect_equal(res$y, resR)
 })
 
 ## Test binning using min
 test_that("binYonX min works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -258,6 +263,8 @@ test_that("binYonX min works", {
 
 ## Test binning using sum
 test_that("binYonX sum works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -313,6 +320,8 @@ test_that("binYonX sum works", {
 
 ## Test binning using mean
 test_that("binYonX mean works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:10
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
@@ -343,6 +352,8 @@ test_that("binYonX mean works", {
 })
 
 test_that("breaks defining functions work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Test generation of breaks for binning.
     ## o nBins
     res <- breaks_on_nBins(1, 10, 4)
@@ -379,7 +390,7 @@ test_that("breaks defining functions work", {
                               binSize = 0.2)
     expect_equal(brks, brksR)
     ##
-    ## Ultimate fix for issue #118 
+    ## Ultimate fix for issue #118
     brksR <- seq((200 - 0.1), (600), by = 0.2)
     brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
     ## Compare them up to the last value, since in R that will be 600-01, while
@@ -394,6 +405,8 @@ test_that("breaks defining functions work", {
 })
 
 test_that("binYonX with imputation_lin works",  {
+    skip_on_os(os = "windows", arch = "i386")
+
     X <- 1:11
     brks <- breaks_on_nBins(1, 11, 5L)
     Y <- c(1, NA, NA, NA, 5, 6, NA, NA, 9, 10, 11)
@@ -464,6 +477,8 @@ test_that("binYonX with imputation_lin works",  {
 })
 
 test_that("binYonX with imputation_linbin works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     doPlot <- FALSE
     ## Construct example:
     ## We're using the same test than we did for profBinLinBase.
@@ -560,6 +575,8 @@ test_that("binYonX with imputation_linbin works", {
 })
 
 ## test_that("testIntegerInput and testDoubleInput works", {
+    skip_on_os(os = "windows", arch = "i386")
+
 
 ##     xcms:::testIntegerInput(4)
 ##     xcms:::testIntegerInput(c(4, 5))
@@ -570,6 +587,8 @@ test_that("binYonX with imputation_linbin works", {
 ## })
 
 test_that("binYonX on subsets works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Simple test without actually needing subsets.
     X <- 1:11
     Y <- 1:11

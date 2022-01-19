@@ -5,13 +5,30 @@
 \alias{plotChromPeakImage}
 \title{General visualizations of peak detection results}
 \usage{
-plotChromPeaks(x, file = 1, xlim = NULL, ylim = NULL, add = FALSE,
-  border = "#00000060", col = NA, xlab = "retention time",
-  ylab = "mz", main = NULL, ...)
+plotChromPeaks(
+  x,
+  file = 1,
+  xlim = NULL,
+  ylim = NULL,
+  add = FALSE,
+  border = "#00000060",
+  col = NA,
+  xlab = "retention time",
+  ylab = "mz",
+  main = NULL,
+  ...
+)
 
-plotChromPeakImage(x, binSize = 30, xlim = NULL, log = FALSE,
-  xlab = "retention time", yaxt = par("yaxt"),
-  main = "Chromatographic peak counts", ...)
+plotChromPeakImage(
+  x,
+  binSize = 30,
+  xlim = NULL,
+  log = FALSE,
+  xlab = "retention time",
+  yaxt = par("yaxt"),
+  main = "Chromatographic peak counts",
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{XCMSnExp}} object.}
@@ -85,27 +102,20 @@ and \code{par(lty = 2)}, respectively.
 }
 \examples{
 
-## Perform peak detection on two files from the faahKO package.
-library(xcms)
-library(faahKO)
-faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                 system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
-od <- readMSData(faahko_file, mode = "onDisk")
-
-## Peak detection using the 'matchedFilter' method. Note that we are using a
-## larger binSize to reduce the runtime of the example.
-xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## plotChromPeakImage: plot an image for the identified peaks per file
-plotChromPeakImage(xod)
+plotChromPeakImage(faahko_sub)
 
 ## Show all detected chromatographic peaks from the first file
-plotChromPeaks(xod)
+plotChromPeaks(faahko_sub)
 
 ## Plot all detected peaks from the second file and restrict the plot to a
 ## mz-rt slice
-plotChromPeaks(xod, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
+plotChromPeaks(faahko_sub, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
 }
 \seealso{
 \code{\link{highlightChromPeaks}} for the function to highlight

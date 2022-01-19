@@ -189,6 +189,7 @@ setClass("xcmsPeaks", contains = "matrix")
 .PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEP.PEAK.FILLING <- "Missing peak filling"
 .PROCSTEP.CALIBRATION <- "Calibration"
+.PROCSTEP.FEATURE.GROUPING <- "Feature grouping"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
     .PROCSTEP.PEAK.DETECTION,
@@ -196,7 +197,8 @@ setClass("xcmsPeaks", contains = "matrix")
     .PROCSTEP.PEAK.GROUPING,
     .PROCSTEP.RTIME.CORRECTION,
     .PROCSTEP.PEAK.FILLING,
-    .PROCSTEP.CALIBRATION
+    .PROCSTEP.CALIBRATION,
+    .PROCSTEP.FEATURE.GROUPING
 )
 
 ############################################################
@@ -233,7 +235,6 @@ setClass("ProcessHistory",
              fileIndex = "integer",
              error = "ANY"
          ),
-         contains = "Versioned",
          prototype = prototype(
              type = .PROCSTEP.UNKNOWN,
              date = character(),
@@ -267,12 +268,9 @@ setClass("ProcessHistory",
 
 ## BasicParam class
 ## CentWaveParam
-setClass("Param",
-         representation = representation("VIRTUAL"),
-         contains = c("Versioned"))
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
-#' @aliases GenericParam
+#' @aliases GenericParam Param class:Param Param-class
 #'
 #' @title Generic parameter class
 #'
@@ -291,8 +289,6 @@ setClassUnion("ParamOrNULL", c("Param", "NULL"))
 #'
 #' @slot args \code{list} (ideally named) with the arguments to the
 #'     function.
-#'
-#' @slot .__classVersion__ the version of the class.
 #'
 #' @author Johannes Rainer
 #'
@@ -408,6 +404,9 @@ setClass("XProcessHistory",
 #'     \code{\link{refineChromPeaks}} for methods to refine or clean identified
 #'     chromatographic peaks.
 #'
+#'     \code{\link{manualChromPeaks}} to manually add/define chromatographic
+#'     peaks.
+#'
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -485,6 +484,12 @@ NULL
 #'     defining the scale for each region of interest in \code{roiList} that
 #'     should be used for the centWave-wavelets.
 #'
+#' @param extendLengthMSW Option to force centWave to use all scales when
+#' running centWave rather than truncating with the EIC length. Uses the "open"
+#' method to extend the EIC to a integer base-2 length prior to being passed to
+#' \code{convolve} rather than the default "reflect" method. See
+#' https://github.com/sneumann/xcms/issues/445 for more information.
+#'
 #' @details
 #'
 #' The centWave algorithm is most suitable for high resolution
@@ -534,8 +539,7 @@ NULL
 #'     for a chromatographic peak detection using the centWave method. Instances
 #'     should be created with the \code{CentWaveParam} constructor.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
 #' @rdname findChromPeaks-centWave
@@ -545,7 +549,7 @@ NULL
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
-#' cwp <- CentWaveParam(ppm = 20, noise = 10000)
+#' cwp <- CentWaveParam(ppm = 20, noise = 10000, prefilter = c(3, 10000))
 #' ## Change snthresh parameter
 #' snthresh(cwp) <- 25
 #' cwp
@@ -557,7 +561,7 @@ NULL
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
@@ -576,7 +580,8 @@ setClass("CentWaveParam",
              verboseColumns = "logical",
              roiList = "list",
              firstBaselineCheck = "logical",
-             roiScales = "numeric"
+             roiScales = "numeric",
+             extendLengthMSW = "logical"
          ),
          contains = c("Param"),
          prototype = prototype(
@@ -592,7 +597,8 @@ setClass("CentWaveParam",
              verboseColumns = FALSE,
              roiList = list(),
              firstBaselineCheck = TRUE,
-             roiScales = numeric()
+             roiScales = numeric(),
+             extendLengthMSW = FALSE
          ),
          validity = function(object) {
              msg <- character()
@@ -757,9 +763,10 @@ NULL
 #'     method. Instances should be created with the \code{MatchedFilterParam}
 #'     constructor.
 #'
-#' @slot .__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index
+#'     See corresponding parameter above. Slots values should exclusively
+#'     be accessed \emph{via} the corresponding getter and setter methods listed
+#'     above.
 #'
 #' @rdname findChromPeaks-matchedFilter
 #'
@@ -779,11 +786,10 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"
-#' register(SerialParam())
 #' res <- findChromPeaks(raw_data, param = mfp)
 #' head(chromPeaks(res))
 setClass("MatchedFilterParam",
@@ -969,9 +975,10 @@ NULL
 #'     method eventually in combination with the centWave algorithm. Instances
 #'     should be created with the \code{MassifquantParam} constructor.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave
+#'      See corresponding parameter above. Slots values should
+#'      exclusively be accessed \emph{via} the corresponding getter and setter
+#'      methods listed above.
 #'
 #' @rdname findChromPeaks-massifquant
 #'
@@ -979,8 +986,9 @@ NULL
 #'
 #' ## Create a MassifquantParam object.
 #' mqp <- MassifquantParam()
-#' ## Change snthresh parameter
+#' ## Change snthresh prefilter parameters
 #' snthresh(mqp) <- 30
+#' prefilter(mqp) <- c(6, 10000)
 #' mqp
 #'
 #' ## Perform the peak detection using massifquant on the files from the
@@ -990,7 +998,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' raw_data <- readMSData(fls[1], mode = "onDisk")
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = mqp)
 #' head(chromPeaks(res))
@@ -1129,9 +1137,8 @@ NULL
 #'     settings for a peak detection using the MSW method. Instances should be
 #'     created with the \code{MSWParam} constructor.
 #'
-#' @slot .__classVersion__,snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams See corresponding parameter above. \code{.__classVersion__} stores the version from the class. Slots values
-#' should exclusively be accessed \emph{via} the corresponding getter and
-#' setter methods listed above.
+#' @slot snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams
+#'      See corresponding parameter above.
 #'
 #' @rdname findPeaks-MSW
 #'
@@ -1145,9 +1152,9 @@ NULL
 #'
 #' ## Loading a small subset of direct injection, single spectrum files
 #' library(msdata)
-#' fticrf <- list.files(system.file("fticr", package = "msdata"),
+#' fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+#' fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1283,9 +1290,8 @@ NULL
 #'     \code{\link{CentWaveParam}} for all methods and arguments this class
 #'     inherits.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
+#'      See corresponding parameter above.
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 #'
@@ -1457,9 +1463,8 @@ NULL
 #' grouping based on peak densities along the time dimension. Instances should
 #' be created with the [PeakDensityParam()] constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See
+#'      corresponding parameter above.
 #'
 #' @rdname groupChromPeaks-density
 #'
@@ -1476,20 +1481,15 @@ NULL
 #' ##############################
 #' ## Chromatographic peak detection and grouping.
 #' ##
-#' ## Below we perform first a peak detection (using the matchedFilter
-#' ## method) on some of the test files from the faahKO package followed by
-#' ## a peak grouping using the density method.
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
-#' ## Perform the chromatographic peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' res <- faahko_sub
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
@@ -1597,9 +1597,8 @@ NULL
 #' grouping based on the *mzClust* algorithm.
 #' Instances should be created with the `MzClustParam` constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,ppm,absMz,minFraction,minSamples See corresponding
+#'     parameter above.
 #'
 #' @md
 #'
@@ -1609,9 +1608,12 @@ NULL
 #'
 #' ## Loading a small subset of direct injection, single spectrum files
 #' library(msdata)
-#' fticrf <- list.files(system.file("fticr", package = "msdata"),
+#' fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
 #' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1719,9 +1721,8 @@ NULL
 #'     settings for the peak grouping based on the *nearest* algorithm.
 #'     Instances should be created with the `NearestPeaksParam` constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. `.__classVersion__` stores
-#' the version from the class. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
+#' @slot sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter
+#'     above.
 #'
 #' @md
 #'
@@ -1733,23 +1734,14 @@ NULL
 #' p <- NearestPeaksParam(kNN = 3)
 #' p
 #'
-#' ##############################
-#' ## Chromatographic peak detection and grouping.
-#' ##
-#' ## Below we perform first a chromatographic peak detection (using the
-#' ## matchedFilter method) on some of the test files from the faahKO package
-#' ## followed by a peaks grouping using the "nearest" method.
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' res <- faahko_sub
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
@@ -1955,37 +1947,26 @@ NULL
 #'     peak groups present in most samples.
 #'     Instances should be created with the \code{PeakGroupsParam} constructor.
 #'
-#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust See corresponding parameter above.
 #'
 #' @rdname adjustRtime-peakGroups
 #'
 #' @examples
-#' ##############################
-#' ## Chromatographic peak detection and grouping.
-#' ##
-#' ## Below we perform first a peak detection (using the matchedFilter
-#' ## method) on some of the test files from the faahKO package followed by
-#' ## a peak grouping.
-#' library(faahKO)
-#' library(xcms)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' res <- faahko_sub
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
 #' table(chromPeaks(res)[, "sample"])
 #'
 #' ## Performing the peak grouping using the "peak density" method.
-#' p <- PeakDensityParam(sampleGroups = c(1, 1))
+#' p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
 #' res <- groupChromPeaks(res, param = p)
 #'
 #' ## Perform the retention time adjustment using peak groups found in both
@@ -2004,7 +1985,7 @@ NULL
 #' segments(x0 = pkGrps[, 1], x1 = pkGrps[, 2],
 #'     y0 = rep(1, nrow(pkGrps)), y1 = rep(2, nrow(pkGrps)))
 #' grid()
-#' axis(side = 2, at = c(1, 2), labels = colnames(pkGrps))
+#' axis(side = 2, at = c(1, 2, 3), labels = colnames(pkGrps))
 #'
 #' ## Next we perform the alignment.
 #' res <- adjustRtime(res, param = fgp)
@@ -2013,14 +1994,12 @@ NULL
 #' hasFeatures(res)
 #'
 #' ## Plot the raw against the adjusted retention times.
-#' plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+#' plot(rtime(res, adjusted = FALSE),
+#'     rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
 #'
 #' ## Adjusterd retention times can be accessed using
 #' ## rtime(object, adjusted = TRUE) and adjustedRtime
 #' all.equal(rtime(res), adjustedRtime(res))
-#'
-#' ## To get the raw, unadjusted retention times:
-#' all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
 #'
 #' ## To extract the retention times grouped by sample/file:
 #' rts <- rtime(res, bySample = TRUE)
@@ -2184,23 +2163,23 @@ NULL
 #'     method. Class Instances should be created using the
 #'     \code{ObiwarpParam} constructor.
 #'
-#' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
-#' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' @slot binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust See
+#'     corresponding parameter above.
 #'
 #' @rdname adjustRtime-obiwarp
 #'
 #' @examples
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Perform retention time correction on the OnDiskMSnExp:
-#' res <- adjustRtime(raw_data, param = ObiwarpParam())
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
+#' ## Perform retention time correction:
+#' res <- adjustRtime(faahko_sub, param = ObiwarpParam())
 #'
 #' ## As a result we get a numeric vector with the adjusted retention times for
 #' ## all spectra.
@@ -2208,25 +2187,8 @@ NULL
 #'
 #' ## We can split this by file to get the adjusted retention times for each
 #' ## file
-#' resL <- split(res, fromFile(raw_data))
+#' resL <- split(res, fromFile(res))
 #'
-#' ##############################
-#' ## Perform retention time correction on an XCMSnExp:
-#' ##
-#' ## Perform first the chromatographic peak detection using the matchedFilter
-#' ## method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
-#'
-#' ## Performing the retention time adjustment using obiwarp.
-#' res_2 <- adjustRtime(res, param = ObiwarpParam())
-#'
-#' head(rtime(res_2))
-#' head(rtime(raw_data))
-#'
-#' ## Also the retention times of the detected peaks were adjusted.
-#' tail(chromPeaks(res))
-#' tail(chromPeaks(res_2))
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",
@@ -2298,10 +2260,8 @@ setClass("ObiwarpParam",
              else TRUE
          })
 
-#' @description The \code{FillChromPeaksParam} object encapsules all settings for
-#' the signal integration for missing peaks.
-#'
-#' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
+#' @slot expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter
+#'      above.
 #'
 #' @rdname fillChromPeaks
 setClass("FillChromPeaksParam",
@@ -2337,6 +2297,17 @@ setClass("FillChromPeaksParam",
          }
          )
 
+#' @rdname fillChromPeaks
+#'
+#' @slot rtmin,rtmax,mzmin,mzmax See corresponding parameter above.
+setClass("ChromPeakAreaParam",
+         slots = c(rtmin = "function",
+                   rtmax = "function",
+                   mzmin = "function",
+                   mzmax = "function"),
+         contains = "Param"
+         )
+
 #' @aliases MsFeatureData
 #'
 #' @title Data container storing xcms preprocessing results
@@ -2352,7 +2323,7 @@ setClass("FillChromPeaksParam",
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setClass("MsFeatureData", contains = c("environment", "Versioned"),
+setClass("MsFeatureData", contains = c("environment"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
 
 .REQ_PEAKS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",
@@ -2471,9 +2442,12 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' \item \code{\link{featureSummary}} perform a simple summary of the defined
 #' features (see respective help page).
 #'
-#' \item \code{link{overlappingFeatures}} identify features that are
+#' \item \code{\link{overlappingFeatures}} identify features that are
 #' overlapping or close in the m/z - rt space (see respective help page).
 #'
+#' \item \code{\link{quantify}} extract feature intensities and put them, along
+#' with feature definitions and phenodata information, into a
+#' \code{\link{SummarizedExperiment}}. See help page for details.
 #' }
 #'
 #' @note The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
@@ -2544,36 +2518,33 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' @examples
 #'
-#' ## Loading the data from 2 files of the faahKO package.
-#' library(faahKO)
-#' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'                    system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-#'                  mode = "onDisk")
-#' ## Now we perform a chromatographic peak detection on this data set using the
-#' ## matched filter method. We are tuning the settings such that it performs
-#' ## faster.
-#' mfp <- MatchedFilterParam(binSize = 6)
-#' xod <- findChromPeaks(od, param = mfp)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
 #'
 #' ## The results from the peak detection are now stored in the XCMSnExp
 #' ## object
-#' xod
+#' faahko_sub
 #'
 #' ## The detected peaks can be accessed with the chromPeaks method.
-#' head(chromPeaks(xod))
+#' head(chromPeaks(faahko_sub))
 #'
 #' ## The settings of the chromatographic peak detection can be accessed with
 #' ## the processHistory method
-#' processHistory(xod)
+#' processHistory(faahko_sub)
 #'
 #' ## Also the parameter class for the peak detection can be accessed
-#' processParam(processHistory(xod)[[1]])
+#' processParam(processHistory(faahko_sub)[[1]])
 #'
 #' ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
 #' ## defined in Bioconductor's MSnbase package. To access the (raw) retention
 #' ## time for each spectrum we can use the rtime method. Setting bySample = TRUE
 #' ## would cause the retention times to be grouped by sample
-#' head(rtime(xod))
+#' head(rtime(faahko_sub))
 #'
 #' ## Similarly it is possible to extract the mz values or the intensity values
 #' ## using the mz and intensity method, respectively, also with the option to
@@ -2582,15 +2553,15 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## spectra method which returns Spectrum objects containing all raw data.
 #' ## Note that all these methods read the information from the original input
 #' ## files and subsequently apply eventual data processing steps to them.
-#' mzs <- mz(xod, bySample = TRUE)
+#' mzs <- mz(faahko_sub, bySample = TRUE)
 #' length(mzs)
 #' lengths(mzs)
 #'
 #' ## The full data could also be read using the spectra data, which returns
 #' ## a list of Spectrum object containing the mz, intensity and rt values.
-#' ## spctr <- spectra(xod)
+#' ## spctr <- spectra(faahko_sub)
 #' ## To get all spectra of the first file we can split them by file
-#' ## head(split(spctr, fromFile(xod))[[1]])
+#' ## head(split(spctr, fromFile(faahko_sub))[[1]])
 #'
 #' ############
 #' ## Filtering
@@ -2600,19 +2571,17 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## retention time correction and peak grouping results) will be dropped.
 #' ## Below we filter the XCMSnExp object by file to extract the results for
 #' ## only the second file.
-#' xod_2 <- filterFile(xod, file = 2)
+#' xod_2 <- filterFile(faahko_sub, file = 2)
 #' xod_2
 #'
 #' ## Now the objects contains only the idenfified peaks for the second file
 #' head(chromPeaks(xod_2))
 #'
-#' head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
-#'
 #' ##########
 #' ## Coercing to an xcmsSet object
 #' ##
 #' ## We can also coerce the XCMSnExp object into an xcmsSet object:
-#' xs <- as(xod, "xcmsSet")
+#' xs <- as(faahko_sub, "xcmsSet")
 #' head(peaks(xs))
 setClass("XCMSnExp",
          slots = c(
@@ -2700,7 +2669,7 @@ setClass("XChromatograms",
                    featureDefinitions = "DataFrame"),
          prototype = prototype(.processHistory = list(),
                                featureDefinitions = DataFrame()),
-         contains = "Chromatograms",
+         contains = "MChromatograms",
          validity = .validXChromatograms)
 
 #' @aliases mz,CalibrantMassParam
@@ -2860,6 +2829,31 @@ setClass("MergeNeighboringPeaksParam",
                  object@minProp < 0)
                  msg <- c(msg, paste0("'minProp' has to be a positive ",
                                       "number of length 1"))
+             if (length(msg))
+                 msg
+             else TRUE
+         })
+
+setClass("FilterIntensityParam",
+         slots = c(threshold = "numeric",
+                   nValues = "integer",
+                   value = "character"),
+         contains = "Param",
+         prototype = prototype(
+             threshold = 0,
+             nValues = 1L,
+             value = "maxo"),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@threshold) > 1 || object@threshold < 0)
+                 msg <- c(msg, paste0("'threshold' has to be a positive ",
+                                      "number of length 1"))
+             if (length(object@nValues) > 1 || object@nValues < 1)
+                 msg <- c(msg, paste0("'nValues' has to be a positive ",
+                                      "number of length 1"))
+             if (length(object@value) > 1)
+                 msg <- c(msg, paste0("'value' has to be a character ",
+                                      "of length 1"))
              if (length(msg))
                  msg
              else TRUE

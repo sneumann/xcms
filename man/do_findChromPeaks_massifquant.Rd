@@ -4,12 +4,27 @@
 \alias{do_findChromPeaks_massifquant}
 \title{Core API function for massifquant peak detection}
 \usage{
-do_findChromPeaks_massifquant(mz, int, scantime, valsPerSpect, ppm = 10,
-  peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  criticalValue = 1.125, consecMissedLimit = 2, unions = 1,
-  checkBack = 0, withWave = FALSE)
+do_findChromPeaks_massifquant(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 10,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  criticalValue = 1.125,
+  consecMissedLimit = 2,
+  unions = 1,
+  checkBack = 0,
+  withWave = FALSE
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -157,22 +172,27 @@ This algorithm's performance has been tested rigorously
     better accuracy.
 }
 \examples{
-library(faahKO)
-library(xcms)
-cdfpath <- system.file("cdf", package = "faahKO")
-cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
 
-## Read the first file
-xraw <- xcmsRaw(cdffiles[1])
-## Extract the required data
-mzVals <- xraw@env$mz
-intVals <- xraw@env$intensity
+## Load the test file
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Subset to one file and restrict to a certain retention time range
+data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+
+## Get m/z and intensity values
+mzs <- mz(data)
+ints <- intensity(data)
+
 ## Define the values per spectrum:
-valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
+valsPerSpect <- lengths(mzs)
 
-## Perform the peak detection using massifquant
-res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
-scantime = xraw@scantime, valsPerSpect = valsPerSpect)
+## Perform the peak detection using massifquant - setting prefilter to
+## a high value to speed up the call for the example
+res <- do_findChromPeaks_massifquant(mz = unlist(mzs), int = unlist(ints),
+    scantime = rtime(data), valsPerSpect = valsPerSpect,
+    prefilter = c(3, 10000))
 head(res)
 }
 \references{
@@ -183,10 +203,11 @@ detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 \seealso{
 \code{\link{massifquant}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_centWave}},
-  \code{\link{do_findChromPeaks_matchedFilter}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_matchedFilter}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Christopher Conley

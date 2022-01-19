@@ -2,17 +2,26 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{chromPeakSpectra}
 \alias{chromPeakSpectra}
-\title{Extract (MS2) spectra associated with chromatographic peaks}
+\title{Extract spectra associated with chromatographic peaks}
 \usage{
-chromPeakSpectra(x, msLevel = 2L, expandRt = 0, expandMz = 0,
-  ppm = 0, method = c("all", "closest_rt", "closest_mz", "signal"),
-  skipFilled = FALSE, return.type = c("Spectra", "list"))
+chromPeakSpectra(
+  x,
+  msLevel = 2L,
+  expandRt = 0,
+  expandMz = 0,
+  ppm = 0,
+  method = c("all", "closest_rt", "closest_mz", "signal", "largest_tic", "largest_bpi"),
+  skipFilled = FALSE,
+  return.type = c("MSpectra", "Spectra", "list", "List"),
+  peaks = character()
+)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks.}
 
 \item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
-returned. Currently only \code{msLevel = 2} is supported.}
+returned. \code{msLevel = 1} is currently only supported for \code{return.type}
+being \code{"Spectra"} or \code{"List"}.}
 
 \item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
@@ -23,41 +32,75 @@ constant value on each side.}
 \item{ppm}{\code{numeric(1)} to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.}
 
-\item{method}{\code{character(1)} specifying which MS2 spectra should be included.
-Defaults to \code{"all"} in which all MS2 spectra within the rt and m/z range
-of a chromatographic peak are returned. \code{"closest_rt"} returns the one
-MS2 spectrum with the retention time closest to the chromatographic
-peak's apex rt. \code{"closest_mz"} returns the MS2 spectrum with the
-precursor m/z closest to the chromatographic peak's m/z. \code{"signal"}
-returns the MS2 spectrum which total signal is closest to the
-chromatographic peak's maximal signal (\code{"maxo"}).}
+\item{method}{\code{character(1)} specifying which spectra to include in the
+result. Defaults to \code{method = "all"}. See function description for
+details.}
 
-\item{skipFilled}{\code{logical(1)} whether no spectra for filled-in peaks should
-be reported.}
+\item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
+be reported or not.}
 
-\item{return.type}{\code{character(1)} defining whether the result should be a
-\link{Spectra} object or a simple \code{list}. See below for more information.}
+\item{return.type}{\code{character(1)} defining the result type. Defaults to
+\code{return.type = "MSpectra"} but \code{return.type = "Spectra"} or
+\code{return.type = "List"} are preferred. See below for more information.}
+
+\item{peaks}{\code{character}, \code{logical} or \code{integer} allowing to specify a
+subset of chromatographic peaks in \code{chromPeaks} for which spectra should
+be returned (providing either their ID, a logical vector same length
+than \code{nrow(chromPeaks(x))} or their index in \code{chromPeaks(x)}). This
+parameter overrides \code{skipFilled} and is only supported for \code{return.type}
+being either \code{"Spectra"} or \code{"List"}.}
 }
 \value{
-Which object is returned depends on the value of \code{return.type}:
+parameter \code{return.type} allow to specify the type of the returned object:
 \itemize{
-\item For \code{return.type = "Spectra"}: a \link{Spectra} object with elements being
+\item \code{return.type = "MSpectra"}: a \link{MSpectra} object with elements being
 \linkS4class{Spectrum} objects. The result objects contains all spectra
 for all peaks. Metadata column \code{"peak_id"} provides the ID of the
 respective peak (i.e. its rowname in \code{\link[=chromPeaks]{chromPeaks()}}).
-\item If \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
+\item \code{return.type = "Spectra"}: a \code{Spectra} object (defined in the \code{Spectra}
+package). The result contains all spectra for all peaks. Metadata column
+\code{"peak_id"} provides the ID of the respective peak (i.e. its rowname in
+\code{\link[=chromPeaks]{chromPeaks()}} and \code{"peak_index"} its index in the object's \code{chromPeaks}
+matrix.
+\item \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
 0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.
+\item \code{return.type = "List"}: \code{List} of length equal to the number of
+chromatographic peaks is returned with elements being either \code{NULL} (no
+spectrum found) or a \code{Spectra} object.
 }
 }
 \description{
-Extract (MS2) spectra from an \link{XCMSnExp} object that represent ions within
-the rt and m/z range of each chromatographic peak (in the same file
-/sample in which the peak was detected). All MS2 spectra are returned for
-chromatographic peak \code{i} for which the precursor m/z is
-\code{>= chromPeaks(x)[i, "mzmin"]} and \code{<= chromPeaks(x)[i, "mzmax"]} and the
-retention time is \code{>= chromPeaks(x)[i, "rtmin"]} and
-\code{<= chromPeaks(x)[i, "rtmax"]}.
+Extract (MS1 or MS2) spectra from an \link{XCMSnExp} object for each identified
+chromatographic peak. The function returns by default spectra for
+chromatographic peaks of \strong{all} MS levels, but parameter \code{peaks} allows to
+restrict the result to selected chromatographic peaks.
+For \code{msLevel = 1L} (only supported for \code{return.type = "Spectra"} or
+\code{return.type = "List"}) MS1 spectra within the retention time boundaries
+(in the file in which the peak was detected) are returned. For
+\code{msLevel = 2L} MS2 spectra are returned for a chromatographic
+peak if their precursor m/z is within the retention time and m/z range of
+the chromatographic peak. Parameter \code{method} allows to define whether all
+or a single spectrum should be returned:
+\itemize{
+\item \code{method = "all"}: (default): return all spectra for each peak.
+\item \code{method = "closest_rt"}: return the spectrum with the retention time
+closest to the peak's retention time (at apex).
+\item \code{method = "closest_mz"}: return the spectrum with the precursor m/z
+closest to the peaks's m/z (at apex); only supported for \code{msLevel = 2L}.
+\item \code{method = "signal"}: return the spectrum with the sum of intensities most
+similar to the peak's apex signal (\code{"maxo"}); only supported for
+\code{msLevel = 2L}.
+\item \code{method = "largest_tic"}: return the spectrum with the largest total
+signal (sum of peaks intensities).
+\item \code{method = "largest_bpi"}: return the spectrum with the largest peak
+intensity (maximal peak intensity).
+}
+
+Parameter \code{return.type} allows to specify the \emph{type} of the result object.
+Please use \code{return.type = "Spectra"} or \code{return.type = "List"},
+\code{return.type = "list"} or the default \code{return.type = "MSpectra"} will be
+deprecated (also, they do not support extracting MS1 spectra).
 
 See also the \emph{LC-MS/MS data analysis} vignette for more details and examples.
 }
@@ -67,13 +110,37 @@ See also the \emph{LC-MS/MS data analysis} vignette for more details and example
 fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
 dda <- readMSData(fl, mode = "onDisk")
 
+## Subset the object to reduce runtime of the example
+dda <- filterRt(dda, c(200, 400))
+
 ## Perform MS1 peak detection
-dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15)))
-ms2_sps <- chromPeakSpectra(dda)
+dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15), prefilter = c(5, 1000)))
+
+## Load the required Spectra package and return all MS2 spectro for each
+## chromatographic peaks as a Spectra object
+ms2_sps <- chromPeakSpectra(dda, return.type = "Spectra")
 ms2_sps
 
-## Metadata column `peak_id` contains the ID of the chromatographic peak
-## of the MS2 spectrum
+## columns peak_id or peak_index assign spectra to the chromatographic peaks
+ms2_sps$peak_id
+ms2_sps$peak_index
+chromPeaks(dda)
+
+## Alternatively, return the result as a List of Spectra objects. This list
+## is parallel to chromPeaks hence the mapping between chromatographic peaks
+## and MS2 spectra is easier.
+ms2_sps <- chromPeakSpectra(dda, return.type = "List")
+ms2_sps[[1L]]
+length(ms2_sps)
+
+## In addition to MS2 spectra we could also return the MS1 spectrum for each
+## chromatographic peak which is closest to the peak's apex position.
+ms1_sps <- chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt",
+    return.type = "Spectra")
+ms1_sps
+
+## Parameter peaks would allow to extract spectra for specific peaks only
+chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
 }
 \author{
 Johannes Rainer

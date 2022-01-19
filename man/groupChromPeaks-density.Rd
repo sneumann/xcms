@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-density}
 \alias{PeakDensityParam-class}
 \alias{PeakDensityParam}
-\alias{show,PeakDensityParam-method}
 \alias{sampleGroups,PeakDensityParam-method}
 \alias{sampleGroups}
 \alias{sampleGroups<-,PeakDensityParam-method}
@@ -32,11 +31,14 @@
 \alias{groupChromPeaks,XCMSnExp,PeakDensityParam-method}
 \title{Peak grouping based on time dimension peak densities}
 \usage{
-PeakDensityParam(sampleGroups = numeric(), bw = 30,
-  minFraction = 0.5, minSamples = 1, binSize = 0.25,
-  maxFeatures = 50)
-
-\S4method{show}{PeakDensityParam}(object)
+PeakDensityParam(
+  sampleGroups = numeric(),
+  bw = 30,
+  minFraction = 0.5,
+  minSamples = 1,
+  binSize = 0.25,
+  maxFeatures = 50
+)
 
 \S4method{sampleGroups}{PeakDensityParam}(object)
 
@@ -62,8 +64,7 @@ PeakDensityParam(sampleGroups = numeric(), bw = 30,
 
 \S4method{maxFeatures}{PeakDensityParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param,
-  msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param, msLevel = 1L, add = FALSE)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -101,8 +102,13 @@ containing the results from a previous peak detection analysis (see
 \item{param}{A \code{PeakDensityParam} object containing all settings for
 the peak grouping algorithm.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level 1
-is supported.}
+\item{msLevel}{\code{integer(1)} (default \code{msLevel = 1L}) defining the MS level
+on which the correspondence should be performed. It is required that
+chromatographic peaks of the respective MS level are present.}
+
+\item{add}{\code{logical(1)} (default \code{add = FALSE}) allowing to perform an
+additional round of correspondence (e.g. on a different MS level) and
+add features to the already present feature definitions.}
 }
 \value{
 The \code{PeakDensityParam} function returns a
@@ -127,47 +133,51 @@ The \code{PeakDensityParam} class allows to specify all settings for the peak
 grouping based on peak densities along the time dimension. Instances should
 be created with the \code{\link[=PeakDensityParam]{PeakDensityParam()}} constructor.
 
-\code{sampleGroups},\code{sampleGroups<-}: getter and setter
+\code{sampleGroups},\verb{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object. Its length should match
 the number of samples in the experiment and it should not contain
 \code{NA}s.
 
-\code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+\code{bw},\verb{bw<-}: getter and setter for the \code{bw} slot
 of the object.
 
-\code{minFraction},\code{minFraction<-}: getter and setter for
+\code{minFraction},\verb{minFraction<-}: getter and setter for
 the \code{minFraction} slot of the object.
 
-\code{minSamples},\code{minSamples<-}: getter and setter for the
+\code{minSamples},\verb{minSamples<-}: getter and setter for the
 \code{minSamples} slot of the object.
 
-\code{binSize},\code{binSize<-}: getter and setter for the
+\code{binSize},\verb{binSize<-}: getter and setter for the
 \code{binSize} slot of the object.
 
-\code{maxFeatures},\code{maxFeatures<-}: getter and setter for
+\code{maxFeatures},\verb{maxFeatures<-}: getter and setter for
 the \code{maxFeatures} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
+\verb{groupChromPeaks,XCMSnExp,PeakDensityParam}:
 performs correspondence (peak grouping within and across samples) within
 in mz dimension overlapping slices of MS data based on the density
 distribution of the identified chromatographic peaks in the slice along
 the time axis.
+
+The correspondence analysis can be performed on chromatographic peaks of
+any MS level (if present and if chromatographic peak detection has been
+performed for that MS level) defining features combining these peaks. The
+MS level can be selected with the parameter \code{msLevel}. By default, calling
+\code{groupChromPeaks} will remove any previous correspondence results. This can
+be disabled with \code{add = TRUE}, which will add newly defined features to
+already present feature definitions.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures}}{See
+corresponding parameter above.}
 }}
 
 \note{
 These methods and classes are part of the updated and modernized
 \code{xcms} user interface. All of the settings to the algorithm
 can be passed with a \code{PeakDensityParam} object.
-
-Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous correspondence results to be dropped.
 }
 \examples{
 
@@ -180,20 +190,15 @@ p
 ##############################
 ## Chromatographic peak detection and grouping.
 ##
-## Below we perform first a peak detection (using the matchedFilter
-## method) on some of the test files from the faahKO package followed by
-## a peak grouping using the density method.
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Disable parallel processing for this example
+register(SerialParam())
 
-## Perform the chromatographic peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+res <- faahko_sub
 
 head(chromPeaks(res))
 ## The number of peaks identified per sample:
@@ -235,9 +240,10 @@ features (i.e. the peak grouping results).
 \code{\link[=plotChromPeakDensity]{plotChromPeakDensity()}} for plotting chromatographic peak density with the
 possibility to test different parameter settings.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-mzClust}},
-  \code{\link{groupChromPeaks-nearest}},
-  \code{\link{groupChromPeaks}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-mzClust}},
+\code{\link{groupChromPeaks-nearest}},
+\code{\link{groupChromPeaks}()}
 }
 \author{
 Colin Smith, Johannes Rainer

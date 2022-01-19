@@ -54,16 +54,19 @@ the package and load the data set. We create also a `data.frame` describing the
 experimental setup based on the file names.
 
 ```{r load-data, message = FALSE, results = "hide"}
-mzdata_path <- system.file("fticr", package = "msdata")
-mzdata_files <- list.files(mzdata_path, recursive = TRUE, full.names = TRUE)
+mzML_path <- system.file("fticr-mzML", package = "msdata")
+mzML_files <- list.files(mzML_path, recursive = TRUE, full.names = TRUE)
+
+## We're subsetting to 2 samples per condition
+mzML_files <- mzML_files[c(1, 2, 6, 7)]
 
 ## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.
-grp <- rep("ham4", length(mzdata_files))
-grp[grep(basename(mzdata_files), pattern = "^HAM005")] <- "ham5"
-pd <- data.frame(filename = basename(mzdata_files), sample_group = grp)
+grp <- rep("ham4", length(mzML_files))
+grp[grep(basename(mzML_files), pattern = "^HAM005")] <- "ham5"
+pd <- data.frame(filename = basename(mzML_files), sample_group = grp)
 
 ## Load the data.
-ham_raw <- readMSData(files = mzdata_files,
+ham_raw <- readMSData(files = mzML_files,
                       pdata = new("NAnnotatedDataFrame", pd),
                       mode = "onDisk")
 ```

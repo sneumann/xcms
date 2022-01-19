@@ -1,6 +1,8 @@
 test_that("do_groupChromPeaks_density works", {
-    fts <- peaks(faahko)
-    grps <- sampclass(faahko)
+    skip_on_os(os = "windows", arch = "i386")
+
+    fts <- chromPeaks(xod_xg)
+    grps <- rep(1, 3)
     res <- do_groupChromPeaks_density(fts, sampleGroups = grps)
     res_2 <- do_groupChromPeaks_density(fts, sampleGroups = grps,
                                       minFraction = 0.9)
@@ -8,17 +10,15 @@ test_that("do_groupChromPeaks_density works", {
 })
 
 test_that("do_groupPeaks_mzClust works", {
-    fts <- peaks(fticr_xs)
+    skip_on_os(os = "windows", arch = "i386")
+
+    fts <- chromPeaks(fticr_xod)
     res <- do_groupPeaks_mzClust(peaks = fts,
-                                 sampleGroups = sampclass(fticr_xs))
+                                 sampleGroups = c(1, 1))
     res_2 <- do_groupPeaks_mzClust(peaks = fts,
-                                   sampleGroups = sampclass(fticr_xs),
+                                   sampleGroups = c(1, 1),
                                    minFraction = 0, absMz = 2)
     expect_true(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
-
-    res_x <- group(fticr_xs, method = "mzClust")
-    expect_equal(res_x@groups, res$featureDefinitions)
-    expect_equal(res_x@groupidx, res$peakIndex)
 
     ## Issue 416
     nas <- sample(1:nrow(fts), 10)
@@ -30,9 +30,11 @@ test_that("do_groupPeaks_mzClust works", {
 })
 
 test_that("do_groupChromPeaks_nearest works", {
-    xs <- faahko_xs
-    features <- peaks(xs)
-    sampleGroups <- sampclass(xs)
+    skip_on_os(os = "windows", arch = "i386")
+
+    tmp <- filterFile(xod_xg)
+    features <- chromPeaks(tmp)
+    sampleGroups <- rep(1, length(fileNames(tmp)))
     mzVsRtBalance <- 10
     mzCheck <- 0.2
     rtCheck <- 15
@@ -41,11 +43,11 @@ test_that("do_groupChromPeaks_nearest works", {
     res <- do_groupChromPeaks_nearest(features, sampleGroups)
     res_2 <- do_groupChromPeaks_nearest(features, sampleGroups, absRt = 3)
     expect_true(nrow(res$featureDefinitions) < nrow(res_2$featureDefinitions))
-    res_x <- group(xs, method = "nearest")
-    expect_equal(res_x@groups, res$featureDefinitions)
 })
 
 test_that(".group_peaks_density works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     x <- rbind(c(rt = 3.1, mz = 3, index = 1, sample = 1, into = 120),
                c(rt = 3.2, mz = 3, index = 2, sample = 2, into = 130),
                c(rt = 3.15, mz = 3, index = 3, sample = 3, into = 29),

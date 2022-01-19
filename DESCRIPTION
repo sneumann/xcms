@@ -1,6 +1,10 @@
 Package: xcms
-Version: 3.9.1
+Version: 3.17.3
 Title: LC-MS and GC-MS Data Analysis
+Description: Framework for processing and visualization of chromatographically
+    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
+    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
+    analyte profiling.
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",
@@ -24,35 +28,32 @@ Authors@R: c(
 	   comment = c(ORCID = "0000-0002-6977-7147")),
 	   person(given = "Michael", family = "Witting",
 	   email = "michael.witting@helmholtz-muenchen.de",
-	   role = "ctb")
+	   role = "ctb"),
+	   person(given = "William", family = "Kumler",
+	   email = "wkumler@uw.edu", role = "ctb",
+	   comment = c(ORCID = "0000-0002-5022-8009"))
 	   )
-Author: Colin A. Smith <csmith@scripps.edu>,
-    Ralf Tautenhahn <rtautenh@gmail.com>,
-    Steffen Neumann <sneumann@ipb-halle.de>,
-    Paul Benton <hpbenton@scripps.edu>,
-    Christopher Conley <cjconley@ucdavis.edu>,
-    Johannes Rainer <Johannes.Rainer@eurac.edu>,
-    Michael Witting <michael.witting@helmholtz-muenchen.de>
-Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
 Depends:
-    R (>= 2.14.0),
+    R (>= 4.0.0),
+    BiocParallel (>= 1.8.0),
+    MSnbase (>= 2.19.1)
+Imports:
+    mzR (>= 2.25.3),
     methods,
     Biobase,
-    BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.9.3)
-Imports:
-    mzR (>= 2.19.5),
     BiocGenerics,
-    ProtGenerics (>= 1.17.2),
+    ProtGenerics (>= 1.25.1),
     lattice,
     RColorBrewer,
     plyr,
     RANN,
-    multtest,
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
     robustbase,
-    IRanges
+    IRanges,
+    SummarizedExperiment,
+    MsCoreUtils,
+    MsFeatures
 Suggests:
     BiocStyle,
     caTools,
@@ -60,27 +61,26 @@ Suggests:
     faahKO,
     msdata (>= 0.25.1),
     ncdf4,
-    rgl,
-    microbenchmark,
     testthat,
     pander,
     magrittr,
+    rmarkdown,
+    multtest,
     MALDIquant,
-    pheatmap
+    pheatmap,
+    Spectra (>= 1.1.17),
+    MsBackendMgf,
+    progress
 Enhances:
     Rgraphviz,
-    Rmpi,
+    rgl,
     XML
-Description: Framework for processing and visualization of chromatographically
-    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
-    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
-    analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: https://github.com/sneumann/xcms
-VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
+VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.2
 Collate:
     'AllGenerics.R'
     'functions-XChromatograms.R'
@@ -114,8 +114,8 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'
-    'methods-Chromatograms.R'
     'methods-IO.R'
+    'methods-MChromatograms.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'
     'methods-Params.R'
@@ -123,6 +123,7 @@ Collate:
     'methods-XCMSnExp.R'
     'methods-XChromatogram.R'
     'methods-XChromatograms.R'
+    'methods-group-features.R'
     'methods-xcmsEIC.R'
     'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'
@@ -131,7 +132,6 @@ Collate:
     'methods-xcmsSet.R'
     'models.R'
     'mzClust.R'
-    'netCDF.R'
     'plotQC.R'
     'ramp.R'
     'specDist.R'
@@ -139,4 +139,5 @@ Collate:
     'writemzdata.R'
     'writemztab.R'
     'xcmsSource.R'
+    'xdata.R'
     'zzz.R'

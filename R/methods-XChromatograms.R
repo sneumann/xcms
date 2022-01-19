@@ -1,4 +1,6 @@
-setAs("Chromatograms", "XChromatograms", function(from) {
+#' @include methods-MChromatograms.R
+
+setAs("MChromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
     res@.Data <- matrix(lapply(from, function(z) {
         if (is(z, "Chromatogram"))
@@ -106,7 +108,7 @@ setMethod("chromPeakData", "XChromatograms", function(object) {
     res <- do.call(rbind, res)
     res$row <- rep(row_idx, nrs)
     res$column <- rep(col_idx, nrs)
-    res[order(res[, "row"]), , drop = FALSE]
+    extractROWS(res, order(res[, "row"]))
 })
 
 #' @rdname XChromatogram
@@ -185,7 +187,7 @@ setMethod("plot", "XChromatograms", function(x, col = "#00000060", lty = 1,
     for (i in seq_len(nr)) {
         x_sub <- x[i, , drop = FALSE]
         plot(as(x_sub, ifelse(is(x_sub, "XChromatograms"),
-                              "Chromatograms", "Chromatogram")),
+                              "MChromatograms", "Chromatogram")),
              col = col, lty = lty, type = type,
              xlab = xlab, ylab = ylab, main = main, ...)
         idx <- which(pks_all[, "row"] == i)
@@ -250,6 +252,12 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 #' @section Chromatographic peak detection:
 #'
 #' See [findChromPeaks-Chromatogram-CentWaveParam] for information.
+#'
+#' After chromatographic peak detection it is also possible to *refine*
+#' identified chromatographic peaks with the `refineChromPeaks` method (e.g. to
+#' reduce peak detection artifacts). Currently, only peak refinement using the
+#' *merge neighboring peaks* method is available (see
+#' [MergeNeighboringPeaksParam()] for a detailed description of the approach.
 #'
 #' @section Correspondence analysis:
 #'
@@ -381,7 +389,7 @@ setMethod("featureDefinitions", "XChromatograms",
                       apex_within = which(feat_def$rtmed >= rt[1] &
                                           feat_def$rtmed <= rt[2])
                   )
-                  feat_def <- feat_def[keep, , drop = FALSE]
+                  feat_def <- extractROWS(feat_def, keep)
               }
               if (length(mz) && nrow(feat_def)) {
                   mz <- range(mz)
@@ -399,13 +407,13 @@ setMethod("featureDefinitions", "XChromatograms",
                       apex_within = which(feat_def$mzmed >= mz[1] &
                                           feat_def$mzmed <= mz[2])
                   )
-                  feat_def <- feat_def[keep, , drop = FALSE]
+                  feat_def <- extractROWS(feat_def, keep)
               }
               feat_def
           })
 
 #' @rdname XChromatogram
-setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
+setMethod("[", "XChromatograms", function(x, i, j, drop = TRUE) {
     if (missing(i) && missing(j))
         return(x)
     if (missing(i))
@@ -416,24 +424,38 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         i <- which(i)
     if (is.logical(j))
         j <- which(j)
-    if (length(i) == 1 && length(j) == 1)
+    if (length(i) > 1 || length(j) > 1)
+        drop <- FALSE
+    if (length(i) == 1 && length(j) == 1 && drop)
         return(x@.Data[i, j, drop = TRUE][[1]])
     cpeaks_orig <- chromPeaks(x)
-    fts <- featureDefinitions(x)
+    fts_orig <- featureDefinitions(x)
+    ## The following code replicates the [,MChromatograms
     ph <- x@.processHistory
-    x <- callNextMethod(x = x, i = i, j = j, drop = drop)
-    if (nrow(fts)) {
-        rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
-        cpks <- .subset_chrom_peaks_xchromatograms(cpeaks_orig, i = i, j = j)
-        idxs <- as.integer(rownames(cpks))
-        fts <- fts[fts$row %in% i, , drop = FALSE]
-        fts$row <- match(fts$row, i)
-        fts$peakidx <- lapply(fts$peakidx, function(z) {
-            newidx <- match(z, idxs)
-            newidx[!is.na(newidx)]
-        })
-        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
-        x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+    pd <- x@phenoData
+    fd <- x@featureData
+    xclass <- class(x)
+    x <- as(x@.Data[i = i, j = j, drop = FALSE], xclass)
+    pd <- pd[j, ]
+    pData(pd) <- droplevels(pData(pd))
+    x@phenoData <- pd
+    fd <- fd[i, ]
+    pData(fd) <- droplevels(pData(fd))
+    x@featureData <- fd
+    if (nrow(fts_orig)) {
+        cpeaks_sub <- chromPeaks(x)
+        ## re-order and duplicate fts based on i.
+        fts <- vector("list", length(i))
+        for (el in seq_along(i)) {
+            fts_row <- fts_orig[fts_orig$row == i[el], , drop = FALSE]
+            if (nrow(fts_row)) {
+                fts_row$row <- el
+                fts_row <- .subset_features_on_chrom_peaks(
+                    fts_row, cpeaks_orig, cpeaks_sub)
+                fts[[el]] <- fts_row
+            } else fts[[el]] <- DataFrame()
+        }
+        x@featureDefinitions <- do.call(rbind, fts)
     }
     x@.processHistory <- .process_history_subset_samples(ph, j = j)
     validObject(x)
@@ -443,7 +465,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
 #' @rdname XChromatogram
 setMethod("featureValues", "XChromatograms",
           function(object, method = c("medret", "maxint", "sum"),
-                   value = "index", intensity = "into", missing = NA, ...) {
+                   value = "into", intensity = "into", missing = NA, ...) {
               if (!any(hasChromPeaks(object)))
                   stop("No chromatographic peaks present! Please use ",
                        "'findChromPeaks' first.")
@@ -465,7 +487,10 @@ setMethod("featureValues", "XChromatograms",
               }
               cnames <- colnames(object)
               pks <- chromPeaks(object)
-              pks <- cbind(pks, sample = pks[, "column"])
+              if (any(colnames(pks) == "sample"))
+                  pks[, "sample"] <- pks[, "column"]
+              else
+                  pks <- cbind(pks, sample = pks[, "column"])
               .feature_values(pks = pks, fts = featureDefinitions(object),
                               method = method, value = value,
                               intensity = intensity, colnames = cnames,
@@ -520,6 +545,7 @@ setMethod("plotChromPeakDensity", "XChromatograms",
                                        param = param, xlab = xlab, xlim = xl,
                                        peakCol = peakCol, peakBg = peakBg,
                                        peakPch = peakPch, simulate = simulate,
+                                       ylim = c(1, ncol(object)),
                                        ...)
               mr[1] <- mr_1
               mr[3] <- mr_3
@@ -544,3 +570,100 @@ setMethod("dropFilledChromPeaks", "XChromatograms", function(object) {
     validObject(object)
     object
 })
+
+#' @rdname XChromatogram
+setMethod("refineChromPeaks", c(object = "XChromatograms",
+                                param = "MergeNeighboringPeaksParam"),
+          function(object, param = MergeNeighboringPeaksParam()) {
+              object@.Data <- matrix(
+                  lapply(object, .xchrom_merge_neighboring_peaks,
+                         diffRt = 2 * param@expandRt,
+                         minProp = param@minProp),
+                  ncol = ncol(object), nrow = nrow(object),
+                  dimnames = dimnames(object))
+              xph <- XProcessHistory(param = param, date. = date(),
+                                     type. = .PROCSTEP.PEAK.REFINEMENT,
+                                     fileIndex = 1:ncol(object))
+              object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })
+
+#' @rdname filter-MChromatograms
+setMethod("filterColumnsIntensityAbove", "XChromatograms",
+          function(object, threshold = 0,
+                   value = c("bpi", "tic", "maxo", "into"),
+                   which = c("any", "all")) {
+              value <- match.arg(value)
+              which <- match.arg(which)
+              if (length(threshold) > 1 || !is.numeric(threshold))
+                  stop("'threshold' should be a 'numeric' of length 1")
+              if (value %in% c("maxo", "into")) {
+                  nc <- ncol(object)
+                  rws <- seq_len(nrow(object))
+                  cps <- chromPeaks(object)
+                  keep <- rep(FALSE, nc)
+                  for (i in seq_len(nc)) {
+                      vals <- cps[cps[, "column"] == i &
+                                  cps[, value] > threshold, "row"]
+                      if (length(vals)) {
+                          if (which == "any")
+                              keep[i] <- TRUE
+                          else keep[i] <- all(rws %in% vals)
+                      }
+                  }
+                  object[, keep]
+              } else
+                  callNextMethod(object, threshold = threshold, value = value,
+                                 which = which)
+          })
+
+#' @rdname filter-MChromatograms
+setMethod("filterColumnsKeepTop", "XChromatograms",
+          function(object, n = 1L, sortBy = c("bpi", "tic", "maxo", "into"),
+                   aggregationFun = sum) {
+              sortBy <- match.arg(sortBy)
+              if (length(n) > 1 || !is.numeric(n))
+                  stop("'n' should be an 'integer' of length 1")
+              if (sortBy %in% c("maxo", "into")) {
+                  n <- ceiling(n)
+                  nc <- ncol(object)
+                  if (n > nc)
+                      stop("'n' should be smaller or equal than the number of ",
+                           "columns (", nc, ")")
+                  colval <- numeric(nc)
+                  cps <- chromPeaks(object)
+                  for (i in seq_len(nc)) {
+                      vals <- cps[cps[, "column"] == i, c("row", sortBy),
+                                  drop = FALSE]
+                      if (nrow(vals)) {
+                          vals <- sapply(split(vals[, sortBy], vals[, "row"]),
+                                         max, na.rm = TRUE)
+                          colval[i] <- aggregationFun(vals, na.rm = TRUE)
+                      }
+                  }
+                  idx <- order(colval, decreasing = TRUE)[seq_len(n)]
+                  object[, sort(idx)]
+              } else
+                  callNextMethod(object, n = n, sortBy = sortBy,
+                                 aggregationFun = aggregationFun)
+          })
+
+#' @rdname XChromatogram
+setMethod("filterChromPeaks", "XChromatograms",
+          function(object, method = c("keepTop"), ...) {
+              method <- match.arg(method)
+              pks_orig <- chromPeaks(object)
+              object@.Data <- matrix(lapply(object, filterChromPeaks,
+                                            method = method, ...),
+                                     nrow = nrow(object),
+                                     dimnames = dimnames(object))
+              pks_sub <- chromPeaks(object)
+              if (hasFeatures(object)) {
+                  fts <- .subset_features_on_chrom_peaks(
+                      object@featureDefinitions, pks_orig, chromPeaks(object))
+                  object@featureDefinitions <- fts
+              }
+              validObject(object)
+              object
+          })

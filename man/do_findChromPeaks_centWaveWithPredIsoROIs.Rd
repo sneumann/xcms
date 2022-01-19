@@ -5,20 +5,53 @@
 \alias{do_findChromPeaks_addPredIsoROIs}
 \title{Core API function for two-step centWave peak detection with isotopes}
 \usage{
-do_findChromPeaks_centWaveWithPredIsoROIs(mz, int, scantime, valsPerSpect,
-  ppm = 25, peakwidth = c(20, 50), snthresh = 10, prefilter = c(3,
-  100), mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  roiList = list(), firstBaselineCheck = TRUE, roiScales = NULL,
-  snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
-  mzIntervalExtension = TRUE, polarity = "unknown")
+do_findChromPeaks_centWaveWithPredIsoROIs(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  roiList = list(),
+  firstBaselineCheck = TRUE,
+  roiScales = NULL,
+  snthreshIsoROIs = 6.25,
+  maxCharge = 3,
+  maxIso = 5,
+  mzIntervalExtension = TRUE,
+  polarity = "unknown",
+  extendLengthMSW = FALSE
+)
 
-do_findChromPeaks_addPredIsoROIs(mz, int, scantime, valsPerSpect,
-  ppm = 25, peakwidth = c(20, 50), snthresh = 6.25,
-  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, peaks. = NULL, maxCharge = 3, maxIso = 5,
-  mzIntervalExtension = TRUE, polarity = "unknown")
+do_findChromPeaks_addPredIsoROIs(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 6.25,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  peaks. = NULL,
+  maxCharge = 3,
+  maxIso = 5,
+  mzIntervalExtension = TRUE,
+  polarity = "unknown"
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -119,6 +152,12 @@ intensity peaks.}
 Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
 
+\item{extendLengthMSW}{Option to force centWave to use all scales when
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to
+\code{convolve} rather than the default "reflect" method. See
+https://github.com/sneumann/xcms/issues/445 for more information.}
+
 \item{peaks.}{A matrix or \code{xcmsPeaks} object such as one returned by
 a call to \code{link{do_findChromPeaks_centWave}} or
 \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
@@ -179,10 +218,11 @@ For more details on the centWave algorithm see
     \code{\link{centWave}}.
 }
 \seealso{
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWave}},
-  \code{\link{do_findChromPeaks_massifquant}},
-  \code{\link{do_findChromPeaks_matchedFilter}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_massifquant}()},
+\code{\link{do_findChromPeaks_matchedFilter}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Hendrik Treutler, Johannes Rainer

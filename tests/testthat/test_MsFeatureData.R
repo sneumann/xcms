@@ -1,4 +1,6 @@
 test_that("MsFeatureData class validation works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fd <- new("MsFeatureData")
     ## Check error for wrong elements.
     fd$a <- 5
@@ -70,21 +72,27 @@ test_that("MsFeatureData class validation works", {
 })
 
 test_that("MsFeatureData class_accessors work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     fd <- new("MsFeatureData")
     expect_true(!hasChromPeaks(fd))
     expect_true(!hasAdjustedRtime(fd))
     expect_true(!hasFeatures(fd))
-    expect_warning(expect_equal(chromPeaks(fd), NULL))
-    expect_warning(expect_equal(featureDefinitions(fd), NULL))
+    expect_equal(chromPeaks(fd), NULL)
+    expect_warning(expect_equal(featureDefinitions(fd), DataFrame()))
     expect_warning(expect_equal(adjustedRtime(fd), NULL))
     ## chromPeaks
     chromPeaks(fd) <- chromPeaks(xod_xgrg)
+    chromPeakData(fd) <- chromPeakData(xod_xgrg)
     expect_true(hasChromPeaks(fd))
+    expect_false(hasChromPeaks(fd, msLevel = 2L))
     expect_equal(chromPeaks(fd), chromPeaks(xod_xgrg))
     ## featureDefinitions
     featureDefinitions(fd) <- featureDefinitions(xod_xgrg)
     expect_true(hasFeatures(fd))
     expect_equal(featureDefinitions(fd), featureDefinitions(xod_xgrg))
+    expect_false(hasFeatures(fd, msLevel = 2L))
+    expect_true(nrow(featureDefinitions(fd, msLevel = 2L)) == 0)
     ## adjustedRtime
     adjustedRtime(fd) <- adjustedRtime(xod_xgrg)
     expect_error(validObject(fd))

@@ -115,7 +115,169 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                               as(param, "list"))), date = procDat)
 }
 
+#' Fast way to split an `XCMSnExp` object by file:
+#' - subsets the object to MS level specified with `msLevel`.
+#' - subsets feature data to the smallest possible set of columns (if
+#'   `selectFeatureData = TRUE`.
+#' - returns by default an `OnDiskMSnExp`, unless `to_class = "XCMSnExp"`, in
+#'   which case also potentially present chromatographic peaks are preserved.
+#'
+#' @param keep_sample_idx if column "sample" should be kept as it is.
+#'
+#' @note
+#'
+#' This function needs a considerable amount of memory if
+#' `to_class = "XCMSnExp"` because, for efficiency reasons, it first splits
+#' the `chromPeaks` and `chromPeakData` per file.
+#'
+#' @noRd
+.split_by_file <- function(x, msLevel. = unique(msLevel(x)),
+                           subsetFeatureData = TRUE,
+                           to_class = "OnDiskMSnExp",
+                           keep_sample_idx = FALSE) {
+    if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
+        x@featureData$retentionTime <- adjustedRtime(x)
+    if (subsetFeatureData) {
+        fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
+                           "polarity", "seqNum"), colnames(.fdata(x)))
+        x <- selectFeatureData(x, fcol = fcs)
+    }
+    procd <- x@processingData
+    expd <- new(
+        "MIAPE",
+        instrumentManufacturer = x@experimentData@instrumentManufacturer[1],
+        instrumentModel = x@experimentData@instrumentModel[1],
+        ionSource = x@experimentData@ionSource[1],
+        analyser = x@experimentData@analyser[1],
+        detectorType = x@experimentData@detectorType[1])
+    create_object <- function(x, i, to_class) {
+        a <- new(to_class)
+        slot(procd, "files", check = FALSE) <- x@processingData@files[i]
+        slot(a, "processingData", check = FALSE) <- procd
+        slot(a, "featureData", check = FALSE) <- extractROWS(
+            x@featureData, which(x@featureData$msLevel %in% msLevel. &
+                                 x@featureData$fileIdx == i))
+        if (!nrow(a@featureData))
+            stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
+        a@featureData$fileIdx <- 1L
+        slot(a, "experimentData", check = FALSE) <- expd
+        slot(a, "spectraProcessingQueue", check = FALSE) <-
+            x@spectraProcessingQueue
+        slot(a, "phenoData", check = FALSE) <- x@phenoData[i, , drop = FALSE]
+        a
+    }
+    if (to_class == "XCMSnExp" && is(x, "XCMSnExp") && hasChromPeaks(x)) {
+        if (any(colnames(.chrom_peak_data(x@msFeatureData)) == "ms_level")) {
+            pk_idx <- which(
+                .chrom_peak_data(x@msFeatureData)$ms_level %in% msLevel.)
+        } else pk_idx <- seq_len(nrow(chromPeaks(x@msFeatureData)))
+        fct <- as.factor(
+            as.integer(chromPeaks(x@msFeatureData)[pk_idx, "sample"]))
+        pksl <- split.data.frame(
+            chromPeaks(x@msFeatureData)[pk_idx, , drop = FALSE], fct)
+        pkdl <- split.data.frame(
+            extractROWS(.chrom_peak_data(x@msFeatureData), pk_idx), fct)
+        res <- vector("list", length(fileNames(x)))
+        for (i in seq_along(res)) {
+            a <- create_object(x, i, to_class)
+            newFd <- new("MsFeatureData")
+            pks <- pksl[[as.character(i)]]
+            if (!is.null(pks) && nrow(pks)) {
+                if (!keep_sample_idx)
+                    pks[, "sample"] <- 1
+                chromPeaks(newFd) <- pks
+                chromPeakData(newFd) <- pkdl[[as.character(i)]]
+            } else {
+                chromPeaks(newFd) <- chromPeaks(x@msFeatureData)[0, ]
+                chromPeakData(newFd) <- .chrom_peak_data(x@msFeatureData)[0, ]
+            }
+            lockEnvironment(newFd, bindings = TRUE)
+            slot(a, "msFeatureData", check = FALSE) <- newFd
+            res[[i]] <- a
+        }
+        res
+    } else {
+        lapply(seq_along(fileNames(x)), function(z) {
+            create_object(x, z, to_class)
+        })
+    }
+}
 
+#' Same as `.split_by_file` but *faster* because it splits the chrom peaks
+#' matrix too - and requires thus more memory.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.split_by_file2 <- function(x, msLevel. = unique(msLevel(x)),
+                            subsetFeatureData = FALSE,
+                            to_class = "OnDiskMSnExp",
+                            keep_sample_idx = FALSE) {
+    if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
+        x@featureData$retentionTime <- adjustedRtime(x)
+    if (subsetFeatureData) {
+        fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
+                           "polarity", "seqNum"), colnames(.fdata(x)))
+        x <- selectFeatureData(x, fcol = fcs)
+    }
+    fdl <- split.data.frame(x@featureData, as.factor(fromFile(x)))
+    procd <- x@processingData
+    expd <- new(
+        "MIAPE",
+        instrumentManufacturer = x@experimentData@instrumentManufacturer[1],
+        instrumentModel = x@experimentData@instrumentModel[1],
+        ionSource = x@experimentData@ionSource[1],
+        analyser = x@experimentData@analyser[1],
+        detectorType = x@experimentData@detectorType[1])
+    create_object <- function(i, fd, x, to_class) {
+        a <- new(to_class)
+        slot(procd, "files", check = FALSE) <- x@processingData@files[i]
+        slot(a, "processingData", check = FALSE) <- procd
+        slot(a, "featureData", check = FALSE) <-
+            extractROWS(fd, which(fd$msLevel %in% msLevel.))
+        if (!nrow(a@featureData))
+            stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
+        a@featureData$fileIdx <- 1L
+        slot(a, "experimentData", check = FALSE) <- expd
+        slot(a, "spectraProcessingQueue", check = FALSE) <-
+            x@spectraProcessingQueue
+        slot(a, "phenoData", check = FALSE) <- x@phenoData[i, , drop = FALSE]
+        a
+    }
+    if (to_class == "XCMSnExp" && is(x, "XCMSnExp") && hasChromPeaks(x)) {
+        if (any(colnames(.chrom_peak_data(x@msFeatureData)) == "ms_level")) {
+            pk_idx <- which(
+                .chrom_peak_data(x@msFeatureData)$ms_level %in% msLevel.)
+        } else pk_idx <- seq_len(nrow(chromPeaks(x@msFeatureData)))
+        fct <- as.factor(
+            as.integer(chromPeaks(x@msFeatureData)[pk_idx, "sample"]))
+        pksl <- split.data.frame(
+            chromPeaks(x@msFeatureData)[pk_idx, , drop = FALSE], fct)
+        pkdl <- split.data.frame(
+            extractROWS(.chrom_peak_data(x@msFeatureData), pk_idx), fct)
+        res <- vector("list", length(fileNames(x)))
+        for (i in seq_along(res)) {
+            a <- create_object(i, fdl[[i]], x, to_class)
+            newFd <- new("MsFeatureData")
+            pks <- pksl[[as.character(i)]]
+            if (!is.null(pks) && nrow(pks)) {
+                if (!keep_sample_idx)
+                    pks[, "sample"] <- 1
+                chromPeaks(newFd) <- pks
+                chromPeakData(newFd) <- pkdl[[as.character(i)]]
+            } else {
+                chromPeaks(newFd) <- chromPeaks(x@msFeatureData)[0, ]
+                chromPeakData(newFd) <- .chrom_peak_data(x@msFeatureData)[0, ]
+            }
+            lockEnvironment(newFd, bindings = TRUE)
+            slot(a, "msFeatureData", check = FALSE) <- newFd
+            res[[i]] <- a
+        }
+        res
+    } else
+        mapply(seq_along(fileNames(x)), fdl, FUN = create_object,
+               MoreArgs = list(x = x, to_class = to_class))
+}
 
 
 ############################################################
@@ -136,7 +298,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     filepaths(object) <- fileNames(pset)
     phenoData(object) <- pData(pset)
     ## rt
-    rt <- split(unname(rtime(pset)), f = fromFile(pset))
+    rt <- split(unname(rtime(pset)), f = as.factor(fromFile(pset)))
     object@rt <- list(raw = rt, corrected = rt)
     ## mslevel
     mslevel(object) <- unique(msLevel(pset))
@@ -234,7 +396,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         centerSample(param) <- floor(median(1:nSamples))
     message("Sample number ", centerSample(param), " used as center sample.")
 
-    rtraw <- split(rtime(object), fromFile(object))
+    rtraw <- split(rtime(object), as.factor(fromFile(object)))
     object <- filterFile(object, file = subs)
     ## Get the profile matrix of the center sample:
     ## Using the (hidden) parameter returnBreaks to return also the breaks of
@@ -249,7 +411,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                            returnBreaks = TRUE)[[1]]
     )
     ## Now split the object by file
-    objL <- splitByFile(object, f = factor(seq_len(nSamples)))
+    objL <- .split_by_file2(object, msLevel. = 1)
     objL <- objL[-centerSample(param)]
     centerObject <- filterFile(object, file = centerSample(param))
     ## Now we can bplapply here!
@@ -265,23 +427,25 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ## 1)Check the scan times of both objects:
         scantime1 <- unname(rtime(cntr))
         scantime2 <- unname(rtime(z))
+        scantime1_diff <- diff(scantime1)
+        scantime2_diff <- diff(scantime2)
         ## median difference between spectras' scan time.
-        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
+        mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
 
         ## rtup1 <- seq_along(scantime1)
         ## rtup2 <- seq_along(scantime2)
 
-        mst1 <- which(diff(scantime1) > 5 * mstdiff)[1]
+        mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
         if (!is.na(mst1)) {
-            scantime1 <- scantime1[seq_len((mst1 - 1))]
             message("Found gaps in scan times of the center sample: cut ",
                     "scantime-vector at ", scantime1[mst1]," seconds.")
+            scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
         }
-        mst2 <- which(diff(scantime2) > 5 * mstdiff)[1]
-        if(!is.na(mst2)) {
-            scantime2 <- scantime2[seq_len((mst2 - 1))]
+        mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
+        if (!is.na(mst2)) {
             message("Found gaps in scan time of file ", basename(fileNames(z)),
                     ": cut scantime-vector at ", scantime2[mst2]," seconds.")
+            scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
         }
         ## Drift of measured scan times - expected to be largest at the end.
         rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
@@ -509,3 +673,187 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
     validObject(path)
     path
 })
+
+#' @description
+#'
+#' Estimate the precursor intensity for an MS2 spectrum based on interpolation
+#' using the intensity of the respective m/z peak from the previous and
+#' following MS1 spectrum.
+#'
+#' @param x `OnDiskMSnExp` for a single file
+#'
+#' @param ppm `numeric(1)` with acceptable difference to MS1 m/z.
+#'
+#' @param method `character(1)` specifying how the precursor intensity should
+#'     be estimated, either based on the previous MS1 scan
+#'     (`method = "previous"`, the default) or using an interpolation between
+#'     the previous and the subsequent MS1 scan (`method = "interpolation"`)
+#'     considering also their retention time.
+#'
+#' @return `numeric` same length than `x` with the estimated precursor intensity
+#'     or `NA` for MS1 spectra.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+#' pest_dda <- readMSData(fl, mode = "onDisk")
+#' res <- .estimate_prec_intensity(pest_dda)
+#' fData(pest_dda)$precursorIntensity <- res
+#'
+#' ms2 <- filterMsLevel(pest_dda, msLevel = 2)
+#' tic <- vapply(intensity(ms2), function(z) sum(z, na.rm = TRUE), numeric(1))
+#' plot(tic, precursorIntensity(ms2))  # not that nice...
+#'
+#' fl <- proteomics(full.names = TRUE)[4]
+#' tmt <- readMSData(fl, mode = "onDisk")
+#'
+#' res <- .estimate_prec_intensity(tmt, method = "interpolation")
+#' res_2 <- .estimate_prec_intensity(tmt, method = "previous")
+#'
+#' par(mfrow = c(1, 2))
+#' plot(res, precursorIntensity(tmt))
+#' plot(res_2, precursorIntensity(tmt))
+.estimate_prec_intensity <- function(x, ppm = 10,
+                                     method = c("previous", "interpolation")) {
+    method <- match.arg(method)
+    pmz <- precursorMz(x)
+    pmi <- rep(NA_real_, length(pmz))
+    idx <- which(!is.na(pmz))
+    x_ms1 <- filterMsLevel(x, msLevel = 1L)
+    ms1_rt <- rtime(x_ms1)
+    sps <- spectra(x_ms1)
+    if (method == "previous") {
+        for (i in idx) {
+            ms2_rt <- .fdata(x)$retentionTime[i]
+            ## Find the closest rtime before and the closest rtime after.
+            before_idx <- which(ms1_rt < ms2_rt)
+            before_int <- numeric()
+            if (length(before_idx)) {
+                sp <- sps[[before_idx[length(before_idx)]]]
+                before_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                      duplicates = "closest")
+                if (!is.na(before_idx)) {
+                    before_rt <- sp@rt
+                    before_int <- sp@intensity[before_idx]
+                    before_int <- before_int[!is.na(before_int)]
+                }
+            }
+            if (length(before_int))
+                pmi[i] <- before_int
+        }
+    } else {
+        for (i in idx) {
+            ms2_rt <- .fdata(x)$retentionTime[i]
+            ## Find the closest rtime before and the closest rtime after.
+            before_idx <- which(ms1_rt < ms2_rt)
+            before_int <- numeric()
+            if (length(before_idx)) {
+                sp <- sps[[before_idx[length(before_idx)]]]
+                before_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                      duplicates = "closest")
+                if (!is.na(before_idx)) {
+                    before_rt <- sp@rt
+                    before_int <- sp@intensity[before_idx]
+                    before_int <- before_int[!is.na(before_int)]
+                }
+            }
+            after_idx <- which(ms1_rt > ms2_rt)
+            after_int <- numeric()
+            if (length(after_idx)) {
+                sp <- sps[[after_idx[1L]]]
+                after_idx <- closest(pmz[i], sp@mz, ppm = ppm, tolerance = 0,
+                                     duplicates = "closest")
+                if (!is.na(after_idx)) {
+                    after_rt <- sp@rt
+                    after_int <- sp@intensity[after_idx]
+                    after_int <- after_int[!is.na(after_int)]
+                }
+            }
+            ## Check if we have before and after value
+            if (length(before_int) && length(after_int)) {
+                pmi[i] <- approx(c(before_rt, after_rt),
+                                 c(before_int, after_int),
+                                 xout = ms2_rt)$y
+            } else {
+                if (length(before_int))
+                    pmi[i] <- before_int
+                if (length(after_int))
+                    pmi[i] <- after_int
+            }
+        }
+    }
+    pmi
+}
+
+#' @title Estimate precursor intensity for MS level 2 spectra
+#'
+#' @description
+#'
+#' `estimatePrecursorIntensity` determines the precursor intensity for a MS 2
+#' spectrum based on the intensity of the respective signal from the
+#' neighboring MS 1 spectra (i.e. based on the peak with the m/z matching the
+#' precursor m/z of the MS 2 spectrum). Based on parameter `method` either the
+#' intensity of the peak from the previous MS 1 scan is used
+#' (`method = "previous"`) or an interpolation between the intensity from the
+#' previous and subsequent MS1 scan is used (`method = "interpolation"`, which
+#' considers also the retention times of the two MS1 scans and the retention
+#' time of the MS2 spectrum).
+#'
+#' @param x `OnDiskMSnExp` or `XCMSnExp` object.
+#'
+#' @param ppm `numeric(1)` defining the maximal acceptable difference (in ppm)
+#'     of the precursor m/z and the m/z of the corresponding peak in the MS 1
+#'     scan.
+#'
+#' @param method `character(1)` defining the method how the precursor intensity
+#'     should be determined (see description above for details). Defaults to
+#'     `method = "previous"`.
+#'
+#' @param BPPARAM parallel processing setup. See [bpparam()] for details.
+#'
+#' @return `numeric` with length equal to the number of spectra in `x`. `NA` is
+#'     returned for MS 1 spectra or if no matching peak in a MS 1 scan can be
+#'     found for an MS 2 spectrum
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+estimatePrecursorIntensity <- function(x, ppm = 10,
+                                       method = c("previous", "interpolation"),
+                                       BPPARAM = bpparam()) {
+    method <- match.arg(method)
+    unlist(bplapply(.split_by_file2(x, subsetFeatureData = FALSE),
+                    .estimate_prec_intensity, ppm = ppm, method = method,
+                    BPPARAM = BPPARAM), use.names = FALSE)
+}
+
+#' Helper function to convert an OnDiskMSnExp to a Spectra object. This will
+#' only convert the spectra data, but no sample information.
+#'
+#' @noRd
+.OnDiskMSnExp2MsBackendMzR <- function(x) {
+    .fData2MsBackendMzR(.fdata(x), fileNames(x))
+}
+
+.fData2MsBackendMzR <- function(x, filenames, res = new("MsBackendMzR")) {
+    x$dataStorage <- x$dataOrigin <- filenames[x$fileIdx]
+    colnames(x)[colnames(x) == "retentionTime"] <- "rtime"
+    colnames(x)[colnames(x) == "seqNum"] <- "scanIndex"
+    colnames(x)[colnames(x) == "precursorScanNum"] <- "precScanNum"
+    colnames(x)[colnames(x) == "precursorMZ"] <- "precursorMz"
+    colnames(x)[colnames(x) == "isolationWindowTargetMZ"] <-
+        "isolationWindowTargetMz"
+    colnames(x)[colnames(x) == "fileIdx"] <- "fromFile"
+    x$isolationWindowLowerMz <- x$isolationWindowTargetMz -
+        x$isolationWindowLowerOffset
+    x$isolationWindowUpperMz <- x$isolationWindowTargetMz +
+        x$isolationWindowUpperOffset
+    x$isolationWindowUpperOffset <- NULL
+    x$isolationWindowLowerOffset <- NULL
+    slot(res, "spectraData", check = FALSE) <- as(x, "DataFrame")
+    res
+}

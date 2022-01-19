@@ -4,10 +4,11 @@
 \docType{class}
 \name{FillChromPeaksParam-class}
 \alias{FillChromPeaksParam-class}
+\alias{ChromPeakAreaParam-class}
 \alias{FillChromPeaksParam}
 \alias{fixedRt}
 \alias{fixedMz}
-\alias{show,FillChromPeaksParam-method}
+\alias{ChromPeakAreaParam}
 \alias{expandMz,FillChromPeaksParam-method}
 \alias{expandMz}
 \alias{expandMz<-,FillChromPeaksParam-method}
@@ -20,17 +21,28 @@
 \alias{ppm<-,FillChromPeaksParam-method}
 \alias{fillChromPeaks,XCMSnExp,FillChromPeaksParam-method}
 \alias{fillChromPeaks}
+\alias{fillChromPeaks,XCMSnExp,ChromPeakAreaParam-method}
 \alias{fillChromPeaks,XCMSnExp,missing-method}
 \title{Integrate areas of missing peaks}
 \usage{
-FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0,
-  fixedMz = 0, fixedRt = 0)
+FillChromPeaksParam(
+  expandMz = 0,
+  expandRt = 0,
+  ppm = 0,
+  fixedMz = 0,
+  fixedRt = 0
+)
 
 fixedRt(object)
 
 fixedMz(object)
 
-\S4method{show}{FillChromPeaksParam}(object)
+ChromPeakAreaParam(
+  mzmin = function(z) quantile(z, probs = 0.25),
+  mzmax = function(z) quantile(z, probs = 0.75),
+  rtmin = function(z) quantile(z, probs = 0.25),
+  rtmax = function(z) quantile(z, probs = 0.75)
+)
 
 \S4method{expandMz}{FillChromPeaksParam}(object)
 
@@ -44,54 +56,82 @@ fixedMz(object)
 
 \S4method{ppm}{FillChromPeaksParam}(object) <- value
 
-\S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param,
-  msLevel = 1L, BPPARAM = bpparam())
+\S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param, msLevel = 1L, BPPARAM = bpparam())
 
-\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param,
-  BPPARAM = bpparam(), msLevel = 1L)
+\S4method{fillChromPeaks}{XCMSnExp,ChromPeakAreaParam}(object, param, msLevel = 1L, BPPARAM = bpparam())
+
+\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param, BPPARAM = bpparam(), msLevel = 1L)
 }
 \arguments{
-\item{expandMz}{\code{numeric(1)} defining the value by which the mz width of
-peaks should be expanded. Each peak is expanded in mz direction by
-\code{expandMz *} their original mz width. A value of \code{0} means no
-expansion, a value of \code{1} grows each peak by 1 * the mz width of
-the peak resulting in peakswith twice their original size in mz
-direction (expansion by half mz width to both sides).}
+\item{expandMz}{for \code{FillChromPeaksParam}: \code{numeric(1)} defining the value
+by which the mz width of peaks should be expanded. Each peak is expanded
+in mz direction by \verb{expandMz *} their original m/z width. A value of
+\code{0} means no expansion, a value of \code{1} grows each peak by \verb{1 *} the m/z
+width of the peak resulting in peaks with twice their original size in
+m/z direction (expansion by half m/z width to both sides).}
 
-\item{expandRt}{\code{numeric(1)}, same as \code{expandRt} but for the
-retention time width.}
+\item{expandRt}{for \code{FillChromPeaksParam}: \code{numeric(1)}, same as \code{expandMz}
+but for the retention time width.}
 
-\item{ppm}{\code{numeric(1)} optionally specifying a \emph{ppm} by which the
-mz width of the peak region should be expanded. For peaks with an mz
-width smaller than \code{mean(c(mzmin, mzmax)) * ppm / 1e6}, the
-\code{mzmin} will be replaced by
+\item{ppm}{for \code{FillChromPeaksParam}: \code{numeric(1)} optionally specifying a
+\emph{ppm} by which the m/z width of the peak region should be expanded. For
+peaks with an m/z width smaller than \code{mean(c(mzmin, mzmax)) * ppm / 1e6},
+the \code{mzmin} will be replaced by
 \code{mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}
-and \code{mzmax} by
+\code{mzmax} by
 \code{mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}.
-This is applied before eventually expanding the mz width using the
+This is applied before eventually expanding the m/z width using the
 \code{expandMz} parameter.}
 
-\item{fixedMz}{\code{numeric(1)} defining a constant factor by which the
-m/z width of each feature is to be expanded. The m/z width is expanded
-on both sides by \code{fixedMz} (i.e. \code{fixedMz} is subtracted
-from the lower m/z and added to the upper m/z). This expansion is
-applied \emph{after} \code{expandMz} and \code{ppm}.}
+\item{fixedMz}{for \code{FillChromPeaksParam}: \code{numeric(1)} defining a constant
+factor by which the m/z width of each feature is to be expanded.
+The m/z width is expanded on both sides by \code{fixedMz} (i.e. \code{fixedMz}
+is subtracted from the lower m/z and added to the upper m/z). This
+expansion is applied \emph{after} \code{expandMz} and \code{ppm}.}
 
-\item{fixedRt}{\code{numeric(1)} defining a constant factor by which the
-retention time width of each factor is to be expanded. The rt width is
-expanded on both sides by \code{fixedRt} (i.e. \code{fixedRt} is
-subtracted from the lower rt and added to the upper rt). This
-expansion is applied \emph{after} \code{expandRt}.}
+\item{fixedRt}{for \code{FillChromPeaksParam}: \code{numeric(1)} defining a constant
+factor by which the retention time width of each factor is to be
+expanded. The rt width is expanded on both sides by \code{fixedRt} (i.e.
+\code{fixedRt} is subtracted from the lower rt and added to the upper rt).
+This expansion is applied \emph{after} \code{expandRt}.}
 
-\item{object}{\code{XCMSnExp} object with identified and grouped
-chromatographic peaks.}
+\item{object}{\code{XCMSnExp} object with identified and grouped chromatographic
+peaks.}
+
+\item{mzmin}{\code{function} to be applied to values in the \code{"mzmin"} column of all
+chromatographic peaks of a feature to define the lower m/z value of the
+area from which signal for the feature should be integrated. Defaults to
+\code{mzmin = function(z) quantile(z, probs = 0.25)} hence using the 25\%
+quantile of all values.}
+
+\item{mzmax}{\code{function} to be applied to values in the \code{"mzmax"} column of all
+chromatographic peaks of a feature to define the upper m/z value of the
+area from which signal for the feature should be integrated. Defaults to
+\code{mzmax = function(z) quantile(z, probs = 0.75)} hence using the 75\%
+quantile of all values.}
+
+\item{rtmin}{\code{function} to be applied to values in the \code{"rtmin"} column of all
+chromatographic peaks of a feature to define the lower rt value of the
+area from which signal for the feature should be integrated. Defaults to
+\code{rtmin = function(z) quantile(z, probs = 0.25)} hence using the 25\%
+quantile of all values.}
+
+\item{rtmax}{\code{function} to be applied to values in the \code{"rtmax"} column of all
+chromatographic peaks of a feature to define the upper rt value of the
+area from which signal for the feature should be integrated. Defaults to
+\code{rtmax = function(z) quantile(z, probs = 0.75)} hence using the 75\%
+quantile of all values.}
 
 \item{value}{The value for the slot.}
 
-\item{param}{A \code{FillChromPeaksParam} object with all settings.}
+\item{param}{\code{FillChromPeaksParam} or \code{ChromPeakAreaParam} object
+defining which approach should be used (see details section).}
 
-\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS
-level 1 is supported.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which peak filling
+should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+on one MS level at a time is supported, to fill in peaks for MS level 1
+and 2 run first using \code{msLevel = 1} and then (on the returned
+result object) again with \code{msLevel = 2}.}
 
 \item{BPPARAM}{Parallel processing settings.}
 }
@@ -99,14 +139,10 @@ level 1 is supported.}
 The \code{FillChromPeaksParam} function returns a
     \code{FillChromPeaksParam} object.
 
-A \code{\link{XCMSnExp}} object with previously missing
-chromatographic peaks for features filled into its \code{chromPeaks}
-matrix.
+A \code{XCMSnExp} object with previously missing chromatographic peaks for
+features filled into its \code{\link[=chromPeaks]{chromPeaks()}} matrix.
 }
 \description{
-The \code{FillChromPeaksParam} object encapsules all settings for
-the signal integration for missing peaks.
-
 \code{expandMz},\code{expandMz<-}: getter and setter
     for the \code{expandMz} slot of the object.
 
@@ -118,41 +154,68 @@ the signal integration for missing peaks.
 
 Integrate signal in the mz-rt area of a feature (chromatographic
 peak group) for samples in which no chromatographic peak for this
-feature was identified and add it to the \code{chromPeaks}. Such peaks
-will have a \code{TRUE} in the \code{chromPeakData} data frame containing
-peak annotations.
+feature was identified and add it to the \code{\link[=chromPeaks]{chromPeaks()}} matrix. Such
+\emph{filled-in} peaks are indicated with a \code{TRUE} in column \code{"is_filled"} in
+the result object's \code{\link[=chromPeakData]{chromPeakData()}} data frame.
+
+Two different gap-filling approaches are implemented:
+\itemize{
+\item \code{param = FillChromPeaksParam()}: the default of the original \code{xcms} code.
+Signal is integrated from the m/z and retention time range as defined in
+the \code{\link[=featureDefinitions]{featureDefinitions()}} data frame, i.e. from the \code{"rtmin"}, \code{"rtmax"},
+\code{"mzmin"} and \code{"mzmax"}. See details below for more information and
+settings for this method.
+\item \code{param = ChromPeakAreaParam()}: the area from which the signal for a
+feature is integrated is defined based on the feature's chromatographic
+peak areas. The m/z range is by default defined as the the lower quartile
+of chromatographic peaks' \code{"mzmin"} value to the upper quartile of the
+chromatographic peaks' \code{"mzmax"} values. The retention time range for the
+area is defined analogously. Alternatively, by setting \code{mzmin = median},
+\code{mzmax = median}, \code{rtmin = median} and \code{rtmax = median} in
+\code{ChromPeakAreaParam}, the median \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
+\code{"rtmax"} values from all detected chromatographic peaks of a feature
+would be used instead.
+In contrast to the  \code{FillChromPeaksParam} approach this method uses the
+actual identified chromatographic peaks of a feature to define the area
+from which the signal should be integrated.
+}
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across
 samples) there will always be features (peak groups) that do not include
 peaks from every sample. The \code{fillChromPeaks} method defines
 intensity values for such features in the missing samples by integrating
-the signal in the mz-rt region of the feature. The mz-rt area is defined
-by the median mz and rt start and end points of the other detected
-chromatographic peaks for a given feature. Various parameters allow to
-increase this area, either by a constant value (\code{fixedMz} and
-\code{fixedRt}) or by a feature-relative amount (\code{expandMz} and
-\code{expandRt}).
+the signal in the mz-rt region of the feature. Two different approaches
+to define this region are available: with \code{ChromPeakAreaParam} the region
+is defined based on the detected \strong{chromatographic peaks} of a feature,
+while with \code{FillChromPeaksParam} the region is defined based on the m/z and
+retention times of the \strong{feature} (which represent the m/z and retentention
+times of the apex position of the associated chromatographic peaks). For the
+latter approach various parameters are available to increase the area from
+which signal is to be integrated, either by a constant value (\code{fixedMz} and
+\code{fixedRt}) or by a feature-relative amount (\code{expandMz} and \code{expandRt}).
 
 Adjusted retention times will be used if available.
 
 Based on the peak finding algorithm that was used to identify the
-(chromatographic) peaks different internal functions are employed to
+(chromatographic) peaks, different internal functions are used to
 guarantee that the integrated peak signal matches as much as possible
 the peak signal integration used during the peak detection. For peaks
-identified with the \code{\link{matchedFilter}} method, signal
+identified with the \code{\link[=matchedFilter]{matchedFilter()}} method, signal
 integration is performed on the \emph{profile matrix} generated with
 the same settings used also during peak finding (using the same
 \code{bin} size for example). For direct injection data and peaks
-identified with the \code{\link{MSW}} algorithm signal is integrated
+identified with the \code{MSW} algorithm signal is integrated
 only along the mz dimension. For all other methods the complete (raw)
-signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
-\code{"rtmin"} and \code{"rtmax"} is used.
+signal within the area is used.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt}}{See corresponding parameter above. \code{.__classVersion__} stores the version of the class.}
+\item{\code{expandMz,expandRt,ppm,fixedMz,fixedRt}}{See corresponding parameter
+above.}
+
+\item{\code{rtmin,rtmax,mzmin,mzmax}}{See corresponding parameter above.}
 }}
 
 \note{
@@ -161,29 +224,18 @@ The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
 which the signal was integrated.
 Note that no peak is filled in if no signal was present in a file/sample
 in the respective mz-rt area. These samples will still show a \code{NA}
-in the matrix returned by the \code{\link{featureValues}} method. This
-is in contrast to the \code{\link{fillPeaks.chrom}} method that returned
-an \code{"into"} and \code{"maxo"} of \code{0} for such peak areas.
-Growing the mz-rt area using the \code{expandMz} and \code{expandRt}
-might help to reduce the number of missing peak signals after filling.
+in the matrix returned by the \code{\link[=featureValues]{featureValues()}} method.
 }
 \examples{
 
-## Perform the peak detection using centWave on some of the files from the
-## faahKO package. Files are read using the readMSData from the MSnbase
-## package
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Load a test data set with identified chromatographic peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+res <- faahko_sub
 
-## Create a CentWaveParam object. Note that the noise is set to 10000 to
-## speed up the execution of the example - in a real use case the default
-## value should be used, or it should be set to a reasonable value.
-cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
-
-res <- findChromPeaks(raw_data, param = cwp)
+## Disable parallel processing for this example
+register(SerialParam())
 
 ## Perform the correspondence. We assign all samples to the same group.
 res <- groupChromPeaks(res,
@@ -192,17 +244,16 @@ res <- groupChromPeaks(res,
 ## For how many features do we lack an integrated peak signal?
 sum(is.na(featureValues(res)))
 
-## Filling missing peak data using default settings.
-res <- fillChromPeaks(res)
+## Filling missing peak data using the peak area from identified
+## chromatographic peaks.
+res <- fillChromPeaks(res, param = ChromPeakAreaParam())
+
+## How many missing values do we have after peak filling?
+sum(is.na(featureValues(res)))
 
 ## Get the peaks that have been filled in:
 fp <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
 head(fp)
-
-## Did we get a signal for all missing peaks?
-sum(is.na(featureValues(res)))
-
-## No.
 
 ## Get the process history step along with the parameters used to perform
 ## The peak filling:
@@ -212,23 +263,16 @@ ph
 ## The parameter class:
 ph@param
 
-## Drop the filled in peaks:
+## It is also possible to remove filled-in peaks:
 res <- dropFilledChromPeaks(res)
 
-## Perform the peak filling with modified settings: allow expansion of the
-## mz range by a specified ppm and expanding the mz range by mz width/2
-prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
-res <- fillChromPeaks(res, param = prm)
-
-## Did we get a signal for all missing peaks?
 sum(is.na(featureValues(res)))
-
-## Still the same missing peaks.
 }
 \seealso{
-\code{\link{groupChromPeaks}} for methods to perform the
-    correspondence.
-    \code{\link{dropFilledChromPeaks}} for the method to remove filled in peaks.
+\code{\link[=groupChromPeaks]{groupChromPeaks()}} for methods to perform the correspondence.
+
+\link{featureArea} for the function to define the m/z-retention time
+region for each feature.
 }
 \author{
 Johannes Rainer

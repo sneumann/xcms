@@ -7,7 +7,6 @@
 \alias{ObiwarpParam-class}
 \alias{ObiwarpParam}
 \alias{adjustRtime,OnDiskMSnExp,ObiwarpParam-method}
-\alias{show,ObiwarpParam-method}
 \alias{binSize,ObiwarpParam-method}
 \alias{binSize<-,ObiwarpParam-method}
 \alias{centerSample,ObiwarpParam-method}
@@ -53,16 +52,22 @@
 \alias{adjustRtime,XCMSnExp,ObiwarpParam-method}
 \title{Align retention times across samples using Obiwarp}
 \usage{
-ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
-  distFun = "cor_opt", gapInit = numeric(), gapExtend = numeric(),
-  factorDiag = 2, factorGap = 1, localAlignment = FALSE,
-  initPenalty = 0, subset = integer(), subsetAdjust = c("average",
-  "previous"))
+ObiwarpParam(
+  binSize = 1,
+  centerSample = integer(),
+  response = 1L,
+  distFun = "cor_opt",
+  gapInit = numeric(),
+  gapExtend = numeric(),
+  factorDiag = 2,
+  factorGap = 1,
+  localAlignment = FALSE,
+  initPenalty = 0,
+  subset = integer(),
+  subsetAdjust = c("average", "previous")
+)
 
-\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param,
-  msLevel = 1L)
-
-\S4method{show}{ObiwarpParam}(object)
+\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 
 \S4method{binSize}{ObiwarpParam}(object)
 
@@ -112,8 +117,7 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 
 \S4method{subsetAdjust}{ObiwarpParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param,
-  msLevel = 1L)
+\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
@@ -285,9 +289,8 @@ data using the \emph{obiwarp} method.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust}}{See
+corresponding parameter above.}
 }}
 
 \note{
@@ -306,16 +309,17 @@ all peak grouping (correspondence) results and any previous retention
 time adjustment results to be dropped.
 }
 \examples{
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Perform retention time correction on the OnDiskMSnExp:
-res <- adjustRtime(raw_data, param = ObiwarpParam())
+## Disable parallel processing for this example
+register(SerialParam())
+
+## Perform retention time correction:
+res <- adjustRtime(faahko_sub, param = ObiwarpParam())
 
 ## As a result we get a numeric vector with the adjusted retention times for
 ## all spectra.
@@ -323,25 +327,8 @@ head(res)
 
 ## We can split this by file to get the adjusted retention times for each
 ## file
-resL <- split(res, fromFile(raw_data))
+resL <- split(res, fromFile(res))
 
-##############################
-## Perform retention time correction on an XCMSnExp:
-##
-## Perform first the chromatographic peak detection using the matchedFilter
-## method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
-
-## Performing the retention time adjustment using obiwarp.
-res_2 <- adjustRtime(res, param = ObiwarpParam())
-
-head(rtime(res_2))
-head(rtime(raw_data))
-
-## Also the retention times of the detected peaks were adjusted.
-tail(chromPeaks(res))
-tail(chromPeaks(res_2))
 }
 \references{
 John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
@@ -359,8 +346,9 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 \code{\link{XCMSnExp}} for the object containing the results of
     the alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime-peakGroups}},
-  \code{\link{adjustRtime}}
+Other retention time correction methods: 
+\code{\link{adjustRtime-peakGroups}},
+\code{\link{adjustRtime}()}
 }
 \author{
 Colin Smith, Johannes Rainer

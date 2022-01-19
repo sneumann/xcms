@@ -1,4 +1,6 @@
 test_that("getPeakGroupsRtMatrix works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     param <- PeakGroupsParam()
     nSamples <- length(fileNames(xod_xg))
     pkGrp <- .getPeakGroupsRtMatrix(
@@ -16,110 +18,64 @@ test_that("getPeakGroupsRtMatrix works", {
 })
 
 test_that("do_adjustRtime_peakGroups works", {
-    xs <- faahko
-    xsg <- group(xs)
-    misSamp <- 1
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                           peakIndex = xsg@groupidx,
-                                           rtime = xsg@rt$raw,
-                                           minFraction = minFr,
-                                           subset = "4"))
-    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                           peakIndex = xsg@groupidx,
-                                           rtime = xsg@rt$raw,
-                                           minFraction = minFr,
-                                           subset = 4L))
-    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                           peakIndex = xsg@groupidx,
-                                           rtime = xsg@rt$raw,
-                                           minFraction = minFr,
-                                           subset = c(1, 2, 5, 14)))
+    skip_on_os(os = "windows", arch = "i386")
 
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr)
-    res_orig <- xcms:::do_adjustRtime_peakGroups_orig(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr)
+    xsa <- xod_xgr
+    xsg <- xod_xg
+    misSamp <- 1
+    minFr <- (length(fileNames(xsa)) - misSamp) / length(fileNames(xsa))
+    expect_error(do_adjustRtime_peakGroups(
+        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
+        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr, subset = "4"),
+        "expected to be an integer")
+    expect_error(do_adjustRtime_peakGroups(
+        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
+        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr,
+        subset = 4L), "out of range")
+    expect_error(do_adjustRtime_peakGroups(
+        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
+        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr,
+        subset = c(1, 2, 5, 14)), "out of range")
+
+    res <- do_adjustRtime_peakGroups(
+        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
+        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr)
+    res_orig <- do_adjustRtime_peakGroups_orig(
+                           peaks = chromPeaks(xsg),
+                           peakIndex = featureDefinitions(xsg)$peakidx,
+                           rtime = rtime(xsg, bySample = TRUE),
+                           minFraction = minFr)
     expect_equal(res, res_orig)
-    expect_equal(xsa@rt$corrected, res)
+    expect_true(sum(unlist(res) != rtime(xsg)) > 3000)
     ## Use only a subset.
-    res_sub <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                         peakIndex = xsg@groupidx,
-                                         rtime = xsg@rt$raw,
-                                         minFraction = minFr,
-                                         subset = c(1, 3, 5, 7, 9, 11))
-    ## Change settings.
-    misSamp <- 3
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr)
-    expect_equal(xsa@rt$corrected, res)
-    misSamp <- 2
-    xtr <- 2
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr)
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr, extraPeaks = xtr)
-    expect_equal(xsa@rt$corrected, res)
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
-                  smooth = "linear")
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr, extraPeaks = xtr,
-                                     smooth = "linear")
-    expect_equal(xsa@rt$corrected, res)
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
-                  family = "symmetric")
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr, extraPeaks = xtr,
-                                     family = "symmetric")
-    expect_equal(xsa@rt$corrected, res)
-    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
-                  span = 1)
-    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr, extraPeaks = xtr,
-                                     span = 1)
-    expect_equal(xsa@rt$corrected, res)
+    res_sub <- do_adjustRtime_peakGroups(
+        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
+        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr,
+        subset = c(1, 3))
 })
 
 test_that("applyRtAdjustment works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xs <- faahko
     ## group em.
-    xsg <- group(xs)
-    ## align em.
-    xsa <- retcor(xsg, method = "peakgroups")
-    pksAdj <- .applyRtAdjToChromPeaks(peaks(xsg),
-                                      rtraw = xsa@rt$raw,
-                                      rtadj = xsa@rt$corrected)
-    expect_equal(pksAdj, peaks(xsa))
+    ## xsg <- group(xs)
+    ## ## align em.
+    ## xsa <- retcor(xsg, method = "peakgroups")
+    pksAdj <- .applyRtAdjToChromPeaks(chromPeaks(xod_xg),
+                                      rtraw = rtime(xod_xg, bySample = TRUE),
+                                      rtadj = rtime(xod_xgr, bySample = TRUE))
+    expect_equal(pksAdj, chromPeaks(xod_xgr))
     ## Reset em.
     pksRaw <- .applyRtAdjToChromPeaks(pksAdj,
-                                      rtraw = xsa@rt$corrected,
-                                      rtadj = xsa@rt$raw)
-    expect_equal(pksRaw, peaks(xsg))
+                                      rtraw = rtime(xod_xgr, bySample = TRUE),
+                                      rtadj = rtime(xod_xg, bySample = TRUE))
+    expect_equal(pksRaw, chromPeaks(xod_xg))
 
     rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)[[1]]
     rt_adj <- rtime(xod_xgr, bySample = TRUE)[[1]]
 
-    rt_new <- xcms:::.applyRtAdjustment(rt_raw, rt_raw, rt_adj)
+    rt_new <- .applyRtAdjustment(rt_raw, rt_raw, rt_adj)
     expect_equal(unname(rt_new), unname(rt_adj))
 
     rt_new2 <- .applyRtAdjustment(rt_raw, rt_raw[200:1000], rt_adj[200:1000])
@@ -140,6 +96,8 @@ test_that("applyRtAdjustment works", {
 })
 
 test_that(".get_closest_index works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7)), 3)
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "previous"), 1)
     expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "closest"), 1)
@@ -173,6 +131,8 @@ test_that(".get_closest_index works", {
 })
 
 test_that(".match_trim_vectors and index works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- .match_trim_vectors(list(1:10, 3:10))
     expect_equal(res, list(3:10, 3:10))
     res <- .match_trim_vectors(list(3:10, 4:15))
@@ -186,6 +146,8 @@ test_that(".match_trim_vectors and index works", {
 })
 
 test_that("adjustRtimeSubset works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)
     rt_adj <- rtime(xod_xgr, adjusted = TRUE, bySample = TRUE)
 

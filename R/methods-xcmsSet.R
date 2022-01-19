@@ -5,16 +5,19 @@
 ## show
 setMethod("show", "xcmsSet", function(object) {
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
-    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
-                              collapse = "-"),
-        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
-                            collapse = "-"),
-        " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
-                             collapse = "-"), "m/z\n")
-    cat("Peaks:", nrow(object@peaks), "(about",
-        round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
-    cat("Peak Groups:", nrow(object@groups), "\n")
+    if (nrow(object@peaks)) {
+        cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
+                                  collapse = "-"),
+            " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
+                                collapse = "-"),
+            " minutes)\n", sep = "")
+        cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
+                                 collapse = "-"), "m/z\n")
+        cat("Peaks:", nrow(object@peaks), "(about",
+            round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
+        cat("Peak Groups:", nrow(object@groups), "\n")
+    } else
+        cat("Peaks: 0\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
 
     ## Processing info.
@@ -1188,7 +1191,9 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = 0,
     rtcor <- object@rt$corrected
 
     ## Remove groups that overlap with more "well-behaved" groups
-    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    sampclasscols <- seq(match("npeaks", colnames(groupmat))+1,
+                         length.out=length(levels(sampclass(object))))
+    numsamp <- rowSums(groupmat[ , sampclasscols, drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)
@@ -1557,7 +1562,9 @@ setMethod("diffreport", "xcmsSet", function(object,
 
     if (!is.numeric(w) || !is.numeric(h))
         stop("'h' and 'w' have to be numeric")
-    ## require(multtest) || stop("Couldn't load multtest")
+    if (!requireNamespace("multtest", quietly = TRUE))
+        stop("The use of 'diffreport' requires package 'multtest'. Please ",
+             "install with 'Biobase::install(\"multtest\")'")
 
     value <- match.arg(value)
     groupmat <- groups(object)
@@ -1610,7 +1617,7 @@ setMethod("diffreport", "xcmsSet", function(object,
     testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
 
     if (min(length(c1), length(c2)) >= 2) {
-        tstat <- mt.teststat(testval, testclab, ...)
+        tstat <- multtest::mt.teststat(testval, testclab, ...)
         pvalue <- pval(testval, testclab, tstat)
     } else {
         message("Too few samples per class, skipping t-test.")
@@ -1966,28 +1973,38 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
     x <- updateObject(x)
     ## don't allow i, but allow j to be: numeric or logical. If
     ## it's a character vector <- has to fit to sampnames(x)
-    if(!missing(i))
+    if (!missing(i))
         stop("Subsetting to rows is not supported!")
-    if(missing(j))
+    if (missing(j)) {
         j <- 1:length(sampnames(x))
-    if(class(j)=="character"){
-        ## check if these match to the sampnames.
-        matches <- match(j, sampnames(x))
-        if(length(matches)!=length(j))
-            stop("All provided sample names have to match the",
-                 " sample names in the xcmsSet!")
-        j <- matches
+    } else {
+        if (is.character(j)) {
+            ## check if these match to the sampnames.
+            matches <- match(j, sampnames(x))
+            if(length(matches)!=length(j))
+                stop("All provided sample names have to match the",
+                     " sample names in the xcmsSet!")
+            j <- matches
+        }
+        if (is.logical(j)) {
+            if (length(j) != length(sampnames(x)))
+                stop("If j is a logical its length has to match",
+                     " the number of samples in the xcmsSet!")
+            j <- which(j)
+        }
+        if (!length(j)) {
+            tmp <- new("xcmsSet")
+            cn <- c("rtmin", "rtmax", "rt", "mzmin", "mzmax", "mz",
+                    "into", "maxo", "sample")
+            pks <- matrix(ncol = length(cn), nrow = 0, dimnames = list(c(), cn))
+            tmp@peaks <- pks
+            return(tmp)
+        }
     }
-    if(class(j)=="logical"){
-        if(length(j) != length(sampnames(x)))
-            stop("If j is a logical its length has to match",
-                 " the number of samples in the xcmsSet!")
-        j <- which(j)
-    }
-    if(class(j)=="numeric")
+    if (class(j) == "numeric")
         j <- as.integer(j)
-    if(class(j)!="integer")
-        stop("j has to be a numeric vector specifying the",
+    if(!is.integer(j))
+        stop("j has to be an integer vector specifying the",
              " index of the samples for which the data has to be extracted")
     ## check if j is within the range of 1:length(sampnames)
     if(any(!j %in% (1:length(sampnames(x)))))

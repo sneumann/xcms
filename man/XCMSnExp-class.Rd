@@ -8,6 +8,7 @@
 \alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
 \alias{hasFilledChromPeaks}
+\alias{featureArea}
 \alias{profMat,OnDiskMSnExp-method}
 \alias{show,XCMSnExp-method}
 \alias{show,MsFeatureData-method}
@@ -62,6 +63,7 @@
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
+\alias{faahko_sub}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}
@@ -75,17 +77,34 @@ processHistoryTypes()
 
 hasFilledChromPeaks(object)
 
-\S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
-  ...)
+featureArea(
+  object,
+  mzmin = median,
+  mzmax = median,
+  rtmin = median,
+  rtmax = median,
+  msLevel = unique(msLevel(object)),
+  features = character()
+)
+
+\S4method{profMat}{OnDiskMSnExp}(
+  object,
+  method = "bin",
+  step = 0.1,
+  baselevel = NULL,
+  basespace = NULL,
+  mzrange. = NULL,
+  fileIndex,
+  ...
+)
 
 \S4method{show}{XCMSnExp}(object)
 
 \S4method{hasAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{hasFeatures}{XCMSnExp}(object)
+\S4method{hasFeatures}{XCMSnExp}(object, msLevel = integer())
 
-\S4method{hasChromPeaks}{XCMSnExp}(object)
+\S4method{hasChromPeaks}{XCMSnExp}(object, msLevel = integer())
 
 \S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
@@ -93,48 +112,74 @@ hasFilledChromPeaks(object)
 
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
-\S4method{featureDefinitions}{XCMSnExp}(object, mz = numeric(),
-  rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+\S4method{featureDefinitions}{XCMSnExp}(
+  object,
+  mz = numeric(),
+  rt = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within"),
+  msLevel = integer()
+)
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
-\S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE,
-  rt = numeric(), mz = numeric(), ppm = 0, msLevel = integer(),
-  type = c("any", "within", "apex_within"), isFilledColumn = FALSE)
+\S4method{chromPeaks}{XCMSnExp}(
+  object,
+  bySample = FALSE,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  msLevel = integer(),
+  type = c("any", "within", "apex_within"),
+  isFilledColumn = FALSE
+)
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
-\S4method{rtime}{XCMSnExp}(object, bySample = FALSE,
-  adjusted = hasAdjustedRtime(object))
+\S4method{rtime}{XCMSnExp}(object, bySample = FALSE, adjusted = hasAdjustedRtime(object))
 
 \S4method{mz}{XCMSnExp}(object, bySample = FALSE, BPPARAM = bpparam())
 
-\S4method{intensity}{XCMSnExp}(object, bySample = FALSE,
-  BPPARAM = bpparam())
+\S4method{intensity}{XCMSnExp}(object, bySample = FALSE, BPPARAM = bpparam())
 
-\S4method{spectra}{XCMSnExp}(object, bySample = FALSE,
-  adjusted = hasAdjustedRtime(object), BPPARAM = bpparam())
+\S4method{spectra}{XCMSnExp}(
+  object,
+  bySample = FALSE,
+  adjusted = hasAdjustedRtime(object),
+  BPPARAM = bpparam()
+)
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type, msLevel)
 
 \S4method{dropChromPeaks}{XCMSnExp}(object, keepAdjustedRtime = FALSE)
 
-\S4method{dropFeatureDefinitions}{XCMSnExp}(object,
-  keepAdjustedRtime = FALSE, dropLastN = -1)
+\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjustedRtime = FALSE, dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
-  ...)
+\S4method{profMat}{XCMSnExp}(
+  object,
+  method = "bin",
+  step = 0.1,
+  baselevel = NULL,
+  basespace = NULL,
+  mzrange. = NULL,
+  fileIndex,
+  ...
+)
 
-\S4method{findChromPeaks}{XCMSnExp,Param}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{XCMSnExp,Param}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L,
+  add = FALSE
+)
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
 
-\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL,
-  BPPARAM = bpparam(), ...)
+\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL, BPPARAM = bpparam(), ...)
 
 \method{c}{XCMSnExp}(...)
 
@@ -142,14 +187,33 @@ hasFilledChromPeaks(object)
 
 \S4method{chromPeakData}{XCMSnExp}(object) <- value
 
-\S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"),
-  peakCol = "#ff000060", ...)
+\S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"), peakCol = "#ff000060", ...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
 \code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and
 \code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
 object, for all other methods a \code{XCMSnExp} object.}
+
+\item{mzmin}{for \code{featureArea}: \code{function} to be applied to values
+in the \code{"mzmin"} column of all chromatographic peaks of a feature
+to define the lower m/z value of the feature area.
+Defaults to \code{median}.}
+
+\item{mzmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
+but for the \code{"mzmax"} column.}
+
+\item{rtmin}{for \code{featureArea}: \code{function} same as \code{mzmin}
+but for the \code{"rtmin"} column.}
+
+\item{rtmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
+but for the \code{"rtmax"} column.}
+
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
+
+\item{features}{for \code{featureArea}: IDs of features for which the area
+should be extracted.}
 
 \item{method}{The profile matrix generation method. Allowed are \code{"bin"},
 \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
@@ -219,9 +283,6 @@ chromatographic peaks partially overlapping the range defined by
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
 
-\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
-chromatographic peaks should be returned.}
-
 \item{isFilledColumn}{\code{logical(1)} whether a column \code{"is_filled"}
 is included in the returned \code{"matrix"} providing the information
 if a peak was filled in. Alternatively, this information would be
@@ -253,6 +314,11 @@ chromatographic peak detection algorithm.}
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{add}{For \code{findChromPeaks}: if newly identified chromatographic
+peaks should be added to the peak matrix with the already identified
+chromatographic peaks. By default (\code{add = FALSE}) previous
+peak detection results will be removed.}
 
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
@@ -287,6 +353,9 @@ Column \code{"peakidx"} contains a \code{list} with indices of
 chromatographic peaks (rows) in the matrix returned by the
 \code{chromPeaks} method that belong to that feature group. The method
 returns \code{NULL} if no feature definitions are present.
+\code{featureDefinitions} supports also parameters \code{mz}, \code{rt},
+\code{ppm} and \code{type} to return only features within certain ranges (see
+description of \code{chromPeaks} for details).
 
 For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
 being a chromatographic peak, rownames representing unique IDs of the peaks)
@@ -362,6 +431,17 @@ correspondence results):
 
 \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
 
+\code{featureArea} extracts the m/z - retention time region for each feature.
+This area is defined by the m/z - retention time regions of all
+chromatographic peaks associated with a feature. Parameters \code{mzmin},
+\code{mzmax}, \code{rtmin} and \code{rtmax} allow to define functions how
+the corresponding value is calculated from the individual values (such as
+the \code{"rtmin"}) of all chromatographic peaks of that feature. By default
+the median \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}
+is reported. Parameter \code{features} allows to provide feature IDs for
+which the area should be extracted. By default it is extracted for all
+features.
+
 \code{profMat}: creates a \emph{profile matrix}, which
     is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
     and m (columns) the retention time of the corresponding scans. Each cell
@@ -413,10 +493,14 @@ arguments \code{rt}, \code{mz}, \code{ppm} and \code{type} allow to extract
 only chromatographic peaks overlapping the defined retention time and/or
 m/z ranges. Argument \code{type} allows to define how \emph{overlapping} is
 determined: for \code{type == "any"} (the default), all peaks that are even
-partially overlapping the region are returned, for \code{type == "within"}
-the full peak has to be within the region and for
-\code{type == "apex_within"} the peak's apex position (highest signal of the
-peak) has to be within the region.
+partially overlapping the region are returned (i.e. for which either
+\code{"mzmin"} or \code{"mzmax"} of the \code{chromPeaks} or
+\code{featureDefinitions} matrix are within the provided m/z range), for
+\code{type == "within"} the full peak has to be within the region (i.e.
+both \code{"mzmin"} and \code{"mzmax"} have to be within the m/z range) and
+for \code{type == "apex_within"} the peak's apex position (highest signal
+of the peak) has to be within the region (i.e. the peak's or features m/z
+has to be within the m/z range).
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the \code{chromPeaks<-} method directly
 as detected chromatographic peaks are added to the object by the
@@ -495,9 +579,12 @@ adjustment. All related process history steps are removed too.
 
 \code{findChromPeaks} performs chromatographic peak detection
 on the provided \code{XCMSnExp} objects. For more details see the method
-for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-method for \code{XCMSnExp} objects removes previously identified
-chromatographic peaks and aligned features. Previous alignment (retention
+for \code{\linkS4class{XCMSnExp}}.
+Note that by default (with parameter \code{add = FALSE}) previous peak
+detection results are removed. Use \code{add = TRUE} to perform a second
+round of peak detection and add the newly identified peaks to the previous
+peak detection results. Correspondence results (features) are always removed
+prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
 aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
@@ -625,44 +712,44 @@ help page).
 \item \code{\link{featureSummary}} perform a simple summary of the defined
 features (see respective help page).
 
-\item \code{link{overlappingFeatures}} identify features that are
+\item \code{\link{overlappingFeatures}} identify features that are
 overlapping or close in the m/z - rt space (see respective help page).
 
+\item \code{\link{quantify}} extract feature intensities and put them, along
+with feature definitions and phenodata information, into a
+\code{\link{SummarizedExperiment}}. See help page for details.
 }
 }
 
 \examples{
 
-## Loading the data from 2 files of the faahKO package.
-library(faahKO)
-od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-                   system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-                 mode = "onDisk")
-## Now we perform a chromatographic peak detection on this data set using the
-## matched filter method. We are tuning the settings such that it performs
-## faster.
-mfp <- MatchedFilterParam(binSize = 6)
-xod <- findChromPeaks(od, param = mfp)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Disable parallel processing for this example
+register(SerialParam())
 
 ## The results from the peak detection are now stored in the XCMSnExp
 ## object
-xod
+faahko_sub
 
 ## The detected peaks can be accessed with the chromPeaks method.
-head(chromPeaks(xod))
+head(chromPeaks(faahko_sub))
 
 ## The settings of the chromatographic peak detection can be accessed with
 ## the processHistory method
-processHistory(xod)
+processHistory(faahko_sub)
 
 ## Also the parameter class for the peak detection can be accessed
-processParam(processHistory(xod)[[1]])
+processParam(processHistory(faahko_sub)[[1]])
 
 ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
 ## defined in Bioconductor's MSnbase package. To access the (raw) retention
 ## time for each spectrum we can use the rtime method. Setting bySample = TRUE
 ## would cause the retention times to be grouped by sample
-head(rtime(xod))
+head(rtime(faahko_sub))
 
 ## Similarly it is possible to extract the mz values or the intensity values
 ## using the mz and intensity method, respectively, also with the option to
@@ -671,15 +758,15 @@ head(rtime(xod))
 ## spectra method which returns Spectrum objects containing all raw data.
 ## Note that all these methods read the information from the original input
 ## files and subsequently apply eventual data processing steps to them.
-mzs <- mz(xod, bySample = TRUE)
+mzs <- mz(faahko_sub, bySample = TRUE)
 length(mzs)
 lengths(mzs)
 
 ## The full data could also be read using the spectra data, which returns
 ## a list of Spectrum object containing the mz, intensity and rt values.
-## spctr <- spectra(xod)
+## spctr <- spectra(faahko_sub)
 ## To get all spectra of the first file we can split them by file
-## head(split(spctr, fromFile(xod))[[1]])
+## head(split(spctr, fromFile(faahko_sub))[[1]])
 
 ############
 ## Filtering
@@ -689,19 +776,17 @@ lengths(mzs)
 ## retention time correction and peak grouping results) will be dropped.
 ## Below we filter the XCMSnExp object by file to extract the results for
 ## only the second file.
-xod_2 <- filterFile(xod, file = 2)
+xod_2 <- filterFile(faahko_sub, file = 2)
 xod_2
 
 ## Now the objects contains only the idenfified peaks for the second file
 head(chromPeaks(xod_2))
 
-head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
-
 ##########
 ## Coercing to an xcmsSet object
 ##
 ## We can also coerce the XCMSnExp object into an xcmsSet object:
-xs <- as(xod, "xcmsSet")
+xs <- as(faahko_sub, "xcmsSet")
 head(peaks(xs))
 }
 \seealso{

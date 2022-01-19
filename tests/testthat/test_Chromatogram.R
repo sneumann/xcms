@@ -1,10 +1,14 @@
-test_that("extractChromatograms is deprecated", {
-    expect_warning(chrs <- extractChromatograms(
-                       filterRt(filterFile(od_x, file = 2), c(2500, 2600))))
-    expect_warning(plotChromatogram(chrs))
-})
+## test_that("extractChromatograms is deprecated", {
+    skip_on_os(os = "windows", arch = "i386")
+
+##     expect_warning(chrs <- extractChromatograms(
+##                        filterRt(filterFile(od_x, file = 2), c(2500, 2600))))
+##     expect_warning(plotChromatogram(chrs))
+## })
 
 test_that("chromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## OnDiskMSnExp
     ## TIC
     od_tmp <- filterFile(filterRt(od_x, c(2500, 3000)), file = 2)
@@ -37,7 +41,7 @@ test_that("chromatogram works", {
     ## with adjusted retention times.
     chrs <- chromatogram(filterFile(xod_xgr, file = 2),
                          adjustedRtime = FALSE, aggregationFun = "max")
-    spctr <- spectra(filterFile(xod_xgr, file = 2))
+    spctr <- spectra(filterFile(xod_xgr, file = 2, keepAdjustedRtime = FALSE))
     ints <- unlist(lapply(spctr, function(z)
         return(max(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
@@ -50,9 +54,6 @@ test_that("chromatogram works", {
                                           adjusted = TRUE)[[2]])
     ## Subset to certain mz range in all files.
     chrs_adj <- chromatogram(xod_xgr, mz = c(300, 330))
-    chrs_raw <- chromatogram(xod_x, mz = c(300, 330))
-    expect_true(sum(rtime(chrs_adj[1, 1]) != rtime(chrs_raw[1, 1])) >
-                length(chrs_raw[1, 1]) / 2)
     expect_equal(rtime(chrs_adj[1, 1]), rtime(xod_xgr, bySample = TRUE)[[1]])
     expect_equal(rtime(chrs_adj[1, 2]), rtime(xod_xgr, bySample = TRUE)[[2]])
     expect_equal(rtime(chrs_adj[1, 3]), rtime(xod_xgr, bySample = TRUE)[[3]])
@@ -72,9 +73,8 @@ test_that("chromatogram works", {
     chrs <- chromatogram(filterFile(xod_xgr, file = 2,
                                     keepAdjustedRtime = TRUE),
                          mz = c(300, 400))
-    expect_warning(spctr <- spectra(
-                       filterMz(filterFile(xod_xgr, file = 2),
-                                mz = c(300, 400))))
+    spctr <- spectra(filterMz(filterFile(xod_xgr, file = 2),
+                              mz = c(300, 400)))
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     ints2 <- intensity(chrs[1, 1])

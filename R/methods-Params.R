@@ -1,71 +1,6 @@
 ## Methods for the Param class and sub-classes
 #' @include functions-Params.R
 
-############################################################
-## Param
-###
-setMethod("as.list", signature(x = "Param"), function(x, ...) {
-    return(.param2list(x))
-})
-## The 'setAs' method.
-setAs("Param" ,"list", function(from){
-    return(.param2list(from))
-})
-setMethod("initialize", "Param", function(.Object, ...) {
-    classVersion(.Object)["Param"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-############################################################
-## GenericParam
-###
-setMethod("initialize", "GenericParam", function(.Object, ...) {
-    classVersion(.Object)["GenericParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-#' @param object \code{GenericParam} object.
-#'
-#' @rdname GenericParam
-setMethod("show", "GenericParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat(" fun:", object@fun, "\n")
-    cat(" arguments:\n")
-    if (length(object@args) > 0) {
-        for (i in 1:length(object@args)) {
-            if (!is.null(names(object@args)))
-                cat(" ", names(object@args)[i], "= ")
-            cat(object@args[[i]], "\n")
-        }
-    }
-})
-
-############################################################
-## CentWaveParam
-###
-setMethod("initialize", "CentWaveParam", function(.Object, ...) {
-    classVersion(.Object)["CentWaveParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname findChromPeaks-centWave
-setMethod("show", "CentWaveParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" ppm:", ppm(object), "\n")
-    cat(" peakwidth:", paste(peakwidth(object), collapse = ", "), "\n")
-    cat(" snthresh:", snthresh(object), "\n")
-    cat(" prefilter:", paste(prefilter(object), collapse = ", "), "\n")
-    cat(" mzCenterFun:", mzCenterFun(object), "\n")
-    cat(" integrate:", integrate(object), "\n")
-    cat(" mzdiff:", mzdiff(object), "\n")
-    cat(" fitgauss:", fitgauss(object), "\n")
-    cat(" noise:", noise(object), "\n")
-    cat(" verboseColumns:", verboseColumns(object), "\n")
-    cat(" roiList length:", length(roiList(object)), "\n")
-    cat(" firstBaselineCheck", firstBaselineCheck(object), "\n")
-    cat(" roiScales length:", length(roiScales(object)), "\n")
-})
-
 #' @aliases ppm
 #'
 #' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
@@ -291,26 +226,6 @@ setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
 
 ############################################################
 ## MatchedFilterParam
-setMethod("initialize", "MatchedFilterParam", function(.Object, ...) {
-    classVersion(.Object)["MatchedFilterParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-#' @rdname findChromPeaks-matchedFilter
-setMethod("show", "MatchedFilterParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" binSize:", binSize(object), "\n")
-    cat(" impute:", impute(object), "\n")
-    cat(" baseValue:", baseValue(object), "\n")
-    cat(" distance:", distance(object), "\n")
-    cat(" fwhm:", fwhm(object), "\n")
-    cat(" sigma:", sigma(object), "\n")
-    cat(" max:", max(object), "\n")
-    cat(" snthresh:", snthresh(object), "\n")
-    cat(" steps:", steps(object), "\n")
-    cat(" mzdiff:", mzdiff(object), "\n")
-    cat(" index:", index(object), "\n")
-})
 
 #' @aliases binSize
 #'
@@ -494,31 +409,6 @@ setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
 ############################################################
 ## MassifquantParam
 ###
-setMethod("initialize", "MassifquantParam", function(.Object, ...) {
-    classVersion(.Object)["MassifquantParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname findChromPeaks-massifquant
-setMethod("show", "MassifquantParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" ppm:", ppm(object), "\n")
-    cat(" peakwidth:", paste(peakwidth(object), collapse = ", "), "\n")
-    cat(" snthresh:", snthresh(object), "\n")
-    cat(" prefilter:", paste(prefilter(object), collapse = ", "), "\n")
-    cat(" mzCenterFun:", mzCenterFun(object), "\n")
-    cat(" integrate:", integrate(object), "\n")
-    cat(" mzdiff:", mzdiff(object), "\n")
-    cat(" fitgauss:", fitgauss(object), "\n")
-    cat(" noise:", noise(object), "\n")
-    cat(" verboseColumns:", verboseColumns(object), "\n")
-    cat(" criticalValue:", criticalValue(object), "\n")
-    cat(" consecMissedLimit:", consecMissedLimit(object), "\n")
-    cat(" unions:", unions(object), "\n")
-    cat(" checkBack:", checkBack(object), "\n")
-    cat(" withWave:", withWave(object), "\n")
-})
 
 #' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 #'     slot of the object.
@@ -743,33 +633,6 @@ setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
 ############################################################
 ## MSWParam
 ###
-setMethod("initialize", "MSWParam", function(.Object, ...) {
-    classVersion(.Object)["MSWParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname findPeaks-MSW
-setMethod("show", "MSWParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" snthresh:", snthresh(object), "\n")
-    cat(" verboseColumns:", verboseColumns(object), "\n")
-    cat(" scales:", paste(scales(object), collapse = ","), "\n")
-    cat(" nearbyPeak:", nearbyPeak(object), "\n")
-    cat(" peakScaleRange:", peakScaleRange(object), "\n")
-    cat(" ampTh:", ampTh(object), "\n")
-    cat(" minNoiseLevel:", minNoiseLevel(object), "\n")
-    cat(" ridgeLength:", ridgeLength(object), "\n")
-    cat(" peakThr:", peakThr(object), "\n")
-    cat(" tuneIn:", tuneIn(object), "\n")
-    parms <- addParams(object)
-    if (length(parms) > 0) {
-        cat(" additional parameters:\n")
-        for (i in 1:length(parms)) {
-            cat("  ", names(parms)[i], ": ", parms[[i]], "\n", sep = "")
-        }
-    }
-})
 
 #' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 #'     \code{snthresh} slot of the object.
@@ -954,47 +817,19 @@ setAs("MSWParam" ,"list", function(from){
     ## Rename ampTh to amp.Th
     names(L) <- sub(names(L), pattern = "ampTh", replacement = "amp.Th",
                     fixed = TRUE)
-    return(L)
+    L
 })
 setMethod("as.list", signature(x = "MSWParam"), function(x, ...) {
     L <- .param2list(x)
     ## Rename ampTh to amp.Th
     names(L) <- sub(names(L), pattern = "ampTh", replacement = "amp.Th",
                     fixed = TRUE)
-    return(L)
+    L
 })
 
 ############################################################
 ## CentWavePredIsoParam
 ###
-setMethod("initialize", "CentWavePredIsoParam", function(.Object, ...) {
-    classVersion(.Object)["CentWavePredIsoParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
-setMethod("show", "CentWavePredIsoParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" ppm:", ppm(object), "\n")
-    cat(" peakwidth:", paste(peakwidth(object), collapse = ", "), "\n")
-    cat(" snthresh:", snthresh(object), "\n")
-    cat(" prefilter:", paste(prefilter(object), collapse = ", "), "\n")
-    cat(" mzCenterFun:", mzCenterFun(object), "\n")
-    cat(" integrate:", integrate(object), "\n")
-    cat(" mzdiff:", mzdiff(object), "\n")
-    cat(" fitgauss:", fitgauss(object), "\n")
-    cat(" noise:", noise(object), "\n")
-    cat(" verboseColumns:", verboseColumns(object), "\n")
-    cat(" roiList length:", length(roiList(object)), "\n")
-    cat(" firstBaselineCheck", firstBaselineCheck(object), "\n")
-    cat(" roiScales length:", length(roiScales(object)), "\n")
-    cat(" snthreshIsoROIs:", snthreshIsoROIs(object), "\n")
-    cat(" maxCharge:", maxCharge(object), "\n")
-    cat(" maxIso:", maxIso(object), "\n")
-    cat(" mzIntervalExtension:", mzIntervalExtension(object), "\n")
-    cat(" polarity:", polarity(object), "\n")
-})
 
 #' @aliases snthreshIsoROIs
 #'
@@ -1083,23 +918,6 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
 
 ############################################################
 ## PeakDensityParam
-setMethod("initialize", "PeakDensityParam", function(.Object, ...) {
-    classVersion(.Object)["PeakDensityParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname groupChromPeaks-density
-setMethod("show", "PeakDensityParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" sampleGroups:", class(object@sampleGroups), "of length",
-        length(object@sampleGroups), "\n")
-    cat(" bw:", object@bw, "\n")
-    cat(" minFraction:", minFraction(object), "\n")
-    cat(" minSamples:", minSamples(object), "\n")
-    cat(" binSize:", binSize(object), "\n")
-    cat(" maxFeatures:", maxFeatures(object), "\n")
-})
 
 #' @aliases sampleGroups
 #'
@@ -1223,22 +1041,6 @@ setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
 
 ############################################################
 ## MzClustParam
-setMethod("initialize", "MzClustParam", function(.Object, ...) {
-    classVersion(.Object)["MzClustParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname groupChromPeaks-mzClust
-setMethod("show", "MzClustParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" sampleGroups:", class(object@sampleGroups), "of length",
-        length(object@sampleGroups), "\n")
-    cat(" ppm:", object@ppm, "\n")
-    cat(" absMz:", object@absMz, "\n")
-    cat(" minFraction:", minFraction(object), "\n")
-    cat(" minSamples:", minSamples(object), "\n")
-})
 
 #' @description `sampleGroups`,`sampleGroups<-`: getter and setter
 #'     for the `sampleGroups` slot of the object.
@@ -1324,22 +1126,6 @@ setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
 
 ############################################################
 ## NearestPeaksParam
-setMethod("initialize", "NearestPeaksParam", function(.Object, ...) {
-    classVersion(.Object)["NearestPeaksParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname groupChromPeaks-nearest
-setMethod("show", "NearestPeaksParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" sampleGroups:", class(object@sampleGroups), "of length",
-        length(object@sampleGroups), "\n")
-    cat(" mzVsRtBalance:", object@mzVsRtBalance, "\n")
-    cat(" absMz:", object@absMz, "\n")
-    cat(" absRt:", object@absRt, "\n")
-    cat(" kNN:", object@kNN, "\n")
-})
 
 #' @description `sampleGroups`,`sampleGroups<-`: getter and setter
 #'     for the `sampleGroups` slot of the object.
@@ -1433,25 +1219,6 @@ setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
 
 ############################################################
 ## PeakGroupsParam
-setMethod("initialize", "PeakGroupsParam", function(.Object, ...) {
-    classVersion(.Object)["PeakGroupsParam"] <- "0.0.2"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname adjustRtime-peakGroups
-setMethod("show", "PeakGroupsParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" minFraction:", object@minFraction, "\n")
-    cat(" extraPeaks:", object@extraPeaks, "\n")
-    cat(" smooth:", object@smooth, "\n")
-    cat(" span:", object@span, "\n")
-    cat(" family:", object@family, "\n")
-    cat(" subset:", object@subset, "\n")
-    pgm <- peakGroupsMatrix(object)
-    if (nrow(pgm))
-        cat(" number of peak groups:", nrow(pgm), "\n")
-})
 
 #' @description \code{minFraction},\code{minFraction<-}: getter and setter
 #'     for the \code{minFraction} slot of the object.
@@ -1590,26 +1357,6 @@ setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
 
 ############################################################
 ## ObiwarpParam
-setMethod("initialize", "ObiwarpParam", function(.Object, ...) {
-    classVersion(.Object)["ObiwarpParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
-#' @rdname adjustRtime-obiwarp
-setMethod("show", "ObiwarpParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" binSize:", binSize(object), "\n")
-    cat(" centerSample:", centerSample(object), "\n")
-    cat(" response:", response(object), "\n")
-    cat(" distFun:", distFun(object), "\n")
-    cat(" gapInit:", gapInit(object), "\n")
-    cat(" gapExtend:", gapExtend(object), "\n")
-    cat(" factorDiag:", factorDiag(object), "\n")
-    cat(" factorGap:", factorGap(object), "\n")
-    cat(" localAlignment:", localAlignment(object), "\n")
-    cat(" initPenalty:", initPenalty(object), "\n")
-})
 
 #' @description \code{binSize},\code{binSize<-}: getter and setter
 #'     for the \code{binSize} slot of the object.
@@ -1825,18 +1572,6 @@ setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
 ############################################################
 ## FillChromPeaksParam
 ###
-setMethod("initialize", "FillChromPeaksParam", function(.Object, ...) {
-    classVersion(.Object)["FillChromPeaksParam"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-#' @rdname fillChromPeaks
-setMethod("show", "FillChromPeaksParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" expandMz:", object@expandMz, "\n")
-    cat(" expandRt:", object@expandRt, "\n")
-    cat(" ppm:", object@ppm, "\n")
-})
 
 #' @aliases expandMz
 #'
@@ -1885,19 +1620,4 @@ setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
         return(object)
-})
-
-setMethod("show", "CleanPeaksParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" maxPeakwidth:", object@maxPeakwidth, "\n")
-})
-
-setMethod("show", "MergeNeighboringPeaksParam", function(object) {
-    cat("Object of class: ", class(object), "\n")
-    cat("Parameters:\n")
-    cat(" expandRt:", object@expandRt, "\n")
-    cat(" expandMz:", object@expandMz, "\n")
-    cat(" ppm:", object@ppm, "\n")
-    cat(" minProp:", object@minProp, "\n")
 })

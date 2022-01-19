@@ -4,8 +4,13 @@
 \alias{imputeLinInterpol}
 \title{Impute values for empty elements in a vector using linear interpolation}
 \usage{
-imputeLinInterpol(x, baseValue, method = "lin", distance = 1L,
-  noInterpolAtEnds = FALSE)
+imputeLinInterpol(
+  x,
+  baseValue,
+  method = "lin",
+  distance = 1L,
+  noInterpolAtEnds = FALSE
+)
 }
 \arguments{
 \item{x}{A numeric vector with eventual missing (\code{NA}) values.}

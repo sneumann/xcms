@@ -8,7 +8,6 @@
 \alias{MassifquantParam-class}
 \alias{MassifquantParam}
 \alias{findChromPeaks,OnDiskMSnExp,MassifquantParam-method}
-\alias{show,MassifquantParam-method}
 \alias{ppm,MassifquantParam-method}
 \alias{ppm<-,MassifquantParam-method}
 \alias{peakwidth,MassifquantParam-method}
@@ -51,17 +50,32 @@
 \alias{withWave<-}
 \title{Chromatographic peak detection using the massifquant method}
 \usage{
-MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, criticalValue = 1.125,
-  consecMissedLimit = 2, unions = 1, checkBack = 0,
-  withWave = FALSE)
+MassifquantParam(
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1L,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  criticalValue = 1.125,
+  consecMissedLimit = 2,
+  unions = 1,
+  checkBack = 0,
+  withWave = FALSE
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
-
-\S4method{show}{MassifquantParam}(object)
+\S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L,
+  ...
+)
 
 \S4method{ppm}{MassifquantParam}(object)
 
@@ -237,6 +251,8 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
 
+\item{...}{ignored.}
+
 \item{value}{The value for the slot.}
 
 \item{f}{For \code{integrate}: a \code{MassifquantParam} object.}
@@ -347,9 +363,9 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave}}{See corresponding parameter above. Slots values should
+exclusively be accessed \emph{via} the corresponding getter and setter
+methods listed above.}
 }}
 
 \note{
@@ -365,8 +381,9 @@ These methods and classes are part of the updated and modernized
 
 ## Create a MassifquantParam object.
 mqp <- MassifquantParam()
-## Change snthresh parameter
+## Change snthresh prefilter parameters
 snthresh(mqp) <- 30
+prefilter(mqp) <- c(6, 10000)
 mqp
 
 ## Perform the peak detection using massifquant on the files from the
@@ -376,7 +393,7 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = mqp)
 head(chromPeaks(res))
@@ -393,11 +410,12 @@ The \code{\link{do_findChromPeaks_massifquant}} core API function
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-matchedFilter}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Christopher Conley, Johannes Rainer

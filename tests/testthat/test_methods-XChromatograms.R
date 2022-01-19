@@ -1,4 +1,6 @@
 test_that("chromPeaks, chromPeakData for XChromatograms work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pks1 <- matrix(c(3, 2, 4, 339.2, 343, NA), nrow = 1,
                    dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     chr1 <- XChromatogram(
@@ -53,6 +55,8 @@ test_that("chromPeaks, chromPeakData for XChromatograms work", {
 })
 
 test_that("filterRt, filterMz for XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr1 <- XChromatogram()
     chr2 <- XChromatogram(rtime = 1:4, intensity = c(45, 3, 34, 2))
     pks3 <- matrix(c(3, 2, 4, 145, 54, NA), nrow = 1,
@@ -134,6 +138,8 @@ test_that("filterRt, filterMz for XChromatograms works", {
 })
 
 test_that("plot,XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
 
@@ -141,7 +147,7 @@ test_that("plot,XChromatogram works", {
     xchr_rt <- chromatogram(xod_chr, mz = mzr)
 
     cols_smple <- c("#ff000060", "#00ff0060", "#0000ff60")
-    plot(as(xchr_rt[1, ], "Chromatograms"), col = cols_smple)
+    plot(as(xchr_rt[1, ], "MChromatograms"), col = cols_smple)
     ## Plotting the data is fine, just as above.
     ## Then we have to loop over each chromatogram...
     x <- xchr_rt[1, ]
@@ -155,7 +161,7 @@ test_that("plot,XChromatogram works", {
                             col = cols_smple[pks[, "sample"]])
     x <- xchr_rt[2, ]
     pks <- chromPeaks(x)
-    plot(as(x, "Chromatograms"), col = cols_smple, lwd = 2)
+    plot(as(x, "MChromatograms"), col = cols_smple, lwd = 2)
     .add_chromatogram_peaks(x, pks, type = "rectangle", bg = rep(NA, nrow(pks)),
                             col = cols_smple[pks[, "sample"]])
     .add_chromatogram_peaks(x, pks, type = "point", bg = rep(NA, nrow(pks)),
@@ -178,6 +184,8 @@ test_that("plot,XChromatogram works", {
 })
 
 test_that("processHistory,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
     res <- processHistory(xchrs)
@@ -192,6 +200,8 @@ test_that("processHistory,XChromatograms works", {
 })
 
 test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
     param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -216,7 +226,7 @@ test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
     expect_true(nrow(res@featureDefinitions) == 1)
 
     ## The same on artificial data.
-    chrs <- as(xchrs, "Chromatograms")
+    chrs <- as(xchrs, "MChromatograms")
     res <- findChromPeaks(chrs, param = CentWaveParam(snthresh = 1))
     expect_equal(nrow(chromPeaks(res)), 31)
     res <- groupChromPeaks(res, param = param)
@@ -224,6 +234,8 @@ test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
 })
 
 test_that("dropFeatureDefinitions,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
     param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -239,6 +251,8 @@ test_that("dropFeatureDefinitions,XChromatograms works", {
 })
 
 test_that("featureDefinitions,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
     param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -257,6 +271,8 @@ test_that("featureDefinitions,XChromatograms works", {
 })
 
 test_that("[,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- findChromPeaks(od_chrs, param = CentWaveParam())
     prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
     chrs <- groupChromPeaks(chrs, param = prm)
@@ -269,10 +285,16 @@ test_that("[,XChromatograms works", {
     expect_equal(chromPeaks(res), pks[pks[, "row"] == 2 &
                                       pks[, "column"] == 2,
                                       colnames(chromPeaks(res))])
+    res <- chrs[2, 2, drop = FALSE]
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(chromPeaks(res)[, 1:7],
+                 pks[pks[, "row"] == 2 & pks[, "column"] == 2, 1:7])
 
     res <- chrs[2, 2:3]
     expect_true(is(res, "XChromatograms"))
     expect_true(ncol(res) == 2)
+    res_2 <- chrs[2, 2:3, drop = TRUE]
+    expect_equal(res, res_2)
     expect_equal(res[1, 1], chrs[2, 2])
     expect_equal(res[1, 2], chrs[2, 3])
     pks_tmp <- pks[pks[, "row"] == 2 & pks[, "column"] %in% 2:3, ]
@@ -288,7 +310,7 @@ test_that("[,XChromatograms works", {
     expect_true(nrow(res) == 2)
     expect_equal(res[1, 1], chrs[2, 1])
     expect_equal(res[2, 1], chrs[1, 1])
-    expect_equal(res$sampleNames, factor("ko15.CDF"))
+    expect_equal(as.character(res$sampleNames), "ko15.CDF")
     expect_equal(fData(res), fData(chrs)[c(2, 1), ])
     pks_tmp <- pks[pks[, "row"] %in% c(1, 2) & pks[, "column"] == 1, ]
     pks_tmp <- pks_tmp[c(5, 6, 1, 2, 3, 4), ]
@@ -305,16 +327,53 @@ test_that("[,XChromatograms works", {
     expect_equal(res[2, 1], chrs[1, 1])
     expect_equal(res[1, 2], chrs[2, 3])
     expect_equal(res[2, 2], chrs[1, 3])
-    expect_equal(res$sampleNames, factor(c("ko15.CDF", "ko18.CDF")))
+    expect_equal(as.character(res$sampleNames), c("ko15.CDF", "ko18.CDF"))
     expect_equal(fData(res), fData(chrs)[c(2, 1), ])
     pks_tmp <- pks[c(8, 9, 12, 13, 1, 2, 3, 4, 6, 7), ]
     expect_equal(chromPeaks(res)[, 1:6], pks_tmp[, 1:6])
     res_fts <- featureDefinitions(res)
     expect_equal(rownames(res_fts), c("FT3", "FT4", "FT1", "FT2"))
     expect_equal(res_fts$peakidx, list(c(1, 3), c(2, 4), c(5, 9), c(8, 10)))
+
+    ## Data from an XCMSnExp.
+    mzm <- rbind(305.1 + c(-0.01, 0.01), 496.2 + c(-0.01, 0.01))
+    xchr <- chromatogram(xod_xgrg, mz = mzm)
+    pks <- chromPeaks(xchr)
+    fts <- featureDefinitions(xchr)
+    res <- xchr[2:1, ]
+    pks_sub <- chromPeaks(res)
+    fts_sub <- featureDefinitions(res)
+    expect_equal(pks_sub[pks_sub[, "row"] == 1, "into"],
+                 pks[pks[, "row"] == 2, "into"])
+    expect_equal(pks_sub[fts_sub$peakidx[[1]], "into"],
+                 pks[fts$peakidx[[4]], "into"])
+
+    mzm <- rbind(mzm, mzm[1, ])
+    xchr <- chromatogram(xod_xgrg, mz = mzm)
+    pks_2 <- chromPeaks(xchr)
+    expect_equal(pks_2[pks_2[, "row"] == 3, "into"],
+                 pks_2[pks_2[, "row"] == 1, "into"])
+    expect_error(xchr[c(2, 1, 1, 2), ], "rownames of object")
+
+    res <- xchr[3:2, ]
+    pks_2 <- chromPeaks(res)
+    fts_2 <- featureDefinitions(res)
+    expect_equal(pks_2, pks)
+    expect_equal(fts_2, fts)
+
+    res <- xchr[3:2, 2]
+    expect_equal(chromPeaks(res)[, "into"],
+                 pks[pks[, "row"] == 2 & pks[, "column"] == 2, "into"])
+    expect_equal(featureDefinitions(res)[, "rtmed"],
+                 fts[fts$row == 2, "rtmed"])
+
+    expect_equal(unname(featureValues(res)[, 1]),
+                 unname(chromPeaks(res)[, "into"]))
 })
 
 test_that("featureValues,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     expect_error(featureValues(chrs))
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
@@ -322,7 +381,7 @@ test_that("featureValues,XChromatograms works", {
     prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
     chrs <- groupChromPeaks(chrs, param = prm)
 
-    vls <- featureValues(chrs)
+    vls <- featureValues(chrs, value = "index")
     expect_equal(colnames(vls), colnames(chrs))
     expect_equal(rownames(vls), rownames(featureDefinitions(chrs)))
     exp_mat <- matrix(c(1, 5, 6,
@@ -358,6 +417,8 @@ test_that("featureValues,XChromatograms works", {
 })
 
 test_that("plotChromPeakDensity,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
     prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -379,6 +440,8 @@ test_that("plotChromPeakDensity,XChromatograms works", {
 })
 
 test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## With filled-in data
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
@@ -422,4 +485,95 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
     expect_true(length(res@.processHistory) < length(xchrf@.processHistory))
     expect_equal(chromPeaks(res), chromPeaks(xchr))
     expect_equal(featureDefinitions(res), featureDefinitions(xchr))
+})
+
+test_that("refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    mzr <- 305.1 + c(-0.01, 0.01)
+    chr <- chromatogram(filterFile(xod_x, 1), mz = mzr)
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam())
+    expect_equal(chromPeaks(res), chromPeaks(chr))
+    expect_true(length(processHistory(res)) > length(processHistory(chr)))
+
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 3))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(chr)))
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+
+    ## With multiple files:
+    chr <- chromatogram(xod_x, mz = mzr)
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 5,
+                                                            minProp = 0))
+    expect_true(sum(chromPeakData(res)$merged) == 2)
+    expect_true(validObject(res))
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 5))
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+    expect_true(validObject(res))
+
+    ## Doing peak detection from scratch
+    mzr <- 462.2 + c(-0.04, 0.04)
+    chr <- chromatogram(od_x, mz = mzr)
+    chr <- findChromPeaks(chr, CentWaveParam())
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(minProp = 0.5,
+                                                            expandRt = 20))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(chr)))
+    expect_true(sum(chromPeakData(res)$merged) == 3)
+})
+
+test_that("filterColumnsIntensityAbove,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    mzr <- rbind(305.1 + c(-0.01, 0.01),
+                 462.2 + c(-0.04, 0.04))
+    chrs <- chromatogram(xod_x, mz = mzr)
+
+    res <- filterColumnsIntensityAbove(chrs)
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res, chrs)
+
+    res <- filterColumnsIntensityAbove(chrs, threshold = 20000, value = "maxo")
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res[, 1], chrs[, 1])
+    expect_equal(res[, 2], chrs[, 3])
+
+    res <- filterColumnsIntensityAbove(chrs, threshold = 20000, value = "maxo",
+                                       which = "all")
+    expect_equal(res[, 1], chrs[, 1])
+    expect_true(ncol(res) == 1)
+})
+
+test_that("filterColumnsKeepTop,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    mzr <- rbind(305.1 + c(-0.01, 0.01),
+                 462.2 + c(-0.04, 0.04))
+    chrs <- chromatogram(xod_x, mz = mzr)
+
+    res <- filterColumnsKeepTop(chrs, n = 3)
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res, chrs)
+
+    res <- filterColumnsKeepTop(chrs, n = 1)
+    expect_equal(res, chrs[, 3])
+
+    res <- filterColumnsKeepTop(chrs, n = 1, sortBy = "maxo")
+    expect_equal(res, chrs[, 3])
+})
+
+test_that("filterChromPeaks,XChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+    res <- filterChromPeaks(chrs, n = 2L)
+    expect_equal(nrow(chromPeaks(res[1, 1])), 2L)
+    expect_equal(nrow(chromPeaks(res[1, 2])), 0L)
+    expect_equal(nrow(chromPeaks(res[1, 3])), 2L)
+
+    chrs <- chromatogram(xod_xg, mz = rbind(305.1 + c(-0.01, 0.01),
+                                            462.2 + c(-0.04, 0.04)))
+    res <- filterChromPeaks(chrs, n = 2L)
+    a <- featureValues(res)
+    b <- featureValues(chrs)
+    expect_equal(a, b[2:3, ])
 })

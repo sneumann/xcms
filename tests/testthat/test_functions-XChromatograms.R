@@ -1,4 +1,6 @@
 test_that("XChromatograms, as, validator, hasChromPeaks work", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chr1 <- Chromatogram(rtime = 1:8,
                          intensity = c(3, 24.2, 343, 32, 3.3, 5, 2, 9))
     chr2 <- Chromatogram(rtime = 1:4, intensity = c(45, 3, 34, 2))
@@ -6,7 +8,7 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
     chr4 <- Chromatogram(rtime = 1:3, intensity = c(3, 4, 1))
     chr5 <- Chromatogram(rtime = 1:6, intensity = c(3, 4, 6, 7, 2, 4))
     chr6 <- Chromatogram(rtime = 2:5, intensity = c(3, 65, 43, 12))
-    chrs <- Chromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), nrow = 2)
+    chrs <- MChromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), nrow = 2)
 
     expect_error(new("XChromatograms", matrix(list(chr1, chr2), nrow = 1)))
 
@@ -24,11 +26,11 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
     expect_true(all(vapply(xchrs, is, logical(1), "XChromatogram")))
 
     pks1 <- matrix(c(3, 2, 4, 339.2, 343, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     pks3 <- matrix(c(3, 2, 4, 145, 54, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     pks6 <- matrix(c(2, 2, 3, 108, 65, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     ## With peak matrix.
     xchrs1 <- XChromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), ncol = 3,
                              chromPeaks = list(pks1, NULL, pks3, NULL, NULL,
@@ -61,6 +63,8 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
 })
 
 test_that(".subset_chrom_peaks_xchromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Matrix is:    with elements
     ## A B C D       2 1 3 1
     ## E F G H       1 4 0 2
@@ -119,6 +123,8 @@ test_that(".subset_chrom_peaks_xchromatograms works", {
 })
 
 test_that(".subset_features_on_chrom_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
     prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -142,9 +148,22 @@ test_that(".subset_features_on_chrom_peaks works", {
     pks_sub <- pks[2, , drop = FALSE]
     res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
     expect_true(nrow(res) == 0)
+
+    pks_sub <- rbind(pks, pks[pks[, "row"] == 1, ])
+    pks_sub[(nrow(pks)+1):nrow(pks_sub), "row"] <- 3
+    fts <- rbind(fts, fts[fts$row == 1, ])
+    fts$row[5:6] <- 3
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
+    expect_true(nrow(res) == 6)
+    expect_equal(pks_sub[res$peakidx[[1]], "into"],
+                 pks_sub[res$peakidx[[5]], "into"])
+    expect_equal(pks_sub[res$peakidx[[2]], "into"],
+                 pks_sub[res$peakidx[[6]], "into"])
 })
 
 test_that(".plot_chrom_peak_density works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     chrs <- as(od_chrs, "XChromatograms")
     chrs <- findChromPeaks(chrs, param = CentWaveParam())
 

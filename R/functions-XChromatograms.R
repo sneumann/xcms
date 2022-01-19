@@ -63,11 +63,15 @@
 #'
 #' hasChromPeaks(xchrs)
 #'
-#' ## Load test files and extract chromatograms for a data slice
-#' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
-#'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
-#'     mode = "onDisk")
+#' ## Loading a test data set with identified chromatographic peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Subset the dataset to the first and third file.
+#' xod_sub <- filterFile(faahko_sub, file = c(1, 3))
+#'
+#' od <- as(xod_sub, "OnDiskMSnExp")
 #'
 #' ## Extract chromatograms for a m/z - retention time slice
 #' chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
@@ -109,7 +113,7 @@
 #' ##       Correspondence analysis                       ##
 #' ## --------------------------------------------------- ##
 #' ## Group chromatographic peaks across samples
-#' prm <- PeakDensityParam(sampleGroup = rep(1, 3))
+#' prm <- PeakDensityParam(sampleGroup = rep(1, 2))
 #' res <- groupChromPeaks(xchrs, param = prm)
 #'
 #' hasFeatures(res)
@@ -156,7 +160,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                 chromPeakData(z) <- pkd
         })
     }
-    object <- Chromatograms(data = data, phenoData = phenoData,
+    object <- MChromatograms(data = data, phenoData = phenoData,
                             featureData = featureData, ...)
     object <- as(object, "XChromatograms")
     if (validObject(object)) object
@@ -175,18 +179,20 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
             ids_sub <- rownames(pks_sub)
         } else {
             cns <- intersect(colnames(pks), colnames(pks_sub))
+            cns <- cns[!(cns %in% c("row", "column"))]
             ids_orig <- apply(pks[, cns, drop = FALSE], 1, paste,
                               collapse = "-")
-            if (length(ids_orig) != length(unique(ids_orig)))
-                stop("Can not uniquely identify chromatographic peaks.")
+            ## if (length(ids_orig) != length(unique(ids_orig)))
+            ##     stop("Can not uniquely identify chromatographic peaks.")
             ids_sub <- apply(pks_sub[, cns, drop = FALSE], 1, paste,
                              collapse = "-")
         }
-        fts$peakidx <- lapply(fts$peakidx, function(z) {
-            newidx <- match(ids_orig[z], ids_sub)
-            newidx[!is.na(newidx)]
-        })
-        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
+        for (i in seq_len(nrow(fts))) {
+            fts$peakidx[[i]] <- unname(
+                which(ids_sub %in% ids_orig[fts$peakidx[[i]]] &
+                      pks_sub[, "row"] == fts$row[i]))
+        }
+        fts <- extractROWS(fts, which(lengths(fts$peakidx) > 0))
     }
     fts
 }
@@ -242,7 +248,8 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                                      main = NA, xlab = "retention time",
                                      ylab = "sample", peakCol = "#00000060",
                                      peakBg = "#00000020", peakPch = 1,
-                                     simulate = TRUE, col = "black", ...) {
+                                     simulate = TRUE, col = "black",
+                                     ylim = range(pks[, "column"]), ...) {
     pks_count <- nrow(pks)
     if (pks_count) {
         smpl_col <- which(colnames(pks) == "sample")
@@ -278,7 +285,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
         dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to,
                         n = densN)
         yl <- c(0, max(dens$y))
-        min_max_smple <- range(pks[, smpl_col])
+        min_max_smple <- ylim
         ypos <- seq(from = yl[1], to = yl[2],
                     length.out = diff(min_max_smple) + 1)
         plot(pks[, "rt"], ypos[pks[, smpl_col]], xlim = xlim, ylim = yl,

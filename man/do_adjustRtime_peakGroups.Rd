@@ -5,11 +5,19 @@
 \title{Align spectrum retention times across samples using peak groups
 found in most samples}
 \usage{
-do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
-  extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
-  family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol =
-  0, nrow = 0), subset = integer(), subsetAdjust = c("average",
-  "previous"))
+do_adjustRtime_peakGroups(
+  peaks,
+  peakIndex,
+  rtime,
+  minFraction = 0.9,
+  extraPeaks = 1,
+  smooth = c("loess", "linear"),
+  span = 0.2,
+  family = c("gaussian", "symmetric"),
+  peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
+  subset = integer(),
+  subsetAdjust = c("average", "previous")
+)
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified

@@ -17,6 +17,7 @@ setMethod("show", "XChromatogram", function(object) {
 
 #' @rdname XChromatogram
 #'
+#' @aliases filterChromPeaks
 #'
 #' @section Accessing data:
 #'
@@ -86,6 +87,16 @@ setMethod("show", "XChromatogram", function(object) {
 #'   in a certain sample `NA` is returned. This can be changed with the
 #'   `missing` argument of the function.
 #'
+#' - `filterChromPeaks`: *filters* chromatographic peaks in `object` depending
+#'   on parameter `method` and method-specific parameters passed as additional
+#'   arguments with `...`. Available methods are:
+#'   - `method = "keepTop"`: keep top `n` (default `n = 1L`) peaks in each
+#'     chromatogram ordered by column `order` (defaults to `order = "maxo"`).
+#'     Parameter `decreasing` (default `decreasing = TRUE`) can be used to
+#'     order peaks in descending (`decreasing = TRUE`) or ascending (
+#'     `decreasing = FALSE`) order to keep the top `n` peaks with largest or
+#'     smallest values, respectively.
+#'
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
@@ -97,7 +108,10 @@ setMethod("show", "XChromatogram", function(object) {
 #'     `XChromatograms` object.
 #'
 #' @param drop For `[`: `logical(1)` whether the dimensionality should be
-#'     dropped (if possible).
+#'     dropped (if possible). Defaults to `drop = TRUE`, thus, if length of `i`
+#'     and `j` is 1 a `XChromatogram` is returned. Note that `drop` is ignored
+#'     if length of `i` or `j` is larger than 1, thus a `XChromatograms` is
+#'     returned.
 #'
 #' @param method For `featureValues`: `character(1)` specifying the method to
 #'     resolve multi-peak mappings within the sample sample, i.e. to select
@@ -106,6 +120,9 @@ setMethod("show", "XChromatogram", function(object) {
 #'     peak closest to the median retention time of the feature, `"maxint"`:
 #'     select the peak with the largest signal and `"sum"`: sum the values
 #'     of all peaks (only if `value` is `"into"` or `"maxo"`).
+#'     For `filterChromPeaks`: `character(1)` defining the method that should
+#'     be used to filter chromatographic peaks. See help on `filterChromPeaks`
+#'     below for details.
 #'
 #' @param missing For `featureValues`: how missing values should be reported.
 #'     Allowed values are `NA` (default), a `numeric(1)` to replace `NA`s with
@@ -148,7 +165,7 @@ setMethod("show", "XChromatogram", function(object) {
 #' @seealso
 #'
 #' [findChromPeaks-centWave][findChromPeaks-Chromatogram-CentWaveParam] for peak
-#' detection on [Chromatograms()] objects.
+#' detection on [MChromatograms()] objects.
 #'
 #' @examples
 #'
@@ -278,6 +295,9 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #'     data and the provided [PeakDensityParam()] `param` argument. See
 #'     section *Correspondence analysis* for details.
 #'
+#' @param ... For `filterChromPeaks`: additional parameters defining how to
+#'     filter chromatographic peaks. See function description below for details.
+#'
 #' @md
 #'
 #' @examples
@@ -362,7 +382,7 @@ setMethod("filterMz", "XChromatogram", function(object, mz, ...) {
         mz <- range(mz)
         keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
         object@chromPeaks <- pks[keep, , drop = FALSE]
-        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        object@chromPeakData <- extractROWS(object@chromPeakData, keep)
         validObject(object)
     }
     object
@@ -386,7 +406,7 @@ setMethod("filterRt", "XChromatogram", function(object, rt, ...) {
         rt <- range(rt)
         keep <- which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2])
         object@chromPeaks <- pks[keep, , drop = FALSE]
-        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        object@chromPeakData <- extractROWS(object@chromPeakData, keep)
         validObject(object)
     }
     object
@@ -407,7 +427,7 @@ setMethod("dropFilledChromPeaks", "XChromatogram", function(object) {
         return(object)
     not_fld <- which(!object@chromPeakData$is_filled)
     object@chromPeaks <- object@chromPeaks[not_fld, , drop = FALSE]
-    object@chromPeakData <- object@chromPeakData[not_fld, , drop = FALSE]
+    object@chromPeakData <- extractROWS(object@chromPeakData, not_fld)
     validObject(object)
     object
 })
@@ -422,3 +442,41 @@ setReplaceMethod("chromPeakData", "XChromatogram", function(object, value) {
     validObject(object)
     object
 })
+
+#' @rdname XChromatogram
+setMethod("refineChromPeaks", c(object = "XChromatogram",
+                                param = "MergeNeighboringPeaksParam"),
+          function(object, param = MergeNeighboringPeaksParam()) {
+              object <- .xchrom_merge_neighboring_peaks(
+                  object, minProp = param@minProp, diffRt = 2 * param@expandRt)
+              validObject(object)
+              object
+          })
+
+#' @rdname removeIntensity-Chromatogram
+setMethod("removeIntensity", "XChromatogram",
+          function(object, which = c("below_threshold", "outside_chromPeak"),
+                   threshold = 0) {
+              which <- match.arg(which)
+              if (which == "outside_chromPeak") {
+                  cps <- chromPeaks(object)
+                  if (nrow(cps)) {
+                      keep <- rep(FALSE, length(object@rtime))
+                      for (i in seq_len(nrow(cps)))
+                          keep[which(object@rtime >= cps[i, "rtmin"] &
+                                     object@rtime <= cps[i, "rtmax"])] <- TRUE
+                      object@intensity[!keep] <- NA_real_
+                  } else
+                      warning("No chromatographic peaks present. ",
+                              "Returning data as is")
+                  return(object)
+              } else callNextMethod(object, which = which, threshold = threshold)
+          })
+
+#' @rdname XChromatogram
+setMethod("filterChromPeaks", "XChromatogram",
+          function(object, method = c("keepTop"), ...) {
+              method <- match.arg(method)
+              switch(method,
+                     keepTop = .filter_chrom_peaks_keep_top(object, ...))
+          })

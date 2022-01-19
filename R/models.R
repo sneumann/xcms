@@ -1,4 +1,4 @@
-SSgauss <- selfStart(~ h*exp(-(x-mu)^2/(2*sigma^2)), function(mCall, data, LHS) {
+SSgauss <- selfStart(~ h*exp(-(x-mu)^2/(2*sigma^2)), function(mCall, data, LHS, ...) {
 
     xy <- sortedXyData(mCall[["x"]], LHS, data)
 

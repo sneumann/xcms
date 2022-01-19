@@ -8,7 +8,6 @@
 \alias{CentWaveParam-class}
 \alias{CentWaveParam}
 \alias{findChromPeaks,OnDiskMSnExp,CentWaveParam-method}
-\alias{show,CentWaveParam-method}
 \alias{ppm,CentWaveParam-method}
 \alias{ppm}
 \alias{ppm<-,CentWaveParam-method}
@@ -62,16 +61,31 @@
 \alias{roiScales<-}
 \title{Chromatographic peak detection using the centWave method}
 \usage{
-CentWaveParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, roiList = list(),
-  firstBaselineCheck = TRUE, roiScales = numeric())
+CentWaveParam(
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1L,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  roiList = list(),
+  firstBaselineCheck = TRUE,
+  roiScales = numeric(),
+  extendLengthMSW = FALSE
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,CentWaveParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
-
-\S4method{show}{CentWaveParam}(object)
+\S4method{findChromPeaks}{OnDiskMSnExp,CentWaveParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L,
+  ...
+)
 
 \S4method{ppm}{CentWaveParam}(object)
 
@@ -190,6 +204,12 @@ data within regions of interest is checked to be above the first baseline.}
 defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
+\item{extendLengthMSW}{Option to force centWave to use all scales when
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to
+\code{convolve} rather than the default "reflect" method. See
+https://github.com/sneumann/xcms/issues/445 for more information.}
+
 \item{object}{For \code{findChromPeaks}: an
     \code{\link{OnDiskMSnExp}}  object containing the MS- and all
     other experiment-relevant data.
@@ -211,6 +231,8 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
+
+\item{...}{ignored.}
 
 \item{value}{The value for the slot.}
 
@@ -309,8 +331,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW}}{See corresponding parameter above. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 
@@ -327,7 +348,7 @@ These methods and classes are part of the updated and modernized
 ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 ## speed up the execution of the example - in a real use case the default
 ## value should be used, or it should be set to a reasonable value.
-cwp <- CentWaveParam(ppm = 20, noise = 10000)
+cwp <- CentWaveParam(ppm = 20, noise = 10000, prefilter = c(3, 10000))
 ## Change snthresh parameter
 snthresh(cwp) <- 25
 cwp
@@ -339,7 +360,7 @@ library(faahKO)
 library(xcms)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = cwp)
@@ -360,11 +381,12 @@ detection in purely chromatographic data.
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-massifquant}},
-  \code{\link{findChromPeaks-matchedFilter}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-massifquant}},
+\code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Ralf Tautenhahn, Johannes Rainer

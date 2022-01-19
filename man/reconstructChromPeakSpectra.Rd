@@ -4,17 +4,24 @@
 \alias{reconstructChromPeakSpectra}
 \title{Data independent acquisition (DIA): reconstruct MS2 spectra}
 \usage{
-reconstructChromPeakSpectra(object, expandRt = 1, diffRt = 2,
-  minCor = 0.8, intensity = "maxo",
+reconstructChromPeakSpectra(
+  object,
+  expandRt = 0,
+  diffRt = 2,
+  minCor = 0.8,
+  intensity = "maxo",
   peakId = rownames(chromPeaks(object, msLevel = 1L)),
-  BPPARAM = bpparam())
+  BPPARAM = bpparam(),
+  return.type = c("MSpectra", "Spectra")
+)
 }
 \arguments{
 \item{object}{\code{XCMSnExp} with identified chromatographic peaks.}
 
 \item{expandRt}{\code{numeric(1)} allowing to expand the retention time range
 for extracted ion chromatograms by a constant value (for the peak
-shape correlation).}
+shape correlation). Defaults to \code{expandRt = 0} hence correlates only
+the signal included in the identified chromatographic peaks.}
 
 \item{diffRt}{\code{numeric(1)} defining the maximal allowed difference between
 the retention time of the chromatographic peak (apex) and the retention
@@ -27,7 +34,8 @@ spectrum reconstruction.}
 
 \item{intensity}{\code{character(1)} defining the column in the \code{chromPeaks}
 matrix that should be used for the intensities of the reconstructed
-spectra's peaks.}
+spectra's peaks. The same value from the MS1 chromatographic peaks will
+be used as \code{precursorIntensity} of the resulting spectra.}
 
 \item{peakId}{optional \code{character} vector with peak IDs (i.e. rownames of
 \code{chromPeaks}) of MS1 peaks for which MS2 spectra should be reconstructed.
@@ -35,21 +43,35 @@ By default they are reconstructed for all MS1 chromatographic peaks.}
 
 \item{BPPARAM}{parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for more
 information.}
+
+\item{return.type}{\code{character(1)} defining the type of the returned object.
+Can be either \code{return.type = "MSpectra"} (the default) to return a
+\code{MSnbase::MSpectra} object or \code{return.type = "Spectra"} for the newer
+\code{Spectra::Spectra} object.}
 }
 \value{
-\code{\link[=Spectra]{Spectra()}} with the reconstructed MS2 spectra for all MS1 peaks
+Depending on \code{return.type}:
+\itemize{
+\item \code{\link[=MSpectra]{MSpectra()}} with the reconstructed MS2 spectra for all MS1 peaks
 in \code{object}. Contains empty \linkS4class{Spectrum2} objects for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
-chromatographic peak was below threshold \code{minCor}. \code{Spectra} metadata
+chromatographic peak was below threshold \code{minCor}. \code{MSpectra} metadata
 columns \code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=CharacterList]{CharacterList()}}
 and \code{\link[=NumericList]{NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+As retention time the median retention times of all MS2 chromatographic
+peaks used for the spectrum reconstruction is reported. The MS1
+chromatographic peak intensity is reported as the reconstructed
+spectrum's \code{precursorIntensity} value (see parameter \code{intensity} above).
+\item \code{Spectra} object (defined in the \code{Spectra} package). The same content and
+information than above.
+}
 }
 \description{
-Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-data independent acquisition (DIA) data (such as SWATH). See the
+\emph{Reconstructs} MS2 spectra for each MS1 chromatographic peak (if possible)
+for data independent acquisition (DIA) data (such as SWATH). See the
 \emph{LC-MS/MS analysis} vignette for more details and examples.
 }
 \details{
@@ -61,14 +83,14 @@ approximately the same retention time than the MS1 peak (accepted rt shift
 can be specified with the \code{diffRt} parameter).
 \item Correlate the peak shapes of the candidate MS2 chromatographic peaks with
 the peak shape of the MS1 peak retaining only MS2 chromatographic peaks
-for which the correlation is \code{> minCor}.
+for which the correlation is \verb{> minCor}.
 \item Reconstruct the MS2 spectrum using the m/z of all above selected MS2
 chromatographic peaks and their intensity (either \code{"maxo"} or \code{"into"}).
 Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one \strong{mass peak} in the reconstructed spectrum.
 }
 
-The resulting \code{Spectra} object provides also the peak IDs of the MS2
+The resulting \code{MSpectra} object provides also the peak IDs of the MS2
 chromatographic peaks for each spectrum as well as their correlation value.
 }
 \seealso{
@@ -76,5 +98,5 @@ chromatographic peaks for each spectrum as well as their correlation value.
 peak detection in DIA isolation windows and for examples.
 }
 \author{
-Johannes Rainer, Micheal Witting
+Johannes Rainer, Michael Witting
 }

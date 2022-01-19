@@ -1,11 +1,6 @@
 ## Methods for the MsFeatureData class.
 #' @include functions-MsFeatureData.R do_adjustRtime-functions.R
 
-setMethod("initialize", "MsFeatureData", function(.Object, ...) {
-    classVersion(.Object)["MsFeatureData"] <- "0.0.1"
-    callNextMethod(.Object, ...)
-})
-
 setValidity("MsFeatureData", function(object) {
     validateMsFeatureData(object)
 })
@@ -37,15 +32,23 @@ setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "MsFeatureData", function(object) {
-    !is.null(object$featureDefinitions)
+setMethod("hasFeatures", "MsFeatureData", function(object,
+                                                   msLevel = integer()) {
+    if (length(msLevel) && !is.null(object$featureDefinitions) &&
+        any(colnames(object$featureDefinitions) == "ms_level"))
+        any(msLevel %in% object$featureDefinitions$ms_level)
+    else !is.null(object$featureDefinitions)
 })
 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "MsFeatureData", function(object) {
-    !is.null(object$chromPeaks)
+setMethod("hasChromPeaks", "MsFeatureData", function(object,
+                                                     msLevel = integer()) {
+    if (length(msLevel) && !is.null(object$chromPeaks) &&
+        any(colnames(object$chromPeakData) == "ms_level"))
+        any(msLevel %in% object$chromPeakData$ms_level)
+    else !is.null(object$chromPeaks)
 })
 
 #' @noRd
@@ -67,8 +70,17 @@ setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
+setMethod("dropAdjustedRtime", "MsFeatureData", function(object, rtraw) {
     if (hasAdjustedRtime(object)) {
+        if (hasChromPeaks(object)) {
+            message("Reverting retention times of identified peaks to ",
+                    "original values ... ", appendLF = FALSE)
+            fts <- .applyRtAdjToChromPeaks(
+                chromPeaks(object), rtraw = adjustedRtime(object),
+                rtadj = rtraw)
+            chromPeaks(object) <- fts
+            message("OK")
+        }
         rm(list = "adjustedRtime", envir = object)
     }
     return(object)
@@ -77,11 +89,18 @@ setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "MsFeatureData", function(object) {
-    if (hasFeatures(object))
-        return(object$featureDefinitions)
-    warning("No aligned feature information available.")
-    return(NULL)
+setMethod("featureDefinitions", "MsFeatureData", function(object,
+                                                          msLevel = integer()) {
+    if (length(object$featureDefinitions)) {
+        if (any(colnames(object$featureDefinitions) == "ms_level") &&
+            length(msLevel))
+            object$featureDefinitions[object$featureDefinitions$ms_level %in%
+                                      msLevel, ]
+        else object$featureDefinitions
+    } else {
+        warning("No aligned feature information available.", call. = FALSE)
+        DataFrame()
+    }
 })
 #' @noRd
 #'
@@ -93,20 +112,31 @@ setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("dropFeatureDefinitions", "MsFeatureData", function(object) {
-    if (hasFeatures(object))
-        rm(list = "featureDefinitions", envir = object)
-    return(object)
+setMethod("dropFeatureDefinitions", "MsFeatureData",
+          function(object, dropAdjustedRtime = FALSE) {
+              if (hasFeatures(object)) {
+                  if (.hasFilledPeaks(object)) {
+                      ## Remove filled in peaks
+                      chromPeaks(object) <- chromPeaks(
+                          object)[!chromPeakData(object)$is_filled, , drop = FALSE]
+                      chromPeakData(object) <- extractROWS(
+                          chromPeakData(object), which(!chromPeakData(object)$is_filled))
+                  }
+                  if (dropAdjustedRtime) {
+                      ## This will ensure that the retention times of the peaks
+                      ## are restored.
+                      object <- dropAdjustedRtime(object)
+                  }
+                  rm(list = "featureDefinitions", envir = object)
+              }
+              object
 })
 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
 setMethod("chromPeaks", "MsFeatureData", function(object) {
-    if (hasChromPeaks(object))
-        return(object$chromPeaks)
-    warning("No chromatographic peaks available.")
-    return(NULL)
+    object$chromPeaks
 })
 #' @noRd
 #'

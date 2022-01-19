@@ -1,4 +1,6 @@
 test_that("XCMSnExp new works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Basic contructor.
     x <- new("XCMSnExp")
     x@.processHistory <- list("a")
@@ -14,6 +16,8 @@ test_that("XCMSnExp new works", {
 })
 
 test_that("adjustRtimePeakGroups works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     pkGrp <- adjustRtimePeakGroups(xod_xg,
                                    param = PeakGroupsParam(minFraction = 1))
     expect_equal(colnames(pkGrp), basename(fileNames(xod_xg)))
@@ -43,6 +47,8 @@ test_that("adjustRtimePeakGroups works", {
 })
 
 test_that("plotAdjustedRtime works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     plotAdjustedRtime(xod_xgr, ylim = c(-20, 40))
     plotAdjustedRtime(xod_xgrg)
     expect_warning(plotAdjustedRtime(xod_x))
@@ -50,6 +56,8 @@ test_that("plotAdjustedRtime works", {
 })
 
 test_that("plotChromPeakDensity works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(305.05, 305.15)
     .plotChromPeakDensity(xod_x, mz = mzr)
     plotChromPeakDensity(xod_x, mz = mzr)
@@ -70,6 +78,8 @@ test_that("plotChromPeakDensity works", {
 })
 
 test_that("plotChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Plot the full range.
     plotChromPeaks(xod_x)
 
@@ -79,6 +89,8 @@ test_that("plotChromPeaks works", {
 })
 
 test_that("plotChromPeakImage works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     plotChromPeakImage(xod_x, binSize = 30, log = FALSE)
     ## Check that it works if no peaks were found in one sample.
     tmp <- xod_x
@@ -91,6 +103,8 @@ test_that("plotChromPeakImage works", {
 })
 
 test_that("applyAdjustedRtime works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(applyAdjustedRtime(faahko_od))
     expect_equal(applyAdjustedRtime(faahko_xod), faahko_xod)
     ## Now really replacing the stuff.
@@ -105,15 +119,11 @@ test_that("applyAdjustedRtime works", {
 })
 
 test_that(".concatenate_XCMSnExp works", {
-    od1 <- readMSData(faahko_3_files[1], mode = "onDisk")
-    od2 <- readMSData(faahko_3_files[2], mode = "onDisk")
-    od3 <- readMSData(faahko_3_files[3], mode = "onDisk")
-    xod1 <- findChromPeaks(od1, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
-    xod2 <- findChromPeaks(od2, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
-    xod3 <- findChromPeaks(od3, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
+    skip_on_os(os = "windows", arch = "i386")
+
+    xod1 <- filterFile(faahko_xod, 1)
+    xod2 <- filterFile(faahko_xod, 2)
+    xod3 <- filterFile(faahko_xod, 3)
     res <- .concatenate_XCMSnExp(xod1, xod2, xod3)
     expect_equal(pData(res), pData(faahko_xod))
     expect_equal(fData(res), fData(faahko_xod))
@@ -125,6 +135,8 @@ test_that(".concatenate_XCMSnExp works", {
 })
 
 test_that("filterFeatureDefinitions works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     tmp <- xod_xgrg
     expect_error(filterFeatureDefinitions("a"))
     expect_error(filterFeatureDefinitions(xod_xgr, 1:3))
@@ -145,6 +157,8 @@ test_that("filterFeatureDefinitions works", {
 })
 
 test_that("featureSummary works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(featureSummary(1:3))
     expect_error(featureSummary(xod_xgrg, group = 1:5))
     expect_error(featureSummary(xod_xgr))
@@ -187,6 +201,8 @@ test_that("featureSummary works", {
 })
 
 test_that("overlappingFeatures works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## Errors
     expect_error(overlappingFeatures())
     expect_error(overlappingFeatures(4))
@@ -198,6 +214,8 @@ test_that("overlappingFeatures works", {
 })
 
 test_that("exportMetaboAnalyst works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(exportMetaboAnalyst(xod_x))
     expect_error(exportMetaboAnalyst(4))
     expect_error(exportMetaboAnalyst(xod_xg))
@@ -225,126 +243,127 @@ test_that("exportMetaboAnalyst works", {
 })
 
 test_that("chromPeakSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_spectra_for_all_peaks(xod_x, method = "other"))
+    expect_error(ms2_mspectrum_for_all_peaks(xod_x, method = "other"))
     expect_error(res <- chromPeakSpectra(od_x))
     expect_warning(res <- chromPeakSpectra(xod_x, return.type = "list"))
     expect_true(length(res) == nrow(chromPeaks(xod_x)))
     expect_equal(names(res), rownames(chromPeaks(xod_x)))
-    expect_warning(res <- chromPeakSpectra(xod_x, return.type = "Spectra"))
-    expect_true(is(res, "Spectra"))
+    expect_warning(res <- chromPeakSpectra(xod_x, return.type = "MSpectra"))
+    expect_true(is(res, "MSpectra"))
     expect_true(length(res) == 0)
     expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L))
     expect_true(length(res) == 0)
 
     dta <- pest_dda
 
-    ## ms2_spectra_for_peaks_from_file
+    ## ms2_mspectrum_for_peaks_from_file
     pks <- chromPeaks(dta)
     pks[, "sample"] <- 5
-    res_all <- ms2_spectra_for_peaks_from_file(dta, pks)
+    res_all <- ms2_mspectrum_for_peaks_from_file(dta, pks)
     expect_equal(length(res_all), nrow(pks))
     expect_equal(names(res_all), rownames(pks))
     expect_true(any(lengths(res_all) > 1))
     tmp <- unlist(res_all)
     expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
 
-    res_sub <- ms2_spectra_for_peaks_from_file(dta, pks, method = "closest_rt")
+    res_sub <- ms2_mspectrum_for_peaks_from_file(dta, pks, method = "closest_rt")
     expect_true(all(lengths(res_sub) <= 1))
     pks[, "mz"] <- NA
-    res_na <- xcms:::ms2_spectra_for_peaks_from_file(dta, pks)
+    res_na <- ms2_mspectrum_for_peaks_from_file(dta, pks)
     expect_true(all(lengths(res_na) == 0))
 
-    ## ms2_spectra_for_all_peaks
-    res_all <- ms2_spectra_for_all_peaks(dta)
+    ## ms2_mspectrum_for_all_peaks
+    res_all <- ms2_mspectrum_for_all_peaks(dta)
     expect_equal(rownames(chromPeaks(dta)), names(res_all))
 
     ## With subset.
     subs <- sample(1:nrow(chromPeaks(dta)), 20)
-    res_subs <- ms2_spectra_for_all_peaks(dta, subset = subs)
+    res_subs <- ms2_mspectrum_for_all_peaks(dta, subset = subs)
     expect_true(all(lengths(res_subs[-subs]) == 0))
 
-    ## manual tests...
-    if (FALSE) {
-        fls <- dir("~/tmp/delete/xcms_gnps_2/MSV000080502/", pattern = ".mzML$",
-                   full.names = TRUE)
-        register(bpstart(MulticoreParam(3)))
-        dta <- readMSData(fls, mode = "onDisk")
-        cwp <- CentWaveParam(snthresh = 3, noise = 5000, peakwidth = c(5, 30),
-                             ppm = 10)
-        dta <- findChromPeaks(dta, param = cwp)
+    ## With Spectra
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- chromPeakSpectra(pest_dda, msLevel = 1L, return.type = "Spectra",
+                                method = "closest_rt")
+        expect_true(is(res, "Spectra"))
+        expect_equal(rtime(res), unname(chromPeaks(pest_dda)[, "rt"]))
 
-        ## ms2_spectra_for_peaks_from_file
-        x <- filterFile(dta, 5L)
-        pks <- chromPeaks(x)
-        pks[, "sample"] <- 5
-        x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
-        res_all <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
-        expect_equal(length(res_all), nrow(pks))
-        expect_equal(names(res_all), rownames(pks))
-        expect_true(any(lengths(res_all) > 1))
-        tmp <- unlist(res_all)
-        expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
-
-        res_sub <- xcms:::ms2_spectra_for_peaks_from_file(x, pks, method = "closest_rt")
-        expect_true(all(lengths(res_sub) <= 1))
-        pks[, "mz"] <- NA
-        res_na <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
-        expect_true(all(lengths(res_na) == 0))
-
-        ## ms2_spectra_for_all_peaks
-        res_all <- xcms:::ms2_spectra_for_all_peaks(dta)
-        expect_equal(rownames(chromPeaks(dta)), names(res_all))
-        ## remove chromPeaks from one file
-        tmp <- dta
-        chromPeaks(tmp) <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] != 3, ]
-        res_tmp <- xcms:::ms2_spectra_for_all_peaks(tmp)
-        expect_equal(rownames(chromPeaks(tmp)), names(res_tmp))
-        expect_equal(res_all[names(res_tmp)], res_tmp)
-        set.seed(123)
-        chromPeakData(tmp)$is_filled[sample(1:length(res_tmp), 400)] <- TRUE
-        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp)
-        expect_equal(res_tmp, res_tmp2)
-        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp, skipFilled = TRUE)
-        expect_true(all(lengths(res_tmp2[chromPeakData(tmp)$is_filled]) == 0))
-
-        ## With subset.
-        subs <- sample(1:nrow(chromPeaks(dta)), 5000)
-        res_subs <- xcms:::ms2_spectra_for_all_peaks(dta, subset = subs)
-        expect_true(all(lengths(res_subs[-subs]) == 0))
+        res <- chromPeakSpectra(pest_dda, msLevel = 2L, return.type = "List")
+        expect_true(is(res, "List"))
+        expect_true(length(res) == nrow(chromPeaks(pest_dda)))
     }
 })
 
 test_that("featureSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_spectra_for_features(xod_x, method = "other"))
+    expect_error(ms2_mspectrum_for_features(xod_x, method = "other"))
     expect_error(res <- featureSpectra(xod_x))
     expect_warning(res <- featureSpectra(xod_xg, return.type = "list"))
     expect_true(length(res) == nrow(featureDefinitions(xod_xg)))
     expect_equal(names(res), rownames(featureDefinitions(xod_xg)))
-    expect_warning(res <- featureSpectra(xod_xg, return.type = "Spectra"))
-    expect_true(is(res, "Spectra"))
+    expect_warning(res <- featureSpectra(xod_xg, return.type = "MSpectra"))
+    expect_true(is(res, "MSpectra"))
     expect_true(length(res) == 0)
     expect_warning(res <- featureSpectra(xod_xg, msLevel = 1L))
     expect_true(length(res) == 0)
+
+    res <- featureSpectra(xod_xg, method = "closest_rt", msLevel = 1L,
+                          return.type = "List")
+    expect_equal(length(res), nrow(featureDefinitions(xod_xg)))
+    for (i in seq_along(res)) {
+        expect_true(is(res[[i]], "Spectra"))
+    }
+
+    res2 <- featureSpectra(xod_xg, msLevel = 2L, return.type = "Spectra")
+    expect_true(length(res2) == 0)
 })
 
 test_that("featureChromatograms works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     expect_error(featureChromatograms(xod_x))
-    chrs <- featureChromatograms(xod_xgrg)
-    expect_equal(nrow(chrs), nrow(featureDefinitions(xod_xgrg)))
-    expect_equal(ncol(chrs), length(fileNames(xod_xgrg)))
-    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2)
+
+    fts <- rownames(featureDefinitions(xod_xgrg))
+    chrs <- featureChromatograms(xod_xgrg, features = fts[c(1, 2, 1)])
+    expect_true(ncol(chrs) == 3)
+    expect_equal(featureDefinitions(chrs)$row, 1:3)
+    expect_equal(featureValues(chrs),
+                 featureValues(xod_xgrg)[fts[c(1, 2, 1)], ])
+    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                     features = fts[c(1, 2, 1)])
     rts <- do.call(rbind, lapply(chrs, function(z) range(rtime(z))))
     rts_ext <- do.call(rbind, lapply(chrs_ext, function(z) range(rtime(z))))
     expect_true(all(rts[, 1] > rts_ext[, 1]))
     expect_true(all(rts[, 2] < rts_ext[, 2]))
 
+    expect_warning(res_n <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                                 features = fts[c(1, 2, 1)],
+                                                 n = 1))
+    expect_true(ncol(res_n) == 1)
+    fvals <- featureValues(xod_xgrg, value = "maxo", method = "maxint",
+                           intensity = "maxo")[fts[c(1, 2, 1)], ]
+    fvals_sum <- apply(fvals, MARGIN = 2, sum, na.rm = TRUE)
+    expect_true(colnames(res_n) == "ko15.CDF")
+    expect_equal(chromPeaks(chrs[, 1])[, 1:11], chromPeaks(res_n)[, 1:11])
+    expect_equal(featureValues(chrs[, 1]), featureValues(res_n))
+
+    res_n <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                  features = fts[c(1, 2, 1)], n = 2)
+    expect_true(ncol(res_n) == 2)
+    expect_equal(featureValues(res_n), featureValues(chrs[, c(1, 3)]))
+
     res_2 <- featureChromatograms(xod_xgrg, features = c(1, 5))
-    expect_equal(chrs[1, ], res_2[1, ])
-    expect_equal(chrs[5, 1], res_2[2, 1])
-    expect_equal(chrs[5, 2], res_2[2, 2])
-    expect_equal(chrs[5, 3], res_2[2, 3])
+    expect_equal(featureDefinitions(res_2)$row, 1:nrow(res_2))
+    res_1 <- featureChromatograms(xod_xgrg, features = fts[c(1, 5)])
+    expect_equal(res_1[1, ], res_2[1, ])
+    expect_equal(res_1[2, 1], res_2[2, 1])
+    expect_equal(res_1[2, 2], res_2[2, 2])
+    expect_equal(res_1[2, 3], res_2[2, 3])
 
     res_3 <- featureChromatograms(xod_xgrg, features = c("FT01", "FT05"))
     expect_equal(res_2, res_3)
@@ -370,7 +389,7 @@ test_that("featureChromatograms works", {
     expect_equal(chromPeakData(fchrsf)$is_filled, c(TRUE, FALSE, TRUE, FALSE,
                                                     FALSE, FALSE))
     expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
-    expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
+    expect_equal(featureDefinitions(fchrsf)$peakidx, list(1:3, 4:6))
     fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)
     expect_equal(chromPeaks(fchrsf2), chromPeaks(fchrs))
     expect_equal(featureDefinitions(fchrsf2), featureDefinitions(fchrs))
@@ -378,6 +397,8 @@ test_that("featureChromatograms works", {
 })
 
 test_that("highlightChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(279, 279)
     rtr <- c(2700, 2850)
     chr <- chromatogram(xod_xgrg, mz = mzr, rt = rtr)
@@ -397,107 +418,98 @@ test_that("highlightChromPeaks works", {
 })
 
 test_that(".swath_collect_chrom_peaks works", {
-    fl <- system.file("TripleTOF-SWATH/PestMix1_SWATH.mzML", package = "msdata")
-    if (file.exists(fl)) {
-        obj <- as(readMSData(fl, mode = "onDisk"), "XCMSnExp")
-        msf <- new("MsFeatureData")
-        msf@.xData <- .copy_env(obj@msFeatureData)
-        cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                             peakwidth = c(3, 30))
-        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
-                    findChromPeaks, msLevel = 2L, param = cwp)
-        res <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    skip_on_os(os = "windows", arch = "i386")
 
-        x_mod <- x
-        chromPeaks(x_mod[[2]]) <- chromPeaks(x_mod[[2]])[integer(), ]
-        msf <- new("MsFeatureData")
-        msf@.xData <- .copy_env(obj@msFeatureData)
-        res_mod <- .swath_collect_chrom_peaks(x_mod, msf, fileNames(obj))
+    obj <- dropChromPeaks(pest_swth)
+    msf <- new("MsFeatureData")
+    ## msf@.xData <- .copy_env(obj@msFeatureData)
+    cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                         peakwidth = c(3, 30), prefilter = c(3, 1000))
+    x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                findChromPeaks, msLevel = 2L, param = cwp)
+    res <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    expect_equal(names(res), c("chromPeakData", "chromPeaks"))
 
-        a <- chromPeaks(res_mod)
-        b <- chromPeaks(res)[chromPeakData(res)$isolationWindowTargetMZ != 208.95, ]
-        expect_equal(unname(a), unname(b))
+    x_mod <- x
+    x_mod[[2]] <- dropChromPeaks(x_mod[[2]])
+    chromPeaks(x_mod[[2]]) <- chromPeaks(x_mod[[3]])[integer(), ]
+    msf <- new("MsFeatureData")
+    ## msf@.xData <- .copy_env(obj@msFeatureData)
+    res_mod <- .swath_collect_chrom_peaks(x_mod, msf, fileNames(obj))
 
-        obj <- findChromPeaks(obj, param = cwp)
-        msf <- new("MsFeatureData")
-        msf@.xData <- .copy_env(obj@msFeatureData)
-        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
-                    findChromPeaks, msLevel = 2L, param = cwp)
-        res_2 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
-        expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
-        expect_equal(chromPeaks(obj),
-                     chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ])
-        expect_equal(nrow(chromPeaks(res_2)),
-                     nrow(chromPeaks(obj)) + nrow(chromPeaks(res)))
+    a <- chromPeaks(res_mod)
+    b <- chromPeaks(res)[chromPeakData(res)$isolationWindowTargetMZ != 208.95, ]
+    expect_equal(unname(a), unname(b))
 
-        expect_equal(colnames(chromPeakData(res_2)),
-                     c("ms_level", "is_filled", "isolationWindowTargetMZ",
-                       "isolationWindowLowerMz",
-                       "isolationWindowUpperMz"))
+    ## obj <- findChromPeaks(obj, param = cwp)
+    ## msf <- new("MsFeatureData")
+    ## msf@.xData <- .copy_env(obj@msFeatureData)
+    ## x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+    ##             findChromPeaks, msLevel = 2L, param = cwp)
+    ## res_2 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    ## expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
+    ## expect_equal(chromPeaks(obj),
+    ##              chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ])
+    ## expect_equal(nrow(chromPeaks(res_2)),
+    ##              nrow(chromPeaks(obj)) + nrow(chromPeaks(res)))
 
-        expect_true(hasChromPeaks(obj))
-        msf <- new("MsFeatureData")
-        msf@.xData <- .copy_env(obj@msFeatureData)
-        cwp <- CentWaveParam(snthresh = 200, noise = 1000, ppm = 10,
-                             peakwidth = c(3, 30))
-        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
-                    findChromPeaks, msLevel = 2L, param = cwp)
-        res_3 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
-        ## First two isolation windows do not have any peaks.
-        target_mz <- unique(isolationWindowTargetMz(obj))
-        target_mz <- target_mz[!is.na(target_mz)]
+    ## expect_equal(colnames(chromPeakData(res_2)),
+    ##              c("ms_level", "is_filled", "isolationWindow",
+    ##                "isolationWindowTargetMZ",
+    ##                "isolationWindowLowerMz",
+    ##                "isolationWindowUpperMz"))
 
-        expect_equal(
-            sort(intersect(res$chromPeakData$isolationWindowTargetMZ, target_mz)),
-            sort(target_mz))
-        expect_equal(
-            sort(intersect(res_3$chromPeakData$isolationWindowTargetMZ, target_mz)),
-            sort(target_mz)[-1])
-        expect_equal(chromPeaks(obj),
-                     chromPeaks(res_3)[1:nrow(chromPeaks(obj)), ])
+    ## expect_true(hasChromPeaks(obj))
+    ## msf <- new("MsFeatureData")
+    ## msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+    ## cwp <- CentWaveParam(snthresh = 200, noise = 1000, ppm = 10,
+    ##                      peakwidth = c(3, 30))
+    ## x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+    ##             findChromPeaks, msLevel = 2L, param = cwp)
+    ## res_3 <- xcms:::.swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    ## ## First two isolation windows do not have any peaks.
+    ## target_mz <- unique(isolationWindowTargetMz(obj))
+    ## target_mz <- target_mz[!is.na(target_mz)]
 
-        obj <- dropChromPeaks(obj)
-        expect_false(hasChromPeaks(obj))
-        msf <- new("MsFeatureData")
-        msf@.xData <- .copy_env(obj@msFeatureData)
-        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
-                    findChromPeaks, msLevel = 2L, param = cwp)
-        res_4 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    ## expect_equal(
+    ##     sort(intersect(res_3$chromPeakData$isolationWindowTargetMZ, target_mz)),
+    ##     sort(target_mz)[-1])
+    ## expect_equal(chromPeaks(obj),
+    ##              chromPeaks(res_3)[1:nrow(chromPeaks(obj)), ])
 
-        ## No chromPeaks found:
-        cwp <- CentWaveParam(snthresh = 10000, noise = 1e6)
-        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
-                    findChromPeaks, msLevel = 2L, param = cwp)
-        res_5 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
-        expect_equal(res_5, msf)
-    }
+    ## No chromPeaks found:
+    cwp <- CentWaveParam(snthresh = 10000, noise = 1e6,
+                         prefilter = c(4, 10000))
+    x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                findChromPeaks, msLevel = 2L, param = cwp)
+    res_5 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+    expect_equal(res_5, msf)
 })
 
 test_that("findChromPeaksIsolationWindow works", {
-    fl <- system.file("TripleTOF-SWATH/PestMix1_SWATH.mzML", package = "msdata")
-    if (file.exists(fl)) {
-        ## OnDiskMSnExp
-        obj <- filterRt(readMSData(fl, mode = "onDisk"), rt = c(0, 300))
-        cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                             peakwidth = c(3, 30))
-        res <- findChromPeaksIsolationWindow(obj, param = cwp)
-        expect_true(is(res, "XCMSnExp"))
-        expect_equal(length(processHistory(res)), 1)
-        expect_true(all(c("isolationWindow", "isolationWindowTargetMZ") %in%
-                        colnames(chromPeakData(res))))
-        expect_true(all(chromPeakData(res)$ms_level == 2L))
+    skip_on_os(os = "windows", arch = "i386")
 
-        ## Add to existing peaks
-        obj <- findChromPeaks(obj, param = cwp)
-        res_2 <- findChromPeaksIsolationWindow(obj, param = cwp)
-        expect_equal(chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ],
-                     chromPeaks(obj))
-        expect_true(length(processHistory(res_2)) == 2)
-    }
+    obj <- filterRt(as(pest_swth, "OnDiskMSnExp"), rt = c(0, 300))
+    cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                         peakwidth = c(3, 30), prefilter = c(2, 1000))
+    res <- findChromPeaksIsolationWindow(obj, param = cwp)
+    expect_true(is(res, "XCMSnExp"))
+    expect_equal(length(processHistory(res)), 1)
+    expect_true(all(c("isolationWindow", "isolationWindowTargetMZ") %in%
+                    colnames(chromPeakData(res))))
+    expect_true(all(chromPeakData(res)$ms_level == 2L))
+
+    ## Add to existing peaks
+    obj <- findChromPeaks(obj, param = cwp)
+    res_2 <- findChromPeaksIsolationWindow(obj, param = cwp)
+    expect_equal(chromPeaks(res_2)[1:nrow(chromPeaks(obj)), , drop = FALSE],
+                 chromPeaks(obj))
+    expect_true(length(processHistory(res_2)) == 2)
+
     ## no isolation window/add isolation window
     expect_error(findChromPeaksIsolationWindow(od_x), "are NA")
     tmp <- od_x
-    cwp <- CentWaveParam(noise = 10000, snthresh = 40)
+    cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
     fData(tmp)$my_win <- 1
     res_3 <- findChromPeaksIsolationWindow(
         tmp, param = cwp, isolationWindow = fData(tmp)$my_win, msLevel = 1L)
@@ -512,26 +524,30 @@ test_that("findChromPeaksIsolationWindow works", {
 })
 
 test_that("reconstructChromPeakSpectra works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     res <- reconstructChromPeakSpectra(
-        pest_swth, peakId = rownames(chromPeaks(pest_swth))[1:6])
-    expect_true(length(res) == 6)
-    expect_true(length(intensity(res[[3]])) == 7)
+        pest_swth, peakId = rownames(chromPeaks(pest_swth))[5:6])
+    expect_true(length(res) == 2)
+    expect_true(length(intensity(res[[2]])) == 2)
 
     ## errors
     expect_error(reconstructChromPeakSpectra(od_x), "object with")
 
     ## peakId
-    res_3 <- reconstructChromPeakSpectra(pest_swth, peakId = c("CP03"))
-    expect_identical(intensity(res_3), intensity(res[3]))
+    res_3 <- reconstructChromPeakSpectra(pest_swth, peakId = c("CP06"))
+    expect_identical(intensity(res_3), intensity(res[2]))
 
     expect_warning(res <- reconstructChromPeakSpectra(
-                       pest_swth, peakId = c("CP03", "other")))
+                       pest_swth, peakId = c("CP06", "other")))
     expect_identical(res_3, res)
     expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
                  "None of the provided")
 })
 
 test_that(".plot_XIC works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzr <- c(453, 453.5)
     rtr <- c(2400, 2700)
 
@@ -545,6 +561,8 @@ test_that(".plot_XIC works", {
 })
 
 test_that(".group_overlapping_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     mzmin <- c(123.3, 123.35, 123.5, 341, 342.1, 343.2, 564, 564.3)
     mzmax <- c(123.4, 123.5, 124, 342, 343, 344, 564.1, 566)
     pks <- cbind(mzmin, mzmax)
@@ -568,6 +586,8 @@ test_that(".group_overlapping_peaks works", {
 })
 
 test_that(".merge_neighboring_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xod_x1 <- filterFile(xod_x, 1L)
     res <- .merge_neighboring_peaks(xod_x1, expandRt = 4)
     expect_true(is.list(res))
@@ -588,15 +608,17 @@ test_that(".merge_neighboring_peaks works", {
     pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
     expect_true(nrow(pks) == 2)
     expect_true(nrow(pks) < nrow(chromPeaks(xod_x1, mz = mzr)))
-    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    ## rect(pks[, "rtmin"], 0, pks[, "rtmax"], pks[, "maxo"], border = "red")
 
-    ## ## mz of 462.2: strange one that fails.
-    ## tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
-    ## mzr <- range(tmp[, c("mzmin", "mzmax")])
-    ## chr <- chromatogram(xod_x1, mz = mzr)
+    ## mz of 462.2:
+    tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    chr <- chromatogram(xod_x1, mz = mzr)
     ## plot(chr)
-    ## res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    pks <- res$chromPeaks
+    res_mzr <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], , drop = FALSE]
     ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    expect_true(nrow(res_mzr) == 1)
 
     ## mz of 496.2: two peaks that DON'T get merged (and that's OK).
     tmp <- chromPeaks(xod_x1)[mz_groups[[5]], ]
@@ -610,4 +632,165 @@ test_that(".merge_neighboring_peaks works", {
     expect_true(nrow(pks) == 2)
     expect_true(nrow(pks) == nrow(chromPeaks(xod_x1, mz = mzr)))
     expect_equal(rownames(pks), rownames(chromPeaks(chr)))
+})
+
+test_that(".XCMSnExp2SummarizedExperiment works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    expect_error(.XCMSnExp2SummarizedExperiment(xod_x), "No correspondence")
+
+    res <- .XCMSnExp2SummarizedExperiment(xod_xgrg)
+    expect_equal(SummarizedExperiment::assay(res), featureValues(xod_xgrg))
+
+    res <- .XCMSnExp2SummarizedExperiment(xod_xgrg, value = "maxo")
+    expect_equal(SummarizedExperiment::assay(res),
+                 featureValues(xod_xgrg, value = "maxo"))
+
+    res <- quantify(xod_xgrg, value = "intb")
+    expect_equal(SummarizedExperiment::assay(res),
+                 featureValues(xod_xgrg, value = "intb"))
+})
+
+test_that(".features_ms_region works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    res <- .features_ms_region(xod_xgrg, msLevel = 1L)
+    expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
+    expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
+
+    expect_error(.features_ms_region(xod_xgrg, msLevel = 1L,
+                                     features = c("a", "b")), "not available")
+})
+
+test_that(".which_peaks_above_threshold works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    xsub <- filterRt(filterFile(xod_x, 1L), rt = c(2500, 3500))
+    pks <- chromPeaks(xsub)
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 100, nValues = 4)
+    expect_equal(res, rep(TRUE, nrow(pks)))
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 50000, nValues = 1)
+    expect_equal(res, unname(pks[, "maxo"] >= 50000))
+
+    res <- .chrom_peaks_above_threshold(xsub, threshold = 50000, nValues = 1,
+                                        msLevel = 2L)
+    expect_equal(res, rep(TRUE, nrow(pks)))
+})
+
+test_that("manualChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    cp <- cbind(mzmin = c(453, 301.9, 100),
+                mzmax = c(453.5, 302.1, 102),
+                rtmin = c(2400, 2500, 2460),
+                rtmax = c(2700, 2650, 2500))
+    ## Errors
+    expect_error(manualChromPeaks(xod_x, msLevel = 1:2), "can only add")
+    expect_error(manualChromPeaks(1:2), "either an OnDiskMSnExp")
+    expect_error(manualChromPeaks(xod_x, 1:2), "lacks one or more of the")
+    expect_error(manualChromPeaks(xod_x, cp, samples = 10), "out of bounds")
+    ## With an XCMSnExp
+    res <- manualChromPeaks(xod_x, cp)
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(xod_x)))
+    expect_equal(chromPeaks(res)[!is.na(chromPeaks(res)[, "intb"]), ],
+                 chromPeaks(xod_x))
+    ## With an OnDiskMSnExp
+    res2 <- manualChromPeaks(od_x, cp)
+    expect_true(is(res2, "XCMSnExp"))
+    expect_true(hasChromPeaks(res2))
+
+    res3 <- manualChromPeaks(od_x, cp, samples = 2)
+    expect_true(all(chromPeaks(res3)[, "sample"] == 2))
+})
+
+test_that(".spectra_for_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res_all <- .spectra_for_peaks(pest_dda, method = "all")
+        expect_true(length(res_all) == nrow(chromPeaks(pest_dda)))
+        res_1 <- .spectra_for_peaks(pest_dda, method = "closest_rt")
+        expect_true(all(lengths(res_1) < 2))
+
+        res <- .spectra_for_peaks(pest_dda, msLevel = 3)
+        expect_true(all(lengths(res) == 0))
+
+        res <- .spectra_for_peaks(pest_dda, msLevel = 1L, method = "closest_rt")
+        res <- do.call(c, unname(res))
+        expect_equal(unname(rtime(res)), unname(chromPeaks(pest_dda)[, "rt"]))
+
+        expect_warning(res <- .spectra_for_peaks(pest_dda, msLevel = 1L,
+                                                 method = "signal"), "Changing")
+
+        res_56 <- .spectra_for_peaks(pest_dda, method = "all", peaks = c(5, 6))
+        expect_equal(res_56[[1]], res_all[[5]])
+        expect_equal(res_56[[2]], res_all[[6]])
+    }
+})
+
+test_that(".spectra_for_features works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    if (requireNamespace("Spectra", quietly = TRUE)) {
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
+                                     msLevel = 2L)
+        expect_true(length(res) ==
+                    nrow(featureDefinitions(xod_xgrg)))
+        expect_true(all(lengths(res) == 0))
+
+        res <- .spectra_for_features(xod_xgrg, method = "closest_rt",
+                                     msLevel = 1L)
+        expect_true(all(vapply(res, is, logical(1), "Spectra")))
+        fds <- featureDefinitions(xod_xgrg)
+        for (i in seq_len(nrow(fds))) {
+            expect_true(all(res[[i]]$feature_id == rownames(fds)[i]))
+        }
+
+        ## with subset
+        idx <- c(1, 400)
+        expect_error(.spectra_for_features(
+            xod_xg, msLevel = 1L, features = idx), "out of bounds")
+        res_all <- .spectra_for_features(xod_xg, msLevel = 1L)
+        res_sub <- .spectra_for_features(xod_xg, msLevel = 1L,
+                                         features = c(5, 12, 45))
+        res_sub2 <- .spectra_for_features(
+            xod_xg, msLevel = 1L,
+            features = rownames(featureDefinitions(xod_xg))[c(5, 12, 45)])
+        expect_equal(length(res_sub), 3)
+        expect_equal(rtime(res_sub[[1L]]), rtime(res_all[[5L]]))
+        expect_equal(rtime(res_sub[[2L]]), rtime(res_all[[12L]]))
+        expect_equal(rtime(res_sub[[3L]]), rtime(res_all[[45L]]))
+
+        expect_equal(length(res_sub), length(res_sub2))
+        expect_equal(rtime(res_sub[[1L]]), rtime(res_sub2[[1L]]))
+        expect_equal(rtime(res_sub[[2L]]), rtime(res_sub2[[2L]]))
+        expect_equal(rtime(res_sub[[3L]]), rtime(res_sub2[[3L]]))
+    }
+})
+
+test_that("manualFeatures works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    idx <- list(1:4, c(4, "a"))
+    expect_error(manualFeatures(od_x, idx), "XCMSnExp")
+    ## Add features to an XCMSnExp without features.
+    expect_error(manualFeatures(xod_x, idx), "out of bounds")
+    idx <- list(1:4, c(5, 500, 500))
+    expect_error(manualFeatures(xod_x, idx), "out of bounds")
+    idx <- list(1:5, c(6, 34, 234))
+    res <- manualFeatures(xod_x, idx)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(featureDefinitions(res)) == 2)
+    expect_equal(featureDefinitions(res)$peakidx, idx)
+    ## Append features to an XCMSnExp.
+    idx <- featureDefinitions(xod_xg)$peakidx[c(3, 5, 7)]
+    res <- manualFeatures(xod_xg, idx)
+    nfd <- nrow(featureDefinitions(xod_xg))
+    expect_true(nrow(featureDefinitions(res)) == nfd + 3)
+    expect_equal(featureDefinitions(res)[nfd + 1, "mzmed"],
+                 featureDefinitions(xod_xg)[3, "mzmed"])
+    expect_equal(featureDefinitions(res)[nfd + 2, "rtmin"],
+                 featureDefinitions(xod_xg)[5, "rtmin"])
 })

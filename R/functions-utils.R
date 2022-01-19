@@ -278,40 +278,6 @@ useOriginalCode <- function(x) {
             seq(from = from, length.out = x))
 }
 
-## #' @description Expands stretches of TRUE values in \code{x} by one on both
-## #'     sides.
-## #'
-## #' @note The return value for a \code{NA} is always \code{FALSE}.
-## #'
-## #' @param x \code{logical} vector.
-## #'
-## #' @author Johannes Rainer
-## #'
-## #' @noRd
-## .grow_trues <- function(x) {
-##     previous <- NA
-##     x_new <- rep_len(FALSE, length(x))
-##     for (i in 1:length(x)) {
-##         if (is.na(x[i])) {
-##             previous <- NA
-##             next
-##         }
-##         ## If current element is TRUE
-##         if (x[i]) {
-##             x_new[i] <- TRUE
-##             ## if last element was FALSE, set last element to TRUE
-##             if (!is.na(previous) && !previous)
-##                 x_new[i - 1] <- TRUE
-##         } else {
-##             ## if previous element was TRUE, set current to TRUE.
-##             if (!is.na(previous) && previous)
-##                 x_new[i] <- TRUE
-##         }
-##         previous <- x[i]
-##     }
-##     x_new
-## }
-
 #' @title Weighted mean around maximum
 #'
 #' @description Calculate a weighted mean of the values around the value with
@@ -351,8 +317,6 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
     seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
     weighted.mean(x[seq_idx], w[seq_idx])
 }
-
-
 
 #' @title DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample
 #'
@@ -640,12 +604,17 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' @md
 #'
 #' @noRd
-.update_feature_definitions <- function(x, original_names, subset_names) {
-    x$peakidx <- lapply(x$peakidx, function(z) {
+.update_feature_definitions <- function(x, original_names, subset_names,
+                                         BPPARAM = bpparam()) {
+    ## Skip if they are the same.
+    if (length(original_names) == length(subset_names) &&
+        all.equal(original_names, subset_names))
+        return(x)
+    x$peakidx <- bplapply(x$peakidx, function(z) {
         idx <- base::match(original_names[z], subset_names)
         idx[!is.na(idx)]
-    })
-    x[lengths(x$peakidx) > 0, ]
+    }, BPPARAM = BPPARAM)
+    extractROWS(x, lengths(x$peakidx) > 0)
 }
 
 #' @description
@@ -683,54 +652,6 @@ rowRla <- function(x, group, log.transform = TRUE) {
     }
     colnames(y) <- c(cny, mis_col)
     rbind(x, y[, colnames(x)])
-}
-
-#' @title Match closest values between vectors
-#'
-#' @description
-#'
-#' Match values in `x` to their closests counterpart in `y` if their difference
-#' is smaller than `maxDiff`. which is by defaul `min(mean(diff(x)), mean(diff(y)))`.
-#'
-#' @param x `numeric` of values to find closest matches in `y`.
-#'
-#' @param y `numeric` of values to match against.
-#'
-#' @return `integer` with the indices in `y` where `x` matches. An `NA` is
-#'     reported if for a value in `x` no value in `y` with a difference smaller
-#'     than `maxDiff` can be found.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-#'
-#' @examples
-#'
-#' a <- 1:10
-#' b <- c(3.1, 3.2, 4.3, 7.8)
-#'
-#' .match_closest(b, a)
-#'
-#' a <- c(1, 4, 7, 10)
-#' b <- c(2.2, 2.3, 2.4, 2.5)
-#' .match_closest(a, b)
-#'
-#' a <- c(1, 2.11, 3, 4, 5)
-#' .match_closest(a, b)
-#'
-#' a <- c(1, 1.5, 2, 2.5, 3, 3.5, 4)
-#' b <- c(1.7, 2.3, 3)
-#' .match_closest(a, b)
-#'
-#' .match_closest(b, a)
-.match_closest <- function(x, y, maxDiff = min(mean(diff(x)), mean(diff(y)))) {
-    vapply(x, function(a) {
-        diffs <- abs(y - a)
-        idx <- intersect(which(diffs <= maxDiff), which.min(diffs))
-        if (length(idx))
-            idx
-        else NA_integer_
-    }, integer(1))
 }
 
 #' @description
@@ -787,50 +708,72 @@ rowRla <- function(x, group, log.transform = TRUE) {
     cbind(start = new_start[idx], end = new_end[idx])
 }
 
-## #' Define a unique identifier for each chromatographic peak within the chrom
-## #' peak matrix by concatenating as many columns as needed.
-## #'
-## #' @param x `chromPeaks` matrix (as returned by `chromPeaks`).
-## #'
-## #' @noRd
-## #'
-## #' @author Johannes Rainer
-## .chrom_peak_id <- function(x) {
-##     if (nrow(x)) {
-##         cns <- c("rt", "rtmin", "rtmax", "mz", "mzmin", "mzmax", "into", "maxo")
-##         cns <- cns[cns %in% colnames(x)]
-##         ids <- apply(x[, cns, drop = FALSE], 1, paste0, collapse = "-")
-##         if (length(ids) != length(unique(ids)))
-##             stop("Can not define unique identifiers based on columns: ",
-##                  paste0(cns, collapse = ", "))
-##         ids
-##     } else character()
-## }
+#' @title Group overlapping ranges
+#'
+#' @description
+#'
+#' `groupOverlaps` identifies overlapping ranges in the input data and groups
+#' them by returning their indices in `xmin` `xmax`.
+#'
+#' @param xmin `numeric` (same length than `xmax`) with the lower boundary of
+#'     the range.
+#'
+#' @param xmax `numeric` (same length than `xmin`) with the upper boundary of
+#'     the range.
+#'
+#' @return `list` with the indices of grouped elements.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' x <- c(2, 12, 34.2, 12.4)
+#' y <- c(3, 16, 35, 36)
+#'
+#' groupOverlaps(x, y)
+groupOverlaps <- function(xmin, xmax) {
+    tolerance <- sqrt(.Machine$double.eps)
+    reduced_ranges <- .reduce(xmin, xmax)
+    res <- vector("list", nrow(reduced_ranges))
+    for (i in seq_along(res)) {
+        res[[i]] <- which(xmin >= reduced_ranges[i, 1] - tolerance &
+                          xmax <= reduced_ranges[i, 2] + tolerance)
+    }
+    res
+}
 
+.require_spectra <- function() {
+    if (!requireNamespace("Spectra", quietly = TRUE))
+        stop("Returning data as a 'Spectra' object requires the 'Spectra' ",
+             "package to be installed. Please ",
+             "install with 'BiocInstaller::install(\"Spectra\")'")
+    else invisible(TRUE)
+}
 
-## #' @examples
-## #' x1_high <- c(0.000012323)
-## #' x1_low <- c(0.0000034302)
-## #' x2_high <- c(0.000012322)
-## #' x2_low <- c(0.0000034301)
-## .overlap <- function(x1_low, x1_high, x2_low, x2_high, res = 1e12) {
-##     library(IRanges)
-##     x1 <- IRanges(round(x1_low * res), round(x1_high * res))
-##     x2 <- IRanges(round(x2_low * res), round(x2_high * res))
-## }
+#' very efficient extractor for the featureData of an OnDiskMSnExp
+#'
+#' @param x `OnDiskMSnExp`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.fdata <- function(x) {
+    x@featureData@data
+}
 
-
-## Use IRanges for this...
-## 1) find overlaps in one dimension.
-## 2) find overlaps in second dimension.
-## Given:
-## MS1 peaks with m/z range, rt range.
-## MS2 peaks with rt.
-## finding the MS2 spectra related to a single mass peak in a MS1 spectrum:
-## one MS2 is associated to a single MS1:
-## MS2: precursor is the MS1 spectrum ID, target m/z (lower and upper bound),
-##      selected m/z, peak intensity.
-## So, for a peak:
-## - select spectra for the rt range of the peak.
-## - get all MS2 spectra for these spectra.
-## - select those MS2 that have an selected ion m/z within m/z range.
+.i2index <- function(x, ids = character(), name = character()) {
+    if (is.character(x))
+        x <- match(x, ids)
+    if (is.logical(x)) {
+        if (length(ids) && length(ids) != length(x))
+            stop("Length of '", name, "' has to be equal to ", length(ids), ".")
+        x <- which(x)
+    }
+    if (is.numeric(x))
+        x <- as.integer(x)
+    if (length(ids) && any(is.na(x)) || (any(x < 1) || any(x > length(ids))))
+        stop("'", name, "' out of bounds")
+    x
+}

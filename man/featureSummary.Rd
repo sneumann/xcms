@@ -4,8 +4,13 @@
 \alias{featureSummary}
 \title{Simple feature summaries}
 \usage{
-featureSummary(x, group, perSampleCounts = FALSE, method = "maxint",
-  skipFilled = TRUE)
+featureSummary(
+  x,
+  group,
+  perSampleCounts = FALSE,
+  method = "maxint",
+  skipFilled = TRUE
+)
 }
 \arguments{
 \item{x}{`XCMSnExp` object with correspondence results.}

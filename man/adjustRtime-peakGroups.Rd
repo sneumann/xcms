@@ -7,7 +7,6 @@
 \alias{PeakGroupsParam-class}
 \alias{PeakGroupsParam}
 \alias{adjustRtimePeakGroups}
-\alias{show,PeakGroupsParam-method}
 \alias{minFraction,PeakGroupsParam-method}
 \alias{minFraction<-,PeakGroupsParam-method}
 \alias{extraPeaks,PeakGroupsParam-method}
@@ -42,14 +41,18 @@
 \title{Retention time correction based on alignment of house keeping peak
 groups}
 \usage{
-PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
-  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
-  0, ncol = 0), subset = integer(), subsetAdjust = c("average",
-  "previous"))
+PeakGroupsParam(
+  minFraction = 0.9,
+  extraPeaks = 1,
+  smooth = "loess",
+  span = 0.2,
+  family = "gaussian",
+  peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
+  subset = integer(),
+  subsetAdjust = c("average", "previous")
+)
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
-
-\S4method{show}{PeakGroupsParam}(object)
 
 \S4method{minFraction}{PeakGroupsParam}(object)
 
@@ -83,8 +86,7 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
 
 \S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param,
-  msLevel = 1L)
+\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
@@ -247,9 +249,7 @@ adjusted.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above.}
 }}
 
 \note{
@@ -279,30 +279,21 @@ re-adjusts adjusted retention times to ensure them being in the same
 order than the raw (original) retention times.
 }
 \examples{
-##############################
-## Chromatographic peak detection and grouping.
-##
-## Below we perform first a peak detection (using the matchedFilter
-## method) on some of the test files from the faahKO package followed by
-## a peak grouping.
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+res <- faahko_sub
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+## Disable parallel processing for this example
+register(SerialParam())
 
 head(chromPeaks(res))
 ## The number of peaks identified per sample:
 table(chromPeaks(res)[, "sample"])
 
 ## Performing the peak grouping using the "peak density" method.
-p <- PeakDensityParam(sampleGroups = c(1, 1))
+p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
 res <- groupChromPeaks(res, param = p)
 
 ## Perform the retention time adjustment using peak groups found in both
@@ -321,7 +312,7 @@ points(x = pkGrps[, 2], y = rep(2, nrow(pkGrps)))
 segments(x0 = pkGrps[, 1], x1 = pkGrps[, 2],
     y0 = rep(1, nrow(pkGrps)), y1 = rep(2, nrow(pkGrps)))
 grid()
-axis(side = 2, at = c(1, 2), labels = colnames(pkGrps))
+axis(side = 2, at = c(1, 2, 3), labels = colnames(pkGrps))
 
 ## Next we perform the alignment.
 res <- adjustRtime(res, param = fgp)
@@ -330,14 +321,12 @@ res <- adjustRtime(res, param = fgp)
 hasFeatures(res)
 
 ## Plot the raw against the adjusted retention times.
-plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+plot(rtime(res, adjusted = FALSE),
+    rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
 
 ## Adjusterd retention times can be accessed using
 ## rtime(object, adjusted = TRUE) and adjustedRtime
 all.equal(rtime(res), adjustedRtime(res))
-
-## To get the raw, unadjusted retention times:
-all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
 
 ## To extract the retention times grouped by sample/file:
 rts <- rtime(res, bySample = TRUE)
@@ -357,8 +346,9 @@ The \code{\link{do_adjustRtime_peakGroups}} core
 \code{\link{XCMSnExp}} for the object containing the results of
     the alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
-  \code{\link{adjustRtime}}
+Other retention time correction methods: 
+\code{\link{adjustRtime-obiwarp}},
+\code{\link{adjustRtime}()}
 }
 \author{
 Colin Smith, Johannes Rainer

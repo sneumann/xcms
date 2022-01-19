@@ -5,8 +5,14 @@
 \title{Core API function for chromatic peak grouping using a nearest
 neighbor approach}
 \usage{
-do_groupChromPeaks_nearest(peaks, sampleGroups, mzVsRtBalance = 10,
-  absMz = 0.2, absRt = 15, kNN = 10)
+do_groupChromPeaks_nearest(
+  peaks,
+  sampleGroups,
+  mzVsRtBalance = 10,
+  absMz = 0.2,
+  absRt = 15,
+  kNN = 10
+)
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
@@ -62,7 +68,8 @@ processing and visualization of mass spectrometry based molecular profile
 data. Bioinformatics 2006, 22:634-636.
 }
 \seealso{
-Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},
-  \code{\link{do_groupPeaks_mzClust}}
+Other core peak grouping algorithms: 
+\code{\link{do_groupChromPeaks_density}()},
+\code{\link{do_groupPeaks_mzClust}()}
 }
 \concept{core peak grouping algorithms}

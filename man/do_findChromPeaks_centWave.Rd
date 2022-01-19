@@ -4,12 +4,27 @@
 \alias{do_findChromPeaks_centWave}
 \title{Core API function for centWave peak detection}
 \usage{
-do_findChromPeaks_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
-  peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  roiList = list(), firstBaselineCheck = TRUE, roiScales = NULL,
-  sleep = 0)
+do_findChromPeaks_centWave(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  roiList = list(),
+  firstBaselineCheck = TRUE,
+  roiScales = NULL,
+  sleep = 0,
+  extendLengthMSW = FALSE
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -93,6 +108,12 @@ iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
 future.}
+
+\item{extendLengthMSW}{Option to force centWave to use all scales when
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to
+\code{convolve} rather than the default "reflect" method. See
+https://github.com/sneumann/xcms/issues/445 for more information.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
@@ -159,21 +180,26 @@ The \emph{centWave} was designed to work on centroided mode, thus it
 }
 \examples{
 ## Load the test file
-library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xr <- xcmsRaw(fs, profstep = 0)
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-mzVals <- xr@env$mz
-intVals <- xr@env$intensity
+## Subset to one file and restrict to a certain retention time range
+data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
+
+## Get m/z and intensity values
+mzs <- mz(data)
+ints <- intensity(data)
+
 ## Define the values per spectrum:
-valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+valsPerSpect <- lengths(mzs)
 
-## Calling the function. We're using a large value for noise to speed up
-## the call in the example performance - in a real use case we would either
+## Calling the function. We're using a large value for noise and prefilter
+## to speed up the call in the example - in a real use case we would either
 ## set the value to a reasonable value or use the default value.
-res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
-scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
+res <- do_findChromPeaks_centWave(mz = unlist(mzs), int = unlist(ints),
+    scantime = rtime(data), valsPerSpect = valsPerSpect, noise = 10000,
+    prefilter = c(3, 10000))
 head(res)
 }
 \references{
@@ -184,10 +210,11 @@ Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 \seealso{
 \code{\link{centWave}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_massifquant}},
-  \code{\link{do_findChromPeaks_matchedFilter}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_massifquant}()},
+\code{\link{do_findChromPeaks_matchedFilter}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Ralf Tautenhahn, Johannes Rainer

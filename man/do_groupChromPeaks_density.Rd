@@ -5,9 +5,16 @@
 \title{Core API function for peak density based chromatographic peak
 grouping}
 \usage{
-do_groupChromPeaks_density(peaks, sampleGroups, bw = 30,
-  minFraction = 0.5, minSamples = 1, binSize = 0.25,
-  maxFeatures = 50, sleep = 0)
+do_groupChromPeaks_density(
+  peaks,
+  sampleGroups,
+  bw = 30,
+  minFraction = 0.5,
+  minSamples = 1,
+  binSize = 0.25,
+  maxFeatures = 50,
+  sleep = 0
+)
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
@@ -79,21 +86,22 @@ especially the \code{bw} and \code{binSize} parameter should be adjusted
 accordingly.
 }
 \examples{
-## Load the test data set
-library(faahKO)
-data(faahko)
+## Load the test file
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Disable parallel processing for this example
+register(SerialParam())
 
 ## Extract the matrix with the identified peaks from the xcmsSet:
-fts <- peaks(faahko)
+pks <- chromPeaks(faahko_sub)
 
 ## Perform the peak grouping with default settings:
-res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
+res <- do_groupChromPeaks_density(pks, sampleGroups = rep(1, 3))
 
 ## The feature definitions:
-head(res$featureDefinitions)
-
-## The assignment of peaks from the input matrix to the features
-head(res$peakIndex)
+head(res)
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
@@ -102,8 +110,9 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Anal. Chem. 2006, 78:779-787.
 }
 \seealso{
-Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_nearest}},
-  \code{\link{do_groupPeaks_mzClust}}
+Other core peak grouping algorithms: 
+\code{\link{do_groupChromPeaks_nearest}()},
+\code{\link{do_groupPeaks_mzClust}()}
 }
 \author{
 Colin Smith, Johannes Rainer

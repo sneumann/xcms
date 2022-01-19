@@ -1,4 +1,6 @@
 test_that(".validXChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xc <- new("XChromatogram")
     expect_true(.validXChromatogram(xc))
     xc@chromPeaks <- matrix(1:10, ncol = 5)
@@ -23,6 +25,8 @@ test_that(".validXChromatogram works", {
 })
 
 test_that("XChromatogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xc <- XChromatogram(rtime = 1:10, intensity = 1:10)
     expect_true(nrow(xc@chromPeaks) == 0)
     expect_true(nrow(xc@chromPeakData) == 0)
@@ -54,6 +58,8 @@ test_that("XChromatogram works", {
 })
 
 test_that(".add_chromatogram_peaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
     xc <- XChromatogram(rtime = 1:10, intensity = c(2, 5, 12, 32, 38, 21, 13,
                                                     5, 5, 9))
     plot(xc)
@@ -66,4 +72,41 @@ test_that(".add_chromatogram_peaks works", {
                                    col = "red", bg = NA)
     .add_chromatogram_peaks(xc, pks, type = "polygon", col = "#00ff0020",
                                    bg = "#00ff0060")
+})
+
+test_that(".xchrom_merge_neighboring_peaks and refineChromPeaks works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    tmp <- filterFile(xod_x, 1)
+    mzr <- 305.1 + c(-0.01, 0.01)
+    chr <- chromatogram(tmp, mz = mzr)
+    res <- .xchrom_merge_neighboring_peaks(chr[1, 1], diffRt = 6)
+    expect_true(nrow(chromPeaks(res)) == 2)
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+
+    res_2 <- refineChromPeaks(chr[1, 1],
+                              param = MergeNeighboringPeaksParam(expandRt = 3))
+    expect_true(validObject(res_2))
+    expect_equal(res, res_2)
+})
+
+test_that(".filter_chrom_peaks_keep_top works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    chrs <- chromatogram(xod_x, mz = rbind(305.1 + c(-0.01, 0.01),
+                                           462.2 + c(-0.04, 0.04)))
+    a <- chrs[1, 1]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_true(all(res@chromPeaks[, "maxo"] > min(a@chromPeaks[, "maxo"])))
+
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 5)
+    expect_equal(a, res)
+
+    a <- chrs[1, 2]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_true(nrow(chromPeaks(res)) == 0)
+
+    a <- chrs[1, 3]
+    res <- .filter_chrom_peaks_keep_top(a, decreasing = TRUE, n = 2)
+    expect_equal(chromPeaks(res), chromPeaks(a)[c(1, 3), ])
 })

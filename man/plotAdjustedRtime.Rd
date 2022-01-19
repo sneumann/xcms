@@ -4,11 +4,21 @@
 \alias{plotAdjustedRtime}
 \title{Visualization of alignment results}
 \usage{
-plotAdjustedRtime(object, col = "#00000080", lty = 1, lwd = 1,
-  type = "l", adjustedRtime = TRUE, xlab = ifelse(adjustedRtime, yes
-  = expression(rt[adj]), no = expression(rt[raw])),
-  ylab = expression(rt[adj] - rt[raw]), peakGroupsCol = "#00000060",
-  peakGroupsPch = 16, peakGroupsLty = 3, ylim, ...)
+plotAdjustedRtime(
+  object,
+  col = "#00000080",
+  lty = 1,
+  lwd = 1,
+  type = "l",
+  adjustedRtime = TRUE,
+  xlab = ifelse(adjustedRtime, yes = expression(rt[adj]), no = expression(rt[raw])),
+  ylab = expression(rt[adj] - rt[raw]),
+  peakGroupsCol = "#00000060",
+  peakGroupsPch = 16,
+  peakGroupsLty = 3,
+  ylim,
+  ...
+)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object with the alignment results.}
@@ -56,38 +66,26 @@ time (y-axis) for each file along the (adjusted or raw) retention time
 groups) used for the alignment are shown.
 }
 \examples{
-## Below we perform first a peak detection (using the matchedFilter
-## method) on some of the test files from the faahKO package followed by
-## a peak grouping and retention time adjustment using the "peak groups"
-## method
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Perform the peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+## Disable parallel processing for this example
+register(SerialParam())
 
 ## Performing the peak grouping using the "peak density" method.
-p <- PeakDensityParam(sampleGroups = c(1, 1))
-res <- groupChromPeaks(res, param = p)
+p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+res <- groupChromPeaks(faahko_sub, param = p)
 
 ## Perform the retention time adjustment using peak groups found in both
 ## files.
 fgp <- PeakGroupsParam(minFraction = 1)
 res <- adjustRtime(res, param = fgp)
 
-## Visualize the impact of the alignment. We show both versions of the plot,
-## with the raw retention times on the x-axis (top) and with the adjusted
-## retention times (bottom).
-par(mfrow = c(2, 1))
+## Visualize the impact of the alignment.
 plotAdjustedRtime(res, adjusted = FALSE)
-grid()
-plotAdjustedRtime(res)
 grid()
 }
 \seealso{

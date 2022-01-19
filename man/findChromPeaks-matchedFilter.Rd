@@ -8,7 +8,6 @@
 \alias{MatchedFilterParam-class}
 \alias{MatchedFilterParam}
 \alias{findChromPeaks,OnDiskMSnExp,MatchedFilterParam-method}
-\alias{show,MatchedFilterParam-method}
 \alias{binSize,MatchedFilterParam-method}
 \alias{binSize}
 \alias{binSize<-,MatchedFilterParam-method}
@@ -49,15 +48,28 @@
 \alias{index<-}
 \title{Peak detection in the chromatographic time domain}
 \usage{
-MatchedFilterParam(binSize = 0.1, impute = "none",
-  baseValue = numeric(), distance = numeric(), fwhm = 30,
-  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
-  mzdiff = 0.8 - binSize * steps, index = FALSE)
+MatchedFilterParam(
+  binSize = 0.1,
+  impute = "none",
+  baseValue = numeric(),
+  distance = numeric(),
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 5,
+  snthresh = 10,
+  steps = 2,
+  mzdiff = 0.8 - binSize * steps,
+  index = FALSE
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
-
-\S4method{show}{MatchedFilterParam}(object)
+\S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L,
+  ...
+)
 
 \S4method{binSize}{MatchedFilterParam}(object)
 
@@ -167,6 +179,8 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
 
+\item{...}{ignored.}
+
 \item{value}{The value for the slot.}
 
 \item{x}{For \code{max}: a \code{MatchedFilterParam} object.}
@@ -261,9 +275,9 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index}}{See corresponding parameter above. Slots values should exclusively
+be accessed \emph{via} the corresponding getter and setter methods listed
+above.}
 }}
 
 \note{
@@ -291,11 +305,10 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
+raw_data <- readMSData(fls[1], mode = "onDisk")
 ## Perform the chromatographic peak detection using the settings defined
 ## above. Note that we are also disabling parallel processing in this
 ## example by registering a "SerialParam"
-register(SerialParam())
 res <- findChromPeaks(raw_data, param = mfp)
 head(chromPeaks(res))
 }
@@ -315,11 +328,12 @@ peak detection in purely chromatographic data.
 \code{\link{XCMSnExp}} for the object containing the results of
     the chromatographic peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-massifquant}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-massifquant}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Colin A Smith, Johannes Rainer

@@ -4,8 +4,14 @@
 \alias{do_groupPeaks_mzClust}
 \title{Core API function for peak grouping using mzClust}
 \usage{
-do_groupPeaks_mzClust(peaks, sampleGroups, ppm = 20, absMz = 0,
-  minFraction = 0.5, minSamples = 1)
+do_groupPeaks_mzClust(
+  peaks,
+  sampleGroups,
+  ppm = 20,
+  absMz = 0,
+  minFraction = 0.5,
+  minSamples = 1
+)
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
@@ -65,7 +71,8 @@ development of a heuristic approach for metabolomics}.\cr Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)
 }
 \seealso{
-Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},
-  \code{\link{do_groupChromPeaks_nearest}}
+Other core peak grouping algorithms: 
+\code{\link{do_groupChromPeaks_density}()},
+\code{\link{do_groupChromPeaks_nearest}()}
 }
 \concept{core peak grouping algorithms}

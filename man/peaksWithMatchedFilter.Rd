@@ -4,8 +4,15 @@
 \alias{peaksWithMatchedFilter}
 \title{Identify peaks in chromatographic data using matchedFilter}
 \usage{
-peaksWithMatchedFilter(int, rt, fwhm = 30, sigma = fwhm/2.3548,
-  max = 20, snthresh = 10, ...)
+peaksWithMatchedFilter(
+  int,
+  rt,
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 20,
+  snthresh = 10,
+  ...
+)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -48,12 +55,16 @@ on chromatographic data (i.e. with only intensities and retention time).
 }
 \examples{
 
-## Read one file from the faahKO package
-od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-    mode = "onDisk")
+## Load the test file
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Subset to one file and drop identified chromatographic peaks
+data <- dropChromPeaks(filterFile(faahko_sub, 1))
 
 ## Extract chromatographic data for a small m/z range
-chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
+chr <- chromatogram(data, mz = c(272.1, 272.3), rt = c(3000, 3200))[1, 1]
 
 pks <- peaksWithMatchedFilter(intensity(chr), rtime(chr))
 pks
@@ -67,7 +78,8 @@ rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"], ybottom = c(0, 0),
 \link{matchedFilter} for a detailed description of the peak detection
 method.
 
-Other peak detection functions for chromatographic data: \code{\link{peaksWithCentWave}}
+Other peak detection functions for chromatographic data: 
+\code{\link{peaksWithCentWave}()}
 }
 \author{
 Johannes Rainer

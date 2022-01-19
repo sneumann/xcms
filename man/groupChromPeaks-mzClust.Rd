@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-mzClust}
 \alias{MzClustParam-class}
 \alias{MzClustParam}
-\alias{show,MzClustParam-method}
 \alias{sampleGroups,MzClustParam-method}
 \alias{sampleGroups<-,MzClustParam-method}
 \alias{ppm,MzClustParam-method}
@@ -22,10 +21,13 @@
 \alias{groupChromPeaks,XCMSnExp,MzClustParam-method}
 \title{High resolution peak grouping for single spectra samples}
 \usage{
-MzClustParam(sampleGroups = numeric(), ppm = 20, absMz = 0,
-  minFraction = 0.5, minSamples = 1)
-
-\S4method{show}{MzClustParam}(object)
+MzClustParam(
+  sampleGroups = numeric(),
+  ppm = 20,
+  absMz = 0,
+  minFraction = 0.5,
+  minSamples = 1
+)
 
 \S4method{sampleGroups}{MzClustParam}(object)
 
@@ -47,8 +49,7 @@ MzClustParam(sampleGroups = numeric(), ppm = 20, absMz = 0,
 
 \S4method{minSamples}{MzClustParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param,
-  msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -102,30 +103,29 @@ The \code{MzClustParam} class allows to specify all settings for the peak
 grouping based on the \emph{mzClust} algorithm.
 Instances should be created with the \code{MzClustParam} constructor.
 
-\code{sampleGroups},\code{sampleGroups<-}: getter and setter
+\code{sampleGroups},\verb{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
 
-\code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+\code{ppm},\verb{ppm<-}: getter and setter for the \code{ppm}
 slot of the object.
 
-\code{absMz},\code{absMz<-}: getter and setter for the
+\code{absMz},\verb{absMz<-}: getter and setter for the
 \code{absMz} slot of the object.
 
-\code{minFraction},\code{minFraction<-}: getter and setter for
+\code{minFraction},\verb{minFraction<-}: getter and setter for
 the \code{minFraction} slot of the object.
 
-\code{minSamples},\code{minSamples<-}: getter and setter for the
+\code{minSamples},\verb{minSamples<-}: getter and setter for the
 \code{minSamples} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,MzClustParam}: performs high resolution peak
+\verb{groupChromPeaks,XCMSnExp,MzClustParam}: performs high resolution peak
 grouping for single spectrum metabolomics data.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,ppm,absMz,minFraction,minSamples}}{See corresponding
+parameter above.}
 }}
 
 \note{
@@ -141,9 +141,12 @@ all eventually present previous correspondence results to be dropped.
 
 ## Loading a small subset of direct injection, single spectrum files
 library(msdata)
-fticrf <- list.files(system.file("fticr", package = "msdata"),
+fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
                     recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+
+## Disable parallel processing for this example
+register(SerialParam())
 
 ## Perform the MSW peak detection on these:
 p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -177,8 +180,9 @@ grouping results (i.e. the features).
 \link{XCMSnExp} for the object containing the results of
 the peak grouping.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-density}},
-  \code{\link{groupChromPeaks-nearest}},
-  \code{\link{groupChromPeaks}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-density}},
+\code{\link{groupChromPeaks-nearest}},
+\code{\link{groupChromPeaks}()}
 }
 \concept{peak grouping methods}

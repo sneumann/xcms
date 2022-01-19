@@ -4,8 +4,13 @@
 \alias{findChromPeaksIsolationWindow}
 \title{Data independent acquisition (DIA): peak detection in isolation windows}
 \usage{
-findChromPeaksIsolationWindow(object, param, msLevel = 2L,
-  isolationWindow = isolationWindowTargetMz(object), ...)
+findChromPeaksIsolationWindow(
+  object,
+  param,
+  msLevel = 2L,
+  isolationWindow = isolationWindowTargetMz(object),
+  ...
+)
 }
 \arguments{
 \item{object}{\code{OnDiskMSnExp} or \code{XCMSnExp} object with the DIA data.}

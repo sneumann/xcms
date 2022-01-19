@@ -6,7 +6,6 @@
 \alias{groupChromPeaks-nearest}
 \alias{NearestPeaksParam-class}
 \alias{NearestPeaksParam}
-\alias{show,NearestPeaksParam-method}
 \alias{sampleGroups,NearestPeaksParam-method}
 \alias{sampleGroups<-,NearestPeaksParam-method}
 \alias{mzVsRtBalance,NearestPeaksParam-method}
@@ -26,10 +25,13 @@
 \alias{groupChromPeaks,XCMSnExp,NearestPeaksParam-method}
 \title{Peak grouping based on proximity in the mz-rt space}
 \usage{
-NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
-  absMz = 0.2, absRt = 15, kNN = 10)
-
-\S4method{show}{NearestPeaksParam}(object)
+NearestPeaksParam(
+  sampleGroups = numeric(),
+  mzVsRtBalance = 10,
+  absMz = 0.2,
+  absRt = 15,
+  kNN = 10
+)
 
 \S4method{sampleGroups}{NearestPeaksParam}(object)
 
@@ -51,8 +53,7 @@ NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
 
 \S4method{kNN}{NearestPeaksParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param,
-  msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param, msLevel = 1L, add = FALSE)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -80,11 +81,15 @@ analysis (see \code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For
 
 \item{value}{The value for the slot.}
 
-\item{param}{A \code{NearestPeaksParam} object containing all settings for
+\item{param}{A \code{PeakDensityParam} object containing all settings for
 the peak grouping algorithm.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level
 1 is supported.}
+
+\item{add}{\code{logical(1)} (default \code{add = FALSE}) allowing to perform an
+additional round of correspondence (e.g. on a different MS level) and
+add features to the already present feature definitions.}
 }
 \value{
 The \code{NearestPeaksParam} function returns a
@@ -109,40 +114,44 @@ The \code{NearestPeaksParam} class allows to specify all
 settings for the peak grouping based on the \emph{nearest} algorithm.
 Instances should be created with the \code{NearestPeaksParam} constructor.
 
-\code{sampleGroups},\code{sampleGroups<-}: getter and setter
+\code{sampleGroups},\verb{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
 
-\code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
+\code{mzVsRtBalance},\verb{mzVsRtBalance<-}: getter and setter
 for the \code{mzVsRtBalance} slot of the object.
 
-\code{absMz},\code{absMz<-}: getter and setter for the
+\code{absMz},\verb{absMz<-}: getter and setter for the
 \code{absMz} slot of the object.
 
-\code{absRt},\code{absRt<-}: getter and setter for the
+\code{absRt},\verb{absRt<-}: getter and setter for the
 \code{absRt} slot of the object.
 
-\code{kNN},\code{kNN<-}: getter and setter for the
+\code{kNN},\verb{kNN<-}: getter and setter for the
 \code{kNN} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
+\verb{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
 performs peak grouping based on the proximity between chromatographic
 peaks from different samples in the mz-rt range.
+
+The correspondence analysis can be performed on chromatographic peaks of
+any MS level (if present and if chromatographic peak detection has been
+performed for that MS level) defining features combining these peaks. The
+MS level can be selected with the parameter \code{msLevel}. By default, calling
+\code{groupChromPeaks} will remove any previous correspondence results. This can
+be disabled with \code{add = TRUE}, which will add newly defined features to
+already present feature definitions.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN}}{See corresponding parameter above. \code{.__classVersion__} stores
-the version from the class. Slots values should exclusively be accessed
-\emph{via} the corresponding getter and setter methods listed above.}
+\item{\code{sampleGroups,mzVsRtBalance,absMz,absRt,kNN}}{See corresponding parameter
+above.}
 }}
 
 \note{
 These methods and classes are part of the updated and modernized
 \code{xcms} user interface. All of the settings to the algorithm
 can be passed with a \code{NearestPeaksParam} object.
-
-Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous alignment results to be dropped.
 }
 \examples{
 
@@ -150,23 +159,14 @@ all eventually present previous alignment results to be dropped.
 p <- NearestPeaksParam(kNN = 3)
 p
 
-##############################
-## Chromatographic peak detection and grouping.
-##
-## Below we perform first a chromatographic peak detection (using the
-## matchedFilter method) on some of the test files from the faahKO package
-## followed by a peaks grouping using the "nearest" method.
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+res <- faahko_sub
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+## Disable parallel processing for this example
+register(SerialParam())
 
 head(chromPeaks(res))
 ## The number of peaks identified per sample:
@@ -200,8 +200,9 @@ peak grouping results (i.e. the features).
 \link{XCMSnExp} for the object containing the results of
 the peak grouping.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-density}},
-  \code{\link{groupChromPeaks-mzClust}},
-  \code{\link{groupChromPeaks}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-density}},
+\code{\link{groupChromPeaks-mzClust}},
+\code{\link{groupChromPeaks}()}
 }
 \concept{peak grouping methods}

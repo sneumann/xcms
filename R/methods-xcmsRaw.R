@@ -1782,7 +1782,7 @@ setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 ############################################################
 ## AutoLockMass
 setMethod("AutoLockMass", "xcmsRaw", function(object) {
-    if(length(grep("xml|mzData|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
+    if(length(grep("xml|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
         tempFreq<-diff(which(diff(object@scantime) == 0))-1
         idx <- which(tempFreq != floor(mean(tempFreq))) ## only needed for newer lockmass signal
         if(is.nan(mean(tempFreq)) ){
@@ -1879,7 +1879,7 @@ setMethod("makeacqNum", "xcmsRaw", function(object, freq, start=1) {
 ############################################################
 ## stitch
 setMethod("stitch", "xcmsRaw", function(object, lockMass) {
-    if(length(grep("xml|mzData", object@filepath, ignore.case=TRUE)) >= 1){
+    if(length(grep("xml", object@filepath, ignore.case=TRUE)) >= 1){
         type<-stitch.xml
     } else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
         ## lets check to see if lockMass is one scan or two
@@ -2160,7 +2160,7 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 #' @examples
 #' ## Load a test file
 #' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-#' xraw <- xcmsRaw(file)
+#' xraw <- xcmsRaw(file, profstep = 0)
 #' ## The number of scans/spectra:
 #' length(xraw@scantime)
 #'
