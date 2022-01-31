@@ -188,7 +188,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
   double ddev = (pickOptions->dev * fMass);
   int lpos = lower_bound( fMass - ddev,mzval,0,mzLength->mzval);
   int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);
-  
+
   if (lpos >  mzLength->mzval-1)
       lpos = mzLength->mzval -1;
   if (hpos >  mzLength->mzval-1)
@@ -217,10 +217,10 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
               mzval[i].kI++;
     }
   } // for
-  
+
   // if not found
   if (wasfound == FALSE) {  // no, create new ROI for mz
-    
+
     lpos=-1;hpos=-1;
     int doInsert=FALSE;
     if ((scan < LastScan) && (scanbuf->nextScanLength > 0)) {// check next scan
@@ -231,7 +231,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
 	    {
 	      ddev = (pickOptions->dev *  scanbuf->nextScan[i]);
 	      double ddiff = fabs(fMass - scanbuf->nextScan[i]);
-	      
+
 	      if (ddiff <= ddev)
 		{
 		  doInsert=TRUE;
@@ -241,7 +241,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
       }
     } else
       doInsert=TRUE;
-    
+
     if (doInsert == TRUE) {
       // get pos. for insert
       int i = lower_bound(fMass,mzval,0,mzLength->mzval);
@@ -252,7 +252,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
       // insert element
       if (n>0)
 	memmove(mzval + i +1, mzval + i, n*sizeof(struct mzROIStruct));
-      
+
       mzval[i].mz = fMass;
       mzval[i].mzmin = fMass;
       mzval[i].mzmax = fMass;
@@ -264,11 +264,11 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
 	mzval[i].kI = 1; else
 	mzval[i].kI = 0;
       mzval[i].deleteMe = FALSE;
-      
+
       mzLength->mzval++;
     }
   }
-  
+
   return(mzval);
 }
 
@@ -541,6 +541,58 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange
     i++;
   }
 
+  UNPROTECT(1);
+  return(res);
+}
+
+SEXP getWeightedMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
+		 SEXP scanrange, SEXP lastscan) {
+  double *pmz, *p_res, mzrangeFrom, mzrangeTo, *pintensity, numerator,
+    denominator;
+  int i,*pscanindex,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
+  SEXP res;
+  pmz = REAL(mz);
+  pintensity = REAL(intensity);
+  nmz = GET_LENGTH(mz);
+  pscanindex = INTEGER(scanindex);
+  int firstScan = 1;   // is always 1
+  ilastScan = INTEGER(lastscan)[0];
+  mzrangeFrom = REAL(mzrange)[0];
+  mzrangeTo =  REAL(mzrange)[1];
+  scanrangeFrom = INTEGER(scanrange)[0];
+  scanrangeTo = INTEGER(scanrange)[1];
+  if ((scanrangeFrom < firstScan) || (scanrangeFrom > ilastScan) ||
+      (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
+    error("Error in scanrange \n");
+
+  buflength = scanrangeTo - scanrangeFrom +1;
+  PROTECT(res = NEW_NUMERIC(buflength));
+  p_res = NUMERIC_POINTER(res);
+
+  i=0;
+  for (ctScan = scanrangeFrom; ctScan <= scanrangeTo; ctScan++) {
+    int idx,idx1,idx2;
+    idx1 =  pscanindex[ctScan -1] +1;
+    if (ctScan == ilastScan)  idx2 =  nmz-1;
+    else idx2 =  pscanindex[ctScan];
+    int idx1b = lowerBound(mzrangeFrom, pmz, idx1-1, idx2-idx1-1);
+    int idx2b = upperBound(mzrangeTo, pmz, idx1b, idx2-idx1b-1);
+
+    numerator = 0.0;
+    denominator = 0.0;
+    p_res[i] = 0.0;
+    for (idx = idx1b; idx <= idx2b; idx++) {
+      double mzval = pmz[idx];
+      if ((mzval <= mzrangeTo) && (mzval >= mzrangeFrom)) {
+	numerator = numerator + mzval * pintensity[idx];
+	denominator = denominator + pintensity[idx];
+      }
+    }
+    if (denominator > 0) {
+      p_res[i] = numerator / denominator;
+    }
+    i++;
+  }
   UNPROTECT(1);
   return(res);
 }
