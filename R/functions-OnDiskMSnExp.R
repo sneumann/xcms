@@ -236,8 +236,9 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         slot(a, "featureData", check = FALSE) <-
             extractROWS(fd, which(fd$msLevel %in% msLevel.))
         if (!nrow(a@featureData))
-            stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
-        a@featureData$fileIdx <- 1L
+            warning("No MS level ", msLevel., " spectra present in file ",
+                    basename(x@processingData@files[i]), call. = FALSE)
+        else a@featureData$fileIdx <- 1L
         slot(a, "experimentData", check = FALSE) <- expd
         slot(a, "spectraProcessingQueue", check = FALSE) <-
             x@spectraProcessingQueue

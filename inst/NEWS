@@ -1,3 +1,9 @@
+Changes in version 3.16.2
+
+- Fix issue when calling `chromPeakSpectra` or `featureSpectra` on an object
+  that contains also files with only MS1 spectra
+  (https://github.com/sneumann/xcms/issues/603).
+
 Changes in version 3.16.1
 
 - Fix bug in feature grouping by EIC correlation resulting in a non-symmetric
