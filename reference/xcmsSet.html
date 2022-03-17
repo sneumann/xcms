@@ -19,7 +19,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -31,7 +31,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -72,14 +72,15 @@
   into different classes suitable for grouping.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">xcmsSet</span><span class="op">(</span>files <span class="op">=</span> <span class="cn">NULL</span>, snames <span class="op">=</span> <span class="cn">NULL</span>, sclass <span class="op">=</span> <span class="cn">NULL</span>, phenoData <span class="op">=</span> <span class="cn">NULL</span>,
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xcmsSet</span><span class="op">(</span>files <span class="op">=</span> <span class="cn">NULL</span>, snames <span class="op">=</span> <span class="cn">NULL</span>, sclass <span class="op">=</span> <span class="cn">NULL</span>, phenoData <span class="op">=</span> <span class="cn">NULL</span>,
         profmethod <span class="op">=</span> <span class="st">"bin"</span>, profparam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
         polarity <span class="op">=</span> <span class="cn">NULL</span>, lockMassFreq<span class="op">=</span><span class="cn">FALSE</span>,
   mslevel<span class="op">=</span><span class="cn">NULL</span>, nSlaves<span class="op">=</span><span class="fl">0</span>, progressCallback<span class="op">=</span><span class="cn">NULL</span>,
         scanrange <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
         stopOnError <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>files</dt>
@@ -184,7 +185,6 @@
   <code><a href="profMethod-methods.html">profMethod</a></code>,
   <code><a href="profGenerate.html">profBin</a></code></p></div>
     </div>
-    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -198,7 +198,8 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

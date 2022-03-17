@@ -47,7 +47,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -59,7 +59,7 @@ already present feature definitions."><!-- mathjax --><script src="https://cdnjs
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -128,7 +128,8 @@ be disabled with <code>add = TRUE</code>, which will add newly defined features 
 already present feature definitions.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">NearestPeaksParam</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">NearestPeaksParam</span><span class="op">(</span>
   sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
   mzVsRtBalance <span class="op">=</span> <span class="fl">10</span>,
   absMz <span class="op">=</span> <span class="fl">0.2</span>,
@@ -168,8 +169,8 @@ already present feature definitions.</p>
 
 <span class="co"># S4 method for XCMSnExp,NearestPeaksParam</span>
 <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>sampleGroups</dt>
@@ -193,8 +194,8 @@ to check.</p></dd>
 <dt>object</dt>
 <dd><p>For <code>groupChromPeaks</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object containing the
 results from a previous chromatographic peak detection
-analysis (see <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code>).</p><pre><code>For all other methods: a `NearestPeaksParam` object.
-</code></pre></dd>
+analysis (see <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code>).</p><div class="sourceCode"><pre><code>For all other methods: a `NearestPeaksParam` object.
+</code></pre></div></dd>
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
 <dt>param</dt>
@@ -251,11 +252,10 @@ the peak grouping.</p>
 <code><a href="groupChromPeaks-mzClust.html">groupChromPeaks-mzClust</a></code>,
 <code><a href="groupChromPeaks.html">groupChromPeaks</a>()</code></p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Create a NearestPeaksParam object</span></span>
 <span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">NearestPeaksParam</span><span class="op">(</span>kNN <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">p</span></span>
@@ -361,7 +361,7 @@ the peak grouping.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak grouping </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon Nov 22 23:29:29 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Mar 17 15:03:16 2022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: NearestPeaksParam </span>
@@ -381,7 +381,8 @@ the peak grouping.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

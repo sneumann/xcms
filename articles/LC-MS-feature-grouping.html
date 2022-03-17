@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -105,17 +105,42 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2021-11-22 22:51:14<br><strong>Compiled</strong>: Mon Nov 22 23:30:34 2021</p>
-<div class="section level1">
-<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h1>
-<p>In a typical LC-MS-based metabolomics experiment compounds eluting from the chromatography are first ionized before being measured by mass spectrometry (MS). During the ionization different (multiple) ions can be generated from the same compound which all will be measured by MS. In general, the resulting data is then pre-processed to identify chromatographic peaks in the data and to group these across samples in the correspondence analysis. The result are distinct LC-MS features, characterized by their specific m/z and retention time range. Different ions generated during ionization will be detected as different features. <em>Compounding</em> aims now at grouping such features presumably representing signal from the same originating compound to reduce data set complexity (and to aid in subsequent annotation steps). General MS feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.15/MsFeatures" class="external-link">MsFeatures</a></em> package with additional functionality being implemented in the <code>xcms</code> package to enable the compounding of LC-MS data.</p>
-<p>This document provides a simple compounding workflow using <code>xcms</code>. Note that the present functionality does not (yet) <em>aggregate</em> or combine the actual features per values, but does only define the feature groups (one per compound).</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2022-03-17 13:56:14<br><strong>Compiled</strong>: Thu Mar 17 15:04:13 2022</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>In a typical LC-MS-based metabolomics experiment compounds eluting
+from the chromatography are first ionized before being measured by mass
+spectrometry (MS). During the ionization different (multiple) ions can
+be generated from the same compound which all will be measured by MS. In
+general, the resulting data is then pre-processed to identify
+chromatographic peaks in the data and to group these across samples in
+the correspondence analysis. The result are distinct LC-MS features,
+characterized by their specific m/z and retention time range. Different
+ions generated during ionization will be detected as different features.
+<em>Compounding</em> aims now at grouping such features presumably
+representing signal from the same originating compound to reduce data
+set complexity (and to aid in subsequent annotation steps). General MS
+feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.15/MsFeatures" class="external-link">MsFeatures</a></em>
+package with additional functionality being implemented in the
+<code>xcms</code> package to enable the compounding of LC-MS data.</p>
+<p>This document provides a simple compounding workflow using
+<code>xcms</code>. Note that the present functionality does not (yet)
+<em>aggregate</em> or combine the actual features per values, but does
+only define the feature groups (one per compound).</p>
 </div>
-<div class="section level1">
-<h1 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
-</h1>
-<p>We demonstrate the compounding (feature grouping) functionality on the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> package and provided through the <code>faahKO</code> package. This data set consists of samples from 4 mice with knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type mice. Pre-processing of this data set is described in detail in the <em>xcms</em> vignette of the <code>xcms</code> package. Below we load all required packages and the result from this pre-processing updating also the location of the respective raw data files on the current machine.</p>
+<div class="section level2">
+<h2 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
+</h2>
+<p>We demonstrate the compounding (feature grouping) functionality on
+the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> package
+and provided through the <code>faahKO</code> package. This data set
+consists of samples from 4 mice with knock-out of the fatty acid amide
+hydrolase (FAAH) and 4 wild type mice. Pre-processing of this data set
+is described in detail in the <em>xcms</em> vignette of the
+<code>xcms</code> package. Below we load all required packages and the
+result from this pre-processing updating also the location of the
+respective raw data files on the current machine.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span>
@@ -125,7 +150,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## Update the path to the files for the local system</span>
 <span class="fu"><a href="../reference/dirname.html">dirname</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>,
                     <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"WT"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Before performing the feature grouping we inspect the result object. With <code>featureDefinitions</code> we can extract the results from the correspondence analysis.</p>
+<p>Before performing the feature grouping we inspect the result object.
+With <code>featureDefinitions</code> we can extract the results from the
+correspondence analysis.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## DataFrame with 225 rows and 11 columns</span>
@@ -155,8 +182,21 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## FT223         1         2  604, 985,1543,...         1</span>
 <span class="co">## FT224         2         3     67,353,876,...         1</span>
 <span class="co">## FT225         0         2  866,1447,1643,...         1</span></code></pre>
-<p>Each row in this data frame represents the definition of one feature, with its average and range of m/z and retention time. Column <code>"peakidx"</code> provides the index of each chromatographic peak which is assigned to the feature in the <code>chromPeaks</code> matrix of the result object. The <code>featureValues</code> function allows to extract <em>feature values</em>, i.e. a matrix with feature abundances, one row per feature and columns representing the samples of the present data set.</p>
-<p>Below we extract the feature values with and without <em>filled-in</em> peak data. Without the gap-filled data only abundances from <strong>detected</strong> chromatographic peaks are reported. In the gap-filled data, for samples in which no chromatographic peak for a feature was detected, all signal from the m/z - retention time range defined based on the detected chromatographic peaks was integrated.</p>
+<p>Each row in this data frame represents the definition of one feature,
+with its average and range of m/z and retention time. Column
+<code>"peakidx"</code> provides the index of each chromatographic peak
+which is assigned to the feature in the <code>chromPeaks</code> matrix
+of the result object. The <code>featureValues</code> function allows to
+extract <em>feature values</em>, i.e. a matrix with feature abundances,
+one row per feature and columns representing the samples of the present
+data set.</p>
+<p>Below we extract the feature values with and without
+<em>filled-in</em> peak data. Without the gap-filled data only
+abundances from <strong>detected</strong> chromatographic peaks are
+reported. In the gap-filled data, for samples in which no
+chromatographic peak for a feature was detected, all signal from the m/z
+- retention time range defined based on the detected chromatographic
+peaks was integrated.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span>
@@ -189,27 +229,67 @@ document.addEventListener("DOMContentLoaded", function() {
 <span class="co">## FT004  221937.53</span>
 <span class="co">## FT005   84772.92</span>
 <span class="co">## FT006  271128.02</span></code></pre>
-<p>In total 225 features have been defined in the present data set, many of which most likely represent signal from different ions (adducts or isotopes) of the same compound. The aim of the grouping functions of are now to define which features most likely come from the same original compound. The feature grouping functions base on the following assumptions/properties of LC-MS data:</p>
+<p>In total 225 features have been defined in the present data set, many
+of which most likely represent signal from different ions (adducts or
+isotopes) of the same compound. The aim of the grouping functions of are
+now to define which features most likely come from the same original
+compound. The feature grouping functions base on the following
+assumptions/properties of LC-MS data:</p>
 <ul>
-<li>Features (ions) of the same compound should have similar retention time.</li>
-<li>The abundance of features (ions) of the same compound should have a similar pattern across samples, i.e. if a compound is highly concentrated in one sample and low in another, all ions from it should follow the same pattern.</li>
-<li>The peak shape of extracted ion chromatograms (EIC) of features of the same compound should be similar as it should follow the elution pattern of the original compound from the LC.</li>
+<li>Features (ions) of the same compound should have similar retention
+time.</li>
+<li>The abundance of features (ions) of the same compound should have a
+similar pattern across samples, i.e. if a compound is highly
+concentrated in one sample and low in another, all ions from it should
+follow the same pattern.</li>
+<li>The peak shape of extracted ion chromatograms (EIC) of features of
+the same compound should be similar as it should follow the elution
+pattern of the original compound from the LC.</li>
 </ul>
-<p>The main method to perform the feature grouping is called <code>groupFeatures</code> which takes an <code>XCMSnExp</code> object (result object from the <code>xcms</code> pre-processing) as input as well as a parameter object to chose the grouping algorithm and specify its settings. <code>xcms</code> provides and supports the following grouping approaches:</p>
+<p>The main method to perform the feature grouping is called
+<code>groupFeatures</code> which takes an <code>XCMSnExp</code> object
+(result object from the <code>xcms</code> pre-processing) as input as
+well as a parameter object to chose the grouping algorithm and specify
+its settings. <code>xcms</code> provides and supports the following
+grouping approaches:</p>
 <ul>
 <li>
-<code>SimilarRtimeParam</code>: perform an initial grouping based on similar retention time.</li>
+<code>SimilarRtimeParam</code>: perform an initial grouping based on
+similar retention time.</li>
 <li>
-<code>AbundanceSimilarityParam</code>: perform a feature grouping based on correlation of feature abundances (values) across samples.</li>
+<code>AbundanceSimilarityParam</code>: perform a feature grouping
+based on correlation of feature abundances (values) across samples.</li>
 <li>
-<code>EicSimilarityParam</code>: perform a feature grouping based on correlation of EICs.</li>
+<code>EicSimilarityParam</code>: perform a feature grouping based on
+correlation of EICs.</li>
 </ul>
-<p>Calling <code>groupFeatures</code> on an <code>xcms</code> result object will perform a feature grouping assigning each feature in the data set to a <em>feature group</em>. These feature groups are stored as an additional column called <code>"feature_group"</code> in the <code>featureDefinition</code> data frame of the result object and can be accessed with the <code>featureGroups</code> function. Any subsequent <code>groupFeature</code> call will <em>sub-group</em> (refine) the identified feature groups further. It is thus possible to use a single grouping approach, or to combine multiple of them to generate the desired feature grouping. While the individual feature grouping algorithms can be called in any order, it is advisable to use the <code>EicSimilarityParam</code> as last refinement step, because it is the computationally most expensive one, especially if applied to a result object without any pre-defined feature groups or if the feature groups are very large. In the subsequent sections we will apply the various feature grouping approaches subsequently.</p>
-<p>Note also that we perform here a grouping of all defined features, but it would also be possible to <em>just</em> group a subset of interesting features (e.g. features found significant by a statistical analysis of the data set). This is described in the last section of this vignette.</p>
-<div class="section level2">
-<h2 id="grouping-of-features-by-similar-retention-time">Grouping of features by similar retention time<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similar-retention-time"></a>
-</h2>
-<p>The most intuitive and simple way to group features is based on their retention time. Before we perform this initial grouping we evaluate retention times and m/z of all features in the present data set.</p>
+<p>Calling <code>groupFeatures</code> on an <code>xcms</code> result
+object will perform a feature grouping assigning each feature in the
+data set to a <em>feature group</em>. These feature groups are stored as
+an additional column called <code>"feature_group"</code> in the
+<code>featureDefinition</code> data frame of the result object and can
+be accessed with the <code>featureGroups</code> function. Any subsequent
+<code>groupFeature</code> call will <em>sub-group</em> (refine) the
+identified feature groups further. It is thus possible to use a single
+grouping approach, or to combine multiple of them to generate the
+desired feature grouping. While the individual feature grouping
+algorithms can be called in any order, it is advisable to use the
+<code>EicSimilarityParam</code> as last refinement step, because it is
+the computationally most expensive one, especially if applied to a
+result object without any pre-defined feature groups or if the feature
+groups are very large. In the subsequent sections we will apply the
+various feature grouping approaches subsequently.</p>
+<p>Note also that we perform here a grouping of all defined features,
+but it would also be possible to <em>just</em> group a subset of
+interesting features (e.g. features found significant by a statistical
+analysis of the data set). This is described in the last section of this
+vignette.</p>
+<div class="section level3">
+<h3 id="grouping-of-features-by-similar-retention-time">Grouping of features by similar retention time<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similar-retention-time"></a>
+</h3>
+<p>The most intuitive and simple way to group features is based on their
+retention time. Before we perform this initial grouping we evaluate
+retention times and m/z of all features in the present data set.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">rtmed</span>, <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">mzmed</span>,
      xlab <span class="op">=</span> <span class="st">"retention time"</span>, ylab <span class="op">=</span> <span class="st">"m/z"</span>, main <span class="op">=</span> <span class="st">"features"</span>,
@@ -220,10 +300,16 @@ document.addEventListener("DOMContentLoaded", function() {
 Plot of retention times and m/z for all features in the data set.
 </p>
 </div>
-<p>Several features with about the same retention time (but different m/z) can be seen, especially at the beginning of the LC. We thus below group features within a retention time window of 10 seconds into <em>feature groups</em>.</p>
+<p>Several features with about the same retention time (but different
+m/z) can be seen, especially at the beginning of the LC. We thus below
+group features within a retention time window of 10 seconds into
+<em>feature groups</em>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>The results from the feature grouping can be accessed with the <code>featureGroups</code> function. Below we determine the size of each of these feature groups (i.e. how many features are grouped together).</p>
+<p>The results from the feature grouping can be accessed with the
+<code>featureGroups</code> function. Below we determine the size of each
+of these feature groups (i.e. how many features are grouped
+together).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## </span>
@@ -243,7 +329,10 @@ Plot of retention times and m/z for all features in the data set.
 <span class="co">##      2      3      2      2      2      3      2      2      1      1      1 </span>
 <span class="co">## FG.078 FG.079 FG.080 FG.081 FG.082 FG.083 FG.084 </span>
 <span class="co">##      1      1      1      1      1      1      1</span></code></pre>
-<p>In addition we visualize these feature groups with the <code>plotFeatureGroups</code> function which shows all features in the m/z - retention time space with grouped features being connected with a line.</p>
+<p>In addition we visualize these feature groups with the
+<code>plotFeatureGroups</code> function which shows all features in the
+m/z - retention time space with grouped features being connected with a
+line.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotFeatureGroups.html">plotFeatureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -252,7 +341,12 @@ Plot of retention times and m/z for all features in the data set.
 Feature groups defined with a rt window of 10 seconds
 </p>
 </div>
-<p>Let’s assume we don’t agree with this feature grouping, also knowing that there were quite large shifts in retention times between runs. We thus re-perform the feature grouping based on similar retention time with a larger rt window. Prior to the <code>groupFeatures</code> call we have however to drop the previously defined feature groups as otherwise these would be simply <em>refined</em> (i.e. further subgrouped).</p>
+<p>Let’s assume we don’t agree with this feature grouping, also knowing
+that there were quite large shifts in retention times between runs. We
+thus re-perform the feature grouping based on similar retention time
+with a larger rt window. Prior to the <code>groupFeatures</code> call we
+have however to drop the previously defined feature groups as otherwise
+these would be simply <em>refined</em> (i.e. further subgrouped).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Remove previous feature grouping results to repeat the rtime-based</span>
 <span class="co">## feature grouping with different setting</span>
@@ -284,13 +378,31 @@ Feature groups defined with a rt window of 10 seconds
 Feature groups defined with a rt window of 20 seconds
 </p>
 </div>
-<p>Grouping by similar retention time grouped the in total 225 features into 77 feature groups.</p>
+<p>Grouping by similar retention time grouped the in total 225 features
+into 77 feature groups.</p>
 </div>
-<div class="section level2">
-<h2 id="grouping-of-features-by-abundance-correlation-across-samples">Grouping of features by abundance correlation across samples<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-abundance-correlation-across-samples"></a>
-</h2>
-<p>Assuming we are OK with the <em>crude</em> initial feature grouping from the previous section, we can next <em>refine</em> the feature groups considering also the feature abundances across samples. We can use the <code>groupFeatures</code> method with an <code>AbundanceSimilarityParam</code> object. This approach performs a pairwise correlation between the feature values (abundances; across samples) between all features of a predefined feature group (such as defined in the previous section). Features that have a correlation <code>&gt;= threshold</code> are grouped together. Feature grouping based on this approach works best for features with a higher variability in their concentration across samples. Parameter <code>subset</code> allows to restrict the analysis to a subset of samples and allows thus to e.g. exclude QC sample pools from this correlation as these could artificially increase the correlation. Other parameters are passed directly to the internal <code>featureValues</code> call that extracts the feature values on which the correlation should be performed.</p>
-<p>Before performing the grouping we could also evaluate the correlation of features based on their (log2 transformed) abundances across samples with a heatmap.</p>
+<div class="section level3">
+<h3 id="grouping-of-features-by-abundance-correlation-across-samples">Grouping of features by abundance correlation across samples<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-abundance-correlation-across-samples"></a>
+</h3>
+<p>Assuming we are OK with the <em>crude</em> initial feature grouping
+from the previous section, we can next <em>refine</em> the feature
+groups considering also the feature abundances across samples. We can
+use the <code>groupFeatures</code> method with an
+<code>AbundanceSimilarityParam</code> object. This approach performs a
+pairwise correlation between the feature values (abundances; across
+samples) between all features of a predefined feature group (such as
+defined in the previous section). Features that have a correlation
+<code>&gt;= threshold</code> are grouped together. Feature grouping
+based on this approach works best for features with a higher variability
+in their concentration across samples. Parameter <code>subset</code>
+allows to restrict the analysis to a subset of samples and allows thus
+to e.g. exclude QC sample pools from this correlation as these could
+artificially increase the correlation. Other parameters are passed
+directly to the internal <code>featureValues</code> call that extracts
+the feature values on which the correlation should be performed.</p>
+<p>Before performing the grouping we could also evaluate the correlation
+of features based on their (log2 transformed) abundances across samples
+with a heatmap.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">pheatmap</span><span class="op">)</span>
 <span class="va">fvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xdata</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
@@ -306,8 +418,20 @@ Feature groups defined with a rt window of 20 seconds
 Correlation of features based on feature abundances.
 </p>
 </div>
-<p>Some large correlations can be observed for several groups of features, but many of them are not within the same <em>feature group</em> that were defined in the previous section (i.e. are not eluting at the same time).</p>
-<p>Below we use the <code>groupFeatures</code> with the <code>AbundanceSimilarityParam</code> to group features with a correlation higher than 0.7 including both detected and filled-in signal. Whether filled-in or only detected signal should be used in the correlation analysis should be evaluated from data set to data set. By specifying <code>transform = log2</code> we tell the function to log2 transform the abundance prior to the correlation analysis. See the help page for <code>groupFeatures</code> with <code>AbundanceSimilarityParam</code> in the <code>xcms</code> package for details and options.</p>
+<p>Some large correlations can be observed for several groups of
+features, but many of them are not within the same <em>feature
+group</em> that were defined in the previous section (i.e. are not
+eluting at the same time).</p>
+<p>Below we use the <code>groupFeatures</code> with the
+<code>AbundanceSimilarityParam</code> to group features with a
+correlation higher than 0.7 including both detected and filled-in
+signal. Whether filled-in or only detected signal should be used in the
+correlation analysis should be evaluated from data set to data set. By
+specifying <code>transform = log2</code> we tell the function to log2
+transform the abundance prior to the correlation analysis. See the help
+page for <code>groupFeatures</code> with
+<code>AbundanceSimilarityParam</code> in the <code>xcms</code> package
+for details and options.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span>,
                                                        transform <span class="op">=</span> <span class="va">log2</span><span class="op">)</span>,
@@ -364,26 +488,66 @@ Correlation of features based on feature abundances.
 <span class="co">##          1          2          1          1          1          2          1 </span>
 <span class="co">## FG.076.001 FG.077.001 </span>
 <span class="co">##          1          1</span></code></pre>
-<p>Many of the larger retention time-based feature groups have been splitted into two or more sub-groups based on the correlation of their feature abundances. We evaluate this for one specific feature group <code>"FG.040"</code> by plotting their pairwise correlation.</p>
+<p>Many of the larger retention time-based feature groups have been
+splitted into two or more sub-groups based on the correlation of their
+feature abundances. We evaluate this for one specific feature group
+<code>"FG.040"</code> by plotting their pairwise correlation.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.040"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">fvals</span><span class="op">[</span><span class="va">fts</span>, <span class="op">]</span><span class="op">)</span>, gap <span class="op">=</span> <span class="fl">0.1</span>, main <span class="op">=</span> <span class="st">"FG.040"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="LC-MS-feature-grouping_files/figure-html/abundance-correlation-fg040-1.png" alt="Pairwise correlation plot for all features initially grouped into the feature group FG.040." width="768"><p class="caption">
-Pairwise correlation plot for all features initially grouped into the feature group FG.040.
+Pairwise correlation plot for all features initially grouped into the
+feature group FG.040.
 </p>
 </div>
-<p>Indeed, correlations can be seen only between some of the features in this retention time feature group, e.g. between <em>FT117</em> and <em>FT120</em> and between <em>FT195</em> and <em>FT200</em>. Note however that this abundance correlation suffers from relatively few samples (8 in total), and a relatively small variance in abundances across these samples.</p>
-<p>After feature grouping by abundance correlation, the 225 features have been grouped into 170 feature groups.</p>
+<p>Indeed, correlations can be seen only between some of the features in
+this retention time feature group, e.g. between <em>FT117</em> and
+<em>FT120</em> and between <em>FT195</em> and <em>FT200</em>. Note
+however that this abundance correlation suffers from relatively few
+samples (8 in total), and a relatively small variance in abundances
+across these samples.</p>
+<p>After feature grouping by abundance correlation, the 225 features
+have been grouped into 170 feature groups.</p>
 </div>
-<div class="section level2">
-<h2 id="grouping-of-features-by-similarity-of-their-eics">Grouping of features by similarity of their EICs<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similarity-of-their-eics"></a>
-</h2>
-<p>The chromatographic peak shape of an ion of a compound should be highly similar to the elution pattern of this compound. Thus, features from the same compound are assumed to have similar peak shapes of their EICs <strong>within the same sample</strong>. A grouping of features based on similarity of their EICs can be performed with the <code>groupFeatures</code> and the <code>EicSimilarityParam</code> object. It is advisable to perform the peak shape correlation only on a subset of samples (because peak shape correlation is computationally intense and because chromatographic peaks of low intensity features are notoriously noisy). The <code>EicSimilarityParam</code> approach has thus the parameter <code>n</code> which allows to select the number of top samples (ordered by total intensity of feature abundances per feature group) on which the correlation should be performed. With an value of <code>n = 3</code>, the 3 samples with the highest signal for all features in that group will be first identified for each feature group and then a pairwise similarity calculation will be performed within each of these samples. The resulting similarity score from these 3 samples will then be aggregated into a single score by taking the 75% quantile across the 3 samples. This value is then subsequently compared with the cut-off for similarity (parameter <code>threshold</code>) and features with a score <code>&gt;= threshold</code> are grouped into the same feature group.</p>
-<p>Below we group the features based on similarity of their EICs in the two samples with the highest total signal for the respective feature groups. By default, a Pearson correlation coefficient is used as similarity score but any similarity/distance metric function could be used instead (parameter <code>FUN</code> of the <code>EicSimilarityParam</code> - see the respective help page <code><a href="../reference/groupFeatures-eic-similarity.html">?EicSimilarityParam</a></code> for details and options). We define as a threshold a correlation coefficient of 0.7.</p>
+<div class="section level3">
+<h3 id="grouping-of-features-by-similarity-of-their-eics">Grouping of features by similarity of their EICs<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similarity-of-their-eics"></a>
+</h3>
+<p>The chromatographic peak shape of an ion of a compound should be
+highly similar to the elution pattern of this compound. Thus, features
+from the same compound are assumed to have similar peak shapes of their
+EICs <strong>within the same sample</strong>. A grouping of features
+based on similarity of their EICs can be performed with the
+<code>groupFeatures</code> and the <code>EicSimilarityParam</code>
+object. It is advisable to perform the peak shape correlation only on a
+subset of samples (because peak shape correlation is computationally
+intense and because chromatographic peaks of low intensity features are
+notoriously noisy). The <code>EicSimilarityParam</code> approach has
+thus the parameter <code>n</code> which allows to select the number of
+top samples (ordered by total intensity of feature abundances per
+feature group) on which the correlation should be performed. With an
+value of <code>n = 3</code>, the 3 samples with the highest signal for
+all features in that group will be first identified for each feature
+group and then a pairwise similarity calculation will be performed
+within each of these samples. The resulting similarity score from these
+3 samples will then be aggregated into a single score by taking the 75%
+quantile across the 3 samples. This value is then subsequently compared
+with the cut-off for similarity (parameter <code>threshold</code>) and
+features with a score <code>&gt;= threshold</code> are grouped into the
+same feature group.</p>
+<p>Below we group the features based on similarity of their EICs in the
+two samples with the highest total signal for the respective feature
+groups. By default, a Pearson correlation coefficient is used as
+similarity score but any similarity/distance metric function could be
+used instead (parameter <code>FUN</code> of the
+<code>EicSimilarityParam</code> - see the respective help page
+<code><a href="../reference/groupFeatures-eic-similarity.html">?EicSimilarityParam</a></code> for details and options). We define as
+a threshold a correlation coefficient of 0.7.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="../reference/groupFeatures-eic-similarity.html">EicSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>This is the most computationally intense approach since it involves also loading the raw MS data to extract the ion chromatograms for each feature. The results of the grouping are shown below.</p>
+<p>This is the most computationally intense approach since it involves
+also loading the raw MS data to extract the ion chromatograms for each
+feature. The results of the grouping are shown below.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## </span>
@@ -461,12 +625,20 @@ Pairwise correlation plot for all features initially grouped into the feature gr
 <span class="co">##              1              1              1              1              2 </span>
 <span class="co">## FG.075.001.001 FG.076.001.001 FG.077.001.001 </span>
 <span class="co">##              1              1              1</span></code></pre>
-<p>In most cases, pre-defined feature groups (by the abundance correlation) were not further subdivided. Below we evaluate some of the feature groups, starting with <em>FG.008.001</em> which was split into two different feature groups based on EIC correlation. We first extract the EICs for all features from this initial feature group. With <code>n = 1</code> we specify to extract the EIC only from the sample with the highest intensity.</p>
+<p>In most cases, pre-defined feature groups (by the abundance
+correlation) were not further subdivided. Below we evaluate some of the
+feature groups, starting with <em>FG.008.001</em> which was split into
+two different feature groups based on EIC correlation. We first extract
+the EICs for all features from this initial feature group. With
+<code>n = 1</code> we specify to extract the EIC only from the sample
+with the highest intensity.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.008.001"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>
 <span class="va">eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="va">fts</span>,
                              filled <span class="op">=</span> <span class="cn">TRUE</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p>Next we plot the EICs using a different color for each of the subgroups. With <code>peakType = "none"</code> we disable the highlighting of the detected chromatographic peaks.</p>
+<p>Next we plot the EICs using a different color for each of the
+subgroups. With <code>peakType = "none"</code> we disable the
+highlighting of the detected chromatographic peaks.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#00ff0080"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">[</span><span class="va">fts</span><span class="op">]</span><span class="op">)</span>
@@ -479,16 +651,23 @@ Pairwise correlation plot for all features initially grouped into the feature gr
                          lwd <span class="op">=</span> <span class="fl">2</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="LC-MS-feature-grouping_files/figure-html/example-1-eic-1.png" alt="EICs of features from feature group FG.008.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color." width="768"><p class="caption">
-EICs of features from feature group FG.008.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color.
+EICs of features from feature group FG.008.001 in the same sample. Shown
+are the actual intensities (left) and intensities normalized to 1
+(right). Features being part of the same feature group after grouping by
+EIC similarity are shown in the same color.
 </p>
 </div>
-<p>One of the features within the original feature group was separated from the other two because of a low similarity of their EICs. In fact, the feature’s EIC is shifted in retention time dimension and can thus not represent the signal from the same compound.</p>
+<p>One of the features within the original feature group was separated
+from the other two because of a low similarity of their EICs. In fact,
+the feature’s EIC is shifted in retention time dimension and can thus
+not represent the signal from the same compound.</p>
 <p>We evaluate next the sub-grouping in another feature group.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"FG.068.001"</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>
 <span class="va">eics</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="va">fts</span>,
                              filled <span class="op">=</span> <span class="cn">TRUE</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p>Next we plot the EICs using a different color for each of the subgroups.</p>
+<p>Next we plot the EICs using a different color for each of the
+subgroups.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#00ff0080"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">[</span><span class="va">fts</span><span class="op">]</span><span class="op">)</span>
@@ -501,24 +680,41 @@ EICs of features from feature group FG.008.001 in the same sample. Shown are the
                          lwd <span class="op">=</span> <span class="fl">2</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="LC-MS-feature-grouping_files/figure-html/example-2-eic-1.png" alt="EICs for features from feature group FG.068.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color." width="768"><p class="caption">
-EICs for features from feature group FG.068.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color.
+EICs for features from feature group FG.068.001 in the same sample.
+Shown are the actual intensities (left) and intensities normalized to 1
+(right). Features being part of the same feature group after grouping by
+EIC similarity are shown in the same color.
 </p>
 </div>
-<p>Based on the EIC correlation, the initial feature group <em>FG.068.001</em> was grouped into two separate sub-groups.</p>
-<p>The grouping based on EIC correlation on the pre-defined feature groups from the previous sections grouped the 225 features into 183 feature groups.</p>
+<p>Based on the EIC correlation, the initial feature group
+<em>FG.068.001</em> was grouped into two separate sub-groups.</p>
+<p>The grouping based on EIC correlation on the pre-defined feature
+groups from the previous sections grouped the 225 features into 183
+feature groups.</p>
 </div>
-<div class="section level2">
-<h2 id="grouping-of-subsets-of-features">Grouping of subsets of features<a class="anchor" aria-label="anchor" href="#grouping-of-subsets-of-features"></a>
-</h2>
-<p>In the previous sections we were always considering all features from the data set, but sometimes it could be desirable to just group a pre-defined set of features, for example features found to be of particular interest in a certain experiment (e.g. significant features). This can be easily achieved by assigning the features of interest to a initial feature group, using <code>NA</code> as group ID for all other features.</p>
-<p>To illustrate this we <em>reset</em> all feature groups by setting them to <code>NA</code> and assign our features of interest (in this example just 30 randomly selected features) to an initial feature group <code>"FG"</code>.</p>
+<div class="section level3">
+<h3 id="grouping-of-subsets-of-features">Grouping of subsets of features<a class="anchor" aria-label="anchor" href="#grouping-of-subsets-of-features"></a>
+</h3>
+<p>In the previous sections we were always considering all features from
+the data set, but sometimes it could be desirable to just group a
+pre-defined set of features, for example features found to be of
+particular interest in a certain experiment (e.g. significant features).
+This can be easily achieved by assigning the features of interest to a
+initial feature group, using <code>NA</code> as group ID for all other
+features.</p>
+<p>To illustrate this we <em>reset</em> all feature groups by setting
+them to <code>NA</code> and assign our features of interest (in this
+example just 30 randomly selected features) to an initial feature group
+<code>"FG"</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span> <span class="op">&lt;-</span> <span class="cn">NA_character_</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">fts_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span>, <span class="fl">30</span><span class="op">)</span>
 <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">[</span><span class="va">fts_idx</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"FG"</span></code></pre></div>
-<p>Any call to <code>groupFeatures</code> would now simply sub-group this set of 30 features. Any feature which has an <code>NA</code> in the <code>"feature_group"</code> column will be ignored.</p>
+<p>Any call to <code>groupFeatures</code> would now simply sub-group
+this set of 30 features. Any feature which has an <code>NA</code> in the
+<code>"feature_group"</code> column will be ignored.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam</a></span><span class="op">(</span>diffRt <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span>
@@ -534,14 +730,14 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 <span class="co">##          1          1</span></code></pre>
 </div>
 </div>
-<div class="section level1">
-<h1 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
-</h1>
+<div class="section level2">
+<h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h2>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## R Under development (unstable) (2021-11-16 r81199)</span>
+<pre><code><span class="co">## R Under development (unstable) (2022-03-10 r81874)</span>
 <span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">## Running under: Ubuntu 20.04.3 LTS</span>
+<span class="co">## Running under: Ubuntu 20.04.4 LTS</span>
 <span class="co">## </span>
 <span class="co">## Matrix products: default</span>
 <span class="co">## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
@@ -549,7 +745,7 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 <span class="co">## locale:</span>
 <span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
 <span class="co">##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
-<span class="co">##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             </span>
+<span class="co">##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
 <span class="co">##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
 <span class="co">##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
 <span class="co">## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
@@ -559,65 +755,65 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">##  [1] pheatmap_1.0.12     faahKO_1.35.0       MsFeatures_1.3.0   </span>
-<span class="co">##  [4] xcms_3.17.3         MSnbase_2.21.2      ProtGenerics_1.27.0</span>
-<span class="co">##  [7] S4Vectors_0.33.4    mzR_2.29.0          Rcpp_1.0.7         </span>
-<span class="co">## [10] Biobase_2.55.0      BiocGenerics_0.41.2 BiocParallel_1.29.2</span>
-<span class="co">## [13] BiocStyle_2.23.0   </span>
+<span class="co">##  [1] pheatmap_1.0.12      faahKO_1.35.0        MsFeatures_1.3.0    </span>
+<span class="co">##  [4] xcms_3.17.4          MSnbase_2.21.6       ProtGenerics_1.27.2 </span>
+<span class="co">##  [7] S4Vectors_0.33.11    mzR_2.29.3           Rcpp_1.0.8.3        </span>
+<span class="co">## [10] Biobase_2.55.0       BiocGenerics_0.41.2  BiocParallel_1.29.17</span>
+<span class="co">## [13] BiocStyle_2.23.1    </span>
 <span class="co">## </span>
 <span class="co">## loaded via a namespace (and not attached):</span>
 <span class="co">##  [1] bitops_1.0-7                matrixStats_0.61.0         </span>
-<span class="co">##  [3] fs_1.5.0                    progress_1.2.2             </span>
-<span class="co">##  [5] doParallel_1.0.16           RColorBrewer_1.1-2         </span>
-<span class="co">##  [7] rprojroot_2.0.2             GenomeInfoDb_1.31.1        </span>
+<span class="co">##  [3] fs_1.5.2                    progress_1.2.2             </span>
+<span class="co">##  [5] doParallel_1.0.17           RColorBrewer_1.1-2         </span>
+<span class="co">##  [7] rprojroot_2.0.2             GenomeInfoDb_1.31.5        </span>
 <span class="co">##  [9] tools_4.2.0                 bslib_0.3.1                </span>
 <span class="co">## [11] utf8_1.2.2                  R6_2.5.1                   </span>
-<span class="co">## [13] affyio_1.65.0               colorspace_2.0-2           </span>
-<span class="co">## [15] prettyunits_1.1.1           tidyselect_1.1.1           </span>
+<span class="co">## [13] affyio_1.65.0               colorspace_2.0-3           </span>
+<span class="co">## [15] prettyunits_1.1.1           tidyselect_1.1.2           </span>
 <span class="co">## [17] MassSpecWavelet_1.61.0      compiler_4.2.0             </span>
 <span class="co">## [19] preprocessCore_1.57.0       textshaping_0.3.6          </span>
-<span class="co">## [21] DelayedArray_0.21.2         desc_1.4.0                 </span>
-<span class="co">## [23] bookdown_0.24               sass_0.4.0                 </span>
-<span class="co">## [25] scales_1.1.1                DEoptimR_1.0-9             </span>
-<span class="co">## [27] robustbase_0.93-9           affy_1.73.0                </span>
-<span class="co">## [29] pkgdown_1.9000.9000.9000    systemfonts_1.0.3          </span>
-<span class="co">## [31] stringr_1.4.0               digest_0.6.28              </span>
-<span class="co">## [33] rmarkdown_2.11              XVector_0.35.0             </span>
-<span class="co">## [35] pkgconfig_2.0.3             htmltools_0.5.2            </span>
-<span class="co">## [37] MatrixGenerics_1.7.0        highr_0.9                  </span>
-<span class="co">## [39] fastmap_1.1.0               limma_3.51.0               </span>
-<span class="co">## [41] rlang_0.4.12                impute_1.69.0              </span>
-<span class="co">## [43] farver_2.1.0                jquerylib_0.1.4            </span>
-<span class="co">## [45] generics_0.1.1              jsonlite_1.7.2             </span>
-<span class="co">## [47] mzID_1.33.0                 dplyr_1.0.7                </span>
-<span class="co">## [49] RCurl_1.98-1.5              magrittr_2.0.1             </span>
-<span class="co">## [51] GenomeInfoDbData_1.2.7      Matrix_1.3-4               </span>
-<span class="co">## [53] MALDIquant_1.20             munsell_0.5.0              </span>
-<span class="co">## [55] fansi_0.5.0                 MsCoreUtils_1.7.0          </span>
-<span class="co">## [57] lifecycle_1.0.1             vsn_3.63.0                 </span>
-<span class="co">## [59] stringi_1.7.5               yaml_2.2.1                 </span>
-<span class="co">## [61] MASS_7.3-54                 SummarizedExperiment_1.25.2</span>
-<span class="co">## [63] zlibbioc_1.41.0             plyr_1.8.6                 </span>
-<span class="co">## [65] grid_4.2.0                  parallel_4.2.0             </span>
-<span class="co">## [67] crayon_1.4.2                lattice_0.20-45            </span>
-<span class="co">## [69] hms_1.1.1                   knitr_1.36                 </span>
-<span class="co">## [71] pillar_1.6.4                GenomicRanges_1.47.5       </span>
-<span class="co">## [73] codetools_0.2-18            XML_3.99-0.8               </span>
-<span class="co">## [75] glue_1.5.0                  evaluate_0.14              </span>
-<span class="co">## [77] pcaMethods_1.87.0           BiocManager_1.30.16        </span>
-<span class="co">## [79] vctrs_0.3.8                 foreach_1.5.1              </span>
-<span class="co">## [81] RANN_2.6.1                  gtable_0.3.0               </span>
-<span class="co">## [83] purrr_0.3.4                 clue_0.3-60                </span>
-<span class="co">## [85] cachem_1.0.6                ggplot2_3.3.5              </span>
-<span class="co">## [87] xfun_0.28                   ragg_1.2.0                 </span>
-<span class="co">## [89] ncdf4_1.17.1                tibble_3.1.6               </span>
-<span class="co">## [91] iterators_1.0.13            memoise_2.0.0              </span>
-<span class="co">## [93] IRanges_2.29.1              cluster_2.1.2              </span>
-<span class="co">## [95] ellipsis_0.3.2</span></code></pre>
+<span class="co">## [21] cli_3.2.0                   DelayedArray_0.21.2        </span>
+<span class="co">## [23] desc_1.4.1                  bookdown_0.25              </span>
+<span class="co">## [25] sass_0.4.0                  scales_1.1.1               </span>
+<span class="co">## [27] DEoptimR_1.0-10             robustbase_0.93-9          </span>
+<span class="co">## [29] affy_1.73.0                 pkgdown_2.0.2.9000         </span>
+<span class="co">## [31] systemfonts_1.0.4           stringr_1.4.0              </span>
+<span class="co">## [33] digest_0.6.29               rmarkdown_2.13             </span>
+<span class="co">## [35] XVector_0.35.0              pkgconfig_2.0.3            </span>
+<span class="co">## [37] htmltools_0.5.2             MatrixGenerics_1.7.0       </span>
+<span class="co">## [39] highr_0.9                   fastmap_1.1.0              </span>
+<span class="co">## [41] limma_3.51.5                rlang_1.0.2                </span>
+<span class="co">## [43] impute_1.69.0               farver_2.1.0               </span>
+<span class="co">## [45] jquerylib_0.1.4             generics_0.1.2             </span>
+<span class="co">## [47] jsonlite_1.8.0              mzID_1.33.0                </span>
+<span class="co">## [49] dplyr_1.0.8                 RCurl_1.98-1.6             </span>
+<span class="co">## [51] magrittr_2.0.2              GenomeInfoDbData_1.2.7     </span>
+<span class="co">## [53] Matrix_1.4-0                MALDIquant_1.21            </span>
+<span class="co">## [55] munsell_0.5.0               fansi_1.0.2                </span>
+<span class="co">## [57] MsCoreUtils_1.7.4           lifecycle_1.0.1            </span>
+<span class="co">## [59] vsn_3.63.0                  stringi_1.7.6              </span>
+<span class="co">## [61] yaml_2.3.5                  MASS_7.3-55                </span>
+<span class="co">## [63] SummarizedExperiment_1.25.3 zlibbioc_1.41.0            </span>
+<span class="co">## [65] plyr_1.8.6                  grid_4.2.0                 </span>
+<span class="co">## [67] parallel_4.2.0              crayon_1.5.0               </span>
+<span class="co">## [69] lattice_0.20-45             hms_1.1.1                  </span>
+<span class="co">## [71] knitr_1.37                  pillar_1.7.0               </span>
+<span class="co">## [73] GenomicRanges_1.47.6        codetools_0.2-18           </span>
+<span class="co">## [75] XML_3.99-0.9                glue_1.6.2                 </span>
+<span class="co">## [77] evaluate_0.15               pcaMethods_1.87.0          </span>
+<span class="co">## [79] BiocManager_1.30.16         vctrs_0.3.8                </span>
+<span class="co">## [81] foreach_1.5.2               RANN_2.6.1                 </span>
+<span class="co">## [83] gtable_0.3.0                purrr_0.3.4                </span>
+<span class="co">## [85] clue_0.3-60                 cachem_1.0.6               </span>
+<span class="co">## [87] ggplot2_3.3.5               xfun_0.30                  </span>
+<span class="co">## [89] ragg_1.2.2                  ncdf4_1.19                 </span>
+<span class="co">## [91] tibble_3.1.6                iterators_1.0.14           </span>
+<span class="co">## [93] memoise_2.0.1               IRanges_2.29.1             </span>
+<span class="co">## [95] cluster_2.1.2               ellipsis_0.3.2</span></code></pre>
 </div>
-<div class="section level1">
-<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 </div>
   </div>
 
@@ -638,7 +834,8 @@ EICs for features from feature group FG.068.001 in the same sample. Shown are th
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer>

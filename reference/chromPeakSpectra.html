@@ -46,7 +46,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><!-
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -58,7 +58,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><!-
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -123,7 +123,8 @@ deprecated (also, they do not support extracting MS1 spectra).</p>
 <p>See also the <em>LC-MS/MS data analysis</em> vignette for more details and examples.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">chromPeakSpectra</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">chromPeakSpectra</span><span class="op">(</span>
   <span class="va">x</span>,
   msLevel <span class="op">=</span> <span class="fl">2L</span>,
   expandRt <span class="op">=</span> <span class="fl">0</span>,
@@ -134,8 +135,8 @@ deprecated (also, they do not support extracting MS1 spectra).</p>
   return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSpectra"</span>, <span class="st">"Spectra"</span>, <span class="st">"list"</span>, <span class="st">"List"</span><span class="op">)</span>,
   peaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
@@ -194,11 +195,10 @@ spectrum found) or a <code>Spectra</code> object.</p></li>
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Read a file with DDA LC-MS/MS data</span></span>
 <span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH/PestMix1_DDA.mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">dda</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fl</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
@@ -321,7 +321,8 @@ spectrum found) or a <code>Spectra</code> object.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

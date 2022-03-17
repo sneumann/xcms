@@ -18,7 +18,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -30,7 +30,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -70,9 +70,10 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
 from <code>fromX</code> to <code>toX</code>.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">binSize</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">binSize</span><span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>fromX</dt>
@@ -105,11 +106,10 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Define breaks with a size of 0.13 for a data range from 1 to 10:</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Define breaks with a size of 0.13 for a data range from 1 to 10:</span></span>
 <span class="r-in"><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1.00  1.13  1.26  1.39  1.52  1.65  1.78  1.91  2.04  2.17  2.30  2.43</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13]  2.56  2.69  2.82  2.95  3.08  3.21  3.34  3.47  3.60  3.73  3.86  3.99</span>
@@ -160,7 +160,8 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

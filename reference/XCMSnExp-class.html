@@ -193,7 +193,7 @@ as rectangles with border color peakCol."><!-- mathjax --><script src="https://c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -205,7 +205,7 @@ as rectangles with border color peakCol."><!-- mathjax --><script src="https://c
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -420,7 +420,8 @@ For <code>type = "XIC"</code>, identified chromatographic peaks will be indicate
 as rectangles with border color <code>peakCol</code>.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">processHistoryTypes</span><span class="op">(</span><span class="op">)</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">processHistoryTypes</span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu">hasFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
 
@@ -563,8 +564,8 @@ as rectangles with border color <code>peakCol</code>.</p>
 
 <span class="co"># S4 method for XCMSnExp,missing</span>
 <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
@@ -894,11 +895,10 @@ with feature definitions and phenodata information, into a
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
@@ -1034,7 +1034,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Mon Nov 22 23:27:27 2021] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Thu Mar 17 15:01:34 2022] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
@@ -1107,7 +1107,8 @@ with feature definitions and phenodata information, into a
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

@@ -78,7 +78,7 @@ adjusted.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@ adjusted.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -189,7 +189,8 @@ the object, i.e. retention times of all spectra, also MS level &gt; 1 are
 adjusted.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">PeakGroupsParam</span><span class="op">(</span>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">PeakGroupsParam</span><span class="op">(</span>
   minFraction <span class="op">=</span> <span class="fl">0.9</span>,
   extraPeaks <span class="op">=</span> <span class="fl">1</span>,
   smooth <span class="op">=</span> <span class="st">"loess"</span>,
@@ -252,8 +253,8 @@ adjusted.</p>
 
 <span class="co"># S4 method for XCMSnExp,PeakGroupsParam</span>
 <span class="fu"><a href="adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>minFraction</dt>
@@ -390,11 +391,10 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <h2>Author</h2>
     <p>Colin Smith, Johannes Rainer</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
 <span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
@@ -487,7 +487,8 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>

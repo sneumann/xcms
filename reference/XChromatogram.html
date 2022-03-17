@@ -26,7 +26,7 @@ Arguments section."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
       </span>
     </div>
 
@@ -38,7 +38,7 @@ Arguments section."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -86,7 +86,8 @@ representing samples and rows m/z-retention time ranges.</p>
 <strong>Arguments</strong> section.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre><code>XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
+    <div id="ref-usage">
+    <div class="sourceCode"><pre><code>XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
 
 XChromatogram(
   rtime = numeric(),
@@ -157,6 +158,9 @@ refineChromPeaks(object, param = MergeNeighboringPeaksParam())
 
 # S4 method for XChromatogram
 filterChromPeaks(object, method = c("keepTop"), ...)
+
+# S4 method for XChromatogram
+transformIntensity(object, FUN = identity)
 
 # S4 method for XChromatograms
 show(object)
@@ -258,9 +262,12 @@ dropFilledChromPeaks(object)
 refineChromPeaks(object, param = MergeNeighboringPeaksParam())
 
 # S4 method for XChromatograms
-filterChromPeaks(object, method = c("keepTop"), ...)</code></pre></div>
+filterChromPeaks(object, method = c("keepTop"), ...)
 
-    <div id="ref-sections">
+# S4 method for XChromatograms
+transformIntensity(object, FUN = identity)</code></pre></div>
+    </div>
+
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
@@ -293,11 +300,11 @@ filter chromatographic peaks. See function description below for details.</p></d
 (length has to be equal to the length of <code>intensity</code>).</p></dd>
 <dt>intensity</dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric</code> with the intensity values
-(length has to be equal to the length of <code>rtime</code>).</p><pre><code>For `featureValues`: `character(1)` specifying the name
+(length has to be equal to the length of <code>rtime</code>).</p><div class="sourceCode"><pre><code>For `featureValues`: `character(1)` specifying the name
 of the column in `chromPeaks(object)` containing the intensity value
 of the peak that should be used for the `method = "maxint"` conflict
 resolution if.
-</code></pre></dd>
+</code></pre></div></dd>
 <dt>mz</dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric(2)</code> representing the m/z value
 range (min, max) on which the chromatogram was created. This is
@@ -347,20 +354,20 @@ defining which peaks or features to return if <code>rt</code> or <code>mz</code>
 <code>"any"</code> (default) return all peaks that are even
 partially overlapping with <code>rt</code>, <code>"within"</code> return peaks that are
 completely within <code>rt</code> and <code>"apex_within"</code> return peaks which apex
-is within <code>rt</code>.</p><pre><code>For `plot`: what type of plot should be used for the
+is within <code>rt</code>.</p><div class="sourceCode"><pre><code>For `plot`: what type of plot should be used for the
 chromatogram (such as `"l"` for lines, `"p"` for points etc), see help
 of [plot()] in the `graphics` package for more details.
 For `processHistory`: restrict returned processing steps to specific
 types. Use [processHistoryTypes()] to list all supported values.
-</code></pre></dd>
+</code></pre></div></dd>
 <dt>value</dt>
 <dd><p>For <code>chromPeaks&lt;-</code>: a numeric <code>matrix</code> with required columns
-<code>"rt"</code>, <code>"rtmin"</code>, <code>"rtmax"</code>, <code>"into"</code> and <code>"maxo"</code>.</p><pre><code>For `featureValues`: `character(1)` specifying the name of the column in
+<code>"rt"</code>, <code>"rtmin"</code>, <code>"rtmax"</code>, <code>"into"</code> and <code>"maxo"</code>.</p><div class="sourceCode"><pre><code>For `featureValues`: `character(1)` specifying the name of the column in
 `chromPeaks(object)` that should be returned or `"index"` (default) to
 return the index of the peak associated with the feature in each sample.
 To return the integrated peak area instead of the index use
 `value = "into"`.
-</code></pre></dd>
+</code></pre></div></dd>
 <dt>x</dt>
 <dd><p>For <code>plot</code>: an <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></dd>
 <dt>col</dt>
@@ -413,6 +420,9 @@ of all peaks (only if <code>value</code> is <code>"into"</code> or <code>"maxo"<
 For <code>filterChromPeaks</code>: <code>character(1)</code> defining the method that should
 be used to filter chromatographic peaks. See help on <code>filterChromPeaks</code>
 below for details.</p></dd>
+<dt>FUN</dt>
+<dd><p>For <code>transformIntensity</code>: a function to transform the intensity
+values of <code>object</code>.</p></dd>
 <dt>fileIndex</dt>
 <dd><p>For <code>processHistory</code>: optional <code>integer</code> specifying the
 index of the files/samples for which the <a href="ProcessHistory-class.html">ProcessHistory</a> objects should
@@ -563,6 +573,16 @@ smallest values, respectively.</p></li>
 the individual performed processing steps. Optional parameters <code>type</code> and
 <code>fileIndex</code> allow to further specify which processing steps to return.</p></li>
 </ul></div>
+    <div id="manipulating-data">
+    <h2>Manipulating data</h2>
+    
+
+<ul><li><p><code>transformIntensity</code>: transforms the intensity values of the chromatograms
+with provided function <code>FUN</code>. See <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">transformIntensity()</a></code> in the <code>MSnbase</code>
+package for details. For <code>XChromatogram</code> and <code>XChromatograms</code> in addition
+to the intensity values also columns <code>"into"</code> and <code>"maxo"</code> in the object's
+<code>chromPeaks</code> matrix are transformed by the same function.</p></li>
+</ul></div>
     <div id="plotting-and-visualizing">
     <h2>Plotting and visualizing</h2>
     
@@ -637,11 +657,10 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
     <h2>Author</h2>
     <p>Johannes Rainer</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
 <span class="r-in"><span class="co">## ---- Creation of XChromatograms ----</span></span>
 <span class="r-in"><span class="co">##</span></span>
 <span class="r-in"><span class="co">## Create a XChromatograms from Chromatogram objects</span></span>
@@ -713,7 +732,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon Nov 22 23:27:31 2021 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Mar 17 15:01:37 2022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -883,7 +902,8 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>
