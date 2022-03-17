@@ -70,7 +70,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData",
                   "filterIsolationWindow", "filterIntensity",
-		  "alignRt", "compareChromatograms")
+		  "alignRt", "compareChromatograms", "transformIntensity")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -521,7 +521,8 @@ exportMethods("hasChromPeaks",
               "filterColumnsIntensityAbove",
               "filterColumnsKeepTop",
 	      "filterChromPeaks",
-	      "plotChromatogramsOverlay"
+	      "plotChromatogramsOverlay",
+	      "transformIntensity"
               )
 
 ## feature grouping functions and methods.

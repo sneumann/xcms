@@ -101,6 +101,14 @@ setMethod("show", "XChromatogram", function(object) {
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
 #'
+#' @section Manipulating data:
+#'
+#' - `transformIntensity`: transforms the intensity values of the chromatograms
+#'   with provided function `FUN`. See [transformIntensity()] in the `MSnbase`
+#'   package for details. For `XChromatogram` and `XChromatograms` in addition
+#'   to the intensity values also columns `"into"` and `"maxo"` in the object's
+#'   `chromPeaks` matrix are transformed by the same function.
+#'
 #' @param i For `[`: `integer` with the row indices to subset the
 #'     `XChromatograms` object.
 #'
@@ -112,6 +120,9 @@ setMethod("show", "XChromatogram", function(object) {
 #'     and `j` is 1 a `XChromatogram` is returned. Note that `drop` is ignored
 #'     if length of `i` or `j` is larger than 1, thus a `XChromatograms` is
 #'     returned.
+#'
+#' @param FUN For `transformIntensity`: a function to transform the intensity
+#'     values of `object`.
 #'
 #' @param method For `featureValues`: `character(1)` specifying the method to
 #'     resolve multi-peak mappings within the sample sample, i.e. to select
@@ -480,3 +491,13 @@ setMethod("filterChromPeaks", "XChromatogram",
               switch(method,
                      keepTop = .filter_chrom_peaks_keep_top(object, ...))
           })
+
+#' @rdname XChromatogram
+setMethod("transformIntensity", "XChromatogram", function(object,
+                                                          FUN = identity) {
+    object <- callNextMethod()
+    object@chromPeaks[, "into"] <- FUN(object@chromPeaks[, "into"])
+    object@chromPeaks[, "maxo"] <- FUN(object@chromPeaks[, "maxo"])
+    validObject(object)
+    object
+})
