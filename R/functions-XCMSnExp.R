@@ -1766,14 +1766,14 @@ ms2_mspectrum_for_peaks_from_file <- function(x, pks, method = c("all",
                                                                  "closest_mz",
                                                                  "signal")) {
     ## DEPRECATE THIS IN BIOC3.14
-    if (nrow(pks) == 0 | !any(msLevel(x) == 2))
-        return(list())
+    res <- vector(mode = "list", nrow(pks))
+    if (nrow(pks) == 0 || !any(msLevel(x) == 2))
+        return(res)
     method <- match.arg(method)
     fromFile <- as.integer(pks[1, "sample"])
     sps <- spectra(x)
     pmz <- precursorMz(x)
     rtm <- rtime(x)
-    res <- vector(mode = "list", nrow(pks))
     for (i in 1:nrow(pks)) {
         if (is.na(pks[i, "mz"]))
             next

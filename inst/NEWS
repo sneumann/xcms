@@ -1,6 +1,5 @@
-Changes in version 3.17.4
+Changes in version 3.17.5
 
-- Add `transformIntensity` method.
 - Change the way the m/z value for a chromatographic peak is determined by
   centWave: if a ROI contains more than one peak for one scan (spectrum) an
   intensity-weighted m/z is reported for that scan. The m/z of the
@@ -9,6 +8,13 @@ Changes in version 3.17.4
   reported instead. As a result, m/z values of chromatographic peaks are now
   slightly different but are expected to be more accurate. See
   https://github.com/sneumann/xcms/issues/590 for more details.
+
+Changes in version 3.17.4
+
+- Add `transformIntensity` method.
+- Fix issue when calling `chromPeakSpectra` or `featureSpectra` on an object
+  that contains also files with only MS1 spectra
+  (https://github.com/sneumann/xcms/issues/603).
 
 Changes in version 3.17.3
 
