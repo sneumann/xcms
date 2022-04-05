@@ -170,15 +170,15 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 #'
 #' @param peakThr numeric(1) with the minimum absolute intensity
 #'     (above baseline) of peaks to be picked. If provided, the smoothing
-#'     function \code{\link{sav.gol}} function (in the \code{MassSpecWavelet})
-#'     package is called to estimate the local intensity.
+#'     Savitzky-Golay filter is used (in the \code{MassSpecWavelet})
+#'     package to estimate the local intensity.
 #'
 #' @param tuneIn logical(1) whther to tune in the parameter
 #'     estimation of the detected peaks.
 #'
 #' @param ... Additional parameters to be passed to the
-#'     \code{\link{identifyMajorPeaks}} and
-#'     \code{\link{sav.gol}} functions from the
+#'     \code{\link{peakDetectionCWT}} and
+#'     \code{\link{identifyMajorPeaks}} functions from the
 #'     \code{MassSpecWavelet} package.
 #'
 #' @return The \code{MSWParam} function returns a \code{MSWParam}
