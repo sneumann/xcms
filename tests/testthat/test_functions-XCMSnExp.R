@@ -375,6 +375,13 @@ test_that("featureChromatograms works", {
     expect_error(featureChromatograms(xod_xgrg, features = c(100000, 1000002)))
     expect_error(featureChromatograms(xod_xgrg, features = c("a", "FT02")))
 
+    ## expandMz
+    res_4 <- featureChromatograms(xod_xgrg, features = c("FT01", "FT05"),
+                                  expandMz = 2)
+    expect_equal(mz(res_4)[1, ], mz(res_3)[1, ] + c(-2, 2))
+    expect_true(sum(is.na(intensity(res_4[1, 2]))) <
+                sum(is.na(intensity(res_3[1, 2]))))
+
     ## Test with filled-in peaks.
     xod_tmp <- groupChromPeaks(
         xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),

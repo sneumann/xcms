@@ -2311,6 +2311,13 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
 #'
 #' @param x `XCMSnExp` object with grouped chromatographic peaks.
 #'
+#' @param expandMz `numeric(1)` to expand the m/z range for each chromatographic
+#'     peak by a constant value on each side. Be aware that by extending the
+#'     m/z range the extracted EIC might **no longer** represent the actual
+#'     identified chromatographic peak because intensities of potential
+#'     additional mass peaks within each spectra would be aggregated into the
+#'     final reported intensity value per spectrum (retention time).
+#'
 #' @param expandRt `numeric(1)` to expand the retention time range for each
 #'     chromatographic peak by a constant value on each side.
 #'
@@ -2383,7 +2390,8 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
                                              "any", "all"),
                                  filled = FALSE,
                                  n = length(fileNames(x)),
-                                 value = c("maxo", "into"), ...) {
+                                 value = c("maxo", "into"),
+                                 expandMz = 0, ...) {
     include <- match.arg(include)
     value <- match.arg(value)
     if (!hasFeatures(x))
@@ -2437,6 +2445,8 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         include_peaks <- "any"
     mat[, 1] <- mat[, 1] - expandRt
     mat[, 2] <- mat[, 2] + expandRt
+    mat[, 3] <- mat[, 3] - expandMz
+    mat[, 4] <- mat[, 4] + expandMz
     colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
     chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
                          aggregationFun = aggregationFun, filled = filled,
@@ -3086,7 +3096,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         adjustedRtime(newFd) <- adjustedRtime(object, bySample = TRUE)[file]
     if (has_chrom_peaks) {
         pks <- chromPeaks(object)
-        idx <- base::which(pks[, "sample"] %in% file)
+        idx <- pks[, "sample"] %in% file
         pks <- pks[idx, , drop = FALSE]
         pks[, "sample"] <- match(pks[, "sample"], file)
         if (has_features) {

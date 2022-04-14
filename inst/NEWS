@@ -1,3 +1,8 @@
+Changes in version 3.17.5
+
+- Add parameter `expandMz` to `featureChromatograms`
+  (https://github.com/sneumann/xcms/issues/612).
+
 Changes in version 3.17.4
 
 - Add `transformIntensity` method.
