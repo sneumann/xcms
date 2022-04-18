@@ -31,7 +31,7 @@ range will be returned.'><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.6</span>
       </span>
     </div>
 
@@ -106,6 +106,7 @@ range will be returned.</p>
   filled <span class="op">=</span> <span class="cn">FALSE</span>,
   n <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">fileNames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>,
   value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"maxo"</span>, <span class="st">"into"</span><span class="op">)</span>,
+  expandMz <span class="op">=</span> <span class="fl">0</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -143,6 +144,13 @@ from which the EIC should be extracted.</p></dd>
 <dd><p><code>character(1)</code> specifying the column to be used to sort the
 samples. Can be either <code>"maxo"</code> (the default) or <code>"into"</code> to use the
 maximal peak intensity or the integrated peak area, respectively.</p></dd>
+<dt>expandMz</dt>
+<dd><p><code>numeric(1)</code> to expand the m/z range for each chromatographic
+peak by a constant value on each side. Be aware that by extending the
+m/z range the extracted EIC might <strong>no longer</strong> represent the actual
+identified chromatographic peak because intensities of potential
+additional mass peaks within each spectra would be aggregated into the
+final reported intensity value per spectrum (retention time).</p></dd>
 <dt>...</dt>
 <dd><p>optional arguments to be passed along to the <code><a href="chromatogram-method.html">chromatogram()</a></code>
 function.</p></dd>
