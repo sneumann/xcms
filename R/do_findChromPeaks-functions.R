@@ -338,6 +338,9 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
     Nscantime <- length(scantime)
     lf <- length(roiList)
 
+    ## @JO REMOVEME
+    mz_fun <- getOption("MZFUN", default = "getMZ")
+
     ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
     ## lp <- -1
     message("Detecting chromatographic peaks in ", length(roiList),
@@ -374,7 +377,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         idxs <- which(eic$scan %in% seq(scrange[1], scrange[2]))
         mzROI.EIC <- list(scan=eic$scan[idxs], intensity=eic$intensity[idxs])
         ## mzROI.EIC <- rawEIC(object,mzrange=mzrange,scanrange=scrange)
-        omz <- .Call("getMZ", mz, int, scanindex, as.double(mzrange),
+        omz <- .Call(mz_fun, mz, int, scanindex, as.double(mzrange),
                      as.integer(scrange), as.integer(length(scantime)),
                      PACKAGE = 'xcms')
         ## omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
@@ -881,6 +884,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
     Nscantime <- length(scantime)
     lf <- length(roiList)
 
+    #' @JO REMOVEME
+    mz_fun <- getOption("MZFUN", default = "getMZ")
     ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
     ## lp <- -1
     message("Detecting chromatographic peaks in ", length(roiList),
@@ -908,7 +913,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         ## original mzROI range
         idxs <- which(eic$scan %in% seq(scrange[1], scrange[2]))
         mzROI.EIC <- list(scan=eic$scan[idxs], intensity=eic$intensity[idxs])
-        omz <- .Call("getMZ", mz, int, scanindex, as.double(mzrange),
+        omz <- .Call(mz_fun, mz, int, scanindex, as.double(mzrange),
                      as.integer(scrange), as.integer(length(scantime)),
                      PACKAGE = 'xcms')
         if (all(omz == 0)) {
