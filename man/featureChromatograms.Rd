@@ -13,6 +13,7 @@ featureChromatograms(
   filled = FALSE,
   n = length(fileNames(x)),
   value = c("maxo", "into"),
+  expandMz = 0,
   ...
 )
 }
@@ -47,6 +48,13 @@ from which the EIC should be extracted.}
 \item{value}{\code{character(1)} specifying the column to be used to sort the
 samples. Can be either \code{"maxo"} (the default) or \code{"into"} to use the
 maximal peak intensity or the integrated peak area, respectively.}
+
+\item{expandMz}{\code{numeric(1)} to expand the m/z range for each chromatographic
+peak by a constant value on each side. Be aware that by extending the
+m/z range the extracted EIC might \strong{no longer} represent the actual
+identified chromatographic peak because intensities of potential
+additional mass peaks within each spectra would be aggregated into the
+final reported intensity value per spectrum (retention time).}
 
 \item{...}{optional arguments to be passed along to the \code{\link[=chromatogram]{chromatogram()}}
 function.}

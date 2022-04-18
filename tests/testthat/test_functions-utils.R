@@ -247,10 +247,25 @@ test_that(".update_feature_definitions works", {
     expect_equal(res$peakidx[[2]], c(5, 10))
     expect_equal(res$peakidx[[3]], c(4, 9))
     expect_equal(res$peakidx[[4]], 5)
+
+    ## Real data set:
+    orig_names <- rownames(chromPeaks(xod_xgrg))
+    sub_names <- sample(orig_names, (length(orig_names) / 2))
+    fts <- featureDefinitions(xod_xgrg)
+    res <- xcms:::.update_feature_definitions(fts, orig_names, sub_names)
+    expect_s4_class(res, "DataFrame")
+    expect_true(all(lengths(res$peakidx) > 0))
+    tmp <- lapply(res$peakidx, function(z) sub_names[z])
+    tmp <- unlist(tmp, use.names = FALSE)
+
+    onames <- intersect(orig_names[unlist(fts$peakidx, use.names = FALSE)],
+                        sub_names)
+    expect_true(all(onames %in% tmp))
+    expect_true(all(tmp %in% sub_names))
 })
 
 ## test_that(".chrom_peak_id works", {
-    skip_on_os(os = "windows", arch = "i386")
+    ## skip_on_os(os = "windows", arch = "i386")
 
 ##     res <- .chrom_peak_id(matrix(nrow = 0, ncol = 5))
 ##     expect_equal(res, character())

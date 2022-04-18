@@ -1,3 +1,11 @@
+Changes in version 3.17.6
+
+- Rewrite code to subset features and chromatographic peaks. This results in a
+  perfomance improvement for `filterFile` and similar functions.
+
+- Add parameter `expandMz` to `featureChromatograms`
+  (https://github.com/sneumann/xcms/issues/612).
+
 Changes in version 3.17.5
 
 - Change the way the m/z value for a chromatographic peak is determined by

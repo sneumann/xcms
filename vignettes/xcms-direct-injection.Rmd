@@ -12,7 +12,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteKeywords{Mass Spectrometry, MS, Metabolomics, Bioinformatics}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,MassSpecWavelet,BiocStyle}
+  %\VignetteDepends{xcms,msdata,MassSpecWavelet,BiocStyle,signal}
 ---
 
 ```{r style, echo = FALSE, results = 'asis'}
