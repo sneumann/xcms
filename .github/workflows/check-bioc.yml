@@ -194,11 +194,11 @@ jobs:
           ## Manually install packages that seem to be skipped.
           message(paste('****', Sys.time(), 'force installation of selected packages  ****'))
           BiocManager::install(c("faahKO"))
-          BiocManager::install("lgatto/ProtGenerics")
-          BiocManager::install("lgatto/MSnbase")
-          ## BiocManager::install("sneumann/mzR")
-          BiocManager::install("RforMassSpectrometry/Spectra")
-          BiocManager::install("RforMassSpectrometry/MsBackendMgf")
+          BiocManager::install("ProtGenerics")
+          BiocManager::install("MSnbase")
+          BiocManager::install("mzR")
+          BiocManager::install("Spectra")
+          BiocManager::install("MsBackendMgf")
           BiocManager::install("magick")
 
           ## For running the checks
