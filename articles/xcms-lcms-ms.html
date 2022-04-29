@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.0</span>
       </span>
     </div>
 
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2022-04-21 19:33:34<br><strong>Compiled</strong>: Thu Apr 21 20:20:11 2022</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.16/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2022-04-29 05:46:17<br><strong>Compiled</strong>: Fri Apr 29 06:40:27 2022</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -136,7 +136,7 @@ once, defined windows (i.e. ranges of m/z values) are used and scanned.
 This reduces the overlap of fragment spectra while still keeping a high
 coverage.</p>
 <p>This document showcases the analysis of two small LC-MS/MS data sets
-using <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em>. The
+using <em><a href="https://bioconductor.org/packages/3.16/xcms" class="external-link">xcms</a></em>. The
 data files used are reversed-phase LC-MS/MS runs from the Agilent
 Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH
 acquisition mode. For comparison a DDA file from the same sample is
@@ -146,7 +146,7 @@ included.</p>
 <h2 id="analysis-of-dda-data">Analysis of DDA data<a class="anchor" aria-label="anchor" href="#analysis-of-dda-data"></a>
 </h2>
 <p>Below we load the example DDA data set using the
-<code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.15/MSnbase" class="external-link">MSnbase</a></em>
+<code>readMSData</code> function from the <em><a href="https://bioconductor.org/packages/3.16/MSnbase" class="external-link">MSnbase</a></em>
 package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span>
@@ -236,7 +236,7 @@ chromatographic peak are returned. Parameter <code>return.type</code>
 allows to define in which format these are returned. With
 <code>return.type = "List"</code> or
 <code>return.type = "Spectra"</code> the data is represented by a
-<code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.15/Spectra" class="external-link">Spectra</a></em>.</p>
+<code>Spectra</code> object from the <em><a href="https://bioconductor.org/packages/3.16/Spectra" class="external-link">Spectra</a></em>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/Spectra" class="external-link">Spectra</a></span><span class="op">)</span>
 <span class="va">dda_spectra</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromPeakSpectra.html">chromPeakSpectra</a></span><span class="op">(</span>
@@ -353,7 +353,7 @@ should be combined into one.</p>
 <span class="co">## F1.S3505         2   418.926      3505</span>
 <span class="co">##  ... 38 more variables/columns.</span>
 <span class="co">## Processing:</span>
-<span class="co">##  Switch backend from MsBackendMzR to MsBackendDataFrame [Thu Apr 21 20:20:30 2022]</span></code></pre>
+<span class="co">##  Switch backend from MsBackendMzR to MsBackendDataFrame [Fri Apr 29 06:40:42 2022]</span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
 median m/z and intensity is reported for these. Due to parameter
@@ -732,7 +732,7 @@ default, but older/obsolete <code>MSpectra</code> object).</p>
 <span class="co">## 62          2   574.942        NA</span>
 <span class="co">##  ... 20 more variables/columns.</span>
 <span class="co">## Processing:</span>
-<span class="co">##  Merge 1 Spectra into one [Thu Apr 21 20:21:10 2022]</span></code></pre>
+<span class="co">##  Merge 1 Spectra into one [Fri Apr 29 06:41:15 2022]</span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. A <code>peaksCount</code> of
 <code>0</code> indicates that no MS2 spectrum could be defined based on
@@ -947,12 +947,13 @@ also correlation with intensity values across several samples.</p>
 </h2>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## R Under development (unstable) (2022-03-14 r81896)</span>
+<pre><code><span class="co">## R version 4.2.0 (2022-04-22)</span>
 <span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">## Running under: Ubuntu 20.04.4 LTS</span>
 <span class="co">## </span>
 <span class="co">## Matrix products: default</span>
-<span class="co">## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
+<span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3</span>
+<span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3</span>
 <span class="co">## </span>
 <span class="co">## locale:</span>
 <span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
@@ -967,59 +968,58 @@ also correlation with intensity values across several samples.</p>
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">##  [1] MsBackendMgf_1.3.3   magrittr_2.0.3       pander_0.6.5        </span>
-<span class="co">##  [4] Spectra_1.5.20       xcms_3.17.6          MSnbase_2.21.7      </span>
-<span class="co">##  [7] ProtGenerics_1.27.2  S4Vectors_0.33.17    mzR_2.29.5          </span>
-<span class="co">## [10] Rcpp_1.0.8.3         Biobase_2.55.2       BiocGenerics_0.41.2 </span>
-<span class="co">## [13] BiocParallel_1.29.21 BiocStyle_2.23.1    </span>
+<span class="co">##  [1] MsBackendMgf_1.5.0  magrittr_2.0.3      pander_0.6.5       </span>
+<span class="co">##  [4] Spectra_1.7.0       xcms_3.19.0         MSnbase_2.23.0     </span>
+<span class="co">##  [7] ProtGenerics_1.29.0 S4Vectors_0.35.0    mzR_2.31.0         </span>
+<span class="co">## [10] Rcpp_1.0.8.3        Biobase_2.57.0      BiocGenerics_0.43.0</span>
+<span class="co">## [13] BiocParallel_1.31.0 BiocStyle_2.25.0   </span>
 <span class="co">## </span>
 <span class="co">## loaded via a namespace (and not attached):</span>
 <span class="co">##  [1] bitops_1.0-7                matrixStats_0.62.0         </span>
 <span class="co">##  [3] fs_1.5.2                    doParallel_1.0.17          </span>
 <span class="co">##  [5] RColorBrewer_1.1-3          rprojroot_2.0.3            </span>
-<span class="co">##  [7] GenomeInfoDb_1.31.7         tools_4.2.0                </span>
+<span class="co">##  [7] GenomeInfoDb_1.33.0         tools_4.2.0                </span>
 <span class="co">##  [9] bslib_0.3.1                 utf8_1.2.2                 </span>
-<span class="co">## [11] R6_2.5.1                    affyio_1.65.0              </span>
-<span class="co">## [13] colorspace_2.0-3            tidyselect_1.1.2           </span>
-<span class="co">## [15] MassSpecWavelet_1.61.3      compiler_4.2.0             </span>
-<span class="co">## [17] preprocessCore_1.57.1       textshaping_0.3.6          </span>
-<span class="co">## [19] cli_3.2.0                   DelayedArray_0.21.2        </span>
-<span class="co">## [21] desc_1.4.1                  bookdown_0.26              </span>
-<span class="co">## [23] sass_0.4.1                  scales_1.2.0               </span>
-<span class="co">## [25] DEoptimR_1.0-11             robustbase_0.95-0          </span>
-<span class="co">## [27] affy_1.73.0                 pkgdown_2.0.2.9000         </span>
-<span class="co">## [29] systemfonts_1.0.4           stringr_1.4.0              </span>
-<span class="co">## [31] digest_0.6.29               rmarkdown_2.13             </span>
-<span class="co">## [33] XVector_0.35.0              pkgconfig_2.0.3            </span>
-<span class="co">## [35] htmltools_0.5.2             MatrixGenerics_1.7.0       </span>
-<span class="co">## [37] highr_0.9                   fastmap_1.1.0              </span>
-<span class="co">## [39] limma_3.51.8                rlang_1.0.2                </span>
-<span class="co">## [41] impute_1.69.0               jquerylib_0.1.4            </span>
-<span class="co">## [43] generics_0.1.2              jsonlite_1.8.0             </span>
-<span class="co">## [45] mzID_1.33.0                 dplyr_1.0.8                </span>
-<span class="co">## [47] RCurl_1.98-1.6              GenomeInfoDbData_1.2.8     </span>
-<span class="co">## [49] Matrix_1.4-1                MALDIquant_1.21            </span>
-<span class="co">## [51] munsell_0.5.0               fansi_1.0.3                </span>
-<span class="co">## [53] MsCoreUtils_1.7.5           lifecycle_1.0.1            </span>
-<span class="co">## [55] vsn_3.63.0                  stringi_1.7.6              </span>
-<span class="co">## [57] yaml_2.3.5                  MASS_7.3-56                </span>
-<span class="co">## [59] SummarizedExperiment_1.25.3 zlibbioc_1.41.0            </span>
-<span class="co">## [61] plyr_1.8.7                  grid_4.2.0                 </span>
-<span class="co">## [63] parallel_4.2.0              crayon_1.5.1               </span>
-<span class="co">## [65] lattice_0.20-45             MsFeatures_1.3.0           </span>
-<span class="co">## [67] knitr_1.38                  pillar_1.7.0               </span>
-<span class="co">## [69] GenomicRanges_1.47.6        codetools_0.2-18           </span>
-<span class="co">## [71] XML_3.99-0.9                glue_1.6.2                 </span>
-<span class="co">## [73] evaluate_0.15               pcaMethods_1.87.0          </span>
-<span class="co">## [75] BiocManager_1.30.16         vctrs_0.4.1                </span>
-<span class="co">## [77] foreach_1.5.2               RANN_2.6.1                 </span>
-<span class="co">## [79] gtable_0.3.0                purrr_0.3.4                </span>
-<span class="co">## [81] clue_0.3-60                 cachem_1.0.6               </span>
-<span class="co">## [83] ggplot2_3.3.5               xfun_0.30                  </span>
-<span class="co">## [85] ragg_1.2.2                  ncdf4_1.19                 </span>
-<span class="co">## [87] tibble_3.1.6                iterators_1.0.14           </span>
-<span class="co">## [89] memoise_2.0.1               IRanges_2.29.1             </span>
-<span class="co">## [91] cluster_2.1.3               ellipsis_0.3.2</span></code></pre>
+<span class="co">## [11] R6_2.5.1                    affyio_1.67.0              </span>
+<span class="co">## [13] colorspace_2.0-3            MassSpecWavelet_1.63.0     </span>
+<span class="co">## [15] compiler_4.2.0              preprocessCore_1.59.0      </span>
+<span class="co">## [17] textshaping_0.3.6           cli_3.3.0                  </span>
+<span class="co">## [19] DelayedArray_0.23.0         desc_1.4.1                 </span>
+<span class="co">## [21] bookdown_0.26               sass_0.4.1                 </span>
+<span class="co">## [23] scales_1.2.0                DEoptimR_1.0-11            </span>
+<span class="co">## [25] robustbase_0.95-0           affy_1.75.0                </span>
+<span class="co">## [27] pkgdown_2.0.3.9000          systemfonts_1.0.4          </span>
+<span class="co">## [29] stringr_1.4.0               digest_0.6.29              </span>
+<span class="co">## [31] rmarkdown_2.14              XVector_0.37.0             </span>
+<span class="co">## [33] pkgconfig_2.0.3             htmltools_0.5.2            </span>
+<span class="co">## [35] MatrixGenerics_1.9.0        highr_0.9                  </span>
+<span class="co">## [37] fastmap_1.1.0               limma_3.53.0               </span>
+<span class="co">## [39] rlang_1.0.2                 impute_1.71.0              </span>
+<span class="co">## [41] jquerylib_0.1.4             jsonlite_1.8.0             </span>
+<span class="co">## [43] mzID_1.35.0                 RCurl_1.98-1.6             </span>
+<span class="co">## [45] GenomeInfoDbData_1.2.8      Matrix_1.4-1               </span>
+<span class="co">## [47] MALDIquant_1.21             munsell_0.5.0              </span>
+<span class="co">## [49] fansi_1.0.3                 MsCoreUtils_1.9.0          </span>
+<span class="co">## [51] lifecycle_1.0.1             vsn_3.65.0                 </span>
+<span class="co">## [53] stringi_1.7.6               yaml_2.3.5                 </span>
+<span class="co">## [55] MASS_7.3-57                 SummarizedExperiment_1.27.0</span>
+<span class="co">## [57] zlibbioc_1.43.0             plyr_1.8.7                 </span>
+<span class="co">## [59] grid_4.2.0                  parallel_4.2.0             </span>
+<span class="co">## [61] crayon_1.5.1                lattice_0.20-45            </span>
+<span class="co">## [63] MsFeatures_1.5.0            knitr_1.39                 </span>
+<span class="co">## [65] pillar_1.7.0                GenomicRanges_1.49.0       </span>
+<span class="co">## [67] codetools_0.2-18            XML_3.99-0.9               </span>
+<span class="co">## [69] glue_1.6.2                  evaluate_0.15              </span>
+<span class="co">## [71] pcaMethods_1.89.0           BiocManager_1.30.17        </span>
+<span class="co">## [73] vctrs_0.4.1                 foreach_1.5.2              </span>
+<span class="co">## [75] RANN_2.6.1                  gtable_0.3.0               </span>
+<span class="co">## [77] purrr_0.3.4                 clue_0.3-60                </span>
+<span class="co">## [79] cachem_1.0.6                ggplot2_3.3.5              </span>
+<span class="co">## [81] xfun_0.30                   ragg_1.2.2                 </span>
+<span class="co">## [83] ncdf4_1.19                  tibble_3.1.6               </span>
+<span class="co">## [85] iterators_1.0.14            memoise_2.0.1              </span>
+<span class="co">## [87] IRanges_2.31.0              cluster_2.1.3              </span>
+<span class="co">## [89] ellipsis_0.3.2</span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1052,8 +1052,7 @@ systems biology</em> 2018, <strong>14</strong>:e8126.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>

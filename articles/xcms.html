@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.0</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2022-04-21 19:33:34<br><strong>Compiled</strong>: Thu Apr 21 20:21:19 2022</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.16/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2022-04-29 05:46:17<br><strong>Compiled</strong>: Fri Apr 29 06:41:23 2022</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -129,7 +129,7 @@ an <code>XCMSnExp</code> object.</p>
 </h2>
 <p><code>xcms</code> supports analysis of LC/MS data from files in
 (AIA/ANDI) NetCDF, mzXML and mzML format. For the actual data import
-Bioconductor’s <em><a href="https://bioconductor.org/packages/3.15/mzR" class="external-link">mzR</a></em> is used.
+Bioconductor’s <em><a href="https://bioconductor.org/packages/3.16/mzR" class="external-link">mzR</a></em> is used.
 For demonstration purpose we will analyze a subset of the data from
 <span class="citation">[1]</span> in which the metabolic consequences of
 knocking out the fatty acid amide hydrolase (FAAH) gene in mice was
@@ -171,7 +171,7 @@ phenodata file that contains the file names.</p>
                  sample_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"KO"</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"WT"</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,
                  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>Subsequently we load the raw data as an <code>OnDiskMSnExp</code>
-object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.15/MSnbase" class="external-link">MSnbase</a></em>
+object using the <code>readMSData</code> method from the <em><a href="https://bioconductor.org/packages/3.16/MSnbase" class="external-link">MSnbase</a></em>
 package. The <code>MSnbase</code> provides based structures and
 infrastructure for the processing of mass spectrometry data. Also,
 <code>MSnbase</code> can be used to <em>centroid</em> profile-mode MS
@@ -1217,7 +1217,7 @@ settings on the full data set.</p>
                         minFraction <span class="op">=</span> <span class="fl">0.4</span>, bw <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
 <span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">xdata</span>, param <span class="op">=</span> <span class="va">pdp</span><span class="op">)</span></code></pre></div>
 <p>Results from the xcms-based preprocessing can be summarized into a
-<code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.15/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
+<code>SummarizedExperiment</code> object from the <em><a href="https://bioconductor.org/packages/3.16/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
 package with the <code>quantify</code> method. This object will contain
 the feature abundances as the <em>assay matrix</em>, the feature
 definition (their m/z, retention time and other metadata) as
@@ -1641,7 +1641,7 @@ of all performed preprocessings can be extracted using the
 <pre><code><span class="co">## [[1]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak detection </span>
-<span class="co">##  date: Thu Apr 21 20:21:48 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:41:47 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: CentWaveParam </span>
@@ -1650,7 +1650,7 @@ of all performed preprocessings can be extracted using the
 <span class="co">## [[2]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak refinement </span>
-<span class="co">##  date: Thu Apr 21 20:22:13 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:06 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: MergeNeighboringPeaksParam </span>
@@ -1659,7 +1659,7 @@ of all performed preprocessings can be extracted using the
 <span class="co">## [[3]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak grouping </span>
-<span class="co">##  date: Thu Apr 21 20:22:31 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:21 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakDensityParam </span>
@@ -1668,7 +1668,7 @@ of all performed preprocessings can be extracted using the
 <span class="co">## [[4]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Retention time correction </span>
-<span class="co">##  date: Thu Apr 21 20:22:32 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:21 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakGroupsParam </span>
@@ -1677,7 +1677,7 @@ of all performed preprocessings can be extracted using the
 <span class="co">## [[5]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Peak grouping </span>
-<span class="co">##  date: Thu Apr 21 20:22:40 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:28 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakDensityParam </span>
@@ -1686,7 +1686,7 @@ of all performed preprocessings can be extracted using the
 <span class="co">## [[6]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Missing peak filling </span>
-<span class="co">##  date: Thu Apr 21 20:22:42 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:29 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: ChromPeakAreaParam </span>
@@ -1702,7 +1702,7 @@ parameter class for the alignment/retention time adjustment step.</p>
 <pre><code><span class="co">## [[1]]</span>
 <span class="co">## Object of class "XProcessHistory"</span>
 <span class="co">##  type: Retention time correction </span>
-<span class="co">##  date: Thu Apr 21 20:22:32 2022 </span>
+<span class="co">##  date: Fri Apr 29 06:42:21 2022 </span>
 <span class="co">##  info:  </span>
 <span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span>
 <span class="co">##  Parameter class: PeakGroupsParam </span>
@@ -2048,8 +2048,7 @@ identification.</span></strong> <em>Analytical chemistry</em> 2006,
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>

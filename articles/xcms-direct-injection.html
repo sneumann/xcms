@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.0</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> for the
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.16/xcms" class="external-link">xcms</a></em> for the
 analysis of direct injection mass spec data, including peak detection,
 calibration and correspondence (grouping of peaks across samples).</p>
 </div>
@@ -123,7 +123,7 @@ calibration and correspondence (grouping of peaks across samples).</p>
 mass spec data. In contrast to the typical metabolomics workflow, in
 which peaks are identified in the chromatographic (time) dimension, in
 direct injection mass spec data sets peaks are identified in the m/z
-dimension. <em><a href="https://bioconductor.org/packages/3.15/xcms" class="external-link">xcms</a></em> uses
+dimension. <em><a href="https://bioconductor.org/packages/3.16/xcms" class="external-link">xcms</a></em> uses
 functionality from the <code>MassSpecWavelet</code> package to identify
 such peaks.</p>
 <p>Below we load the required packages. For information on the parallel
@@ -133,8 +133,8 @@ processing setup please see the <code>BiocParallel</code> vignette.</p>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/zeehio/MassSpecWavelet" class="external-link">MassSpecWavelet</a></span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.15/msdata" class="external-link">msdata</a></em>
-package. Assuming that <em><a href="https://bioconductor.org/packages/3.15/msdata" class="external-link">msdata</a></em> is
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.16/msdata" class="external-link">msdata</a></em>
+package. Assuming that <em><a href="https://bioconductor.org/packages/3.16/msdata" class="external-link">msdata</a></em> is
 installed, we locate the path of the package and load the data set. We
 create also a <code>data.frame</code> describing the experimental setup
 based on the file names.</p>
@@ -256,8 +256,8 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span class="co">##  Number of spectra: 4 </span>
 <span class="co">##  MSn retention times: -1:59 - -1:59 minutes</span>
 <span class="co">## - - - Processing information - - -</span>
-<span class="co">## Data loaded [Thu Apr 21 20:19:58 2022] </span>
-<span class="co">##  MSnbase version: 2.21.7 </span>
+<span class="co">## Data loaded [Fri Apr 29 06:40:15 2022] </span>
+<span class="co">##  MSnbase version: 2.23.0 </span>
 <span class="co">## - - - Meta data  - - -</span>
 <span class="co">## phenoData</span>
 <span class="co">##   rowNames: 1 2 3 4</span>
@@ -428,7 +428,7 @@ signal at that location an <code>NA</code> is reported.</p>
 <p>Further analysis, i.e. detection of features/metabolites with
 significantly different abundances, or PCA analyses can be performed on
 the feature matrix using functionality from other R packages, such as
-<em><a href="https://bioconductor.org/packages/3.15/limma" class="external-link">limma</a></em>.</p>
+<em><a href="https://bioconductor.org/packages/3.16/limma" class="external-link">limma</a></em>.</p>
 </div>
   </div>
 
@@ -449,8 +449,7 @@ the feature matrix using functionality from other R packages, such as
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>

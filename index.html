@@ -36,7 +36,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.17.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.0</span>
       </span>
     </div>
 
@@ -92,48 +92,29 @@
 <div class="page-header"><h1 id="the-xcms-package-version--3">The <code>xcms</code> package (version &gt;= 3)<a class="anchor" aria-label="anchor" href="#the-xcms-package-version--3"></a>
 </h1></div>
 <p><img align="right" src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/xcms/xcms.png" height="200"></p>
-<p>Version &gt;= 3 of the <code>xcms</code> package are updated and
-partially re-written versions of the original <code>xcms</code> package.
-The version number <em>3</em> was selected to avoid confusions with the
-<code>xcms2</code> (<a href="http://pubs.acs.org/doi/abs/10.1021/ac800795f" class="external-link uri">http://pubs.acs.org/doi/abs/10.1021/ac800795f</a>) software.
-While providing all of the original software’s functionality,
-<code>xcms</code> version &gt;= 3 aims at:</p>
+<p>Version &gt;= 3 of the <code>xcms</code> package are updated and partially re-written versions of the original <code>xcms</code> package. The version number <em>3</em> was selected to avoid confusions with the <code>xcms2</code> (<a href="http://pubs.acs.org/doi/abs/10.1021/ac800795f" class="external-link uri">http://pubs.acs.org/doi/abs/10.1021/ac800795f</a>) software. While providing all of the original software’s functionality, <code>xcms</code> version &gt;= 3 aims at:</p>
 <ol style="list-style-type: decimal">
 <li>Better integration into the Bioconductor framework:</li>
 </ol>
 <ul>
-<li>Make use and extend classes defined in the <code>MSnbase</code>
-package.</li>
-<li>Implement class versioning (Biobase’s <code>Versioned</code>
-class).</li>
+<li>Make use and extend classes defined in the <code>MSnbase</code> package.</li>
+<li>Implement class versioning (Biobase’s <code>Versioned</code> class).</li>
 <li>Use <code>BiocParallel</code> for parallel processing.</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li>Implementation of validation methods for all classes to ensure data
-integrity.</li>
+<li>Implementation of validation methods for all classes to ensure data integrity.</li>
 <li>Easier and faster access to raw spectra data.</li>
 <li>Cleanup of the source code:</li>
 </ol>
 <ul>
-<li>Remove obsolete and redundant functionality (<code>getEIC</code>,
-<code>rawEIC</code> etc).</li>
-<li>Unify interfaces, i.e. implement a layer of base functions accessing
-all analysis methods (which are implemented in C, C++ or R).</li>
+<li>Remove obsolete and redundant functionality (<code>getEIC</code>, <code>rawEIC</code> etc).</li>
+<li>Unify interfaces, i.e. implement a layer of base functions accessing all analysis methods (which are implemented in C, C++ or R).</li>
 </ul>
 <ol start="5" style="list-style-type: decimal">
-<li>Using a more consistent naming scheme of methods that follows
-established naming conventions (e.g. <code>correspondence</code> instead
-of <code>grouping</code>).</li>
+<li>Using a more consistent naming scheme of methods that follows established naming conventions (e.g. <code>correspondence</code> instead of <code>grouping</code>).</li>
 <li>Update, improve and extend the documentation.</li>
-<li>Establishing a layer of base R-functions that interface all analysis
-methods. These should take M/Z, retention time (or scan index) and
-intensity values as input along with optional arguments for the
-downstream functions (implemented in C, C++ or R). The input arguments
-should be basic R objects (numeric vectors) thus enabling easy
-integration of analysis methods in other R packages.</li>
-<li>The user interface’s analysis methods should take the (raw) data
-object and a parameter class, that is used for dispatching to the
-corresponding analysis algorithm.</li>
+<li>Establishing a layer of base R-functions that interface all analysis methods. These should take M/Z, retention time (or scan index) and intensity values as input along with optional arguments for the downstream functions (implemented in C, C++ or R). The input arguments should be basic R objects (numeric vectors) thus enabling easy integration of analysis methods in other R packages.</li>
+<li>The user interface’s analysis methods should take the (raw) data object and a parameter class, that is used for dispatching to the corresponding analysis algorithm.</li>
 </ol>
 <p>Discussions and suggestions are welcome: <a href="https://github.com/sneumann/xcms/issues" class="external-link uri">https://github.com/sneumann/xcms/issues</a></p>
 <p>For more information see the package <a href="vignettes/xcms.Rmd">vignette</a>.</p>
@@ -197,8 +178,7 @@ corresponding analysis algorithm.</li>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>
