@@ -798,7 +798,7 @@ setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
 #'     \code{addParams} slot of the object. This slot stores optional additional
 #'     parameters to be passed to the
 #'     \code{\link{identifyMajorPeaks}} and
-#'     \code{\link{sav.gol}} functions from the
+#'     \code{\link{peakDetectionCWT}} functions from the
 #'     \code{MassSpecWavelet} package.
 #'
 #' @rdname findPeaks-MSW
