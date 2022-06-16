@@ -1609,7 +1609,7 @@ setMethod("groupChromPeaks",
                   startFrom <- max(as.integer(
                       sub("FT", "", rownames(featureDefinitions(object))))) + 1
                   rownames(df) <- .featureIDs(nrow(df), from = startFrom)
-                  df <- rbind(featureDefinitions(object), df)
+                  df <- rbindFill(featureDefinitions(object), df)
               } else
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
