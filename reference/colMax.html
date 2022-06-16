@@ -79,13 +79,16 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>an array of two or more dimensions, containing numeric values</p></dd>
-<dt>na.rm</dt>
+
+  <dt>na.rm</dt>
 <dd><p>logical. Should missing values (including 'NaN') be omitted
     from the calculations? (not currently implemented)</p></dd>
-<dt>dims</dt>
+
+  <dt>dims</dt>
 <dd><p>Which dimensions are regarded as "rows" or "columns" to maximize.
     For <code>rowMax</code>, the maximum is over dimensions <code>dims+1,
     ...</code>; for <code>colMax</code> it is over dimensions <code>1:dims</code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -95,13 +98,18 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric array of suitable size, or a vector if the result is
+    
+
+<p>A numeric array of suitable size, or a vector if the result is
   one-dimensional. The <code>dimnames</code> (or <code>names</code> for a
-  vector result) are taken from the original array.
-  For the <code>which.*</code> functions, an integer array of suitable
+  vector result) are taken from the original array.</p>
+
+
+<p>For the <code>which.*</code> functions, an integer array of suitable
   size, or a vector if the result is one-dimensional. The indecies
-  returned are for accessing <code>x</code> one-dimensionally (i.e.
-<code>x[index]</code>). For <code>which.colMax()</code>, the actual row
+  returned are for accessing <code>x</code> one-dimensionally (i.e.</p>
+<p></p>
+<p><code>x[index]</code>). For <code>which.colMax()</code>, the actual row
   indecies my be determined using <code>(which.colMax(x)-1) %%
   nrow(x) + 1</code>. For <code>which.rowMax()</code>, the actual column indecies
   may be determined using <code>ceiling(rowMax(x)/nrow(x))</code>.</p>
@@ -127,7 +135,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

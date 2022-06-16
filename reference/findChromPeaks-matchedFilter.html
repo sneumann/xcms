@@ -251,79 +251,125 @@ index,index&amp;lt;-: getter and setter for the
     <dl><dt>binSize</dt>
 <dd><p><code>numeric(1)</code> specifying the width of the
 bins/slices in m/z dimension.</p></dd>
+
+
 <dt>impute</dt>
 <dd><p>Character string specifying the method to be used for missing
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
 <code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></dd>
+
+
 <dt>baseValue</dt>
 <dd><p>The base value to which empty elements should be set. This
 is only considered for <code>method = "linbase"</code> and corresponds to the
 <code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></dd>
+
+
 <dt>distance</dt>
 <dd><p>For <code>method = "linbase"</code>: number of non-empty
 neighboring element of an empty element that should be considered for
 linear interpolation. See details section for more information.</p></dd>
+
+
 <dt>fwhm</dt>
 <dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
 actual sigma, see below.</p></dd>
+
+
 <dt>sigma</dt>
 <dd><p><code>numeric(1)</code> specifying the standard deviation (width)
 of the matched filtration model peak.</p></dd>
+
+
 <dt>max</dt>
 <dd><p><code>numeric(1)</code> representing the maximum number of peaks
 that are expected/will be identified per slice.</p></dd>
+
+
 <dt>snthresh</dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise cutoff
 to be used in the chromatographic peak detection step.</p></dd>
+
+
 <dt>steps</dt>
 <dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
 performed).</p></dd>
+
+
 <dt>mzdiff</dt>
 <dd><p><code>numeric(1)</code> defining the minimum difference
 in m/z for peaks with overlapping retention times</p></dd>
+
+
 <dt>index</dt>
 <dd><p><code>logical(1)</code> specifying whether indicies should be
 returned instead of values for m/z and retention times.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>For <code>findChromPeaks</code>: an
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>An <code>MatchedFilterParam</code> object containing all settings for
 the matchedFilter algorithm.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A parameter class specifying if and how parallel processing
 should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></dd>
+
+
 <dt>return.type</dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt>x</dt>
 <dd><p>For <code>max</code>: a <code>MatchedFilterParam</code> object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>MatchedFilterParam</code> function returns a
-<code>MatchedFilterParam</code> class instance with all of the settings
-    specified for chromatographic detection by the <em>matchedFilter</em>    method.
-For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-<code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
+    
+
+<p>The <code>MatchedFilterParam</code> function returns a</p>
+<p></p>
+<p><code>MatchedFilterParam</code> class instance with all of the settings
+    specified for chromatographic detection by the <em>matchedFilter</em></p>
+
+
+<p>method.</p>
+
+
+<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an</p>
+<p></p>
+<p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
@@ -456,7 +502,7 @@ peak detection in purely chromatographic data.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

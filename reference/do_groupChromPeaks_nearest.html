@@ -96,6 +96,8 @@ retention times of the identified chromatographic peaks in all samples of an
 experiment. Required columns are <code>"mz"</code>, <code>"rt"</code> and
 <code>"sample"</code>. The latter should contain <code>numeric</code> values representing
 the index of the sample in which the peak was found.</p></dd>
+
+
 <dt>sampleGroups</dt>
 <dd><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
@@ -103,21 +105,32 @@ group). This parameter is mandatory for the <code>PeakDensityParam</code>
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).</p></dd>
+
+
 <dt>mzVsRtBalance</dt>
 <dd><p><code>numeric(1)</code> representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between
 two peaks.</p></dd>
+
+
 <dt>absMz</dt>
 <dd><p><code>numeric(1)</code> maximum tolerated distance for mz values.</p></dd>
+
+
 <dt>absRt</dt>
 <dd><p><code>numeric(1)</code> maximum tolerated distance for rt values.</p></dd>
+
+
 <dt>kNN</dt>
 <dd><p><code>numeric(1)</code> representing the number of nearest neighbors
 to check.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>list</code> with elements <code>"featureDefinitions"</code> and
+    
+
+<p>A <code>list</code> with elements <code>"featureDefinitions"</code> and
 <code>"peakIndex"</code>. <code>"featureDefinitions"</code> is a <code>matrix</code>, each row
 representing an (mz-rt) feature (i.e. peak group) with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz values.</p></li>
 <li><p><code>"mzmin"</code>: smallest mz value of all peaks' apex within the feature.</p></li>
@@ -154,7 +167,7 @@ data. Bioinformatics 2006, 22:634-636.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

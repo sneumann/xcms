@@ -287,28 +287,38 @@ data using the <em>obiwarp</em> method.</p>
 <dd><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
 parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></dd>
+
+
 <dt>centerSample</dt>
 <dd><p><code>integer(1)</code> defining the index of the center sample
 in the experiment. It defaults to
 <code>floor(median(1:length(fileNames(object))))</code>. Note that if
 <code>subset</code> is used, the index passed with <code>centerSample</code> is
 within these subset samples.</p></dd>
+
+
 <dt>response</dt>
 <dd><p><code>numeric(1)</code> defining the <em>responsiveness</em> of
 warping with <code>response = 0</code> giving linear warping on start and end
 points and <code>response = 100</code> warping using all bijective anchors.</p></dd>
+
+
 <dt>distFun</dt>
 <dd><p>character defining the distance function to be used. Allowed
 values are <code>"cor"</code> (Pearson's correlation), <code>"cor_opt"</code>
 (calculate only 10% diagonal band of distance matrix; better runtime),
 <code>"cov"</code> (covariance), <code>"prd"</code> (product) and <code>"euc"</code>
 (Euclidian distance). The default value is <code>distFun = "cor_opt"</code>.</p></dd>
+
+
 <dt>gapInit</dt>
 <dd><p><code>numeric(1)</code> defining the penalty for gap opening. The
 default value for <code>gapInit</code> depends on the value of <code>distFun</code>:
 for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
 <code>0.3</code>, for <code>distFun = "cov"</code> and <code>distFun = "prd"</code>
 <code>0.0</code> and for <code>distFun = "euc"</code> <code>0.9</code>.</p></dd>
+
+
 <dt>gapExtend</dt>
 <dd><p><code>numeric(1)</code> defining the penalty for gap enlargement.
 The default value for <code>gapExtend</code> depends on the value of
@@ -316,56 +326,88 @@ The default value for <code>gapExtend</code> depends on the value of
 <code>distFun = "cor_opt"</code> it is <code>2.4</code>, for <code>distFun = "cov"</code>
 <code>11.7</code>, for <code>distFun = "euc"</code> <code>1.8</code> and for
 <code>distFun = "prd"</code> 7.8.</p></dd>
+
+
 <dt>factorDiag</dt>
 <dd><p><code>numeric(1)</code> defining the local weight applied to
 diagonal moves in the alignment.</p></dd>
+
+
 <dt>factorGap</dt>
 <dd><p><code>numeric(1)</code> defining the local weight for gap moves
 in the alignment.</p></dd>
+
+
 <dt>localAlignment</dt>
 <dd><p><code>logical(1)</code> whether a local alignment should be
 performed instead of the default global alignment.</p></dd>
+
+
 <dt>initPenalty</dt>
 <dd><p><code>numeric(1)</code> defining the penalty for initiating an
 alignment (for local alignment only).</p></dd>
+
+
 <dt>subset</dt>
 <dd><p><code>integer</code> with the indices of samples within the
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
 See description above for more details.</p></dd>
+
+
 <dt>subsetAdjust</dt>
 <dd><p><code>character</code> specifying the method with which
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
 for more information.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>For <code>adjustRtime</code>: an <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object.</p>
 <p>For all other methods: a <code>ObiwarpParam</code> object.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>A <code>ObiwarpParam</code> object containing all settings for
 the alignment method.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer</code> defining the MS level on which the retention
 time should be performed.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt>x</dt>
 <dd><p>a <code>PeakGroupsParam</code> object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>ObiwarpParam</code> function returns a
-<code>ObiwarpParam</code> class instance with all of the settings
-    specified for obiwarp retention time adjustment and alignment.
-For <code>adjustRtime,XCMSnExp,ObiwarpParam</code>: a
+    
+
+<p>The <code>ObiwarpParam</code> function returns a</p>
+<p></p>
+<p><code>ObiwarpParam</code> class instance with all of the settings
+    specified for obiwarp retention time adjustment and alignment.</p>
+
+
+<p>For <code>adjustRtime,XCMSnExp,ObiwarpParam</code>: a
 <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the retention time
 adjustment step. These can be accessed with the
 <code><a href="XCMSnExp-class.html">adjustedRtime</a></code> method. Retention time correction does also
 adjust the retention time of the identified chromatographic peaks
-(accessed <em>via</em><code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention time
+(accessed <em>via</em></p>
+<p></p>
+<p><code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention time
 correction drops all previous peak grouping results from the result
-object.
-For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
+object.</p>
+
+
+<p>For <code>adjustRtime,OnDiskMSnExp,ObiwarpParam</code>: a <code>numeric</code> with
 the adjusted retention times per spectra (in the same order than
 <code>rtime</code>).</p>
     </div>
@@ -483,7 +525,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

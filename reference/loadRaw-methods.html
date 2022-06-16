@@ -87,6 +87,7 @@
     <dl><dt>object</dt>
 <dd><p>Specification of a data source (such as a file name or
     database query)</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -94,26 +95,36 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing elements describing the data source. The <code>rt</code>,
-<code>scanindex</code>, <code>tic</code>, and <code>acquisitionNum</code> components
-  each have one entry per scan. They are <em>parallel</em> in the sense that
-<code>rt[1]</code>, <code>scanindex[1]</code>, and <code>acquisitionNum[1]</code> all
+    
+
+
+<p>A list containing elements describing the data source. The <code>rt</code>,</p>
+<p></p>
+<p><code>scanindex</code>, <code>tic</code>, and <code>acquisitionNum</code> components
+  each have one entry per scan. They are <em>parallel</em> in the sense that</p>
+<p></p>
+<p><code>rt[1]</code>, <code>scanindex[1]</code>, and <code>acquisitionNum[1]</code> all
   refer to the same scan. The list containst the following components:</p>
 <dl><dt><code>rt</code></dt>
 <dd><p>Numeric vector with acquisition time (in seconds) for each scan</p></dd>
-<dt><code>tic</code></dt>
+
+  <dt><code>tic</code></dt>
 <dd><p>Numeric vector with Total Ion Count for each scan</p></dd>
-<dt><code>scanindex</code></dt>
+
+  <dt><code>scanindex</code></dt>
 <dd><p>Integer vector with starting positions of each scan in the <code>mz</code>
     and <code>intensity</code> components. It is an exclusive offset, so
     <code>scanindex[i]</code> is the offset in <code>mz</code> and <code>intensity</code>
     <em>before</em> the beginning of scan <code>i</code>. This means that the
     <code>mz</code> (respectively <code>intensity</code>) values for scan <code>i</code>
     would be from <code>scanindex[i] + 1</code> to <code>scanindex[i + 1]</code></p></dd>
-<dt><code>mz</code></dt>
+
+  <dt><code>mz</code></dt>
 <dd><p>Concatenated vector of m/z values for all scans</p></dd>
-<dt><code>intensity</code></dt>
+
+  <dt><code>intensity</code></dt>
 <dd><p>Concatenated vector of intensity values for all scans</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -137,7 +148,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

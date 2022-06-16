@@ -99,18 +99,26 @@ The profMat method creates a new profile matrix or returns the
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>The profile matrix generation method. Allowed are <code>"bin"</code>,
 <code>"binlin"</code>, <code>"binlinbase"</code> and <code>"intlin"</code>. See details
 section for more information.</p></dd>
+
+
 <dt>step</dt>
 <dd><p>numeric(1) representing the m/z bin size.</p></dd>
+
+
 <dt>baselevel</dt>
 <dd><p>numeric(1) representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if <code>method = "binlinbase"</code>. See
 <code>baseValue</code> parameter of <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more
 details.</p></dd>
+
+
 <dt>basespace</dt>
 <dd><p>numeric(1) representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will
@@ -122,13 +130,18 @@ be used between consecutive data points falling within
 function by <code>distance = floor(basespace / step)</code>. See
 <code>distance</code> parameter of <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more
 details.</p></dd>
+
+
 <dt>mzrange.</dt>
 <dd><p>Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>profMat</code> returns the profile matrix (rows representing scans,
+    
+
+<p><code>profMat</code> returns the profile matrix (rows representing scans,
     columns equally spaced m/z values).</p>
     </div>
     <div id="details">
@@ -221,7 +234,7 @@ be used for binnind. If not provided, the whole mz value range is used.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

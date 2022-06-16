@@ -87,16 +87,20 @@
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>(empty) <code><a href="xcmsFragments-class.html">xcmsFragments-class</a></code> object</p></dd>
-<dt>xs</dt>
+
+  <dt>xs</dt>
 <dd><p>A <code><a href="xcmsSet-class.html">xcmsSet-class</a></code> object which contains
     picked ms1-peaks from several experiments</p></dd>
-<dt>compMethod</dt>
+
+  <dt>compMethod</dt>
 <dd><p>("floor", "round", "none"): compare-method which is
     used to find the parent peak of a MSnpeak through comparing the
     MZ-values of the  MS1peaks with the MSnParentPeaks.</p></dd>
-<dt>snthresh, mzgap, uniq</dt>
+
+  <dt>snthresh, mzgap, uniq</dt>
 <dd><p>these are the parameters for the
     getspec-peakpicker included in xcmsRaw.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -108,25 +112,36 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix with columns:</p>
+    
+
+<p>A matrix with columns:</p>
 <dl><dt>peakID</dt>
 <dd><p>unique identifier of every peak</p></dd>
-<dt>MSnParentPeakID</dt>
+
+  <dt>MSnParentPeakID</dt>
 <dd><p>PeakID of the parent peak of a msLevel&gt;1 - peak, it is 0 if the peak is msLevel 1.</p></dd>
-<dt>msLevel</dt>
+
+  <dt>msLevel</dt>
 <dd><p>The msLevel of the peak.</p></dd>
-<dt>rt</dt>
+
+  <dt>rt</dt>
 <dd><p>retention time of the peak midpoint</p></dd>
-<dt>mz</dt>
+
+  <dt>mz</dt>
 <dd><p>the mz-Value of the peak</p></dd>
-<dt>intensity</dt>
+
+  <dt>intensity</dt>
 <dd><p>the intensity of the peak</p></dd>
-<dt>sample</dt>
+
+ <dt>sample</dt>
 <dd><p>the number of the sample from the xcmsSet</p></dd>
-<dt>GroupPeakMSn</dt>
+
+ <dt>GroupPeakMSn</dt>
 <dd><p>Used for grouped xcmsSet groups</p></dd>
-<dt>CollisionEnergy</dt>
+
+ <dt>CollisionEnergy</dt>
 <dd><p>The collision energy of the fragment</p></dd>
+
 </dl></div>
 
   </div>
@@ -141,7 +156,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

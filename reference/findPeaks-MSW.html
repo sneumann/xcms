@@ -240,70 +240,111 @@ addParams,addParams&amp;lt;-: getter and setter for the
     <h2>Arguments</h2>
     <dl><dt>snthresh</dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+
+
 <dt>verboseColumns</dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
+
+
 <dt>scales</dt>
 <dd><p>Numeric defining the scales of the continuous wavelet
 transform (CWT).</p></dd>
+
+
 <dt>nearbyPeak</dt>
 <dd><p>logical(1) whether to include nearby peaks of
 major peaks.</p></dd>
+
+
 <dt>peakScaleRange</dt>
 <dd><p>numeric(1) defining the scale range of the
 peak (larger than 5 by default).</p></dd>
+
+
 <dt>ampTh</dt>
 <dd><p>numeric(1) defining the minimum required relative
 amplitude of the peak (ratio of the maximum of CWT coefficients).</p></dd>
+
+
 <dt>minNoiseLevel</dt>
 <dd><p>numeric(1) defining the minimum noise level
 used in computing the SNR.</p></dd>
+
+
 <dt>ridgeLength</dt>
 <dd><p>numeric(1) defining the minimum highest scale
 of the peak in 2-D CWT coefficient matrix.</p></dd>
+
+
 <dt>peakThr</dt>
 <dd><p>numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
 function <code>sav.gol</code> function (in the <code>MassSpecWavelet</code>)
 package is called to estimate the local intensity.</p></dd>
+
+
 <dt>tuneIn</dt>
 <dd><p>logical(1) whther to tune in the parameter
 estimation of the detected peaks.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters to be passed to the
 <code>identifyMajorPeaks</code> and
 <code>sav.gol</code> functions from the
 <code>MassSpecWavelet</code> package.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>For <code>findChromPeaks</code>: an
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>An <code>MSWParam</code> object containing all settings for
 the algorithm.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A parameter class specifying if and how parallel processing
 should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></dd>
+
+
 <dt>return.type</dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>MSWParam</code> function returns a <code>MSWParam</code>    class instance with all of the settings specified for peak detection by
-    the <em>MSW</em> method.
-For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
-<code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
+    
+
+<p>The <code>MSWParam</code> function returns a <code>MSWParam</code></p>
+
+
+<p>class instance with all of the settings specified for peak detection by
+    the <em>MSW</em> method.</p>
+
+
+<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an</p>
+<p></p>
+<p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
@@ -419,7 +460,7 @@ For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

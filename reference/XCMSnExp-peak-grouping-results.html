@@ -123,9 +123,13 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
     <dl><dt>object</dt>
 <dd><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object providing the feature
 definitions.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>For <code>quantify</code>: additional parameters to be passed on to the
 <code>featureValues</code> method.</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>character</code> specifying the method to resolve
 multi-peak mappings within the same sample, i.e. to define the
@@ -135,41 +139,61 @@ peak closest to the median retention time of the feature.
 If <code>"maxint"</code>: select the peak yielding the largest signal. If
 <code>"sum"</code>: sum the values (only if <code>value</code> is <code>"into"</code> or
 <code>"maxo"</code>.</p></dd>
+
+
 <dt>value</dt>
 <dd><p><code>character</code> specifying the name of the column in
 <code>chromPeaks(object)</code> that should be returned. Defaults to
 <code>"into"</code> in which case the integrated peak area is returned. To
 get the index of the peak in the <code>chromPeaks(object)</code> matrix use
 <code>"index"</code>.</p></dd>
+
+
 <dt>intensity</dt>
 <dd><p><code>character</code> specifying the name of the column in the
 <code>chromPeaks(objects)</code> matrix containing the intensity value of the
 peak that should be used for the conflict resolution if
 <code>method = "maxint"</code>.</p></dd>
+
+
 <dt>filled</dt>
 <dd><p><code>logical(1)</code> specifying whether values for filled-in
 peaks should be returned or not. If <code>filled = FALSE</code>, an <code>NA</code>
 is returned in the matrix for the respective peak. See
 <code><a href="fillChromPeaks.html">fillChromPeaks</a></code> for details on peak filling.</p></dd>
+
+
 <dt>missing</dt>
 <dd><p>how missing values should be reported. Allowed values are
 <code>NA</code> (the default), a <code>numeric</code> or
 <code>missing = "rowmin_half"</code>. The latter replaces any <code>NA</code> with
 half of the row's minimal (non-missing) value.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p>for `featureValues`: `integer` defining the MS level(s) for
 which feature values should be returned. By default, values for features
 defined for all MS levels are returned.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>featureValues</code>: a <code>matrix</code> with
+    
+
+<p>For <code>featureValues</code>: a <code>matrix</code> with
 feature values, columns representing samples, rows features. The order
 of the features matches the order found in the
-<code>featureDefinitions(object)</code><code>DataFrame</code>. The rownames of the
-<code>matrix</code> are the same than those of the <code>featureDefinitions</code><code>DataFrame</code>. <code>NA</code> is reported for features without
-corresponding chromatographic peak in the respective sample(s).
-For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
+<code>featureDefinitions(object)</code></p>
+<p></p>
+<p><code>DataFrame</code>. The rownames of the
+<code>matrix</code> are the same than those of the <code>featureDefinitions</code></p>
+
+
+<p><code>DataFrame</code>. <code>NA</code> is reported for features without
+corresponding chromatographic peak in the respective sample(s).</p>
+
+
+<p>For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
 the preprocessing results.</p>
     </div>
     <div id="note">
@@ -207,7 +231,7 @@ feature.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

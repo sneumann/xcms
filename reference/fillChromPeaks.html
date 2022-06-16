@@ -184,9 +184,13 @@ in mz direction by <code>expandMz *</code> their original m/z width. A value of
 <code>0</code> means no expansion, a value of <code>1</code> grows each peak by <code>1 *</code> the m/z
 width of the peak resulting in peaks with twice their original size in
 m/z direction (expansion by half m/z width to both sides).</p></dd>
+
+
 <dt>expandRt</dt>
 <dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code>, same as <code>expandMz</code>
 but for the retention time width.</p></dd>
+
+
 <dt>ppm</dt>
 <dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> optionally specifying a
 <em>ppm</em> by which the m/z width of the peak region should be expanded. For
@@ -197,64 +201,92 @@ the <code>mzmin</code> will be replaced by
 <code>mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)</code>.
 This is applied before eventually expanding the m/z width using the
 <code>expandMz</code> parameter.</p></dd>
+
+
 <dt>fixedMz</dt>
 <dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
 factor by which the m/z width of each feature is to be expanded.
 The m/z width is expanded on both sides by <code>fixedMz</code> (i.e. <code>fixedMz</code>
 is subtracted from the lower m/z and added to the upper m/z). This
 expansion is applied <em>after</em> <code>expandMz</code> and <code>ppm</code>.</p></dd>
+
+
 <dt>fixedRt</dt>
 <dd><p>for <code>FillChromPeaksParam</code>: <code>numeric(1)</code> defining a constant
 factor by which the retention time width of each factor is to be
 expanded. The rt width is expanded on both sides by <code>fixedRt</code> (i.e.
 <code>fixedRt</code> is subtracted from the lower rt and added to the upper rt).
 This expansion is applied <em>after</em> <code>expandRt</code>.</p></dd>
+
+
 <dt>object</dt>
 <dd><p><code>XCMSnExp</code> object with identified and grouped chromatographic
 peaks.</p></dd>
+
+
 <dt>mzmin</dt>
 <dd><p><code>function</code> to be applied to values in the <code>"mzmin"</code> column of all
 chromatographic peaks of a feature to define the lower m/z value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>mzmin = function(z) quantile(z, probs = 0.25)</code> hence using the 25%
 quantile of all values.</p></dd>
+
+
 <dt>mzmax</dt>
 <dd><p><code>function</code> to be applied to values in the <code>"mzmax"</code> column of all
 chromatographic peaks of a feature to define the upper m/z value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>mzmax = function(z) quantile(z, probs = 0.75)</code> hence using the 75%
 quantile of all values.</p></dd>
+
+
 <dt>rtmin</dt>
 <dd><p><code>function</code> to be applied to values in the <code>"rtmin"</code> column of all
 chromatographic peaks of a feature to define the lower rt value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>rtmin = function(z) quantile(z, probs = 0.25)</code> hence using the 25%
 quantile of all values.</p></dd>
+
+
 <dt>rtmax</dt>
 <dd><p><code>function</code> to be applied to values in the <code>"rtmax"</code> column of all
 chromatographic peaks of a feature to define the upper rt value of the
 area from which signal for the feature should be integrated. Defaults to
 <code>rtmax = function(z) quantile(z, probs = 0.75)</code> hence using the 75%
 quantile of all values.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt>param</dt>
 <dd><p><code>FillChromPeaksParam</code> or <code>ChromPeakAreaParam</code> object
 defining which approach should be used (see details section).</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining the MS level on which peak filling
 should be performed (defaults to <code>msLevel = 1L</code>). Only peak filling
 on one MS level at a time is supported, to fill in peaks for MS level 1
 and 2 run first using <code>msLevel = 1</code> and then (on the returned
 result object) again with <code>msLevel = 2</code>.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>Parallel processing settings.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>FillChromPeaksParam</code> function returns a
-<code>FillChromPeaksParam</code> object.
-A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
+    
+
+<p>The <code>FillChromPeaksParam</code> function returns a</p>
+<p></p>
+<p><code>FillChromPeaksParam</code> object.</p>
+
+
+<p>A <code>XCMSnExp</code> object with previously missing chromatographic peaks for
 features filled into its <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> matrix.</p>
     </div>
     <div id="details">
@@ -384,7 +416,7 @@ region for each feature.</p></div>
 <span class="r-in"><span class="va">ph</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Missing peak filling </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Fri Apr 29 06:37:15 2022 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Jun 16 09:21:30 2022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: ChromPeakAreaParam </span>
@@ -396,16 +428,16 @@ region for each feature.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55be734afa28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557a14672de8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55be734afa28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557a14672de8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmin: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55be734afa28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557a14672de8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmax: function (z) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55be734afa28&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x557a14672de8&gt;</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## It is also possible to remove filled-in peaks:</span></span>
 <span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFilledChromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
@@ -426,7 +458,7 @@ region for each feature.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

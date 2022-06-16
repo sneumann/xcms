@@ -94,35 +94,53 @@ chromatographic peak counts per sample are returned.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>`XCMSnExp` object with correspondence results.</p></dd>
+
+
 <dt>group</dt>
 <dd><p>`numeric`, `logical`, `character` or `factor` with the same
 length than `x` has samples to aggregate counts by the groups defined
 in `group`.</p></dd>
+
+
 <dt>perSampleCounts</dt>
 <dd><p>`logical(1)` whether feature wise individual peak
 counts per sample should be returned too.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>`character` passed to the [featureValues()] function. See
 respective help page for more information.</p></dd>
+
+
 <dt>skipFilled</dt>
 <dd><p>`logical(1)` whether filled-in peaks should be excluded
 (default) or included in the summary calculation.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>`matrix` with one row per feature and columns:
-- `"count"`: the total number of samples in which a peak was found.
+    
+
+<p>`matrix` with one row per feature and columns:</p>
+
+
+<p>- `"count"`: the total number of samples in which a peak was found.
 - `"perc"`: the percentage of samples in which a peak was found.
 - `"multi_count"`: the total number of samples in which more than one peak
   was assigned to the feature.
 - `"multi_perc"`: the percentage of those samples in which a peak was found,
   that have also multiple peaks annotated to the feature. Example: for a
   feature, at least one peak was detected in 50 samples. In 5 of them 2 peaks
-  were assigned to the feature. `"multi_perc"` is in this case 10<!-- %. -->- `"rsd"`: relative standard deviation (coefficient of variation) of the
+  were assigned to the feature. `"multi_perc"` is in this case 10<!-- %. --></p>
+
+
+<p>- `"rsd"`: relative standard deviation (coefficient of variation) of the
   integrated peak area of the feature's peaks.
 - The same 4 columns are repeated for each unique element (level) in `group`
-  if `group` was provided.
-If `perSampleCounts = TRUE` also one column for each sample is returned
+  if `group` was provided.</p>
+
+
+<p>If `perSampleCounts = TRUE` also one column for each sample is returned
 with the peak counts per sample.</p>
     </div>
     <div id="author">
@@ -142,7 +160,7 @@ with the peak counts per sample.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

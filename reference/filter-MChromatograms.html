@@ -155,9 +155,13 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+
+
 <dt>threshold</dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>numeric(1)</code> with the
 threshold value to compare against.</p></dd>
+
+
 <dt>value</dt>
 <dd><p><code>character(1)</code> defining which value should be used in the
 comparison or sorting. Can be <code>value = "bpi"</code> (default) to use the
@@ -166,15 +170,21 @@ of intensities per chromatogram. For <code><a href="XChromatogram.html">XChromat
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
+
+
 <dt>which</dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>character(1)</code> defining
 whether <strong>any</strong> (<code>which = "any"</code>, default) or <strong>all</strong> (<code>which = "all"</code>)
 chromatograms in a column have to fulfill the criteria for the column
 to be kept.</p></dd>
+
+
 <dt>n</dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: <code>integer(1)</code> specifying the number of
 columns that should be returned. <code>n</code> will be rounded to the closest
 (larger) integer value.</p></dd>
+
+
 <dt>sortBy</dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: the value by which columns should
 be ordered to determine the top n columns. Can be either <code>sortBy = "bpi"</code>
@@ -184,16 +194,21 @@ sum of all chromatograms. For <code><a href="XChromatogram.html">XChromatograms(
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
+
+
 <dt>aggregationFun</dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: function to be used to
 aggregate (combine) the values from all chromatograms in each column.
 Defaults to <code>aggregationFun = sum</code> in which case the sum of the values
 is used to rank the columns. Alternatively the <code>mean</code>, <code>median</code> or
 similar function can be used.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
+    
+
+<p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
 same number of rows (EICs) but eventually a lower number of columns
 (samples).</p>
     </div>
@@ -293,7 +308,7 @@ same number of rows (EICs) but eventually a lower number of columns
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

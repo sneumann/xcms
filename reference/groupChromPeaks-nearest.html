@@ -180,41 +180,65 @@ group). This parameter is mandatory for the <code>PeakDensityParam</code>
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).</p></dd>
+
+
 <dt>mzVsRtBalance</dt>
 <dd><p><code>numeric(1)</code> representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between
 two peaks.</p></dd>
+
+
 <dt>absMz</dt>
 <dd><p><code>numeric(1)</code> maximum tolerated distance for mz values.</p></dd>
+
+
 <dt>absRt</dt>
 <dd><p><code>numeric(1)</code> maximum tolerated distance for rt values.</p></dd>
+
+
 <dt>kNN</dt>
 <dd><p><code>numeric(1)</code> representing the number of nearest neighbors
 to check.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>For <code>groupChromPeaks</code>: an <a href="XCMSnExp-class.html">XCMSnExp</a> object containing the
 results from a previous chromatographic peak detection
 analysis (see <code><a href="chromatographic-peak-detection.html">findChromPeaks()</a></code>).</p><div class="sourceCode"><pre><code>For all other methods: a `NearestPeaksParam` object.
 </code></pre></div></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>A <code>PeakDensityParam</code> object containing all settings for
 the peak grouping algorithm.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining the MS level. Currently only MS level
 1 is supported.</p></dd>
+
+
 <dt>add</dt>
 <dd><p><code>logical(1)</code> (default <code>add = FALSE</code>) allowing to perform an
 additional round of correspondence (e.g. on a different MS level) and
 add features to the already present feature definitions.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>NearestPeaksParam</code> function returns a
-<code>NearestPeaksParam</code> class instance with all of the settings
-    specified for peak alignment based on peak proximity.
-For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the results of the peak
+    
+
+<p>The <code>NearestPeaksParam</code> function returns a</p>
+<p></p>
+<p><code>NearestPeaksParam</code> class instance with all of the settings
+    specified for peak alignment based on peak proximity.</p>
+
+
+<p>For <code>groupChromPeaks</code>: a <a href="XCMSnExp-class.html">XCMSnExp</a> object with the results of the peak
 grouping/correspondence step (i.e. the mz-rt features). These can be
 accessed with the <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code> method.</p>
     </div>
@@ -361,7 +385,7 @@ the peak grouping.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak grouping </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Fri Apr 29 06:38:26 2022 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Jun 16 09:22:47 2022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: NearestPeaksParam </span>
@@ -381,7 +405,7 @@ the peak grouping.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

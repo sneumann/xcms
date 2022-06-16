@@ -141,30 +141,46 @@ deprecated (also, they do not support extracting MS1 spectra).</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining whether MS1 or MS2 spectra should be
 returned. <code>msLevel = 1</code> is currently only supported for <code>return.type</code>
 being <code>"Spectra"</code> or <code>"List"</code>.</p></dd>
+
+
 <dt>expandRt</dt>
 <dd><p><code>numeric(1)</code> to expand the retention time range of each
 peak by a constant value on each side.</p></dd>
+
+
 <dt>expandMz</dt>
 <dd><p><code>numeric(1)</code> to expand the m/z range of each peak by a
 constant value on each side.</p></dd>
+
+
 <dt>ppm</dt>
 <dd><p><code>numeric(1)</code> to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>character(1)</code> specifying which spectra to include in the
 result. Defaults to <code>method = "all"</code>. See function description for
 details.</p></dd>
+
+
 <dt>skipFilled</dt>
 <dd><p><code>logical(1)</code> whether spectra for filled-in peaks should
 be reported or not.</p></dd>
+
+
 <dt>return.type</dt>
 <dd><p><code>character(1)</code> defining the result type. Defaults to
 <code>return.type = "MSpectra"</code> but <code>return.type = "Spectra"</code> or
 <code>return.type = "List"</code> are preferred. See below for more information.</p></dd>
+
+
 <dt>peaks</dt>
 <dd><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
 subset of chromatographic peaks in <code>chromPeaks</code> for which spectra should
@@ -172,10 +188,13 @@ be returned (providing either their ID, a logical vector same length
 than <code>nrow(chromPeaks(x))</code> or their index in <code>chromPeaks(x)</code>). This
 parameter overrides <code>skipFilled</code> and is only supported for <code>return.type</code>
 being either <code>"Spectra"</code> or <code>"List"</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSpectra</a> object with elements being
+    
+
+<p>parameter <code>return.type</code> allow to specify the type of the returned object:</p><ul><li><p><code>return.type = "MSpectra"</code>: a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSpectra</a> object with elements being
 <a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">Spectrum</a> objects. The result objects contains all spectra
 for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
 respective peak (i.e. its rowname in <code><a href="XCMSnExp-class.html">chromPeaks()</a></code>).</p></li>
@@ -321,7 +340,7 @@ spectrum found) or a <code>Spectra</code> object.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -78,25 +78,34 @@ the m/z - rt space.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code>XCMSnExp</code> with the features.</p></dd>
+
+
 <dt>expandMz</dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in m/z dimension before identifying overlapping features.
 The resulting <code>"mzmin"</code> for the feature is thus <code>mzmin - expandMz</code> and
 the <code>"mzmax"</code> <code>mzmax + expandMz</code>.</p></dd>
+
+
 <dt>expandRt</dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in retention time dimension before identifying overlapping
 features. The resulting <code>"rtmin"</code> for the
 feature is thus <code>rtmin - expandRt</code> and the <code>"rtmax"</code> <code>rtmax + expandRt</code>.</p></dd>
+
+
 <dt>ppm</dt>
 <dd><p><code>numeric(1)</code> to grow the m/z width of the feature by a relative
 value: <code>mzmin - mzmin * ppm / 2e6</code>, <code>mzmax + mzmax * ppm / 2e6</code>. Each
 feature is thus expanded in m/z dimension by ppm/2 on each side before
 identifying overlapping features.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>list</code> with indices of features (in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>) that
+    
+
+<p><code>list</code> with indices of features (in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>) that
 are overlapping.</p>
     </div>
     <div id="author">
@@ -147,7 +156,7 @@ are overlapping.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

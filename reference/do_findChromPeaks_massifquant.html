@@ -105,30 +105,46 @@
     <dl><dt>mz</dt>
 <dd><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></dd>
+
+
 <dt>int</dt>
 <dd><p>Numeric vector with the individual intensity values from all
 scans/spectra of one file/sample.</p></dd>
+
+
 <dt>scantime</dt>
 <dd><p>Numeric vector of length equal to the number of
 spectra/scans of the data representing the retention time of each scan.</p></dd>
+
+
 <dt>valsPerSpect</dt>
 <dd><p>Numeric vector with the number of values for each
 spectrum.</p></dd>
+
+
 <dt>ppm</dt>
 <dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></dd>
+
+
 <dt>peakwidth</dt>
 <dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></dd>
+
+
 <dt>snthresh</dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+
+
 <dt>prefilter</dt>
 <dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></dd>
+
+
 <dt>mzCenterFun</dt>
 <dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
@@ -138,29 +154,41 @@ values, <code>"apex"</code>: use the m/z value at the peak apex,
 peak apex and the m/z values left and right of it and <code>"meanApex3"</code>:
 mean of the m/z value of the peak apex and the m/z values left and right
 of it.</p></dd>
+
+
 <dt>integrate</dt>
 <dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
+
+
 <dt>mzdiff</dt>
 <dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
 signal.</p></dd>
+
+
 <dt>fitgauss</dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></dd>
+
+
 <dt>noise</dt>
 <dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
+
+
 <dt>verboseColumns</dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
+
+
 <dt>criticalValue</dt>
 <dd><p><code>numeric(1)</code>. Suggested values:
 (<code>0.1-3.0</code>). This setting helps determine the the Kalman Filter
@@ -171,12 +199,16 @@ translates to be a multiplier of the standard error of the prediction
 reported by the Kalman Filter. If the peak in the XC-MS sample have
 a small mass deviance in ppm error, a smaller critical value might be
 better and vice versa.</p></dd>
+
+
 <dt>consecMissedLimit</dt>
 <dd><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
 or more consecutive failed predictions, this setting informs Massifquant
 when to stop a Kalman Filter from following a candidate peak.</p></dd>
+
+
 <dt>unions</dt>
 <dd><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
 segmentation; set to <code>0</code> if no t-test to be applied on
@@ -189,6 +221,8 @@ divided into two segments or more. With this option turned on, the
 program identifies segmented peaks and combines them (merges them)
 into one with a two sample t-test. The potential danger of this option
 is that some truly distinct peaks may be merged.</p></dd>
+
+
 <dt>checkBack</dt>
 <dd><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
 <code>0</code> if turned off. The convergence of a Kalman Filter to a peak's
@@ -199,15 +233,22 @@ the converged bounds of the Kalman Filter. The option does not directly
 affect identification of a peak because it is a postprocessing measure;
 it has not shown to be a extremely useful thus far and the default is set
 to being turned off.</p></dd>
+
+
 <dt>withWave</dt>
 <dd><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix, each row representing an identified chromatographic peak,
-    with columns:</p><dl><dt>mz</dt>
+    
+
+<p>A matrix, each row representing an identified chromatographic peak,
+    with columns:</p>
+<p></p>
+<dl><dt>mz</dt>
 <dd><p>Intensity weighted mean of m/z values of the peaks across
     scans.</p></dd>
 
@@ -327,7 +368,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

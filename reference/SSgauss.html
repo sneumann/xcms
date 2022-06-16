@@ -82,12 +82,16 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>a numeric vector of values at which to evaluate the model</p></dd>
-<dt>mu</dt>
+
+  <dt>mu</dt>
 <dd><p>mean  of the distribution function</p></dd>
-<dt>sigma</dt>
+
+  <dt>sigma</dt>
 <dd><p>standard deviation of the distribution fuction</p></dd>
-<dt>h</dt>
+
+  <dt>h</dt>
 <dd><p>height of the distribution function</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -97,11 +101,14 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric vector of the same length as <code>x</code>. It is the value
+    
+
+<p>A numeric vector of the same length as <code>x</code>. It is the value
   of the expression <code>h*exp(-(x-mu)^2/(2*sigma^2)</code>, which is a
   modified gaussian function where the maximum height is treated
-  as a separate parameter not dependent on <code>sigma</code>. If arguments
-<code>mu</code>, <code>sigma</code>, and <code>h</code> are names of objects, the
+  as a separate parameter not dependent on <code>sigma</code>. If arguments</p>
+<p></p>
+<p><code>mu</code>, <code>sigma</code>, and <code>h</code> are names of objects, the
   gradient matrix with respect to these names is attached as an
   attribute named <code>gradient</code>.</p>
     </div>
@@ -127,7 +134,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

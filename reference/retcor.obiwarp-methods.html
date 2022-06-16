@@ -97,38 +97,53 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>the <code>xcmsSet</code> object</p></dd>
-<dt>plottype</dt>
+
+  <dt>plottype</dt>
 <dd><p>if <code>deviation</code> plot retention time deviation</p></dd>
-<dt>profStep</dt>
+
+  <dt>profStep</dt>
 <dd><p>step size (in m/z) to use for profile generation from
     the raw data files</p></dd>
-<dt>center</dt>
+
+  <dt>center</dt>
 <dd><p>the index of the sample all others will be aligned
   to. If center==NULL, the sample with the most peaks is chosen as default.</p></dd>
-<dt>col</dt>
+
+  <dt>col</dt>
 <dd><p>vector of colors for plotting each sample</p></dd>
-<dt>ty</dt>
+
+  <dt>ty</dt>
 <dd><p>vector of line and point types for plotting each sample</p></dd>
-<dt>response</dt>
+
+  <dt>response</dt>
 <dd><p>Responsiveness of warping.  0 will give a linear warp based
     on start and end points.  100 will use all bijective anchors</p></dd>
-<dt>distFunc</dt>
+
+  <dt>distFunc</dt>
 <dd><p>DistFunc function: cor (Pearson's R) or cor_opt (default,
     calculate only 10% diagonal band of distance matrix, better
     runtime), cov (covariance), prd (product), euc (Euclidean distance)</p></dd>
-<dt>gapInit</dt>
+
+  <dt>gapInit</dt>
 <dd><p>Penalty for Gap opening, see below</p></dd>
-<dt>gapExtend</dt>
+
+  <dt>gapExtend</dt>
 <dd><p>Penalty for Gap enlargement, see below</p></dd>
-<dt>factorDiag</dt>
+
+  <dt>factorDiag</dt>
 <dd><p>Local weighting applied to diagonal moves in alignment.</p></dd>
-<dt>factorGap</dt>
+
+  <dt>factorGap</dt>
 <dd><p>Local weighting applied to gap moves in alignment.</p></dd>
-<dt>localAlignment</dt>
+
+  <dt>localAlignment</dt>
 <dd><p>Local rather than global alignment</p></dd>
-<dt>initPenalty</dt>
+
+  <dt>initPenalty</dt>
 <dd><p>Penalty for initiating alignment (for local
   alignment only) Default: 0</p></dd>
+
+
 </dl><p>Default gap penalties: (gapInit, gapExtend) [by distFunc type]:
 'cor' = '0.3,2.4'
 'cov' = '0,11.7'
@@ -137,7 +152,9 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>An <code>xcmsSet</code> object</p>
+    
+
+<p>An <code>xcmsSet</code> object</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -156,7 +173,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

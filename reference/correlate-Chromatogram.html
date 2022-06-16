@@ -130,26 +130,39 @@ correlation matrix might thus be different.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object.</p></dd>
+
+
 <dt>y</dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object.</p></dd>
+
+
 <dt>use</dt>
 <dd><p><code>character(1)</code> passed to the <code>cor</code> function. See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> for
 details.</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>character(1)</code> passed to the <code>cor</code> function. See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> for
 details.</p></dd>
+
+
 <dt>align</dt>
 <dd><p><code>character(1)</code> defining the alignment method to be used. See
 help on <code>alignRt</code> in <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> for details. The value of
 this parameter is passed to the <code>method</code> parameter of <code>alignRt</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional parameters passed along to the <code>alignRt</code> method such as
 <code>tolerance</code> that, if set to <code>0</code> requires the retention times to be
 identical.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>numeric(1)</code> or <code>matrix</code> (if called on <code>MChromatograms</code> objects)
+    
+
+<p><code>numeric(1)</code> or <code>matrix</code> (if called on <code>MChromatograms</code> objects)
 with the correlation coefficient. If a <code>matrix</code> is returned, the rows
 represent the chromatograms in <code>x</code> and the columns the chromatograms in
 <code>y</code>.</p>
@@ -173,15 +186,15 @@ represent the chromatograms in <code>x</code> and the columns the chromatograms 
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## Using `compareChromatograms` instead of `correlate`.</span></span>
 <span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">chr2</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.09095194</span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms</a></span><span class="op">(</span><span class="va">chr2</span>, <span class="va">chr1</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.02314823</span>
+<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms</a></span><span class="op">(</span><span class="va">chr2</span>, <span class="va">chr1</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2630029</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms</a></span><span class="op">(</span><span class="va">chrs</span>, <span class="va">chrs</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]      [,3]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.00000000 -0.09095194 0.9928602</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.02314823  1.00000000 0.6754555</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  0.99355819  0.67545554 1.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]        [,2]      [,3]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.0000000 -0.02314823 0.9954772</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.2630029  1.00000000 0.5341594</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 0.9954772  0.49060175 1.0000000</span>
 </code></pre></div>
     </div>
   </div>
@@ -196,7 +209,7 @@ represent the chromatograms in <code>x</code> and the columns the chromatograms 
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

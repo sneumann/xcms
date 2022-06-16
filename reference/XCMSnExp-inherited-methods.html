@@ -168,30 +168,46 @@ examples.</p>
     <dl><dt>x</dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>
 object.</p></dd>
+
+
 <dt>binSize</dt>
 <dd><p><code>numeric(1)</code> defining the size of a bin (in Dalton).</p></dd>
+
+
 <dt>msLevel.</dt>
 <dd><p>For <code>bin</code>, <code>clean</code>, <code>filterMsLevel</code>,
 <code>removePeaks</code>: <code>numeric(1)</code> defining the MS level(s)
 to which operations should be applied or to which the object should be
 subsetted.</p></dd>
+
+
 <dt>object</dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>
 object.</p></dd>
+
+
 <dt>all</dt>
 <dd><p>For <code>clean</code>: <code>logical(1)</code>, if <code>TRUE</code> all zeros are
 removed.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p><code>logical(1)</code> whether progress information should be
 displayed.</p></dd>
+
+
 <dt>n</dt>
 <dd><p>For <code>filterAcquisitionNum</code>: <code>integer</code> defining the
 acquisition numbers of the spectra to which the data set should be
 sub-setted.</p></dd>
+
+
 <dt>file</dt>
 <dd><p>For <code>filterAcquisitionNum</code>:
 <code>integer</code> defining the file index within the object to subset the
 object by file.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>For <code>normalize</code>: <code>character(1)</code> specifying the
 normalization method. See <code><a href="https://lgatto.github.io/MSnbase/reference/normalise-methods.html" class="external-link">normalize</a></code> in the <code>MSnbase</code>
@@ -201,25 +217,36 @@ For <code>pickPeaks</code>: <code>character(1)</code> defining the method. See
 <code>character(1)</code> defining the method. See
 <code><a href="adjustRtime-peakGroups.html">smooth</a></code> in the <code>MSnbase</code> package for options and
 details.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Optional additional arguments.</p></dd>
+
+
 <dt>halfWindowSize</dt>
 <dd><p>For <code>pickPeaks</code> and <code>smooth</code>:
 <code>integer(1)</code> defining the window size for the peak picking. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code> and <code><a href="adjustRtime-peakGroups.html">smooth</a></code> in the <code>MSnbase</code>
 package for details and options.</p></dd>
+
+
 <dt>SNR</dt>
 <dd><p>For <code>pickPeaks</code>: <code>numeric(1)</code> defining the signal to
 noise ratio to be considered. See <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code>
 documentation for details.</p></dd>
+
+
 <dt>t</dt>
 <dd><p>For <code>removePeaks</code>: either a <code>numeric(1)</code> or <code>"min"</code>
 defining the threshold (method) to be used. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html" class="external-link">removePeaks</a></code> for details.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>For all methods: a <code>XCMSnExp</code> object.</p>
+    
+
+<p>For all methods: a <code>XCMSnExp</code> object.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -246,7 +273,7 @@ defining the threshold (method) to be used. See
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

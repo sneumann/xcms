@@ -87,33 +87,48 @@ software (or the <code>MetaboAnalystR</code> R package).</p>
     <dl><dt>x</dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks grouped
 across samples.</p></dd>
+
+
 <dt>file</dt>
 <dd><p><code>character(1)</code> defining the file name. If not specified, the
 <code>matrix</code> with the content is returned.</p></dd>
+
+
 <dt>label</dt>
 <dd><p>either <code>character(1)</code> specifying the phenodata column in <code>x</code>
 defining the sample grouping or a vector with the same length than
 samples in <code>x</code> defining the group assignment of the samples.</p></dd>
+
+
 <dt>value</dt>
 <dd><p><code>character(1)</code> specifying the value to be returned for each
 feature. See <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> for more details.</p></dd>
+
+
 <dt>digits</dt>
 <dd><p><code>integer(1)</code> defining the number of significant digits to be
 used for numeric. The default <code>NULL</code> uses <code>getOption("digits")</code>. See
 <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> for more information.</p></dd>
+
+
 <dt>groupnames</dt>
 <dd><p><code>logical(1)</code> whether row names of the resulting matrix
 should be the feature IDs (<code>groupnames = FALSE</code>; default) or IDs that
 are composed of the m/z and retention time of the features (in the
 format <code>M&lt;m/z&gt;T&lt;rt&gt;</code> (<code>groupnames = TRUE</code>). See help of the <a href="groupnames-methods.html">groupnames</a>
 function for details.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional parameters to be passed to the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code>
 function.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>file</code> is not specified, the function returns the <code>matrix</code> in
+    
+
+<p>If <code>file</code> is not specified, the function returns the <code>matrix</code> in
 the format supported by MetaboAnalyst.</p>
     </div>
     <div id="author">
@@ -133,7 +148,7 @@ the format supported by MetaboAnalyst.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

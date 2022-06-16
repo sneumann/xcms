@@ -102,24 +102,35 @@ data range if <code>rt</code> and <code>mz</code> are not defined).</p>
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A <code>XCMSnExp</code> or <code>OnDiskMSnExp</code> object.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p><code>numeric(2)</code> with the retention time range from which the
 data should be extracted.</p></dd>
+
+
 <dt>mz</dt>
 <dd><p><code>numeric(2)</code> with the mz range.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer</code> defining the MS level(s) to which the data
 should be sub-setted prior to extraction; defaults to
 <code>msLevel = 1L</code>.</p></dd>
+
+
 <dt>adjustedRtime</dt>
 <dd><p>(for <code>extractMsData,XCMSnExp</code>): <code>logical(1)</code>
 specifying if adjusted or raw retention times should be reported.
 Defaults to adjusted retention times, if these are present in
 <code>object</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>list</code> of length equal to the number of samples/files in
+    
+
+<p>A <code>list</code> of length equal to the number of samples/files in
 <code>object</code>. Each element being a <code>data.frame</code> with columns
 <code>"rt"</code>, <code>"mz"</code> and <code>"i"</code> with the retention time, mz and
 intensity tuples of a file. If no data is available for the mz-rt range
@@ -173,7 +184,7 @@ in a file a <code>data.frame</code> with 0 rows is returned for that file.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

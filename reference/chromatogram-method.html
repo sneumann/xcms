@@ -95,42 +95,60 @@ an <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" 
     <dl><dt>object</dt>
 <dd><p>Either a <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a> or <a href="XCMSnExp-class.html">XCMSnExp</a> object from which the
 chromatograms should be extracted.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p><code>numeric(2)</code> or two-column <code>matrix</code> defining the lower
 and upper boundary for the retention time range(s). If not specified,
 the full retention time range of the original data will be used.</p></dd>
+
+
 <dt>mz</dt>
 <dd><p><code>numeric(2)</code> or two-column <code>matrix</code> defining the lower
 and upper mz value for the MS data slice(s). If not specified, the
 chromatograms will be calculated on the full mz range.</p></dd>
+
+
 <dt>aggregationFun</dt>
 <dd><p><code>character(1)</code> specifying the function to be used to
 aggregate intensity values across the mz value range for the same
 retention time. Allowed values are <code>"sum"</code> (the default), <code>"max"</code>,
 <code>"mean"</code> and <code>"min"</code>.</p></dd>
+
+
 <dt>missing</dt>
 <dd><p><code>numeric(1)</code> allowing to specify the intensity value to
 be used if for a given retention time no signal was measured within the
 mz range of the corresponding scan. Defaults to <code>NA_real_</code> (see also
 Details and Notes sections below). Use <code>missing = 0</code> to resemble the
 behaviour of the <code>getEIC</code> from the <em>old</em> user interface.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> specifying the MS level from which the
 chromatogram should be extracted. Defaults to <code>msLevel = 1L</code>.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>Parallelisation backend to be used, which will
 depend on the architecture. Default is
 <code>BiocParallel::bparam()</code>.</p></dd>
+
+
 <dt>adjustedRtime</dt>
 <dd><p>For <code>chromatogram,XCMSnExp</code>: whether the
 adjusted (<code>adjustedRtime = TRUE</code>) or raw retention times
 (<code>adjustedRtime = FALSE</code>) should be used for filtering and returned
 in the resulting <a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms</a> object. Adjusted
 retention times are used by default if available.</p></dd>
+
+
 <dt>filled</dt>
 <dd><p><code>logical(1)</code> whether filled-in peaks should also be
 returned. Defaults to <code>filled = FALSE</code>, i.e. returns only detected
 chromatographic peaks in the result object.</p></dd>
+
+
 <dt>include</dt>
 <dd><p><code>character(1)</code> defining which chromatographic peaks should be
 returned. Supported are <code>include = "apex_within"</code> (the default) which
@@ -138,10 +156,13 @@ returns chromatographic peaks that have their apex within the <code>mz</code> <c
 range, <code>include = "any"</code> to return all chromatographic peaks which
 m/z and rt ranges overlap the <code>mz</code> and <code>rt</code> or <code>include = "none"</code> to
 not include any chromatographic peaks.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>chromatogram</code> returns a <a href="XChromatogram.html">XChromatograms</a> object with
+    
+
+<p><code>chromatogram</code> returns a <a href="XChromatogram.html">XChromatograms</a> object with
 the number of columns corresponding to the number of files in
 <code>object</code> and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments <code>mz</code> and/or
@@ -275,7 +296,7 @@ the MS data as `data.frame`.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -86,28 +86,43 @@ on chromatographic data (i.e. with only intensities and retention time).</p>
     <h2>Arguments</h2>
     <dl><dt>int</dt>
 <dd><p><code>numeric</code> with intensity values.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p><code>numeric</code> with the retention time for the intensities. Length has
 to be equal to <code>length(int)</code>.</p></dd>
+
+
 <dt>fwhm</dt>
 <dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
 actual sigma, see below.</p></dd>
+
+
 <dt>sigma</dt>
 <dd><p><code>numeric(1)</code> specifying the standard deviation (width)
 of the matched filtration model peak.</p></dd>
+
+
 <dt>max</dt>
 <dd><p><code>numeric(1)</code> with the maximal number of peaks that are expected/
 will bbe detected in the data</p></dd>
+
+
 <dt>snthresh</dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise cut-off to be used
 in the peak detection step.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>currently ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix, each row representing an identified chromatographic peak, with
+    
+
+<p>A matrix, each row representing an identified chromatographic peak, with
 columns:</p><ul><li><p><code>"rt"</code>: retention time of the peak's midpoint (time of the maximum signal).</p></li>
 <li><p><code>"rtmin"</code>: minimum retention time of the peak.</p></li>
 <li><p><code>"rtmax"</code>: maximum retention time of the peak.</p></li>
@@ -167,7 +182,7 @@ method.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

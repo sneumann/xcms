@@ -85,27 +85,37 @@
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>a <code>xcmsSet</code> object with uncalibrated mz</p></dd>
-<dt>calibrants</dt>
+
+    <dt>calibrants</dt>
 <dd><p>a vector or a list of vectors with reference m/z-values</p></dd>
-<dt>method</dt>
+
+    <dt>method</dt>
 <dd><p>the used calibrating-method, see below</p></dd>
-<dt>mzppm</dt>
+
+    <dt>mzppm</dt>
 <dd><p>the relative error used for matching peaks in ppm (parts per million)</p></dd>
-<dt>mzabs</dt>
+
+    <dt>mzabs</dt>
 <dd><p>the absolute error used for matching peaks in Da</p></dd>
-<dt>neighbours</dt>
+
+    <dt>neighbours</dt>
 <dd><p>the number of neighbours from wich the one with the highest intensity is used (instead of the nearest)</p></dd>
-<dt>plotres</dt>
+
+    <dt>plotres</dt>
 <dd><p>can be set to TRUE if wanted a result-plot showing the found m/z with the distances and the regression</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <dl><dt>object</dt>
 <dd><p>a <code>xcmsSet</code> with one ore more samples</p></dd>
+
 <dt>calibrants</dt>
 <dd><p>for each sample different calibrants can be used, if a list of m/z-vectors is given. The length of the list must be the same as the number of samples, alternatively a single vector of masses can be given which is used for all samples.</p></dd>
-<dt>method</dt>
+
+   <dt>method</dt>
 <dd><p>"shift" for shifting each m/z, "linear" does a linear regression and adds a linear term to each m/z. "edgeshift" does a linear regression within the range of the mz-calibrants and a shift outside.</p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -124,7 +134,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -89,44 +89,64 @@ findPeaks.massifquant(object, ppm=10, peakwidth=c(20,50), snthresh=10,
     </div>
     <div id="arguments">
     <h2>Arguments</h2>
-    <p>The following arguments are specific to Massifquant. Any additional arguments supplied must correspond as specified by the method findPeaks.centWave.</p>
+    
+
+<p>The following arguments are specific to Massifquant. Any additional arguments supplied must correspond as specified by the method findPeaks.centWave.</p>
 <dl><dt>object</dt>
 <dd><p>An xcmsRaw object.</p></dd>
+
 <dt>criticalValue</dt>
 <dd><p>Numeric: Suggested values: (0.1-3.0). This setting helps determine the the Kalman Filter prediciton margin of error. A real centroid belonging to a bonafide feature must fall within the KF prediction margin of error. Much like in the construction of a confidence interval, criticalVal loosely translates to be a  multiplier of the standard error of the prediction reported by the Kalman Filter. If the features in the XC-MS sample have a small mass deviance in ppm error, a smaller critical value might be better and vice versa.</p></dd>
+
 <dt>consecMissedLimit</dt>
 <dd><p>Integer: Suggested values:(1,2,3). While a feature is in the proces of being detected by a Kalman Filter, the Kalman Filter may not find a predicted centroid in every scan. After 1 or more consecutive failed predictions, this setting informs Massifquant when to stop a Kalman Filter from following a candidate feature.</p></dd>
+
 <dt>prefilter</dt>
 <dd><p>Numeric Vector: (Positive Integer, Positive Numeric): The first argument is only used if (withWave = 1); see centWave for details. The second argument specifies the minimum threshold for the maximum intensity of a feature that must be met.</p></dd>
+
 <dt>peakwidth</dt>
 <dd><p>Integer Vector: (Positive Integer, Positive Integer): Only the first argument is used for Massifquant, which specifices the minimum feature length in time scans. If centWave is used, then the second argument is the maximum feature length  subject to being greater than the mininum feature length.</p></dd>
+
 <dt>ppm</dt>
 <dd><p>The minimum estimated parts per million mass resolution a feature must possess.</p></dd>
+
 <dt>unions</dt>
 <dd><p>Integer: set to 1 if apply t-test union on segmentation; set to 0 if no t-test to be applied on chromatographically continous features sharing same m/z range. Explanation: With very few data points, sometimes a Kalman Filter stops tracking a feature prematurely. Another Kalman Filter is instantiated and begins following the rest of the signal. Because tracking is done backwards to forwards, this algorithmic defect leaves a real feature divided into two segments or more. With this option turned on, the program identifies segmented features and combines them (merges them) into one with a two sample t-test. The potential danger of this option is that some truly distinct features may be merged.</p></dd>
+
 <dt>withWave</dt>
 <dd><p>Integer: set to 1 if turned on; set to 0 if turned off. Allows the user to find features first with Massifquant and then filter those features with the second phase of centWave, which includes wavelet estimation.</p></dd>
+
 <dt>checkBack</dt>
 <dd><p>Integer: set to 1 if turned on; set to 0 if turned off. The convergence of a Kalman Filter to a feature's precise m/z mapping  is very fast, but sometimes it incorporates erroneous centroids as part of a feature (especially early on). The "scanBack" option is an attempt to remove the occasional outlier that lies beyond the converged bounds of the Kalman Filter. The option does not directly affect identification of a feature because it is a postprocessing measure; it has not shown to be a extremely useful thus far and the default is set to being turned off.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If the method findPeaks.massifquant(...) is used, then a matrix is returned with rows corresponding to features, and properties of the features listed with the following column names. Otherwise,
+    
+
+<p>If the method findPeaks.massifquant(...) is used, then a matrix is returned with rows corresponding to features, and properties of the features listed with the following column names. Otherwise,
 if centWave feature is used also (withWave = 1), or Massifquant is called through the xcmsSet(...) method, then their corresponding return values are used.</p>
 <dl><dt>mz</dt>
 <dd><p>weighted m/z mean (weighted by intensity) of the feature</p></dd>
-<dt>mzmin</dt>
+
+  <dt>mzmin</dt>
 <dd><p>m/z  lower boundary of the feature</p></dd>
-<dt>mzmax</dt>
+
+  <dt>mzmax</dt>
 <dd><p>m/z  upper boundary of the feature</p></dd>
-<dt>rtmin</dt>
+
+  <dt>rtmin</dt>
 <dd><p>starting scan time of the feature</p></dd>
-<dt>rtmax</dt>
+
+  <dt>rtmax</dt>
 <dd><p>starting scan time of the feature</p></dd>
-<dt>into</dt>
+
+  <dt>into</dt>
 <dd><p>the raw quantitation (area under the curve) of the feature.</p></dd>
-<dt>area</dt>
+
+  <dt>area</dt>
 <dd><p>feature area that is not normalized by the scan rate.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -194,7 +214,7 @@ if centWave feature is used also (withWave = 1), or Massifquant is called throug
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

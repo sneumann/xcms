@@ -106,17 +106,27 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Numeric vector to be used for binning.</p></dd>
+
+
 <dt>y</dt>
 <dd><p>Numeric vector (same length than <code>x</code>) from which the maximum
 values for each bin should be defined. If not provided, <code>x</code> will
 be used.</p></dd>
+
+
 <dt>breaks</dt>
 <dd><p>Numeric vector defining the breaks for the bins, i.e. the
 lower and upper values for each bin. See examples below.</p></dd>
+
+
 <dt>nBins</dt>
 <dd><p>integer(1) defining the number of desired bins.</p></dd>
+
+
 <dt>binSize</dt>
 <dd><p>numeric(1) defining the desired bin size.</p></dd>
+
+
 <dt>binFromX</dt>
 <dd><p>Optional numeric(1) allowing to manually specify
 the range of x-values to be used for binning.
@@ -124,52 +134,76 @@ This will affect only the calculation of the breaks for the bins
 (i.e. if <code>nBins</code> or <code>binSize</code> is provided).
 If not provided the minimal value in the sub-set
 <code>fromIdx</code>-<code>toIdx</code> in input vector <code>x</code> will be used.</p></dd>
+
+
 <dt>binToX</dt>
 <dd><p>Same as <code>binFromX</code>, but defining the maximum x-value to be
 used for binning.</p></dd>
+
+
 <dt>fromIdx</dt>
 <dd><p>Integer vector defining the start position of one or multiple
 sub-sets of input vector <code>x</code> that should be used for binning.</p></dd>
+
+
 <dt>toIdx</dt>
 <dd><p>Same as <code>toIdx</code>, but defining the maximum index (or indices)
 in x to be used for binning.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A character string specifying the method that should be used to
 aggregate values in <code>y</code>. Allowed are <code>"max"</code>, <code>"min"</code>,
 <code>"sum"</code> and <code>"mean"</code> to identify the maximal or minimal value
 or to sum all values within a bin or calculate their mean value.</p></dd>
+
+
 <dt>baseValue</dt>
 <dd><p>The base value for empty bins (i.e. bins into which either
 no values in <code>x</code> did fall, or to which only <code>NA</code> values in
 <code>y</code> were assigned). By default (i.e. if not specified), <code>NA</code>
 is assigned to such bins.</p></dd>
+
+
 <dt>sortedX</dt>
 <dd><p>Whether <code>x</code> is sorted.</p></dd>
+
+
 <dt>shiftByHalfBinSize</dt>
 <dd><p>Logical specifying whether the bins should be
 shifted by half the bin size to the left. Thus, the first bin will have
 its center at <code>fromX</code> and its lower and upper boundary are
 <code>fromX - binSize/2</code> and <code>fromX + binSize/2</code>. This argument is
 ignored if <code>breaks</code> are provided.</p></dd>
+
+
 <dt>returnIndex</dt>
 <dd><p>Logical indicating whether the index of the max (if
 <code>method = "max"</code>) or min (if <code>method = "min"</code>) value within
 each bin in input vector <code>x</code> should also be reported. For methods
 other than <code>"max"</code> or <code>"min"</code> this argument is ignored.</p></dd>
+
+
 <dt>returnX</dt>
 <dd><p><code>logical</code> allowing to avoid returning <code>$x</code>, i.e. the
 mid-points of the bins. <code>returnX = FALSE</code> might be useful in cases
 where <code>breaks</code> are pre-defined as it considerably reduces the memory
 demand.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Returns a list of length 2, the first element (named <code>"x"</code>)
+    
+
+<p>Returns a list of length 2, the first element (named <code>"x"</code>)
     contains the bin mid-points, the second element (named <code>"y"</code>) the
-    aggregated values from input vector <code>y</code> within each bin. For
-<code>returnIndex = TRUE</code> the list contains an additional element
-<code>"index"</code> with the index of the max or min (depending on whether
-<code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
+    aggregated values from input vector <code>y</code> within each bin. For</p>
+<p></p>
+<p><code>returnIndex = TRUE</code> the list contains an additional element</p>
+<p></p>
+<p><code>"index"</code> with the index of the max or min (depending on whether</p>
+<p></p>
+<p><code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
     input vector <code>x</code>.</p>
     </div>
     <div id="details">
@@ -375,7 +409,7 @@ demand.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -100,25 +100,36 @@ will be generated.</p>
     <dl><dt>x</dt>
 <dd><p><code>matrix</code> with abundances, rows being features/metabolites and
 columns samples.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>method <code>character(1)</code> defining the imputation method.
 See description for details. Defaults to <code>method = "mean_sd"</code>.</p></dd>
+
+
 <dt>min_fraction</dt>
 <dd><p><code>numeric(1)</code> with the fraction of the row minimum that
 should be used to replace <code>NA</code> values in that row in case that <code>mean_sd</code>
 method is specified. When  using <code>from_to</code> method, this value will be the
 one used to calculate the maximum value for replace <code>NA</code> values in that row.</p></dd>
+
+
 <dt>min_fraction_from</dt>
 <dd><p><code>numeric(1)</code> with the fraction of the row minimum
 that should be used to calculate the minimum value for replace <code>NA</code> values
 in that row. This parameter is used only in case that <code>from_to</code> method is
 specified.</p></dd>
+
+
 <dt>sd_fraction</dt>
 <dd><p><code>numeric(1)</code> factor to reduce the estimated standard
 deviation. This parameter is used only in case that <code>mean_sd</code> method is
 specified.</p></dd>
+
+
 <dt>abs</dt>
 <dd><p><code>logical(1)</code> to force imputed values to be strictly positive.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -185,34 +196,34 @@ fractions of the row minimum.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_meansd</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15       ko16       ko18       ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   18048.72   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   44298.94   91635.45  162012.44</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.6  269713.98  201393.42  150107.31  176989.65  156797.04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.0  460629.74  351750.14  219287.97  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   30661.64   34262.36  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    156938.4   93931.26  222609.07  286232.15  435094.49   40911.26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   42154.01   34530.06  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    109982.6   63538.33  222609.07  286232.15  435094.49   86260.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16       wt18       wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   47084.46   69198.22  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   33608.66   69198.22  153273.5   98144.28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.16 1275312.76 1356014.3 1231442.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.71  186850.88  188285.9  172348.76</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.70  220972.35  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38   28068.02  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     91659.62  139150.79   71514.79  240261.21  201316.2  179437.72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38   20995.33  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     73808.29   93065.30  110269.61  240261.21  201316.2  179437.72</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_fromto</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15       ko16       ko18        ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.71   65290.38   30384.955   91635.45  162012.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.14 1482796.38 1039129.818 1223132.35 1072037.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269713.98  201393.42  150107.310  176989.65  156797.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.74  351750.14  219287.968  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.38   22547.48    4894.015  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     32800.15   63943.74  222609.07  286232.146  435094.49   50146.06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16       wt18        wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48   20987.01   69198.222  153273.5   98144.28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.16 1275312.758 1356014.3 1231442.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.71  186850.878  188285.9  172348.76</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.70  220972.352  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.38    4112.477  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     61410.17   43755.24   68406.76  240261.212  201316.2  179437.72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15       ko16       ko18       ko19       ko21       ko22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   10483.63   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.6  269713.98  201393.42  150107.31  176989.65  156797.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.0  460629.74  351750.14  219287.97  286848.56  235022.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   18189.24   13732.65  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     34243.8   36669.66  222609.07  286232.15  435094.49   48826.53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 wt15       wt16       wt18        wt19      wt21       wt22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.1   82619.48   31350.35   69198.222  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.5 1466780.60 1572679.16 1275312.758 1356014.3 1231442.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.8  222366.15  211717.71  186850.878  188285.9  172348.76</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.6  324892.46  277990.70  220972.352  252874.0  236728.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38    8785.089  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     17880.0   15184.73   31867.80  240261.212  201316.2  179437.72</span>
 </code></pre></div>
     </div>
   </div>
@@ -227,7 +238,7 @@ fractions of the row minimum.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

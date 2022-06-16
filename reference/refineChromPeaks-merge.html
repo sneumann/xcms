@@ -142,36 +142,53 @@ peak.</p>
     <dl><dt>expandRt</dt>
 <dd><p><code>numeric(1)</code> defining by how many seconds the retention time
 window is expanded on both sides to check for overlapping peaks.</p></dd>
+
+
 <dt>expandMz</dt>
 <dd><p><code>numeric(1)</code> constant value by which the m/z range of each
 chromatographic peak is expanded (on both sides!) to check for
 overlapping peaks.</p></dd>
+
+
 <dt>ppm</dt>
 <dd><p><code>numeric(1)</code> defining a m/z relative value (in parts per million)
 by which the m/z range of each chromatographic peak is expanded
 to check for overlapping peaks.</p></dd>
+
+
 <dt>minProp</dt>
 <dd><p><code>numeric(1)</code> between <code>0</code> and <code>1</code> representing the proporion
 of intensity to be required for peaks to be joined. See description for
 more details. The default (<code>minProp = 0.75</code>) means that peaks are only
 joined if the signal half way between then is larger 75% of the smallest
 of the two peak's <code>"maxo"</code> (maximal intensity at peak apex).</p></dd>
+
+
 <dt>object</dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks.</p></dd>
+
+
 <dt>param</dt>
 <dd><p><code>MergeNeighboringPeaksParam</code> object defining the settings for
 the method.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer</code> defining for which MS level(s) the chromatographic
 peaks should be merged.</p></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>parameter object to set up parallel processing. Uses the
 default parallel processing setup returned by <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>. See
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details and examples.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>XCMSnExp</code> object with chromatographic peaks matching the defined
+    
+
+<p><code>XCMSnExp</code> object with chromatographic peaks matching the defined
 conditions being merged.</p>
     </div>
     <div id="details">
@@ -270,7 +287,7 @@ newly merged peak are considered.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

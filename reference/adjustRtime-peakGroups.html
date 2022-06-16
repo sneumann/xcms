@@ -268,6 +268,8 @@ has to contain peaks in all samples of the experiment. Note that if
 defined subset of samples and not to the total number of samples within
 the experiment (i.e. a peak has to be present in the specified
 proportion of subset samples).</p></dd>
+
+
 <dt>extraPeaks</dt>
 <dd><p><code>numeric(1)</code> defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
@@ -276,63 +278,98 @@ feature) for retention time correction. For a data set with 6 samples,
 <code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
 sample being assigned to the group.</p></dd>
+
+
 <dt>smooth</dt>
 <dd><p>character defining the function to be used, to interpolate
 corrected retention times for all peak groups. Either <code>"loess"</code> or
 <code>"linear"</code>.</p></dd>
+
+
 <dt>span</dt>
 <dd><p><code>numeric(1)</code> defining the degree of smoothing (if
 <code>smooth = "loess"</code>). This parameter is passed to the internal call
 to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code>.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>character defining the method to be used for loess smoothing.
 Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>.See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code> for more information.</p></dd>
+
+
 <dt>peakGroupsMatrix</dt>
 <dd><p>optional <code>matrix</code> of (raw) retention times for
 the peak groups on which the alignment should be performed. Each column
 represents a sample, each row a feature/peak group. Such a matrix is
 for example returned by the <code>adjustRtimePeakGroups</code> method.</p></dd>
+
+
 <dt>subset</dt>
 <dd><p><code>integer</code> with the indices of samples within the
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
 See description above for more details.</p></dd>
+
+
 <dt>subsetAdjust</dt>
 <dd><p><code>character</code> specifying the method with which
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
 for more information.</p></dd>
+
+
 <dt>object</dt>
 <dd><p>For <code>adjustRtime</code>: an <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object
     containing the results from a previous chromatographic peak detection
     (see <code><a href="chromatographic-peak-detection.html">findChromPeaks</a></code>) and alignment analysis (see
     <code><a href="groupChromPeaks.html">groupChromPeaks</a></code>).</p>
 <p>For all other methods: a <code>PeakGroupsParam</code> object.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>A <code>PeakGroupsParam</code> object containing all settings for
 the retention time correction method..</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> specifying the MS level. Currently only MS
 level 1 is supported.</p></dd>
+
+
 <dt>value</dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt>x</dt>
 <dd><p>a <code>PeakGroupsParam</code> object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The <code>PeakGroupsParam</code> function returns a
-<code>PeakGroupsParam</code> class instance with all of the settings
-    specified for retention time adjustment based on <em>house keeping</em>    features/peak groups.
-For <code>adjustRtimePeakGroups</code>: a <code>matrix</code>, rows being
+    
+
+<p>The <code>PeakGroupsParam</code> function returns a</p>
+<p></p>
+<p><code>PeakGroupsParam</code> class instance with all of the settings
+    specified for retention time adjustment based on <em>house keeping</em></p>
+
+
+<p>features/peak groups.</p>
+
+
+<p>For <code>adjustRtimePeakGroups</code>: a <code>matrix</code>, rows being
 features, columns samples, of retention times. The features are ordered
-by the median retention time across columns.
-For <code>adjustRtime</code>: a <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the
+by the median retention time across columns.</p>
+
+
+<p>For <code>adjustRtime</code>: a <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the
 results of the retention time adjustment step. These can be accessed
 with the <code><a href="XCMSnExp-class.html">adjustedRtime</a></code> method. Retention time correction
 does also adjust the retention time of the identified chromatographic
-peaks (accessed <em>via</em><code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention
+peaks (accessed <em>via</em></p>
+<p></p>
+<p><code><a href="XCMSnExp-class.html">chromPeaks</a></code>. Note that retention
 time correction drops all previous alignment results from the result
 object.</p>
     </div>
@@ -487,7 +524,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

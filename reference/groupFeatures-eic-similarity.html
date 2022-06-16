@@ -159,53 +159,80 @@ will be skipped/not considered for feature grouping.</p>
     <dl><dt>threshold</dt>
 <dd><p><code>numeric(1)</code> with the minimal required similarity score to
 group featues. This is passed to the <code>groupFun</code> function.</p></dd>
+
+
 <dt>n</dt>
 <dd><p><code>numeric(1)</code> defining the total number of samples per feature group
 on which this similarity calculation should be performed. This value is
 rounded up to the next larger integer value.</p></dd>
+
+
 <dt>onlyPeak</dt>
 <dd><p><code>logical(1)</code> whether the correlation should be performed only
 on the signals within the identified chromatographic peaks
 (<code>onlyPeak = TRUE</code>, default) or all the signal from the extracted ion
 chromatogram.</p></dd>
+
+
 <dt>value</dt>
 <dd><p><code>character(1)</code> defining whether samples should be grouped based
 on the sum of the maximal peak intensity (<code>value = "maxo"</code>, the default)
 or the integrated peak area (<code>value = "into"</code>) for a feature.</p></dd>
+
+
 <dt>groupFun</dt>
 <dd><p><code>function</code> defining the function to be used to group rows
 based on a pairwise similarity matrix. Defaults to
 <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code>.</p></dd>
+
+
 <dt>ALIGNFUN</dt>
 <dd><p><code>function</code> defining the function to be used to <em>align</em>
 chromatograms prior similarity calculation. Defaults to
 <code>ALIGNFUN = alignRt</code>. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> for
 more information.</p></dd>
+
+
 <dt>ALIGNFUNARGS</dt>
 <dd><p><strong>named</strong> <code>list</code> with arguments for <code>ALIGNFUN</code>.
 Defaults to <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code>.</p></dd>
+
+
 <dt>FUN</dt>
 <dd><p><code>function</code> defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to <code>FUN = cor</code>.
 See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">compareChromatograms()</a></code> for more information.</p></dd>
+
+
 <dt>FUNARGS</dt>
 <dd><p><strong>named</strong> <code>list</code> with arguments for <code>FUN</code>. Defaults to
 <code>FUN = list(use = "pairwise.complete.obs")</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>for <code>EicSimilarityParam</code>: additional arguments to be passed to
 <code>groupFun</code> and <code>featureChromatograms</code> (such as <code>expandRt</code> to expand the
 retention time range of each feature).</p></dd>
+
+
 <dt>object</dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object containing also correspondence results.</p></dd>
+
+
 <dt>param</dt>
 <dd><p><code>EicSimilarityParam</code> object with the settings for the method.</p></dd>
+
+
 <dt>msLevel</dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the features
 should be grouped.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>input <code>XCMSnExp</code> with feature groups added (i.e. in column
+    
+
+<p>input <code>XCMSnExp</code> with feature groups added (i.e. in column
 <code>"feature_group"</code> of its <code>featureDefinitions</code> data frame.</p>
     </div>
     <div id="note">
@@ -294,9 +321,9 @@ is excluded from the correlation.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [===========&gt;---------------------------------------------] 7/33 ( 21%) in  1s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============&gt;-------------------------------------------] 8/33 ( 24%) in  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=============&gt;-------------------------------------------] 8/33 ( 24%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============&gt;-----------------------------------------] 9/33 ( 27%) in  1s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============&gt;-----------------------------------------] 9/33 ( 27%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [================&gt;---------------------------------------] 10/33 ( 30%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -304,25 +331,25 @@ is excluded from the correlation.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [===================&gt;------------------------------------] 12/33 ( 36%) in  2s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================&gt;----------------------------------] 13/33 ( 39%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=====================&gt;----------------------------------] 13/33 ( 39%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=======================&gt;--------------------------------] 14/33 ( 42%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=======================&gt;--------------------------------] 14/33 ( 42%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================&gt;-------------------------------] 15/33 ( 45%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [========================&gt;-------------------------------] 15/33 ( 45%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [==========================&gt;-----------------------------] 16/33 ( 48%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [==========================&gt;-----------------------------] 16/33 ( 48%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [============================&gt;---------------------------] 17/33 ( 52%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [============================&gt;---------------------------] 17/33 ( 52%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [==============================&gt;-------------------------] 18/33 ( 55%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [==============================&gt;-------------------------] 18/33 ( 55%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================&gt;------------------------] 19/33 ( 58%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===============================&gt;------------------------] 19/33 ( 58%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [=================================&gt;----------------------] 20/33 ( 61%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [=================================&gt;----------------------] 20/33 ( 61%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [===================================&gt;--------------------] 21/33 ( 64%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [===================================&gt;--------------------] 21/33 ( 64%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================&gt;-------------------] 22/33 ( 67%) in  2s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [====================================&gt;-------------------] 22/33 ( 67%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [======================================&gt;-----------------] 23/33 ( 70%) in  3s</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -375,7 +402,7 @@ is excluded from the correlation.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

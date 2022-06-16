@@ -119,52 +119,79 @@ represented with the color of the respective cell.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object.</p></dd>
+
+
 <dt>file</dt>
 <dd><p>For <code>plotChromPeaks</code>: <code>numeric(1)</code> specifying the
 index of the file within <code>x</code> for which the plot should be created.
 Defaults to <code>1</code>.</p></dd>
+
+
 <dt>xlim</dt>
 <dd><p><code>numeric(2)</code> specifying the x-axis limits (retention time
 dimension). Defaults to <code>NULL</code> in which case the full retention
 time range of the file is used.</p></dd>
+
+
 <dt>ylim</dt>
 <dd><p>For <code>plotChromPeaks</code>: <code>numeric(2)</code> specifying the
 y-axis limits (mz dimension). Defaults to <code>NULL</code> in which case the
 full mz range of the file is used.</p></dd>
+
+
 <dt>add</dt>
 <dd><p>For <code>plotChromPeaks</code>: <code>logical(1)</code> whether the plot
 should be added or created as a new plot.</p></dd>
+
+
 <dt>border</dt>
 <dd><p>For <code>plotChromPeaks</code>: the color for the rectangles'
 border.</p></dd>
+
+
 <dt>col</dt>
 <dd><p>For <code>plotChromPeaks</code>: the color to be used to fill the
 rectangles.</p></dd>
+
+
 <dt>xlab</dt>
 <dd><p><code>character(1)</code> defining the x-axis label.</p></dd>
+
+
 <dt>ylab</dt>
 <dd><p>For <code>plotChromPeaks</code>: <code>character(1)</code> defining the
 y-axis label.</p></dd>
+
+
 <dt>main</dt>
 <dd><p><code>character(1)</code> defining the plot title. By default (i.e.
 <code>main = NULL</code> the name of the file will be used as title.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments passed to the <code>plot</code> (for
 <code>plotChromPeaks</code>) and <code>image</code> (for
 <code>plotChromPeakImage</code>) functions. Ignored if <code>add = TRUE</code>.</p></dd>
+
+
 <dt>binSize</dt>
 <dd><p>For <code>plotChromPeakImage</code>: <code>numeric(1)</code> defining the
 size of the bins along the x-axis (retention time). Defaults to
 <code>binSize = 30</code>, peaks within each 30 seconds will thus counted and
 plotted.</p></dd>
+
+
 <dt>log</dt>
 <dd><p>For <code>plotChromPeakImage</code>: <code>logical(1)</code> whether the peak
 counts should be log2 transformed before plotting.</p></dd>
+
+
 <dt>yaxt</dt>
 <dd><p>For <code>plotChromPeakImage</code>: <code>character(1)</code> defining
 whether y-axis labels should be added. To disable the y-axis use
 <code>yaxt = "n"</code>. For any other value of <code>yaxt</code> the axis will be
 drawn. See <code>par</code> help page for more details.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -217,7 +244,7 @@ and <code>par(lty = 2)</code>, respectively.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

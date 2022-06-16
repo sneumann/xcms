@@ -93,47 +93,72 @@ without m/z values.</p>
     <h2>Arguments</h2>
     <dl><dt>int</dt>
 <dd><p><code>numeric</code> with intensity values.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p><code>numeric</code> with the retention time for the intensities. Length has
 to be equal to <code>length(int)</code>.</p></dd>
+
+
 <dt>peakwidth</dt>
 <dd><p><code>numeric(2)</code> with the lower and upper bound of the
 expected peak width.</p></dd>
+
+
 <dt>snthresh</dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.
 Peaks with a signal to noise ratio &lt; <code>snthresh</code> are omitted.</p></dd>
+
+
 <dt>prefilter</dt>
 <dd><p><code>numeric(2)</code> (<code>c(k, I)</code>): only regions of interest with at
 least <code>k</code> centroids with signal <code>&gt;= I</code> are returned in the first
 step.</p></dd>
+
+
 <dt>integrate</dt>
 <dd><p><code>numeric(1)</code>, integration method. For <code>integrate = 1</code> peak
 limits are found through descending on the mexican hat filtered data,
 for <code>integrate = 2</code> the descend is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
+
+
 <dt>fitgauss</dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak.</p></dd>
+
+
 <dt>noise</dt>
 <dd><p><code>numeric(1)</code> defining the minimum required intensity for
 centroids to be considered in the first analysis step (definition of
 the <em>regions of interest</em>).</p></dd>
+
+
 <dt>verboseColumns</dt>
 <dd><p><code>logical(1)</code>: whether additional peak meta data
 columns should be returned.</p></dd>
+
+
 <dt>firstBaselineCheck</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous data within
 regions of interest is checked to be above the first baseline.</p></dd>
+
+
 <dt>extendLengthMSW</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> the "open" method of EIC
 extension is used, rather than the default "reflect" method.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>currently ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix, each row representing an identified chromatographic peak, with
+    
+
+<p>A matrix, each row representing an identified chromatographic peak, with
 columns:</p><ul><li><p><code>"rt"</code>: retention time of the peak's midpoint (time of the maximum signal).</p></li>
 <li><p><code>"rtmin"</code>: minimum retention time of the peak.</p></li>
 <li><p><code>"rtmax"</code>: maximum retention time of the peak.</p></li>
@@ -219,7 +244,7 @@ method.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

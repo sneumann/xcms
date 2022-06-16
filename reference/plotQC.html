@@ -78,13 +78,21 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A grouped <code><a href="xcmsSet.html">xcmsSet</a></code></p></dd>
+
+
 <dt>sampNames</dt>
 <dd><p>Override sample names (e.g. with simplified names)</p></dd>
+
+
 <dt>sampColors</dt>
 <dd><p>Provide a set of colors (default: monochrome ?)</p></dd>
+
+
 <dt>sampOrder</dt>
 <dd><p>Override the order of samples, e.g. to bring them in order
 of measurement to detect time drift</p></dd>
+
+
 <dt>what</dt>
 <dd><p>A vector of which QC plots to generate.
 "mzdevhist": histogram of mz deviations. Should be gaussian shaped. If it is multimodal, then some peaks seem to have a systematically higher m/z deviation
@@ -93,10 +101,13 @@ of measurement to detect time drift</p></dd>
 "mzdevtime": Shows whether m/z deviations are RT dependent, could indicate instrument drift
 "mzdevsample": median mz deviation for each sample, indicates outliers
 "rtdevsample": median RT deviation for each sample, indicates outliers</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>List with four matrices, each of dimension features * samples:
+    
+
+<p>List with four matrices, each of dimension features * samples:
  "mz":    median mz deviation for each sample
  "mzdev": median mz deviation for each sample
  "rt":    median RT deviation for each sample
@@ -146,7 +157,7 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

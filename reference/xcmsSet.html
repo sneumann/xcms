@@ -85,18 +85,22 @@
     <h2>Arguments</h2>
     <dl><dt>files</dt>
 <dd><p>path names of the NetCDF/mzXML files to read</p></dd>
-<dt>snames</dt>
+
+  <dt>snames</dt>
 <dd><p>sample names. By default the file name without extension
     is used.</p></dd>
-<dt>sclass</dt>
+
+  <dt>sclass</dt>
 <dd><p>sample classes.</p></dd>
-<dt>phenoData</dt>
+
+  <dt>phenoData</dt>
 <dd><p><code>data.frame</code> or <code>AnnotatedDataFrame</code>
     defining the sample names and classes and other sample related
     properties. If not provided, the argument <code>sclass</code> or the
     subdirectories in which the samples are stored will be
     used to specify sample grouping.</p></dd>
-<dt>profmethod</dt>
+
+  <dt>profmethod</dt>
 <dd><p>Method to use for profile generation. Supported
     values are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and
     <code>"intlin"</code> (for methods <code><a href="profGenerate.html">profBin</a></code>,
@@ -104,36 +108,47 @@
     <code><a href="profGenerate.html">profIntLin</a></code>, respectively). See help on
     <code><a href="profGenerate.html">profBin</a></code> for a complete list of available methods and
     their supported parameters.</p></dd>
-<dt>profparam</dt>
+
+  <dt>profparam</dt>
 <dd><p>parameters to use for profile generation.</p></dd>
-<dt>polarity</dt>
+
+  <dt>polarity</dt>
 <dd><p>filter raw data for positive/negative scans</p></dd>
-<dt>lockMassFreq</dt>
+
+	<dt>lockMassFreq</dt>
 <dd><p>Performs correction for Waters LockMass function</p></dd>
-<dt>mslevel</dt>
+
+    <dt>mslevel</dt>
 <dd><p>perform peak picking on data of given mslevel</p></dd>
-<dt>nSlaves</dt>
+
+    <dt>nSlaves</dt>
 <dd><p><em>DEPRECATED</em>, use <code>BPPARAM</code> argument
       instead.</p></dd>
-<dt>progressCallback</dt>
+
+  <dt>progressCallback</dt>
 <dd><p>function to be called, when progressInfo changes (useful for GUIs)</p></dd>
-<dt>scanrange</dt>
+
+  <dt>scanrange</dt>
 <dd><p>scan range to read</p></dd>
-<dt>BPPARAM</dt>
+
+  <dt>BPPARAM</dt>
 <dd><p>a <code>BiocParallel</code> parameter object to control how
     and if parallel processing should be performed. Such objects can be
     created by the <code><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></code>,
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></code> or
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></code> functions.</p></dd>
-<dt>stopOnError</dt>
+
+  <dt>stopOnError</dt>
 <dd><p>Logical specifying whether the feature detection
     call should stop on the first encountered error (the default), or
     whether feature detection is performed in all files regardless
     eventual failures for individual files in which case all errors are
     reported as <code>warnings</code>.</p></dd>
-<dt>...</dt>
+
+  <dt>...</dt>
 <dd><p>further arguments to the <code>findPeaks</code> method of the
     <code>xcmsRaw</code> class</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -164,7 +179,9 @@
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>xcmsSet</code> object.</p>
+    
+
+<p>A <code>xcmsSet</code> object.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -198,7 +215,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

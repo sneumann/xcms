@@ -106,12 +106,18 @@ spectrum in each sample.</p>
     <dl><dt>peaks</dt>
 <dd><p>a <code>matrix</code> or <code>data.frame</code> with the identified
 chromatographic peaks in the samples.</p></dd>
+
+
 <dt>peakIndex</dt>
 <dd><p>a <code>list</code> of indices that provides the grouping
 information of the chromatographic peaks (across and within samples).</p></dd>
+
+
 <dt>rtime</dt>
 <dd><p>a <code>list</code> of <code>numeric</code> vectors with the retention
 times per file/sample.</p></dd>
+
+
 <dt>minFraction</dt>
 <dd><p><code>numeric(1)</code> between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
@@ -123,6 +129,8 @@ has to contain peaks in all samples of the experiment. Note that if
 defined subset of samples and not to the total number of samples within
 the experiment (i.e. a peak has to be present in the specified
 proportion of subset samples).</p></dd>
+
+
 <dt>extraPeaks</dt>
 <dd><p><code>numeric(1)</code> defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
@@ -131,18 +139,26 @@ feature) for retention time correction. For a data set with 6 samples,
 <code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
 sample being assigned to the group.</p></dd>
+
+
 <dt>smooth</dt>
 <dd><p>character defining the function to be used, to interpolate
 corrected retention times for all peak groups. Either <code>"loess"</code> or
 <code>"linear"</code>.</p></dd>
+
+
 <dt>span</dt>
 <dd><p><code>numeric(1)</code> defining the degree of smoothing (if
 <code>smooth = "loess"</code>). This parameter is passed to the internal call
 to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code>.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>character defining the method to be used for loess smoothing.
 Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>.See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess</a></code> for more information.</p></dd>
+
+
 <dt>peakGroupsMatrix</dt>
 <dd><p>optional <code>matrix</code> of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
@@ -150,20 +166,27 @@ represents a sample, each row a feature/peak group. If not provided,
 this matrix will be determined depending on parameters
 <code>minFraction</code> and <code>extraPeaks</code>. If provided,
 <code>minFraction</code> and <code>extraPeaks</code> will be ignored.</p></dd>
+
+
 <dt>subset</dt>
 <dd><p><code>integer</code> with the indices of samples within the
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
 See description above for more details.</p></dd>
+
+
 <dt>subsetAdjust</dt>
 <dd><p><code>character</code> specifying the method with which
 non-subset samples should be adjusted. Supported options are
 <code>"previous"</code> and <code>"average"</code> (default). See description above
 for more information.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
+    
+
+<p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
     retention times grouped by sample.</p>
     </div>
     <div id="details">
@@ -211,7 +234,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

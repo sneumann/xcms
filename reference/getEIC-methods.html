@@ -95,7 +95,8 @@ Note that this method will always return profile, not raw
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>the <code>xcmsRaw</code> or <code>xcmsSet</code> object</p></dd>
-<dt>mzrange</dt>
+
+  <dt>mzrange</dt>
 <dd><p>Either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns <code>mzmin</code> and
     <code>mzmax</code>. If not specified, the method for <code>xcmsRaw</code> returns
@@ -103,7 +104,8 @@ Note that this method will always return profile, not raw
     each RT across all m/z).</p>
 <p>For <code>xcmsSet</code> objects the group data will be used if
     <code>mzrange</code> is not provided.</p></dd>
-<dt>rtrange</dt>
+
+  <dt>rtrange</dt>
 <dd><p>A two column matrix the same size as <code>mzrange</code> with minimum
     and maximum retention times between which to return EIC data
     points. If not specified, the method returns the chromatogram for
@@ -111,18 +113,23 @@ Note that this method will always return profile, not raw
 <p>For <code>xcmsSet</code> objects, it may also be a single number
     specifying the time window around the peak to return EIC data
     points</p></dd>
-<dt>step</dt>
+
+  <dt>step</dt>
 <dd><p>step (bin) size to use for profile generation. Note that a
     value of <code>step = 0</code> is not supported.</p></dd>
-<dt>groupidx</dt>
+
+  <dt>groupidx</dt>
 <dd><p>either character vector with names or integer vector with
     indicies of peak groups for which to get EICs</p></dd>
-<dt>sampleidx</dt>
+
+  <dt>sampleidx</dt>
 <dd><p>either character vector with names or integer vector with
     indicies of samples for which to get EICs</p></dd>
-<dt>rt</dt>
+
+  <dt>rt</dt>
 <dd><p><code>"corrected"</code> for using corrected retention times, or
     <code>"raw"</code> for using raw retention times</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -134,7 +141,9 @@ Note that this method will always return profile, not raw
     </div>
     <div id="value">
     <h2>Value</h2>
-    <p>For <code>xcmsSet</code> and <code>xcmsRaw</code> objects, an <code>xcmsEIC</code> object.</p>
+    
+
+<p>For <code>xcmsSet</code> and <code>xcmsRaw</code> objects, an <code>xcmsEIC</code> object.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -156,7 +165,7 @@ Note that this method will always return profile, not raw
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

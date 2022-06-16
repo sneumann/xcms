@@ -96,6 +96,8 @@ retention times of the identified chromatographic peaks in all samples of an
 experiment. Required columns are <code>"mz"</code>, <code>"rt"</code> and
 <code>"sample"</code>. The latter should contain <code>numeric</code> values representing
 the index of the sample in which the peak was found.</p></dd>
+
+
 <dt>sampleGroups</dt>
 <dd><p>A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
@@ -103,31 +105,46 @@ group). This parameter is mandatory for the <code>PeakDensityParam</code>
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).</p></dd>
+
+
 <dt>bw</dt>
 <dd><p><code>numeric(1)</code> defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
 [density() method.</p></dd>
+
+
 <dt>minFraction</dt>
 <dd><p><code>numeric(1)</code> defining the minimum fraction of samples
 in at least one sample group in which the peaks have to be present to be
 considered as a peak group (feature).</p></dd>
+
+
 <dt>minSamples</dt>
 <dd><p><code>numeric(1)</code> with the minimum number of samples in at
 least one sample group in which the peaks have to be detected to be
 considered a peak group (feature).</p></dd>
+
+
 <dt>binSize</dt>
 <dd><p><code>numeric(1)</code> defining the size of the overlapping slices
 in mz dimension.</p></dd>
+
+
 <dt>maxFeatures</dt>
 <dd><p><code>numeric(1)</code> with the maximum number of peak groups
 to be identified in a single mz slice.</p></dd>
+
+
 <dt>sleep</dt>
 <dd><p><code>numeric(1)</code> defining the time to <em>sleep</em> between
 iterations and plot the result from the current iteration.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>data.frame</code>, each row representing a (mz-rt) feature (i.e. a peak group)
+    
+
+<p>A <code>data.frame</code>, each row representing a (mz-rt) feature (i.e. a peak group)
 with columns:</p><ul><li><p><code>"mzmed"</code>: median of the peaks' apex mz values.</p></li>
 <li><p><code>"mzmin"</code>: smallest mz value of all peaks' apex within the feature.</p></li>
 <li><p><code>"mzmax"</code>:largest mz value of all peaks' apex within the feature.</p></li>
@@ -212,7 +229,7 @@ Anal. Chem. 2006, 78:779-787.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

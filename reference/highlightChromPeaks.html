@@ -97,25 +97,39 @@ peak definitions to an existing plot, such as one created by the
     <dl><dt>x</dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>XCMSnExp</code> object with the
 detected peaks.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>numeric(2)</code> with the
 retention time range from which peaks should be extracted and plotted.</p></dd>
+
+
 <dt>mz</dt>
 <dd><p><code>numeric(2)</code> with the mz range from which the peaks should
 be extracted and plotted.</p></dd>
+
+
 <dt>peakIds</dt>
 <dd><p><code>character</code> defining the IDs (i.e. rownames of the peak
 in the <code>chromPeaks</code> table) of the chromatographic peaks to be
 highlighted in a plot.</p></dd>
+
+
 <dt>border</dt>
 <dd><p>colors to be used to color the border of the rectangles/peaks.
 Has to be equal to the number of samples in <code>x</code>.</p></dd>
+
+
 <dt>lwd</dt>
 <dd><p><code>numeric(1)</code> defining the width of the line/border.</p></dd>
+
+
 <dt>col</dt>
 <dd><p>For <code>highlightChromPeaks</code>: color to be used to fill the
 rectangle (if <code>type = "rect"</code>) or the peak
 (for <code>type = "polygon"</code>).</p></dd>
+
+
 <dt>type</dt>
 <dd><p>the plotting type. See <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></code> in base grapics for
 more details.
@@ -127,6 +141,8 @@ chromatographic peak with a single point at the position of the peak's
 the peak shape. For <code>type = "polygon"</code> the color of the border and
 area can be defined with parameters <code>"border"</code> and <code>"col"</code>,
 respectively.</p></dd>
+
+
 <dt>whichPeaks</dt>
 <dd><p><code>character(1)</code> specifying how peaks are called to be
 located within the region defined by <code>mz</code> and <code>rt</code>. Can be
@@ -136,9 +152,12 @@ completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the <code>type</code> argument of the
 <code><a href="XCMSnExp-class.html">chromPeaks</a></code> function. See related documentation for more
 information and examples.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional parameters to the <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></code> or <code>plot</code>
 function.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -188,7 +207,7 @@ function.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

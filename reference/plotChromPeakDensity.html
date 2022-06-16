@@ -105,37 +105,57 @@ visualized setting <code>simulate = FALSE</code>.</p>
     <dl><dt>object</dt>
 <dd><p>A <a href="XCMSnExp-class.html">XCMSnExp</a> object with identified
 chromatographic peaks.</p></dd>
+
+
 <dt>mz</dt>
 <dd><p><code>numeric(2)</code> defining an mz range for which the peak density
 should be plotted.</p></dd>
+
+
 <dt>rt</dt>
 <dd><p><code>numeric(2)</code> defining an optional rt range for which the
 peak density should be plotted. Defaults to the absolute retention time
 range of <code>object</code>.</p></dd>
+
+
 <dt>param</dt>
 <dd><p><a href="groupChromPeaks-density.html">PeakDensityParam</a> from which parameters for the
 <em>peak density</em> correspondence algorithm can be extracted. If not provided
 and if <code>object</code> contains feature definitions with the correspondence/
 peak grouping being performed by the <em>peak density</em> method, the
 corresponding parameter class stored in <code>object</code> is used.</p></dd>
+
+
 <dt>simulate</dt>
 <dd><p><code>logical(1)</code> defining whether correspondence should be
 simulated within the specified m/z / rt region or (with
 <code>simulate = FALSE</code>) whether the results from an already performed
 correspondence should be shown.</p></dd>
+
+
 <dt>col</dt>
 <dd><p>Color to be used for the individual samples. Length has to be 1
 or equal to the number of samples in <code>object</code>.</p></dd>
+
+
 <dt>xlab</dt>
 <dd><p><code>character(1)</code> with the label for the x-axis.</p></dd>
+
+
 <dt>ylab</dt>
 <dd><p><code>character(1)</code> with the label for the y-axis.</p></dd>
+
+
 <dt>xlim</dt>
 <dd><p><code>numeric(2)</code> representing the limits for the x-axis.
 Defaults to the range of the <code>rt</code> parameter.</p></dd>
+
+
 <dt>main</dt>
 <dd><p><code>character(1)</code> defining the title of the plot. By default
 (for <code>main = NULL</code>) the mz-range is used.</p></dd>
+
+
 <dt>type</dt>
 <dd><p><code>character(1)</code> specifying how peaks are called to be located
 within the region defined by <code>mz</code> and <code>rt</code>. Can be one of <code>"any"</code>,
@@ -144,14 +164,19 @@ overlapping the region, peaks that are completely within the region, and
 peaks for which the apex is within the region. This parameter is passed
 to the <a href="XCMSnExp-class.html">chromPeaks</a> function. See related documentation for more
 information and examples.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters to be passed to the <code>plot</code> function. Data
 point specific parameters such as <code>bg</code> or <code>pch</code> have to be of length 1
 or equal to the number of samples.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The function is called for its side effect, i.e. to create a plot.</p>
+    
+
+<p>The function is called for its side effect, i.e. to create a plot.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -210,7 +235,7 @@ algorithm and its supported settings.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

@@ -126,24 +126,40 @@ the <code>plot</code> function for <code><a href="XChromatogram.html">XChromatog
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+
+
 <dt>col</dt>
 <dd><p>definition of the color in which the chromatograms should be
 drawn. Can be of length 1 or equal to <code>nrow(object)</code> to plot each
 overlayed chromatogram in a different color.</p></dd>
+
+
 <dt>type</dt>
 <dd><p><code>character(1)</code> defing the type of the plot. By default
 (<code>type = "l"</code>) each chromatogram is drawn as a line.</p></dd>
+
+
 <dt>main</dt>
 <dd><p>optional title of the plot. If not defined, the range of m/z
 values is used.</p></dd>
+
+
 <dt>xlab</dt>
 <dd><p><code>character(1)</code> defining the x-axis label.</p></dd>
+
+
 <dt>ylab</dt>
 <dd><p><code>character(1)</code> defining the y-axis label.</p></dd>
+
+
 <dt>xlim</dt>
 <dd><p>optional <code>numeric(2)</code> defining the x-axis limits.</p></dd>
+
+
 <dt>ylim</dt>
 <dd><p>optional <code>numeric(2)</code> defining the y-axis limits.</p></dd>
+
+
 <dt>stacked</dt>
 <dd><p><code>numeric(1)</code> defining the part (proportion) of the y-axis to
 use to <em>stack</em> EICs depending on their m/z values. If <code>stacked = 0</code> (the
@@ -151,38 +167,53 @@ default) no stacking is performed. With <code>stacked = 1</code> half of the y-a
 is used for stacking and half for the intensity y-axis (i.e. the ratio
 between stacking and intensity y-axis is 1:1). Note that if <code>stacking</code>
 is different from 0 no y-axis and label are drawn.</p></dd>
+
+
 <dt>transform</dt>
 <dd><p><code>function</code> to transform the intensity values before
 plotting. Defaults to <code>transform = identity</code> which plots the data as it
 is. With <code>transform = log10</code> intensity values would be log10 transformed
 before plotting.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>optional arguments to be passed to the plotting functions (see
 help on the base R <code>plot</code> function.</p></dd>
+
+
 <dt>peakType</dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: how chromatographic
 peaks should be drawn: <code>peakType = "polygon"</code> (the default): label the
 full chromatographic peak area, <code>peakType = "rectangle"</code>: indicate the
 chromatographic peak by a rectangle and <code>peakType  = "point"</code>: label the
 chromatographic peaks' apex position with a point.</p></dd>
+
+
 <dt>peakBg</dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: definition of
 background color(s) for each chromatographic peak. Has to be either of
 length 1 or equal to the number of peaks in <code>object</code>. If not specified,
 the peak will be drawn in the color defined by <code>col</code>.</p></dd>
+
+
 <dt>peakCol</dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: definition of
 color(s) for each chromatographic peak. Has to be either of length 1 or
 equal to the number of peaks in <code>object</code>. If not specified, the peak will
 be drawn in the color defined by <code>col</code>.</p></dd>
+
+
 <dt>peakPch</dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: <em>point character</em> to
 be used to label the apex position of the chromatographic peak if
 <code>peakType = "point"</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>silently returns a <code>list</code> (length equal to <code>ncol(object)</code> of
+    
+
+<p>silently returns a <code>list</code> (length equal to <code>ncol(object)</code> of
 <code>numeric</code> (length equal to <code>nrow(object)</code>) with the y position of
 each EIC.</p>
     </div>
@@ -275,7 +306,7 @@ each EIC.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>

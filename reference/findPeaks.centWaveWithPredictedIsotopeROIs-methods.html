@@ -93,34 +93,47 @@
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p><code>xcmsSet</code> object</p></dd>
-<dt>ppm</dt>
+
+  <dt>ppm</dt>
 <dd><p>maxmial tolerated m/z deviation in consecutive scans, in ppm (parts per million)</p></dd>
-<dt>peakwidth</dt>
+
+  <dt>peakwidth</dt>
 <dd><p>Chromatographic peak width, given as range (min,max) in seconds</p></dd>
-<dt>snthresh</dt>
+
+  <dt>snthresh</dt>
 <dd><p>signal to noise ratio cutoff, definition see below.</p></dd>
-<dt>prefilter</dt>
+
+  <dt>prefilter</dt>
 <dd><p><code>prefilter=c(k,I)</code>. Prefilter step for the first phase. Mass traces are only retained if they contain at least <code>k</code> peaks with intensity &gt;= <code>I</code>.</p></dd>
-<dt>mzCenterFun</dt>
+
+  <dt>mzCenterFun</dt>
 <dd><p>Function to calculate the m/z center of the feature: <code>wMean</code> intensity weighted mean of the feature m/z values, <code>mean</code> mean of the feature m/z values, <code>apex</code> use m/z value at peak apex,
         <code>wMeanApex3</code> intensity weighted mean of the m/z value at peak apex and the m/z value left and right of it, <code>meanApex3</code> mean of the m/z value at peak apex and the m/z value left and right of it.</p></dd>
-<dt>integrate</dt>
+
+  <dt>integrate</dt>
 <dd><p>Integration method. If <code>=1</code> peak limits are found through descent on the mexican hat filtered data, if <code>=2</code> the descent is done on the real data. Method 2 is very accurate but prone to noise, while method 1 is more robust to noise but less exact.</p></dd>
-<dt>mzdiff</dt>
+
+  <dt>mzdiff</dt>
 <dd><p>minimum difference in m/z for peaks with overlapping retention
     times, can be negative to allow overlap</p></dd>
-<dt>fitgauss</dt>
+
+  <dt>fitgauss</dt>
 <dd><p>logical, if TRUE a Gaussian is fitted to each peak</p></dd>
-<dt>scanrange</dt>
+
+  <dt>scanrange</dt>
 <dd><p>scan range to process</p></dd>
-<dt>noise</dt>
+
+  <dt>noise</dt>
 <dd><p>optional argument which is useful for data that was centroided without any intensity threshold,
     centroids with intensity &lt; <code>noise</code> are omitted from ROI detection</p></dd>
-<dt>sleep</dt>
+
+  <dt>sleep</dt>
 <dd><p>number of seconds to pause between plotting peak finding cycles</p></dd>
-<dt>verbose.columns</dt>
+
+  <dt>verbose.columns</dt>
 <dd><p>logical, if TRUE additional peak meta data columns are returned</p></dd>
-<dt>ROI.list</dt>
+
+  <dt>ROI.list</dt>
 <dd><p>A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs,
     otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots:
     <code>scmin</code> start scan index,
@@ -129,64 +142,94 @@
     <code>mzmax</code> maximum m/z,
     <code>length</code> number of scans,
     <code>intensity</code> summed intensity.</p></dd>
-<dt>firstBaselineCheck</dt>
+
+  <dt>firstBaselineCheck</dt>
 <dd><p>logical, if TRUE continuous data within ROI is checked to be above 1st baseline</p></dd>
-<dt>roiScales</dt>
+
+  <dt>roiScales</dt>
 <dd><p>numeric, optional vector of scales for each ROI in <code>ROI.list</code> to be used for the centWave-wavelets</p></dd>
-<dt>snthreshIsoROIs</dt>
+
+  <dt>snthreshIsoROIs</dt>
 <dd><p>signal to noise ratio cutoff for predicted isotope ROIs, definition see below.</p></dd>
-<dt>maxcharge</dt>
+
+  <dt>maxcharge</dt>
 <dd><p>max. number of the isotope charge.</p></dd>
-<dt>maxiso</dt>
+
+  <dt>maxiso</dt>
 <dd><p>max. number of the isotope peaks to predict for each detected feature.</p></dd>
-<dt>mzIntervalExtension</dt>
+
+  <dt>mzIntervalExtension</dt>
 <dd><p>logical, if TRUE predicted isotope ROIs (regions of interest) are extended in the m/z dimension to increase the detection of low intensity and hence noisy peaks.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A matrix with columns:</p>
+    
+
+<p>A matrix with columns:</p>
 <dl><dt>mz</dt>
 <dd><p>weighted (by intensity) mean of peak m/z across scans</p></dd>
-<dt>mzmin</dt>
+
+  <dt>mzmin</dt>
 <dd><p>m/z peak minimum</p></dd>
-<dt>mzmax</dt>
+
+  <dt>mzmax</dt>
 <dd><p>m/z peak maximum</p></dd>
-<dt>rt</dt>
+
+  <dt>rt</dt>
 <dd><p>retention time of peak midpoint</p></dd>
-<dt>rtmin</dt>
+
+  <dt>rtmin</dt>
 <dd><p>leading edge of peak retention time</p></dd>
-<dt>rtmax</dt>
+
+  <dt>rtmax</dt>
 <dd><p>trailing edge of peak retention time</p></dd>
-<dt>into</dt>
+
+  <dt>into</dt>
 <dd><p>integrated peak intensity</p></dd>
-<dt>intb</dt>
+
+   <dt>intb</dt>
 <dd><p>baseline corrected integrated peak intensity</p></dd>
-<dt>maxo</dt>
+
+  <dt>maxo</dt>
 <dd><p>maximum peak intensity</p></dd>
-<dt>sn</dt>
+
+  <dt>sn</dt>
 <dd><p>Signal/Noise ratio, defined as <code>(maxo - baseline)/sd</code>, where <br><code>maxo</code> is the maximum peak intensity, <br><code>baseline</code> the estimated baseline value and <br><code>sd</code> the standard deviation of local chromatographic noise.</p></dd>
-<dt>egauss</dt>
+
+  <dt>egauss</dt>
 <dd><p>RMSE of Gaussian fit</p></dd>
-<dt></dt>
+
+  <dt></dt>
 <dd><p>if <code>verbose.columns</code> is <code>TRUE</code> additionally :</p></dd>
-<dt>mu</dt>
+
+  <dt>mu</dt>
 <dd><p>Gaussian parameter mu</p></dd>
-<dt>sigma</dt>
+
+  <dt>sigma</dt>
 <dd><p>Gaussian parameter sigma</p></dd>
-<dt>h</dt>
+
+  <dt>h</dt>
 <dd><p>Gaussian parameter h</p></dd>
-<dt>f</dt>
+
+  <dt>f</dt>
 <dd><p>Region number of m/z ROI where the peak was localised</p></dd>
-<dt>dppm</dt>
+
+  <dt>dppm</dt>
 <dd><p>m/z deviation of mass trace across scans in ppm</p></dd>
-<dt>scale</dt>
+
+  <dt>scale</dt>
 <dd><p>Scale on which the peak was localised</p></dd>
-<dt>scpos</dt>
+
+  <dt>scpos</dt>
 <dd><p>Peak position found by wavelet analysis</p></dd>
-<dt>scmin</dt>
+
+  <dt>scmin</dt>
 <dd><p>Left peak limit found by wavelet analysis (scan number)</p></dd>
-<dt>scmax</dt>
+
+  <dt>scmax</dt>
 <dd><p>Right peak limit found by wavelet analysis (scan number)</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -223,7 +266,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>
