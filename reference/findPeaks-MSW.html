@@ -36,7 +36,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
     addParams slot of the object. This slot stores optional additional
     parameters to be passed to the
     identifyMajorPeaks and
-    sav.gol functions from the
+    peakDetectionCWT functions from the
     MassSpecWavelet package."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -55,7 +55,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
     <code>addParams</code> slot of the object. This slot stores optional additional
     parameters to be passed to the
     <code>identifyMajorPeaks</code> and
-    <code>sav.gol</code> functions from the
+    <code>peakDetectionCWT</code> functions from the
     <code>MassSpecWavelet</code> package.</p>
     </div>
 
@@ -280,8 +280,8 @@ of the peak in 2-D CWT coefficient matrix.</p></dd>
 <dt>peakThr</dt>
 <dd><p>numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
-function <code>sav.gol</code> function (in the <code>MassSpecWavelet</code>)
-package is called to estimate the local intensity.</p></dd>
+Savitzky-Golay filter is used (in the <code>MassSpecWavelet</code>)
+package to estimate the local intensity.</p></dd>
 
 
 <dt>tuneIn</dt>
@@ -291,8 +291,8 @@ estimation of the detected peaks.</p></dd>
 
 <dt>...</dt>
 <dd><p>Additional parameters to be passed to the
-<code>identifyMajorPeaks</code> and
-<code>sav.gol</code> functions from the
+<code>peakDetectionCWT</code> and
+<code>identifyMajorPeaks</code> functions from the
 <code>MassSpecWavelet</code> package.</p></dd>
 
 
