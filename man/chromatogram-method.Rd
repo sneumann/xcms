@@ -141,14 +141,16 @@ plot(chrs[1, , drop = FALSE])
 }
 \seealso{
 \link{XCMSnExp} for the data object.
-\link{Chromatogram} for the object representing chromatographic data.\preformatted{[XChromatograms] for the object allowing to arrange
+\link{Chromatogram} for the object representing chromatographic data.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{[XChromatograms] for the object allowing to arrange
 multiple [XChromatogram] objects.
 
 [plot] to plot a [XChromatogram] or [MChromatograms] objects.
 
 `as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
 the MS data as `data.frame`.
-}
+}\if{html}{\out{</div>}}
 }
 \author{
 Johannes Rainer

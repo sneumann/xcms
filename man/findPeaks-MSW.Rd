@@ -143,15 +143,15 @@ of the peak in 2-D CWT coefficient matrix.}
 
 \item{peakThr}{numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
-function \code{\link{sav.gol}} function (in the \code{MassSpecWavelet})
-package is called to estimate the local intensity.}
+Savitzky-Golay filter is used (in the \code{MassSpecWavelet})
+package to estimate the local intensity.}
 
 \item{tuneIn}{logical(1) whther to tune in the parameter
 estimation of the detected peaks.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link{identifyMajorPeaks}} and
-\code{\link{sav.gol}} functions from the
+\code{\link{peakDetectionCWT}} and
+\code{\link{identifyMajorPeaks}} functions from the
 \code{MassSpecWavelet} package.}
 
 \item{object}{For \code{findChromPeaks}: an
@@ -241,7 +241,7 @@ The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
     \code{addParams} slot of the object. This slot stores optional additional
     parameters to be passed to the
     \code{\link{identifyMajorPeaks}} and
-    \code{\link{sav.gol}} functions from the
+    \code{\link{peakDetectionCWT}} functions from the
     \code{MassSpecWavelet} package.
 }
 \details{

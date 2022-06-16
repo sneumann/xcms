@@ -221,11 +221,13 @@ filter chromatographic peaks. See function description below for details.}
 (length has to be equal to the length of \code{intensity}).}
 
 \item{intensity}{For \code{XChromatogram}: \code{numeric} with the intensity values
-(length has to be equal to the length of \code{rtime}).\preformatted{For `featureValues`: `character(1)` specifying the name
+(length has to be equal to the length of \code{rtime}).
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For `featureValues`: `character(1)` specifying the name
 of the column in `chromPeaks(object)` containing the intensity value
 of the peak that should be used for the `method = "maxint"` conflict
 resolution if.
-}}
+}\if{html}{\out{</div>}}}
 
 \item{mz}{For \code{XChromatogram}: \code{numeric(2)} representing the m/z value
 range (min, max) on which the chromatogram was created. This is
@@ -275,20 +277,24 @@ defining which peaks or features to return if \code{rt} or \code{mz} is provided
 \code{"any"} (default) return all peaks that are even
 partially overlapping with \code{rt}, \code{"within"} return peaks that are
 completely within \code{rt} and \code{"apex_within"} return peaks which apex
-is within \code{rt}.\preformatted{For `plot`: what type of plot should be used for the
+is within \code{rt}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For `plot`: what type of plot should be used for the
 chromatogram (such as `"l"` for lines, `"p"` for points etc), see help
 of [plot()] in the `graphics` package for more details.
 For `processHistory`: restrict returned processing steps to specific
 types. Use [processHistoryTypes()] to list all supported values.
-}}
+}\if{html}{\out{</div>}}}
 
 \item{value}{For \verb{chromPeaks<-}: a numeric \code{matrix} with required columns
-\code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.\preformatted{For `featureValues`: `character(1)` specifying the name of the column in
+\code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For `featureValues`: `character(1)` specifying the name of the column in
 `chromPeaks(object)` that should be returned or `"index"` (default) to
 return the index of the peak associated with the feature in each sample.
 To return the integrated peak area instead of the index use
 `value = "into"`.
-}}
+}\if{html}{\out{</div>}}}
 
 \item{x}{For \code{plot}: an \code{XChromatogram} or \code{XChromatograms} object.}
 

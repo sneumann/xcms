@@ -60,12 +60,14 @@ processHistory(xod)
 }
 \seealso{
 \code{\link[=adjustRtime]{adjustRtime()}} for the function to perform the alignment (retention
-time correction).\preformatted{[adjustedRtime()] for the method to extract adjusted retention times from
+time correction).
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{[adjustedRtime()] for the method to extract adjusted retention times from
 an [XCMSnExp] object.
 
 [dropAdjustedRtime] for the method to delete alignment results and to
 restore the raw retention times.
-}
+}\if{html}{\out{</div>}}
 }
 \author{
 Johannes Rainer

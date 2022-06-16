@@ -94,8 +94,10 @@ to be identified in a single mz slice.}
 
 \item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object
 containing the results from a previous peak detection analysis (see
-\code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For all other methods: a `PeakDensityParam` object.
-}}
+\code{\link[=findChromPeaks]{findChromPeaks()}}).
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a `PeakDensityParam` object.
+}\if{html}{\out{</div>}}}
 
 \item{value}{The value for the slot.}
 

@@ -75,8 +75,10 @@ considered a peak group (feature).}
 
 \item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object containing the
 results from a previous chromatographic peak detection analysis (see
-\code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For all other methods: a `MzClustParam` object.
-}}
+\code{\link[=findChromPeaks]{findChromPeaks()}}).
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a `MzClustParam` object.
+}\if{html}{\out{</div>}}}
 
 \item{value}{The value for the slot.}
 

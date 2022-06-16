@@ -17,8 +17,8 @@ detection should be performed.}
 should be returned.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link{identifyMajorPeaks}} and
-\code{\link{sav.gol}} functions from the
+\code{\link{peakDetectionCWT}} and
+\code{\link{identifyMajorPeaks}} functions from the
 \code{MassSpecWavelet} package.}
 }
 \value{
