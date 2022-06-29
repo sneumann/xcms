@@ -1,10 +1,10 @@
 pandoc: 2.17.1.1
-pkgdown: 2.0.4.9000
-pkgdown_sha: af84e66bf7bf1fb6fbab8698f8dcd883d634f93a
+pkgdown: 2.0.5.9000
+pkgdown_sha: b4096aa376773d7dee98a267fd0b5a025975a3dc
 articles:
   LC-MS-feature-grouping: LC-MS-feature-grouping.html
   xcms-direct-injection: xcms-direct-injection.html
   xcms-lcms-ms: xcms-lcms-ms.html
   xcms: xcms.html
-last_built: 2022-06-16T10:11Z
+last_built: 2022-06-29T08:35Z
 
