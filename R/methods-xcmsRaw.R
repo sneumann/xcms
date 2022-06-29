@@ -431,7 +431,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
                       distance <- floor(0.075 / bin_size)
                   }
                   ## o baseValue
-                  if (length(profp$baseleve) > 0) {
+                  if (length(profp$baselevel) > 0) {
                       if (!is.numeric(profp$baselevel))
                           stop("Profile parameter 'baselevel' has to be numeric!")
                       baseValue <- profp$baselevel[1]
