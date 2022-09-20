@@ -479,6 +479,9 @@ NULL
 #'
 #' @param firstBaselineCheck \code{logical(1)}. If \code{TRUE} continuous
 #'     data within regions of interest is checked to be above the first baseline.
+#'     In detail, a first rough estimate of the noise is calculated and peak
+#'     detection is performed only in regions in which multiple sequential
+#'     signals are higher than this first estimated baseline/noise level.
 #'
 #' @param roiScales Optional numeric vector with length equal to \code{roiList}
 #'     defining the scale for each region of interest in \code{roiList} that

@@ -1,3 +1,9 @@
+Changes in version 3.19.2
+----------------------
+
+- Update/expand documentation for the `firstBaselineCheck` parameter of
+  centWave.
+
 Changes in version 3.19.1
 ----------------------
 

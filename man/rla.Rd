@@ -3,10 +3,7 @@
 \name{rla}
 \alias{rla}
 \alias{rowRla}
-\title{Calculate relative log abundances
-
-\code{rla} calculates the relative log abundances (RLA, see reference) on a
-\code{numeric} vector.}
+\title{Calculate relative log abundances}
 \usage{
 rla(x, group, log.transform = TRUE)
 
@@ -28,12 +25,8 @@ Set to \code{log.transform = FALSE} if \code{x} is already in log scale.}
 the same dimensions than \code{x} (for \code{rowRla}).
 }
 \description{
-Calculate relative log abundances
-
 \code{rla} calculates the relative log abundances (RLA, see reference) on a
 \code{numeric} vector.
-
-\code{rowRla} calculates row-wise RLAs.
 }
 \details{
 The RLA is defines as the (log) abundance of an analyte relative

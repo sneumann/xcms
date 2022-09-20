@@ -410,7 +410,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         noise <- estimateChromNoise(noised, trim = 0.05,
                                     minPts = 3 * minPeakWidth)
         ## any continuous data above 1st baseline ?
-        if (firstBaselineCheck &
+        if (firstBaselineCheck &&
             !continuousPtsAboveThreshold(fd, threshold = noise,
                                          num = minPtsAboveBaseLine))
             next
@@ -941,7 +941,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         noise <- estimateChromNoise(noised, trim = 0.05,
                                     minPts = 3 * minPeakWidth)
         ## any continuous data above 1st baseline ?
-        if (firstBaselineCheck &
+        if (firstBaselineCheck &&
             !continuousPtsAboveThreshold(fd, threshold = noise,
                                          num = minPtsAboveBaseLine))
             next
@@ -3181,7 +3181,10 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'     columns should be returned.
 #'
 #' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
-#'     regions of interest is checked to be above the first baseline.
+#'     regions of interest is checked to be above the first baseline. In detail,
+#'     a first *rough* estimate of the noise is calculated and peak detection
+#'     is performed only in regions in which multiple sequential signals are
+#'     higher than this first estimated baseline/noise level.
 #'
 #' @param extendLengthMSW `logical(1)`. If `TRUE` the "open" method of EIC
 #'     extension is used, rather than the default "reflect" method.
@@ -3353,7 +3356,7 @@ peaksWithCentWave <- function(int, rt,
         noise <- xcms:::estimateChromNoise(noised, trim = 0.05,
                                     minPts = 3 * minPeakWidth)
         ## any continuous data above 1st baseline ?
-        if (firstBaselineCheck &
+        if (firstBaselineCheck &&
             !continuousPtsAboveThreshold(fd, threshold = noise,
                                          num = minPtsAboveBaseLine))
             next
