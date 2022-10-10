@@ -4,7 +4,7 @@ importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
-    "isolationWindowTargetMz", "quantify", "bin")
+    "isolationWindowTargetMz", "quantify", "bin", "spectrapply")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
@@ -543,3 +543,14 @@ exportMethods("featureGroups",
               "featureGroups<-")
 export("plotFeatureGroups", "EicSimilarityParam")
 exportClasses("EicSimilarityParam")
+
+## Spectra things
+importClassesFrom("Spectra", "Spectra")
+importMethodsFrom("Spectra", "spectrapply")
+importMethodsFrom("Spectra", "peaksData")
+
+## MsExperiment things
+importClassesFrom("MsExperiment", "MsExperiment")
+importMethodsFrom("MsExperiment", "spectra")
+importMethodsFrom("BiocGenerics", "do.call")
+importMethodsFrom("BiocGenerics", "rbind")
