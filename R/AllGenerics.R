@@ -114,8 +114,64 @@ setGeneric("filterColumnsIntensityAbove", function(object, ...)
     standardGeneric("filterColumnsIntensityAbove"))
 setGeneric("filterColumnsKeepTop", function(object, ...)
     standardGeneric("filterColumnsKeepTop"))
+
+#' @aliases findChromPeaks
+#'
+#' @title Chromatographic Peak Detection
+#'
+#' @description
+#'
+#' The `findChromPeaks` method performs chromatographic peak detection on
+#' LC/GC-MS data. The peak detection algorithm can be selected, and configured,
+#' using the `param` argument.
+#'
+#' Supported `param` objects are:
+#'
+#' - [CentWaveParam()]: chromatographic peak detection using the *centWave*
+#'   algorithm.
+#'
+#' - [CentWavePredIsoParam()]: *centWave* with predicted isotopes. Peak
+#'   detection uses a two-step centWave-based approach considering also feature
+#'   isotopes.
+#'
+#' - [MatchedFilterParam()]: peak detection using the *matched filter*
+#'   algorithm.
+#'
+#' - [MassifquantParam()]: peak detection using the Kalman filter-based
+#'   *massifquant* method.
+#'
+#' - [MSWParam()]: single-spectrum non-chromatography MS data peak detection.
+#'
+#' For specific examples see the help pages of the individual parameter classes
+#' listed above.
+#'
+#' @param object The data object on which to perform the peak detection. Can be
+#'     an [OnDiskMSnExp()], [XCMSnExp()], [MChromatograms()] or [MsExperiment()]
+#'     object.
+#'
+#' @param param The parameter object selecting and configuring the algorithm.
+#'
+#' @param ... Optional parameters.
+#'
+#' @name findChromPeaks
+#'
+#' @family peak detection methods
+#'
+#' @seealso
+#'
+#' [plotChromPeaks()] to plot identified chromatographic peaks for one file.
+#'
+#' [refineChromPeaks()] for methods to *refine* or clean identified
+#' chromatographic peaks.
+#'
+#' [manualChromPeaks()] to manually add/define chromatographic peaks.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
 setGeneric("findChromPeaks", function(object, param, ...)
            standardGeneric("findChromPeaks"))
+
 setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE)
     standardGeneric("findMZ"))
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))

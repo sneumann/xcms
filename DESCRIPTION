@@ -91,6 +91,7 @@ Collate:
     'Deprecated.R'
     'MPI.R'
     'MsExperiment-functions.R'
+    'XcmsExperiment-functions.R'
     'XcmsExperiment.R'
     'c.R'
     'cwTools.R'

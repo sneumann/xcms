@@ -360,57 +360,6 @@ setClass("XProcessHistory",
              else TRUE
          })
 
-#' @aliases findChromPeaks
-#'
-#' @title Chromatographic peak detection methods.
-#'
-#' @description The \code{findChromPeaks} methods perform the chromatographic
-#'     peak detection on LC/GC-MS data and are part of the modernized
-#'     \code{xcms} user interface.
-#'
-#'     The implemented peak detection methods in chromatographic space are:
-#'     \describe{
-#'     \item{centWave}{chromatographic peak detection using the \emph{centWave}
-#'     method. See \code{\link{centWave}} for more details.}
-#'
-#'     \item{centWave with predicted isotopes}{peak detection using a two-step
-#'     centWave-based approach considering also feature isotopes. See
-#'     \code{\link{centWaveWithPredIsoROIs}} for more details.}
-#'
-#'     \item{matchedFilter}{peak detection in chromatographic space. See
-#'     \code{\link{matchedFilter}} for more details.}
-#'
-#'     \item{massifquant}{peak detection using the Kalman filter-based
-#'     method. See \code{\link{massifquant}} for more details.}
-#'
-#'     \item{MSW}{single-spectrum non-chromatography MS data peak detection.
-#'     See \code{\link{MSW}} for more details.}
-#'
-#'     }
-#'
-#' @name chromatographic-peak-detection
-#'
-#' @family peak detection methods
-#'
-#' @seealso \code{\link{findPeaks}} for the \emph{old} peak detection
-#'     methods.
-#'
-#'     \code{\link{plotChromPeaks}} to plot identified chromatographic peaks
-#'     for one file.
-#'
-#'     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
-#'     peaks in an extracted ion chromatogram plot.
-#'
-#'     \code{\link{refineChromPeaks}} for methods to refine or clean identified
-#'     chromatographic peaks.
-#'
-#'     \code{\link{manualChromPeaks}} to manually add/define chromatographic
-#'     peaks.
-#'
-#' @author Johannes Rainer
-NULL
-#> NULL
-
 ## Main centWave documentation.
 #' @title Chromatographic peak detection using the centWave method
 #'

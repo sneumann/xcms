@@ -8,7 +8,7 @@
 ## The centWave peak detection method for OnDiskMSnExp:
 #' @title Chromatographic peak detection using the centWave method
 #'
-#' @description The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
+#' @description The \code{findChromPeaks,OnDiskMSnExp,CentWaveParam} method
 #'     performs chromatographic peak detection using the \emph{centWave}
 #'     algorithm on all samples from an \code{\link{OnDiskMSnExp}}
 #'     object. \code{\link{OnDiskMSnExp}} objects encapsule all

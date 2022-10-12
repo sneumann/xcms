@@ -300,11 +300,11 @@ The \code{\link{do_findPeaks_MSW}} core API function
     the peak detection.
 
 Other peak detection methods: 
-\code{\link{chromatographic-peak-detection}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},
-\code{\link{findChromPeaks-matchedFilter}}
+\code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findChromPeaks}()}
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

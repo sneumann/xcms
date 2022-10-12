@@ -57,18 +57,17 @@ test_that(".mse_sample_spectra_apply works", {
     expect_equal(unlist(res), c(`1` = 0L, `2` = 0L, `3` = 0L))
 })
 
-test_that(".mse_sample_find_chrom_peaks works", {
+test_that(".mse_find_chrom_peaks_sample works", {
     p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
-    res <- .mse_sample_find_chrom_peaks(spectra(mse[2L]), param = p)
+    res <- .mse_find_chrom_peaks_sample(spectra(mse[2L]), param = p)
     tmp <- chromPeaks(faahko_xod)
     tmp <- tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"]
     rownames(tmp) <- NULL
     expect_equal(res, tmp)
 
-    res <- .mse_sample_find_chrom_peaks(spectra(mse[1L]), param = p,
+    res <- .mse_find_chrom_peaks_sample(spectra(mse[1L]), param = p,
                                         msLevel = 2L)
-    expect_true(is.matrix(res))
-    expect_true(nrow(res) == 0)
+    expect_true(is.null(res))
 })
 
 test_that(".mse_find_chrom_peaks works", {
@@ -80,4 +79,40 @@ test_that(".mse_find_chrom_peaks works", {
 
     res <- .mse_find_chrom_peaks(mse, param = p, msLevel = 2L)
     expect_true(nrow(res) == 0)
+    expect_equal(colnames(res), colnames(.empty_chrom_peaks()))
+})
+
+test_that(".mse_find_chrom_peaks_chunks works", {
+    p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+    res <- .mse_find_chrom_peaks_chunks(mse, param = p)
+    tmp <- chromPeaks(faahko_xod)
+    rownames(tmp) <- NULL
+    expect_equal(tmp, res)
+
+    res <- .mse_find_chrom_peaks_chunks(mse, param = p, msLevel = 2L)
+    expect_true(nrow(res) == 0)
+    expect_equal(res, .empty_chrom_peaks())
+})
+
+test_that(".mse_find_chrom_peaks_chunk works", {
+    p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+    sps <- spectra(mse[1:2])[mse[1:2]@sampleDataLinks[["spectra"]][, 2L]]
+    sps$.SAMPLE_IDX <- mse[1:2]@sampleDataLinks[["spectra"]][, 1L]
+
+    res <- .mse_find_chrom_peaks_chunk(sps, param = p)
+    expect_true(is.list(res))
+    expect_true(length(res) == 2)
+
+    cp <- chromPeaks(faahko_xod)
+    f <- cp[, "sample"]
+    rownames(cp) <- NULL
+    cpl <- split.data.frame(cp[, colnames(cp) != "sample"], f)
+    expect_equal(cpl[[1L]], res[[1L]])
+    expect_equal(cpl[[2L]], res[[2L]])
+
+    res <- .mse_find_chrom_peaks_chunk(sps, param = p, msLevel = 2L)
+    expect_true(is.list(res))
+    expect_true(length(res) == 2)
+    expect_true(is.null(res[[1L]]))
+    expect_true(is.null(res[[2L]]))
 })

@@ -3,7 +3,38 @@
 \name{XcmsExperiment}
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
+\alias{hasChromPeaks,XcmsExperiment-method}
+\alias{dropChromPeaks,XcmsExperiment-method}
+\alias{chromPeaks,XCMSnExp-method}
+\alias{chromPeakData,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
+\usage{
+\S4method{hasChromPeaks}{XcmsExperiment}(object, msLevel = integer())
+
+\S4method{dropChromPeaks}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
+
+\S4method{chromPeaks}{XCMSnExp}(
+  object,
+  bySample = FALSE,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  msLevel = integer(),
+  type = c("any", "within", "apex_within"),
+  isFilledColumn = FALSE
+)
+
+\S4method{chromPeakData}{XcmsExperiment}(object)
+}
+\arguments{
+\item{object}{An \code{XcmsExperiment} object.}
+
+\item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
+function supports it).}
+
+\item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
+present) should be retained.}
+}
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
 (i.e. results from chromatographic peak detection, alignment and
@@ -13,7 +44,54 @@ It provides the same functionality than the \link{XCMSnExp} object, but uses the
 more advanced and modern MS infrastructure provided by the \code{MsExperiment}
 and \code{Spectra} Bioconductor packages. With this comes a higher flexibility on
 how and where to store the data.
+
+Documentation of the various functions for \code{XcmsExperiment} objects are
+grouped by topic and provided in the sections below.
 }
+\section{Subsetting and filtering}{
+
+}
+
+\section{Functionality related to chromatographic peaks}{
+
+\itemize{
+\item \code{chromPeaks}: returns a \code{numeric} matrix with the identified
+chromatographic peaks. Each row represents a chromatographic peak
+identified in one sample (file). The number of columns depends on the
+peak detection algorithm (see \code{\link[=findChromPeaks]{findChromPeaks()}}) but most methods return
+the following columns: \code{"mz"} (intensity-weighted mean of the m/z values
+of all mass peaks included in the chromatographic peak), \code{"mzmin"} (
+smallest m/z value of any mass peak in the chromatographic peak), \code{"mzmax"}
+(largest m/z value of any mass peak in the chromatographic peak), \code{"rt"}
+(retention time of the peak apex), \code{"rtmin"} (retention time of the first
+scan/mass peak of the chromatographic peak), \code{"rtmax"} (retention time of
+the last scan/mass peak of the chromatographic peak), \code{"into"} (integrated
+intensity of the chromatographic peak), \code{"maxo"} (maximal intensity of any
+mass peak of the chromatographic peak), \code{"sample"} (index of the sample
+in \code{object} in which the peak was identified). Parameters \code{rt}, \code{mz},
+\code{ppm}, \code{msLevel} and \code{type} allow to extract subsets of identified
+chromatographic peaks from the \code{object}. See parameter description below
+for details.
+\item \code{chromPeakData}: returns a \code{DataFrame} with potential additional
+\emph{annotations} for the identified chromatographic peaks. Each row in this
+\code{DataFrame} corresponds to a row (same index and row name) in the
+\code{chromPeaks} matrix. The default \emph{annotations} are \code{"ms_level"} (the MS
+level in which the peak was identified) and \code{"is_filled"} (whether the
+chromatographic peak was \emph{detected} (by \code{findChromPeaks}) or \emph{filled-in}
+(by \code{fillChromPeaks}).
+\item \code{dropChromPeaks}: removes (all) chromatographic peak detection results
+from \code{object}. This will also remove any correspondence results (i.e.
+features) and eventually present adjusted retention times from the object.
+Alignment results (adjusted retention times) can be retained if parameter
+\code{keepAdjustedRtime} is set to \code{TRUE}.
+\item \code{findChromPeaks}: perform chromatographic peak detection. See
+\code{\link[=findChromPeaks]{findChromPeaks()}} for details.
+\item \code{hasChromPeaks}: whether the object contains peak detection results.
+Parameter \code{msLevel} allows to check whether peak detection results are
+available for the specified MS level(s).
+}
+}
+
 \author{
 Johannes Rainer
 }

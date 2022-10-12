@@ -274,7 +274,7 @@ useOriginalCode <- function(x) {
 #'
 #' @noRd
 .featureIDs <- function(x, prefix = "FT", from = 1L) {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"),
+    sprintf(paste0(prefix, "%0", ceiling(log10(x + from)), "d"),
             seq(from = from, length.out = x))
 }
 
