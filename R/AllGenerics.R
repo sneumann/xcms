@@ -145,6 +145,37 @@ setGeneric("filterColumnsKeepTop", function(object, ...)
 #' For specific examples see the help pages of the individual parameter classes
 #' listed above.
 #'
+#' @param add `logical(1)` (if `object` contains already chromatographic peaks,
+#'     i.e. is either an `XCMSnExp` or `XcmsExperiment`) whether chromatographic
+#'     peak detection results should be **added** to existing results. By
+#'     default (`add = FALSE`) any additional `findChromPeaks` call on a result
+#'     object will remove previous results.
+#'
+#' @param BPPARAM Parallel processing setup. Uses by default the system-wide
+#'     default setup. See [bpparam()] for more details.
+#'
+#' @param chunkSize `integer(1)` for `object` being an `MsExoeriment` or
+#'     [XcmsExperiment()]: defines the number of files (samples) for which the
+#'     full peaks data (m/z and intensity values) should be loaded in memory in
+#'     each iteration. Peak detection is then performed in parallel (per sample)
+#'     on this subset of loaded data. This setting thus allows to balance
+#'     memory requirement and speed (due to parallel processing) of the peak
+#'     detection. Because parallel processing can only performed on the subset
+#'     of data loaded into memory in each iteration, the value for `chunkSize`
+#'     should be equivalent to the defined  parallel setting setup. Using
+#'     a parallel processing setup using 4 CPUs (separate processes) but using
+#'     `chunkSize = `1` will not perform any parallel processing, as only the
+#'     data from one sample is loaded in memory at a time. On the other hand,
+#'     setting `chunkSize` to the total number of samples in an experiment will
+#'     load the full MS data into memory and will thus in most settings cause
+#'     an out-of-memory error.
+#'     By setting `chunkSize = -1` the peak detection will be performed
+#'     separately, and in parallel, for each sample. This will however not work
+#'     for all `Spectra` *backends* (see eventually [Spectra()] for details).
+#'
+#' @param msLevel `integer(1)` defining the MS level on which the
+#'     chromatographic peak detection should be performed.
+#'
 #' @param object The data object on which to perform the peak detection. Can be
 #'     an [OnDiskMSnExp()], [XCMSnExp()], [MChromatograms()] or [MsExperiment()]
 #'     object.

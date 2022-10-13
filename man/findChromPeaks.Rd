@@ -35,6 +35,30 @@ object.}
 \item{param}{The parameter object selecting and configuring the algorithm.}
 
 \item{...}{Optional parameters.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level on which the
+chromatographic peak detection should be performed.}
+
+\item{chunkSize}{\code{integer(1)} for \code{object} being an \code{MsExoeriment} or
+\code{\link[=XcmsExperiment]{XcmsExperiment()}}: defines the number of files (samples) for which the
+full peaks data (m/z and intensity values) should be loaded in memory in
+each iteration. Peak detection is then performed in parallel (per sample)
+on this subset of loaded data. This setting thus allows to balance
+memory requirement and speed (due to parallel processing) of the peak
+detection. Because parallel processing can only performed on the subset
+of data loaded into memory in each iteration, the value for \code{chunkSize}
+should be equivalent to the defined  parallel setting setup. Using
+a parallel processing setup using 4 CPUs (separate processes) but using
+\verb{chunkSize = }1\verb{will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting}chunkSize\verb{to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting}chunkSize = -1\verb{the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all}Spectra` \emph{backends} (see eventually \code{\link[=Spectra]{Spectra()}} for details).}
+
+\item{BPPARAM}{Parallel processing setup. Uses by default the system-wide
+default setup. See \code{\link[=bpparam]{bpparam()}} for more details.}
+
+\item{add}{\code{logical(1)} (if \code{object} contains already chromatographic peaks,
+i.e. is either an \code{XCMSnExp} or \code{XcmsExperiment}) whether chromatographic
+peak detection results should be \strong{added} to existing results. By
+default (\code{add = FALSE}) any additional \code{findChromPeaks} call on a result
+object will remove previous results.}
 }
 \description{
 The \code{findChromPeaks} method performs chromatographic peak detection on

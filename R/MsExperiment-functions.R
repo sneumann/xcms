@@ -191,7 +191,7 @@
     x <- filterMsLevel(x, msLevel = msLevel)
     if (length(x))
         f <- factor(x$.SAMPLE_IDX, levels = sidx)
-    else f <- factor(integer(), level = sidx)
+    else f <- factor(integer(), levels = sidx)
     bpmapply(
         split(Spectra::peaksData(x, columns = c("mz", "intensity"),
                                  BPPARAM = SerialParam()), f),

@@ -30,10 +30,10 @@ import("BiocParallel")
 
 ## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
-importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList")
+importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
-importFrom("MsCoreUtils", "rbindFill", "closest")
+importFrom("MsCoreUtils", "rbindFill", "closest", "i2index")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",

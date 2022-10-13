@@ -39,3 +39,60 @@
         "Row names of 'chromPeaks' and 'chromPeakData' don't match"
     else NULL
 }
+
+#' @title Subsetting an XcmsExperiment
+#'
+#' @description
+#'
+#' Subsetting the xcms results by sample. In contrast to the XCMSnExp we allow
+#' here a little more flexibility:
+#' - keepChromPeaks: do not automatically drop the chrom peaks.
+#' - keepAdjustedRtime: eventually keep adjusted retention times.
+#' - keepFeatures: keep features.
+#'
+#' Also, we allow subsetting in arbitrary order, re-assigning chrom peaks etc.
+#'
+#' @param ignoreHistory `logical(1)` whether process history should not be
+#'     updated. Setting to `TRUE` would be faster.
+#'
+#' @note Unit tests are in test_XcmsExperiment.R!
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.subset_xcms_experiment <- function(x, i = integer(),
+                                    keepChromPeaks = TRUE,
+                                    keepAdjustedRtime = FALSE,
+                                    keepFeatures = FALSE,
+                                    ignoreHistory = FALSE, ...) {
+    if (!length(i))
+        return(x)
+    i <- MsCoreUtils::i2index(i, length(x))
+    ## This is a special case that would make life (=performance) miserable
+    if (length(i) != length(unique(i)))
+        stop("Duplicated indices are not (yet) supported", call. = FALSE)
+    ## if (keepAdjustedRtime && hasAdjustedRtime(x)) {
+    ##     ## Keep only adjusted rtimes for the selected samples.
+    ## }
+    ## if (keepFeatures && hasFeatures(x)) {
+    ## }
+    if (hasChromPeaks(x)) {
+        if (keepChromPeaks) {
+            keep <- x@chromPeaks[, "sample"] %in% i
+            x@chromPeaks <- x@chromPeaks[keep, , drop = FALSE]
+            x@chromPeakData <- x@chromPeakData[keep, , drop = FALSE]
+            x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
+        } else {
+            x@chromPeaks <- .empty_chrom_peaks()
+            x@chromPeakData <- data.frame(ms_level = integer(),
+                                          is_filled = logical())
+            if (!ignoreHistory)
+                x@processHistory <- dropProcessHistoriesList(
+                    x@processHistory,
+                    type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+                             .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+                             .PROCSTEP.PEAK.REFINEMENT))
+        }
+    }
+    getMethod("[", "MsExperiment")(x, i = i)
+}

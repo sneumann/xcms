@@ -3,19 +3,22 @@
 \name{XcmsExperiment}
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
+\alias{show,XcmsExperiment-method}
+\alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{hasChromPeaks,XcmsExperiment-method}
 \alias{dropChromPeaks,XcmsExperiment-method}
-\alias{chromPeaks,XCMSnExp-method}
+\alias{chromPeaks,XcmsExperiment-method}
 \alias{chromPeakData,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
+\S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
 \S4method{hasChromPeaks}{XcmsExperiment}(object, msLevel = integer())
 
 \S4method{dropChromPeaks}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
 
-\S4method{chromPeaks}{XCMSnExp}(
+\S4method{chromPeaks}{XcmsExperiment}(
   object,
-  bySample = FALSE,
   rt = numeric(),
   mz = numeric(),
   ppm = 0,
@@ -27,6 +30,17 @@
 \S4method{chromPeakData}{XcmsExperiment}(object)
 }
 \arguments{
+\item{x}{An \code{XcmsExperiment} object.}
+
+\item{i}{For \code{[}: \code{integer} or \code{logical} defining the samples/files to
+subset.}
+
+\item{j}{For \code{[}: not supported.}
+
+\item{...}{Additional optional parameters.}
+
+\item{drop}{For \code{[}: ignored.}
+
 \item{object}{An \code{XcmsExperiment} object.}
 
 \item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
@@ -34,6 +48,32 @@ function supports it).}
 
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
+
+\item{rt}{For \code{chromPeaks}: \code{numeric(2)} defining the retention time range
+for which chromatographic peaks should be returned. The full range is
+used by default.}
+
+\item{mz}{For \code{chromPeaks}: \code{numeric(2)} optionally defining the m/z range
+for which chromatographic peaks should be returned. The full m/z range
+is used by default.}
+
+\item{ppm}{For \code{chromPeaks}: optional \code{numeric(1)} specifying the ppm by
+which the m/z range (defined by \code{mz} should be extended. For a value of
+\code{ppm = 10}, all peaks within \code{mz[1] - ppm / 1e6} and
+\code{mz[2] + ppm / 1e6} are returned.}
+
+\item{type}{For \code{chromPeaks} and only if either \code{mz} and \code{rt} are defined
+too: \code{character(1)}: defining which peaks should be returned. For
+\code{type = "any"}: returns all chromatographic peaks also only partially
+overlapping any of the provided ranges. For \code{type = "within"}: returns
+only peaks completely within the region defined by \code{mz} and/or \code{rt}.
+For \code{type = "apex_within"}: returns peaks for which the m/z and retention
+time of the peak's apex is within the region defined by \code{mz} and/or \code{rt}.}
+
+\item{isFilledColumn}{For \code{chromPeaks}: \code{logical(1)} whether a column
+\code{"is_filled"} should be included in the returned \code{matrix} with the
+information whether a peak was detected or \emph{only} filled-in. Note that
+this information is also provided in the \code{chromPeakData} data frame.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
@@ -50,6 +90,16 @@ grouped by topic and provided in the sections below.
 }
 \section{Subsetting and filtering}{
 
+\itemize{
+\item \code{[}: subset an \code{XcmsExperiment} by \strong{sample} (parameter \code{i}). Subsetting
+will by default drop correspondence results (as subsetting by samples will
+obviously affect the feature definition) and alignment results (adjusted
+retention times) while identified chromatographic peaks (for the selected
+samples) will be retained. Which preprocessing results should be
+kept or dropped can also be configured with optional parameters
+\code{keepChromPeaks} (by default \code{TRUE}), \code{keepAdjustedRtime} (by default
+\code{FALSE}) and \code{keepFeatures} (by default \code{FALSE}).
+}
 }
 
 \section{Functionality related to chromatographic peaks}{
@@ -92,6 +142,50 @@ available for the specified MS level(s).
 }
 }
 
+\examples{
+
+## Creating a MsExperiment object representing the data from an LC-MS
+## experiment.
+library(MsExperiment)
+mse <- MsExperiment()
+
+## Defining the raw data files
+fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+fls <- normalizePath(fls)
+
+## Defining a data frame with the sample characterization
+df <- data.frame(mzML_file = basename(fls),
+                dataOrigin = fls,
+                sample = c("ko15", "ko16", "ko18"))
+## Adding the sample definition to the experiment
+sampleData(mse) <- DataFrame(df)
+
+## Load the MS data as a Spectra object and add it to the experiment
+spectra(mse) <- Spectra::Spectra(fls)
+
+## Linking samples to MS spectra. This step is required to define
+## which spectra (and eventually files) belong to which sample
+mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+
+## Perform peak detection on the data using the centWave algorith. Note
+## that the parameters are chosen to reduce the run time of the example.
+p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+xmse <- findChromPeaks(mse, param = p)
+xmse
+
+## Have a quick look at the identified chromatographic peaks
+head(chromPeaks(xmse))
+
+## Extract chromatographic peaks identified between 3000 and 3300 seconds
+chromPeaks(xmse, rt = c(3000, 3300), type = "within")
+
+## Subsetting the data to the results (and data) for the second sample
+a <- xmse[2]
+nrow(chromPeaks(xmse))
+nrow(chromPeaks(a))
+}
 \author{
 Johannes Rainer
 }

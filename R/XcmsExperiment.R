@@ -1,6 +1,6 @@
 #' @title Next Generation `xcms` Result Object
 #'
-#' @aliases XcmsExperiment-class
+#' @aliases XcmsExperiment-class show,XcmsExperiment-method
 #'
 #' @description
 #'
@@ -17,6 +17,15 @@
 #' grouped by topic and provided in the sections below.
 #'
 #' @section Subsetting and filtering:
+#'
+#' - `[`: subset an `XcmsExperiment` by **sample** (parameter `i`). Subsetting
+#'   will by default drop correspondence results (as subsetting by samples will
+#'   obviously affect the feature definition) and alignment results (adjusted
+#'   retention times) while identified chromatographic peaks (for the selected
+#'   samples) will be retained. Which preprocessing results should be
+#'   kept or dropped can also be configured with optional parameters
+#'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
+#'   `FALSE`) and `keepFeatures` (by default `FALSE`).
 #'
 #' @section Functionality related to chromatographic peaks:
 #'
@@ -59,13 +68,50 @@
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
 #'
+#' @param drop For `[`: ignored.
+#'
+#' @param i For `[`: `integer` or `logical` defining the samples/files to
+#'     subset.
+#'
+#' @param isFilledColumn For `chromPeaks`: `logical(1)` whether a column
+#'     `"is_filled"` should be included in the returned `matrix` with the
+#'     information whether a peak was detected or *only* filled-in. Note that
+#'     this information is also provided in the `chromPeakData` data frame.
+#'
+#' @param j For `[`: not supported.
+#'
 #' @param keepAdjustedRtime `logical(1)`: whether adjusted retention times (if
 #'     present) should be retained.
 #'
 #' @param msLevel `integer` defining the MS level (or multiple MS level if the
 #'     function supports it).
 #'
+#' @param mz For `chromPeaks`: `numeric(2)` optionally defining the m/z range
+#'     for which chromatographic peaks should be returned. The full m/z range
+#'     is used by default.
+#'
+#' @param ppm For `chromPeaks`: optional `numeric(1)` specifying the ppm by
+#'     which the m/z range (defined by `mz` should be extended. For a value of
+#'     `ppm = 10`, all peaks within `mz[1] - ppm / 1e6` and
+#'     `mz[2] + ppm / 1e6` are returned.
+#'
 #' @param object An `XcmsExperiment` object.
+#'
+#' @param rt For `chromPeaks`: `numeric(2)` defining the retention time range
+#'     for which chromatographic peaks should be returned. The full range is
+#'     used by default.
+#'
+#' @param type For `chromPeaks` and only if either `mz` and `rt` are defined
+#'     too: `character(1)`: defining which peaks should be returned. For
+#'     `type = "any"`: returns all chromatographic peaks also only partially
+#'     overlapping any of the provided ranges. For `type = "within"`: returns
+#'     only peaks completely within the region defined by `mz` and/or `rt`.
+#'     For `type = "apex_within"`: returns peaks for which the m/z and retention
+#'     time of the peak's apex is within the region defined by `mz` and/or `rt`.
+#'
+#' @param x An `XcmsExperiment` object.
+#'
+#' @param ... Additional optional parameters.
 #'
 #' @name XcmsExperiment
 #'
@@ -74,6 +120,50 @@
 #' @exportClass XcmsExperiment
 #'
 #' @md
+#'
+#' @examples
+#'
+#' ## Creating a MsExperiment object representing the data from an LC-MS
+#' ## experiment.
+#' library(MsExperiment)
+#' mse <- MsExperiment()
+#'
+#' ## Defining the raw data files
+#' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' fls <- normalizePath(fls)
+#'
+#' ## Defining a data frame with the sample characterization
+#' df <- data.frame(mzML_file = basename(fls),
+#'                 dataOrigin = fls,
+#'                 sample = c("ko15", "ko16", "ko18"))
+#' ## Adding the sample definition to the experiment
+#' sampleData(mse) <- DataFrame(df)
+#'
+#' ## Load the MS data as a Spectra object and add it to the experiment
+#' spectra(mse) <- Spectra::Spectra(fls)
+#'
+#' ## Linking samples to MS spectra. This step is required to define
+#' ## which spectra (and eventually files) belong to which sample
+#' mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+#'
+#' ## Perform peak detection on the data using the centWave algorith. Note
+#' ## that the parameters are chosen to reduce the run time of the example.
+#' p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+#' xmse <- findChromPeaks(mse, param = p)
+#' xmse
+#'
+#' ## Have a quick look at the identified chromatographic peaks
+#' head(chromPeaks(xmse))
+#'
+#' ## Extract chromatographic peaks identified between 3000 and 3300 seconds
+#' chromPeaks(xmse, rt = c(3000, 3300), type = "within")
+#'
+#' ## Subsetting the data to the results (and data) for the second sample
+#' a <- xmse[2]
+#' nrow(chromPeaks(xmse))
+#' nrow(chromPeaks(a))
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
@@ -116,7 +206,12 @@ setMethod("show", "XcmsExperiment", function(object) {
 ## Filtering and subsetting
 ################################################################################
 
-
+#' @rdname XcmsExperiment
+setMethod("[", "XcmsExperiment", function(x, i, j, ...) {
+    if (!missing(j))
+        stop("subsetting by j not supported")
+    .subset_xcms_experiment(x, i = i, ...)
+})
 
 ################################################################################
 ## chromatographic peaks
@@ -203,12 +298,12 @@ setMethod(
     })
 
 #' @rdname XcmsExperiment
-setMethod("chromPeaks", "XCMSnExp", function(object, rt = numeric(),
-                                             mz = numeric(), ppm = 0,
-                                             msLevel = integer(),
-                                             type = c("any", "within",
-                                                      "apex_within"),
-                                             isFilledColumn = FALSE) {
+setMethod("chromPeaks", "XcmsExperiment", function(object, rt = numeric(),
+                                                   mz = numeric(), ppm = 0,
+                                                   msLevel = integer(),
+                                                   type = c("any", "within",
+                                                            "apex_within"),
+                                                   isFilledColumn = FALSE) {
     type <- match.arg(type)
     pks <- object@chromPeaks
     if (isFilledColumn)
@@ -249,5 +344,13 @@ setMethod("chromPeaks", "XCMSnExp", function(object, rt = numeric(),
 
 #' @rdname XcmsExperiment
 setMethod("chromPeakData", "XcmsExperiment", function(object) {
-    object@chromPeakData
+    DataFrame(object@chromPeakData)
 })
+
+################################################################################
+## alignment
+################################################################################
+
+## setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
+##     hasAdjustedRtime(object@msFeatureData)
+## })
