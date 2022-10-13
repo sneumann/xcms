@@ -36,13 +36,13 @@ Authors@R: c(
 Depends:
     R (>= 4.0.0),
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.21.4)
+    MSnbase (>= 2.23.1)
 Imports:
     mzR (>= 2.25.3),
     methods,
     Biobase,
     BiocGenerics,
-    ProtGenerics (>= 1.25.1),
+    ProtGenerics (>= 1.29.1),
     lattice,
     RColorBrewer,
     plyr,
