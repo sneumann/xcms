@@ -220,3 +220,48 @@
         }, MoreArgs = list(prm = param, msl = msLevel), SIMPLIFY = FALSE,
         USE.NAMES = FALSE, BPPARAM = BPPARAM)
 }
+
+#' generic method to apply a filtering to the spectra data. The function will
+#' apply the filtering and (most importantly) keep/update the link between
+#' spectra and samples.
+#'
+#' @importMethodsFrom Spectra selectSpectraVariables
+#'
+#' @param x `MsExperiment`.
+#'
+#' @param FUN filter function.
+#'
+#' @param ... parameters for `FUN`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.mse_filter_spectra <- function(x, FUN, ...) {
+    ls <- length(spectra(x))
+    have_links <- length(x@sampleDataLinks[["spectra"]]) > 0
+    if (have_links)
+        x@spectra$._SAMPLE_IDX <- seq_len(ls)
+    x@spectra <- FUN(x@spectra, ...)
+    if (have_links) {
+        if (ls != length(spectra(x))) {
+            sdl <- x@sampleDataLinks[["spectra"]]
+            idx <- match(sdl[, 2L], x@spectra$._SAMPLE_IDX)
+            keep <- !is.na(idx)
+            sdl <- sdl[keep, , drop = FALSE]
+            sdl[, 2L] <- idx[keep]
+            x@sampleDataLinks[["spectra"]] <- sdl
+        }
+        svs <- spectraVariables(spectra(x))
+        x@spectra <- selectSpectraVariables(
+            x@spectra, svs[svs != "._SAMPLE_IDX"])
+    }
+    x
+}
+
+#' @rdname XcmsExperiment
+setMethod("filterRt", "MsExperiment",
+          function(object, rt = numeric(), ...) {
+              message("Filter spectra")
+              object <- .mse_filter_spectra(object, filterRt, rt = rt, ...)
+              object
+          })

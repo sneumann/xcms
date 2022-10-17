@@ -70,7 +70,8 @@
     i <- MsCoreUtils::i2index(i, length(x))
     ## This is a special case that would make life (=performance) miserable
     if (length(i) != length(unique(i)))
-        stop("Duplicated indices are not (yet) supported", call. = FALSE)
+        stop("Duplicated indices are not (yet) supported for ",
+             "'[,XcmsExperiment'", call. = FALSE)
     ## if (keepAdjustedRtime && hasAdjustedRtime(x)) {
     ##     ## Keep only adjusted rtimes for the selected samples.
     ## }

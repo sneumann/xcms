@@ -27,6 +27,14 @@
 #'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
 #'   `FALSE`) and `keepFeatures` (by default `FALSE`).
 #'
+#' - `filterRt`: filter an `XcmsExperiment` keeping only data within the
+#'   specified retention time range (parameter `rt`). This function will keep
+#'   all preprocessing results present within the retention time range: all
+#'   identified chromatographic peaks with the retention time of the apex
+#'   position within the retention time range `rt` are retained.
+#'   Parameter `msLevel.` is currently ignored, i.e. filtering will always
+#'   performed on **all** MS levels of the object.
+#'
 #' @section Functionality related to chromatographic peaks:
 #'
 #' - `chromPeaks`: returns a `numeric` matrix with the identified
@@ -68,6 +76,14 @@
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
 #'
+#' @section Differences compared to the [XCMSnExp()] object:
+#'
+#' - Subsetting by `[` supports arbitrary ordering.
+#'
+#' - `dropAdjustedRtime` is no longer supported. Alignment (retention time
+#'   adjustment) will change the retention times of the spectra and the
+#'   identified chromatographic peaks.
+#'
 #' @param drop For `[`: ignored.
 #'
 #' @param i For `[`: `integer` or `logical` defining the samples/files to
@@ -85,6 +101,9 @@
 #'
 #' @param msLevel `integer` defining the MS level (or multiple MS level if the
 #'     function supports it).
+#'
+#' @param msLevel. For `filterRt`: ignored. `filterRt` will always filter
+#'     by retention times on all MS levels regardless of this parameter.
 #'
 #' @param mz For `chromPeaks`: `numeric(2)` optionally defining the m/z range
 #'     for which chromatographic peaks should be returned. The full m/z range
@@ -164,6 +183,12 @@
 #' a <- xmse[2]
 #' nrow(chromPeaks(xmse))
 #' nrow(chromPeaks(a))
+#'
+#' ## Filtering the result by retention time: keeping all spectra and
+#' ## chromatographic peaks within 3000 and 3500 seconds.
+#' xmse_sub <- filterRt(xmse, rt = c(3000, 3500))
+#' xmse_sub
+#' nrow(chromPeaks(xcms_sub))
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
@@ -213,58 +238,81 @@ setMethod("[", "XcmsExperiment", function(x, i, j, ...) {
     .subset_xcms_experiment(x, i = i, ...)
 })
 
+#' @rdname XcmsExperiment
+setMethod(
+    "filterRt", "XcmsExperiment",
+    function(object, rt, msLevel.) {
+        if (missing(rt))
+            return(object)
+        rt <- range(rt)
+        if (!missing(msLevel.))
+            warning("Parameter 'msLevel.' currently ignored.", call. = FALSE)
+        msLevel. <- uniqueMsLevels(spectra(object))
+        ## Subset chrom peaks
+        if (hasChromPeaks(object)) {
+            crt <- object@chromPeaks[, "rt"]
+            keep <- which(crt >= rt[1] & crt <= rt[2])
+            object@chromPeaks <- object@chromPeaks[keep, , drop = FALSE]
+        }
+        ## for features: keep all features for the chrom peaks that we kept.
+        callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
+    })
+
 ################################################################################
 ## chromatographic peaks
 ################################################################################
 
 #' @rdname findChromPeaks
-setMethod("findChromPeaks", signature(object = "MsExperiment", param = "Param"),
-          function(object, param, msLevel = 1L, chunkSize = 2L, ...,
-                   BPPARAM = bpparam()) {
-              if (length(msLevel) > 1)
-                  stop("Currently only peak detection in a single MS level is ",
-                       "supported", call. = FALSE)
-              if (chunkSize < 0) {
-                  res <- .mse_find_chrom_peaks(
-                      object, msLevel = msLevel, param = param,
-                      BPPARAM = BPPARAM)
-              } else {
-                  res <- .mse_find_chrom_peaks_chunks(
-                      object, msLevel = msLevel, param = param,
-                      chunkSize = chunkSize, BPPARAM = BPPARAM)
-              }
-              ## Assign/define peak IDs.
-              pkd <- data.frame(ms_level = rep(msLevel, nrow(res)),
-                                is_filled = rep(FALSE, nrow(res)))
-              ph <- XProcessHistory(param = param,
-                                    type. = .PROCSTEP.PEAK.DETECTION,
-                                    fileIndex. = seq_along(object),
-                                    msLevel = msLevel)
-              if (!is(object, "XcmsExperiment"))
-                  object <- as(object, "XcmsExperiment")
-              object@processHistory <- c(object@processHistory, list(ph))
-              object <- .mse_add_chrom_peaks(object, res, pkd)
-              validObject(object)
-              object
-          })
+setMethod(
+    "findChromPeaks",
+    signature(object = "MsExperiment", param = "Param"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, ...,
+             BPPARAM = bpparam()) {
+        if (length(msLevel) > 1)
+            stop("Currently only peak detection in a single MS level is ",
+                 "supported", call. = FALSE)
+        if (chunkSize < 0) {
+            res <- .mse_find_chrom_peaks(
+                object, msLevel = msLevel, param = param,
+                BPPARAM = BPPARAM)
+        } else {
+            res <- .mse_find_chrom_peaks_chunks(
+                object, msLevel = msLevel, param = param,
+                chunkSize = chunkSize, BPPARAM = BPPARAM)
+        }
+        ## Assign/define peak IDs.
+        pkd <- data.frame(ms_level = rep(msLevel, nrow(res)),
+                          is_filled = rep(FALSE, nrow(res)))
+        ph <- XProcessHistory(param = param,
+                              type. = .PROCSTEP.PEAK.DETECTION,
+                              fileIndex. = seq_along(object),
+                              msLevel = msLevel)
+        if (!is(object, "XcmsExperiment"))
+            object <- as(object, "XcmsExperiment")
+        object@processHistory <- c(object@processHistory, list(ph))
+        object <- .mse_add_chrom_peaks(object, res, pkd)
+        validObject(object)
+        object
+    })
 
 #' @rdname findChromPeaks
-setMethod("findChromPeaks", signature(object = "XcmsExperiment",
-                                      param = "Param"),
-          function(object, param, msLevel = 1L, chunkSize = 2L, add = FALSE,
-                   ..., BPPARAM = bpparam()) {
-              ## if (hasFeatures(object)) {
-              ##     message("Remove feature definitions")
-              ##     object <- dropFeatureDefinitions(
-              ##         object, keepAdjustedRtime = hasAdjustedRtime(object))
-              ## }
-              if (hasChromPeaks(object) && !add) {
-                  message("Remove previously identified chromatographic peaks")
-                  object <- dropChromPeaks(
-                      object, keepAdjustedRtime = hasAdjustedRtime(object))
-              }
-              callNextMethod()
-          })
+setMethod(
+    "findChromPeaks",
+    signature(object = "XcmsExperiment", param = "Param"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, add = FALSE,
+             ..., BPPARAM = bpparam()) {
+        ## if (hasFeatures(object)) {
+        ##     message("Remove feature definitions")
+        ##     object <- dropFeatureDefinitions(
+        ##         object, keepAdjustedRtime = hasAdjustedRtime(object))
+        ## }
+        if (hasChromPeaks(object) && !add) {
+            message("Remove previously identified chromatographic peaks")
+            object <- dropChromPeaks(
+                object, keepAdjustedRtime = hasAdjustedRtime(object))
+        }
+        callNextMethod()
+    })
 
 #' @rdname XcmsExperiment
 setMethod("hasChromPeaks", "XcmsExperiment",

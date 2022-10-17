@@ -548,6 +548,8 @@ exportClasses("EicSimilarityParam")
 importClassesFrom("Spectra", "Spectra")
 importMethodsFrom("Spectra", "spectrapply")
 importMethodsFrom("Spectra", "peaksData")
+importMethodsFrom("Spectra", "uniqueMsLevels")
+importMethodsFrom("Spectra", "selectSpectraVariables") # needed for filterRt
 
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")

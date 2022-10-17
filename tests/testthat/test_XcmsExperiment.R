@@ -4,9 +4,9 @@ fls <- normalizePath(faahko_3_files)
 df <- data.frame(mzML_file = basename(fls),
                  dataOrigin = fls,
                  sample = c("ko15", "ko16", "ko18"))
-
-spectra(mse) <- Spectra::Spectra(fls)
 sampleData(mse) <- DataFrame(df)
+spectra(mse) <- Spectra::Spectra(fls)
+
 ## Link samples to spectra.
 mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
 p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
@@ -125,4 +125,30 @@ test_that("subsetting,XcmsExperiment works", {
                                    ignoreHistory = TRUE)
     expect_false(hasChromPeaks(res))
     expect_true(length(res@processHistory) == 1)
+
+    expect_error(xmse[3, 4], "not supported")
+    res <- xmse[c(3, 1)]
+    expect_true(hasChromPeaks(res))
+    cp3 <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ]
+    cp1 <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 2, ]
+    expect_equal(cp3[, colnames(cp3) != "sample"],
+                 cp[cp[, "sample"] == 3, colnames(cp) != "sample"])
+    expect_equal(cp1[, colnames(cp1) != "sample"],
+                 cp[cp[, "sample"] == 1, colnames(cp) != "sample"])
+})
+
+test_that("filterRt,XcmsExperiment works", {
+    res <- filterRt(xmse)
+    expect_equal(res, xmse)
+
+    res <- filterRt(xmse, rt = c(3000, 3500))
+    expect_true(all(rtime(spectra(res)) >= 3000 &
+                    rtime(spectra(res)) <= 3500))
+    expect_true(all(chromPeaks(res)[, "rt"] >= 3000 &
+                    chromPeaks(res)[, "rt"] <= 3500))
+    ## Check error: define msLevel
+    expect_warning(res_2 <- filterRt(xmse, rt = c(3000, 3500), msLevel = 2L),
+                   "ignored")
+    expect_equal(chromPeaks(res), chromPeaks(res_2))
+    expect_equal(rtime(spectra(res)), rtime(spectra(res_2)))
 })
