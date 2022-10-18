@@ -163,3 +163,14 @@ test_that("filterRt,MsExperiment works", {
     res <- filterRt(mse, rt = c(2700, 2900), msLevel = 2L)
     expect_equal(rtime(spectra(res)), rtime(spectra(mse)))
 })
+
+test_that("filterFile,XcmsExperiment works", {
+    res <- filterFile(mse)
+    expect_s4_class(res, "MsExperiment")
+    expect_true(length(res) == 0)
+
+    res <- filterFile(mse, 2)
+    expect_equal(res, mse[2])
+    res <- filterFile(mse, c(3, 1))
+    expect_equal(res, mse[c(1, 3)])
+})

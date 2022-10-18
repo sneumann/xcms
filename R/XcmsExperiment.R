@@ -27,6 +27,15 @@
 #'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
 #'   `FALSE`) and `keepFeatures` (by default `FALSE`).
 #'
+#' - `filterFile`: filter an `XcmsExperiment` (or `MsExperiment`) by *file*
+#'   (sample). The index of the samples to which the data should be subsetted
+#'   can be specified with parameter `file`. The sole purpose of this function
+#'   is to provide backward compatibility with the `MSnbase` package. Wherever
+#'   possible, the `[` function should be used instead for any sample-based
+#'   subsetting.
+#'   Note also that in contrast to `[`, `filterFile` does not support subsetting
+#'   in arbitrary order.
+#'
 #' - `filterRt`: filter an `XcmsExperiment` keeping only data within the
 #'   specified retention time range (parameter `rt`). This function will keep
 #'   all preprocessing results present within the retention time range: all
@@ -85,6 +94,9 @@
 #'   identified chromatographic peaks.
 #'
 #' @param drop For `[`: ignored.
+#'
+#' @param file For `filterFile`: `integer` with the indices of the samples
+#'     (files) to which the data should be subsetted.
 #'
 #' @param i For `[`: `integer` or `logical` defining the samples/files to
 #'     subset.
@@ -188,7 +200,7 @@
 #' ## chromatographic peaks within 3000 and 3500 seconds.
 #' xmse_sub <- filterRt(xmse, rt = c(3000, 3500))
 #' xmse_sub
-#' nrow(chromPeaks(xcms_sub))
+#' nrow(chromPeaks(xmse_sub))
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
@@ -399,6 +411,30 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
 ## alignment
 ################################################################################
 
+## setMethod(
+##     "adjustRtime", signature(object = "MsExperiment", param = "ObiwarpParam"),
+##     function(object, param, msLevel = 1L) {
+## })
+
+## obiwarp
+## split the object by sample.
+## Need profMat for MsExperiment (one sample). implement
+## Need an rtime method for MsExperiment. -> .rtime_spectra?
+## Need a fileNames method for MsExperiment. implement?
+## Need fromFile method. implement?
+## Need filterFile method. implement.
+## .split_by_file2 should support splitting MsExperiment.
+
 ## setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 ##     hasAdjustedRtime(object@msFeatureData)
 ## })
+
+################################################################################
+## utility and unsorted methods
+################################################################################
+
+## fromFile:
+## requires sampleDataLinks[["spectra"]]. Ideally check if the length of
+## the spectra equals the number of rows of matrix.
+## no duplicated entries in second column allowed
+## needs to support returning NA.

@@ -152,3 +152,16 @@ test_that("filterRt,XcmsExperiment works", {
     expect_equal(chromPeaks(res), chromPeaks(res_2))
     expect_equal(rtime(spectra(res)), rtime(spectra(res_2)))
 })
+
+test_that("filterFile,XcmsExperiment works", {
+    res <- filterFile(xmse)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res) == 0)
+    expect_false(hasChromPeaks(res))
+
+    res <- filterFile(xmse, 2)
+    expect_equal(res, xmse[2])
+
+    res <- filterFile(xmse, c(3, 1))
+    expect_equal(res, xmse[c(1, 3)])
+})

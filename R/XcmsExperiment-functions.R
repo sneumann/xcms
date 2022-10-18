@@ -65,8 +65,8 @@
                                     keepAdjustedRtime = FALSE,
                                     keepFeatures = FALSE,
                                     ignoreHistory = FALSE, ...) {
-    if (!length(i))
-        return(x)
+    ## if (!length(i))
+    ##     return(x)
     i <- MsCoreUtils::i2index(i, length(x))
     ## This is a special case that would make life (=performance) miserable
     if (length(i) != length(unique(i)))
