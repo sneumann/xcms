@@ -36,12 +36,7 @@
                                       BPPARAM = SerialParam()) {
     if (!length(spectra(x)))
         stop("No spectra available.")
-    if (!any(names(x@sampleDataLinks) == "spectra"))
-        stop("No link between samples and spectra found. Please use ",
-             "'linkSampleData' to define which spectra belong to which ",
-             "samples.")
-    if (nrow(x@sampleDataLinks[["spectra"]]) != length(spectra(x)))
-        stop("All spectra in 'x' need to be associated with a sample.")
+    .mse_check_spectra_sample_mapping(x)
     Spectra::spectrapply(
                  spectra(x),
                  f = as.factor(x@sampleDataLinks[["spectra"]][, 1L]),
@@ -256,4 +251,21 @@
             x@spectra, svs[svs != "._SAMPLE_IDX"])
     }
     x
+}
+
+#' Ensure that each spectrum is assigned to a sample and that we only have 1:1
+#' mappings. That is important for most code involving splitting of samples
+#' etc.
+#'
+#' @noRd
+.mse_check_spectra_sample_mapping <- function(x) {
+    if (!length(x@sampleDataLinks[["spectra"]]))
+        stop("No links between samples and spectra are present.", call. = FALSE)
+    if (nrow(x@sampleDataLinks[["spectra"]]) != length(x@spectra))
+        stop("This functionality requires that all spectra in 'object' are ",
+             "assigned to a sample.", call. = FALSE)
+    if (anyDuplicated(x@sampleDataLinks[["spectra"]][, 2L]))
+        stop("This functionality requires that each spectrum is only ",
+             "assigned to a single sample.", call. = FALSE)
+    NULL
 }

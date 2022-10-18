@@ -3,6 +3,9 @@
 \name{filterRt,MsExperiment-method}
 \alias{filterRt,MsExperiment-method}
 \alias{filterFile,MsExperiment-method}
+\alias{rtime,MsExperiment-method}
+\alias{fromFile,MsExperiment-method}
+\alias{fileNames,MsExperiment-method}
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
 \alias{show,XcmsExperiment-method}
@@ -17,6 +20,12 @@
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
 
 \S4method{filterFile}{MsExperiment}(object, file = integer())
+
+\S4method{rtime}{MsExperiment}(object)
+
+\S4method{fromFile}{MsExperiment}(object)
+
+\S4method{fileNames}{MsExperiment}(object)
 
 \S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -172,13 +181,29 @@ available for the specified MS level(s).
 }
 }
 
+\section{Functionality for backward compatibility}{
+
+
+These functions for \code{MsExperiment} and \code{XcmsExperiment} ensure compatibility
+with the \emph{older} \code{\link[=XCMSnExp]{XCMSnExp()}} xcms result object.
+\itemize{
+\item \code{fileNames}: returns the original data file names for the spectra data.
+Ideally, the \code{dataOrigin} or \code{dataStorage} spectra variables from the
+object's \code{spectra} should be used instead.
+\item \code{fromFile}: returns the file (sample) index for each spectrum within
+\code{object}. Generally, subsetting by sample using the \code{[} is the preferred
+way to get spectra from a specific sample.
+\item \code{rtime}: extract retention times of the \strong{spectra} from the
+\code{MsExperiment} or \code{XcmsExperiment} object. It is thus a shortcut for
+\code{rtime(spectra(object))} which would be the preferred way to extract
+retention times from an \code{MsExperiment}..
+}
+}
+
 \section{Differences compared to the \code{\link[=XCMSnExp]{XCMSnExp()}} object}{
 
 \itemize{
 \item Subsetting by \code{[} supports arbitrary ordering.
-\item \code{dropAdjustedRtime} is no longer supported. Alignment (retention time
-adjustment) will change the retention times of the spectra and the
-identified chromatographic peaks.
 }
 }
 

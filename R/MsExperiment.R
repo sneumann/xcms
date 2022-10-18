@@ -10,3 +10,31 @@ setMethod("filterRt", "MsExperiment",
 setMethod("filterFile", "MsExperiment", function(object, file = integer()) {
     object[i = sort(unique(file))]
 })
+
+################################################################################
+## These functions below are needed to re-use code from the xcms package
+## developed for OnDiskMSnExp/XCMSnExp objects for MsExperiment objects. They
+## are NOT indended to go to the MsExperiment package as they do not make full
+## use of the new data structure.
+
+#' @rdname XcmsExperiment
+setMethod("rtime", "MsExperiment", function(object) {
+    if (length(spectra(object)))
+        rtime(spectra(object))
+    else numeric()
+})
+
+#' @rdname XcmsExperiment
+setMethod("fromFile", "MsExperiment", function(object) {
+    if (length(spectra(object))) {
+        .mse_check_spectra_sample_mapping(object)
+        object@sampleDataLinks[["spectra"]][, 1L]
+    } else integer()
+})
+
+#' @rdname XcmsExperiment
+setMethod("fileNames", "MsExperiment", function(object) {
+    if (length(spectra(object)))
+        unique(dataOrigin(spectra(object)))
+    else character()
+})

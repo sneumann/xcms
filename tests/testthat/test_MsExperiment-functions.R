@@ -153,24 +153,15 @@ test_that(".mse_filter_spectra works", {
                  cbind(c(1L, 1L, 2L, 2L, 3L, 3L), c(1L, 2L, 1L, 2L, 1L, 2L)))
 })
 
-test_that("filterRt,MsExperiment works", {
-    res <- filterRt(mse, rt = c(2700, 2900))
-    expect_true(all(rtime(spectra(res)) > 2700 & rtime(spectra(res)) < 2900))
-    b <- spectra(mse[2])
-    B <- spectra(res[2])
-    expect_equal(rtime(B), rtime(filterRt(b, rt = c(2700, 2900))))
+test_that(".mse_check_spectra_sample_mapping works", {
+    expect_true(length(.mse_check_spectra_sample_mapping(mse)) == 0)
 
-    res <- filterRt(mse, rt = c(2700, 2900), msLevel = 2L)
-    expect_equal(rtime(spectra(res)), rtime(spectra(mse)))
-})
+    tmp <- mse
+    tmp@sampleDataLinks[["spectra"]] <-
+        mse@sampleDataLinks[["spectra"]][1:100, ]
+    expect_error(.mse_check_spectra_sample_mapping(tmp), "assigned to a sample")
 
-test_that("filterFile,XcmsExperiment works", {
-    res <- filterFile(mse)
-    expect_s4_class(res, "MsExperiment")
-    expect_true(length(res) == 0)
-
-    res <- filterFile(mse, 2)
-    expect_equal(res, mse[2])
-    res <- filterFile(mse, c(3, 1))
-    expect_equal(res, mse[c(1, 3)])
+    tmp@sampleDataLinks[["spectra"]] <- mse@sampleDataLinks[["spectra"]]
+    tmp@sampleDataLinks[["spectra"]][3, ] <- c(2L, 2L)
+    expect_error(.mse_check_spectra_sample_mapping(tmp), "single sample")
 })

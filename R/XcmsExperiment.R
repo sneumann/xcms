@@ -85,13 +85,27 @@
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
 #'
+#' @section Functionality for backward compatibility:
+#'
+#' These functions for `MsExperiment` and `XcmsExperiment` ensure compatibility
+#' with the *older* [XCMSnExp()] xcms result object.
+#'
+#' - `fileNames`: returns the original data file names for the spectra data.
+#'   Ideally, the `dataOrigin` or `dataStorage` spectra variables from the
+#'   object's `spectra` should be used instead.
+#'
+#' - `fromFile`: returns the file (sample) index for each spectrum within
+#'   `object`. Generally, subsetting by sample using the `[` is the preferred
+#'    way to get spectra from a specific sample.
+#'
+#' - `rtime`: extract retention times of the **spectra** from the
+#'   `MsExperiment` or `XcmsExperiment` object. It is thus a shortcut for
+#'   `rtime(spectra(object))` which would be the preferred way to extract
+#'   retention times from an `MsExperiment`..
+#'
 #' @section Differences compared to the [XCMSnExp()] object:
 #'
 #' - Subsetting by `[` supports arbitrary ordering.
-#'
-#' - `dropAdjustedRtime` is no longer supported. Alignment (retention time
-#'   adjustment) will change the retention times of the spectra and the
-#'   identified chromatographic peaks.
 #'
 #' @param drop For `[`: ignored.
 #'
@@ -417,13 +431,14 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
 ## })
 
 ## obiwarp
-## split the object by sample.
 ## Need profMat for MsExperiment (one sample). implement
-## Need an rtime method for MsExperiment. -> .rtime_spectra?
-## Need a fileNames method for MsExperiment. implement?
-## Need fromFile method. implement?
-## Need filterFile method. implement.
 ## .split_by_file2 should support splitting MsExperiment.
+
+## DONE:
+## Need fromFile method. implement? OK
+## Need filterFile method. implement. OK
+## Need an rtime method for MsExperiment. -> .rtime_spectra? OK.
+## Need a fileNames method for MsExperiment. implement?
 
 ## setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 ##     hasAdjustedRtime(object@msFeatureData)
@@ -432,9 +447,3 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
 ################################################################################
 ## utility and unsorted methods
 ################################################################################
-
-## fromFile:
-## requires sampleDataLinks[["spectra"]]. Ideally check if the length of
-## the spectra equals the number of rows of matrix.
-## no duplicated entries in second column allowed
-## needs to support returning NA.
