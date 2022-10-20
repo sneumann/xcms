@@ -427,14 +427,14 @@ setMethod("findChromPeaks",
 #' @inheritParams profMat-xcmsSet
 #'
 #' @rdname XCMSnExp-class
-setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
-                                                                  method = "bin",
-                                                                  step = 0.1,
-                                                                  baselevel = NULL,
-                                                                  basespace = NULL,
-                                                                  mzrange. = NULL,
-                                                                  fileIndex,
-                                                                  ...) {
+setMethod("profMat", "OnDiskMSnExp", function(object,
+                                              method = "bin",
+                                              step = 0.1,
+                                              baselevel = NULL,
+                                              basespace = NULL,
+                                              mzrange. = NULL,
+                                              fileIndex,
+                                              ...) {
     ## Subset the object by fileIndex.
     if (!missing(fileIndex)) {
         if (!is.numeric(fileIndex))

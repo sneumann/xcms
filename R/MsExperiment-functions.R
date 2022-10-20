@@ -110,6 +110,38 @@
     else res
 }
 
+#' Helper function to process spectra in an MsExperiment in chunks, rather than
+#' directly in parallel.
+#' This function assigns each spectrum the index of the sample it belongs
+#' (as a new spectra variable). This can be used by FUN to split the spectra
+#' by sample and process them separately (and in parallel).
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.mse_spectrapply_chunks <- function(x, FUN, ..., chunkSize = 1L,
+                                    BPPARAM = bpparam) {
+    if (!length(spectra(x)))
+        stop("No spectra available.")
+    if (!any(names(x@sampleDataLinks) == "spectra"))
+        stop("No link between samples and spectra found. Please use ",
+             "'linkSampleData' to define which spectra belong to which ",
+             "samples.")
+    idx <- seq_along(x)
+    chunks <- split(idx, ceiling(idx / chunkSize))
+    sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
+    sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
+    lapply(chunks, function(z, ...) {
+        FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
+    }, ..., BPPARAM = BPPARAM)
+    ## res <- vector("list", length(chunks))
+    ## for (i in seq_along(chunks)) {
+    ##     res[[i]] <- FUN(sps[sps$.SAMPLE_IDX %in% chunks[[i]]], ...,
+    ##                     BPPARAM = BPPARAM)
+    ## }
+    ## res
+}
+
 #' @title Perform peak detection on chunks of data
 #'
 #' @description
@@ -146,22 +178,11 @@
 .mse_find_chrom_peaks_chunks <- function(x, msLevel = 1L, param, ...,
                                          chunkSize = 1L,
                                          BPPARAM = bpparam()) {
-    if (!length(spectra(x)))
-        stop("No spectra available.")
-    if (!any(names(x@sampleDataLinks) == "spectra"))
-        stop("No link between samples and spectra found. Please use ",
-             "'linkSampleData' to define which spectra belong to which ",
-             "samples.")
-    idx <- seq_along(x)
-    chunks <- split(idx, ceiling(idx / chunkSize))
-    sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
-    sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
-    res <- unlist(lapply(chunks, function(z) {
-        .mse_find_chrom_peaks_chunk(
-            sps[sps$.SAMPLE_IDX %in% z],
-            msLevel = msLevel, param = param,
-            BPPARAM = BPPARAM)
-    }), recursive = FALSE, use.names = FALSE)
+    res <- unlist(
+        .mse_spectrapply_chunks(x, FUN = .mse_find_chrom_peaks_chunk,
+                                msLevel = msLevel, param = param,
+                                BPPARAM = BPPARAM),
+        recursive = FALSE, use.names = FALSE)
     sidx <- vapply(res, function(z) if (is.matrix(z)) nrow(z) else length(z),
                    integer(1), USE.NAMES = FALSE)
     res <- cbind(do.call(rbind, res), sample = rep(seq_along(x), sidx))
@@ -169,6 +190,33 @@
         .empty_chrom_peaks()
     else res
 }
+
+## .mse_find_chrom_peaks_chunks <- function(x, msLevel = 1L, param, ...,
+##                                          chunkSize = 1L,
+##                                          BPPARAM = bpparam()) {
+##     if (!length(spectra(x)))
+##         stop("No spectra available.")
+##     if (!any(names(x@sampleDataLinks) == "spectra"))
+##         stop("No link between samples and spectra found. Please use ",
+##              "'linkSampleData' to define which spectra belong to which ",
+##              "samples.")
+##     idx <- seq_along(x)
+##     chunks <- split(idx, ceiling(idx / chunkSize))
+##     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
+##     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
+##     res <- unlist(lapply(chunks, function(z) {
+##         .mse_find_chrom_peaks_chunk(
+##             sps[sps$.SAMPLE_IDX %in% z],
+##             msLevel = msLevel, param = param,
+##             BPPARAM = BPPARAM)
+##     }), recursive = FALSE, use.names = FALSE)
+##     sidx <- vapply(res, function(z) if (is.matrix(z)) nrow(z) else length(z),
+##                    integer(1), USE.NAMES = FALSE)
+##     res <- cbind(do.call(rbind, res), sample = rep(seq_along(x), sidx))
+##     if (!length(res))
+##         .empty_chrom_peaks()
+##     else res
+## }
 
 #' Perform the peak detection on a *chunk* of samples. Data realization (i.e.
 #' loading of the peak data) is performed without parallel processing while

@@ -82,8 +82,28 @@ test_that(".mse_find_chrom_peaks works", {
     expect_equal(colnames(res), colnames(.empty_chrom_peaks()))
 })
 
+test_that(".mse_spectrapply_chunks works", {
+    expect_error(.mse_spectrapply_chunks(MsExperiment), "spectra")
+
+    myident <- function(z, ...) {z}
+    res <- .mse_spectrapply_chunks(mse, FUN = myident)
+    expect_true(is.list(res))
+    expect_true(length(res) == 3)
+    expect_equal(rtime(res[[1L]]), rtime(spectra(mse[1L])))
+    expect_equal(rtime(res[[2L]]), rtime(spectra(mse[2L])))
+    expect_equal(rtime(res[[3L]]), rtime(spectra(mse[3L])))
+
+    res <- .mse_spectrapply_chunks(mse, FUN = myident, chunkSize = 2)
+    expect_true(is.list(res))
+    expect_true(length(res) == 2)
+    expect_equal(rtime(res[[1L]]), c(rtime(spectra(mse[1L])),
+                                     rtime(spectra(mse[2L]))))
+    expect_equal(rtime(res[[2L]]), rtime(spectra(mse[3L])))
+})
+
 test_that(".mse_find_chrom_peaks_chunks works", {
     p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+
     res <- .mse_find_chrom_peaks_chunks(mse, param = p)
     tmp <- chromPeaks(faahko_xod)
     rownames(tmp) <- NULL
@@ -93,6 +113,7 @@ test_that(".mse_find_chrom_peaks_chunks works", {
     expect_true(nrow(res) == 0)
     expect_equal(res, .empty_chrom_peaks())
 })
+
 
 test_that(".mse_find_chrom_peaks_chunk works", {
     p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
