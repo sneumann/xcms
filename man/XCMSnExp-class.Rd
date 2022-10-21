@@ -215,31 +215,32 @@ chromatographic peaks should be returned.}
 \item{features}{for \code{featureArea}: IDs of features for which the area
 should be extracted.}
 
-\item{method}{The profile matrix generation method. Allowed are \code{"bin"},
-\code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
-section for more information.}
+\item{method}{\code{character(1)} defining the profile matrix generation method.
+Allowed are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}.
+See details section for more information.}
 
-\item{step}{numeric(1) representing the m/z bin size.}
+\item{step}{\code{numeric(1)} representing the m/z bin size.}
 
-\item{baselevel}{numeric(1) representing the base value to which
+\item{baselevel}{\code{numeric(1)} representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if \code{method = "binlinbase"}. See
-\code{baseValue} parameter of \code{\link{imputeLinInterpol}} for more
+\code{baseValue} parameter of \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more
 details.}
 
-\item{basespace}{numeric(1) representing the m/z length after
+\item{basespace}{\code{numeric(1)} representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will
 be used between consecutive data points falling within
 \code{2 * basespace} to each other. Only considered if
 \code{method = "binlinbase"}. If not specified, it defaults to
 \code{0.075}. Internally this parameter is translated into the
-\code{distance} parameter of the \code{\link{imputeLinInterpol}}
+\code{distance} parameter of the \code{\link[=imputeLinInterpol]{imputeLinInterpol()}}
 function by \code{distance = floor(basespace / step)}. See
-\code{distance} parameter of \code{\link{imputeLinInterpol}} for more
+\code{distance} parameter of \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more
 details.}
 
-\item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
-be used for binnind. If not provided, the whole mz value range is used.}
+\item{mzrange.}{Optional \code{numeric(2)} manually specifying the mz value range
+to be used for binnind. If not provided, the whole m/z value range is
+used.}
 
 \item{fileIndex}{For \code{processHistory}: optional \code{integer}
 specifying the index of the files/samples for which the

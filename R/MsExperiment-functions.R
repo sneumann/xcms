@@ -181,7 +181,7 @@
     res <- unlist(
         .mse_spectrapply_chunks(x, FUN = .mse_find_chrom_peaks_chunk,
                                 msLevel = msLevel, param = param,
-                                BPPARAM = BPPARAM),
+                                chunkSize = chunkSize, BPPARAM = BPPARAM),
         recursive = FALSE, use.names = FALSE)
     sidx <- vapply(res, function(z) if (is.matrix(z)) nrow(z) else length(z),
                    integer(1), USE.NAMES = FALSE)
@@ -190,33 +190,6 @@
         .empty_chrom_peaks()
     else res
 }
-
-## .mse_find_chrom_peaks_chunks <- function(x, msLevel = 1L, param, ...,
-##                                          chunkSize = 1L,
-##                                          BPPARAM = bpparam()) {
-##     if (!length(spectra(x)))
-##         stop("No spectra available.")
-##     if (!any(names(x@sampleDataLinks) == "spectra"))
-##         stop("No link between samples and spectra found. Please use ",
-##              "'linkSampleData' to define which spectra belong to which ",
-##              "samples.")
-##     idx <- seq_along(x)
-##     chunks <- split(idx, ceiling(idx / chunkSize))
-##     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
-##     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
-##     res <- unlist(lapply(chunks, function(z) {
-##         .mse_find_chrom_peaks_chunk(
-##             sps[sps$.SAMPLE_IDX %in% z],
-##             msLevel = msLevel, param = param,
-##             BPPARAM = BPPARAM)
-##     }), recursive = FALSE, use.names = FALSE)
-##     sidx <- vapply(res, function(z) if (is.matrix(z)) nrow(z) else length(z),
-##                    integer(1), USE.NAMES = FALSE)
-##     res <- cbind(do.call(rbind, res), sample = rep(seq_along(x), sidx))
-##     if (!length(res))
-##         .empty_chrom_peaks()
-##     else res
-## }
 
 #' Perform the peak detection on a *chunk* of samples. Data realization (i.e.
 #' loading of the peak data) is performed without parallel processing while
@@ -316,4 +289,62 @@
         stop("This functionality requires that each spectrum is only ",
              "assigned to a single sample.", call. = FALSE)
     NULL
+}
+
+#' Create a `profMat` for spectra of each sample in the chunk of spectra.
+#'
+#' @param ... can also include `returnBreaks = TRUE`.
+#'
+#' @noRd
+.mse_profmat_chunk <- function(x, method = "bin", step = 0.1,
+                               baselevel = NULL, basespace = NULL,
+                               mzrange. = NULL, msLevel = 1L, ...,
+                               BPPARAM = bpparam()) {
+    sidx <- unique(x$.SAMPLE_IDX)
+    x <- filterMsLevel(x, msLevel = msLevel)
+    if (length(x))
+        f <- factor(x$.SAMPLE_IDX, levels = sidx)
+    else f <- factor(integer(), levels = sidx)
+    bplapply(
+        split(Spectra::peaksData(x, columns = c("mz", "intensity"),
+                                 BPPARAM = SerialParam()), f),
+        function(z, m, s, bl, bs, mzr, rb, ...) {
+            pk_count <- vapply(z, nrow, integer(1), USE.NAMES = FALSE)
+            empty_spectra <- which(!pk_count)
+            if (length(empty_spectra))
+                pk_count <- pk_count[-empty_spectra]
+            z <- do.call(rbind, z)
+            if (length(z)) {
+                res <- .createProfileMatrix(mz = z[, 1], int = z[, 2],
+                                            valsPerSpect = pk_count,
+                                            method = m, step = s,
+                                            baselevel = bl,
+                                            basespace = bs, mzrange. = mzr, ...)
+                if (length(empty_spectra)) {
+                    if (any(names(res) == "profMat"))
+                        res$profMat <- .insertColumn(res$profMat,
+                                                     empty_spectra, 0)
+                    else
+                        res <- .insertColumn(res, emtpy_spectra, 0)
+                }
+                res
+            } else matrix(numeric(), nrow = 0, ncol = 0)
+        },
+        m = method, s = step, bl = baselevel, bs = basespace, mzr = mzrange.,
+        ..., BPPARAM = BPPARAM)
+}
+
+.mse_profmat_chunks <- function(x, msLevel = 1L, method = "bin", step = 0.1,
+                               baselevel = NULL, basespace = NULL,
+                               mzrange. = NULL, fileIndex = seq_along(x),
+                               chunkSize = 1L, ..., BPPARAM = bpparam()) {
+    if (!all(fileIndex %in% seq_along(x)))
+        stop("fileIndex out of bounds", call. = FALSE)
+    unlist(
+        .mse_spectrapply_chunks(x[fileIndex], FUN = .mse_profmat_chunk,
+                                method = method, step = step,
+                                baselevel = baselevel, basespace = basespace,
+                                mzrange. = mzrange., msLevel = msLevel, ...,
+                                chunkSize = chunkSize, BPPARAM = BPPARAM),
+        recursive = FALSE, use.names = FALSE)
 }

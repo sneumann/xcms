@@ -186,3 +186,47 @@ test_that(".mse_check_spectra_sample_mapping works", {
     tmp@sampleDataLinks[["spectra"]][3, ] <- c(2L, 2L)
     expect_error(.mse_check_spectra_sample_mapping(tmp), "single sample")
 })
+
+test_that(".mse_profmat_chunk works", {
+    tmp <- mse[1]
+    ref <- profMat(faahko_od, fileIndex = 1)
+
+    sps <- spectra(tmp)
+    sps$.SAMPLE_IDX <- 1L
+    res <- .mse_profmat_chunk(sps)
+    expect_equal(unname(res), ref)
+
+    ref <- profMat(faahko_od, fileIndex = 1:2, step = 2, returnBreaks = TRUE)
+    tmp <- mse[1:2]
+    sps <- spectra(tmp)
+    sps$.SAMPLE_IDX <- tmp@sampleDataLinks[["spectra"]][, 1L]
+    res <- .mse_profmat_chunk(sps, step = 2, returnBreaks = TRUE)
+    expect_equal(unname(res), ref)
+    expect_true(all(names(res[[1L]]) == c("profMat", "breaks")))
+
+    res <- .mse_profmat_chunk(sps, step = 2, msLevel = 2)
+    expect_equal(length(res), 2)
+    expect_true(nrow(res[[1L]]) == 0)
+    expect_true(nrow(res[[2L]]) == 0)
+})
+
+test_that(".mse_profmat_chunks works", {
+    expect_error(.mse_profmat_chunks(mse, fileIndex = 5), "bounds")
+    expect_error(.mse_profmat_chunks(mse, fileIndex = 1:5), "bounds")
+
+    ref <- profMat(faahko_od, fileIndex = 3)
+    res <- .mse_profmat_chunks(mse, fileIndex = 3)
+    expect_equal(ref, res)
+
+    ref <- profMat(faahko_od, returnBreaks = TRUE, step = 4)
+    res <- .mse_profmat_chunks(mse, chunkSize = 2L, step = 4,
+                               returnBreaks = TRUE)
+    expect_equal(res, ref)
+
+    res <- .mse_profmat_chunks(mse, chunkSize = 3L, msLevel = 2L)
+    expect_true(length(res) == 3)
+
+    ## Testing the method.
+    res <- profMat(mse, chunkSize = 2L, step = 4, returnBreaks = TRUE)
+    expect_equal(res, ref)
+})
