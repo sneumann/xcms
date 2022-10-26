@@ -11,8 +11,170 @@ setGeneric("addParams", function(object, ...) standardGeneric("addParams"))
 setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-"))
 setGeneric("addProcessHistory", function(object, ...)
     standardGeneric("addProcessHistory"))
+
+#' @aliases adjustRtime ObiwarpParam-class
+#'
+#' @title Alignment: Retention time correction methods.
+#'
+#' @description
+#'
+#' The `adjustRtime` method(s) perform retention time correction (alignment)
+#' between chromatograms of different samples. Alignment is performed by defaul
+#' on MS level 1 data. Retention times of spectra from other MS levels, if
+#' present, are subsequently adjusted based on the adjusted retention times
+#' of the MS1 spectra. Note that calling `adjustRtime` on a *xcms* result object
+#' will remove any eventually present previous alignment results as well as
+#' any correspondence analysis results.
+#'
+#' The alignment method can be specified (and configured) using a dedicated
+#' `param` argument.
+#'
+#' Supported `param` objects are:
+#'
+#' - `ObiwarpParam`: performs retention time adjustment based on the full m/z -
+#'   rt data using the *obiwarp* method (Prince (2006)). It is based on the
+#'   [original code](http://obi-warp.sourceforge.net) but supports in addition
+#'   alignment of multiple samples by aligning each against a *center* sample.
+#'   The alignment is performed directly on the [profile-matrix] and can hence
+#'   be performed independently of the peak detection or peak grouping.
+#'
+#' @section Subset-based alignment:
+#'
+#' All alignment methods allow to perform the retention time correction on a
+#' user-selected subset of samples (e.g. QC samples) after which all samples
+#' not part of that subset will be adjusted based on the adjusted retention
+#' times of the *closest* subset sample (close in terms of index within `object`
+#' and hence possibly injection index). It is thus suggested to load MS data
+#' files in the order in which their samples were injected in the measurement
+#' run(s).
+#'
+#' How the non-subset samples are adjusted depends also on the parameter
+#' `subsetAdjust`: with `subsetAdjust = "previous"`, each non-subset
+#' sample is adjusted based on the closest *previous* subset sample which
+#' results in most cases with adjusted retention times of the non-subset
+#' sample being identical to the subset sample on which the adjustment bases.
+#' The second, default, option is `subsetAdjust = "average"` in which case
+#' each non subset sample is adjusted based on the average retention time
+#' adjustment from the previous and following subset sample. For the average,
+#' a weighted mean is used with weights being the inverse of the distance of
+#' the non-subset sample to the subset samples used for alignment.
+#'
+#' See also section *Alignment of experiments including blanks* in the
+#' *xcms* vignette for more details.
+#'
+#' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
+#'     to be used for the \emph{profile matrix} generation. See \code{step}
+#'     parameter in \code{\link{profile-matrix}} documentation for more details.
+#'
+#' @param BPPARAM parallel processing setup. Defaults to `BPPARAM = bpparam()`.
+#'     See [bpparam()] for details.
+#'
+#' @param centerSample \code{integer(1)} defining the index of the center sample
+#'     in the experiment. It defaults to
+#'     \code{floor(median(1:length(fileNames(object))))}. Note that if
+#'     \code{subset} is used, the index passed with \code{centerSample} is
+#'     within these subset samples.
+#'
+#' @param chunkSize For `adjustRtime` if `object` is either an `MsExperiment` or
+#'     `XcmsExperiment`: `integer(1)` defining the number of files (samples)
+#'     that should be loaded into memory and processed at the same time.
+#'     Alignment is then performed in parallel (per sample) on this subset of
+#'     loaded data. This setting thus allows to balance between memory
+#'     demand and speed (due to parallel processing). Because parallel
+#'     processing can only performed on the subset of data currently loaded
+#'     into memory in each iteration, the value for `chunkSize` should match
+#'     the defined  parallel setting setup. Using a parallel processing setup
+#'     using 4 CPUs (separate processes) but using `chunkSize = `1` will not
+#'     perform any parallel processing, as only the data from one sample is
+#'     loaded in memory at a time. On the other hand, setting `chunkSize` to
+#'     the total number of samples in an experiment will load the full MS data
+#'     into memory and will thus in most settings cause an out-of-memory error.
+#'
+#' @param distFun For `ObiwarpParam`: `character(1)` defining the distance
+#'     function to be used. Allowed values are `"cor"` (Pearson's correlation),
+#'     `"cor_opt"` (calculate only 10% diagonal band of distance matrix;
+#'     better runtime), `"cov"` (covariance), `"prd"` (product) and `"euc"`
+#'     (Euclidian distance). The default value is `distFun = "cor_opt"`.
+#'
+#' @param factorDiag For `ObiwarpParam`: `numeric(1)` defining the local weight
+#'     applied to diagonal moves in the alignment.
+#'
+#' @param factorGap For `ObiwarpParam`: `numeric(1)` defining the local weight
+#'     for gap moves in the alignment.
+#'
+#' @param gapExtend For `ObiwarpParam`: `numeric(1)` defining the penalty for
+#'     gap enlargement. The default value for `gapExtend` depends on the value
+#'     of `distFun`: for `distFun = "cor"` and `distFun = "cor_opt"` it is
+#'     `2.4`, `distFun = "cov"` `11.7`, for `distFun = "euc"` `1.8` and for
+#'     `distFun = "prd"` `7.8`.
+#'
+#' @param gapInit For `ObiwarpParam`: `numeric(1)` defining the penalty for gap
+#'     opening. The default value for depends on the value of `distFun`:
+#'     `distFun = "cor"` and `distFun = "cor_opt"` it is `0.3`, for
+#'     `distFun = "cov"` and `distFun = "prd"` `0.0` and for `distFun = "euc"`
+#'     `0.9`.
+#'
+#' @param initPenalty For `ObiwarpParam`: `numeric(1)` defining the penalty for
+#'     initiating an alignment (for local alignment only).
+#'
+#' @param localAlignment For `ObiwarpParam`: `logical(1)` whether a local
+#'     alignment should be performed instead of the default global alignment.
+#'
+#' @param msLevel For `adjustRtime`: `integer(1)` defining the MS level on
+#'     which the alignment should be performed.
+#'
+#' @param object For `adjustRtime`: an [OnDiskMSnExp()], [XCMSnExp()],
+#'     [MsExperiment()] or [XcmsExperiment()] object.
+#'
+#' @param param The parameter object defining the alignment method (and its
+#'     setting).
+#'
+#' @param response For `ObiwarpParam`: `numeric(1)` defining the
+#'     *responsiveness* of warping with `response = 0` giving linear warping on
+#'     start and end points and `response = 100` warping using all bijective
+#'     anchors.
+#'
+#' @param subset For `ObiwarpParam`: `integer` with the indices of samples
+#'     within the experiment on which the alignment models should be estimated.
+#'     Samples not part of the subset are adjusted based on the closest subset
+#'     sample. See *Subset-based alignment* section for details.
+#'
+#' @param subsetAdjust For `ObiwarpParam`: `character(1)` specifying the method
+#'     with which non-subset samples should be adjusted. Supported options are
+#'     `"previous"` and `"average"` (default). See *Subset-based alignment*
+#'     section for details.
+#'
+#' @param value For all assignment methods: the value to set/replace.
+#'
+#' @param x An `ObiwarpParam`.
+#'
+#' @param ... ignored.
+#'
+#' @return
+#'
+#' `adjustRtime` on an `OnDiskMSnExp` or `XCMSnExp` object will return an
+#' `XCMSnExp` object with the alignment results.
+#'
+#' `adjustRtime` on an `MsExperiment` or `XcmsExperiment` will return an
+#' `XcmsExperiment` with the adjusted retention times stored in an new
+#' *spectra variable* `rtime_adjusted` in the object's `spectra`.
+#'
+#' @name adjustRtime
+#'
+#' @family retention time correction methods
+#'
+#' @author Colin Smith, Johannes Rainer
+#'
+#' @references
+#'
+#' Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
+#' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
+#' *Anal. Chem.*, 78 (17), 6140-6152.
+#'
+#' @md
 setGeneric("adjustRtime", function(object, param, ...)
     standardGeneric("adjustRtime"))
+
 setGeneric("adjustedRtime", function(object, ...) standardGeneric("adjustedRtime"))
 setGeneric("adjustedRtime<-", function(object, value)
     standardGeneric("adjustedRtime<-"))
@@ -154,21 +316,21 @@ setGeneric("filterColumnsKeepTop", function(object, ...)
 #' @param BPPARAM Parallel processing setup. Uses by default the system-wide
 #'     default setup. See [bpparam()] for more details.
 #'
-#' @param chunkSize `integer(1)` for `object` being an `MsExoeriment` or
+#' @param chunkSize `integer(1)` for `object` being an `MsExperiment` or
 #'     [XcmsExperiment()]: defines the number of files (samples) for which the
-#'     full peaks data (m/z and intensity values) should be loaded in memory in
-#'     each iteration. Peak detection is then performed in parallel (per sample)
-#'     on this subset of loaded data. This setting thus allows to balance
-#'     memory requirement and speed (due to parallel processing) of the peak
-#'     detection. Because parallel processing can only performed on the subset
-#'     of data loaded into memory in each iteration, the value for `chunkSize`
-#'     should be equivalent to the defined  parallel setting setup. Using
-#'     a parallel processing setup using 4 CPUs (separate processes) but using
-#'     `chunkSize = `1` will not perform any parallel processing, as only the
-#'     data from one sample is loaded in memory at a time. On the other hand,
-#'     setting `chunkSize` to the total number of samples in an experiment will
-#'     load the full MS data into memory and will thus in most settings cause
-#'     an out-of-memory error.
+#'     full peaks data (m/z and intensity values) should be loaded into memory
+#'     at the same time. Peak detection is then performed in parallel (per
+#'     sample) on this subset of loaded data. This setting thus allows to
+#'     balance between memory demand and speed (due to parallel processing) of
+#'     the peak detection. Because parallel processing can only performed on
+#'     the subset of data loaded currently into memory (in each iteration), the
+#'     value for `chunkSize` should be match the defined  parallel setting
+#'     setup. Using a parallel processing setup using 4 CPUs (separate
+#'     processes) but using `chunkSize = `1` will not perform any parallel
+#'     processing, as only the data from one sample is loaded in memory at a
+#'     time. On the other hand, setting `chunkSize` to the total number of
+#'     samples in an experiment will load the full MS data into memory and
+#'     will thus in most settings cause an out-of-memory error.
 #'     By setting `chunkSize = -1` the peak detection will be performed
 #'     separately, and in parallel, for each sample. This will however not work
 #'     for all `Spectra` *backends* (see eventually [Spectra()] for details).

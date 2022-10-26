@@ -549,7 +549,11 @@ importClassesFrom("Spectra", "Spectra")
 importMethodsFrom("Spectra", "spectrapply")
 importMethodsFrom("Spectra", "peaksData")
 importMethodsFrom("Spectra", "uniqueMsLevels")
-importMethodsFrom("Spectra", "selectSpectraVariables") # needed for filterRt
+importMethodsFrom("Spectra", "selectSpectraVariables")
+importMethodsFrom("Spectra", "setBackend")
+importMethodsFrom("Spectra", "dataOrigin")
+importMethodsFrom("Spectra", "spectraVariables")
+importFrom("Spectra", "MsBackendMemory")
 
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")

@@ -494,7 +494,7 @@ setMethod("profMat", "OnDiskMSnExp", function(object,
     res
 })
 
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("adjustRtime",
           signature(object = "OnDiskMSnExp", param = "ObiwarpParam"),
           function(object, param, msLevel = 1L) {

@@ -85,6 +85,14 @@
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
 #'
+#' @section Functionality related to alignment:
+#'
+#' - `adjustRtime`: performs retention time adjustment (alignment) of the data.
+#'   See [adjustRtime()] for details.
+#'
+#' - `hasAdjustedRtime`: whether alignment was performed on the object (i.e.,
+#'   the object contains alignment results).
+#'
 #' @section Functionality for backward compatibility:
 #'
 #' These functions for `MsExperiment` and `XcmsExperiment` ensure compatibility
@@ -251,6 +259,11 @@ setMethod("show", "XcmsExperiment", function(object) {
         cat(" - chromatographic peaks:", nrow(object@chromPeaks),
             "in MS level(s):",
             paste(unique(object@chromPeakData$ms_level), collapse = ", "), "\n")
+    if (hasAdjustedRtime(object))
+        cat(" - adjusted retention times: mean absolute difference",
+            format(mean(abs(rtime(spectra(object)) -
+                           spectra(object)$rtime_adjusted)),
+                  digits = 3), "seconds\n")
 })
 
 ################################################################################
@@ -425,24 +438,38 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
 ## alignment
 ################################################################################
 
-## setMethod(
-##     "adjustRtime", signature(object = "MsExperiment", param = "ObiwarpParam"),
-##     function(object, param, msLevel = 1L) {
-## })
+#' @rdname adjustRtime
+setMethod(
+    "adjustRtime", signature(object = "MsExperiment", param = "ObiwarpParam"),
+    function(object, param, chunkSize = 2L, BPPARAM = bpparam()) {
+        msLevel <- 1L
+        res <- .mse_obiwarp_chunks(
+            object, param = param, chunkSize = chunkSize, BPPARAM = BPPARAM)
+        ## Saving adjusted rtimes into $rtime_adjusted
+        rt_adj <- rep(NA_real_, length(spectra(object)))
+        rt_adj[object@sampleDataLinks[["spectra"]][, 2L]] <-
+            unlist(res, use.names = FALSE)
+        object@spectra$rtime_adjusted <- rt_adj
+        if (!is(object, "XcmsExperiment"))
+            object <- as(object, "XcmsExperiment")
 
-## obiwarp
-## Need profMat for MsExperiment (one sample). implement
-## .split_by_file2 should support splitting MsExperiment.
+        ph <- XProcessHistory(param = param,
+                              type. = .PROCSTEP.RTIME.CORRECTION,
+                              fileIndex. = seq_along(object),
+                              msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(ph))
+        validObject(object)
+        object
+})
 
-## DONE:
-## Need fromFile method. implement? OK
-## Need filterFile method. implement. OK
-## Need an rtime method for MsExperiment. -> .rtime_spectra? OK.
-## Need a fileNames method for MsExperiment. implement?
+## For XcmsExperiment: need also to adjust chrom peaks.
+## applyAdjustedRtime,XcmsExperiment
+## dropAdjustedRtime,XcmsExperiment
 
-## setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
-##     hasAdjustedRtime(object@msFeatureData)
-## })
+#' @rdname XcmsExperiment
+setMethod("hasAdjustedRtime", "MsExperiment", function(object) {
+    any(spectraVariables(spectra(object)) == "rtime_adjusted")
+})
 
 ################################################################################
 ## utility and unsorted methods

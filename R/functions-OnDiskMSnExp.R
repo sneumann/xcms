@@ -424,136 +424,12 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
             curP <- profMat(z, method = "bin", step = binSize(parms),
                             returnBreaks = TRUE)[[1]]
         )
-        ## ---------------------------------------
-        ## 1)Check the scan times of both objects:
-        scantime1 <- unname(rtime(cntr))
-        scantime2 <- unname(rtime(z))
-        scantime1_diff <- diff(scantime1)
-        scantime2_diff <- diff(scantime2)
-        ## median difference between spectras' scan time.
-        mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
-
-        ## rtup1 <- seq_along(scantime1)
-        ## rtup2 <- seq_along(scantime2)
-
-        mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
-        if (!is.na(mst1)) {
-            message("Found gaps in scan times of the center sample: cut ",
-                    "scantime-vector at ", scantime1[mst1]," seconds.")
-            scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
-        }
-        mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
-        if (!is.na(mst2)) {
-            message("Found gaps in scan time of file ", basename(fileNames(z)),
-                    ": cut scantime-vector at ", scantime2[mst2]," seconds.")
-            scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
-        }
-        ## Drift of measured scan times - expected to be largest at the end.
-        rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
-                                scantime2[length(scantime2)])))
-        ## If the drift is larger than the threshold, cut the matrix up to the
-        ## max allowed difference.
-        if (rtmaxdiff > (5 * mstdiff)) {
-            rtmax <- min(scantime1[length(scantime1)],
-                         scantime2[length(scantime2)])
-            scantime1 <- scantime1[scantime1 <= rtmax]
-            scantime2 <- scantime2[scantime2 <= rtmax]
-        }
-        valscantime1 <- length(scantime1)
-        valscantime2 <- length(scantime2)
-        ## Ensure we have the same number of scans.
-        if (valscantime1 != valscantime2) {
-            min_number <- min(valscantime1, valscantime2)
-            diffs <- abs(range(scantime1) - range(scantime2))
-            ## Cut at the start or at the end, depending on where we have the
-            ## larger difference
-            if (diffs[2] > diffs[1]) {
-                scantime1 <- scantime1[1:min_number]
-                scantime2 <- scantime2[1:min_number]
-            } else {
-                scantime1 <- rev(rev(scantime1)[1:min_number])
-                scantime2 <- rev(rev(scantime2)[1:min_number])
-            }
-            valscantime1 <- length(scantime1)
-            valscantime2 <- length(scantime2)
-        }
-        ## Finally, restrict the profile matrix to the restricted data
-        if (ncol(cntrPr$profMat) != valscantime1) {
-            ## Find out whether we were cutting at the start or end.
-            start_idx <- which(scantime1[1] == rtime(cntr))
-            end_idx <- which(scantime1[length(scantime1)] == rtime(cntr))
-            cntrPr$profMat <- cntrPr$profMat[, start_idx:end_idx]
-        }
-        if(ncol(curP$profMat) != valscantime2) {
-            start_idx <- which(scantime2[1] == rtime(z))
-            end_idx <- which(scantime2[length(scantime2)] == rtime(z))
-            curP$profMat <- curP$profMat[, start_idx:end_idx]
-        }
-        ## ---------------------------------
-        ## 2) Now match the breaks/mz range.
-        ##    The -1 below is because the breaks define the upper and lower
-        ##    boundary. Have to do it that way to be in line with the orignal
-        ##    code... would be better to use the breaks as is.
-        mzr1 <- c(cntrPr$breaks[1], cntrPr$breaks[length(cntrPr$breaks) - 1])
-        mzr2 <- c(curP$breaks[1], curP$breaks[length(curP$breaks) - 1])
-        mzmin <- min(c(mzr1[1], mzr2[1]))
-        mzmax <- max(c(mzr1[2], mzr2[2]))
-        mzs <- seq(mzmin, mzmax, by = binSize(parms))
-        ## Eventually add empty rows at the beginning
-        if (mzmin < mzr1[1]) {
-            tmp <- matrix(0, (length(seq(mzmin, mzr1[1], binSize(parms))) - 1),
-                          ncol = ncol(cntrPr$profMat))
-            cntrPr$profMat <- rbind(tmp, cntrPr$profMat)
-        }
-        ## Eventually add empty rows at the end
-        if (mzmax > mzr1[2]) {
-            tmp <- matrix(0, (length(seq(mzr1[2], mzmax, binSize(parms))) - 1),
-                          ncol = ncol(cntrPr$profMat))
-            cntrPr$profMat <- rbind(cntrPr$profMat, tmp)
-        }
-        ## Eventually add empty rows at the beginning
-        if (mzmin < mzr2[1]) {
-            tmp <- matrix(0, (length(seq(mzmin, mzr2[1], binSize(parms))) - 1),
-                          ncol = ncol(curP$profMat))
-            curP$profMat <- rbind(tmp, curP$profMat)
-        }
-        ## Eventually add empty rows at the end
-        if (mzmax > mzr2[2]) {
-            tmp <- matrix(0, (length(seq(mzr2[2], mzmax, binSize(parms))) - 1),
-                          ncol = ncol(curP$profMat))
-            curP$profMat <- rbind(curP$profMat, tmp)
-        }
-        ## A final check of the data.
-        mzvals <- length(mzs)
-        cntrVals <- length(cntrPr$profMat)
-        curVals <- length(curP$profMat)
-        if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals)
-            stop("Dimensions of profile matrices of files ",
-                 basename(fileNames(cntr)), " and ", basename(fileNames(z)),
-                 " do not match!")
-        ## Done with preparatory stuff - now I can perform the alignment.
-        rtadj <- .Call("R_set_from_xcms", valscantime1, scantime1, mzvals, mzs,
-                       cntrPr$profMat, valscantime2, scantime2, mzvals, mzs,
-                       curP$profMat, response(parms), distFun(parms),
-                       gapInit(parms), gapExtend(parms), factorDiag(parms),
-                       factorGap(parms), as.numeric(localAlignment(parms)),
-                       initPenalty(parms))
-        if (length(rtime(z)) != valscantime2) {
-            nrt <- length(rtime(z))
-            adj_starts_at <- which(rtime(z) == scantime2[1])
-            adj_ends_at <- which(rtime(z) == scantime2[length(scantime2)])
-            if (adj_ends_at < nrt)
-                rtadj <- c(rtadj, rtadj[length(rtadj)] +
-                                  cumsum(diff(rtime(z)[adj_ends_at:nrt])))
-            if (adj_starts_at > 1)
-                rtadj <- c(rtadj[1] +
-                           rev(cumsum(diff(rtime(z)[adj_starts_at:1]))), rtadj)
-        }
+        rtadj <- .obiwarp_bare(scantime1 = unname(rtime(cntr)),
+                               scantime2 = unname(rtime(z)),
+                               ref_pr = cntrPr, other_pr = curP,
+                               param = parms)
         message("OK")
-        return(unname(rtadj))
-        ## Related to issue #122: try to resemble the rounding done in the
-        ## recor.obiwarp method.
-        ## return(round(rtadj, 2))
+        rtadj
     }, cntr = centerObject, cntrPr = profCtr, parms = param)
     ## Create result
     adjRt <- vector("list", total_samples)
@@ -561,6 +437,133 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     adjRt[subs[-centerSample(param)]] <- res
     adjustRtimeSubset(rtraw, adjRt, subset = subs, method = subsetAdjust(param))
 }
+
+.obiwarp_bare <- function(scantime1, scantime2, ref_pr, other_pr, param) {
+    ## ---------------------------------------
+    ## 1)Check the scan times of both objects:
+    scantime1_orig <- scantime1         # reference
+    scantime2_orig <- scantime2         # sample
+    scantime1_diff <- diff(scantime1)
+    scantime2_diff <- diff(scantime2)
+    ## median difference between spectras' scan time.
+    mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
+
+    mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
+    if (!is.na(mst1)) {
+        message("Found gaps in scan times of the center sample: cut ",
+                "scantime-vector at ", scantime1[mst1]," seconds.")
+        scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
+    }
+    mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
+    if (!is.na(mst2)) {
+        message("Found gaps in scan time. Cutting scantime-vector at ",
+                scantime2[mst2]," seconds.")
+        scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
+    }
+    ## Drift of measured scan times - expected to be largest at the end.
+    rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
+                            scantime2[length(scantime2)])))
+    ## If the drift is larger than the threshold, cut the matrix up to the
+    ## max allowed difference.
+    if (rtmaxdiff > (5 * mstdiff)) {
+        rtmax <- min(scantime1[length(scantime1)],
+                     scantime2[length(scantime2)])
+        scantime1 <- scantime1[scantime1 <= rtmax]
+        scantime2 <- scantime2[scantime2 <= rtmax]
+    }
+    valscantime1 <- length(scantime1)
+    valscantime2 <- length(scantime2)
+    ## Ensure we have the same number of scans.
+    if (valscantime1 != valscantime2) {
+        min_number <- min(valscantime1, valscantime2)
+        diffs <- abs(range(scantime1) - range(scantime2))
+        ## Cut at the start or at the end, depending on where we have the
+        ## larger difference
+        if (diffs[2] > diffs[1]) {
+            scantime1 <- scantime1[1:min_number]
+            scantime2 <- scantime2[1:min_number]
+        } else {
+            scantime1 <- rev(rev(scantime1)[1:min_number])
+            scantime2 <- rev(rev(scantime2)[1:min_number])
+        }
+        valscantime1 <- length(scantime1)
+        valscantime2 <- length(scantime2)
+    }
+    ## Finally, restrict the profile matrix to the restricted data
+    if (ncol(ref_pr$profMat) != valscantime1) {
+        ## Find out whether we were cutting at the start or end.
+        start_idx <- which(scantime1[1] == scantime1_orig)
+        end_idx <- which(scantime1[length(scantime1)] == scantime1_orig)
+        ref_pr$profMat <- ref_pr$profMat[, start_idx:end_idx]
+    }
+    if(ncol(other_pr$profMat) != valscantime2) {
+        start_idx <- which(scantime2[1] == scantime2_orig)
+        end_idx <- which(scantime2[length(scantime2)] == scantime2_orig)
+        other_pr$profMat <- other_pr$profMat[, start_idx:end_idx]
+    }
+    ## ---------------------------------
+    ## 2) Now match the breaks/mz range.
+    ##    The -1 below is because the breaks define the upper and lower
+    ##    boundary. Have to do it that way to be in line with the orignal
+    ##    code... would be better to use the breaks as is.
+    mzr1 <- c(ref_pr$breaks[1], ref_pr$breaks[length(ref_pr$breaks) - 1])
+    mzr2 <- c(other_pr$breaks[1], other_pr$breaks[length(other_pr$breaks) - 1])
+    mzmin <- min(c(mzr1[1], mzr2[1]))
+    mzmax <- max(c(mzr1[2], mzr2[2]))
+    mzs <- seq(mzmin, mzmax, by = binSize(param))
+    ## Eventually add empty rows at the beginning
+    if (mzmin < mzr1[1]) {
+        tmp <- matrix(0, (length(seq(mzmin, mzr1[1], binSize(param))) - 1),
+                      ncol = ncol(ref_pr$profMat))
+        ref_pr$profMat <- rbind(tmp, ref_pr$profMat)
+    }
+    ## Eventually add empty rows at the end
+    if (mzmax > mzr1[2]) {
+        tmp <- matrix(0, (length(seq(mzr1[2], mzmax, binSize(param))) - 1),
+                      ncol = ncol(ref_pr$profMat))
+        ref_pr$profMat <- rbind(ref_pr$profMat, tmp)
+    }
+    ## Eventually add empty rows at the beginning
+    if (mzmin < mzr2[1]) {
+        tmp <- matrix(0, (length(seq(mzmin, mzr2[1], binSize(param))) - 1),
+                      ncol = ncol(other_pr$profMat))
+        other_pr$profMat <- rbind(tmp, other_pr$profMat)
+    }
+    ## Eventually add empty rows at the end
+    if (mzmax > mzr2[2]) {
+        tmp <- matrix(0, (length(seq(mzr2[2], mzmax, binSize(param))) - 1),
+                      ncol = ncol(other_pr$profMat))
+        other_pr$profMat <- rbind(other_pr$profMat, tmp)
+    }
+    ## A final check of the data.
+    mzvals <- length(mzs)
+    cntrVals <- length(ref_pr$profMat)
+    curVals <- length(other_pr$profMat)
+    if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals)
+        stop("Dimensions of profile matrices do not match!")
+    ## Done with preparatory stuff - now I can perform the alignment.
+    rtadj <- .Call("R_set_from_xcms", valscantime1, scantime1, mzvals, mzs,
+                   ref_pr$profMat, valscantime2, scantime2, mzvals, mzs,
+                   other_pr$profMat, response(param), distFun(param),
+                   gapInit(param), gapExtend(param), factorDiag(param),
+                   factorGap(param), as.numeric(localAlignment(param)),
+                   initPenalty(param))
+    if (length(scantime2_orig) != valscantime2) {
+        nrt <- length(scantime2_orig)
+        adj_starts_at <- which(scantime2_orig == scantime2[1])
+        adj_ends_at <- which(scantime2_orig == scantime2[length(scantime2)])
+        if (adj_ends_at < nrt)
+            rtadj <- c(
+                rtadj, rtadj[length(rtadj)] +
+                       cumsum(diff(scantime2_orig[adj_ends_at:nrt])))
+        if (adj_starts_at > 1)
+            rtadj <- c(
+                rtadj[1] +
+                rev(cumsum(diff(scantime2_orig[adj_starts_at:1]))), rtadj)
+    }
+    unname(rtadj)
+}
+
 
 .concatenate_OnDiskMSnExp <- function(...) {
     x <- list(...)

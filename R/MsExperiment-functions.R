@@ -308,30 +308,38 @@
     bplapply(
         split(Spectra::peaksData(x, columns = c("mz", "intensity"),
                                  BPPARAM = SerialParam()), f),
-        function(z, m, s, bl, bs, mzr, rb, ...) {
-            pk_count <- vapply(z, nrow, integer(1), USE.NAMES = FALSE)
-            empty_spectra <- which(!pk_count)
-            if (length(empty_spectra))
-                pk_count <- pk_count[-empty_spectra]
-            z <- do.call(rbind, z)
-            if (length(z)) {
-                res <- .createProfileMatrix(mz = z[, 1], int = z[, 2],
-                                            valsPerSpect = pk_count,
-                                            method = m, step = s,
-                                            baselevel = bl,
-                                            basespace = bs, mzrange. = mzr, ...)
-                if (length(empty_spectra)) {
-                    if (any(names(res) == "profMat"))
-                        res$profMat <- .insertColumn(res$profMat,
-                                                     empty_spectra, 0)
-                    else
-                        res <- .insertColumn(res, emtpy_spectra, 0)
-                }
-                res
-            } else matrix(numeric(), nrow = 0, ncol = 0)
-        },
-        m = method, s = step, bl = baselevel, bs = basespace, mzr = mzrange.,
+        FUN = .peaksdata_profmat, method = method, step = step,
+        baselevel = baselevel, basespace = basespace, mzrange. = mzrange.,
         ..., BPPARAM = BPPARAM)
+}
+
+#' Calculate a profile matrix from a `Spectra` (should be from a single
+#' file/sample and from a single MS level).
+#'
+#' @noRd
+.peaksdata_profmat <- function(x, method = "bin", step = 0.1, baselevel = NULL,
+                             basespace = NULL, mzrange. = NULL, ...) {
+    pk_count <- vapply(x, nrow, integer(1), USE.NAMES = FALSE)
+    empty_spectra <- which(!pk_count)
+    if (length(empty_spectra))
+        pk_count <- pk_count[-empty_spectra]
+    x <- do.call(rbind, x)
+    if (length(x)) {
+        res <- .createProfileMatrix(mz = x[, 1], int = x[, 2],
+                                    valsPerSpect = pk_count,
+                                    method = method, step = step,
+                                    baselevel = baselevel,
+                                    basespace = basespace,
+                                    mzrange. = mzrange., ...)
+        if (length(empty_spectra)) {
+            if (any(names(res) == "profMat"))
+                res$profMat <- .insertColumn(res$profMat,
+                                             empty_spectra, 0)
+            else
+                res <- .insertColumn(res, empty_spectra, 0)
+        }
+        res
+    } else matrix(numeric(), nrow = 0, ncol = 0)
 }
 
 .mse_profmat_chunks <- function(x, msLevel = 1L, method = "bin", step = 0.1,
@@ -347,4 +355,83 @@
                                 mzrange. = mzrange., msLevel = msLevel, ...,
                                 chunkSize = chunkSize, BPPARAM = BPPARAM),
         recursive = FALSE, use.names = FALSE)
+}
+
+.mse_obiwarp_chunks <- function(x, param, msLevel = 1L, chunkSize = 1L,
+                                BPPARAM = bpparam()) {
+    rt_raw <- split(rtime(x), fromFile(x))
+    subset_idx <- subset(param)
+    if (length(subset_idx))
+        x <- x[subset_idx]
+
+    if (!length(centerSample(param)))
+        centerSample(param) <- floor(median(seq_along(x)))
+    ref_idx <- centerSample(param)
+    if (!(ref_idx %in% seq_along(x)))
+        stop("'centerSample' needs to be an integer between 1 and ", length(x))
+    ref_sps <- filterMsLevel(spectra(x[ref_idx]), msLevel = msLevel)
+    ref_pm <- .peaksdata_profmat(peaksData(ref_sps), method = "bin",
+                                 step = binSize(param), returnBreaks = TRUE)
+    res <- unlist(.mse_spectrapply_chunks(
+        x, FUN = function(z, ref, ref_pm, param, msLevel, BPPARAM) {
+            z <- setBackend(
+                selectSpectraVariables(z, c("rtime", "msLevel", ".SAMPLE_IDX",
+                                            "dataStorage", "scanIndex")),
+                MsBackendMemory(), BPPARAM = SerialParam())
+            bplapply(split(z, f = as.factor(z$.SAMPLE_IDX)),
+                     FUN = .obiwarp_spectra, ref = ref, ref_pm = ref_pm,
+                     param = param, msLevel = msLevel, BPPARAM = BPPARAM)
+        }, ref = ref_sps, ref_pm = ref_pm, param = param, msLevel = msLevel,
+        chunkSize = chunkSize, BPPARAM = BPPARAM),
+        recursive = FALSE, use.names = FALSE)
+
+    if (length(subset_idx)) {
+        res[[ref_idx]] <- rt_raw[subset_idx][[ref_idx]]
+        rt_adj <- vector("list", length(x))
+        rt_adj[subset_idx] <- res
+        res <- adjustRtimeSubset(rt_raw, rt_adj, subset = subset_idx,
+                                 method = subsetAdjust(param))
+    } else
+        res[[ref_idx]] <- rt_raw[[ref_idx]]
+    res
+}
+
+#' Performs alignment of other against ref and returns the adjusted retention
+#' times (for ALL spectra, even in other MS levels). other and ref are expected
+#' to be `Spectra` objects.
+#'
+#' @noRd
+.obiwarp_spectra <- function(other, ref, ref_pm = list(), param, msLevel = 1L) {
+    ## why is that not idea? well, we can't do that in chunks!
+    rt_raw <- rtime(other)
+    n_all <- length(rt_raw)
+    rt_ms <- which(msLevel(other) == msLevel)
+    ref <- filterMsLevel(ref, msLevel = msLevel)
+    other <- filterMsLevel(other, msLevel = msLevel)
+    if (!(length(ref) & length(other)))
+        stop("No spectra with MS level ", msLevel, " present")
+    if (!length(ref_pm))
+        ref_pm <- .peaksdata_profmat(peaksData(ref), method = "bin",
+                                     step = binSize(param),
+                                     returnBreaks = TRUE)
+    other_pm <- .peaksdata_profmat(peaksData(other), method = "bin",
+                                   step = binSize(param),
+                                   returnBreaks = TRUE)
+    adj <- .obiwarp_bare(rtime(ref), rtime(other), ref_pr = ref_pm,
+                         other_pr = other_pm, param = param)
+    n_adj <- length(adj)
+    if (length(n_all) != n_adj) {
+        ## Have to adjust rts for MS levels other than msLevel
+        adj_fun <- approxfun(x = rtime(other), y = adj)
+        rt_adj <- adj_fun(rt_raw)
+        tmp_rt <- rtime(other[1L])
+        idx_below <- which(rt_raw < tmp_rt)
+        if (length(idx_below))
+            rt_adj[idx_below] <- rt_raw[idx_below] + adj[1L] - tmp_rt
+        tmp_rt <- rtime(other[n_adj])
+        idx_above <- which(rt_raw > tmp_rt)
+        if (length(idx_above))
+            rt_adj[idx_above] <- rt_raw[idx_above] + adj[n_adj] - tmp_rt
+        rt_adj
+    } else adj
 }

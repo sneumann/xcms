@@ -222,6 +222,7 @@ test_that(".mse_profmat_chunks works", {
     res <- .mse_profmat_chunks(mse, chunkSize = 2L, step = 4,
                                returnBreaks = TRUE)
     expect_equal(res, ref)
+    expect_equal(names(res[[1L]]), c("profMat", "breaks"))
 
     res <- .mse_profmat_chunks(mse, chunkSize = 3L, msLevel = 2L)
     expect_true(length(res) == 3)
@@ -229,4 +230,53 @@ test_that(".mse_profmat_chunks works", {
     ## Testing the method.
     res <- profMat(mse, chunkSize = 2L, step = 4, returnBreaks = TRUE)
     expect_equal(res, ref)
+})
+
+test_that(".obiwarp_spectra works", {
+    p <- ObiwarpParam(binSize = 3.4, centerSample = 1L)
+    ref <- split(adjustRtime(faahko_od, param = p), fromFile(faahko_od))
+
+    a <- spectra(mse[1L])
+    b <- spectra(mse[2L])
+    res <- xcms:::.obiwarp_spectra(b, a, param = p)
+    expect_equal(res, unname(ref[[2L]]))
+    res <- xcms:::.obiwarp_spectra(spectra(mse[3L]), a, param = p)
+    expect_equal(res, unname(ref[[3L]]))
+
+    ## Test with different MS levels.
+    res_sub <- xcms:::.obiwarp_spectra(b[-seq(1, length(b), by = 3)],
+                                   a[-seq(1, length(a), by = 3)],
+                                   param = p)
+    a$msLevel[seq(1, length(a), by = 3)] <- 2L
+    b$msLevel[seq(1, length(b), by = 3)] <- 2L
+    res2 <- xcms:::.obiwarp_spectra(b, a, param = p)
+    expect_equal(length(res2), length(b))
+    expect_equal(res_sub, res2[-seq(1, length(b), by = 3)])
+    expect_true(cor(res, res2) > 0.999)
+})
+
+test_that(".mse_obiwarp_chunks works", {
+    p <- ObiwarpParam(binSize = 50, centerSample = 1L)
+    ref <- split(adjustRtime(faahko_od, param = p), fromFile(faahko_od))
+
+    expect_error(.mse_obiwarp_chunks(mse, ObiwarpParam(centerSample = 6)),
+                 "integer between 1 and 3")
+
+    res <- xcms:::.mse_obiwarp_chunks(mse, p)
+    expect_true(is.list(res))
+    expect_equal(length(res), length(mse))
+    expect_equal(unname(ref[[1L]]), res[[1L]])
+    expect_equal(unname(ref[[2L]]), res[[2L]])
+    expect_equal(unname(ref[[3L]]), res[[3L]])
+
+    ## Subset alignment...
+    p <- ObiwarpParam(binSize = 30, centerSample = 1L, subset = c(1, 3))
+    ref <- split(adjustRtime(faahko_od, param = p), fromFile(faahko_od))
+
+    res <- xcms:::.mse_obiwarp_chunks(mse, p, chunkSize = 2L)
+    expect_equal(unname(ref[[1L]]), res[[1L]])
+    expect_equal(unname(ref[[2L]]), res[[2L]])
+    expect_equal(unname(ref[[3L]]), res[[3L]])
+
+    expect_error(.mse_obiwarp_chunks(mse, p, msLevel = 2), "MS level")
 })

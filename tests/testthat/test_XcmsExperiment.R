@@ -165,3 +165,26 @@ test_that("filterFile,XcmsExperiment works", {
     res <- filterFile(xmse, c(3, 1))
     expect_equal(res, xmse[c(1, 3)])
 })
+
+test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
+    p <- ObiwarpParam(binSize = 35.5)
+    ref <- adjustRtime(faahko_xod, param = p)
+
+    res <- adjustRtime(mse, param = p)
+    expect_equal(unname(rtime(ref)), spectra(res)$rtime_adjusted)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res@processHistory) == 1L)
+    expect_true(hasAdjustedRtime(res))
+
+    ## With spectra that are NOT all associated to a sample.
+    mse2 <- MsExperiment()
+    sampleData(mse2) <- DataFrame(df)
+
+    sps <- spectra(mse)
+    tmp <- sps[1:10]
+    tmp$dataOrigin <- "a"
+    spectra(mse2) <- c(tmp, sps)
+    mse2 <- linkSampleData(
+        mse2, with = "sampleData.dataOrigin = spectra.dataOrigin")
+    expect_error(adjustRtime(mse2, param = p), "to a sample")
+})

@@ -1946,59 +1946,7 @@ setMethod("adjustRtime",
           })
 
 
-#' @title Align retention times across samples using Obiwarp
-#'
-#' @description
-#'
-#' \code{adjustRtime,XCMSnExp,ObiwarpParam}:
-#' performs retention time correction/alignment based on the total mz-rt
-#' data using the \emph{obiwarp} method.
-#'
-#' @note
-#'
-#' Alignment using obiwarp is performed on the retention time of spectra
-#' of on MS level. Retention times for spectra of other MS levels are
-#' subsequently adjusted based on the adjustment function defined on the
-#' retention times of the spectra of MS level \code{msLevel}.
-#'
-#' Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-#' all peak grouping (correspondence) results and any previous retention
-#' time adjustment results to be dropped.
-#'
-#' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
-#'
-#'     For all other methods: a \code{ObiwarpParam} object.
-#'
-#' @param param A \code{ObiwarpParam} object containing all settings for
-#'     the alignment method.
-#'
-#' @param msLevel \code{integer} defining the MS level on which the retention
-#'     time should be performed.
-#'
-#' @return
-#'
-#' For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
-#' \code{\link{XCMSnExp}} object with the results of the retention time
-#' adjustment step. These can be accessed with the
-#' \code{\link{adjustedRtime}} method. Retention time correction does also
-#' adjust the retention time of the identified chromatographic peaks
-#' (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention time
-#' correction drops all previous peak grouping results from the result
-#' object.
-#'
-#' For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with
-#' the adjusted retention times per spectra (in the same order than
-#' \code{rtime}).
-#'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-#'     the alignment.
-#'
-#' @references
-#' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
-#' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
-#' \emph{Anal. Chem.} 2006, 78 (17), 6140-6152.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "ObiwarpParam"),
           function(object, param, msLevel = 1L) {
@@ -2522,7 +2470,7 @@ setMethod(
 #' prior to peak detection. Previous alignment (retention
 #' time adjustment) results are kept, i.e. chromatographic peak detection
 #' is performed using adjusted retention times if the data was first
-#' aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
+#' aligned using e.g. obiwarp (\code{\link{adjustRtime}}).
 #'
 #' @param param A \code{\link{CentWaveParam}}, \code{\link{MatchedFilterParam}},
 #'     \code{\link{MassifquantParam}}, \code{\link{MSWParam}} or

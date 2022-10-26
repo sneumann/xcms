@@ -347,7 +347,6 @@ The \code{\link{do_adjustRtime_peakGroups}} core
     the alignment.
 
 Other retention time correction methods: 
-\code{\link{adjustRtime-obiwarp}},
 \code{\link{adjustRtime}()}
 }
 \author{

@@ -588,7 +588,7 @@ peak detection results. Correspondence results (features) are always removed
 prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
-aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
+aligned using e.g. obiwarp (\code{\link{adjustRtime}}).
 
 \code{dropFilledChromPeaks}: drops any filled-in chromatographic
 peaks (filled in by the \code{\link{fillChromPeaks}} method) and all

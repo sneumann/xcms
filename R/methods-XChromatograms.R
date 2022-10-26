@@ -1,5 +1,6 @@
 #' @include methods-MChromatograms.R
 
+
 setAs("MChromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
     res@.Data <- matrix(lapply(from, function(z) {

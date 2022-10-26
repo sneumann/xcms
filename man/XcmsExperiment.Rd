@@ -15,6 +15,7 @@
 \alias{dropChromPeaks,XcmsExperiment-method}
 \alias{chromPeaks,XcmsExperiment-method}
 \alias{chromPeakData,XcmsExperiment-method}
+\alias{hasAdjustedRtime,MsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
@@ -46,6 +47,8 @@
 )
 
 \S4method{chromPeakData}{XcmsExperiment}(object)
+
+\S4method{hasAdjustedRtime}{MsExperiment}(object)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -178,6 +181,16 @@ Alignment results (adjusted retention times) can be retained if parameter
 \item \code{hasChromPeaks}: whether the object contains peak detection results.
 Parameter \code{msLevel} allows to check whether peak detection results are
 available for the specified MS level(s).
+}
+}
+
+\section{Functionality related to alignment}{
+
+\itemize{
+\item \code{adjustRtime}: performs retention time adjustment (alignment) of the data.
+See \code{\link[=adjustRtime]{adjustRtime()}} for details.
+\item \code{hasAdjustedRtime}: whether alignment was performed on the object (i.e.,
+the object contains alignment results).
 }
 }
 

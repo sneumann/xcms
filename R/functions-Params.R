@@ -294,11 +294,7 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
         subset = as.integer(subset), subsetAdjust = subsetAdjust)
 }
 
-#' @return The \code{ObiwarpParam} function returns a
-#'     \code{ObiwarpParam} class instance with all of the settings
-#'     specified for obiwarp retention time adjustment and alignment.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
