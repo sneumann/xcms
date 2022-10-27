@@ -55,7 +55,8 @@ Imports:
     MsCoreUtils,
     MsFeatures,
     MsExperiment,
-    Spectra
+    Spectra,
+    progress
 Suggests:
     BiocStyle,
     caTools,
@@ -71,7 +72,6 @@ Suggests:
     MALDIquant,
     pheatmap,
     MsBackendMgf,
-    progress,
     signal
 Enhances:
     Rgraphviz,

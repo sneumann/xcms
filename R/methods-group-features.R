@@ -874,9 +874,6 @@ setMethod(
     "groupFeatures",
     signature(object = "XCMSnExp", param = "EicSimilarityParam"),
     function(object, param, msLevel = 1L) {
-        if (!requireNamespace("progress", quietly = TRUE))
-            stop("Package 'progress' is required. Please install with ",
-                 "'BiocManager::install(\"progress\")'")
         if (!hasFeatures(object))
             stop("No feature definitions present. Please run ",
                  "first 'groupChromPeaks'")
@@ -909,12 +906,11 @@ setMethod(
         fvals <- featureValues(object, method = "maxint", value = param@value)
         ffun <- function(z, na.rm = TRUE)
             quantile(z, probs = 0.75, na.rm = na.rm)
-        pb <- progress::progress_bar$new(format = paste0("[:bar] :current/:",
-                                                         "total (:percent) in ",
-                                                         ":elapsed"),
-                                         total = length(fgroups),
-                                         clear = FALSE, force = TRUE)
-        pb$tick(0)
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(fgroups),
+                               clear = FALSE, force = TRUE)
         for (fg in fgroups) {
             idx <- which(f == fg)
             idxl <- length(idx)

@@ -129,10 +129,20 @@
              "samples.")
     idx <- seq_along(x)
     chunks <- split(idx, ceiling(idx / chunkSize))
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = length(chunks),
+                           clear = FALSE, show_after = 0)
+    pb$tick(0)
     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
     lapply(chunks, function(z, ..., pb) {
-        FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
+        suppressMessages(
+            res <- FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
+        )
+        pb$tick()
+        res
     }, ..., pb = pb, BPPARAM = BPPARAM)
     ## res <- vector("list", length(chunks))
     ## for (i in seq_along(chunks)) {

@@ -560,3 +560,5 @@ importClassesFrom("MsExperiment", "MsExperiment")
 importMethodsFrom("MsExperiment", "spectra")
 importMethodsFrom("BiocGenerics", "do.call")
 importMethodsFrom("BiocGenerics", "rbind")
+
+importFrom("progress", "progress_bar")
