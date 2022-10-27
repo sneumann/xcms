@@ -7,8 +7,9 @@ setMethod("filterRt", "MsExperiment",
           })
 
 #' @rdname XcmsExperiment
-setMethod("filterFile", "MsExperiment", function(object, file = integer()) {
-    object[i = sort(unique(file))]
+setMethod("filterFile", "MsExperiment", function(object,
+                                                 file = integer(), ...) {
+    object[i = sort(unique(file)), ...]
 })
 
 #' @rdname profMat-xcmsSet

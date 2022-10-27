@@ -167,14 +167,89 @@ test_that("filterFile,XcmsExperiment works", {
 })
 
 test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
-    p <- ObiwarpParam(binSize = 35.5)
-    ref <- adjustRtime(faahko_xod, param = p)
+    op <- ObiwarpParam(binSize = 35.5)
+    ref <- adjustRtime(faahko_xod, param = op)
 
-    res <- adjustRtime(mse, param = p)
+    res <- adjustRtime(mse, param = op)
     expect_equal(unname(rtime(ref)), spectra(res)$rtime_adjusted)
     expect_s4_class(res, "XcmsExperiment")
     expect_true(length(res@processHistory) == 1L)
     expect_true(hasAdjustedRtime(res))
+    expect_equal(rtime(res), unname(rtime(ref)))
+    expect_equal(rtime(res, adjusted = FALSE),
+                 unname(rtime(ref, adjusted = FALSE)))
+
+    ## applyAdjustedRtime
+    res2 <- applyAdjustedRtime(res)
+    expect_false(hasAdjustedRtime(res2))
+    expect_equal(rtime(res2), rtime(res, adjusted = TRUE))
+    res2 <- dropAdjustedRtime(res)
+    expect_false(hasAdjustedRtime(res2))
+    expect_true(length(res2@processHistory) == 0L)
+
+    ## xcms object.
+    res2 <- adjustRtime(xmse, param = op)
+    expect_true(hasAdjustedRtime(res2))
+    expect_equal(rtime(res, adjusted = FALSE), rtime(res2, adjusted = FALSE))
+    expect_equal(rtime(res, adjusted = TRUE), rtime(res2, adjusted = TRUE))
+    expect_equal(chromPeaks(ref), chromPeaks(res2))
+    ## chrom peaks got adjusted too
+    a <- chromPeaks(xmse)
+    b <- chromPeaks(res2)
+    expect_true(all(a[a[, "sample"] == 1L, "rt"] !=
+                    b[b[, "sample"] == 1L, "rt"]))
+    ## those of center sample are not changed
+    expect_true(all(a[a[, "sample"] == 2L, "rt"] ==
+                    b[b[, "sample"] == 2L, "rt"]))
+    expect_true(length(res2@processHistory) == 2L)
+
+    ## Order: peak detection, alignment.
+    ## dropAdjustedRtime:
+    res3 <- dropAdjustedRtime(res2)
+    expect_false(hasAdjustedRtime(res3))
+    expect_true(hasChromPeaks(res3))
+    ## chrom peak rt gets reverted
+    expect_equal(chromPeaks(res3), chromPeaks(xmse))
+    expect_true(length(res3@processHistory) == 1L)
+    ref2 <- dropAdjustedRtime(ref)
+    expect_equal(chromPeaks(res3), chromPeaks(ref2))
+    ## dropChromPeaks
+    res3 <- dropChromPeaks(res2)
+    expect_false(hasChromPeaks(res3))
+    expect_false(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 0L)
+    res3 <- dropChromPeaks(res2, keepAdjustedRtime = TRUE)
+    expect_false(hasChromPeaks(res3))
+    expect_true(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 1L)
+    expect_equal(rtime(res3, adjusted = TRUE), rtime(res2, adjusted = TRUE))
+
+    ## Order: alignment, peak detection.
+    res3 <- findChromPeaks(res, param = p)
+    expect_true(hasChromPeaks(res3))
+    expect_true(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 2L)
+    ## dropAdjustedRtime
+    res4 <- dropAdjustedRtime(res3)
+    expect_true(hasChromPeaks(res4))
+    expect_false(hasAdjustedRtime(res4))
+    expect_true(length(res4@processHistory) == 1L)
+    ## chrom peak rt should be "reverted" (as with raw data) - but they
+    ## are not identical because of the interpolation
+    ## expect_equal(chromPeaks(res4), chromPeaks(xmse))
+    ## a <- chromPeaks(res4)
+    ## b <- chromPeaks(xmse)
+    ## expect_true(all(a[a[, "sample"] == 1L, "rt"] ==
+    ##                 b[b[, "sample"] == 1L, "rt"]))
+    ## expect_true(all(a[a[, "sample"] == 2L, "rt"] ==
+    ##                 b[b[, "sample"] == 2L, "rt"]))
+    ## expect_true(all(a[a[, "sample"] == 3L, "rt"] ==
+    ##                 b[b[, "sample"] == 3L, "rt"]))
+    ## dropChromPeaks
+    res4 <- dropChromPeaks(res3)
+    expect_false(hasChromPeaks(res4))
+    expect_true(hasAdjustedRtime(res4))
+    expect_true(length(res4@processHistory) == 1L)
 
     ## With spectra that are NOT all associated to a sample.
     mse2 <- MsExperiment()
@@ -186,5 +261,5 @@ test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
     spectra(mse2) <- c(tmp, sps)
     mse2 <- linkSampleData(
         mse2, with = "sampleData.dataOrigin = spectra.dataOrigin")
-    expect_error(adjustRtime(mse2, param = p), "to a sample")
+    expect_error(adjustRtime(mse2, param = op), "to a sample")
 })

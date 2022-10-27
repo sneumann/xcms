@@ -131,9 +131,9 @@
     chunks <- split(idx, ceiling(idx / chunkSize))
     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
-    lapply(chunks, function(z, ...) {
+    lapply(chunks, function(z, ..., pb) {
         FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
-    }, ..., BPPARAM = BPPARAM)
+    }, ..., pb = pb, BPPARAM = BPPARAM)
     ## res <- vector("list", length(chunks))
     ## for (i in seq_along(chunks)) {
     ##     res[[i]] <- FUN(sps[sps$.SAMPLE_IDX %in% chunks[[i]]], ...,
@@ -267,7 +267,7 @@
             sdl[, 2L] <- idx[keep]
             x@sampleDataLinks[["spectra"]] <- sdl
         }
-        svs <- spectraVariables(spectra(x))
+        svs <- unique(c(spectraVariables(spectra(x)), "mz", "intensity"))
         x@spectra <- selectSpectraVariables(
             x@spectra, svs[svs != "._SAMPLE_IDX"])
     }
@@ -376,7 +376,8 @@
         x, FUN = function(z, ref, ref_pm, param, msLevel, BPPARAM) {
             z <- setBackend(
                 selectSpectraVariables(z, c("rtime", "msLevel", ".SAMPLE_IDX",
-                                            "dataStorage", "scanIndex")),
+                                            "dataStorage", "scanIndex",
+                                            "mz", "intensity")),
                 MsBackendMemory(), BPPARAM = SerialParam())
             bplapply(split(z, f = as.factor(z$.SAMPLE_IDX)),
                      FUN = .obiwarp_spectra, ref = ref, ref_pm = ref_pm,

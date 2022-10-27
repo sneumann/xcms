@@ -1255,9 +1255,9 @@ isCalibrated <- function(object) {
 #' @details
 #'
 #' Adjusted retention times are stored *in parallel* to the adjusted
-#' retention times in the `XCMSnExp`. The `applyAdjustedRtime` replaces the
-#' raw retention times (stored in the *feature data* (`fData` `data.frame`))
-#' with the adjusted retention times.
+#' retention times in `XCMSnExp` or `XcmsExperiment` objects. The
+#' `applyAdjustedRtime` replaces the raw (original) retention times with the
+#' adjusted retention times.
 #'
 #' @note
 #'
@@ -1268,14 +1268,14 @@ isCalibrated <- function(object) {
 #' the [processHistory()] of the `object` to ensure that the processing
 #' history is preserved.
 #'
-#' @param object An [XCMSnExp] object.
+#' @param object An [XCMSnExp] or [XcmsExperiment] object.
 #'
 #' @md
 #'
 #' @return
 #'
-#' A `XCMSnExp` with the raw retention times being replaced with the
-#' adjusted retention time.
+#' An `XCMSnExp` or `XcmsExperiment` object with the raw (original) retention
+#' times being replaced with the adjusted retention time.
 #'
 #' @author Johannes Rainer
 #'
@@ -1315,18 +1315,27 @@ isCalibrated <- function(object) {
 #' ## And the process history still contains the settings for the alignment
 #' processHistory(xod)
 applyAdjustedRtime <- function(object) {
-    if (!is(object, "XCMSnExp"))
-        stop("'object' has to be an 'XCMSnExp' object")
-    if (!hasAdjustedRtime(object))
-        return(object)
-    ## Replace retention times.
-    fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
-    ## Copy the data
-    newFd <- new("MsFeatureData")
-    newFd@.xData <- .copy_env(object@msFeatureData)
-    rm(list = "adjustedRtime", envir = newFd)
-    object@msFeatureData <- newFd
-    object
+    if (inherits(object, "XCMSnExp")) {
+        if (!hasAdjustedRtime(object))
+            return(object)
+        ## Replace retention times.
+        fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+        ## Copy the data
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        rm(list = "adjustedRtime", envir = newFd)
+        object@msFeatureData <- newFd
+        object
+    } else if (inherits(object, "XcmsExperiment")) {
+        if (!hasAdjustedRtime(object))
+            return(object)
+        rtime(object@spectra) <- object@spectra$rtime_adjusted
+        svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
+        object@spectra <- selectSpectraVariables(
+            object@spectra, svs[svs != "rtime_adjusted"])
+        object
+    } else stop("'object' has to be either an 'XCMSnExp' or ",
+                "'XcmsExperiment' object")
 }
 
 ## Find mz ranges with multiple peaks per sample.

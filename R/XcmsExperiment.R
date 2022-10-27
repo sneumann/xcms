@@ -32,7 +32,8 @@
 #'   can be specified with parameter `file`. The sole purpose of this function
 #'   is to provide backward compatibility with the `MSnbase` package. Wherever
 #'   possible, the `[` function should be used instead for any sample-based
-#'   subsetting.
+#'   subsetting. Parameters `keepChromPeaks`, `keepAdjustedRtime` and
+#'   `keepChromPeaks` can be passed using `...`.
 #'   Note also that in contrast to `[`, `filterFile` does not support subsetting
 #'   in arbitrary order.
 #'
@@ -74,7 +75,8 @@
 #'
 #' - `dropChromPeaks`: removes (all) chromatographic peak detection results
 #'   from `object`. This will also remove any correspondence results (i.e.
-#'   features) and eventually present adjusted retention times from the object.
+#'   features) and eventually present adjusted retention times from the object
+#'   if the alignment was performed **after** the peak detection.
 #'   Alignment results (adjusted retention times) can be retained if parameter
 #'   `keepAdjustedRtime` is set to `TRUE`.
 #'
@@ -89,6 +91,16 @@
 #'
 #' - `adjustRtime`: performs retention time adjustment (alignment) of the data.
 #'   See [adjustRtime()] for details.
+#'
+#' - `applyAdjustedRtime`: replaces the original (raw) retention times with the
+#'   adjusted ones. See [applyAdjustedRtime()] for more information.
+#'
+#' - `dropAdjustedRtime`: drops alignment results (adjusted retention time) from
+#'   the result object. This also reverts the retention times of identified
+#'   chromatographic peaks if present in the result object. Note that any
+#'   results from a correspondence analysis (i.e. feature definitions) will be
+#'   dropped too (if the correspondence analysis was performed **after** the
+#'   alignment). This can be overruled with `keepAdjustedRtime = TRUE`.
 #'
 #' - `hasAdjustedRtime`: whether alignment was performed on the object (i.e.,
 #'   the object contains alignment results).
@@ -109,11 +121,19 @@
 #' - `rtime`: extract retention times of the **spectra** from the
 #'   `MsExperiment` or `XcmsExperiment` object. It is thus a shortcut for
 #'   `rtime(spectra(object))` which would be the preferred way to extract
-#'   retention times from an `MsExperiment`..
+#'   retention times from an `MsExperiment`. The `rtime` method for
+#'   `XcmsExperiment` has an additional parameter `adjusted` which allows to
+#'   define whether adjusted retention times (if present - `adjusted = TRUE`)
+#'   or *raw* retention times (`adjusted = FALSE`) should be returned. By
+#'   default adjusted retention times are returned if available.
 #'
 #' @section Differences compared to the [XCMSnExp()] object:
 #'
 #' - Subsetting by `[` supports arbitrary ordering.
+#'
+#' @param adjusted For `rtime,XcmsExperiment`: whether adjusted or *raw*
+#'     retention times should be returned. The default is to return adjusted
+#'     retention times, if available.
 #'
 #' @param drop For `[`: ignored.
 #'
@@ -366,6 +386,7 @@ setMethod(
     "dropChromPeaks", "XcmsExperiment",
     function(object, keepAdjustedRtime = FALSE) {
         if (hasChromPeaks(object)) {
+            pt <- vapply(object@processHistory, processType, character(1))
             object@processHistory <- dropProcessHistoriesList(
                 object@processHistory,
                 type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
@@ -374,9 +395,16 @@ setMethod(
             object@chromPeaks <- .empty_chrom_peaks()
             object@chromPeakData <- data.frame(ms_level = integer(),
                                                is_filled = logical())
-            ## if (hasAdjustedRtime(object) && !keepAdjustedRtime) {
-            ##     object <- dropAdjustedRtime(object)
-            ## }
+            if (hasAdjustedRtime(object) && !keepAdjustedRtime) {
+                ## remove if alignment performed AFTER chrom peaks
+                nom <- length(pt) + 1L
+                idx_cp <- .match_last(.PROCSTEP.PEAK.DETECTION, pt,
+                                      nomatch = nom)
+                idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, pt,
+                                      nomatch = nom)
+                if (idx_al > idx_cp)
+                    object <- dropAdjustedRtime(object)
+            }
             ## if (hasFeatureDefinitions(object)) {
             ##     object <- dropFeatureDefinitions(object)
             ## }
@@ -452,7 +480,13 @@ setMethod(
         object@spectra$rtime_adjusted <- rt_adj
         if (!is(object, "XcmsExperiment"))
             object <- as(object, "XcmsExperiment")
-
+        if (hasChromPeaks(object)) {
+            fidx <- as.factor(fromFile(object))
+            object@chromPeaks <- .applyRtAdjToChromPeaks(
+                chromPeaks(object),
+                rtraw = split(rtime(object, adjusted = FALSE), fidx),
+                rtadj = split(rt_adj, fidx))
+        }
         ph <- XProcessHistory(param = param,
                               type. = .PROCSTEP.RTIME.CORRECTION,
                               fileIndex. = seq_along(object),
@@ -462,14 +496,44 @@ setMethod(
         object
 })
 
-## For XcmsExperiment: need also to adjust chrom peaks.
-## applyAdjustedRtime,XcmsExperiment
-## dropAdjustedRtime,XcmsExperiment
+#' @rdname XcmsExperiment
+setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
+    if (!hasAdjustedRtime(object))
+        return(object)
+    ptype <- vapply(object@processHistory, processType, character(1))
+    nom <- length(ptype) + 1L
+    idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, ptype, nomatch = nom)
+    if (hasChromPeaks(object)) {
+        fidx <- as.factor(fromFile(object))
+        object@chromPeaks <- .applyRtAdjToChromPeaks(
+            object@chromPeaks,
+            rtraw = split(rtime(object, adjusted = TRUE), fidx),
+            rtadj = split(rtime(object, adjusted = FALSE), fidx))
+    }
+    ## if (hasFeatures(object)) {
+    ## ## Only drop features if correspondence was performed AFTER alignment.
+    ## }
+    svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
+    object@spectra <- selectSpectraVariables(
+        object@spectra, svs[svs != "rtime_adjusted"])
+    object@processHistory <- dropProcessHistoriesList(
+        object@processHistory, type = .PROCSTEP.RTIME.CORRECTION, num = 1L)
+    object
+})
 
 #' @rdname XcmsExperiment
 setMethod("hasAdjustedRtime", "MsExperiment", function(object) {
     any(spectraVariables(spectra(object)) == "rtime_adjusted")
 })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "rtime", "XcmsExperiment",
+    function(object, adjusted = hasAdjustedRtime(object)) {
+        if (adjusted && hasAdjustedRtime(object))
+            spectra(object)$rtime_adjusted
+        else rtime(spectra(object))
+    })
 
 ################################################################################
 ## utility and unsorted methods

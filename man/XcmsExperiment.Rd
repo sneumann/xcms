@@ -15,12 +15,14 @@
 \alias{dropChromPeaks,XcmsExperiment-method}
 \alias{chromPeaks,XcmsExperiment-method}
 \alias{chromPeakData,XcmsExperiment-method}
+\alias{dropAdjustedRtime,XcmsExperiment-method}
 \alias{hasAdjustedRtime,MsExperiment-method}
+\alias{rtime,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
 
-\S4method{filterFile}{MsExperiment}(object, file = integer())
+\S4method{filterFile}{MsExperiment}(object, file = integer(), ...)
 
 \S4method{rtime}{MsExperiment}(object)
 
@@ -48,7 +50,11 @@
 
 \S4method{chromPeakData}{XcmsExperiment}(object)
 
+\S4method{dropAdjustedRtime}{XcmsExperiment}(object)
+
 \S4method{hasAdjustedRtime}{MsExperiment}(object)
+
+\S4method{rtime}{XcmsExperiment}(object, adjusted = hasAdjustedRtime(object))
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -101,6 +107,10 @@ time of the peak's apex is within the region defined by \code{mz} and/or \code{r
 \code{"is_filled"} should be included in the returned \code{matrix} with the
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
+
+\item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
+retention times should be returned. The default is to return adjusted
+retention times, if available.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
@@ -131,7 +141,8 @@ kept or dropped can also be configured with optional parameters
 can be specified with parameter \code{file}. The sole purpose of this function
 is to provide backward compatibility with the \code{MSnbase} package. Wherever
 possible, the \code{[} function should be used instead for any sample-based
-subsetting.
+subsetting. Parameters \code{keepChromPeaks}, \code{keepAdjustedRtime} and
+\code{keepChromPeaks} can be passed using \code{...}.
 Note also that in contrast to \code{[}, \code{filterFile} does not support subsetting
 in arbitrary order.
 \item \code{filterRt}: filter an \code{XcmsExperiment} keeping only data within the
@@ -173,7 +184,8 @@ chromatographic peak was \emph{detected} (by \code{findChromPeaks}) or \emph{fil
 (by \code{fillChromPeaks}).
 \item \code{dropChromPeaks}: removes (all) chromatographic peak detection results
 from \code{object}. This will also remove any correspondence results (i.e.
-features) and eventually present adjusted retention times from the object.
+features) and eventually present adjusted retention times from the object
+if the alignment was performed \strong{after} the peak detection.
 Alignment results (adjusted retention times) can be retained if parameter
 \code{keepAdjustedRtime} is set to \code{TRUE}.
 \item \code{findChromPeaks}: perform chromatographic peak detection. See
@@ -189,6 +201,14 @@ available for the specified MS level(s).
 \itemize{
 \item \code{adjustRtime}: performs retention time adjustment (alignment) of the data.
 See \code{\link[=adjustRtime]{adjustRtime()}} for details.
+\item \code{applyAdjustedRtime}: replaces the original (raw) retention times with the
+adjusted ones. See \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} for more information.
+\item \code{dropAdjustedRtime}: drops alignment results (adjusted retention time) from
+the result object. This also reverts the retention times of identified
+chromatographic peaks if present in the result object. Note that any
+results from a correspondence analysis (i.e. feature definitions) will be
+dropped too (if the correspondence analysis was performed \strong{after} the
+alignment). This can be overruled with \code{keepAdjustedRtime = TRUE}.
 \item \code{hasAdjustedRtime}: whether alignment was performed on the object (i.e.,
 the object contains alignment results).
 }
@@ -209,7 +229,11 @@ way to get spectra from a specific sample.
 \item \code{rtime}: extract retention times of the \strong{spectra} from the
 \code{MsExperiment} or \code{XcmsExperiment} object. It is thus a shortcut for
 \code{rtime(spectra(object))} which would be the preferred way to extract
-retention times from an \code{MsExperiment}..
+retention times from an \code{MsExperiment}. The \code{rtime} method for
+\code{XcmsExperiment} has an additional parameter \code{adjusted} which allows to
+define whether adjusted retention times (if present - \code{adjusted = TRUE})
+or \emph{raw} retention times (\code{adjusted = FALSE}) should be returned. By
+default adjusted retention times are returned if available.
 }
 }
 

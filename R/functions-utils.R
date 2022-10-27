@@ -779,3 +779,7 @@ groupOverlaps <- function(xmin, xmax) {
         stop("'", name, "' out of bounds")
     x
 }
+
+.match_last <- function(x, table, nomatch = NA_integer_) {
+    length(table) - match(x, rev(table), nomatch = nomatch) + 1
+}
