@@ -34,6 +34,15 @@
     else NULL
 }
 
+.mse_valid_feature_def <- function(x) {
+    msg <- NULL
+    if (!is.data.frame(x))
+        msg <- "featureDefinitions has to be a data.frame"
+    if (!all(.REQ_PEAKG_COLS %in% colnames(x)))
+        msg <- "featureDefinitions lacks one or more required columns"
+    msg
+}
+
 .mse_same_rownames <- function(a, b) {
     if (!all(rownames(a) == rownames(b)))
         "Row names of 'chromPeaks' and 'chromPeakData' don't match"
@@ -96,4 +105,30 @@
         }
     }
     getMethod("[", "MsExperiment")(x, i = i)
+}
+
+#' @param x `chromPeaks` `matrix`.
+#'
+#' @param param The parameter object with the settings for the peak grouping.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.xmse_group_cpeaks <- function(cp, param, index = seq_len(nrow(cp))) {
+    pclass <- class(param)[1L]
+    if (!nrow(cp))
+        return(.empty_feature_definitions())
+    switch(
+        pclass,
+        PeakDensityParam = {
+            do_groupChromPeaks_density(
+                cp, sampleGroups = sampleGroups(param), bw = bw(param),
+                minFraction = minFraction(param),
+                minSamples = minSamples(param), binSize = binSize(param),
+                maxFeatures = maxFeatures(param), index = index)
+        },
+        MzCLustParam = stop("not yet implemented"),
+        NearestPeaksParam = stop("not yet implemented"),
+        stop("No correspondence analysis method for '", pclass,
+             "' available", call. = FALSE))
 }

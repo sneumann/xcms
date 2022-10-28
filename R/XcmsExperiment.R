@@ -105,6 +105,30 @@
 #' - `hasAdjustedRtime`: whether alignment was performed on the object (i.e.,
 #'   the object contains alignment results).
 #'
+#' @section Functionality related to correspondence analysis:
+#'
+#' - `dropFeatureDefinitions`: removes any correspondence analysis results from
+#'   `object` as well as any filled-in chromatographic peaks. By default
+#'   (with parameter `keepAdjustedRtime = FALSE`) also all alignment results
+#'   will be removed if alignment was performed **after** the correspondence
+#'   analysis. This can be overruled with `keepAdjustedRtime = TRUE`.
+#'
+#' - `featureDefinitions`: returns a `data.frame` with feature definitions or
+#'   an empty `data.frame` if no correspondence analysis results are present.
+#'   Parameters `msLevel`, `mz`, `ppm` and `rt` allow to define subsets of
+#'   feature definitions that should be returned with the parameter `type`
+#'   defining how these parameters should be used to subset the returned
+#'   `data.frame`. See parameter descriptions for details.
+#'
+#' - `groupChromPeaks`: performs the correspondence analysis (i.e., grouping
+#'   of chromatographic peaks into LC-MS *features*). See [groupChromPeaks()]
+#'   for details.
+#'
+#' - `hasFeatures`: whether correspondence analysis results are presentin in
+#'   `object`. The optional parameter `msLevel` allows to define the  MS
+#'   level(s) for which it should be determined if feature definitions are
+#'   available.
+#'
 #' @section Functionality for backward compatibility:
 #'
 #' These functions for `MsExperiment` and `XcmsExperiment` ensure compatibility
@@ -159,28 +183,30 @@
 #' @param msLevel. For `filterRt`: ignored. `filterRt` will always filter
 #'     by retention times on all MS levels regardless of this parameter.
 #'
-#' @param mz For `chromPeaks`: `numeric(2)` optionally defining the m/z range
-#'     for which chromatographic peaks should be returned. The full m/z range
-#'     is used by default.
+#' @param mz For `chromPeaks` and `featureDefinitions`: `numeric(2)` optionally
+#'     defining the m/z range for which chromatographic peaks or feature
+#'     definitions should be returned. The full m/z range is used by default.
 #'
-#' @param ppm For `chromPeaks`: optional `numeric(1)` specifying the ppm by
-#'     which the m/z range (defined by `mz` should be extended. For a value of
-#'     `ppm = 10`, all peaks within `mz[1] - ppm / 1e6` and
-#'     `mz[2] + ppm / 1e6` are returned.
+#' @param ppm For `chromPeaks` and `featureDefinitions`: optional `numeric(1)`
+#'     specifying the ppm by which the m/z range (defined by `mz` should be
+#'     extended. For a value of `ppm = 10`, all peaks within `mz[1] - ppm / 1e6`
+#'     and `mz[2] + ppm / 1e6` are returned.
 #'
 #' @param object An `XcmsExperiment` object.
 #'
-#' @param rt For `chromPeaks`: `numeric(2)` defining the retention time range
-#'     for which chromatographic peaks should be returned. The full range is
-#'     used by default.
+#' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
+#'     the retention time range for which chromatographic peaks or features
+#'     should be returned. The full range is used by default.
 #'
-#' @param type For `chromPeaks` and only if either `mz` and `rt` are defined
-#'     too: `character(1)`: defining which peaks should be returned. For
-#'     `type = "any"`: returns all chromatographic peaks also only partially
-#'     overlapping any of the provided ranges. For `type = "within"`: returns
-#'     only peaks completely within the region defined by `mz` and/or `rt`.
-#'     For `type = "apex_within"`: returns peaks for which the m/z and retention
-#'     time of the peak's apex is within the region defined by `mz` and/or `rt`.
+#' @param type For `chromPeaks` and `featureDefinitions` and only if either
+#'     `mz` and `rt` are defined too: `character(1)`: defining which peaks
+#'     (or features) should be returned. For `type = "any"`: returns all
+#'     chromatographic peaks or features also only partially overlapping any of
+#'     the provided ranges. For `type = "within"`: returns only peaks or
+#'     features completely within the region defined by `mz` and/or `rt`.
+#'     For `type = "apex_within"`: returns peaks or features for which the m/z
+#'     and retention time of the peak's apex is within the region defined by
+#'     `mz` and/or `rt`.
 #'
 #' @param x An `XcmsExperiment` object.
 #'
@@ -253,21 +279,32 @@ NULL
            dimnames = list(character(), cols))
 }
 
+.empty_feature_definitions <- function() {
+    res <- data.frame(mzmed = numeric(), mzmin = numeric(), mzmax = numeric(),
+                      rtmed = numeric(), rtmin = numeric(), rtmax = numeric(),
+                      peakidx = list(), ms_level = integer())
+    res$peakidx <- list()
+    res
+}
+
 setClass("XcmsExperiment",
          contains = "MsExperiment",
          slots = c(chromPeaks = "matrix",
                    chromPeakData = "data.frame",
+                   featureDefinitions = "data.frame",
                    processHistory = "list"),
-         prototype = prototype(chromPeaks = .empty_chrom_peaks(),
-                               chromPeakData = data.frame(
-                                   ms_level = integer(),
-                                   is_filled = logical()),
-                               processHistory = list()))
+         prototype = prototype(
+             chromPeaks = .empty_chrom_peaks(),
+             chromPeakData = data.frame(ms_level = integer(),
+                                        is_filled = logical()),
+             featureDefinitions = .empty_feature_definitions(),
+             processHistory = list()))
 
 setValidity("XcmsExperiment", function(object) {
     msg <- c(.mse_valid_chrom_peaks(object@chromPeaks),
              .mse_valid_chrom_peak_data(object@chromPeakData),
-             .mse_same_rownames(object@chromPeaks, object@chromPeakData))
+             .mse_same_rownames(object@chromPeaks, object@chromPeakData),
+             .mse_valid_feature_def(object@featureDefinitions))
     if (is.null(msg)) TRUE
     else msg
 })
@@ -405,9 +442,9 @@ setMethod(
                 if (idx_al > idx_cp)
                     object <- dropAdjustedRtime(object)
             }
-            ## if (hasFeatureDefinitions(object)) {
-            ##     object <- dropFeatureDefinitions(object)
-            ## }
+            if (hasFeatures(object))
+                object <- dropFeatureDefinitions(
+                    object, keepAdjustedRtime = keepAdjustedRtime)
         }
         object
     })
@@ -503,6 +540,7 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
     ptype <- vapply(object@processHistory, processType, character(1))
     nom <- length(ptype) + 1L
     idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, ptype, nomatch = nom)
+    idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
     if (hasChromPeaks(object)) {
         fidx <- as.factor(fromFile(object))
         object@chromPeaks <- .applyRtAdjToChromPeaks(
@@ -510,14 +548,13 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
             rtraw = split(rtime(object, adjusted = TRUE), fidx),
             rtadj = split(rtime(object, adjusted = FALSE), fidx))
     }
-    ## if (hasFeatures(object)) {
-    ## ## Only drop features if correspondence was performed AFTER alignment.
-    ## }
     svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
     object@spectra <- selectSpectraVariables(
         object@spectra, svs[svs != "rtime_adjusted"])
     object@processHistory <- dropProcessHistoriesList(
         object@processHistory, type = .PROCSTEP.RTIME.CORRECTION, num = 1L)
+    if (hasFeatures(object) && idx_co > idx_al)
+        object <- dropFeatureDefinitions(object)
     object
 })
 
@@ -533,6 +570,99 @@ setMethod(
         if (adjusted && hasAdjustedRtime(object))
             spectra(object)$rtime_adjusted
         else rtime(spectra(object))
+    })
+
+################################################################################
+## correspondence
+################################################################################
+
+setMethod(
+    "groupChromPeaks",
+    signature(object = "XcmsExperiment", param = "Param"),
+    function(object, param, msLevel = 1L, add = FALSE) {
+        msLevel <- unique(msLevel)
+        if (length(msLevel) != 1)
+            stop("Can only perform the correspondence analysis on one MS",
+                 " level at a time. Please repeat for other MS levels ",
+                 "with parameter `add = TRUE`.")
+        if (!hasChromPeaks(object, msLevel))
+            stop("No chromatographic peak for MS level ", msLevel,
+                 " present. Please perform first a peak detection ",
+                 "using the 'findChromPeaks' method.", call. = FALSE)
+        if (hasFeatures(object) && !add)
+            object <- dropFeatureDefinitions(object)
+        cps <- chromPeaks(object, msLevel = msLevel)
+        res <- .xmse_group_cpeaks(
+            cps, param = param,
+            index = match(rownames(cps), rownames(chromPeaks(object))))
+        if (!nrow(res))
+            return(object)
+        res$ms_level <- as.integer(msLevel)
+        if (add && hasFeatures(object)) {
+            sf <- max(
+                as.integer(sub("FT", "", rownames(object@featureDefinitions))))
+            rownames(res) <- .featureIDs(nrow(res), from = (sf + 1L))
+            object@featureDefinitions <- rbindFill(
+                object@featureDefinitions, res)
+        } else {
+            rownames(res) <- .featureIDs(nrow(res))
+            object@featureDefinitions <- res
+        }
+        xph <- XProcessHistory(param = param, type. = .PROCSTEP.PEAK.GROUPING,
+                               fileIndex = seq_along(object), msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(xph))
+        validObject(object)
+        object
+    })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "hasFeatures", "XcmsExperiment",
+    function(object, msLevel = integer()) {
+        if (length(msLevel))
+            any(object@featureDefinitions$ms_level %in% msLevel)
+        else as.logical(nrow(object@featureDefinitions))
+    })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "featureDefinitions", "XcmsExperiment",
+    function(object, mz = numeric(), rt = numeric(), ppm = 0,
+             type = c("any", "within", "apex_within"), msLevel = integer()) {
+        if (length(msLevel)) {
+            fdef <- object@featureDefinitions[
+                               object@featureDefinitions$ms_level %in% msLevel,
+                             , drop = FALSE]
+        } else fdef <- object@featureDefinitions
+        type <- match.arg(type)
+        .subset_feature_definitions(fdef, mz = mz, rt = rt,
+                                    ppm = ppm, type = type)
+    })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "dropFeatureDefinitions", "XcmsExperiment",
+    function(object, keepAdjustedRtime = FALSE) {
+        if (!hasFeatures(object))
+            return(object)
+        ptype <- vapply(object@processHistory, processType, character(1))
+        nom <- length(ptype) + 1L
+        idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, ptype, nomatch = nom)
+        idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
+        object@processHistory <- dropProcessHistoriesList(
+            object@processHistory, type = .PROCSTEP.PEAK.GROUPING, num = 1L)
+        object@featureDefinitions <- xcms:::.empty_feature_definitions()
+        if (.hasFilledPeaks(object)) {
+            object@chromPeaks <- object@chromPeaks[
+                                            !object@chromPeakData$is_filled, ,
+                                            drop = FALSE]
+            object@processHistory <- dropProcessHistoriesList(
+                object@processHistory, type = .PROCSTEP.PEAK.FILLING)
+        }
+        if (!keepAdjustedRtime && hasAdjustedRtime(object) && idx_al > idx_co) {
+            object <- dropAdjustedRtime(object)
+        }
+        object
     })
 
 ################################################################################

@@ -3434,3 +3434,33 @@ manualFeatures <- function(object, peakIdx = list(), msLevel = 1L) {
     object@msFeatureData <- newFd
     object
 }
+
+.subset_feature_definitions <- function(x, mz, rt, ppm, type) {
+    if (length(rt) && nrow(x)) {
+        rt <- range(rt)
+        keep <- switch(type,
+                       any = which(x$rtmin <= rt[2L] &
+                                   x$rtmax >= rt[1L]),
+                       within = which(x$rtmin >= rt[1L] &
+                                      x$rtmax <= rt[2L]),
+                       apex_within = which(x$rtmed >= rt[1L] &
+                                           x$rtmed <= rt[2L]))
+        x <- x[keep, , drop = FALSE]
+    }
+    if (length(mz) && nrow(x)) {
+        mz <- range(mz)
+        if (is.finite(mz[1L]))
+            mz[1L] <- mz[1L] - mz[1L] * ppm / 1e6
+        if (is.finite(mz[2L]))
+            mz[2L] <- mz[2L] + mz[2L] * ppm / 1e6
+        keep <- switch(type,
+                       any = which(x$mzmin <= mz[2L] &
+                                   x$mzmax >= mz[1L]),
+                       within = which(x$mzmin >= mz[1L] &
+                                      x$mzmax <= mz[2L]),
+                       apex_within = which(x$mzmed >= mz[1L] &
+                                           x$mzmed <= mz[2L]))
+        x <- x[keep, , drop = FALSE]
+    }
+    x
+}

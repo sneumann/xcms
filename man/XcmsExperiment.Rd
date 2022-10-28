@@ -18,6 +18,9 @@
 \alias{dropAdjustedRtime,XcmsExperiment-method}
 \alias{hasAdjustedRtime,MsExperiment-method}
 \alias{rtime,XcmsExperiment-method}
+\alias{hasFeatures,XcmsExperiment-method}
+\alias{featureDefinitions,XcmsExperiment-method}
+\alias{dropFeatureDefinitions,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
@@ -55,13 +58,26 @@
 \S4method{hasAdjustedRtime}{MsExperiment}(object)
 
 \S4method{rtime}{XcmsExperiment}(object, adjusted = hasAdjustedRtime(object))
+
+\S4method{hasFeatures}{XcmsExperiment}(object, msLevel = integer())
+
+\S4method{featureDefinitions}{XcmsExperiment}(
+  object,
+  mz = numeric(),
+  rt = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within"),
+  msLevel = integer()
+)
+
+\S4method{dropFeatureDefinitions}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
 
-\item{rt}{For \code{chromPeaks}: \code{numeric(2)} defining the retention time range
-for which chromatographic peaks should be returned. The full range is
-used by default.}
+\item{rt}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining
+the retention time range for which chromatographic peaks or features
+should be returned. The full range is used by default.}
 
 \item{...}{Additional optional parameters.}
 
@@ -86,22 +102,24 @@ function supports it).}
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
 
-\item{mz}{For \code{chromPeaks}: \code{numeric(2)} optionally defining the m/z range
-for which chromatographic peaks should be returned. The full m/z range
-is used by default.}
+\item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
+defining the m/z range for which chromatographic peaks or feature
+definitions should be returned. The full m/z range is used by default.}
 
-\item{ppm}{For \code{chromPeaks}: optional \code{numeric(1)} specifying the ppm by
-which the m/z range (defined by \code{mz} should be extended. For a value of
-\code{ppm = 10}, all peaks within \code{mz[1] - ppm / 1e6} and
-\code{mz[2] + ppm / 1e6} are returned.}
+\item{ppm}{For \code{chromPeaks} and \code{featureDefinitions}: optional \code{numeric(1)}
+specifying the ppm by which the m/z range (defined by \code{mz} should be
+extended. For a value of \code{ppm = 10}, all peaks within \code{mz[1] - ppm / 1e6}
+and \code{mz[2] + ppm / 1e6} are returned.}
 
-\item{type}{For \code{chromPeaks} and only if either \code{mz} and \code{rt} are defined
-too: \code{character(1)}: defining which peaks should be returned. For
-\code{type = "any"}: returns all chromatographic peaks also only partially
-overlapping any of the provided ranges. For \code{type = "within"}: returns
-only peaks completely within the region defined by \code{mz} and/or \code{rt}.
-For \code{type = "apex_within"}: returns peaks for which the m/z and retention
-time of the peak's apex is within the region defined by \code{mz} and/or \code{rt}.}
+\item{type}{For \code{chromPeaks} and \code{featureDefinitions} and only if either
+\code{mz} and \code{rt} are defined too: \code{character(1)}: defining which peaks
+(or features) should be returned. For \code{type = "any"}: returns all
+chromatographic peaks or features also only partially overlapping any of
+the provided ranges. For \code{type = "within"}: returns only peaks or
+features completely within the region defined by \code{mz} and/or \code{rt}.
+For \code{type = "apex_within"}: returns peaks or features for which the m/z
+and retention time of the peak's apex is within the region defined by
+\code{mz} and/or \code{rt}.}
 
 \item{isFilledColumn}{For \code{chromPeaks}: \code{logical(1)} whether a column
 \code{"is_filled"} should be included in the returned \code{matrix} with the
@@ -211,6 +229,30 @@ dropped too (if the correspondence analysis was performed \strong{after} the
 alignment). This can be overruled with \code{keepAdjustedRtime = TRUE}.
 \item \code{hasAdjustedRtime}: whether alignment was performed on the object (i.e.,
 the object contains alignment results).
+}
+}
+
+\section{Functionality related to correspondence analysis}{
+
+\itemize{
+\item \code{dropFeatureDefinitions}: removes any correspondence analysis results from
+\code{object} as well as any filled-in chromatographic peaks. By default
+(with parameter \code{keepAdjustedRtime = FALSE}) also all alignment results
+will be removed if alignment was performed \strong{after} the correspondence
+analysis. This can be overruled with \code{keepAdjustedRtime = TRUE}.
+\item \code{featureDefinitions}: returns a \code{data.frame} with feature definitions or
+an empty \code{data.frame} if no correspondence analysis results are present.
+Parameters \code{msLevel}, \code{mz}, \code{ppm} and \code{rt} allow to define subsets of
+feature definitions that should be returned with the parameter \code{type}
+defining how these parameters should be used to subset the returned
+\code{data.frame}. See parameter descriptions for details.
+\item \code{groupChromPeaks}: performs the correspondence analysis (i.e., grouping
+of chromatographic peaks into LC-MS \emph{features}). See \code{\link[=groupChromPeaks]{groupChromPeaks()}}
+for details.
+\item \code{hasFeatures}: whether correspondence analysis results are presentin in
+\code{object}. The optional parameter \code{msLevel} allows to define the  MS
+level(s) for which it should be determined if feature definitions are
+available.
 }
 }
 

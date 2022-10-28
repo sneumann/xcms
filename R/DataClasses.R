@@ -1298,51 +1298,6 @@ setClass("CentWavePredIsoParam",
              else TRUE
          })
 
-
-## General groupChromPeaks method.
-#' @title Correspondence: Chromatographic peak grouping methods.
-#'
-#' @description The \code{groupChromPeaks} method(s) perform the correspondence,
-#'     i.e. the grouping of chromatographic peaks within and between samples.
-#'     These methods are part of the modernized \code{xcms} user interface.
-#'     The resulting peak groups are referred to as (mz-rt) features and can be
-#'     accessed \emph{via} the \code{\link{featureDefinitions}} method on the
-#'     result object.
-#'
-#'     The implemented peak grouping methods are:
-#'     \describe{
-#'
-#'     \item{density}{peak grouping based on time dimension peak densities.
-#'     See \code{\link{groupChromPeaks-density}} for more details.}
-#'
-#'     \item{mzClust}{high resolution peak grouping for single spectra (direct
-#'     infusion) MS data. See \code{\link{groupChromPeaks-mzClust}} for more
-#'     details.}
-#'
-#'     \item{nearest}{chromatographic peak grouping based on their proximity in
-#'     the mz-rt space. See \code{\link{groupChromPeaks-nearest}} for more
-#'     details.}
-#'
-#' }
-#' @name groupChromPeaks
-#'
-#' @family peak grouping methods
-#'
-#' @seealso
-#'
-#' \code{\link{featureDefinitions}} and
-#' \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
-#' grouping results.
-#'
-#' \code{\link{featureChromatograms}} to extract ion chromatograms for each
-#' feature.
-#'
-#' \code{\link{group}} for the \emph{old} peak grouping methods.
-#'
-#' @author Johannes Rainer
-NULL
-#> NULL
-
 #' @title Peak grouping based on time dimension peak densities
 #'
 #' @description

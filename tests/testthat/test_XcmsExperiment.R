@@ -263,3 +263,90 @@ test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
         mse2, with = "sampleData.dataOrigin = spectra.dataOrigin")
     expect_error(adjustRtime(mse2, param = op), "to a sample")
 })
+
+test_that(".empty_feature_definitions works", {
+    res <- .empty_feature_definitions()
+    expect_true(is.data.frame(res))
+    expect_true(nrow(res) == 0)
+    expect_equal(colnames(res), .REQ_PEAKG_COLS)
+})
+
+test_that(".xmse_group_cpeaks works", {
+    expect_error(.xmse_group_cpeaks(chromPeaks(xmse), p), "No correspondence")
+    ## Just for PeakDensityParam.
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    cp <- chromPeaks(xmse, msLevel = 1L)
+    res <- xcms:::.xmse_group_cpeaks(cp, pdp)
+    expect_true(is.data.frame(res))
+    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+    expect_equal(res$mzmed, featureDefinitions(xod_xg)$mzmed)
+    expect_equal(res$mzmin, featureDefinitions(xod_xg)$mzmin)
+    expect_equal(res$mzmax, featureDefinitions(xod_xg)$mzmax)
+    expect_equal(res$peakidx, featureDefinitions(xod_xg)$peakidx)
+
+    res2 <- xcms:::.xmse_group_cpeaks(cp, pdp, index = seq_len(nrow(cp)) + 13)
+    idx <- lapply(res$peakidx, function(z) z + 13)
+    expect_equal(idx, res2$peakidx)
+
+    res <- xcms:::.xmse_group_cpeaks(chromPeaks(xmse, msLevel = 2L), pdp)
+    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+})
+
+test_that("groupChromPeaks,XcmsExperiment and related things work", {
+    ## PeakDensityParam
+    expect_false(hasFeatures(xmse))
+    expect_false(hasFeatures(xmse, msLevel = 2L))
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    res <- groupChromPeaks(xmse, param = pdp, add = FALSE)
+    expect_true(hasFeatures(res))
+    expect_false(hasFeatures(res, msLevel = 2L))
+    expect_equal(DataFrame(res@featureDefinitions), featureDefinitions(xod_xg))
+    ## add FALSE
+    res2 <- groupChromPeaks(res, param = pdp, add = FALSE)
+    ## add TRUE
+    res2 <- groupChromPeaks(res, param = pdp, add = TRUE)
+    expect_true(length(res2@processHistory) > length(res@processHistory))
+    expect_equal(res2@featureDefinitions[1:nrow(res@featureDefinitions), ],
+                 res@featureDefinitions)
+    a <- res2@featureDefinitions[1:nrow(res@featureDefinitions), ]
+    b <- res2@featureDefinitions[(nrow(a) + 1):nrow(res2@featureDefinitions), ]
+    expect_true(all(rownames(a) != rownames(b)))
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+
+    expect_error(groupChromPeaks(xmse, param = pdp, msLevel = 2L), "MS level 2")
+
+    ## featureDefinitions
+    expect_equal(featureDefinitions(xod_xg), DataFrame(featureDefinitions(res)))
+    expect_equal(featureDefinitions(xod_xg, msLevel = 2L),
+                 DataFrame(featureDefinitions(res, msLevel = 2L)))
+
+    ## dropFeatureDefinitions
+    res2 <- dropFeatureDefinitions(res)
+    expect_false(hasFeatures(res2))
+    expect_true(hasChromPeaks(res2))
+    expect_true(length(res2@processHistory) == 1L)
+    ## alignment before correspondence: keep adjusted rtime
+    xmse2 <- adjustRtime(xmse, param = ObiwarpParam())
+    res2 <- groupChromPeaks(xmse2, param = pdp)
+    res3 <- dropFeatureDefinitions(res2)
+    expect_false(hasFeatures(res3))
+    expect_true(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 2L)
+
+    ## alignment after correspondence: drop adjusted rtime
+    res2 <- adjustRtime(res, param = ObiwarpParam())
+    expect_true(hasAdjustedRtime(res2))
+    expect_true(hasFeatures(res2))
+    res3 <- dropFeatureDefinitions(res2)
+    expect_false(hasFeatures(res3))
+    expect_false(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 1L)
+    expect_equal(chromPeaks(res3), chromPeaks(xmse))
+    res3 <- dropFeatureDefinitions(res2, keepAdjustedRtime = TRUE)
+    expect_false(hasFeatures(res3))
+    expect_true(hasAdjustedRtime(res3))
+    expect_true(length(res3@processHistory) == 2L)
+    expect_equal(chromPeaks(res3), chromPeaks(res2))
+})

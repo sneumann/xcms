@@ -25,6 +25,9 @@
 #' `"sample"`. The latter should contain `numeric` values representing
 #' the index of the sample in which the peak was found.
 #'
+#' @param index An optional `integer` providing the indices of the peaks in the
+#'     original peak matrix.
+#'
 #' @inheritParams groupChromPeaks-density
 #'
 #' @param sleep `numeric(1)` defining the time to *sleep* between
@@ -79,9 +82,10 @@
 #' ## The feature definitions:
 #' head(res)
 do_groupChromPeaks_density <- function(peaks, sampleGroups,
-                                       bw = 30, minFraction = 0.5, minSamples = 1,
-                                       binSize = 0.25, maxFeatures = 50,
-                                       sleep = 0) {
+                                       bw = 30, minFraction = 0.5,
+                                       minSamples = 1, binSize = 0.25,
+                                       maxFeatures = 50, sleep = 0,
+                                       index = seq_len(nrow(peaks))) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
@@ -110,11 +114,11 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
              " groups specified with 'sampleGroups'!")
 
     peaks <- cbind(peaks[, .reqCols, drop = FALSE],
-                   index = seq_len(nrow(peaks)))
+                   index = index)
 
     ## Order peaks matrix by mz
-    peaks <- peaks[order(peaks[, "mz"]), , drop = FALSE]
     rownames(peaks) <- NULL
+    peaks <- peaks[order(peaks[, "mz"]), , drop = FALSE]
     rtRange <- range(peaks[, "rt"])
 
     ## Define the mass slices and the index in the peaks matrix with an mz
@@ -128,10 +132,15 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     ## Increase the number of sampling points for the density distribution.
     densN <- max(512, 2 * 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
     endIdx <- 0
-    message("Processing ", length(mass) - 1, " mz slices ... ",
-            appendLF = FALSE)
-    resL <- vector("list", (length(mass) - 2))
-    for (i in seq_len(length(mass)-2)) {
+    niter <- length(mass) - 2L
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = niter,
+                           clear = FALSE)
+    pb$tick(0)
+    resL <- vector("list", niter)
+    for (i in seq_len(niter)) {
         ## That's identifying overlapping mz slices.
         startIdx <- masspos[i]
         endIdx <- masspos[i + 2] - 1
@@ -146,10 +155,9 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                           minSamples = minSamples,
                                           maxFeatures = maxFeatures,
                                           sleep = sleep)
+        pb$tick()
     }
-    message("OK")
     res <- do.call(rbind, resL)
-
     if (nrow(res)) {
         ## Remove groups that overlap with more "well-behaved" groups
         numsamp <- rowSums(

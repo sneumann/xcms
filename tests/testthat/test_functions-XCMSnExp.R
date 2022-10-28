@@ -801,3 +801,34 @@ test_that("manualFeatures works", {
     expect_equal(featureDefinitions(res)[nfd + 2, "rtmin"],
                  featureDefinitions(xod_xg)[5, "rtmin"])
 })
+
+test_that(".subset_feature_definitions works", {
+    a <- as.data.frame(featureDefinitions(xod_xg))
+
+    res <- .subset_feature_definitions(a, rt = numeric(), mz = numeric(),
+                                       ppm = 0, type = "any")
+    expect_equal(res, a)
+    res <- .subset_feature_definitions(a, rt = c(3500, 3900), mz = numeric(),
+                                       type = "within")
+    expect_true(all(res$rtmin > 3500))
+    expect_true(all(res$rtmax < 3900))
+    res <- .subset_feature_definitions(a, rt = c(3500, 3900), mz = numeric(),
+                                       type = "apex_within")
+    expect_true(all(res$rtmed > 3500))
+    expect_true(all(res$rtmed < 3900))
+    res <- .subset_feature_definitions(a, rt = c(3500, 3900), mz = numeric(),
+                                       type = "any")
+    expect_true(all(res$rtmin < 3900 & res$rtmax > 3500))
+    ## mz
+    res <- .subset_feature_definitions(a, mz = c(300, 320), rt = numeric(),
+                                       type = "within", ppm = 0)
+    expect_true(all(res$mzmin > 300))
+    expect_true(all(res$mzmax < 320))
+    res <- .subset_feature_definitions(a, mz = c(300, 320), rt = numeric(),
+                                       type = "apex_within", ppm = 0)
+    expect_true(all(res$mzmed > 300))
+    expect_true(all(res$mzmed < 320))
+    res <- .subset_feature_definitions(a, rt = c(300, 320), mz = numeric(),
+                                       type = "any", ppm = 0)
+    expect_true(all(res$mzmin < 320 & res$mzmax > 300))
+})

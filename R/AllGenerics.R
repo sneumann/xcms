@@ -412,8 +412,52 @@ setGeneric("group.density", function(object, ...) standardGeneric("group.density
 setGeneric("group.mzClust", function(object, ...) standardGeneric("group.mzClust"))
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
 setGeneric("group", function(object, ...) standardGeneric("group"))
+
+
+#' @aliases groupChromPeaks
+#'
+#' @title Correspondence: group chromatographic peaks across samples
+#'
+#' @description
+#'
+#' The `groupChromPeaks` method performs a correspondence analysis i.e., it
+#' groups chromatographic peaks across samples to define the LC-MS *features*.
+#' The correspondence algorithm can be selected, and configured, using the
+#' `param` argument.
+#'
+#' Supported `param` objects are:
+#'
+#' - [PeakDensityParam()]: correspondence using the *peak density* method.
+#'
+#' For specific examples and description of the method and settings see the
+#' help pages of the individual parameter classes listed above.
+#'
+#' @param add `logical(1)` (if `object` contains already chromatographic peaks,
+#'     i.e. is either an `XCMSnExp` or `XcmsExperiment`) whether chromatographic
+#'     peak detection results should be **added** to existing results. By
+#'     default (`add = FALSE`) any additional `findChromPeaks` call on a result
+#'     object will remove previous results.
+#'
+#' @param msLevel `integer(1)` defining the MS level on which the
+#'     chromatographic peak detection should be performed.
+#'
+#' @param object The data object on which the correspondence analysis should be
+#'     performed. Can be an [XCMSnExp()], [XcmsExperiment()] object.
+#'
+#' @param param The parameter object selecting and configuring the algorithm.
+#'
+#' @param ... Optional parameters.
+#'
+#' @name groupChromPeaks
+#'
+#' @family peak grouping methods
+#'
+#' @author Johannes Rainer
+#'
+#' @md
 setGeneric("groupChromPeaks", function(object, param, ...)
            standardGeneric("groupChromPeaks"))
+
 setGeneric("groupidx", function(object) standardGeneric("groupidx"))
 setGeneric("groupidx<-", function(object, value) standardGeneric("groupidx<-"))
 setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))

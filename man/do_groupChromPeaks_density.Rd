@@ -13,7 +13,8 @@ do_groupChromPeaks_density(
   minSamples = 1,
   binSize = 0.25,
   maxFeatures = 50,
-  sleep = 0
+  sleep = 0,
+  index = seq_len(nrow(peaks))
 )
 }
 \arguments{
@@ -50,6 +51,9 @@ to be identified in a single mz slice.}
 
 \item{sleep}{\code{numeric(1)} defining the time to \emph{sleep} between
 iterations and plot the result from the current iteration.}
+
+\item{index}{An optional \code{integer} providing the indices of the peaks in the
+original peak matrix.}
 }
 \value{
 A \code{data.frame}, each row representing a (mz-rt) feature (i.e. a peak group)
