@@ -56,8 +56,9 @@ NearestPeaksParam(
 \S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param, msLevel = 1L, add = FALSE)
 }
 \arguments{
-\item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample
+\item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
+samples defining the sample group assignments (i.e. which samples
+belong to which sample
 group). This parameter is mandatory for the \code{PeakDensityParam}
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
@@ -83,8 +84,7 @@ analysis (see \code{\link[=findChromPeaks]{findChromPeaks()}}).
 
 \item{value}{The value for the slot.}
 
-\item{param}{A \code{PeakDensityParam} object containing all settings for
-the peak grouping algorithm.}
+\item{param}{The parameter object selecting and configuring the algorithm.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level
 1 is supported.}
@@ -203,7 +203,6 @@ peak grouping results (i.e. the features).
 the peak grouping.
 
 Other peak grouping methods: 
-\code{\link{groupChromPeaks-density}},
 \code{\link{groupChromPeaks-mzClust}},
 \code{\link{groupChromPeaks}()}
 }

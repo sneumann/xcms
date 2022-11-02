@@ -553,6 +553,7 @@ importMethodsFrom("Spectra", "selectSpectraVariables")
 importMethodsFrom("Spectra", "setBackend")
 importMethodsFrom("Spectra", "dataOrigin")
 importMethodsFrom("Spectra", "spectraVariables")
+importMethodsFrom("Spectra", "rtime<-")
 importFrom("Spectra", "MsBackendMemory")
 
 ## MsExperiment things

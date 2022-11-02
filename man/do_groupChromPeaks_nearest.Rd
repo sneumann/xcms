@@ -21,8 +21,9 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 
-\item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample
+\item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
+samples defining the sample group assignments (i.e. which samples
+belong to which sample
 group). This parameter is mandatory for the \code{PeakDensityParam}
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the

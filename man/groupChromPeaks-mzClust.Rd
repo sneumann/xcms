@@ -52,8 +52,9 @@ MzClustParam(
 \S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param, msLevel = 1L)
 }
 \arguments{
-\item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample
+\item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
+samples defining the sample group assignments (i.e. which samples
+belong to which sample
 group). This parameter is mandatory for the \code{PeakDensityParam}
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
@@ -65,13 +66,13 @@ clustering/grouping (in parts per million).}
 \item{absMz}{\code{numeric(1)} representing the absolute mz error for the
 clustering.}
 
-\item{minFraction}{\code{numeric(1)} defining the minimum fraction of samples
-in at least one sample group in which the peaks have to be present to be
-considered as a peak group (feature).}
+\item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
+fraction of samples in at least one sample group in which the peaks
+have to be present to be considered as a peak group (feature).}
 
-\item{minSamples}{\code{numeric(1)} with the minimum number of samples in at
-least one sample group in which the peaks have to be detected to be
-considered a peak group (feature).}
+\item{minSamples}{For \code{PeakDensityParam}: \code{numeric(1)} with the minimum
+number of samples in at least one sample group in which the peaks have
+to be detected to be considered a peak group (feature).}
 
 \item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object containing the
 results from a previous chromatographic peak detection analysis (see
@@ -183,7 +184,6 @@ grouping results (i.e. the features).
 the peak grouping.
 
 Other peak grouping methods: 
-\code{\link{groupChromPeaks-density}},
 \code{\link{groupChromPeaks-nearest}},
 \code{\link{groupChromPeaks}()}
 }

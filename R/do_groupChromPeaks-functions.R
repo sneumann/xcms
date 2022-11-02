@@ -28,7 +28,7 @@
 #' @param index An optional `integer` providing the indices of the peaks in the
 #'     original peak matrix.
 #'
-#' @inheritParams groupChromPeaks-density
+#' @inheritParams groupChromPeaks
 #'
 #' @param sleep `numeric(1)` defining the time to *sleep* between
 #'     iterations and plot the result from the current iteration.
@@ -136,14 +136,17 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
                                            "total (:percent) in ",
                                            ":elapsed"),
-                           total = niter,
+                           total = 100,
                            clear = FALSE)
+    pb_perc <- floor(seq(1, niter, length.out = 100))
     pb$tick(0)
     resL <- vector("list", niter)
     for (i in seq_len(niter)) {
         ## That's identifying overlapping mz slices.
         startIdx <- masspos[i]
         endIdx <- masspos[i + 2] - 1
+        if (any(i == pb_perc))
+            pb$tick()
         if (endIdx - startIdx < 0)
             next
         resL[[i]] <- .group_peaks_density(peaks[startIdx:endIdx, , drop = FALSE],
@@ -155,7 +158,6 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                           minSamples = minSamples,
                                           maxFeatures = maxFeatures,
                                           sleep = sleep)
-        pb$tick()
     }
     res <- do.call(rbind, resL)
     if (nrow(res)) {
@@ -181,7 +183,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
 #' The `do_groupPeaks_mzClust` function performs high resolution
 #' correspondence on single spectra samples.
 #'
-#' @inheritParams groupChromPeaks-density
+#' @inheritParams groupChromPeaks
 #'
 #' @inheritParams do_groupChromPeaks_density
 #'

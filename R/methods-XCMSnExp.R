@@ -1466,57 +1466,7 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
     .XCMSnExp2SummarizedExperiment(object, ...)
 })
 
-#' @title Peak grouping/correspondence based on time dimension peak densities
-#'
-#' @description
-#'
-#' `groupChromPeaks,XCMSnExp,PeakDensityParam`:
-#' performs correspondence (peak grouping within and across samples) within
-#' in mz dimension overlapping slices of MS data based on the density
-#' distribution of the identified chromatographic peaks in the slice along
-#' the time axis.
-#'
-#' The correspondence analysis can be performed on chromatographic peaks of
-#' any MS level (if present and if chromatographic peak detection has been
-#' performed for that MS level) defining features combining these peaks. The
-#' MS level can be selected with the parameter `msLevel`. By default, calling
-#' `groupChromPeaks` will remove any previous correspondence results. This can
-#' be disabled with `add = TRUE`, which will add newly defined features to
-#' already present feature definitions.
-#'
-#' @param object For `groupChromPeaks`: an [XCMSnExp] object
-#'     containing the results from a previous peak detection analysis (see
-#'     [findChromPeaks()]).
-#'
-#'     For all other methods: a `PeakDensityParam` object.
-#'
-#' @param param A `PeakDensityParam` object containing all settings for
-#'     the peak grouping algorithm.
-#'
-#' @param msLevel `integer(1)` (default `msLevel = 1L`) defining the MS level
-#'     on which the correspondence should be performed. It is required that
-#'     chromatographic peaks of the respective MS level are present.
-#'
-#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
-#'     additional round of correspondence (e.g. on a different MS level) and
-#'     add features to the already present feature definitions.
-#'
-#' @return
-#'
-#' For `groupChromPeaks`: a [XCMSnExp] object with the
-#' results of the correspondence analysis. The definition of the resulting
-#' mz-rt features can be accessed with the [featureDefinitions()] method
-#'
-#' @seealso
-#'
-#' [XCMSnExp] for the object containing the results of the correspondence.
-#'
-#' [plotChromPeakDensity()] for plotting chromatographic peak density with the
-#' possibility to test different parameter settings.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "PeakDensityParam"),
           function(object, param, msLevel = 1L, add = FALSE) {
@@ -3515,7 +3465,7 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #' `param` object. Grey rectangles indicate which chromatographic peaks
 #' would be grouped into a feature by the `peak density` correspondence
 #' method. Parameters for the algorithm are also taken from `param`.
-#' See [groupChromPeaks-density()] for more information about the
+#' See [groupChromPeaks()] for more information about the
 #' algorithm and its supported settings.
 #'
 #' @param object A [XCMSnExp] object with identified
@@ -3568,7 +3518,7 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #'
 #' @author Johannes Rainer
 #'
-#' @seealso [groupChromPeaks-density()] for details on the
+#' @seealso [groupChromPeaks()] for details on the
 #'     *peak density* correspondence method and supported settings.
 #'
 #' @md

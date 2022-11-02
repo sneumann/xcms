@@ -921,23 +921,12 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
 
 #' @aliases sampleGroups
 #'
-#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
-#'     for the `sampleGroups` slot of the object. Its length should match
-#'     the number of samples in the experiment and it should not contain
-#'     `NA`s.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("sampleGroups", "PeakDensityParam", function(object){
     return(object@sampleGroups)})
 #' @aliases sampleGroups<-
 #'
-#' @param value The value for the slot.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
     if (length(value) == 0 | any(is.na(value)))
         stop("'sampleGroups' should not contain any NAs and its length has ",
@@ -949,17 +938,12 @@ setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
 
 #' @aliases bw
 #'
-#' @description `bw`,`bw<-`: getter and setter for the `bw` slot
-#'     of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("bw", "PeakDensityParam", function(object){
     return(object@bw)})
 #' @aliases bw<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
     object@bw <- value
     if (validObject(object))
@@ -968,17 +952,12 @@ setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
 
 #' @aliases minFraction
 #'
-#' @description `minFraction`,`minFraction<-`: getter and setter for
-#'     the `minFraction` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("minFraction", "PeakDensityParam", function(object){
     return(object@minFraction)})
 #' @aliases minFraction<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
@@ -987,32 +966,22 @@ setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
 
 #' @aliases minSamples
 #'
-#' @description `minSamples`,`minSamples<-`: getter and setter for the
-#'     `minSamples` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("minSamples", "PeakDensityParam", function(object){
     return(object@minSamples)})
 #' @aliases minSamples<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `binSize`,`binSize<-`: getter and setter for the
-#'     `binSize` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("binSize", "PeakDensityParam", function(object){
     return(object@binSize)})
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
@@ -1021,17 +990,12 @@ setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
 
 #' @aliases maxFeatures
 #'
-#' @description `maxFeatures`,`maxFeatures<-`: getter and setter for
-#'     the `maxFeatures` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("maxFeatures", "PeakDensityParam", function(object){
     return(object@maxFeatures)})
 #' @aliases maxFeatures<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
     object@maxFeatures <- value
     if (validObject(object))

@@ -127,7 +127,12 @@
                 minSamples = minSamples(param), binSize = binSize(param),
                 maxFeatures = maxFeatures(param), index = index)
         },
-        MzCLustParam = stop("not yet implemented"),
+        MzCLustParam = {
+            do_groupPeaks_mzClust(cp, sampleGroups = sampleGroups(param),
+                                  ppm = ppm(param), absMz = absMz(param),
+                                  minFraction = minFraction(param),
+                                  minSamples = minSamples(param))
+        },
         NearestPeaksParam = stop("not yet implemented"),
         stop("No correspondence analysis method for '", pclass,
              "' available", call. = FALSE))

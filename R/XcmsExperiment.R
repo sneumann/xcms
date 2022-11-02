@@ -313,14 +313,19 @@ setMethod("show", "XcmsExperiment", function(object) {
     callNextMethod()
     cat(" xcms results:\n")
     if (hasChromPeaks(object))
-        cat(" - chromatographic peaks:", nrow(object@chromPeaks),
+        cat("  - chromatographic peaks:", nrow(object@chromPeaks),
             "in MS level(s):",
             paste(unique(object@chromPeakData$ms_level), collapse = ", "), "\n")
     if (hasAdjustedRtime(object))
-        cat(" - adjusted retention times: mean absolute difference",
+        cat("  - adjusted retention times: mean absolute difference",
             format(mean(abs(rtime(spectra(object)) -
                            spectra(object)$rtime_adjusted)),
                   digits = 3), "seconds\n")
+    if (hasFeatures(object))
+        cat("  - correspondence results:", nrow(object@featureDefinitions),
+            "features in MS level(s):",
+            paste(unique(object@featureDefinitions$ms_level), collapse = ", "),
+            "\n")
 })
 
 ################################################################################
@@ -576,6 +581,7 @@ setMethod(
 ## correspondence
 ################################################################################
 
+#' @rdname groupChromPeaks
 setMethod(
     "groupChromPeaks",
     signature(object = "XcmsExperiment", param = "Param"),

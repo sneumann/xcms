@@ -423,11 +423,23 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' The `groupChromPeaks` method performs a correspondence analysis i.e., it
 #' groups chromatographic peaks across samples to define the LC-MS *features*.
 #' The correspondence algorithm can be selected, and configured, using the
-#' `param` argument.
+#' `param` argument. See documentation of [XcmsExperiment()] and [XCMSnExp()]
+#' for information on how to access and extract correspondence results.
 #'
 #' Supported `param` objects are:
 #'
-#' - [PeakDensityParam()]: correspondence using the *peak density* method.
+#' - [PeakDensityParam()]: correspondence using the *peak density* method
+#'   (Smith 2006) that groups chromatographic peaks along the retention time
+#'   axis within slices of (partially overlapping) m/z ranges. All peaks (from
+#'   the same or from different samples) with their apex position being close
+#'   on the retention time axis are grouped into a LC-MS feature. See in
+#'   addition [do_groupChromPeaks_density()] for the base correspondence
+#'   function.
+#'
+#' - [MzClustParam()]: performs high resolution peak grouping for
+#'   **single spectrum** metabolomics data. This method should **only** be used
+#'   for such data as the retention time is not considered in the correspondence
+#'   analysis.
 #'
 #' For specific examples and description of the method and settings see the
 #' help pages of the individual parameter classes listed above.
@@ -438,6 +450,24 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     default (`add = FALSE`) any additional `findChromPeaks` call on a result
 #'     object will remove previous results.
 #'
+#' @param binSize For `PeakDensityParam`: `numeric(1)` defining the size of the
+#'     overlapping slices in m/z dimension.
+#'
+#' @param bw For `PeakDensityParam`: `numeric(1)` defining the bandwidth
+#'     (standard deviation ot the smoothing kernel) to be used. This argument
+#'     is passed to the [density() method.
+#'
+#' @param maxFeatures For `PeakDensityParam`: `numeric(1)` with the maximum
+#'     number of peak groups to be identified in a single mz slice.
+#'
+#' @param minFraction For `PeakDensityParam`: `numeric(1)` defining the minimum
+#'     fraction of samples in at least one sample group in which the peaks
+#'     have to be present to be considered as a peak group (feature).
+#'
+#' @param minSamples For `PeakDensityParam`: `numeric(1)` with the minimum
+#'     number of samples in at least one sample group in which the peaks have
+#'     to be detected to be considered a peak group (feature).
+#'
 #' @param msLevel `integer(1)` defining the MS level on which the
 #'     chromatographic peak detection should be performed.
 #'
@@ -446,13 +476,33 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'
+#' @param sampleGroups For `PeakDensityParam`: A vector of the same length than
+#'     samples defining the sample group assignments (i.e. which samples
+#'     belong to which sample
+#'     group). This parameter is mandatory for the `PeakDensityParam`
+#'     and has to be provided also if there is no sample grouping in the
+#'     experiment (in which case all samples should be assigned to the
+#'     same group).
+#'
+#' @param value Replacement value for `<-` methods.
+#'
 #' @param ... Optional parameters.
+#'
+#' @return For `groupChromPeaks`: either an [XcmsExperiment()] or [XCMSnExp()]
+#'     object with the correspondence result.
 #'
 #' @name groupChromPeaks
 #'
 #' @family peak grouping methods
 #'
-#' @author Johannes Rainer
+#' @author Colin Smith, Johannes Rainer
+#'
+#' @references
+#'
+#' Smith, C.A., Want E.J., O'Maille G., Abagyan R., and Siuzdak G. (2006)
+#' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
+#' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
+#' 78:779-787.
 #'
 #' @md
 setGeneric("groupChromPeaks", function(object, param, ...)

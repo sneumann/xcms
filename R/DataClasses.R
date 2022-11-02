@@ -1298,124 +1298,7 @@ setClass("CentWavePredIsoParam",
              else TRUE
          })
 
-#' @title Peak grouping based on time dimension peak densities
-#'
-#' @description
-#'
-#' This method performs performs correspondence (chromatographic
-#' peak grouping) based on the density (distribution) of identified peaks
-#' along the retention time axis within slices of overlapping mz ranges.
-#' All peaks (from the same or from different samples) being close on the
-#' retention time axis are grouped into a feature (*peak group*).
-#'
-#' @note These methods and classes are part of the updated and modernized
-#'     `xcms` user interface. All of the settings to the algorithm
-#'     can be passed with a `PeakDensityParam` object.
-#'
-#' @param sampleGroups A vector of the same length than samples defining the
-#'     sample group assignments (i.e. which samples belong to which sample
-#'     group). This parameter is mandatory for the `PeakDensityParam`
-#'     and has to be provided also if there is no sample grouping in the
-#'     experiment (in which case all samples should be assigned to the
-#'     same group).
-#'
-#' @param bw `numeric(1)` defining the bandwidth (standard deviation ot the
-#'     smoothing kernel) to be used. This argument is passed to the
-#'     [density() method.
-#'
-#' @param minFraction `numeric(1)` defining the minimum fraction of samples
-#'     in at least one sample group in which the peaks have to be present to be
-#'     considered as a peak group (feature).
-#'
-#' @param minSamples `numeric(1)` with the minimum number of samples in at
-#'     least one sample group in which the peaks have to be detected to be
-#'     considered a peak group (feature).
-#'
-#' @param binSize `numeric(1)` defining the size of the overlapping slices
-#'     in mz dimension.
-#'
-#' @param maxFeatures `numeric(1)` with the maximum number of peak groups
-#'     to be identified in a single mz slice.
-#'
-#' @family peak grouping methods
-#'
-#' @seealso
-#'
-#' The [do_groupChromPeaks_density()] core API function and [group.density()]
-#' for the old user interface.
-#'
-#' [plotChromPeakDensity()] to plot peak densities and evaluate different
-#' algorithm settings.
-#'
-#' [featureDefinitions()] and [featureValues()] for methods to access the
-#' features (i.e. the peak grouping results).
-#'
-#' @name groupChromPeaks-density
-#'
-#' @md
-#'
-#' @author Colin Smith, Johannes Rainer
-#'
-#' @references
-#' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-#' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-#' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-#' Anal. Chem. 2006, 78:779-787.
-NULL
-#> NULL
-
-#' @description
-#'
-#' The `PeakDensityParam` class allows to specify all settings for the peak
-#' grouping based on peak densities along the time dimension. Instances should
-#' be created with the [PeakDensityParam()] constructor.
-#'
-#' @slot sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See
-#'      corresponding parameter above.
-#'
-#' @rdname groupChromPeaks-density
-#'
-#' @md
-#'
-#' @examples
-#'
-#' ## Create a PeakDensityParam object
-#' p <- PeakDensityParam(binSize = 0.05, sampleGroups = c(1, 1, 2, 2))
-#' ## Change hte minSamples slot
-#' minSamples(p) <- 3
-#' p
-#'
-#' ##############################
-#' ## Chromatographic peak detection and grouping.
-#' ##
-#' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
-#'
-#' ## Disable parallel processing for this example
-#' register(SerialParam())
-#'
-#' res <- faahko_sub
-#'
-#' head(chromPeaks(res))
-#' ## The number of peaks identified per sample:
-#' table(chromPeaks(res)[, "sample"])
-#'
-#' ## Performing the chromatographic peak grouping. Assigning all samples to
-#' ## the same sample group.
-#' fdp <- PeakDensityParam(sampleGroups = rep(1, length(fileNames(res))))
-#' res <- groupChromPeaks(res, fdp)
-#'
-#' ## The definition of the features (peak groups):
-#' featureDefinitions(res)
-#'
-#' ## Using the featureValues method to extract a matrix with the
-#' ## intensities of the features per sample.
-#' head(featureValues(res, value = "into"))
-#'
-#' ## The process history:
-#' processHistory(res)
+#' @rdname groupChromPeaks
 setClass("PeakDensityParam",
          slots = c(sampleGroups = "ANY",
                    bw = "numeric",
@@ -1469,7 +1352,7 @@ setClass("PeakDensityParam",
 #'     [group()] methods. All of the settings to the algorithm
 #'     can be passed with a [MzClustParam] object.
 #'
-#' @inheritParams groupChromPeaks-density
+#' @inheritParams groupChromPeaks
 #'
 #' @param ppm `numeric(1)` representing the relative mz error for the
 #'     clustering/grouping (in parts per million).
@@ -1592,7 +1475,7 @@ setClass("MzClustParam",
 #' `xcms` user interface. All of the settings to the algorithm
 #' can be passed with a `NearestPeaksParam` object.
 #'
-#' @inheritParams groupChromPeaks-density
+#' @inheritParams groupChromPeaks
 #'
 #' @param mzVsRtBalance `numeric(1)` representing the factor by which mz
 #'     values are multiplied before calculating the (euclician) distance between

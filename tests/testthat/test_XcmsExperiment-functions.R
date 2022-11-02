@@ -30,7 +30,7 @@ test_that(".mse_valid_chrom_peak_data works", {
 
 test_that(".mse_valid_feature_def", {
     expect_equal(.mse_valid_feature_def(.empty_feature_definitions()), NULL)
-    expect_match(.mse_valid_feature_def(3), "data.frame")
+    expect_match(.mse_valid_feature_def(3), "required columns")
     expect_match(.mse_valid_feature_def(data.frame(a = 1:4, b = 1:4)),
                  "required columns")
 })

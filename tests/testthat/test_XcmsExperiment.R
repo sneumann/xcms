@@ -268,7 +268,7 @@ test_that(".empty_feature_definitions works", {
     res <- .empty_feature_definitions()
     expect_true(is.data.frame(res))
     expect_true(nrow(res) == 0)
-    expect_equal(colnames(res), .REQ_PEAKG_COLS)
+    expect_true(all(.REQ_PEAKG_COLS %in% colnames(res)))
 })
 
 test_that(".xmse_group_cpeaks works", {

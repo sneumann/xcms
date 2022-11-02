@@ -226,16 +226,7 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
 
-#' @return The `PeakDensityParam` function returns a
-#'     `PeakDensityParam` class instance with all of the settings
-#'     specified for chromatographic peak alignment based on peak densities.
-#'     Note that argument `sampleGroups` is mandatory and should represent
-#'     either the sample grouping in the experiment. It's length has to match
-#'     the number of sample in the experiments.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                                 minFraction = 0.5, minSamples = 1,
                              binSize = 0.25, maxFeatures = 50) {
