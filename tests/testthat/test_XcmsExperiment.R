@@ -409,3 +409,14 @@ test_that("findChromPeaks,XcmsExperiment,MatchedFilterParam works", {
     expect_true(nrow(chromPeaks(res)) == 0L)
     expect_false(hasChromPeaks(res))
 })
+
+test_that("refineChromPeaks,XcmsExperiment,CleanPeaksParam works", {
+    res <- refineChromPeaks(xmse, CleanPeaksParam(), msLevel = 2L)
+    expect_equal(res, xmse)
+    res <- refineChromPeaks(xmse, CleanPeaksParam(maxPeakwidth = 20))
+    expect_true(length(res@processHistory) > length(xmse@processHistory))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(xmse)))
+    expect_equal(nrow(chromPeaks(res)), nrow(chromPeakData(res)))
+    rtw <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
+    expect_true(all(rtw <= 20))
+})

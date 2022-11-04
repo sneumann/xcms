@@ -152,8 +152,8 @@ plot(chr_res)
 }
 \seealso{
 Other chromatographic peak refinement methods: 
-\code{\link{CleanPeaksParam}},
-\code{\link{FilterIntensityParam}}
+\code{\link{FilterIntensityParam}},
+\code{\link{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

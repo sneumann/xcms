@@ -81,8 +81,8 @@ nrow(chromPeaks(res))
 }
 \seealso{
 Other chromatographic peak refinement methods: 
-\code{\link{CleanPeaksParam}},
-\code{\link{MergeNeighboringPeaksParam}}
+\code{\link{MergeNeighboringPeaksParam}},
+\code{\link{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

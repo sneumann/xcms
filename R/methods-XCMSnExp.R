@@ -3495,18 +3495,19 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #' a call to this method can change or remove identified chromatographic peaks,
 #' which may be part of features.
 #'
- #' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
+#' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
 #'     allowed peak width (in retention time).
 #'
 #' @param msLevel `integer` defining for which MS level(s) the chromatographic
 #'     peaks should be cleaned.
 #'
-#' @param object [XCMSnExp] object with identified chromatographic peaks.
+#' @param object [XCMSnExp] or [XcmsExperiment] object with identified
+#'     chromatographic peaks.
 #'
 #' @param param `CleanPeaksParam` object defining the settings for the method.
 #'
-#' @return `XCMSnExp` object with chromatographic peaks exceeding the specified
-#'     maximal retention time width being removed.
+#' @return `XCMSnExp` or [XcmsExperiment] object with chromatographic peaks
+#'     exceeding the specified maximal retention time width being removed.
 #'
 #' @author Johannes Rainer
 #'
@@ -3534,8 +3535,7 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #'
 #' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
-          function(object, param = CleanPeaksParam(),
-                   msLevel = 1L) {
+          function(object, param = CleanPeaksParam(), msLevel = 1L) {
               if (!hasChromPeaks(object, msLevel = msLevel)) {
                   warning("No chromatographic peaks present in for MS level ",
                           msLevel, ". Please run 'findChromPeaks' first.")

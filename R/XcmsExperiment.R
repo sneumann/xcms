@@ -87,6 +87,11 @@
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
 #'
+#' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
+#'   Supported options (parameter classes) are:
+#'   - [CleanPeaksParam()]: remove chromatographic peaks with a retention time
+#'     width larger than a user provided value.
+#'
 #' @section Functionality related to alignment:
 #'
 #' - `adjustRtime`: performs retention time adjustment (alignment) of the data.
@@ -504,7 +509,38 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
     DataFrame(object@chromPeakData)
 })
 
-## refineChromPeaks,CleanPeaksParam
+#' @rdname refineChromPeaks-clean
+setMethod(
+    "refineChromPeaks",
+    signature(object = "XcmsExperiment", param = "CleanPeaksParam"),
+    function(object, param = CleanPeaksParam(), msLevel = 1L) {
+        if (!hasChromPeaks(object, msLevel = msLevel)) {
+            warning("No chromatographic peaks for MS level ",
+                    msLevel, " present", call. = FALSE)
+            return(object)
+        }
+        if (hasFeatures(object)) {
+            message("Removing feature definitions")
+            object <- dropFeatureDefinitions(object)
+        }
+        validObject(param)
+        rtw <- chromPeaks(object)[, "rtmax"] - chromPeaks(object)[, "rtmin"]
+        keep_ms <- chromPeakData(object)$ms_level %in% msLevel
+        keep_rt <- rtw < param@maxPeakwidth & keep_ms
+        keep <- which(keep_rt | !keep_ms)
+        message("Removed ", nrow(chromPeaks(object)) - length(keep), " of ",
+                nrow(chromPeaks(object)), " chromatographic peaks.")
+        object@chromPeaks <- object@chromPeaks[keep, , drop = FALSE]
+        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        xph <- XProcessHistory(param = param, date. = date(),
+                               type. = .PROCSTEP.PEAK.REFINEMENT,
+                               fileIndex = seq_along(object),
+                               msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(xph))
+        validObject(object)
+        object
+    })
+
 ## refineChromPeaks,MergeNeightboringPeaksParam
 ## refineChromPeaks,FilterIntensityParam
 
