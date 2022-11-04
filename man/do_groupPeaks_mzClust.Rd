@@ -28,11 +28,11 @@ and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).}
 
-\item{ppm}{\code{numeric(1)} representing the relative mz error for the
-clustering/grouping (in parts per million).}
+\item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
+error for the clustering/grouping (in parts per million).}
 
-\item{absMz}{\code{numeric(1)} representing the absolute mz error for the
-clustering.}
+\item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
+maximum tolerated distance for m/z values.}
 
 \item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
 fraction of samples in at least one sample group in which the peaks

@@ -187,7 +187,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
 #'
 #' @inheritParams do_groupChromPeaks_density
 #'
-#' @inheritParams groupChromPeaks-mzClust
+#' @inheritParams groupChromPeaks
 #'
 #' @return A `list` with elements `"featureDefinitions"` and
 #' `"peakIndex"`. `"featureDefinitions"` is a `matrix`, each row
@@ -274,7 +274,8 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
 #' correspondence algorithm of mzMine (Katajamaa 2006).
 #'
 #' @inheritParams do_groupChromPeaks_density
-#' @inheritParams groupChromPeaks-nearest
+#'
+#' @inheritParams groupChromPeaks
 #'
 #' @return A `list` with elements `"featureDefinitions"` and
 #' `"peakIndex"`. `"featureDefinitions"` is a `matrix`, each row

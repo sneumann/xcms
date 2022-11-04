@@ -290,6 +290,20 @@ test_that(".xmse_group_cpeaks works", {
 
     res <- xcms:::.xmse_group_cpeaks(chromPeaks(xmse, msLevel = 2L), pdp)
     expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+
+    ## NearestPeaksParam
+    npp <- NearestPeaksParam(sampleGroups = c(1, 1))
+    res <- xcms:::.xmse_group_cpeaks(cp, npp)
+    expect_true(is.data.frame(res))
+    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+    expect_true(is.list(res$peakidx))
+
+    ## MzClustParam
+    cp <- chromPeaks(fticr_xod)
+    mcp <- MzClustParam(sampleGroups = c(1, 1))
+    res <- xcms:::.xmse_group_cpeaks(cp, mcp)
+    expect_true(is.data.frame(res))
+    expect_true(is.list(res$peakidx))
 })
 
 test_that("groupChromPeaks,XcmsExperiment and related things work", {
@@ -349,4 +363,49 @@ test_that("groupChromPeaks,XcmsExperiment and related things work", {
     expect_true(hasAdjustedRtime(res3))
     expect_true(length(res3@processHistory) == 2L)
     expect_equal(chromPeaks(res3), chromPeaks(res2))
+
+    ## NearestPeaksParam
+    npp <- NearestPeaksParam(sampleGroups = rep(1, 3), kNN = 3)
+    ref <- groupChromPeaks(faahko_xod, param = npp)
+    res <- groupChromPeaks(xmse, param = npp)
+    expect_equal(featureDefinitions(ref), DataFrame(featureDefinitions(res)))
+    expect_true(hasFeatures(res))
+    expect_true(length(res@processHistory) == 2L)
+})
+
+test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
+    a <- groupChromPeaks(xmse, param = PeakDensityParam(
+                                   sampleGroups = c(1, 1, 1)))
+
+    pgp <- PeakGroupsParam(span = 0.4)
+    expect_false(hasAdjustedRtime(a))
+    expect_true(hasFeatures(a))
+    expect_error(adjustRtime(a, param = pgp, msLevel = 2L), "MS level 1")
+    res <- adjustRtime(a, param = pgp)
+    expect_true(hasAdjustedRtime(res))
+    expect_false(hasFeatures(res))
+    expect_equal(unname(rtime(xod_xgr)), unname(rtime(res)))
+    expect_true(length(res@processHistory) == 3L)
+})
+
+test_that("findChromPeaks,XcmsExperiment,MatchedFilterParam works", {
+    mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
+    ref <- findChromPeaks(faahko_od, param = mfp)
+    res <- findChromPeaks(mse, param = mfp)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res@processHistory) == 1L)
+    expect_equal(chromPeaks(res), chromPeaks(ref))
+    expect_true(hasChromPeaks(res))
+
+    res <- findChromPeaks(res, param = mfp, add = TRUE)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res@processHistory) == 2L)
+    expect_equal(chromPeaks(res)[1:nrow(chromPeaks(ref)), ], chromPeaks(ref))
+    expect_true(hasChromPeaks(res))
+
+    res <- findChromPeaks(mse, param = mfp, msLevel = 2L)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res@processHistory) == 1L)
+    expect_true(nrow(chromPeaks(res)) == 0L)
+    expect_false(hasChromPeaks(res))
 })

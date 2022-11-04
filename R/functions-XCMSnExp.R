@@ -545,40 +545,24 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @noRd
 .peakIndex <- function(object) {
-    if (inherits(object, "DataFrame")) {
+    if (is.data.frame(object) || inherits(object, "DataFrame")) {
         idxs <- object$peakidx
         names(idxs) <- rownames(object)
     } else {
         if (!hasFeatures(object))
-            stop("No feature definitions present. Please run groupChromPeaks first.")
+            stop("No feature definitions present. ",
+                 "Please run 'groupChromPeaks' first.")
         idxs <- featureDefinitions(object)$peakidx
         names(idxs) <- rownames(featureDefinitions(object))
     }
     idxs
 }
 
-#' @description
-#'
-#' \code{adjustRtimePeakGroups} returns the features (peak groups)
-#' which would, depending on the provided \code{\link{PeakGroupsParam}}, be
-#' selected for alignment/retention time correction.
-#'
-#' @note
-#'
-#' \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
-#' sample alignment, but after a correspondence (peak grouping).
-#'
-#' @return
-#'
-#' For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
-#' features, columns samples, of retention times. The features are ordered
-#' by the median retention time across columns.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
                                   msLevel = 1L) {
-    if (!is(object, "XCMSnExp"))
-        stop("'object' has to be an 'XCMSnExp' object.")
+    if (!(inherits(object, "XCMSnExp") | inherits(object, "XcmsExperiment")))
+        stop("'object' has to be an 'XCMSnExp' or 'XcmsExperiment' object.")
     if (!hasFeatures(object))
         stop("No features present. Please run 'groupChromPeaks' first.")
     if (hasAdjustedRtime(object))
@@ -609,7 +593,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' Plot the difference between the adjusted and the raw retention
 #' time (y-axis) for each file along the (adjusted or raw) retention time
 #' (x-axis). If alignment was performed using the
-#' \code{\link{adjustRtime-peakGroups}} method, also the features (peak
+#' \code{\link{adjustRtime}} method, also the features (peak
 #' groups) used for the alignment are shown.
 #'
 #' @param object A \code{\link{XCMSnExp}} object with the alignment results.
@@ -632,16 +616,16 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' @param ylab the label for the y-axis.
 #'
 #' @param peakGroupsCol color to be used for the peak groups (only used if
-#'     alignment was performed using the \code{\link{adjustRtime-peakGroups}}
+#'     alignment was performed using the \code{\link{adjustRtime}}
 #'     method.
 #'
 #' @param peakGroupsPch point character (\code{pch}) to be used for the peak
 #'     groups (only used if alignment was performed using the
-#'     \code{\link{adjustRtime-peakGroups}} method.
+#'     \code{\link{adjustRtime}} method.
 #'
 #' @param peakGroupsLty line type (\code{lty}) to be used to connect points for
 #'     each peak groups (only used if alignment was performed using the
-#'     \code{\link{adjustRtime-peakGroups}} method.
+#'     \code{\link{adjustRtime}} method.
 #'
 #' @param ylim optional \code{numeric(2)} with the upper and lower limits on
 #'     the y-axis.

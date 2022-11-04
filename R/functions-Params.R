@@ -238,15 +238,7 @@ PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
         binSize = binSize, maxFeatures = maxFeatures)
 }
 
-#' @return
-#'
-#' The `MzClustParam` function returns a `MzClustParam` class instance with
-#' all of the settings specified for high resolution single spectra peak
-#' alignment.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                                 minFraction = 0.5, minSamples = 1) {
     return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
@@ -254,11 +246,7 @@ MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                minSamples = minSamples))
 }
 
-#' @return The \code{NearestPeaksParam} function returns a
-#'     \code{NearestPeaksParam} class instance with all of the settings
-#'     specified for peak alignment based on peak proximity.
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                               absMz = 0.2, absRt = 15, kNN = 10) {
     return(new("NearestPeaksParam", sampleGroups = sampleGroups,
@@ -266,12 +254,7 @@ NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                kNN = kNN))
 }
 
-#' @return The \code{PeakGroupsParam} function returns a
-#'     \code{PeakGroupsParam} class instance with all of the settings
-#'     specified for retention time adjustment based on \emph{house keeping}
-#'     features/peak groups.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                             family = "gaussian",

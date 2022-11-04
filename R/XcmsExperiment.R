@@ -402,11 +402,11 @@ setMethod(
     signature(object = "XcmsExperiment", param = "Param"),
     function(object, param, msLevel = 1L, chunkSize = 2L, add = FALSE,
              ..., BPPARAM = bpparam()) {
-        ## if (hasFeatures(object)) {
-        ##     message("Remove feature definitions")
-        ##     object <- dropFeatureDefinitions(
-        ##         object, keepAdjustedRtime = hasAdjustedRtime(object))
-        ## }
+        if (hasFeatures(object)) {
+            message("Remove feature definitions")
+            object <- dropFeatureDefinitions(
+                object, keepAdjustedRtime = hasAdjustedRtime(object))
+        }
         if (hasChromPeaks(object) && !add) {
             message("Remove previously identified chromatographic peaks")
             object <- dropChromPeaks(
@@ -504,6 +504,10 @@ setMethod("chromPeakData", "XcmsExperiment", function(object) {
     DataFrame(object@chromPeakData)
 })
 
+## refineChromPeaks,CleanPeaksParam
+## refineChromPeaks,MergeNeightboringPeaksParam
+## refineChromPeaks,FilterIntensityParam
+
 ################################################################################
 ## alignment
 ################################################################################
@@ -534,6 +538,57 @@ setMethod(
                               fileIndex. = seq_along(object),
                               msLevel = msLevel)
         object@processHistory <- c(object@processHistory, list(ph))
+        validObject(object)
+        object
+})
+
+#' @rdname adjustRtime
+setMethod(
+    "adjustRtime", signature(object = "MsExperiment",
+                             param = "PeakGroupsParam"),
+    function(object, param, msLevel = 1L, ...) {
+        if (hasAdjustedRtime(object)) {
+            message("Removing previous alignment results")
+            object <- dropAdjustedRtime(object)
+        }
+        if (any(msLevel != 1L))
+            stop("Alignment is currently only supported for MS level 1")
+        if (!hasFeatures(object))
+            stop("No feature definitions present in 'object'. Please perform ",
+                 "first a correspondence analysis using 'groupChromPeaks'")
+        if (!nrow(peakGroupsMatrix(param)))
+            peakGroupsMatrix(param) <- adjustRtimePeakGroups(
+                object, param = param)
+        fidx <- as.factor(fromFile(object))
+        rt_raw <- split(rtime(object), fidx)
+        rt_adj <- do_adjustRtime_peakGroups(
+            chromPeaks(object, msLevel = msLevel),
+            peakIndex = .update_feature_definitions(
+                featureDefinitions(object), rownames(chromPeaks(object)),
+                rownames(chromPeaks(object, msLevel = msLevel)))$peakidx,
+            rtime = rt_raw,
+            minFraction = minFraction(param),
+            extraPeaks = extraPeaks(param),
+            smooth = smooth(param),
+            span = span(param),
+            family = family(param),
+            peakGroupsMatrix = peakGroupsMatrix(param),
+            subset = subset(param),
+            subsetAdjust = subsetAdjust(param)
+        )
+        pt <- vapply(object@processHistory, processType, character(1))
+        idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt, nomatch = -1L)
+        if (idx_pg > 0)
+            ph <- object@processHistory[idx_pg]
+        else ph <- list()
+        object <- dropFeatureDefinitions(object)
+        object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
+        object@chromPeaks <- .applyRtAdjToChromPeaks(
+            chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        xph <- XProcessHistory(
+            param = param, type. = .PROCSTEP.RTIME.CORRECTION,
+            fileIndex = seq_along(object), msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, ph, list(xph))
         validObject(object)
         object
 })
@@ -670,6 +725,22 @@ setMethod(
         }
         object
     })
+
+################################################################################
+## gap filling
+################################################################################
+
+## hasFilledChromPeaks
+## fillChromPeaks,FillChromPeaksParam
+## fillChromPeaks,ChromPeakAreaParam
+## dropFilledChromPeaks
+
+################################################################################
+## results
+################################################################################
+
+## quantify
+## featureValues
 
 ################################################################################
 ## utility and unsorted methods

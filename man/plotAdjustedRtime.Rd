@@ -41,16 +41,16 @@ should be shown on the x-axis.}
 \item{ylab}{the label for the y-axis.}
 
 \item{peakGroupsCol}{color to be used for the peak groups (only used if
-alignment was performed using the \code{\link{adjustRtime-peakGroups}}
+alignment was performed using the \code{\link{adjustRtime}}
 method.}
 
 \item{peakGroupsPch}{point character (\code{pch}) to be used for the peak
 groups (only used if alignment was performed using the
-\code{\link{adjustRtime-peakGroups}} method.}
+\code{\link{adjustRtime}} method.}
 
 \item{peakGroupsLty}{line type (\code{lty}) to be used to connect points for
 each peak groups (only used if alignment was performed using the
-\code{\link{adjustRtime-peakGroups}} method.}
+\code{\link{adjustRtime}} method.}
 
 \item{ylim}{optional \code{numeric(2)} with the upper and lower limits on
 the y-axis.}
@@ -62,7 +62,7 @@ function.}
 Plot the difference between the adjusted and the raw retention
 time (y-axis) for each file along the (adjusted or raw) retention time
 (x-axis). If alignment was performed using the
-\code{\link{adjustRtime-peakGroups}} method, also the features (peak
+\code{\link{adjustRtime}} method, also the features (peak
 groups) used for the alignment are shown.
 }
 \examples{

@@ -12,7 +12,7 @@ setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-")
 setGeneric("addProcessHistory", function(object, ...)
     standardGeneric("addProcessHistory"))
 
-#' @aliases adjustRtime ObiwarpParam-class
+#' @aliases adjustRtime ObiwarpParam-class PeakGroupsParam-class
 #'
 #' @title Alignment: Retention time correction methods.
 #'
@@ -37,6 +37,26 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   alignment of multiple samples by aligning each against a *center* sample.
 #'   The alignment is performed directly on the [profile-matrix] and can hence
 #'   be performed independently of the peak detection or peak grouping.
+#'
+#' - `PeakGroupsParam`: performs retention time correctoin based on the
+#'   alignment of features defined in all/most samples (corresponding to
+#'   *house keeping compounds* or marker compounds) (Smith 2006). First the
+#'   retention time deviation of these features is described by fitting either a
+#'   polynomial (`smooth = "loess"`) or a linear (`smooth = "linear"`) function
+#'   to the data points. These are then subsequently used to adjust the
+#'   retention time of each spectrum in each sample (even from spectra of
+#'   MS levels different than MS 1). Since the function is
+#'   based on features (i.e. chromatographic peaks grouped across samples) a
+#'   initial correspondence analysis has to be performed **before** using the
+#'   [groupChromPeaks()] function. Alternatively, it is also possible to
+#'   manually define a `numeric` matrix with retention times of markers in each
+#'   samples that should be used for alignment. Such a `matrix` can be passed
+#'   to the alignment function using the `peakGroupsMatrix` parameter of the
+#'   `PeakGroupsParam` parameter object. By default the `adjustRtimePeakGroups`
+#'   function is used to define this `matrix`. This function identifies peak
+#'   groups (features) for alignment in `object` based on the parameters defined
+#'   in `param`. See also [do_adjustRtime_peakGroups()] for the core API
+#'   function.
 #'
 #' @section Subset-based alignment:
 #'
@@ -96,11 +116,23 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     better runtime), `"cov"` (covariance), `"prd"` (product) and `"euc"`
 #'     (Euclidian distance). The default value is `distFun = "cor_opt"`.
 #'
+#' @param extraPeaks For `PeakGroupsParam`: `numeric(1)` defining the maximal
+#'     number of additional peaks for all samples to be assigned to a peak
+#'     group (feature) for retention time correction. For a data set with 6
+#'     samples, `extraPeaks = 1` uses all peak groups with a total peak count
+#'     `<= 6 + 1`. The total peak count is the total number of peaks being
+#'     assigned to a peak group and considers also multiple peaks within a
+#'     sample that are assigned to the group.
+#'
 #' @param factorDiag For `ObiwarpParam`: `numeric(1)` defining the local weight
 #'     applied to diagonal moves in the alignment.
 #'
 #' @param factorGap For `ObiwarpParam`: `numeric(1)` defining the local weight
 #'     for gap moves in the alignment.
+#'
+#' @param family For `PeakGroupsParam`: `character(1)` defining the method for
+#'     loess smoothing. Allowed values are `"gaussian"` and `"symmetric"`. See
+#'     [loess()] for more information.
 #'
 #' @param gapExtend For `ObiwarpParam`: `numeric(1)` defining the penalty for
 #'     gap enlargement. The default value for `gapExtend` depends on the value
@@ -120,6 +152,17 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param localAlignment For `ObiwarpParam`: `logical(1)` whether a local
 #'     alignment should be performed instead of the default global alignment.
 #'
+#' @param minFraction For `PeakGroupsParam`: `numeric(1)` between 0 and 1
+#'     defining the minimum required fraction of samples in which peaks for
+#'     the peak group were identified. Peak groups passing this criteria will
+#'     be aligned across samples and retention times of individual spectra will
+#'     be adjusted based on this alignment. For `minFraction = 1` the peak
+#'     group has to contain peaks in all samples of the experiment. Note that if
+#'     `subset` is provided, the specified fraction is relative to the
+#'     defined subset of samples and not to the total number of samples within
+#'     the experiment (i.e. a peak has to be present in the specified
+#'     proportion of subset samples).
+#'
 #' @param msLevel For `adjustRtime`: `integer(1)` defining the MS level on
 #'     which the alignment should be performed.
 #'
@@ -129,24 +172,39 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param param The parameter object defining the alignment method (and its
 #'     setting).
 #'
+#' @param peakGroupsMatrix For `PeakGroupsParam`: optional `matrix` of (raw)
+#'     retention times for the (marker) peak groups on which the alignment
+#'     should be performed. Each column represents a sample, each row a
+#'     feature/peak group. The `adjustRtimePeakGroups` method is used by
+#'     default to determine this matrix on the provided `object`.
+#'
 #' @param response For `ObiwarpParam`: `numeric(1)` defining the
 #'     *responsiveness* of warping with `response = 0` giving linear warping on
 #'     start and end points and `response = 100` warping using all bijective
 #'     anchors.
 #'
-#' @param subset For `ObiwarpParam`: `integer` with the indices of samples
-#'     within the experiment on which the alignment models should be estimated.
+#' @param smooth For `PeakGroupsParam`: `character(1)` defining the function to
+#'     be used to interpolate corrected retention times for all peak groups.
+#'     Can be either `"loess"` or `"linear"`.
+#'
+#' @param span For `PeakGroupsParam`: `numeric(1)` defining the degree of
+#'     smoothing (if `smooth = "loess"`). This parameter is passed to the
+#'     internal call to [loess()].
+#'
+#' @param subset For `ObiwarpParam` and `PeakGroupsParam`: `integer` with the
+#'     indices of samples within the experiment on which the alignment models
+#'     should be estimated.
 #'     Samples not part of the subset are adjusted based on the closest subset
 #'     sample. See *Subset-based alignment* section for details.
 #'
-#' @param subsetAdjust For `ObiwarpParam`: `character(1)` specifying the method
-#'     with which non-subset samples should be adjusted. Supported options are
-#'     `"previous"` and `"average"` (default). See *Subset-based alignment*
-#'     section for details.
+#' @param subsetAdjust For `ObiwarpParam` and `PeakGroupsParam`: `character(1)`
+#'     specifying the method with which non-subset samples should be adjusted.
+#'     Supported options are `"previous"` and `"average"` (default).
+#'     See *Subset-based alignment* section for details.
 #'
 #' @param value For all assignment methods: the value to set/replace.
 #'
-#' @param x An `ObiwarpParam`.
+#' @param x An `ObiwarpParam` or `PeakGroupsParam` object.
 #'
 #' @param ... ignored.
 #'
@@ -159,6 +217,11 @@ setGeneric("addProcessHistory", function(object, ...)
 #' `XcmsExperiment` with the adjusted retention times stored in an new
 #' *spectra variable* `rtime_adjusted` in the object's `spectra`.
 #'
+#' `ObiwarpParam` and `PeakGroupsParam` return the respective parameter object.
+#'
+#' `adjustRtimeGroups` returns a `matrix` with the retention times of *marker*
+#' features in each sample (each row one feature, each row one sample).
+#'
 #' @name adjustRtime
 #'
 #' @family retention time correction methods
@@ -170,6 +233,11 @@ setGeneric("addProcessHistory", function(object, ...)
 #' Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
 #' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 #' *Anal. Chem.*, 78 (17), 6140-6152.
+#'
+#' Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
+#' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
+#' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
+#' 78:779-787.
 #'
 #' @md
 setGeneric("adjustRtime", function(object, param, ...)
@@ -414,7 +482,9 @@ setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
 
-#' @aliases groupChromPeaks
+#' @aliases groupChromPeaks PeakDensityParam-class
+#'
+#' @aliases NearestPeaksParam-class MzClustParam-class
 #'
 #' @title Correspondence: group chromatographic peaks across samples
 #'
@@ -426,23 +496,47 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' `param` argument. See documentation of [XcmsExperiment()] and [XCMSnExp()]
 #' for information on how to access and extract correspondence results.
 #'
+#' The correspondence analysis can be performed on chromatographic peaks of
+#' any MS level (if present and if chromatographic peak detection has been
+#' performed for that MS level) defining features combining these peaks. The
+#' MS level can be selected with the parameter `msLevel`. By default, calling
+#' `groupChromPeaks` will remove any previous correspondence results. This can
+#' be disabled with `add = TRUE`, which will add newly defined features to
+#' already present feature definitions.
+#'
 #' Supported `param` objects are:
 #'
-#' - [PeakDensityParam()]: correspondence using the *peak density* method
+#' - `PeakDensityParam`: correspondence using the *peak density* method
 #'   (Smith 2006) that groups chromatographic peaks along the retention time
 #'   axis within slices of (partially overlapping) m/z ranges. All peaks (from
 #'   the same or from different samples) with their apex position being close
 #'   on the retention time axis are grouped into a LC-MS feature. See in
-#'   addition [do_groupChromPeaks_density()] for the base correspondence
-#'   function.
+#'   addition [do_groupChromPeaks_density()] for the core API function.
 #'
-#' - [MzClustParam()]: performs high resolution peak grouping for
-#'   **single spectrum** metabolomics data. This method should **only** be used
-#'   for such data as the retention time is not considered in the correspondence
-#'   analysis.
+#' - `NearestPeaksParam`: performs peak grouping based on the proximity of
+#'   chromatographic peaks from different samples in the m/z - rt space similar
+#'   to the correspondence method of *mzMine* (Katajamaa 2006). The method
+#'   creates first a *master peak list* consisting of all chromatographic peaks
+#'   from the sample with the most detected peaks and iteratively calculates
+#'   distances to peaks from the sample with the next most number of peaks
+#'   grouping peaks together if their *distance* is smaller than the provided
+#'   thresholds.
+#'   See in addition [do_groupChromPeaks_nearest()] for the core API function.
+#'
+#' - `MzClustParam`: performs high resolution peak grouping for
+#'   **single spectrum** metabolomics data (Kazmi 2006). This method should
+#'   **only** be used for such data as the retention time is not considered
+#'   in the correspondence analysis.
+#'   See in addition [do_groupPeaks_mzClust()] for the core API function.
 #'
 #' For specific examples and description of the method and settings see the
 #' help pages of the individual parameter classes listed above.
+#'
+#' @param absMz For `NearestPeaksParam` and `MzClustParam`: `numeric(1)`
+#'     maximum tolerated distance for m/z values.
+#'
+#' @param absRt For `NearestPeaksParam`: `numeric(1)` maximum tolerated
+#'     distance for retention times.
 #'
 #' @param add `logical(1)` (if `object` contains already chromatographic peaks,
 #'     i.e. is either an `XCMSnExp` or `XcmsExperiment`) whether chromatographic
@@ -456,6 +550,9 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' @param bw For `PeakDensityParam`: `numeric(1)` defining the bandwidth
 #'     (standard deviation ot the smoothing kernel) to be used. This argument
 #'     is passed to the [density() method.
+#'
+#' @param kNN For `NearestPeaksParam`: `integer(1)` representing the number of
+#'     nearest neighbors to check.
 #'
 #' @param maxFeatures For `PeakDensityParam`: `numeric(1)` with the maximum
 #'     number of peak groups to be identified in a single mz slice.
@@ -471,8 +568,15 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' @param msLevel `integer(1)` defining the MS level on which the
 #'     chromatographic peak detection should be performed.
 #'
+#' @param mzVsRtBalance For `NearestPeaksParam`: `numeric(1)` representing the
+#'     factor by which m/z values are multiplied before calculating the
+#'     (euclician) distance between two peaks.
+#'
 #' @param object The data object on which the correspondence analysis should be
 #'     performed. Can be an [XCMSnExp()], [XcmsExperiment()] object.
+#'
+#' @param ppm For `MzClustParam`: `numeric(1)` representing the relative m/z
+#'     error for the clustering/grouping (in parts per million).
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'
@@ -503,6 +607,14 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 #' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
 #' 78:779-787.
+#'
+#' Katajamaa, M., Miettinen, J., Oresic, M. (2006) "MZmine: Toolbox for
+#' processing and visualization of mass spectrometry based molecular profile
+#' data". *Bioinformatics*, 22:634-636.
+#'
+#' Kazmi S. A., Ghosh, S., Shin, D., Hill, D.W., and Grant, D.F. (2006)
+#' "Alignment of high resolution mass spectra: development of a
+#' heuristic approach for metabolomics. *Metabolomics* Vol. 2, No. 2, 75-83.
 #'
 #' @md
 setGeneric("groupChromPeaks", function(object, param, ...)

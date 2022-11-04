@@ -1535,41 +1535,7 @@ setMethod("groupChromPeaks",
               object
           })
 
-
-#' @title Single-spectrum non-chromatography MS data peak grouping
-#'
-#' @description
-#'
-#' `groupChromPeaks,XCMSnExp,MzClustParam`: performs high resolution peak
-#' grouping for single spectrum metabolomics data.
-#'
-#' @note Calling `groupChromPeaks` on an `XCMSnExp` object will cause
-#'     all eventually present previous correspondence results to be dropped.
-#'
-#' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
-#'     results from a previous chromatographic peak detection analysis (see
-#'     [findChromPeaks()]).
-#'
-#'     For all other methods: a `MzClustParam` object.
-#'
-#' @param param A `MzClustParam` object containing all settings for
-#'     the peak grouping algorithm.
-#'
-#' @param msLevel `integer(1)` defining the MS level. Currently only MS level
-#'     1 is supported.
-#'
-#' @return
-#'
-#' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
-#' grouping step (i.e. the features). These can be accessed with the
-#' [featureDefinitions()] method.
-#'
-#' @seealso [XCMSnExp] for the object containing the results of
-#'     the peak grouping.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "MzClustParam"),
           function(object, param, msLevel = 1L) {
@@ -1632,51 +1598,7 @@ setMethod("groupChromPeaks",
           })
 
 
-#' @title Peak grouping/correspondence based on proximity in the mz-rt space
-#'
-#' @description
-#'
-#' `groupChromPeaks,XCMSnExp,NearestPeaksParam`:
-#' performs peak grouping based on the proximity between chromatographic
-#' peaks from different samples in the mz-rt range.
-#'
-#' The correspondence analysis can be performed on chromatographic peaks of
-#' any MS level (if present and if chromatographic peak detection has been
-#' performed for that MS level) defining features combining these peaks. The
-#' MS level can be selected with the parameter `msLevel`. By default, calling
-#' `groupChromPeaks` will remove any previous correspondence results. This can
-#' be disabled with `add = TRUE`, which will add newly defined features to
-#' already present feature definitions.
-#'
-#' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
-#'     results from a previous chromatographic peak detection
-#'     analysis (see [findChromPeaks()]).
-#'
-#'     For all other methods: a `NearestPeaksParam` object.
-#'
-#' @param msLevel `integer(1)` defining the MS level on which the correspondence
-#'     should be performed. It is required that chromatographic peaks of the
-#'     respective MS level are present.
-#'
-#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
-#'     additional round of correspondence (e.g. on a different MS level) and
-#'     add features to the already present feature definitions.
-#'
-#' @param msLevel `integer(1)` defining the MS level. Currently only MS level
-#'     1 is supported.
-#'
-#' @return
-#'
-#' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
-#' grouping/correspondence step (i.e. the mz-rt features). These can be
-#' accessed with the [featureDefinitions()] method.
-#'
-#' @seealso [XCMSnExp] for the object containing the results of
-#'     the peak grouping.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "NearestPeaksParam"),
           function(object, param, msLevel = 1L, add = FALSE) {
@@ -1745,58 +1667,7 @@ setMethod("groupChromPeaks",
               object
           })
 
-#' @title Retention time correction based on alignment of house keeping peak
-#' groups
-#'
-#' @description
-#'
-#' \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
-#' performs retention time correction based on the alignment of peak groups
-#' (features) found in all/most samples. The correction function identified
-#' on these peak groups is applied to the retention time of all spectra in
-#' the object, i.e. retention times of all spectra, also MS level > 1 are
-#' adjusted.
-#'
-#' @note
-#'
-#' This method requires that a correspondence analysis has been performed
-#' on the data, i.e. that grouped chromatographic peaks/features are present
-#' (see \code{\link{groupChromPeaks}} for details).
-#'
-#' Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause all
-#' peak grouping (correspondence) results and any previous retention time
-#' adjustments to be dropped.
-#' In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
-#' re-adjusts adjusted retention times to ensure them being in the same
-#' order than the raw (original) retention times.
-#'
-#' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
-#'     containing the results from a previous chromatographic peak detection
-#'     (see \code{\link{findChromPeaks}}) and alignment analysis (see
-#'     \code{\link{groupChromPeaks}}).
-#'
-#'     For all other methods: a \code{PeakGroupsParam} object.
-#'
-#' @param param A \code{PeakGroupsParam} object containing all settings for
-#'     the retention time correction method..
-#'
-#' @param msLevel \code{integer(1)} specifying the MS level. Currently only MS
-#'     level 1 is supported.
-#'
-#' @return
-#'
-#' For \code{adjustRtime}: a \code{\link{XCMSnExp}} object with the
-#' results of the retention time adjustment step. These can be accessed
-#' with the \code{\link{adjustedRtime}} method. Retention time correction
-#' does also adjust the retention time of the identified chromatographic
-#' peaks (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention
-#' time correction drops all previous alignment results from the result
-#' object.
-#'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-#'     the alignment.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "PeakGroupsParam"),
           function(object, param, msLevel = 1L) {
@@ -1807,8 +1678,8 @@ setMethod("adjustRtime",
               if (any(msLevel != 1))
                   stop("Alignment is currently only supported for MS level 1")
               if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'! ",
-                       "Please perform first a peak detection using the ",
+                  stop("No chromatographic peak detection results in 'object'!",
+                       " Please perform first a peak detection using the ",
                        "'findChromPeaks' method.")
               if (!hasFeatures(object))
                   stop("No feature definitions found in 'object'! Please ",
@@ -2884,7 +2755,6 @@ setMethod("fillChromPeaks",
               object
           })
 
-
 #' @rdname fillChromPeaks
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "ChromPeakAreaParam"),
@@ -3068,8 +2938,6 @@ setMethod("fillChromPeaks",
               object <- addProcessHistory(object, ph) ## this also validates object.
               object
           })
-
-
 
 #' @rdname fillChromPeaks
 setMethod(
@@ -3627,7 +3495,7 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #' a call to this method can change or remove identified chromatographic peaks,
 #' which may be part of features.
 #'
-#' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
+ #' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
 #'     allowed peak width (in retention time).
 #'
 #' @param msLevel `integer` defining for which MS level(s) the chromatographic

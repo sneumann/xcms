@@ -29,16 +29,18 @@ and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).}
 
-\item{mzVsRtBalance}{\code{numeric(1)} representing the factor by which mz
-values are multiplied before calculating the (euclician) distance between
-two peaks.}
+\item{mzVsRtBalance}{For \code{NearestPeaksParam}: \code{numeric(1)} representing the
+factor by which m/z values are multiplied before calculating the
+(euclician) distance between two peaks.}
 
-\item{absMz}{\code{numeric(1)} maximum tolerated distance for mz values.}
+\item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
+maximum tolerated distance for m/z values.}
 
-\item{absRt}{\code{numeric(1)} maximum tolerated distance for rt values.}
+\item{absRt}{For \code{NearestPeaksParam}: \code{numeric(1)} maximum tolerated
+distance for retention times.}
 
-\item{kNN}{\code{numeric(1)} representing the number of nearest neighbors
-to check.}
+\item{kNN}{For \code{NearestPeaksParam}: \code{integer(1)} representing the number of
+nearest neighbors to check.}
 }
 \value{
 A \code{list} with elements \code{"featureDefinitions"} and

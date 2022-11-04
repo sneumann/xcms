@@ -127,13 +127,24 @@
                 minSamples = minSamples(param), binSize = binSize(param),
                 maxFeatures = maxFeatures(param), index = index)
         },
-        MzCLustParam = {
-            do_groupPeaks_mzClust(cp, sampleGroups = sampleGroups(param),
-                                  ppm = ppm(param), absMz = absMz(param),
-                                  minFraction = minFraction(param),
-                                  minSamples = minSamples(param))
+        MzClustParam = {
+            tmp <- do_groupPeaks_mzClust(
+                cp, sampleGroups = sampleGroups(param), ppm = ppm(param),
+                absMz = absMz(param), minFraction = minFraction(param),
+                minSamples = minSamples(param))
+            res <- as.data.frame(tmp$featureDefinitions)
+            res$peakidx <- tmp$peakIndex
+            res
         },
-        NearestPeaksParam = stop("not yet implemented"),
+        NearestPeaksParam = {
+            tmp <- do_groupChromPeaks_nearest(
+                cp, sampleGroups = sampleGroups(param),
+                mzVsRtBalance = mzVsRtBalance(param),
+                absMz = absMz(param), absRt = absRt(param), kNN = kNN(param))
+            res <- as.data.frame(tmp$featureDefinitions)
+            res$peakidx <- tmp$peakIndex
+            res
+        },
         stop("No correspondence analysis method for '", pclass,
              "' available", call. = FALSE))
 }
