@@ -420,3 +420,85 @@ test_that("refineChromPeaks,XcmsExperiment,CleanPeaksParam works", {
     rtw <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
     expect_true(all(rtw <= 20))
 })
+
+test_that(".merge_neighboring_peak_candidates works", {
+    ## first file
+    ref <- refineChromPeaks(filterFile(
+        faahko_xod, 1L), MergeNeighboringPeaksParam(expandRt = 4))
+    ref_pks <- chromPeaks(ref)[is.na(chromPeaks(ref)[, "intb"]), ]
+    tmp <- xmse[1L, keepSampleIndex = TRUE, keepAdjustedRtime = TRUE]
+    pd <- Spectra::peaksData(filterMsLevel(spectra(tmp), 1L))
+    rt <- rtime(filterMsLevel(spectra(tmp), 1L))
+
+    cand <- .define_merge_candidates(chromPeaks(tmp), expandRt = 4,
+                                            expandMz = 0, ppm = 10)[[2L]]
+    ## 1
+    pks <- chromPeaks(tmp)[cand[[1L]], ]
+    pkd <- chromPeakData(tmp)[cand[[1L]], ]
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
+                                              ppm = 10, expandMz = 0)
+    expect_equal(unname(res$chromPeaks), unname(ref_pks[1, , drop = FALSE]))
+
+    ## 3
+    pks <- chromPeaks(tmp)[cand[[3L]], ]
+    pkd <- chromPeakData(tmp)[cand[[3L]], ]
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
+                                              ppm = 10, expandMz = 0)
+    expect_equal(unname(res$chromPeaks[1, ]),
+                 unname(ref_pks[2, ]))
+    expect_equal(unname(res$chromPeaks[3, ]),
+                 unname(ref_pks[3, ]))
+
+    ## Second file
+    ref <- refineChromPeaks(filterFile(
+        faahko_xod, 2L), MergeNeighboringPeaksParam(expandRt = 4))
+    ref_pks <- chromPeaks(ref)[is.na(chromPeaks(ref)[, "intb"]), ]
+    ref_pks["sample"] <- 2L
+    tmp <- xmse[2L, keepSampleIndex = TRUE, keepAdjustedRtime = TRUE]
+    pd <- Spectra::peaksData(filterMsLevel(spectra(tmp), 1L))
+    rt <- rtime(filterMsLevel(spectra(tmp), 1L))
+
+    cand <- .define_merge_candidates(chromPeaks(tmp), expandRt = 4,
+                                            expandMz = 0, ppm = 10)[[2L]]
+    pks <- chromPeaks(tmp)[cand[[1L]], ]
+    pkd <- chromPeakData(tmp)[cand[[1L]], ]
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
+                                              ppm = 10, expandMz = 0)
+    expect_equal(names(res), c("chromPeaks", "chromPeakData"))
+    expect_equal(nrow(res$chromPeaks), 1)
+    expect_equal(res$chromPeaks[1, ], ref_pks)
+
+    ## Not merging
+    pks <- chromPeaks(tmp)[cand[[2L]], ]
+    pkd <- chromPeakData(tmp)[cand[[2L]], ]
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
+                                              ppm = 10, expandMz = 0)
+    expect_equal(res$chromPeaks, pks)
+
+    pks <- chromPeaks(tmp)[cand[[3L]], ]
+    pkd <- chromPeakData(tmp)[cand[[3L]], ]
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
+                                              ppm = 10, expandMz = 0)
+    expect_equal(res$chromPeaks, pks)
+})
+
+test_that(".merge_neighboring_peaks2 works", {
+    ref <- refineChromPeaks(filterFile(
+        faahko_xod, 1L), MergeNeighboringPeaksParam(expandRt = 6,
+                                                    expandMz = 1))
+
+    tmp <- xmse[1L]
+    x <- Spectra::peaksData(filterMsLevel(spectra(tmp), 1L))
+    pks <- chromPeaks(tmp, msLevel = 1L)
+    pkd <- chromPeaks(tmp, msLevel = 1L)
+    rt <- rtime(tmp)[msLevel(spectra(tmp)) == 1L]
+    res <- .merge_neighboring_peaks2(x, pks, pkd, rt, expandRt = 6,
+                                     expandMz = 1)
+    expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
+
+    expandMz <- 0
+    ppm <- 10
+    minProp <- 0.75
+    expandRt <- 4
+
+})

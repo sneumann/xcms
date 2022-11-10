@@ -73,7 +73,8 @@
                                     keepChromPeaks = TRUE,
                                     keepAdjustedRtime = FALSE,
                                     keepFeatures = FALSE,
-                                    ignoreHistory = FALSE, ...) {
+                                    ignoreHistory = FALSE,
+                                    keepSampleIndex = FALSE, ...) {
     ## if (!length(i))
     ##     return(x)
     i <- MsCoreUtils::i2index(i, length(x))
@@ -81,17 +82,20 @@
     if (length(i) != length(unique(i)))
         stop("Duplicated indices are not (yet) supported for ",
              "'[,XcmsExperiment'", call. = FALSE)
-    ## if (keepAdjustedRtime && hasAdjustedRtime(x)) {
-    ##     ## Keep only adjusted rtimes for the selected samples.
-    ## }
-    ## if (keepFeatures && hasFeatures(x)) {
-    ## }
+    if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
+        svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
+        object@spectra <- selectSpectraVariables(
+            object@spectra, svs[svs != "rtime_adjusted"])
+    }
+    if (keepFeatures && hasFeatures(x))
+        stop("Not implemented yet", call. = FALSE)
     if (hasChromPeaks(x)) {
         if (keepChromPeaks) {
             keep <- x@chromPeaks[, "sample"] %in% i
             x@chromPeaks <- x@chromPeaks[keep, , drop = FALSE]
             x@chromPeakData <- x@chromPeakData[keep, , drop = FALSE]
-            x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
+            if (!keepSampleIndex)
+                x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
         } else {
             x@chromPeaks <- .empty_chrom_peaks()
             x@chromPeakData <- data.frame(ms_level = integer(),
@@ -147,4 +151,221 @@
         },
         stop("No correspondence analysis method for '", pclass,
              "' available", call. = FALSE))
+}
+
+#' @param x peak matrix (columns `"mz"` and `"intensity"`).
+#'
+#' @param mzr m/z range within which to aggregate intensities
+#'
+#' @param INTFUN function to aggregate the intensities.
+#'
+#' @param ... additional parameters for `FUN`.
+#'
+#' @note
+#'
+#' `matrixStats` `sum2`, `colSums2` etc could be nice alternatives that don't
+#' subset the matrix because they iterate on the indices. Somehow `sum` seems
+#' however to be faster than `sum2` - even on subsetting etc.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.aggregate_intensities <- function(x, mzr = numeric(), INTFUN = sumi, ...) {
+    ## x could also be just a numeric vector - to support Chromatogram...
+    if (length(mzr))
+        vals <- x[between(x[, "mz"], mzr), "intensity"]
+    else vals <- x[, "intensity"]
+    INTFUN(vals, ...)
+}
+
+#' @title Sum MS Intensity Values
+#'
+#' @description
+#'
+#' `sumi` sums MS intensity values ignoring missing values but returning
+#' `NA_real_` in case all intensity values are `NA`. This is in contrast to
+#' `sum(x, na.rm = TRUE)` that, while ignoring also missing values, returns
+#' `0` if all values in `x` are `NA`.
+#'
+#' @param x `numeric` with the intensity values to sum.
+#'
+#' @return `numeric(1)` with the sum of `x` or `NA_real_` if **all** values in
+#'     `x` are `NA`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+sumi <- function(x) {
+    ## Note: any(!is.na(x)) would be faster, but ONLY if there are NAs,
+    ## otherwise this version is slightly faster.
+    if (all(is.na(x)))
+        return(NA_real_)
+    sum(x, na.rm = TRUE)
+}
+
+#' Same as functions-Chromatogram.R::.chrom_merge_neighboring_peaks, but this
+#' takes a list of peak matrices as input and does not require creation of a
+#' Chromatogram object.
+#'
+#' @param x `list` with `numeric` matrices with columns `mz` and `intensity`
+#'     representing the MS data. This has to be from a single sample and from
+#'     a single MS level.
+#'
+#' @param rt `numeric` with the retention times for `x`. HAS TO BE ADJUSTED RT
+#'
+#' @noRd
+.merge_neighboring_peak_candidates <- function(x, rt, pks, pkd, minProp = 0.75,
+                                               expandMz = 0, ppm = 10,
+                                               diffRt = 0) {
+    if (!length(pks) || nrow(pks) < 2)
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    idx <- order(pks[, "rtmin"])
+    pks <- pks[idx, , drop = FALSE]
+    pkd <- pkd[idx, ]
+    pks_new <- pks
+    pks_new[ , ] <- NA_real_
+    rownames(pks_new) <- rep(NA_character_, nrow(pks))
+    pks_new[1, ] <- pks[1, ]
+    rownames(pks_new)[1] <- rownames(pks)[1]
+    current_peak <- 1 # point always to the current *new* (merged) peak.
+    drop_cols <- !(colnames(pks_new) %in% c("mz", "mzmin", "mzmax", "rt",
+                                            "rtmin", "rtmax", "into",
+                                            "maxo", "sn", "sample"))
+    ppme <- ppm * 1e-6
+    for (i in 2:nrow(pks)) {
+        if ((pks[i, "rtmin"] - pks_new[current_peak, "rtmax"]) < diffRt) {
+            ## skip if second peak contained within first
+            if (pks[i, "rtmin"] >= pks_new[current_peak, "rtmin"] &
+                pks[i, "rtmax"] <= pks_new[current_peak, "rtmax"])
+                next
+            rt_mid <- (pks[i, "rtmin"] + pks_new[current_peak, "rtmax"]) / 2
+            ## If rt_mid is NOT between the peaks, take the midpoint between
+            ## the apexes instead.
+            apexes <- range(c(pks[i, "rt"], pks_new[current_peak, "rt"]))
+            if (rt_mid < apexes[1] || rt_mid > apexes[2])
+                rt_mid <- sum(apexes) / 2
+            ## Calculate the mean of the 3 data points closest to rt_mid.
+            rt_idx <- order(abs(rt - rt_mid))[1:3]
+            mzr <- range(pks[i, c("mzmin", "mzmax")],
+                         pks_new[current_peak, c("mzmin", "mzmax")])
+            ## Expand range to be compliant with original code
+            mzr_e <- mzr + c(-1, 1) * mzr * ppme + expandMz
+            mid_vals <- vapply(x[rt_idx], .aggregate_intensities,
+                               mzr = mzr_e, numeric(1))
+            if (!all(is.na(mid_vals)) &&
+                mean(mid_vals, na.rm = TRUE) >
+                min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) * minProp) {
+                ## Merge the existing peak with the new one, re-calculating the
+                ## intensity etc from the original data.
+                pks_new[current_peak, drop_cols] <- NA_real_
+                pks_new[current_peak, "rtmax"] <-
+                    max(pks[i, "rtmax"], pks_new[current_peak, "rtmax"])
+                pks_new[current_peak, c("mzmin", "mzmax")] <- mzr
+                rtmin <- pks_new[current_peak, "rtmin"]
+                rtmax <- pks_new[current_peak, "rtmax"]
+                idx <- which(rt >= rtmin & rt <= rtmax)
+                ## Calculate into as done in centWave. Use the ORIGINAL! m/z
+                peak_width <- (rtmax - rtmin) / (idx[length(idx)] - idx[1L])
+                pks_new[current_peak, "into"] <- sum(
+                    vapply(x[idx], .aggregate_intensities, mzr = mzr,
+                           numeric(1)), na.rm = TRUE) * peak_width
+                if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
+                    pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
+                        pks[i, c("mz", "rt", "maxo", "sn")]
+                    pkd[current_peak, ] <- pkd[i, ] # replace peak data with new
+                }
+                rownames(pks_new)[current_peak] <- NA_character_
+            } else {
+                current_peak <- current_peak + 1
+                pks_new[current_peak, ] <- pks[i, ]
+                rownames(pks_new)[current_peak] <- rownames(pks)[i]
+                pkd[current_peak, ] <- pkd[i, ]
+            }
+        } else {
+            current_peak <- current_peak + 1
+            pks_new[current_peak, ] <- pks[i, ]
+            rownames(pks_new)[current_peak] <- rownames(pks)[i]
+            pkd[current_peak, ] <- pkd[i, ]
+        }
+    }
+    keep <- which(!is.na(pks_new[, "rt"]))
+    list(chromPeaks = pks_new[keep, , drop = FALSE],
+         chromPeakData = pkd[keep, ])
+}
+
+#' similar to functions-XCMSnExp.R/.merge_neigboring_peaks but works on only
+#' low level data from one file/sample. All data is expected to be from a
+#' single sample and the correct (single) MS level.
+#'
+#' @param x `list` of peak matrices (as returned by `Spectra::peaksData`)
+#'
+#' @param pks `matrix` with chromatographic peaks (`chromPeaks` for one MS)
+#'
+#' @param pkd `data.frame` (`chromPeakData`)
+#'
+#' @param rt `numeric` with the retention times.
+#'
+#' @return `list` with the peaks matrix and peaks data containing all peaks as
+#'     well as the merged peaks.
+#'
+#' @noRd
+.merge_neighboring_peaks2 <- function(x, pks, pkd, rt, expandRt = 2,
+                                      expandMz = 0, ppm = 10, minProp = 0.75) {
+    cands <- xcms:::.define_merge_candidates(pks, expandMz, ppm, expandRt)
+    if (!length(cands))
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    cands <- cands[[2L]]
+    pks_new <- pkd_new <- vector("list", length(cands))
+    for (i in seq_along(cands)) {
+        res <- .merge_neighboring_peak_candidates(
+            x, rt = rt, pks[cands[[i]], , drop = FALSE],
+            pkd[cands[[i]], , drop = FALSE], diffRt = 2 * expandRt,
+            minProp = minProp, expandMz = expandMz, ppm = ppm)
+        pks_new[[i]] <- res$chromPeaks
+        pkd_new[[i]] <- res$chromPeakData
+    }
+    pks_new <- do.call(rbind, pks_new)
+    pkd_new <- do.call(rbind, pkd_new)
+    ## drop peaks that were candidates, but that were not returned (i.e.
+    ## were either merged or dropped)
+    keep <- !(rownames(pks) %in% setdiff(unlist(cands, use.names = FALSE),
+                                         rownames(pks_new)))
+    pks <- pks[keep, , drop = FALSE]
+    pkd <- pkd[keep, ]
+    ## add merged peaks
+    news <- is.na(rownames(pks_new))
+    if (any(news)) {
+        pks <- rbind(pks, pks_new[news, , drop = FALSE])
+        pkd <- rbind(pkd, pkd_new[news, ])
+    }
+    list(chromPeaks = pks, chromPeakData = pkd)
+}
+
+#' @param x `XcmsExperiment` with potentially multiple files, samples.
+#'
+#' @noRd
+.xmse_merge_neighboring_peaks <- function(x, msLevel = 1L) {
+    ## filter MS level - but only spectra...
+    ## rt either rtime or rtime_adjusted
+    ## f <- fromFile()
+    ## f_peaks <- factor("sample", levels = idx)
+    ## bpmapply splitting peaksData, rt and chromPeaks
+    ## call function that processes data for one file. that one has to return
+    ## all peaks (merged and not merged) for the file.
+    ## return chrom peaks matrix
+
+    if (hasAdjustedRtime())
+    ## rt:
+
+    pks <- chromPeaks(x, msLevel = msLevel)
+    pkd <- chromPeakData(x, msLevel = msLevel)
+    sps <- filterMsLevelLLLLLL
+    p <- peaksData(filterMsLevel(spectra(x, msLevel = 1L)))
+
+}
+
+.xmse_merge_neighboring_peaks_chunks <- function() {
+    ## Split xmse into chunks.
+    ## split by file/sample, extract peaks, chromPeakData and peaks.
+    ## call the merge thing.
 }

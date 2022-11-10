@@ -43,3 +43,22 @@ test_that(".mse_same_rownames works", {
     expect_match(.mse_same_rownames(a, data.frame(ms_level = 1:3)),
                  "don't match")
 })
+
+test_that(".aggregate_intensities works", {
+    pks <- cbind(mz = c(12.3, 12.4, 12.5, 13, 13.2, 13.3, 13.4, 13.5),
+                 intensity = 1:8)
+    res <- .aggregate_intensities(pks)
+    expect_equal(res, sum(1:8))
+
+    res <- .aggregate_intensities(pks, mzr = c(12.4, 13.2))
+    expect_equal(res, sum(2:5))
+
+    res <- .aggregate_intensities(pks, mzr = c(12.4, 13.2), INTFUN = max)
+    expect_equal(res, 5)
+})
+
+test_that("sumi works", {
+    expect_equal(sumi(1:4), sum(1:4))
+    expect_equal(sumi(c(1:4, NA)), sum(c(1:4, NA), na.rm = TRUE))
+    expect_equal(sumi(c(NA, NA)), NA_real_)
+})

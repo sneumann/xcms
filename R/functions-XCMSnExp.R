@@ -2991,16 +2991,52 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     ms_level <- unique(pkd$ms_level)
     if (length(ms_level) != 1)
         stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
+    ## drop_peaks <- rep(FALSE, nrow(pks))
+    ## names(drop_peaks) <- rownames(pks)
+    cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
+    if (!length(cands))
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    chr_def_mat <- cands[[1L]]
+    pk_groups <- cands[[2L]]
+    message("Evaluating ", length(pk_groups), " peaks in file ",
+            basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
+    chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
+                         rt = chr_def_mat[, c(3, 4)],
+                         msLevel = ms_level)
+    ## Now proceed to process them.
+    res_list <- pkd_list <- vector("list", length(pk_groups))
+    for (i in seq_along(pk_groups)) {
+        pk_group <- pk_groups[[i]]
+        res <- .chrom_merge_neighboring_peaks(
+            chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
+            extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
+            minProp = minProp)
+        ## drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
+        res_list[[i]] <- res$chromPeaks
+        pkd_list[[i]] <- res$chromPeakData
+    }
+    pks_new <- do.call(rbind, res_list)
+    pks_new[, "sample"] <- pks[1, "sample"]
+    pkd_new <- do.call(rbind, pkd_list)
+    ## drop peaks that were candidates, but that were not returned (i.e.
+    ## were either merged or dropped)
+    keep <- which(!(rownames(pks) %in% setdiff(unlist(pk_groups,
+                                                      use.names = FALSE),
+                                               rownames(pks_new))))
+    pks <- pks[keep, , drop = FALSE]
+    pkd <- extractROWS(pkd, keep)
+    ## add merged peaks
+    idx_new <- is.na(rownames(pks_new))
+    message("OK")
+    list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
+         chromPeakData = rbind(pkd, extractROWS(pkd_new, idx_new)))
+}
+
+.define_merge_candidates <- function(pks, expandMz, ppm, expandRt) {
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
-    drop_peaks <- rep(FALSE, nrow(pks))
-    names(drop_peaks) <- rownames(pks)
-    message("Evaluating ", length(mz_groups), " peaks in file ",
-            basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
-    if (!length(mz_groups)) {
-        message("OK")
-        return(list(chromPeaks = pks, chromPeakData = pkd))
-    }
+    if (!length(mz_groups))
+        return(list())
     ## Defining merge candidates
     pk_groups <- list()
     chr_def_mat <- list()
@@ -3009,8 +3045,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         rt_groups <- .group_overlapping_peaks(
             pks[mz_groups[[i]], , drop = FALSE],
             expand = expandRt, min_col = "rtmin",
-            max_col = "rtmax"
-        )
+            max_col = "rtmax")
         rt_groups <- rt_groups[lengths(rt_groups) > 1]
         for (j in seq_along(rt_groups)) {
             rt_group <- rt_groups[[j]]
@@ -3028,36 +3063,9 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
             current_group <- current_group + 1
         }
     }
-    if (!length(chr_def_mat)) {
-        message("OK")
-        return(list(chromPeaks = pks, chromPeakData = pkd))
-    }
-    chr_def_mat <- do.call(rbind, chr_def_mat)
-    chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
-                         rt = chr_def_mat[, c(3, 4)],
-                         msLevel = ms_level)
-    ## Now proceed to process them.
-    res_list <- pkd_list <- vector("list", length(pk_groups))
-    for (i in seq_along(pk_groups)) {
-        pk_group <- pk_groups[[i]]
-        res <- .chrom_merge_neighboring_peaks(
-            chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
-            extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
-            minProp = minProp)
-        drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
-        res_list[[i]] <- res$chromPeaks
-        pkd_list[[i]] <- res$chromPeakData
-    }
-    pks_new <- do.call(rbind, res_list)
-    pks_new[, "sample"] <- pks[1, "sample"]
-    pkd_new <- do.call(rbind, pkd_list)
-    keep_peaks <- which(!drop_peaks)
-    pks <- pks[keep_peaks, , drop = FALSE]
-    pkd <- extractROWS(pkd, keep_peaks)
-    idx_new <- is.na(rownames(pks_new))
-    message("OK")
-    list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
-         chromPeakData = rbind(pkd, extractROWS(pkd_new, idx_new)))
+    if (!length(chr_def_mat))
+        return(list())
+    list(do.call(rbind, chr_def_mat), pk_groups)
 }
 
 .filter_file_XCMSnExp <- function(object, file,

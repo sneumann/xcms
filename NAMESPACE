@@ -563,3 +563,4 @@ importMethodsFrom("BiocGenerics", "do.call")
 importMethodsFrom("BiocGenerics", "rbind")
 
 importFrom("progress", "progress_bar")
+importFrom("MsCoreUtils", "between")

@@ -592,6 +592,14 @@ test_that(".group_overlapping_peaks works", {
     expect_equal(res[[3]], c("g", "h"))
 })
 
+test_that(".define_merge_candidates works", {
+    xod_x1 <- filterFile(xod_x, 1L)
+    res <- .define_merge_candidates(chromPeaks(xod_x1), expandRt = 4,
+                                    expandMz = 0, ppm = 10)
+    expect_true(is.list(res))
+    expect_true(length(res) == 2)
+})
+
 test_that(".merge_neighboring_peaks works", {
     skip_on_os(os = "windows", arch = "i386")
 

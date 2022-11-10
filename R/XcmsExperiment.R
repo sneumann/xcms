@@ -542,6 +542,17 @@ setMethod(
     })
 
 ## refineChromPeaks,MergeNeightboringPeaksParam
+## splits XCMSnExp by file and calls (in parallel) .merge_neighboring_peaks
+## .merge_neighboring_peaks:
+## - uses chromPeaks and chromPeakData
+## - calls .group_overlapping_peaks to evaluate which peaks to merge
+## - calls chromatogram to get the data for the defined peaks.
+## - on each calls .chrom_merge_neighboring_peaks
+## How to do that.
+## - process chunk wise, then by file/sample:
+## - use .define_merge_candidates to define the candidates.
+## - see how .chrom_merge_neighboring_peaks could be replaced.
+
 ## refineChromPeaks,FilterIntensityParam
 
 ################################################################################
