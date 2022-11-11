@@ -3000,8 +3000,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
-    drop_peaks <- rep(FALSE, nrow(pks))
-    names(drop_peaks) <- rownames(pks)
     message("Evaluating ", length(mz_groups), " peaks in file ",
             basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
     if (!length(mz_groups)) {
@@ -3051,16 +3049,20 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
             chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
             extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
             minProp = minProp)
-        drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
         res_list[[i]] <- res$chromPeaks
         pkd_list[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, res_list)
     pks_new[, "sample"] <- pks[1, "sample"]
     pkd_new <- do.call(rbind, pkd_list)
-    keep_peaks <- which(!drop_peaks)
-    pks <- pks[keep_peaks, , drop = FALSE]
-    pkd <- extractROWS(pkd, keep_peaks)
+    ## drop peaks that were candidates, but that were not returned (i.e.
+    ## were either merged or dropped)
+    keep <- which(!(rownames(pks) %in% setdiff(unlist(pk_groups,
+                                                      use.names = FALSE),
+                                               rownames(pks_new))))
+    pks <- pks[keep, , drop = FALSE]
+    pkd <- extractROWS(pkd, keep)
+    ## add merged peaks
     idx_new <- is.na(rownames(pks_new))
     message("OK")
     list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
