@@ -2257,7 +2257,7 @@ featureSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
     ## Get spectra for all peaks of these features
     pkidx <- sort(unique(unlist(idx, use.names = FALSE)))
     peak_sp <- vector("list", nrow(chromPeaks(x)))
-    peak_sp[pkidx] <- xcms:::.spectra_for_peaks(
+    peak_sp[pkidx] <- .spectra_for_peaks(
         x, msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
         ppm = ppm, skipFilled = skipFilled, peaks = pkidx, ...)
     res <- lapply(seq_along(fids), function(i) {
@@ -3002,12 +3002,12 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
             basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
     chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
                          rt = chr_def_mat[, c(3, 4)],
-                         msLevel = ms_level)
+                         msLevel = ms_level, aggregationFun = "sum")
     ## Now proceed to process them.
     res_list <- pkd_list <- vector("list", length(pk_groups))
     for (i in seq_along(pk_groups)) {
         pk_group <- pk_groups[[i]]
-        res <- .chrom_merge_neighboring_peaks(
+        res <- xcms:::.chrom_merge_neighboring_peaks(
             chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
             extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
             minProp = minProp)
@@ -3041,6 +3041,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     pk_groups <- list()
     chr_def_mat <- list()
     current_group <- 1
+    ppme <- ppm * 1e-6
     for (i in seq_along(mz_groups)) {
         rt_groups <- .group_overlapping_peaks(
             pks[mz_groups[[i]], , drop = FALSE],
@@ -3056,9 +3057,9 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
             ## if chrom peaks are overlapping. This fixes an issue with very
             ## low intensities in between two peaks, that tend to have shifted
             ## m/z value (because their intensities are so low).
-            mzr_sub <- mzr_sub + c(-1, 1) * mzr_sub * ppm * 1e-6 + expandMz
             chr_def_mat[[current_group]] <-
-                c(mzr_sub,
+                c(mzr_sub[1L] - expandMz - mzr_sub[1L] * ppme,
+                  mzr_sub[2L] + expandMz + mzr_sub[2L] * ppme,
                   range(pks_sub[, c("rtmin", "rtmax")]))
             current_group <- current_group + 1
         }
@@ -3315,7 +3316,7 @@ manualChromPeaks <- function(object, chromPeaks = matrix(),
     else cn <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
                  "intb", "maxo", "sn", "sample")
     ## Do integration
-    res <- bpmapply(xcms:::.split_by_file2(object)[samples], samples,
+    res <- bpmapply(.split_by_file2(object)[samples], samples,
                     FUN = function(obj, idx, peakArea, msLevel, cn) {
                         xcms:::.getChromPeakData(obj, peakArea = peakArea,
                                                  sample_idx = idx,

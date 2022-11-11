@@ -3638,7 +3638,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #' instruments). This also ensures that all data points from the same ion are
 #' considered for the peak integration of merged peaks. The smallest and largest
 #' m/z value of all data points used in the peak integration of the merged peak
-#' are used as the merged peak's m/z range (i.e. columns `"mzmin"` and `"mzmax"`).
+#' are used as the merged peak's m/z range (i.e. columns `"mzmin"` and
+#' `"mzmax"`).
 #'
 #' @param expandRt `numeric(1)` defining by how many seconds the retention time
 #'     window is expanded on both sides to check for overlapping peaks.

@@ -483,22 +483,36 @@ test_that(".merge_neighboring_peak_candidates works", {
 })
 
 test_that(".merge_neighboring_peaks2 works", {
-    ref <- refineChromPeaks(filterFile(
-        faahko_xod, 1L), MergeNeighboringPeaksParam(expandRt = 6,
-                                                    expandMz = 1))
+    tmp1 <- filterFile(faahko_xod, 1L)
+    tmp2 <- xmse[1L]
+    x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
+    pks <- chromPeaks(tmp2, msLevel = 1L)
+    pkd <- chromPeaks(tmp2, msLevel = 1L)
+    rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
+    prm <- MergeNeighboringPeaksParam(expandRt = 6, expandMz = 1)
 
-    tmp <- xmse[1L]
-    x <- Spectra::peaksData(filterMsLevel(spectra(tmp), 1L))
-    pks <- chromPeaks(tmp, msLevel = 1L)
-    pkd <- chromPeaks(tmp, msLevel = 1L)
-    rt <- rtime(tmp)[msLevel(spectra(tmp)) == 1L]
-    res <- .merge_neighboring_peaks2(x, pks, pkd, rt, expandRt = 6,
-                                     expandMz = 1)
+    ref <- refineChromPeaks(tmp1, prm)
+    res <- .merge_neighboring_peaks2(x, pks, pkd, rt,
+                                     expandRt = prm@expandRt,
+                                     expandMz = prm@expandMz)
     expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
 
-    expandMz <- 0
-    ppm <- 10
-    minProp <- 0.75
-    expandRt <- 4
+    prm <- MergeNeighboringPeaksParam(expandRt = 4, expandMz = 1)
+    ref <- refineChromPeaks(tmp1, prm)
+    res <- .merge_neighboring_peaks2(x, pks, pkd, rt,
+                                     expandRt = prm@expandRt,
+                                     expandMz = prm@expandMz)
+    expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
 
+    tmp1 <- filterFile(faahko_xod, 2L)
+    tmp2 <- xmse[2L]
+    x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
+    pks <- chromPeaks(tmp2, msLevel = 1L)
+    pkd <- chromPeaks(tmp2, msLevel = 1L)
+    rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
+    ref <- refineChromPeaks(tmp1, prm)
+    res <- .merge_neighboring_peaks2(x, pks, pkd, rt,
+                                     expandRt = prm@expandRt,
+                                     expandMz = prm@expandMz)
+    expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
 })

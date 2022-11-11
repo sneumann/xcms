@@ -178,6 +178,12 @@
     INTFUN(vals, ...)
 }
 
+.pmat_filter_mz <- function(x, mzr = numeric()) {
+    if (!length(x))
+        return(x)
+    x[between(x[, "mz"], mzr), , drop = FALSE]
+}
+
 #' @title Sum MS Intensity Values
 #'
 #' @description
@@ -213,10 +219,14 @@ sumi <- function(x) {
 #'
 #' @param rt `numeric` with the retention times for `x`. HAS TO BE ADJUSTED RT
 #'
+#' @note
+#'
+#' The m/z range of the new merged peak considers also `expandMz` and `ppm`!
+#'
 #' @noRd
 .merge_neighboring_peak_candidates <- function(x, rt, pks, pkd, minProp = 0.75,
-                                               expandMz = 0, ppm = 10,
-                                               diffRt = 0) {
+                                                expandMz = 0, ppm = 10,
+                                                diffRt = 0) {
     if (!length(pks) || nrow(pks) < 2)
         return(list(chromPeaks = pks, chromPeakData = pkd))
     idx <- order(pks[, "rtmin"])
@@ -225,13 +235,28 @@ sumi <- function(x) {
     pks_new <- pks
     pks_new[ , ] <- NA_real_
     rownames(pks_new) <- rep(NA_character_, nrow(pks))
-    pks_new[1, ] <- pks[1, ]
-    rownames(pks_new)[1] <- rownames(pks)[1]
-    current_peak <- 1 # point always to the current *new* (merged) peak.
+    pks_new[1L, ] <- pks[1L, ]
+    rownames(pks_new)[1L] <- rownames(pks)[1L]
+    current_peak <- 1L # point always to the current *new* (merged) peak.
     drop_cols <- !(colnames(pks_new) %in% c("mz", "mzmin", "mzmax", "rt",
                                             "rtmin", "rtmax", "into",
                                             "maxo", "sn", "sample"))
+    ## Similar to the original code we define the "expanded m/r range" for the
+    ## full set of peaks based on the m/z min and max of **all** candidate peaks
+    ## Adjusting the m/z range for each tested candidate peak individually would
+    ## eventually result in wrong intensity estimation. The current approach
+    ## is more greedy, but, using *reasonable* settings it is supposed ot be
+    ## correct.
+    ## The reported m/z range for merged candidates represents the full m/z
+    ## range of all intensities considered in the calculation of the "into".
     ppme <- ppm * 1e-6
+    mzr <- range(pks[, c("mzmin", "mzmax")])
+    mzr_e <- c(mzr[1L] - expandMz - ppme * mzr[1L],
+               mzr[2L] + expandMz + ppme * mzr[2L])
+    ## pre-selecting the peaksData x *might* speed up things?
+    rtidx <- which(rt >= min(pks[, "rtmin"]) & rt <= max(pks[, "rtmax"]))
+    rt <- rt[rtidx]
+    x <- lapply(x[rtidx], .pmat_filter_mz, mzr = mzr_e)
     for (i in 2:nrow(pks)) {
         if ((pks[i, "rtmin"] - pks_new[current_peak, "rtmax"]) < diffRt) {
             ## skip if second peak contained within first
@@ -242,33 +267,27 @@ sumi <- function(x) {
             ## If rt_mid is NOT between the peaks, take the midpoint between
             ## the apexes instead.
             apexes <- range(c(pks[i, "rt"], pks_new[current_peak, "rt"]))
-            if (rt_mid < apexes[1] || rt_mid > apexes[2])
+            if (rt_mid < apexes[1L] || rt_mid > apexes[2L])
                 rt_mid <- sum(apexes) / 2
             ## Calculate the mean of the 3 data points closest to rt_mid.
             rt_idx <- order(abs(rt - rt_mid))[1:3]
-            mzr <- range(pks[i, c("mzmin", "mzmax")],
-                         pks_new[current_peak, c("mzmin", "mzmax")])
-            ## Expand range to be compliant with original code
-            mzr_e <- mzr + c(-1, 1) * mzr * ppme + expandMz
-            mid_vals <- vapply(x[rt_idx], .aggregate_intensities,
-                               mzr = mzr_e, numeric(1))
+            mid_vals <- vapply(x[rt_idx], .aggregate_intensities, numeric(1))
             if (!all(is.na(mid_vals)) &&
                 mean(mid_vals, na.rm = TRUE) >
                 min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) * minProp) {
                 ## Merge the existing peak with the new one, re-calculating the
-                ## intensity etc from the original data.
+                ## intensity and the m/z range from the original data.
                 pks_new[current_peak, drop_cols] <- NA_real_
                 pks_new[current_peak, "rtmax"] <-
                     max(pks[i, "rtmax"], pks_new[current_peak, "rtmax"])
-                pks_new[current_peak, c("mzmin", "mzmax")] <- mzr
                 rtmin <- pks_new[current_peak, "rtmin"]
                 rtmax <- pks_new[current_peak, "rtmax"]
                 idx <- which(rt >= rtmin & rt <= rtmax)
-                ## Calculate into as done in centWave. Use the ORIGINAL! m/z
                 peak_width <- (rtmax - rtmin) / (idx[length(idx)] - idx[1L])
-                pks_new[current_peak, "into"] <- sum(
-                    vapply(x[idx], .aggregate_intensities, mzr = mzr,
-                           numeric(1)), na.rm = TRUE) * peak_width
+                pkm <- do.call(rbind, x[idx])
+                pks_new[current_peak, c("into", "mzmin", "mzmax")] <-
+                    c(sum(pkm[, "intensity"], na.rm = TRUE) * peak_width,
+                      range(pkm[, "mz"], na.rm = TRUE))
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
@@ -311,7 +330,7 @@ sumi <- function(x) {
 #' @noRd
 .merge_neighboring_peaks2 <- function(x, pks, pkd, rt, expandRt = 2,
                                       expandMz = 0, ppm = 10, minProp = 0.75) {
-    cands <- xcms:::.define_merge_candidates(pks, expandMz, ppm, expandRt)
+    cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
     if (!length(cands))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     cands <- cands[[2L]]

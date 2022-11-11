@@ -647,6 +647,11 @@ test_that(".merge_neighboring_peaks works", {
     expect_true(nrow(pks) == 2)
     expect_true(nrow(pks) == nrow(chromPeaks(xod_x1, mz = mzr)))
     expect_equal(rownames(pks), rownames(chromPeaks(chr)))
+
+    ## Merge of overlapping peaks CP041 and CP043 with expandMz = 1
+    res <- xcms:::.merge_neighboring_peaks(xod_x1, expandRt = 6, expandMz = 1)
+    expect_true(!any(rownames(chromPeaks(res) == "CP041")))
+    expect_true(any(rownames(chromPeaks(res) == "CP043")))
 })
 
 test_that(".XCMSnExp2SummarizedExperiment works", {
