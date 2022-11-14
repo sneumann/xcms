@@ -3,8 +3,6 @@
 \name{FilterIntensityParam}
 \alias{FilterIntensityParam}
 \alias{refineChromPeaks,XCMSnExp,FilterIntensityParam-method}
-\alias{FilterIntensityParam-class}
-\alias{show,FilterIntensityParam-method}
 \title{Remove chromatographic peaks based on intensity}
 \usage{
 FilterIntensityParam(threshold = 0, nValues = 1L, value = "maxo")
@@ -81,8 +79,7 @@ nrow(chromPeaks(res))
 }
 \seealso{
 Other chromatographic peak refinement methods: 
-\code{\link{MergeNeighboringPeaksParam}},
-\code{\link{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}}
+\code{\link{refineChromPeaks}()}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

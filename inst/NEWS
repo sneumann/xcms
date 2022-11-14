@@ -1,7 +1,10 @@
-Changes in version 4.0.0
+Changes in version 3.99.0
 ----------------------
 
 - Add `XcmsExperiment` and support for `MsExperiment`/`Spectra`.
+- Fix issue in `refineChromPeaks` with `MergeNeighboringPeaksParam` where a
+  wrong apex position was considered in the evaluation whether candidate peaks
+  should be merged (would only happen for merging of > 2 candidate peaks).
 
 Changes in version 3.19.2
 ----------------------

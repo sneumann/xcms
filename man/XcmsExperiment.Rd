@@ -51,7 +51,11 @@
   isFilledColumn = FALSE
 )
 
-\S4method{chromPeakData}{XcmsExperiment}(object)
+\S4method{chromPeakData}{XcmsExperiment}(
+  object,
+  msLevel = integer(),
+  return.type = c("DataFrame", "data.frame")
+)
 
 \S4method{dropAdjustedRtime}{XcmsExperiment}(object)
 
@@ -125,6 +129,10 @@ and retention time of the peak's apex is within the region defined by
 \code{"is_filled"} should be included in the returned \code{matrix} with the
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
+
+\item{return.type}{For \code{chromPeakData}: \code{character(1)} defining the class of
+the returned object. Can be either \code{"DataFrame"} (the default) or
+\code{"data.frame"}.}
 
 \item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
 retention times should be returned. The default is to return adjusted

@@ -232,6 +232,7 @@ sumi <- function(x) {
     idx <- order(pks[, "rtmin"])
     pks <- pks[idx, , drop = FALSE]
     pkd <- pkd[idx, ]
+    rownames(pkd) <- NULL
     pks_new <- pks
     pks_new[ , ] <- NA_real_
     rownames(pks_new) <- rep(NA_character_, nrow(pks))
@@ -357,34 +358,61 @@ sumi <- function(x) {
         pks <- rbind(pks, pks_new[news, , drop = FALSE])
         pkd <- rbind(pkd, pkd_new[news, ])
     }
-    list(chromPeaks = pks, chromPeakData = pkd)
+    list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks))
 }
 
 #' @param x `XcmsExperiment` with potentially multiple files, samples.
 #'
 #' @noRd
-.xmse_merge_neighboring_peaks <- function(x, msLevel = 1L) {
-    ## filter MS level - but only spectra...
-    ## rt either rtime or rtime_adjusted
-    ## f <- fromFile()
-    ## f_peaks <- factor("sample", levels = idx)
-    ## bpmapply splitting peaksData, rt and chromPeaks
-    ## call function that processes data for one file. that one has to return
-    ## all peaks (merged and not merged) for the file.
-    ## return chrom peaks matrix
-
-    if (hasAdjustedRtime())
-    ## rt:
-
-    pks <- chromPeaks(x, msLevel = msLevel)
-    pkd <- chromPeakData(x, msLevel = msLevel)
-    sps <- filterMsLevelLLLLLL
-    p <- peaksData(filterMsLevel(spectra(x, msLevel = 1L)))
-
+.xmse_merge_neighboring_peaks <- function(x, msLevel = 1L, expandRt = 2,
+                                          expandMz = 0, ppm = 10,
+                                          minProp = 0.75, BPPARAM = bpparam()) {
+    keep <- msLevel(spectra(x)) == msLevel
+    f <- as.factor(fromFile(x)[keep])
+    if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
+    else rt <- rtime(spectra(x))[keep]
+    f_peaks <- factor(chromPeaks(x, msLevel = msLevel)[, "sample"],
+                      levels = levels(f))
+    res <- bpmapply(
+        .merge_neighboring_peaks2,
+        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel)), f),
+        split.data.frame(chromPeaks(x, msLevel = msLevel), f = f_peaks),
+        split.data.frame(chromPeakData(
+            x, msLevel = msLevel, return.type = "data.frame"), f = f_peaks),
+        split(rt, f),
+        MoreArgs = list(expandRt = expandRt, expandMz = expandMz,
+                        ppm = ppm, minProp = minProp),
+        SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
+    list(chromPeaks = do.call(rbind, lapply(res, `[[`, 1L)),
+         chromPeakData = do.call(rbind, lapply(res, `[[`, 2L)),
+         npeaks = vapply(res, `[[`, i = 3L, integer(1)))
 }
 
-.xmse_merge_neighboring_peaks_chunks <- function() {
-    ## Split xmse into chunks.
-    ## split by file/sample, extract peaks, chromPeakData and peaks.
-    ## call the merge thing.
+#' Apply any function `FUN` to chunks of an `XcmsExperiment`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.xmse_apply_chunks <- function(x, FUN, ..., keepChromPeaks = TRUE,
+                               keepAdjustedRtime = FALSE, keepFeatures = FALSE,
+                               ignoreHistory = FALSE, keepSampleIndex = FALSE,
+                               chunkSize = 1L) {
+    idx <- seq_along(x)
+    chunks <- split(idx, ceiling(idx / chunkSize))
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = length(chunks), clear = FALSE)
+    pb$tick(0)
+    lapply(chunks, function(z, ...) {
+        suppressMessages(
+            res <- FUN(.subset_xcms_experiment(
+                x, i = z, keepChromPeaks = keepChromPeaks,
+                keepAdjustedRtime = keepAdjustedRtime,
+                keepFeatures = keepFeatures, ignoreHistory = ignoreHistory,
+                keepSampleIndex = keepSampleIndex), ...)
+        )
+        pb$tick()
+        res
+    }, ...)
 }

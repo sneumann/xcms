@@ -177,7 +177,7 @@ jobs:
           ## Ideally, all dependencies should get installed in the first pass.
 
           ## Pass #1 at installing dependencies
-          BiocManager::install("lgatto/MSnbase")
+          BiocManager::install(c("ncdf4", "mzR"))
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos =
           BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)

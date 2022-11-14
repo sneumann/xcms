@@ -66,6 +66,9 @@ test_that("findChromPeaks,MsExperiment et al works", {
 
     ## chromPeakData
     expect_equal(chromPeakData(res), DataFrame(res@chromPeakData))
+    expect_true(is.data.frame(chromPeakData(xmse, return.type = "data.frame")))
+    expect_s4_class(chromPeakData(xmse), "DataFrame")
+    expect_true(nrow(chromPeakData(xmse, 2:3)) == 0)
 
     ## dropChromPeaks
     rres <- dropChromPeaks(res)
@@ -515,4 +518,51 @@ test_that(".merge_neighboring_peaks2 works", {
                                      expandRt = prm@expandRt,
                                      expandMz = prm@expandMz)
     expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
+})
+
+test_that(".xmse_merge_neighboring_peaks etc works", {
+    ref <- refineChromPeaks(faahko_xod, MergeNeighboringPeaksParam(
+                                            expandRt = 6, expandMz = 1))
+    a <- xcms:::.xmse_merge_neighboring_peaks(xmse, expandRt = 6, expandMz = 1)
+    expect_true(nrow(a$chromPeaks) == nrow(chromPeaks(ref)))
+    expect_true(nrow(a$chromPeakData) == nrow(chromPeaks(ref)))
+})
+
+test_that(".xmse_apply_chunks works", {
+    res <- xcms:::.xmse_apply_chunks(xmse, FUN = identity, chunkSize = 2L)
+    expect_true(length(res) == 2)
+    expect_s4_class(res[[1L]], "XcmsExperiment")
+    expect_s4_class(res[[2L]], "XcmsExperiment")
+    expect_true(length(res[[1L]]) == 2)
+    expect_true(length(res[[2L]]) == 1)
+})
+
+test_that("refineChromPeaks,XcmsExperiment,MergedChromPeaksParam works", {
+    prm <- MergeNeighboringPeaksParam(expandRt = 4, ppm = 20)
+    ref <- refineChromPeaks(faahko_xod, param = prm)
+
+    res <- refineChromPeaks(xmse, param = prm)
+    expect_true(validObject(res))
+    expect_equal(unname(chromPeaks(res)), unname(chromPeaks(ref)))
+    a <- chromPeakData(res)
+    b <- chromPeakData(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+    expect_equal(rownames(chromPeaks(res)), rownames(chromPeakData(res)))
+    expect_true(length(res@processHistory) > length(xmse@processHistory))
+
+    prm <- MergeNeighboringPeaksParam(expandRt = 6, expandMz = 1)
+    ref <- refineChromPeaks(faahko_xod, param = prm)
+
+    res <- refineChromPeaks(xmse, param = prm)
+    expect_true(validObject(res))
+    expect_equal(unname(chromPeaks(res)), unname(chromPeaks(ref)))
+    a <- chromPeakData(res)
+    b <- chromPeakData(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+    expect_equal(rownames(chromPeaks(res)), rownames(chromPeakData(res)))
+    expect_true(length(res@processHistory) > length(xmse@processHistory))
 })

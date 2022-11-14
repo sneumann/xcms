@@ -199,6 +199,10 @@
 #'
 #' @param object An `XcmsExperiment` object.
 #'
+#' @param return.type For `chromPeakData`: `character(1)` defining the class of
+#'     the returned object. Can be either `"DataFrame"` (the default) or
+#'     `"data.frame"`.
+#'
 #' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
 #'     the retention time range for which chromatographic peaks or features
 #'     should be returned. The full range is used by default.
@@ -505,11 +509,20 @@ setMethod("chromPeaks", "XcmsExperiment", function(object, rt = numeric(),
 })
 
 #' @rdname XcmsExperiment
-setMethod("chromPeakData", "XcmsExperiment", function(object) {
-    DataFrame(object@chromPeakData)
+setMethod(
+    "chromPeakData", "XcmsExperiment",
+    function(object, msLevel = integer(),
+             return.type = c("DataFrame", "data.frame")) {
+        return.type <- match.arg(return.type)
+        if (return.type == "DataFrame") FUN <- DataFrame
+        else FUN <- identity
+        if (length(msLevel))
+            FUN(object@chromPeakData[
+                           object@chromPeakData$ms_level %in% msLevel, ])
+        else FUN(object@chromPeakData)
 })
 
-#' @rdname refineChromPeaks-clean
+#' @rdname refineChromPeaks
 setMethod(
     "refineChromPeaks",
     signature(object = "XcmsExperiment", param = "CleanPeaksParam"),
@@ -525,7 +538,7 @@ setMethod(
         }
         validObject(param)
         rtw <- chromPeaks(object)[, "rtmax"] - chromPeaks(object)[, "rtmin"]
-        keep_ms <- chromPeakData(object)$ms_level %in% msLevel
+        keep_ms <- object@chromPeakData$ms_level %in% msLevel
         keep_rt <- rtw < param@maxPeakwidth & keep_ms
         keep <- which(keep_rt | !keep_ms)
         message("Removed ", nrow(chromPeaks(object)) - length(keep), " of ",
@@ -541,7 +554,56 @@ setMethod(
         object
     })
 
-## refineChromPeaks,MergeNeightboringPeaksParam
+#' @rdname refineChromPeaks
+setMethod(
+    "refineChromPeaks",
+    signature(object = "XcmsExperiment", param = "MergeNeighboringPeaksParam"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+        if (!hasChromPeaks(object, msLevel = msLevel)) {
+            warning("No chromatographic peaks for MS level ",
+                    msLevel, " present", call. = FALSE)
+            return(object)
+        }
+        if (hasFeatures(object)) {
+            message("Removing feature definitions")
+            object <- dropFeatureDefinitions(object)
+        }
+        npks_orig <- nrow(chromPeaks(object))
+        validObject(param)
+        res <- .xmse_apply_chunks(
+            object, .xmse_merge_neighboring_peaks, msLevel = msLevel,
+            expandRt = param@expandRt, expandMz = param@expandMz,
+            ppm = param@ppm, minProp = param@minProp, BPPARAM = BPPARAM,
+            keepAdjustedRtime = TRUE, ignoreHistory = TRUE,
+            keepSampleIndex = FALSE, chunkSize = chunkSize)
+        pks <- do.call(rbind, lapply(res, `[[`, 1L))
+        pkd <- do.call(rbind.data.frame, c(lapply(res, `[[`, 2L),
+                                           make.row.names = FALSE))
+        npks <- unlist(lapply(res, `[[`, 3L), use.names = FALSE)
+        pks[, "sample"] <- rep(seq_along(npks), npks)
+        nas <- which(is.na(rownames(pks))) # merged peaks
+        if (!any(colnames(pkd) == "merged"))
+            pkd$merged <- FALSE
+        pkd$merged[nas] <- TRUE
+        ## Fix rownames
+        maxi <- max(as.integer(sub("CP", "", rownames(object@chromPeaks))))
+        rownames(pks)[nas] <- .featureIDs(length(nas), "CP", from = maxi + 1L)
+        rownames(pkd) <- rownames(pks)
+        ## Merge with existing peaks from **other** MS levels
+        keep <- object@chromPeakData$ms_level != msLevel
+        object@chromPeaks <- rbind(object@chromPeaks[keep, ], pks)
+        object@chromPeakData <- rbindFill(object@chromPeakData[keep, ], pkd)
+        message("Reduced from ", npks_orig, " to ", nrow(chromPeaks(object)),
+                " chromatographic peaks.")
+        xph <- XProcessHistory(param = param, date. = date(),
+                               type. = .PROCSTEP.PEAK.REFINEMENT,
+                               fileIndex = seq_along(object),
+                               msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(xph))
+        validObject(object)
+        object
+    })
+
 ## splits XCMSnExp by file and calls (in parallel) .merge_neighboring_peaks
 ## .merge_neighboring_peaks:
 ## - uses chromPeaks and chromPeakData

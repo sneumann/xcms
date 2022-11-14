@@ -3480,60 +3480,7 @@ setMethod("plot", c("XCMSnExp", "missing"),
               else .plot_XIC(x, peakCol = peakCol, ...)
           })
 
-#' @title Remove chromatographic peaks with too large rt width
-#'
-#' @aliases refineChromPeaks CleanPeaksParam-class show,CleanPeaksParam-method
-#'
-#' @description
-#'
-#' Remove chromatographic peaks with a retention time range larger than the
-#' provided maximal acceptable width (`maxPeakwidth`).
-#'
-#' @note
-#'
-#' `refineChromPeaks` methods will always remove feature definitions, because
-#' a call to this method can change or remove identified chromatographic peaks,
-#' which may be part of features.
-#'
-#' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
-#'     allowed peak width (in retention time).
-#'
-#' @param msLevel `integer` defining for which MS level(s) the chromatographic
-#'     peaks should be cleaned.
-#'
-#' @param object [XCMSnExp] or [XcmsExperiment] object with identified
-#'     chromatographic peaks.
-#'
-#' @param param `CleanPeaksParam` object defining the settings for the method.
-#'
-#' @return `XCMSnExp` or [XcmsExperiment] object with chromatographic peaks
-#'     exceeding the specified maximal retention time width being removed.
-#'
-#' @author Johannes Rainer
-#'
-#' @md
-#'
-#' @family chromatographic peak refinement methods
-#'
-#' @rdname refineChromPeaks-clean
-#'
-#' @examples
-#'
-#' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
-#'
-#' ## Disable parallel processing for this example
-#' register(SerialParam())
-#'
-#' ## Distribution of chromatographic peak widths
-#' quantile(chromPeaks(faahko_sub)[, "rtmax"] - chromPeaks(faahko_sub)[, "rtmin"])
-#'
-#' ## Remove all chromatographic peaks with a width larger 60 seconds
-#' data <- refineChromPeaks(faahko_sub, param = CleanPeaksParam(60))
-#'
-#' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+#' @rdname refineChromPeaks
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
           function(object, param = CleanPeaksParam(), msLevel = 1L) {
               if (!hasChromPeaks(object, msLevel = msLevel)) {
@@ -3569,148 +3516,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
               object
           })
 
-#' @title Merge neighboring and overlapping chromatographic peaks
-#'
-#' @aliases MergeNeighboringPeaksParam-class show,MergeNeighboringPeaksParam-method
-#'
-#' @description
-#'
-#' Peak detection sometimes fails to identify a chromatographic peak correctly,
-#' especially for broad peaks and if the peak shape is irregular (mostly for
-#' HILIC data). In such cases several smaller peaks are reported. Also, peak
-#' detection can result in partially or completely overlapping peaks. To reduce
-#' such peak detection artifacts, this function merges chromatographic peaks
-#' which are overlapping or close in rt and m/z dimension considering also the
-#' measured signal intensities in the region between them.
-#'
-#' Chromatographic peaks are first expanded in m/z and retention time dimension
-#' (based on parameters `expandMz`, `ppm` and `expandRt`) and subsequently
-#' grouped into sets of merge candidates if they are (after expansion)
-#' overlapping in both m/z and rt (within the same sample).
-#' Candidate peaks are merged if the average intensity of the 3 data
-#' points in the middle position between them (i.e. at half the distance between
-#' `"rtmax"` of the first and `"rtmin"` of the second peak) is larger than a
-#' certain proportion (`minProp`) of the smaller maximal intensity (`"maxo"`)
-#' of both peaks. In cases in which this calculated mid point is **not**
-#' located between the apexes of the two peaks (e.g. if the peaks are largely
-#' overlapping) the average signal intensity at half way between the apexes is
-#' used instead. Candidate peaks are not joined if all 3 data points between
-#' them have `NA` intensities.
-#' The joined peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from
-#' the peak with the largest signal (`"maxo"`) as well as its row in the
-#' metadata data frame of the peak (`chromPeakData`). The `"rtmin"`, `"rtmax"`
-#' of the merged peaks are updated and `"into"` is recalculated based on all
-#' the signal between `"rtmin"` and `"rtmax"` of the new merged peak. See
-#' details for information on the `"mzmin"` and `"mzmax"` values of the merged
-#' peak.
-#'
-#' @note
-#'
-#' Note that **each** peak gets expanded by `expandMz` and `expandRt`, thus
-#' peaks differing by `2 * expandMz` (or `expandRt`) will be identified as
-#' *overlapping*. As an example: m/z max of one peak is 12.2, m/z min of
-#' another one is 12.4, if `expandMz = 0.1` the m/z max of the first peak
-#' will be 12.3 and the m/z min of the second one 12.3, thus both are
-#' considered overlapping.
-#'
-#' `refineChromPeaks` methods will always remove feature definitions, because
-#' a call to this method can change or remove identified chromatographic peaks,
-#' which may be part of features.
-#'
-#' Merging of chromatographic peaks is performed along the retention time axis,
-#' i.e. candidate peaks are first ordered by their `"rtmin"` value. The signals
-#' at half way between the first and the second candidate peak are then compared
-#' to the smallest `"maxo"` of both and the two peaks are then merged if the
-#' average signal between the peaks is larger `minProp`. For merging any
-#' additional peak in a candidate peak list the `"maxo"` of that peak and the
-#' newly merged peak are considered.
-#'
-#' @details
-#'
-#' For each set of candidate peaks an ion chromatogram is
-#' extracted using the range of retention times and m/z values of these peaks.
-#' The m/z range for the extracted ion chromatogram is expanded by `expandMz`
-#' and `ppm` (on both sides) to reduce the possibility of missing signal
-#' intensities between candidate peaks (variance of measured m/z values for
-#' lower intensities is larger than for higher intensities and thus data points
-#' not being part of identified chromatographic peaks tend to have m/z values
-#' outside of the m/z range of the candidate peaks - especially for ToF
-#' instruments). This also ensures that all data points from the same ion are
-#' considered for the peak integration of merged peaks. The smallest and largest
-#' m/z value of all data points used in the peak integration of the merged peak
-#' are used as the merged peak's m/z range (i.e. columns `"mzmin"` and
-#' `"mzmax"`).
-#'
-#' @param expandRt `numeric(1)` defining by how many seconds the retention time
-#'     window is expanded on both sides to check for overlapping peaks.
-#'
-#' @param expandMz `numeric(1)` constant value by which the m/z range of each
-#'     chromatographic peak is expanded (on both sides!) to check for
-#'     overlapping peaks.
-#'
-#' @param ppm `numeric(1)` defining a m/z relative value (in parts per million)
-#'     by which the m/z range of each chromatographic peak is expanded
-#'     to check for overlapping peaks.
-#'
-#' @param minProp `numeric(1)` between `0` and `1` representing the proporion
-#'     of intensity to be required for peaks to be joined. See description for
-#'     more details. The default (`minProp = 0.75`) means that peaks are only
-#'     joined if the signal half way between then is larger 75% of the smallest
-#'     of the two peak's `"maxo"` (maximal intensity at peak apex).
-#'
-#' @param msLevel `integer` defining for which MS level(s) the chromatographic
-#'     peaks should be merged.
-#'
-#' @param object [XCMSnExp] object with identified chromatographic peaks.
-#'
-#' @param param `MergeNeighboringPeaksParam` object defining the settings for
-#'     the method.
-#'
-#' @param BPPARAM parameter object to set up parallel processing. Uses the
-#'     default parallel processing setup returned by `bpparam()`. See
-#'     [bpparam()] for details and examples.
-#'
-#' @return `XCMSnExp` object with chromatographic peaks matching the defined
-#'     conditions being merged.
-#'
-#' @author Johannes Rainer, Mar Garcia-Aloy
-#'
-#' @md
-#'
-#' @family chromatographic peak refinement methods
-#'
-#' @rdname refineChromPeaks-merge
-#'
-#' @examples
-#'
-#' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
-#'
-#' ## Disable parallel processing for this example
-#' register(SerialParam())
-#'
-#' ## Subset to a single file
-#' xd <- filterFile(faahko_sub, file = 1)
-#'
-#' ## Example of a split peak that will be merged
-#' mzr <- 305.1 + c(-0.01, 0.01)
-#' chr <- chromatogram(xd, mz = mzr, rt = c(2700, 3700))
-#' plot(chr)
-#'
-#' ## Combine the peaks
-#' res <- refineChromPeaks(xd, param = MergeNeighboringPeaksParam(expandRt = 4))
-#' chr_res <- chromatogram(res, mz = mzr, rt = c(2700, 3700))
-#' plot(chr_res)
-#'
-#' ## Example of a peak that was not merged, because the signal between them
-#' ## is lower than the cut-off minProp
-#' mzr <- 496.2 + c(-0.01, 0.01)
-#' chr <- chromatogram(xd, mz = mzr, rt = c(3200, 3500))
-#' plot(chr)
-#' chr_res <- chromatogram(res, mz = mzr, rt = c(3200, 3500))
-#' plot(chr_res)
+#' @rdname refineChromPeaks
 setMethod("refineChromPeaks", c(object = "XCMSnExp",
                                 param = "MergeNeighboringPeaksParam"),
           function(object, param = MergeNeighboringPeaksParam(),
@@ -3771,8 +3577,6 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
           })
 
 #' @title Remove chromatographic peaks based on intensity
-#'
-#' @aliases FilterIntensityParam-class show,FilterIntensityParam-method
 #'
 #' @description
 #'

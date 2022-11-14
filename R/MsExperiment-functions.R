@@ -152,26 +152,6 @@
     ## res
 }
 
-## .xmse_apply_chunks <- function(x, FUN, ..., chunkize = 1L, BPPARAM = bpparam() {
-##     idx <- seq_along(x)
-##     chunks <- split(idx, ceiling(idx / chunkSize))
-##     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-##                                            "total (:percent) in ",
-##                                            ":elapsed"),
-##                            total = length(chunks),
-##                            clear = FALSE, show_after = 0)
-##     pb$tick(0)
-##     lapply(chunks, function(z, ..., pb) {
-##         suppressMessages(
-##             res <- FUN(.subset_xcms_experiment(x, ), ...)
-##         )
-##         pb$tick()
-##         res
-##     }, ..., pb = pb, BPPARAM = BPPARAM)
-
-##     ## subset
-## })
-
 #' @title Perform peak detection on chunks of data
 #'
 #' @description
