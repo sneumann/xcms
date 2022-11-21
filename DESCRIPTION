@@ -8,23 +8,23 @@ Description: Framework for processing and visualization of chromatographically
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Ralf", family = "Tautenhahn",
 	   email = "rtautenh@gmail.com",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Steffen", family = "Neumann",
 	   email = "sneumann@ipb-halle.de",
 	   role = c("aut", "cre"),
 	   comment = c(ORCID = "0000-0002-7899-7192")),
 	   person(given = "Paul", family = "Benton",
 	   email = "hpbenton@scripps.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Christopher", family = "Conley",
 	   email = "cjconley@ucdavis.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Johannes", family = "Rainer",
 	   email = "johannes.rainer@eurac.edu",
-	   role = "ctb",
+	   role = "aut",
 	   comment = c(ORCID = "0000-0002-6977-7147")),
 	   person(given = "Michael", family = "Witting",
 	   email = "michael.witting@helmholtz-muenchen.de",
@@ -82,7 +82,7 @@ URL: https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new
 VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Collate:
     'AllGenerics.R'
     'functions-XChromatograms.R'
