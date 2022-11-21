@@ -88,9 +88,7 @@
 #'   available for the specified MS level(s).
 #'
 #' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
-#'   Supported options (parameter classes) are:
-#'   - [CleanPeaksParam()]: remove chromatographic peaks with a retention time
-#'     width larger than a user provided value.
+#'   See [refineChromPeaks()] for details.
 #'
 #' @section Functionality related to alignment:
 #'
@@ -604,18 +602,45 @@ setMethod(
         object
     })
 
-## splits XCMSnExp by file and calls (in parallel) .merge_neighboring_peaks
-## .merge_neighboring_peaks:
-## - uses chromPeaks and chromPeakData
-## - calls .group_overlapping_peaks to evaluate which peaks to merge
-## - calls chromatogram to get the data for the defined peaks.
-## - on each calls .chrom_merge_neighboring_peaks
-## How to do that.
-## - process chunk wise, then by file/sample:
-## - use .define_merge_candidates to define the candidates.
-## - see how .chrom_merge_neighboring_peaks could be replaced.
-
-## refineChromPeaks,FilterIntensityParam
+#' @rdname refineChromPeaks
+setMethod(
+    "refineChromPeaks",
+    signature(object = "XcmsExperiment", param = "FilterIntensityParam"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+        if (!hasChromPeaks(object, msLevel = msLevel)) {
+            warning("No chromatographic peaks for MS level ",
+                    msLevel, " present", call. = FALSE)
+            return(object)
+        }
+        if (hasFeatures(object)) {
+            message("Removing feature definitions")
+            object <- dropFeatureDefinitions(object)
+        }
+        npks_orig <- nrow(chromPeaks(object))
+        validObject(param)
+        if (param@nValues == 1L) {
+            if (!any(colnames(chromPeaks(object)) == param@value))
+                stop("Column '", param@value, "' not available.")
+            keep <- chromPeaks(object)[, param@value] >= param@threshold |
+                chromPeakData(object)$ms_level != msLevel
+        } else
+            keep <- unlist(.xmse_apply_chunks(
+                object, .xmse_filter_peaks_intensities,nValues = param@nValues,
+                threshold = param@threshold, msLevel = msLevel,
+                keepAdjustedRtime = TRUE, ignoreHistory = TRUE,
+                BPPARAM = BPPARAM, chunkSize = chunkSize), use.names = FALSE)
+        object@chromPeaks <- object@chromPeaks[keep, , drop = FALSE]
+        object@chromPeakData <- object@chromPeakData[keep, ]
+        message("Reduced from ", npks_orig, " to ", nrow(chromPeaks(object)),
+                " chromatographic peaks.")
+        xph <- XProcessHistory(param = param, date. = date(),
+                               type. = .PROCSTEP.PEAK.REFINEMENT,
+                               fileIndex = seq_along(object),
+                               msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(xph))
+        validObject(object)
+        object
+    })
 
 ################################################################################
 ## alignment

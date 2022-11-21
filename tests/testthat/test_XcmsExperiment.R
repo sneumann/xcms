@@ -566,3 +566,41 @@ test_that("refineChromPeaks,XcmsExperiment,MergedChromPeaksParam works", {
     expect_equal(rownames(chromPeaks(res)), rownames(chromPeakData(res)))
     expect_true(length(res@processHistory) > length(xmse@processHistory))
 })
+
+test_that(".xmse_filter_peaks_intensities works", {
+    res <- .xmse_filter_peaks_intensities(xmse, nValues = 4, threshold = 0,
+                                          msLevel = 1L)
+    expect_true(is.logical(res))
+    expect_true(length(res) == nrow(chromPeaks(xmse)))
+    expect_true(all(res))
+
+    res <- .xmse_filter_peaks_intensities(xmse, nValues = 20, threshold = 0,
+                                          msLevel = 1L)
+    expect_false(all(res))
+
+    res <- .xmse_filter_peaks_intensities(xmse, nValues = 1, threshold = 50000)
+    expect_equal(res, unname(chromPeaks(xmse)[, "maxo"] >= 50000))
+
+    res <- .xmse_filter_peaks_intensities(xmse, nValues = 1, , msLeve = 2L)
+    expect_true(length(res) == 0)
+})
+
+test_that("refineChromPeaks,XcmsExperiment,FilterIntensityParam works", {
+    fip <- FilterIntensityParam(threshold = 13000, nValues = 3)
+    ref <- refineChromPeaks(faahko_xod, fip)
+
+    res <- refineChromPeaks(xmse, fip)
+    expect_equal(chromPeaks(res), chromPeaks(ref))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(xmse)))
+    expect_true(length(res@processHistory) > length(xmse@processHistory))
+
+    expect_warning(res <- refineChromPeaks(xmse, fip, msLevel = 3L), "level 3")
+    expect_equal(chromPeaks(res), chromPeaks(xmse))
+
+    expect_error(
+        refineChromPeaks(xmse, FilterIntensityParam(1000, value = "other")),
+        "not available")
+    res <- refineChromPeaks(xmse, FilterIntensityParam(300000, nValues = 1,
+                                                       value = "into"))
+    expect_true(all(chromPeaks(res)[, "into"] >= 300000))
+})

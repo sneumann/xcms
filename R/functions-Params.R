@@ -353,9 +353,7 @@ ChromPeakAreaParam <- function(mzmin = function(z) quantile(z, probs = 0.25),
         rtmax = rtmax)
 }
 
-#' @rdname refineChromPeaks-filter-intensity
-#'
-#' @md
+#' @rdname refineChromPeaks
 FilterIntensityParam <- function(threshold = 0, nValues = 1L, value = "maxo") {
     new("FilterIntensityParam", threshold = as.numeric(threshold),
         nValues = as.integer(nValues), value = value)

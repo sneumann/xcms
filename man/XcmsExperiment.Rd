@@ -220,11 +220,7 @@ Alignment results (adjusted retention times) can be retained if parameter
 Parameter \code{msLevel} allows to check whether peak detection results are
 available for the specified MS level(s).
 \item \code{refineChromPeaks}: \emph{refines} identified chromatographic peaks in \code{object}.
-Supported options (parameter classes) are:
-\itemize{
-\item \code{\link[=CleanPeaksParam]{CleanPeaksParam()}}: remove chromatographic peaks with a retention time
-width larger than a user provided value.
-}
+See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 }
 }
 

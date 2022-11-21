@@ -786,8 +786,17 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #' refinement and cleaning can be defined, along with all its settings, using
 #' one of the following parameter objects:
 #'
-#' - `CleanPeaksParam`: remove chromatographic peaks with a retention time range
-#'   larger than the provided maximal acceptable width (`maxPeakwidth`).
+#' - `CleanPeaksParam`: remove chromatographic peaks with a retention time
+#'   range larger than the provided maximal acceptable width (`maxPeakwidth`).
+#'
+#' - `FilterIntensityParam`: remove chromatographic peaks with intensities
+#'   below the specified threshold. By default (with `nValues = 1`) values in
+#'   the `chromPeaks` matrix are evaluated: all peaks with a value in the
+#'   column defined with parameter `value` that are `>=` a threshold (defined
+#'   with parameter `threshold`) are retained. If `nValues` is larger than 1,
+#'   the individual peak intensities from the raw MS files are evaluated:
+#'   chromatographic peaks with at least `nValues` mass peaks `>= threshold`
+#'   are retained.
 #'
 #' - `MergeNeighboringPeaksParam`: peak detection sometimes fails to identify a
 #'   chromatographic peak correctly, especially for broad peaks and if the peak
@@ -875,6 +884,10 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #' @param msLevel `integer` defining for which MS level(s) the chromatographic
 #'     peaks should be cleaned.
 #'
+#' @param nValues For `FilterIntensityParam`: `integer(1)` defining the number
+#'     of data points (for each chromatographic peak) that have to be
+#'     `>= threshold`. Defaults to `nValues = 1`.
+#'
 #' @param object [XCMSnExp] or [XcmsExperiment] object with identified
 #'     chromatographic peaks.
 #'
@@ -883,6 +896,13 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #' @param ppm For `MergeNeighboringPeaksParam`: `numeric(1)` defining a m/z
 #'     relative value (in parts per million) by which the m/z range of each
 #'     chromatographic peak is expanded to check for overlapping peaks.
+#'
+#' @param threshold For `FilterIntensityParam`: `numeric(1)` defining the
+#'     threshold below which peaks are removed.
+#'
+#' @param value For `FilterIntensityParam`: `character(1)` defining the name
+#'     of the column in `chromPeaks` that contains the values to be used for
+#'     the filtering.
 #'
 #' @param ... ignored.
 #'
@@ -917,6 +937,16 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #' data <- refineChromPeaks(faahko_sub, param = CleanPeaksParam(60))
 #'
 #' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+#'
+#' ####
+#' ## FilterIntensityParam:
+#'
+#' ## Remove all peaks with a maximal intensity below 50000
+#' res <- refineChromPeaks(faahko_sub,
+#'     param = FilterIntensityParam(threshold = 50000))
+#'
+#' nrow(chromPeaks(faahko_sub))
+#' nrow(chromPeaks(res))
 #'
 #' ####
 #' ## MergeNeighboringPeaksParam:

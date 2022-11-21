@@ -11,10 +11,13 @@
 \alias{show,MergeNeighboringPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,MergeNeighboringPeaksParam-method}
+\alias{refineChromPeaks,XcmsExperiment,FilterIntensityParam-method}
 \alias{CleanPeaksParam}
 \alias{MergeNeighboringPeaksParam}
+\alias{FilterIntensityParam}
 \alias{refineChromPeaks,XCMSnExp,CleanPeaksParam-method}
 \alias{refineChromPeaks,XCMSnExp,MergeNeighboringPeaksParam-method}
+\alias{refineChromPeaks,XCMSnExp,FilterIntensityParam-method}
 \title{Refine Identified Chromatographic Peaks}
 \usage{
 refineChromPeaks(object, param, ...)
@@ -22,6 +25,14 @@ refineChromPeaks(object, param, ...)
 \S4method{refineChromPeaks}{XcmsExperiment,CleanPeaksParam}(object, param = CleanPeaksParam(), msLevel = 1L)
 
 \S4method{refineChromPeaks}{XcmsExperiment,MergeNeighboringPeaksParam}(
+  object,
+  param,
+  msLevel = 1L,
+  chunkSize = 2L,
+  BPPARAM = bpparam()
+)
+
+\S4method{refineChromPeaks}{XcmsExperiment,FilterIntensityParam}(
   object,
   param,
   msLevel = 1L,
@@ -38,11 +49,20 @@ MergeNeighboringPeaksParam(
   minProp = 0.75
 )
 
+FilterIntensityParam(threshold = 0, nValues = 1L, value = "maxo")
+
 \S4method{refineChromPeaks}{XCMSnExp,CleanPeaksParam}(object, param = CleanPeaksParam(), msLevel = 1L)
 
 \S4method{refineChromPeaks}{XCMSnExp,MergeNeighboringPeaksParam}(
   object,
   param = MergeNeighboringPeaksParam(),
+  msLevel = 1L,
+  BPPARAM = bpparam()
+)
+
+\S4method{refineChromPeaks}{XCMSnExp,FilterIntensityParam}(
+  object,
+  param = FilterIntensityParam(),
   msLevel = 1L,
   BPPARAM = bpparam()
 )
@@ -96,6 +116,17 @@ joined. See description for more details. With default (\code{minProp = 0.75})
 only peaks are joined if the signal half way between them is larger than
 75\% of the smallest of the two peak's \code{"maxo"} (maximal intensity at
 peak apex).}
+
+\item{threshold}{For \code{FilterIntensityParam}: \code{numeric(1)} defining the
+threshold below which peaks are removed.}
+
+\item{nValues}{For \code{FilterIntensityParam}: \code{integer(1)} defining the number
+of data points (for each chromatographic peak) that have to be
+\verb{>= threshold}. Defaults to \code{nValues = 1}.}
+
+\item{value}{For \code{FilterIntensityParam}: \code{character(1)} defining the name
+of the column in \code{chromPeaks} that contains the values to be used for
+the filtering.}
 }
 \value{
 \code{XCMSnExp} or \link{XcmsExperiment} object with the refined
@@ -109,8 +140,16 @@ object \strong{after} peak detection with \code{\link[=findChromPeaks]{findChrom
 refinement and cleaning can be defined, along with all its settings, using
 one of the following parameter objects:
 \itemize{
-\item \code{CleanPeaksParam}: remove chromatographic peaks with a retention time range
-larger than the provided maximal acceptable width (\code{maxPeakwidth}).
+\item \code{CleanPeaksParam}: remove chromatographic peaks with a retention time
+range larger than the provided maximal acceptable width (\code{maxPeakwidth}).
+\item \code{FilterIntensityParam}: remove chromatographic peaks with intensities
+below the specified threshold. By default (with \code{nValues = 1}) values in
+the \code{chromPeaks} matrix are evaluated: all peaks with a value in the
+column defined with parameter \code{value} that are \code{>=} a threshold (defined
+with parameter \code{threshold}) are retained. If \code{nValues} is larger than 1,
+the individual peak intensities from the raw MS files are evaluated:
+chromatographic peaks with at least \code{nValues} mass peaks \verb{>= threshold}
+are retained.
 \item \code{MergeNeighboringPeaksParam}: peak detection sometimes fails to identify a
 chromatographic peak correctly, especially for broad peaks and if the peak
 shape is irregular (mostly for HILIC data). In such cases several smaller
@@ -182,6 +221,16 @@ data <- refineChromPeaks(faahko_sub, param = CleanPeaksParam(60))
 quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 
 ####
+## FilterIntensityParam:
+
+## Remove all peaks with a maximal intensity below 50000
+res <- refineChromPeaks(faahko_sub,
+    param = FilterIntensityParam(threshold = 50000))
+
+nrow(chromPeaks(faahko_sub))
+nrow(chromPeaks(res))
+
+####
 ## MergeNeighboringPeaksParam:
 
 ## Subset to a single file
@@ -204,10 +253,6 @@ chr <- chromatogram(xd, mz = mzr, rt = c(3200, 3500))
 plot(chr)
 chr_res <- chromatogram(res, mz = mzr, rt = c(3200, 3500))
 plot(chr_res)
-}
-\seealso{
-Other chromatographic peak refinement methods: 
-\code{\link{FilterIntensityParam}}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

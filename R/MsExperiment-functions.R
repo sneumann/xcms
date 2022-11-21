@@ -215,27 +215,29 @@
                                         BPPARAM = bpparam()) {
     sidx <- unique(x$.SAMPLE_IDX)
     x <- filterMsLevel(x, msLevel = msLevel)
-    if (length(x))
+    lx <- length(x)
+    if (lx)
         f <- factor(x$.SAMPLE_IDX, levels = sidx)
     else f <- factor(integer(), levels = sidx)
+    ## Check for random number of spectra if they are centroided. NOT all.
+    if (inherits(param, "CentWaveParam")) {
+        cntr <- all(centroided(x[sort(sample(seq_along(x), min(c(100, lx))))]))
+        if (is.na(cntr)) {
+            cntr <- isCentroided(x[ceiling(lx / 3)])
+            if (is.na(cntr) || !cntr)
+                warning("Your data appears to be not centroided! ",
+                        "CentWave works best on data in centroid mode.")
+        }
+    }
     bpmapply(
-        split(Spectra::peaksData(x, columns = c("mz", "intensity"),
-                                 BPPARAM = SerialParam()), f),
+        split(peaksData(x, columns = c("mz", "intensity"),
+                        BPPARAM = SerialParam()), f),
         split(rtime(x), f),
         FUN = function(p, rt, prm, msl) {
             vals_per_spect <- vapply(p, nrow, integer(1), USE.NAMES = FALSE)
             p <- do.call(rbind, p)
             if (!length(p))
                 return(NULL)            # not returning matrix because of rbind
-            if (inherits(prm, "CentWaveParam")) {
-                centroided <- all(centroided(x))
-                if (is.na(centroided)) {
-                    centroided <- isCentroided(x[ceiling(length(x) / 3)])
-                    if (is.na(centroided) || !centroided)
-                        warning("Your data appears to be not centroided! ",
-                                "CentWave works best on data in centroid mode.")
-                }
-            }
             if (is.unsorted(rt))
                 stop("Spectra are not ordered by retention time", .call = FALSE)
             do.call(

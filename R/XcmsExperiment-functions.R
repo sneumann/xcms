@@ -388,6 +388,43 @@ sumi <- function(x) {
          npeaks = vapply(res, `[[`, i = 3L, integer(1)))
 }
 
+#' @param x `XcmsExperiment` (multiple files)
+#'
+#' @return `logical` or length equal `nrow(chromPeaks(x))`.
+#'
+#' @noRd
+.xmse_filter_peaks_intensities <- function(x, nValues = 1L, threshold = 0,
+                                           msLevel = 1L, BPPARAM = bpparam()) {
+    keep <- msLevel(spectra(x)) == msLevel
+    f <- as.factor(fromFile(x)[keep])
+    if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
+    else rt <- rtime(spectra(x))[keep]
+    f_peaks <- factor(chromPeaks(x)[, "sample"], levels = levels(f))
+    res <- bpmapply(
+        function(x, rt, pks, msLevels, nValues, threshold, msLevel) {
+            if (!length(pks)) return(logical())
+            vapply(seq_len(nrow(pks)), function(i) {
+                if (msLevels[i] != msLevel)
+                    FALSE
+                else {
+                    rtidx <- between(rt , pks[i, c("rtmin", "rtmax")])
+                    vals <- vapply(x[rtidx], .aggregate_intensities,
+                                   mzr = pks[i, c("mzmin", "mzmax")],
+                                   numeric(1))
+                    sum(vals >= threshold, na.rm = TRUE) >= nValues
+                }
+            }, logical(1))
+        },
+        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel)), f),
+        split(rt, f),
+        split.data.frame(chromPeaks(x), f = f_peaks),
+        split(chromPeakData(x)$ms_level, f = f_peaks),
+        MoreArgs = list(nValues = nValues, threshold = threshold,
+                        msLevel = msLevel),
+        USE.NAMES = FALSE, BPPARAM = BPPARAM)
+    unlist(res, use.names = FALSE)
+}
+
 #' Apply any function `FUN` to chunks of an `XcmsExperiment`.
 #'
 #' @author Johannes Rainer

@@ -3576,77 +3576,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               object
           })
 
-#' @title Remove chromatographic peaks based on intensity
-#'
-#' @description
-#'
-#' Remove chromatographic peaks with intensities below the specified threshold.
-#' By default, with `nValues = 1`, all peaks with an intensity
-#' `>= threshold` are retained. Parameter `value` allows to specify the column of
-#' the [chromPeaks()] matrix that should be used for the filtering (defaults to
-#' `value = "maxo"` and thus evaluating the maximal intensity for each peak).
-#' With `nValues > 1` it is possible to keep only peaks that have `nValues`
-#' intensities `>= threshold`. Note that this requires data import from the
-#' original MS files and run time of the call can thus be significantly larger.
-#' Also, for `nValues > 1` parameter `value` is ignored.
-#'
-#' @param threshold `numeric(1)` defining the minimal required intensity for
-#'     a peak to be retained. Defaults to `threshold = 0`.
-#'
-#' @param nValues `integer(1)` defining the number of data points (per
-#'     chromatographic peak) that have to be `>= threshold`. Defaults to
-#'     `nValues = 1`.
-#'
-#' @param value `character(1)` specifying the column in [chromPeaks()] that
-#'     should be used for the comparison. This is ignored for `nValues > 1`.
-#'
-#' @param msLevel `integer(1)` defining the MS level in which peaks should be
-#'     filtered.
-#'
-#' @param object [XCMSnExp] object with identified chromatographic peaks.
-#'
-#' @param param `FilterIntensityParam` object defining the settings for
-#'     the method.
-#'
-#' @param BPPARAM parameter object to set up parallel processing. Uses the
-#'     default parallel processing setup returned by `bpparam()`. See
-#'     [bpparam()] for details and examples.
-#'
-#' @return `XCMSnExp` object with filtererd chromatographic peaks.
-#'
-#' @author Johannes Rainer, Mar Garcia-Aloy
-#'
-#' @md
-#'
-#' @family chromatographic peak refinement methods
-#'
-#' @rdname refineChromPeaks-filter-intensity
-#'
-#' @examples
-#'
-#' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
-#'
-#' ## Disable parallel processing for this example
-#' register(SerialParam())
-#'
-#' ## Remove all peaks with a maximal intensity below 50000
-#' res <- refineChromPeaks(faahko_sub, param = FilterIntensityParam(threshold = 50000))
-#'
-#' nrow(chromPeaks(faahko_sub))
-#' nrow(chromPeaks(res))
-#'
-#' all(chromPeaks(res)[, "maxo"] > 50000)
-#'
-#' ## Keep only chromatographic peaks that have 3 signals above 20000; we
-#' ## perform this on the data of a single file.
-#' xdata <- filterFile(faahko_sub)
-#'
-#' res <- refineChromPeaks(xdata, FilterIntensityParam(threshold = 20000, nValues = 3))
-#' nrow(chromPeaks(xdata))
-#' nrow(chromPeaks(res))
+#' @rdname refineChromPeaks
 setMethod("refineChromPeaks", c(object = "XCMSnExp",
                                 param = "FilterIntensityParam"),
           function(object, param = FilterIntensityParam(),
