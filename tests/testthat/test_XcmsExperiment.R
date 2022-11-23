@@ -604,3 +604,21 @@ test_that("refineChromPeaks,XcmsExperiment,FilterIntensityParam works", {
                                                        value = "into"))
     expect_true(all(chromPeaks(res)[, "into"] >= 300000))
 })
+
+test_that("featureValues,XcmsExperiment works", {
+    expect_error(featureValues(xmse), "feature definitions")
+
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
+    expect_error(featureValues(xmseg, msLevel = 2L), "feature definitions")
+    res <- featureValues(xmseg)
+    expect_true(is.matrix(res))
+    expect_equal(colnames(res), c("ko15.CDF", "ko16.CDF", "ko18.CDF"))
+    expect_equal(rownames(res), rownames(featureDefinitions(xmseg)))
+    res2 <- featureValues(xmseg, missing = 10)
+    expect_true(all(res2[is.na(res)] == 10))
+
+    expect_error(featureValues(xmseg, method = "sum", value = "index"),
+                 "value is set to")
+    expect_error(featureValues(xmseg, missing = "sum"), "or a numeric")
+})

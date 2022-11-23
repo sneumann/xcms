@@ -21,6 +21,7 @@
 \alias{hasFeatures,XcmsExperiment-method}
 \alias{featureDefinitions,XcmsExperiment-method}
 \alias{dropFeatureDefinitions,XcmsExperiment-method}
+\alias{featureValues,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
@@ -75,6 +76,16 @@
 )
 
 \S4method{dropFeatureDefinitions}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
+
+\S4method{featureValues}{XcmsExperiment}(
+  object,
+  method = c("medret", "maxint", "sum"),
+  value = "into",
+  intensity = "into",
+  filled = TRUE,
+  missing = NA_real_,
+  msLevel = integer()
+)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -137,6 +148,39 @@ the returned object. Can be either \code{"DataFrame"} (the default) or
 \item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
 retention times should be returned. The default is to return adjusted
 retention times, if available.}
+
+\item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
+resolve multi-peak mappings within the same sample (correspondence
+analysis can assign more than one chromatographic peak within a sample
+to the same feature, e.g. if they are close in retention time). Options:
+\code{method = "medret"}: report the value for the chromatographic peak
+closest to the feature's median retention time.
+\code{method = "maxint"}: report the value for the chromatographic peak
+with the largest signal (parameter \code{intensity} allows to select the
+column in \code{chromPeaks} that should be used for \emph{signal}).
+\code{method = "sum"}: sum the value for all chromatographic peaks in a
+sample assigned to the same feature. The default is \code{method = "medret"}.}
+
+\item{value}{For \code{featureValues}: \code{character(1)} defining which value should
+be reported for each feature in each sample. Can be any column of the
+\code{chromPeaks} matrix or \code{"index"} if simply the index of the assigned
+peak should be returned. Defaults to \code{value = "into"} thus the
+integrated peak area is reported.}
+
+\item{intensity}{For \code{featureValues}: \code{character(1)} specifying the name
+of the column in the \code{chromPeaks(objects)} matrix containing the
+intensity value of the peak that should be used for the conflict
+resolution if \code{method = "maxint"}.}
+
+\item{filled}{For \code{featureValues}: \code{logical(1)} specifying whether values
+for filled-in peaks should be reported. For \code{filled = TRUE} (the
+default) filled peak values are returned, otherwise \code{NA} is reported
+for the respective features in the samples in which no peak was
+detected.}
+
+\item{missing}{For \code{featureValues}: default value for missing values.
+Allows to define the value that should be reported for a missing peak
+intensity. Defaults to \code{missing = NA_real_}.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
@@ -263,6 +307,35 @@ for details.
 \code{object}. The optional parameter \code{msLevel} allows to define the  MS
 level(s) for which it should be determined if feature definitions are
 available.
+}
+}
+
+\section{Extracting data and results from an \code{XcmsExperiment}}{
+
+
+Preprocessing results can be extracted using the following functions:
+\itemize{
+\item \code{chromPeaks}: extract identified chromatographic peaks. See section on
+chromatographic peak detection for details.
+\item \code{featureDefinitions}: extract the definition of \emph{features} (chromatographic
+peaks grouped across samples). See section on correspondence analysis for
+details.
+\item \code{featureValues}: extract a \code{matrix} of \emph{values} for features from each
+sample (file). Rows are features, columns samples. Which \emph{value} should be
+returned can be defined with parameter \code{value}, which can be any column of
+the \code{chromPeaks} matrix. By default (\code{value = "into"}) the integrated
+chromatographic peak intensities are returned. With parameter \code{msLevel} it
+is possible to extract values for features from certain MS levels.
+During correspondence analysis, more than one chromatographic peak per
+sample can be assigned to the same feature (e.g. if they are very close in
+retention time). Parameter \code{method} allows to define the strategy to deal
+with such cases: \code{method = "medret"}: report the value from the
+chromatographic peak with the apex position closest to the feautre's
+median retention time. \code{method = "maxint"}: report the value from the
+chromatographic peak with the largest signal (parameter \code{intensity} allows
+to define the column in \code{chromPeaks} that should be selected; defaults to
+\verb{intensity = "into"). }method = "sum"`: sum the values for all
+chromatographic peaks assigned to the feature in the same sample.
 }
 }
 

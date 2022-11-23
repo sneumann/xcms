@@ -453,3 +453,39 @@ sumi <- function(x) {
         res
     }, ...)
 }
+
+#' Integrates MS intensities for a chromatographic peak.
+#'
+#' @param x `list` of peak matrices (from a single MS level and from a single
+#'     file/sample).
+#'
+#' @param rt retention time for each peak matrix.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.integrate_chrom_peak_intensity <- function(x, rt, peakArea,
+                                            mzCenterFun = "weighted.mean",
+                                            sampleIndex = integer(),
+                                            cn = character()) {
+    res <- matrix(ncol = length(cn), nrow = nrow(peakArea))
+    colnames(res) <- cn
+    res[, "sample"] <- sample_idx
+    res[, c("rtmin", "rtmax", "mzmin", "mzmax")] <-
+        peakArea[, c("rtmin", "rtmax", "mzmin", "mzmax")]
+    keep <- between(rt, range(peakArea[, c("rtmin", "rtmax")]))
+    rt <- rt[keep]
+    for (i in seq_len(nrow(res))) {
+        mzr <- peakArea[i, c("mzmin", "mzmax")]
+        rtr <- peakArea[i, c("rtmin", "rtmax")]
+        ## skip if range is out.
+        keep <- between(rt, peakArea[i, c("rtmin", "rtmax")])
+        if (any(keep)) {
+            mat <- do.call(
+                rbind, .pmat_filter_mz, mzr = peakArea[i, c("mzmin", "mzmax")])
+            if (!length(mat))
+                next
+            ## Calculate intensities
+        }
+    }
+}

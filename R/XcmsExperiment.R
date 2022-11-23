@@ -132,6 +132,34 @@
 #'   level(s) for which it should be determined if feature definitions are
 #'   available.
 #'
+#' @section Extracting data and results from an `XcmsExperiment`:
+#'
+#' Preprocessing results can be extracted using the following functions:
+#'
+#' - `chromPeaks`: extract identified chromatographic peaks. See section on
+#'   chromatographic peak detection for details.
+#'
+#' - `featureDefinitions`: extract the definition of *features* (chromatographic
+#'   peaks grouped across samples). See section on correspondence analysis for
+#'   details.
+#'
+#' - `featureValues`: extract a `matrix` of *values* for features from each
+#'   sample (file). Rows are features, columns samples. Which *value* should be
+#'   returned can be defined with parameter `value`, which can be any column of
+#'   the `chromPeaks` matrix. By default (`value = "into"`) the integrated
+#'   chromatographic peak intensities are returned. With parameter `msLevel` it
+#'   is possible to extract values for features from certain MS levels.
+#'   During correspondence analysis, more than one chromatographic peak per
+#'   sample can be assigned to the same feature (e.g. if they are very close in
+#'   retention time). Parameter `method` allows to define the strategy to deal
+#'   with such cases: `method = "medret"`: report the value from the
+#'   chromatographic peak with the apex position closest to the feautre's
+#'   median retention time. `method = "maxint"`: report the value from the
+#'   chromatographic peak with the largest signal (parameter `intensity` allows
+#'   to define the column in `chromPeaks` that should be selected; defaults to
+#'   `intensity = "into"). `method = "sum"`: sum the values for all
+#'   chromatographic peaks assigned to the feature in the same sample.
+#'
 #' @section Functionality for backward compatibility:
 #'
 #' These functions for `MsExperiment` and `XcmsExperiment` ensure compatibility
@@ -167,8 +195,19 @@
 #' @param file For `filterFile`: `integer` with the indices of the samples
 #'     (files) to which the data should be subsetted.
 #'
+#' @param filled For `featureValues`: `logical(1)` specifying whether values
+#'     for filled-in peaks should be reported. For `filled = TRUE` (the
+#'     default) filled peak values are returned, otherwise `NA` is reported
+#'     for the respective features in the samples in which no peak was
+#'     detected.
+#'
 #' @param i For `[`: `integer` or `logical` defining the samples/files to
 #'     subset.
+#'
+#' @param intensity For `featureValues`: `character(1)` specifying the name
+#'     of the column in the `chromPeaks(objects)` matrix containing the
+#'     intensity value of the peak that should be used for the conflict
+#'     resolution if `method = "maxint"`.
 #'
 #' @param isFilledColumn For `chromPeaks`: `logical(1)` whether a column
 #'     `"is_filled"` should be included in the returned `matrix` with the
@@ -179,6 +218,22 @@
 #'
 #' @param keepAdjustedRtime `logical(1)`: whether adjusted retention times (if
 #'     present) should be retained.
+#'
+#' @param method For `featureValues`: `character(1)` specifying the method to
+#'     resolve multi-peak mappings within the same sample (correspondence
+#'     analysis can assign more than one chromatographic peak within a sample
+#'     to the same feature, e.g. if they are close in retention time). Options:
+#'     `method = "medret"`: report the value for the chromatographic peak
+#'     closest to the feature's median retention time.
+#'     `method = "maxint"`: report the value for the chromatographic peak
+#'     with the largest signal (parameter `intensity` allows to select the
+#'     column in `chromPeaks` that should be used for *signal*).
+#'     `method = "sum"`: sum the value for all chromatographic peaks in a
+#'     sample assigned to the same feature. The default is `method = "medret"`.
+#'
+#' @param missing For `featureValues`: default value for missing values.
+#'     Allows to define the value that should be reported for a missing peak
+#'     intensity. Defaults to `missing = NA_real_`.
 #'
 #' @param msLevel `integer` defining the MS level (or multiple MS level if the
 #'     function supports it).
@@ -214,6 +269,12 @@
 #'     For `type = "apex_within"`: returns peaks or features for which the m/z
 #'     and retention time of the peak's apex is within the region defined by
 #'     `mz` and/or `rt`.
+#'
+#' @param value For `featureValues`: `character(1)` defining which value should
+#'     be reported for each feature in each sample. Can be any column of the
+#'     `chromPeaks` matrix or `"index"` if simply the index of the assigned
+#'     peak should be returned. Defaults to `value = "into"` thus the
+#'     integrated peak area is reported.
 #'
 #' @param x An `XcmsExperiment` object.
 #'
@@ -866,7 +927,28 @@ setMethod(
 
 ## hasFilledChromPeaks
 ## fillChromPeaks,FillChromPeaksParam
+
 ## fillChromPeaks,ChromPeakAreaParam
+## - define the regions from which to fill-in.
+## - depending on the peak detection method, call different functions.
+## - for peak integration: will need a `Spectra`? For one sample? Changing the
+##   backend to MsBackendMemory and calling it? Or should I just use peak matrix
+##   list and retention time? Would be more memory efficient.
+## Code:
+## - process x by chunk.
+## - for each chunk: get peaks data and rt, split by file.
+## - call .integrate_chrom_peak_intensity on that.
+
+bla <- function(object) {
+    if (length(msLevel) != 1)
+        stop("Can only perform peak filling for one MS level at a time.")
+    if (!hasFeatures(object, msLevel = msLevel))
+        stop("No feature definitions for MS level ", msLevel, " present.")
+    .xmse_apply_chunks(x, function() {})
+    fts_region <- .features_ms_region()
+
+}
+
 ## dropFilledChromPeaks
 
 ################################################################################
@@ -874,7 +956,32 @@ setMethod(
 ################################################################################
 
 ## quantify
-## featureValues
+
+#' @rdname XcmsExperiment
+setMethod(
+    "featureValues", "XcmsExperiment",
+    function(object, method = c("medret", "maxint", "sum"), value = "into",
+             intensity = "into", filled = TRUE, missing = NA_real_,
+             msLevel = integer()) {
+        if (!hasFeatures(object, msLevel = msLevel))
+            stop("No feature definitions for MS level(s) ", msLevel," present.")
+        method <- match.arg(method)
+        if (method == "sum" && !(value %in% c("into", "maxo")))
+            stop("method 'sum' is only allowed if value is set to 'into'",
+                 " or 'maxo'")
+        if (is.character(missing) && !(missing %in% c("rowmin_half")))
+            stop("if 'missing' is not 'NA' or a numeric it should",
+                 " be one of: \"rowmin_half\".")
+        fNames <- basename(fileNames(object))
+        pks <- chromPeaks(object)
+        ## issue #157: replace all values for filled-in peaks with NA
+        if (!filled)
+            pks[chromPeakData(object)$is_filled, ] <- NA_real_
+        .feature_values(
+            pks = pks, fts = featureDefinitions(object, msLevel = msLevel),
+            method = method, value = value, intensity = intensity,
+            colnames = fNames, missing = missing)
+    })
 
 ################################################################################
 ## utility and unsorted methods
