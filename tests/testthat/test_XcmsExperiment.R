@@ -98,6 +98,7 @@ test_that("findChromPeaks,MsExperiment et al works", {
     expect_false(hasChromPeaks(res, msLevel = 2))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that("subsetting,XcmsExperiment works", {
     expect_error(.subset_xcms_experiment(xmse, i = 1:4), "out of bounds")
     expect_error(.subset_xcms_experiment(xmse, i = c(1, 1, 2)), "Duplicated")
@@ -274,37 +275,38 @@ test_that(".empty_feature_definitions works", {
     expect_true(all(.REQ_PEAKG_COLS %in% colnames(res)))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".xmse_group_cpeaks works", {
     expect_error(.xmse_group_cpeaks(chromPeaks(xmse), p), "No correspondence")
     ## Just for PeakDensityParam.
     pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
     cp <- chromPeaks(xmse, msLevel = 1L)
-    res <- xcms:::.xmse_group_cpeaks(cp, pdp)
+    res <- .xmse_group_cpeaks(cp, pdp)
     expect_true(is.data.frame(res))
-    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+    expect_true(all(.REQ_PEAKG_COLS %in% colnames(res)))
     expect_equal(res$mzmed, featureDefinitions(xod_xg)$mzmed)
     expect_equal(res$mzmin, featureDefinitions(xod_xg)$mzmin)
     expect_equal(res$mzmax, featureDefinitions(xod_xg)$mzmax)
     expect_equal(res$peakidx, featureDefinitions(xod_xg)$peakidx)
 
-    res2 <- xcms:::.xmse_group_cpeaks(cp, pdp, index = seq_len(nrow(cp)) + 13)
+    res2 <- .xmse_group_cpeaks(cp, pdp, index = seq_len(nrow(cp)) + 13)
     idx <- lapply(res$peakidx, function(z) z + 13)
     expect_equal(idx, res2$peakidx)
 
-    res <- xcms:::.xmse_group_cpeaks(chromPeaks(xmse, msLevel = 2L), pdp)
-    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+    res <- .xmse_group_cpeaks(chromPeaks(xmse, msLevel = 2L), pdp)
+    expect_true(all(.REQ_PEAKG_COLS %in% colnames(res)))
 
     ## NearestPeaksParam
     npp <- NearestPeaksParam(sampleGroups = c(1, 1))
-    res <- xcms:::.xmse_group_cpeaks(cp, npp)
+    res <- .xmse_group_cpeaks(cp, npp)
     expect_true(is.data.frame(res))
-    expect_true(all(xcms:::.REQ_PEAKG_COLS %in% colnames(res)))
+    expect_true(all(.REQ_PEAKG_COLS %in% colnames(res)))
     expect_true(is.list(res$peakidx))
 
     ## MzClustParam
     cp <- chromPeaks(fticr_xod)
     mcp <- MzClustParam(sampleGroups = c(1, 1))
-    res <- xcms:::.xmse_group_cpeaks(cp, mcp)
+    res <- .xmse_group_cpeaks(cp, mcp)
     expect_true(is.data.frame(res))
     expect_true(is.list(res$peakidx))
 })
@@ -424,6 +426,7 @@ test_that("refineChromPeaks,XcmsExperiment,CleanPeaksParam works", {
     expect_true(all(rtw <= 20))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".merge_neighboring_peak_candidates works", {
     ## first file
     ref <- refineChromPeaks(filterFile(
@@ -485,6 +488,7 @@ test_that(".merge_neighboring_peak_candidates works", {
     expect_equal(res$chromPeaks, pks)
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".merge_neighboring_peaks2 works", {
     tmp1 <- filterFile(faahko_xod, 1L)
     tmp2 <- xmse[1L]
@@ -520,16 +524,18 @@ test_that(".merge_neighboring_peaks2 works", {
     expect_equal(unname(chromPeaks(ref)), unname(res$chromPeaks))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".xmse_merge_neighboring_peaks etc works", {
     ref <- refineChromPeaks(faahko_xod, MergeNeighboringPeaksParam(
                                             expandRt = 6, expandMz = 1))
-    a <- xcms:::.xmse_merge_neighboring_peaks(xmse, expandRt = 6, expandMz = 1)
+    a <- .xmse_merge_neighboring_peaks(xmse, expandRt = 6, expandMz = 1)
     expect_true(nrow(a$chromPeaks) == nrow(chromPeaks(ref)))
     expect_true(nrow(a$chromPeakData) == nrow(chromPeaks(ref)))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".xmse_apply_chunks works", {
-    res <- xcms:::.xmse_apply_chunks(xmse, FUN = identity, chunkSize = 2L)
+    res <- .xmse_apply_chunks(xmse, FUN = identity, chunkSize = 2L)
     expect_true(length(res) == 2)
     expect_s4_class(res[[1L]], "XcmsExperiment")
     expect_s4_class(res[[2L]], "XcmsExperiment")
@@ -567,6 +573,7 @@ test_that("refineChromPeaks,XcmsExperiment,MergedChromPeaksParam works", {
     expect_true(length(res@processHistory) > length(xmse@processHistory))
 })
 
+## That's from XcmsExperiment-functions.R
 test_that(".xmse_filter_peaks_intensities works", {
     res <- .xmse_filter_peaks_intensities(xmse, nValues = 4, threshold = 0,
                                           msLevel = 1L)
@@ -621,4 +628,64 @@ test_that("featureValues,XcmsExperiment works", {
     expect_error(featureValues(xmseg, method = "sum", value = "index"),
                  "value is set to")
     expect_error(featureValues(xmseg, missing = "sum"), "or a numeric")
+})
+
+test_that("fillChromPeaks,XcmsExperiment,ChromPeakAreaParam works", {
+    cpp <- ChromPeakAreaParam()
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
+
+    pal <- split.data.frame(chromPeaks(xmseg), chromPeaks(xmseg)[, "sample"])
+    res <- .xmse_integrate_chrom_peaks(xmse, pal)
+    expect_true(is.matrix(res))
+    expect_equal(unname(res[, "into"]), unname(chromPeaks(xmse)[, "into"]))
+    expect_equal(unname(res[, "maxo"]), unname(chromPeaks(xmse)[, "maxo"]))
+
+    expect_error(fillChromPeaks(xmse, param = cpp), "MS level 1")
+    expect_error(fillChromPeaks(xmseg, param = cpp, msLevel = 2L), "MS level 2")
+
+    res <- fillChromPeaks(xmseg, param = cpp)
+    expect_true(length(res@processHistory) > length(xmseg@processHistory))
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(xmseg)))
+    expect_true(nrow(chromPeakData(res)) > nrow(chromPeakData(xmseg)))
+    expect_true(sum(is.na(featureValues(res))) <
+                sum(is.na(featureValues(xmseg))))
+    expect_true(hasFilledChromPeaks(res))
+
+    ## With matched filter.
+    mfp <- MatchedFilterParam()
+    tmp <- findChromPeaks(mse, mfp)
+    tmp <- groupChromPeaks(tmp, pdp)
+    ## res <- fillChromPeaks(tmp, cpp)
+})
+
+## That's from XcmsExperiment-functions.R
+test_that(".xmse_process_history works", {
+    res <- .xmse_process_history(xmse)
+    expect_equal(res, xmse@processHistory)
+    res <- .xmse_process_history(xmse, msLevel = 1L)
+    expect_equal(res, xmse@processHistory)
+    res <- .xmse_process_history(xmse, msLevel = 2L)
+    expect_equal(res, list())
+    res <- .xmse_process_history(xmse, type = .PROCSTEP.PEAK.DETECTION)
+    expect_equal(res, xmse@processHistory)
+    res <- .xmse_process_history(xmse, type = .PROCSTEP.PEAK.DETECTION,
+                                 msLevel = 2L)
+    expect_equal(res, list())
+    res <- .xmse_process_history(xmse, type = .PROCSTEP.FEATURE.GROUPING)
+    expect_equal(res, list())
+})
+
+## That's from XcmsExperiment-functions.R
+test_that(".chrom_peak_intensity_centWave works", {
+    x <- Spectra::peaksData(spectra(xmse[2L]))
+    rt <- rtime(spectra(xmse[2L]))
+    pks <- chromPeaks(xmse)[chromPeaks(xmse)[, "sample"] == 2L, ]
+
+    res <- .chrom_peak_intensity_centWave(x, rt, pks, sampleIndex = 2L,
+                                          cn = colnames(pks))
+    expect_equal(unname(res[, "mz"]), unname(pks[, "mz"]))
+    ## expect_equal(res[, "rt"], unname(pks[, "rt"])) # that is different.
+    expect_equal(unname(res[, "into"]), unname(pks[, "into"]))
+    expect_equal(unname(res[, "maxo"]), unname(pks[, "maxo"]))
 })

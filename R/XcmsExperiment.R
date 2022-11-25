@@ -650,8 +650,13 @@ setMethod(
         rownames(pkd) <- rownames(pks)
         ## Merge with existing peaks from **other** MS levels
         keep <- object@chromPeakData$ms_level != msLevel
-        object@chromPeaks <- rbind(object@chromPeaks[keep, ], pks)
-        object@chromPeakData <- rbindFill(object@chromPeakData[keep, ], pkd)
+        if (any(keep)) {
+            object@chromPeaks <- rbind(object@chromPeaks[keep, ], pks)
+            object@chromPeakData <- rbindFill(object@chromPeakData[keep, ], pkd)
+        } else {
+            object@chromPeaks <- pks
+            object@chromPeakData <- pkd
+        }
         message("Reduced from ", npks_orig, " to ", nrow(chromPeaks(object)),
                 " chromatographic peaks.")
         xph <- XProcessHistory(param = param, date. = date(),
@@ -925,31 +930,89 @@ setMethod(
 ## gap filling
 ################################################################################
 
-## hasFilledChromPeaks
-## fillChromPeaks,FillChromPeaksParam
+#' @rdname fillChromPeaks
+setMethod("hasFilledChromPeaks", "XcmsExperiment", function(object) {
+    any(chromPeakData(object)$is_filled)
+})
 
-## fillChromPeaks,ChromPeakAreaParam
-## - define the regions from which to fill-in.
-## - depending on the peak detection method, call different functions.
-## - for peak integration: will need a `Spectra`? For one sample? Changing the
-##   backend to MsBackendMemory and calling it? Or should I just use peak matrix
-##   list and retention time? Would be more memory efficient.
-## Code:
-## - process x by chunk.
-## - for each chunk: get peaks data and rt, split by file.
-## - call .integrate_chrom_peak_intensity on that.
-
-bla <- function(object) {
-    if (length(msLevel) != 1)
-        stop("Can only perform peak filling for one MS level at a time.")
-    if (!hasFeatures(object, msLevel = msLevel))
-        stop("No feature definitions for MS level ", msLevel, " present.")
-    .xmse_apply_chunks(x, function() {})
-    fts_region <- .features_ms_region()
-
-}
+#' @rdname fillChromPeaks
+setMethod(
+    "fillChromPeaks",
+    signature(object = "XcmsExperiment", param = "ChromPeakAreaParam"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+        if (length(msLevel) != 1)
+            stop("Can only perform peak filling for one MS level at a time.")
+        if (!hasFeatures(object, msLevel = msLevel))
+            stop("No feature definitions for MS level ", msLevel, " present.")
+        ## Define region to integrate from for each file
+        fr <- .features_ms_region(object, mzmin = param@mzmin,
+                                  mzmax = param@mzmax, rtmin = param@rtmin,
+                                  rtmax = param@rtmax, msLevel = msLevel)
+        fvals <- featureValues(object, value = "index", msLevel = msLevel)
+        pal <- lapply(seq_len(ncol(fvals)), function(i) {
+            fr[is.na(fvals[, i]), , drop = FALSE]
+        })
+        names(pal) <- seq_along(pal)
+        ## Get integration function and other info.
+        ph <- .xmse_process_history(object, .PROCSTEP.PEAK.DETECTION,
+                                    msLevel = msLevel)
+        fill_fun <- xcms:::.history2fill_fun(ph)
+        if (length(ph) && any(slotNames(ph[[1L]]@param) == "mzCenterFun")) {
+            prm <- ph[[1L]]@param
+            mzf <- prm@mzCenterFun
+        } else {
+            mzf <- "wMean"
+            prm <- MatchedFilterParam()
+        }
+        mzf <- paste0("mzCenter.", gsub("mzCenter.", "", mzf, fixed = TRUE))
+        ## Manual chunk processing because we have to split `object` and `pal`
+        idx <- seq_along(object)
+        chunks <- split(idx, ceiling(idx / chunkSize))
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks), clear = FALSE)
+        pb$tick(0)
+        res <- lapply(chunks, function(z, ...) {
+            pb$tick()
+            .xmse_integrate_chrom_peaks(
+                .subset_xcms_experiment(object, i = z, keepAdjustedRtime = TRUE,
+                                        ignoreHistory = TRUE),
+                pal = pal[z], intFun = fill_fun, mzCenterFun = mzf,
+                param = prm, BPPARAM = BPPARAM)
+        })
+        res <- do.call(rbind, res)
+        ## Update feature definitions
+        i_res <- seq((nrow(chromPeaks(object)) + 1L), length.out = nrow(res))
+        i_res <- split(i_res, rownames(res))
+        i_ft <- match(names(i_res), rownames(featureDefinitions(object)))
+        for (i in seq_along(i_res))
+            object@featureDefinitions$peakidx[[i_ft[i]]] <-
+                sort(c(object@featureDefinitions$peakidx[[i_ft[i]]], i_res[[i]]))
+        ## Add results
+        nr <- nrow(res)
+        maxi <- max(as.integer(sub("CP", "", rownames(chromPeaks(object)))))
+        rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
+        cpd <- data.frame(ms_level = rep(msLevel, nr),
+                          is_filled = rep(TRUE, nr))
+        rownames(cpd) <- rownames(res)
+        object@chromPeaks <- rbind(object@chromPeaks, res)
+        object@chromPeakData <- rbindFill(object@chromPeakData, cpd)
+        ## Need to update the index in the featureDefinitions
+        ph <- XProcessHistory(param = param,
+                              date. = date(),
+                              type. = .PROCSTEP.PEAK.FILLING,
+                              fileIndex = seq_along(object),
+                              msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, list(ph))
+        validObject(object)
+        object
+    })
 
 ## dropFilledChromPeaks
+## identify index of filled peaks
+## remove indices from the $peakidx
+## remove peaks.
 
 ################################################################################
 ## results

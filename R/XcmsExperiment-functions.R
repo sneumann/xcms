@@ -178,8 +178,12 @@
     INTFUN(vals, ...)
 }
 
+#' Filter a peaks matrix based on m/z value range. Returns a `matrix` with 0
+#' rows if no value is within the mz range.
+#'
+#' @noRd
 .pmat_filter_mz <- function(x, mzr = numeric()) {
-    if (!length(x))
+    if (!length(mzr))
         return(x)
     x[between(x[, "mz"], mzr), , drop = FALSE]
 }
@@ -222,6 +226,10 @@ sumi <- function(x) {
 #' @note
 #'
 #' The m/z range of the new merged peak considers also `expandMz` and `ppm`!
+#' The m/z range of this version represents the m/z range of the intensity
+#' actually considered for the integration. This is in contrast to
+#' functions-Chromatogram.R/.chrom_merge_neighboring_peaks that simply uses
+#' the m/z range of all candidates that should be evaluated for merging.
 #'
 #' @noRd
 .merge_neighboring_peak_candidates <- function(x, rt, pks, pkd, minProp = 0.75,
@@ -279,16 +287,14 @@ sumi <- function(x) {
                 ## Merge the existing peak with the new one, re-calculating the
                 ## intensity and the m/z range from the original data.
                 pks_new[current_peak, drop_cols] <- NA_real_
-                pks_new[current_peak, "rtmax"] <-
-                    max(pks[i, "rtmax"], pks_new[current_peak, "rtmax"])
                 rtmin <- pks_new[current_peak, "rtmin"]
-                rtmax <- pks_new[current_peak, "rtmax"]
+                rtmax <- max(pks[i, "rtmax"], pks_new[current_peak, "rtmax"])
                 idx <- which(rt >= rtmin & rt <= rtmax)
                 peak_width <- (rtmax - rtmin) / (idx[length(idx)] - idx[1L])
                 pkm <- do.call(rbind, x[idx])
-                pks_new[current_peak, c("into", "mzmin", "mzmax")] <-
-                    c(sum(pkm[, "intensity"], na.rm = TRUE) * peak_width,
-                      range(pkm[, "mz"], na.rm = TRUE))
+                pks_new[current_peak, c("rtmax", "mzmin", "mzmax", "into")] <-
+                    c(rtmax, range(pkm[, "mz"], na.rm = TRUE),
+                      sum(pkm[, "intensity"], na.rm = TRUE) * peak_width)
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
@@ -454,38 +460,133 @@ sumi <- function(x) {
     }, ...)
 }
 
-#' Integrates MS intensities for a chromatographic peak.
+#' Perform peak integration on provided m/z - RT regions. Can be called for
+#' gap filling or manual definition of chrom peaks. Requires the data (as
+#' `XcmsExperiment` or `MsExperiment`, the definition of regions and the
+#' integration function. This function simply splits the input object
+#' and calls the (provided) integration function.
+#'
+#' @param x `XcmsExperiment` with data from potentially multiple files.
+#'
+#' @param pal `list` of peak area matrices defining (for each individual sample
+#'     in `x`) the MS area from which the signal should be integrated. Names
+#'     should represent the file/sample index!
+#'
+#' @param msLevel `integer(1)` with the MS level on which to integrate the data.
+#'
+#' @param intFun function to be used for the integration.
+#'
+#' @param mzCenterFun function to calculate the m/z value
+#'
+#' @return `matrix` with the newly integrated peaks (NO chromPeakData!).
+#'
+#' @noRd
+.xmse_integrate_chrom_peaks <- function(x, pal, msLevel = 1L,
+                                        intFun = .chrom_peak_intensity_centWave,
+                                        mzCenterFun = "mzCenter.wMean",
+                                        param = MatchedFilterParam(),
+                                        BPPARAM = bpparam()) {
+    keep <- which(msLevel(spectra(x)) == msLevel)
+    f <- as.factor(fromFile(x)[keep])
+    if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
+    else rt <- rtime(spectra(x))[keep]
+    cn <- colnames(chromPeaks(x))
+    res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel)), f),
+                    split(rt, f),
+                    pal,
+                    as.integer(names(pal)),
+                    FUN = intFun,
+                    MoreArgs = list(mzCenterFun = mzCenterFun, cn = cn,
+                                    param = param),
+                    SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
+    do.call(rbind, res)
+}
+
+#' Integrates MS intensities for a chromatographic peak. This is equivalent
+#' to the `.getChromPeakData` function.
 #'
 #' @param x `list` of peak matrices (from a single MS level and from a single
 #'     file/sample).
 #'
 #' @param rt retention time for each peak matrix.
 #'
+#' @param peakArea `matrix` defining the chrom peak area.
+#'
 #' @author Johannes Rainer
 #'
 #' @noRd
-.integrate_chrom_peak_intensity <- function(x, rt, peakArea,
-                                            mzCenterFun = "weighted.mean",
-                                            sampleIndex = integer(),
-                                            cn = character()) {
-    res <- matrix(ncol = length(cn), nrow = nrow(peakArea))
+.chrom_peak_intensity_centWave <- function(x, rt, peakArea,
+                                           mzCenterFun = "weighted.mean",
+                                           sampleIndex = integer(),
+                                           cn = character(), ...) {
+    res <- matrix(NA_real_, ncol = length(cn), nrow = nrow(peakArea))
+    rownames(res) <- rownames(peakArea)
     colnames(res) <- cn
-    res[, "sample"] <- sample_idx
+    res[, "sample"] <- sampleIndex
     res[, c("rtmin", "rtmax", "mzmin", "mzmax")] <-
         peakArea[, c("rtmin", "rtmax", "mzmin", "mzmax")]
-    keep <- between(rt, range(peakArea[, c("rtmin", "rtmax")]))
-    rt <- rt[keep]
     for (i in seq_len(nrow(res))) {
-        mzr <- peakArea[i, c("mzmin", "mzmax")]
         rtr <- peakArea[i, c("rtmin", "rtmax")]
-        ## skip if range is out.
-        keep <- between(rt, peakArea[i, c("rtmin", "rtmax")])
-        if (any(keep)) {
-            mat <- do.call(
-                rbind, .pmat_filter_mz, mzr = peakArea[i, c("mzmin", "mzmax")])
-            if (!length(mat))
-                next
-            ## Calculate intensities
+        keep <- which(between(rt, rtr))
+        if (length(keep)) {
+            xsub <- lapply(x[keep], .pmat_filter_mz,
+                           mzr = peakArea[i, c("mzmin", "mzmax")])
+            mat <- do.call(rbind, xsub)
+            if (nrow(mat)) {
+                ## can have 0, 1 or x values per rt; repeat rt accordingly
+                rts <- rep(rt[keep], vapply(xsub, nrow, integer(1L)))
+                maxi <- which.max(mat[, 2L])[1L]
+                mmz <- do.call(mzCenterFun, list(mat[, 1L], mat[, 2L]))
+                if (is.na(mmz)) mmz <- mat[maxi, 1L]
+                res[i, c("rt", "mz", "maxo", "into")] <- c(
+                    rts[maxi], mmz, mat[maxi, 2L],
+                    sum(mat[, 2L], na.rm = TRUE) *
+                    ((rtr[2L] - rtr[1L]) / max(1L, (length(keep) - 1L)))
+                )
+            }
         }
     }
+    res[!is.na(res[, "maxo"]), , drop = FALSE]
+}
+
+.chrom_peak_intensity_matchedFilter <- function(x, rt, peakArea,
+                                                mzCenterFun = "weighted.mean",
+                                                sampleIndex = integer(),
+                                                cn = character(),
+                                                param = MatchedFilterParam(),
+                                                ...) {
+    ## Need to calculate the profile matrix and then work on that.
+    stop("Not yet implemented")
+    pmat <- .peaksdata_profmat(x)
+}
+
+.chrom_peak_intensity_msw <- function(x, rt, peakArea,
+                                      mzCenterFun = "weighted.mean",
+                                      sampleIndex = integer(),
+                                      cn = character(), ...) {
+    stop("Not yet implemented")
+}
+
+.xmse_process_history <- function(x, type = character(), msLevel = integer()) {
+    if (!length(msLevel) && !length(type))
+        return(x@processHistory)
+    if (length(msLevel))
+        keep_msl <- vapply(
+            x@processHistory, function(z) msLevel(z) %in% msLevel, logical(1))
+    else keep_msl <- rep(TRUE, length(x@processHistory))
+    if (length(type))
+        keep_t <- vapply(
+            x@processHistory, function(z) processType(z) %in% type, logical(1))
+    else keep_t <- rep(TRUE, length(x@processHistory))
+    x@processHistory[keep_msl & keep_t]
+}
+
+.history2fill_fun <- function(x = list()) {
+    if (!length(x))
+        cl <- "CentWaveParam"
+    else cl <- class(x[[1L]]@param)[1L]
+    switch(cl,
+           MatchedFilterParam = .chrom_peak_intensity_matchedFilter,
+           MSWParam = .chrom_peak_intensity_msw,
+           .chrom_peak_intensity_centWave)
 }

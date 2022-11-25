@@ -62,3 +62,27 @@ test_that("sumi works", {
     expect_equal(sumi(c(1:4, NA)), sum(c(1:4, NA), na.rm = TRUE))
     expect_equal(sumi(c(NA, NA)), NA_real_)
 })
+
+test_that(".history2fill_fun works", {
+    expect_equal(.history2fill_fun(), .chrom_peak_intensity_centWave)
+    h <- xcms:::XProcessHistory()
+    expect_equal(.history2fill_fun(list(h)), .chrom_peak_intensity_centWave)
+    h@param <- MSWParam()
+    expect_equal(.history2fill_fun(list(h)), .chrom_peak_intensity_msw)
+    h@param <- MatchedFilterParam()
+    expect_equal(.history2fill_fun(list(h)),
+                 .chrom_peak_intensity_matchedFilter)
+})
+
+test_that(".pmat_filter_mz works", {
+    a <- cbind(mz = 1:4, intensity = c(1.2, 3.4, 5.6, 8.9))
+    res <- .pmat_filter_mz(a, c(5, 6))
+    expect_true(nrow(res) == 0)
+    expect_equal(colnames(res), colnames(a))
+
+    res <- .pmat_filter_mz(a)
+    expect_equal(a, res)
+
+    res <- .pmat_filter_mz(a, c(2, 3))
+    expect_equal(res, a[2:3, ])
+})

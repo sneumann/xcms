@@ -3007,7 +3007,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     res_list <- pkd_list <- vector("list", length(pk_groups))
     for (i in seq_along(pk_groups)) {
         pk_group <- pk_groups[[i]]
-        res <- xcms:::.chrom_merge_neighboring_peaks(
+        res <- .chrom_merge_neighboring_peaks(
             chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
             extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
             minProp = minProp)
