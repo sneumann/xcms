@@ -2492,9 +2492,9 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
 #' \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
 #'
 #' @rdname XCMSnExp-class
-hasFilledChromPeaks <- function(object) {
+setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
     .hasFilledPeaks(object)
-}
+})
 
 #' Process the results from a peak detection in SWATH pockets.
 #'

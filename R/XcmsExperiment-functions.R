@@ -485,7 +485,7 @@ sumi <- function(x) {
                                         intFun = .chrom_peak_intensity_centWave,
                                         mzCenterFun = "mzCenter.wMean",
                                         param = MatchedFilterParam(),
-                                        BPPARAM = bpparam()) {
+                                        BPPARAM = bpparam(), ...) {
     keep <- which(msLevel(spectra(x)) == msLevel)
     f <- as.factor(fromFile(x)[keep])
     if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
@@ -549,22 +549,102 @@ sumi <- function(x) {
     res[!is.na(res[, "maxo"]), , drop = FALSE]
 }
 
+#' Difference to the original code is that the weighted mean is also calculated
+#' if some of the peak intensities in the profile matrix are 0
+#'
+#' Note also that the rt of a peak is estimated differently, i.e. not from the
+#' gaussian fitted curve, but simply the rt of the largest signal.
+#'
+#' @noRd
 .chrom_peak_intensity_matchedFilter <- function(x, rt, peakArea,
                                                 mzCenterFun = "weighted.mean",
                                                 sampleIndex = integer(),
                                                 cn = character(),
                                                 param = MatchedFilterParam(),
                                                 ...) {
-    ## Need to calculate the profile matrix and then work on that.
-    stop("Not yet implemented")
-    pmat <- .peaksdata_profmat(x)
+    res <- matrix(NA_real_, ncol = length(cn), nrow = nrow(peakArea))
+    rownames(res) <- rownames(peakArea)
+    colnames(res) <- cn
+    res[, "sample"] <- sampleIndex
+    res[, c("rtmin", "rtmax", "mzmin", "mzmax")] <-
+        peakArea[, c("rtmin", "rtmax", "mzmin", "mzmax")]
+    basespc <- NULL
+    if (length(distance(param)) > 0) {
+        mzr <- range(vapply(x, function(z) range(z[, 1L]), numeric(2)))
+        mass <- seq(floor(mzr[1L] / binSize(param)) * binSize(param),
+                    ceiling(mzr[2L] / binSize(param)) * binSize(param),
+                    by = binSize(param))
+        bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
+        basespc <- distance(param) * bin_size
+    }
+    pmat <- .peaksdata_profmat(
+        x, method = .impute2method(param), step = binSize(param),
+        baselevel = baseValue(param), basespace = basespc, baseValue = 0,
+        returnBreaks = TRUE)
+    brks <- pmat$breaks
+    pmat <- pmat$profMat
+    bin_size <- diff(brks[1:2])
+    bin_half <- bin_size / 2
+    mzs <- brks[-length(brks)] + bin_half ## midpoint for the breaks
+    for (i in seq_len(nrow(res))) {
+        rtr <- peakArea[i, c("rtmin", "rtmax")]
+        mzr <- peakArea[i, c("mzmin", "mzmax")]
+        idx_rt <- which(between(rt, rtr))
+        idx_mz <- which(between(mzs, mzr + c(-1, 1) * bin_half))
+        if (length(idx_rt) && length(idx_mz)) {
+            imat <- pmat[idx_mz, idx_rt, drop = FALSE]
+            if (any(imat > 0)) {
+                rti <- colMax(imat, na.rm = TRUE)
+                max_idx <- which.max(rti)
+                idx_rt_range <- idx_rt[c(1, length(idx_rt))]
+                rt_width <- diff(rt[idx_rt_range]) / diff(idx_rt_range)
+                res[i, c("mz", "rt", "into", "maxo")] <- c(
+                    weighted.mean(mzs[idx_mz], rowSums(imat), na.rm = TRUE),
+                    rt[idx_rt[max_idx]],
+                    rt_width * sum(rti, na.rm = TRUE),
+                    rti[max_idx]
+                )
+            }
+        }
+    }
+    res[!is.na(res[, "maxo"]), , drop = FALSE]
 }
 
 .chrom_peak_intensity_msw <- function(x, rt, peakArea,
                                       mzCenterFun = "weighted.mean",
                                       sampleIndex = integer(),
                                       cn = character(), ...) {
-    stop("Not yet implemented")
+    res <- matrix(NA_real_, ncol = ncols, nrow = nrow(peakArea))
+    colnames(res) <- cn
+    rownames(res) <- rownames(peakArea)
+    res[, "sample"] <- sampleIndex
+    res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
+    res[, c("rt", "rtmin", "rtmax")] <- -1
+    mzs <- unlist(lapply(x, function(z) z[, "mz"]), use.names = FALSE)
+    ints <- unlist(lapply(x, function(z) z[, "intensity"]), use.names = FALSE)
+    for (i in 1:nrow(res)) {
+        mz_area <- which(between(mzs, peakArea[i, c("mzmin", "mzmax")]))
+        ## Alternative version from original code: but this can also pick up
+        ## mzs from outside of the range! See also comments on issue #130
+        ## mz_area <- seq(which.min(abs(mzs - peakArea[i, "mzmin"])),
+        ##                which.min(abs(mzs - peakArea[i, "mzmax"])))
+        mtx <- cbind(time = -1, mz = mzs[mz_area], intensity = ints[mz_area])
+        if (length(mz_area) && !all(is.na(mtx[, 3]))) {
+            ## Get the index of the mz value(s) closest to the mzmed of the
+            ## feature
+            mzDiff <- abs(mtx[, 2] - peakArea[i, "mzmed"])
+            mz_idx <- which(mzDiff == min(mzDiff))
+            ## Now get the one with the highest intensity.
+            maxi <- mz_idx[which.max(mtx[mz_idx, 3])]
+            ## Return these.
+            res[i, c("mz", "maxo", "into")] <-
+                c(mtx[maxi, 2:3], sum(mtx[, 3], na.rm = TRUE))
+            ## ## mz should be the weighted mean!
+            ## res[i, c("mz", "maxo")] <- c(weighted.mean(mtx[, 2], mtx[, 3]),
+            ##                              mtx[maxi[1], 3])
+        }
+    }
+    res
 }
 
 .xmse_process_history <- function(x, type = character(), msLevel = integer()) {

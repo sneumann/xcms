@@ -7,7 +7,7 @@
 \alias{XCMSnExp}
 \alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
-\alias{hasFilledChromPeaks}
+\alias{hasFilledChromPeaks,XCMSnExp-method}
 \alias{featureArea}
 \alias{profMat,OnDiskMSnExp-method}
 \alias{show,XCMSnExp-method}
@@ -22,7 +22,7 @@
 \alias{hasChromPeaks,XCMSnExp-method}
 \alias{hasChromPeaks}
 \alias{hasChromPeaks,MsFeatureData-method}
-\alias{hasFilledChromPeaks,XCMSnExp-method}
+\alias{hasFilledChromPeaks}
 \alias{adjustedRtime,XCMSnExp-method}
 \alias{adjustedRtime}
 \alias{adjustedRtime,MsFeatureData-method}
@@ -75,7 +75,7 @@
 \usage{
 processHistoryTypes()
 
-hasFilledChromPeaks(object)
+\S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
 featureArea(
   object,

@@ -86,3 +86,8 @@ test_that(".pmat_filter_mz works", {
     res <- .pmat_filter_mz(a, c(2, 3))
     expect_equal(res, a[2:3, ])
 })
+
+test_that(".chrom_peak_intensity_msw  works", {
+    ## LLLL add me
+    ## also check that it works on `XcmsExperiment`.
+})

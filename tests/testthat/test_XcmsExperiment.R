@@ -653,10 +653,16 @@ test_that("fillChromPeaks,XcmsExperiment,ChromPeakAreaParam works", {
     expect_true(hasFilledChromPeaks(res))
 
     ## With matched filter.
-    mfp <- MatchedFilterParam()
+    mfp <- MatchedFilterParam(binSize = 0.2)
     tmp <- findChromPeaks(mse, mfp)
     tmp <- groupChromPeaks(tmp, pdp)
-    ## res <- fillChromPeaks(tmp, cpp)
+    res <- fillChromPeaks(tmp, cpp)
+    expect_true(length(res@processHistory) > length(tmp@processHistory))
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(tmp)))
+    expect_true(nrow(chromPeakData(res)) > nrow(chromPeakData(tmp)))
+    expect_true(sum(is.na(featureValues(res))) <
+                sum(is.na(featureValues(tmp))))
+    expect_true(hasFilledChromPeaks(res))
 })
 
 ## That's from XcmsExperiment-functions.R
@@ -688,4 +694,19 @@ test_that(".chrom_peak_intensity_centWave works", {
     ## expect_equal(res[, "rt"], unname(pks[, "rt"])) # that is different.
     expect_equal(unname(res[, "into"]), unname(pks[, "into"]))
     expect_equal(unname(res[, "maxo"]), unname(pks[, "maxo"]))
+})
+
+## That's from XcmsExperiment-functions.R
+test_that(".chrom_peak_intensity_matchedFilter works", {
+    x <- Spectra::peaksData(spectra(xmse[2L]))
+    rt <- rtime(spectra(xmse[2L]))
+
+    tmp <- findChromPeaks(mse[2L], param = MatchedFilterParam())
+    pks <- chromPeaks(tmp)
+    res <- .chrom_peak_intensity_matchedFilter(x, rt, pks, cn = colnames(pks),
+                                               sampleIndex = 2L)
+    ## expect_equal(res[, "rt"], pks[, "rt"]) # not the same: no gauss filter
+    expect_equal(res[, "mz"], pks[, "mz"], tolerance = 0.0001)
+    expect_equal(res[, "into"], pks[, "into"])
+    expect_equal(res[, "maxo"], pks[, "maxo"])
 })

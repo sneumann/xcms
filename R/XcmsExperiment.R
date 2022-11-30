@@ -16,6 +16,26 @@
 #' Documentation of the various functions for `XcmsExperiment` objects are
 #' grouped by topic and provided in the sections below.
 #'
+#' The default `xcms` workflow is to perform
+#'
+#' - chromatographic peak detection using [findChromPeaks()]
+#'
+#' - optionally refine identified chromatographic peaks using
+#'   [refineChromPeaks()]
+#'
+#' - perform an alignment (retention time adjustment) using [adjustRtime()].
+#'   Depending on the method used this requires to run a correspondence
+#'   analysis first
+#'
+#' - perform a correspondence analysis using the [groupChromPeaks()] function
+#'   to group chromatographic peaks across samples to define the LC-MS
+#'   features.
+#'
+#' - optionally perform a gap-filling to *rescue* signal in samples in which
+#'   no chromatographic peak was identified and hence a missing value would
+#'   be reported. This can be performed using the [fillChromPeaks()] function.
+#'
+#'
 #' @section Subsetting and filtering:
 #'
 #' - `[`: subset an `XcmsExperiment` by **sample** (parameter `i`). Subsetting
@@ -80,12 +100,20 @@
 #'   Alignment results (adjusted retention times) can be retained if parameter
 #'   `keepAdjustedRtime` is set to `TRUE`.
 #'
+#' - `fillChromPeaks`: perform *gap filling* to integrate signal missing
+#'   values in samples in which no chromatographic peak was found. This
+#'   depends on correspondence results, hence `groupChromPeaks` needs to be
+#'   called first. For details and options see [fillChromPeaks()].
+#'
 #' - `findChromPeaks`: perform chromatographic peak detection. See
 #'   [findChromPeaks()] for details.
 #'
 #' - `hasChromPeaks`: whether the object contains peak detection results.
 #'   Parameter `msLevel` allows to check whether peak detection results are
 #'   available for the specified MS level(s).
+#'
+#' - `hasFilledChromPeaks`: whether gap-filling results (i.e., filled-in
+#'   chromatographic peaks) are present.
 #'
 #' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
 #'   See [refineChromPeaks()] for details.
@@ -912,7 +940,7 @@ setMethod(
         idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
         object@processHistory <- dropProcessHistoriesList(
             object@processHistory, type = .PROCSTEP.PEAK.GROUPING, num = 1L)
-        object@featureDefinitions <- xcms:::.empty_feature_definitions()
+        object@featureDefinitions <- .empty_feature_definitions()
         if (.hasFilledPeaks(object)) {
             object@chromPeaks <- object@chromPeaks[
                                             !object@chromPeakData$is_filled, ,
@@ -930,7 +958,7 @@ setMethod(
 ## gap filling
 ################################################################################
 
-#' @rdname fillChromPeaks
+#' @rdname XcmsExperiment
 setMethod("hasFilledChromPeaks", "XcmsExperiment", function(object) {
     any(chromPeakData(object)$is_filled)
 })
@@ -956,14 +984,14 @@ setMethod(
         ## Get integration function and other info.
         ph <- .xmse_process_history(object, .PROCSTEP.PEAK.DETECTION,
                                     msLevel = msLevel)
-        fill_fun <- xcms:::.history2fill_fun(ph)
-        if (length(ph) && any(slotNames(ph[[1L]]@param) == "mzCenterFun")) {
+        fill_fun <- .history2fill_fun(ph)
+        mzf <- "wMean"
+        if (length(ph) && inherits(ph[[1L]], "XProcessHistory")) {
             prm <- ph[[1L]]@param
-            mzf <- prm@mzCenterFun
-        } else {
-            mzf <- "wMean"
+            if (any(slotNames(prm) == "mzCenterFun"))
+                mzf <- prm@mzCenterFun
+        } else
             prm <- MatchedFilterParam()
-        }
         mzf <- paste0("mzCenter.", gsub("mzCenter.", "", mzf, fixed = TRUE))
         ## Manual chunk processing because we have to split `object` and `pal`
         idx <- seq_along(object)
@@ -971,7 +999,7 @@ setMethod(
         pb <- progress_bar$new(format = paste0("[:bar] :current/:",
                                                "total (:percent) in ",
                                                ":elapsed"),
-                               total = length(chunks), clear = FALSE)
+                               total = length(chunks) + 1L, clear = FALSE)
         pb$tick(0)
         res <- lapply(chunks, function(z, ...) {
             pb$tick()
@@ -988,7 +1016,7 @@ setMethod(
         i_ft <- match(names(i_res), rownames(featureDefinitions(object)))
         for (i in seq_along(i_res))
             object@featureDefinitions$peakidx[[i_ft[i]]] <-
-                sort(c(object@featureDefinitions$peakidx[[i_ft[i]]], i_res[[i]]))
+                sort(c(object@featureDefinitions$peakidx[[i_ft[i]]],i_res[[i]]))
         ## Add results
         nr <- nrow(res)
         maxi <- max(as.integer(sub("CP", "", rownames(chromPeaks(object)))))
@@ -998,6 +1026,7 @@ setMethod(
         rownames(cpd) <- rownames(res)
         object@chromPeaks <- rbind(object@chromPeaks, res)
         object@chromPeakData <- rbindFill(object@chromPeakData, cpd)
+        pb$tick()
         ## Need to update the index in the featureDefinitions
         ph <- XProcessHistory(param = param,
                               date. = date(),

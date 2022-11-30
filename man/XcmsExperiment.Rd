@@ -21,6 +21,7 @@
 \alias{hasFeatures,XcmsExperiment-method}
 \alias{featureDefinitions,XcmsExperiment-method}
 \alias{dropFeatureDefinitions,XcmsExperiment-method}
+\alias{hasFilledChromPeaks,XcmsExperiment-method}
 \alias{featureValues,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
@@ -76,6 +77,8 @@
 )
 
 \S4method{dropFeatureDefinitions}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
+
+\S4method{hasFilledChromPeaks}{XcmsExperiment}(object)
 
 \S4method{featureValues}{XcmsExperiment}(
   object,
@@ -194,6 +197,22 @@ how and where to store the data.
 
 Documentation of the various functions for \code{XcmsExperiment} objects are
 grouped by topic and provided in the sections below.
+
+The default \code{xcms} workflow is to perform
+\itemize{
+\item chromatographic peak detection using \code{\link[=findChromPeaks]{findChromPeaks()}}
+\item optionally refine identified chromatographic peaks using
+\code{\link[=refineChromPeaks]{refineChromPeaks()}}
+\item perform an alignment (retention time adjustment) using \code{\link[=adjustRtime]{adjustRtime()}}.
+Depending on the method used this requires to run a correspondence
+analysis first
+\item perform a correspondence analysis using the \code{\link[=groupChromPeaks]{groupChromPeaks()}} function
+to group chromatographic peaks across samples to define the LC-MS
+features.
+\item optionally perform a gap-filling to \emph{rescue} signal in samples in which
+no chromatographic peak was identified and hence a missing value would
+be reported. This can be performed using the \code{\link[=fillChromPeaks]{fillChromPeaks()}} function.
+}
 }
 \section{Subsetting and filtering}{
 
@@ -258,11 +277,17 @@ features) and eventually present adjusted retention times from the object
 if the alignment was performed \strong{after} the peak detection.
 Alignment results (adjusted retention times) can be retained if parameter
 \code{keepAdjustedRtime} is set to \code{TRUE}.
+\item \code{fillChromPeaks}: perform \emph{gap filling} to integrate signal missing
+values in samples in which no chromatographic peak was found. This
+depends on correspondence results, hence \code{groupChromPeaks} needs to be
+called first. For details and options see \code{\link[=fillChromPeaks]{fillChromPeaks()}}.
 \item \code{findChromPeaks}: perform chromatographic peak detection. See
 \code{\link[=findChromPeaks]{findChromPeaks()}} for details.
 \item \code{hasChromPeaks}: whether the object contains peak detection results.
 Parameter \code{msLevel} allows to check whether peak detection results are
 available for the specified MS level(s).
+\item \code{hasFilledChromPeaks}: whether gap-filling results (i.e., filled-in
+chromatographic peaks) are present.
 \item \code{refineChromPeaks}: \emph{refines} identified chromatographic peaks in \code{object}.
 See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 }
