@@ -88,6 +88,44 @@ test_that(".pmat_filter_mz works", {
 })
 
 test_that(".chrom_peak_intensity_msw  works", {
-    ## LLLL add me
+    library(MsExperiment)
+    fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fls <- normalizePath(fticrf)[1:2]
+    mp <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+                   SNR.method = "data.mean", winSize.noise = 500)
+
+    tmp <- MsExperiment()
+    df <- data.frame(mzML_file = basename(fls),
+                     dataOrigin = fls, sample = c("a", "b"))
+    sampleData(tmp) <- DataFrame(df)
+    spectra(tmp) <- Spectra::Spectra(fls)
+    tmp <- linkSampleData(
+        tmp, with = "sampleData.dataOrigin = spectra.dataOrigin")
+    tmp <- findChromPeaks(tmp, mp)
+
+    pks <- chromPeaks(tmp[1L])
+    cn <- colnames(pks)
+    colnames(pks)[cn == "mz"] <- "mzmed"
+    p <- Spectra::peaksData(spectra(tmp[1L]))
+    rt <- rtime(spectra(tmp[1L]))
+    res <- .chrom_peak_intensity_msw(p, rt, pks, sampleIndex = 1L, cn = cn)
+    expect_equal(res[, "mz"], pks[, "mzmed"])
+    ## expect_equal(res[, "into"], pks[, "into"]) # not the same...
+    expect_equal(res[, "maxo"], pks[, "maxo"])
+
     ## also check that it works on `XcmsExperiment`.
+    mzc <- MzClustParam(sampleGroups = c(1, 1))
+    tmp <- groupChromPeaks(tmp, param = mzc)
+    cpp <- ChromPeakAreaParam()
+    res <- fillChromPeaks(tmp, cpp)
+    expect_true(length(res@processHistory) > length(tmp@processHistory))
+    expect_true(sum(is.na(featureValues(res))) < sum(is.na(featureValues(tmp))))
+
+    ## Compare with XCMSnExp.
+    ## ref <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
+    ## ref <- findChromPeaks(ref, mp)
+    ## ref <- groupChromPeaks(ref, param = mzc)
+    ## ref <- fillChromPeaks(ref, cpp)
+    ## expect_equal(chromPeaks(ref), chromPeaks(res))
 })

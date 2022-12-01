@@ -75,39 +75,60 @@
                                     keepFeatures = FALSE,
                                     ignoreHistory = FALSE,
                                     keepSampleIndex = FALSE, ...) {
-    ## if (!length(i))
-    ##     return(x)
-    i <- MsCoreUtils::i2index(i, length(x))
+    i <- i2index(i, length(x))
     ## This is a special case that would make life (=performance) miserable
     if (length(i) != length(unique(i)))
         stop("Duplicated indices are not (yet) supported for ",
              "'[,XcmsExperiment'", call. = FALSE)
+    drop <- character()
     if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
         svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
         object@spectra <- selectSpectraVariables(
             object@spectra, svs[svs != "rtime_adjusted"])
+        drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
     }
-    if (keepFeatures && hasFeatures(x))
-        stop("Not implemented yet", call. = FALSE)
+    if (!keepFeatures && hasFeatures(x)) {
+        x@featureDefinitions <- .empty_feature_definitions()
+        drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
+    }
     if (hasChromPeaks(x)) {
         if (keepChromPeaks) {
-            keep <- x@chromPeaks[, "sample"] %in% i
-            x@chromPeaks <- x@chromPeaks[keep, , drop = FALSE]
-            x@chromPeakData <- x@chromPeakData[keep, , drop = FALSE]
+            x <- .filter_chrom_peaks(x, which(x@chromPeaks[, "sample"] %in% i))
             if (!keepSampleIndex)
                 x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
         } else {
             x@chromPeaks <- .empty_chrom_peaks()
             x@chromPeakData <- data.frame(ms_level = integer(),
                                           is_filled = logical())
-            if (!ignoreHistory)
-                x@processHistory <- dropProcessHistoriesList(
-                    x@processHistory,
-                    type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
-                             .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
-                             .PROCSTEP.PEAK.REFINEMENT))
+            drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
+                      .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
         }
     }
+    if (!ignoreHistory && length(drop))
+        x@processHistory <- dropProcessHistoriesList(
+            x@processHistory, type = drop)
+
+    ## if (keepFeatures && hasFeatures(x))
+    ##     stop("Not implemented yet", call. = FALSE)
+    ## if (hasChromPeaks(x)) {
+    ##     if (keepChromPeaks) {
+    ##         keep <- x@chromPeaks[, "sample"] %in% i
+    ##         x@chromPeaks <- x@chromPeaks[keep, , drop = FALSE]
+    ##         x@chromPeakData <- x@chromPeakData[keep, , drop = FALSE]
+    ##         if (!keepSampleIndex)
+    ##             x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
+    ##     } else {
+    ##         x@chromPeaks <- .empty_chrom_peaks()
+    ##         x@chromPeakData <- data.frame(ms_level = integer(),
+    ##                                       is_filled = logical())
+    ##         if (!ignoreHistory)
+    ##             x@processHistory <- dropProcessHistoriesList(
+    ##                 x@processHistory,
+    ##                 type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+    ##                          .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+    ##                          .PROCSTEP.PEAK.REFINEMENT))
+    ##     }
+    ## }
     getMethod("[", "MsExperiment")(x, i = i)
 }
 
@@ -614,7 +635,7 @@ sumi <- function(x) {
                                       mzCenterFun = "weighted.mean",
                                       sampleIndex = integer(),
                                       cn = character(), ...) {
-    res <- matrix(NA_real_, ncol = ncols, nrow = nrow(peakArea))
+    res <- matrix(NA_real_, ncol = length(cn), nrow = nrow(peakArea))
     colnames(res) <- cn
     rownames(res) <- rownames(peakArea)
     res[, "sample"] <- sampleIndex
@@ -624,24 +645,13 @@ sumi <- function(x) {
     ints <- unlist(lapply(x, function(z) z[, "intensity"]), use.names = FALSE)
     for (i in 1:nrow(res)) {
         mz_area <- which(between(mzs, peakArea[i, c("mzmin", "mzmax")]))
-        ## Alternative version from original code: but this can also pick up
-        ## mzs from outside of the range! See also comments on issue #130
-        ## mz_area <- seq(which.min(abs(mzs - peakArea[i, "mzmin"])),
-        ##                which.min(abs(mzs - peakArea[i, "mzmax"])))
         mtx <- cbind(time = -1, mz = mzs[mz_area], intensity = ints[mz_area])
         if (length(mz_area) && !all(is.na(mtx[, 3]))) {
-            ## Get the index of the mz value(s) closest to the mzmed of the
-            ## feature
             mzDiff <- abs(mtx[, 2] - peakArea[i, "mzmed"])
             mz_idx <- which(mzDiff == min(mzDiff))
-            ## Now get the one with the highest intensity.
             maxi <- mz_idx[which.max(mtx[mz_idx, 3])]
-            ## Return these.
             res[i, c("mz", "maxo", "into")] <-
                 c(mtx[maxi, 2:3], sum(mtx[, 3], na.rm = TRUE))
-            ## ## mz should be the weighted mean!
-            ## res[i, c("mz", "maxo")] <- c(weighted.mean(mtx[, 2], mtx[, 3]),
-            ##                              mtx[maxi[1], 3])
         }
     }
     res
@@ -669,4 +679,14 @@ sumi <- function(x) {
            MatchedFilterParam = .chrom_peak_intensity_matchedFilter,
            MSWParam = .chrom_peak_intensity_msw,
            .chrom_peak_intensity_centWave)
+}
+
+.filter_chrom_peaks <- function(x, idx = integer()) {
+    cpn <- rownames(x@chromPeaks)
+    x@chromPeaks <- x@chromPeaks[idx, , drop = FALSE]
+    x@chromPeakData <- x@chromPeakData[idx, ]
+    if (hasFeatures(x) && (nrow(x@chromPeaks) != length(cpn)))
+        x@featureDefinitions <- .update_feature_definitions(
+            x@featureDefinitions, cpn, rownames(chromPeaks(x)))
+    x
 }

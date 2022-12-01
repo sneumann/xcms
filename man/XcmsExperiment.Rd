@@ -13,15 +13,19 @@
 \alias{filterRt,XcmsExperiment-method}
 \alias{hasChromPeaks,XcmsExperiment-method}
 \alias{dropChromPeaks,XcmsExperiment-method}
+\alias{chromPeaks<-,XcmsExperiment-method}
 \alias{chromPeaks,XcmsExperiment-method}
+\alias{chromPeakData<-,XcmsExperiment-method}
 \alias{chromPeakData,XcmsExperiment-method}
 \alias{dropAdjustedRtime,XcmsExperiment-method}
 \alias{hasAdjustedRtime,MsExperiment-method}
 \alias{rtime,XcmsExperiment-method}
 \alias{hasFeatures,XcmsExperiment-method}
+\alias{featureDefinitions<-,XcmsExperiment-method}
 \alias{featureDefinitions,XcmsExperiment-method}
 \alias{dropFeatureDefinitions,XcmsExperiment-method}
 \alias{hasFilledChromPeaks,XcmsExperiment-method}
+\alias{dropFilledChromPeaks,XcmsExperiment-method}
 \alias{featureValues,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
@@ -43,6 +47,8 @@
 
 \S4method{dropChromPeaks}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
 
+\S4method{chromPeaks}{XcmsExperiment}(object) <- value
+
 \S4method{chromPeaks}{XcmsExperiment}(
   object,
   rt = numeric(),
@@ -52,6 +58,8 @@
   type = c("any", "within", "apex_within"),
   isFilledColumn = FALSE
 )
+
+\S4method{chromPeakData}{XcmsExperiment}(object) <- value
 
 \S4method{chromPeakData}{XcmsExperiment}(
   object,
@@ -67,6 +75,8 @@
 
 \S4method{hasFeatures}{XcmsExperiment}(object, msLevel = integer())
 
+\S4method{featureDefinitions}{XcmsExperiment}(object) <- value
+
 \S4method{featureDefinitions}{XcmsExperiment}(
   object,
   mz = numeric(),
@@ -79,6 +89,8 @@
 \S4method{dropFeatureDefinitions}{XcmsExperiment}(object, keepAdjustedRtime = FALSE)
 
 \S4method{hasFilledChromPeaks}{XcmsExperiment}(object)
+
+\S4method{dropFilledChromPeaks}{XcmsExperiment}(object)
 
 \S4method{featureValues}{XcmsExperiment}(
   object,
@@ -119,6 +131,12 @@ function supports it).}
 
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
+
+\item{value}{For \code{featureValues}: \code{character(1)} defining which value should
+be reported for each feature in each sample. Can be any column of the
+\code{chromPeaks} matrix or \code{"index"} if simply the index of the assigned
+peak should be returned. Defaults to \code{value = "into"} thus the
+integrated peak area is reported.}
 
 \item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
 defining the m/z range for which chromatographic peaks or feature
@@ -163,12 +181,6 @@ with the largest signal (parameter \code{intensity} allows to select the
 column in \code{chromPeaks} that should be used for \emph{signal}).
 \code{method = "sum"}: sum the value for all chromatographic peaks in a
 sample assigned to the same feature. The default is \code{method = "medret"}.}
-
-\item{value}{For \code{featureValues}: \code{character(1)} defining which value should
-be reported for each feature in each sample. Can be any column of the
-\code{chromPeaks} matrix or \code{"index"} if simply the index of the assigned
-peak should be returned. Defaults to \code{value = "into"} thus the
-integrated peak area is reported.}
 
 \item{intensity}{For \code{featureValues}: \code{character(1)} specifying the name
 of the column in the \code{chromPeaks(objects)} matrix containing the
@@ -277,6 +289,8 @@ features) and eventually present adjusted retention times from the object
 if the alignment was performed \strong{after} the peak detection.
 Alignment results (adjusted retention times) can be retained if parameter
 \code{keepAdjustedRtime} is set to \code{TRUE}.
+\item \code{dropFilledChromPeaks}: removes chromatographic peaks added by gap filling
+with \code{fillChromPeaks}.
 \item \code{fillChromPeaks}: perform \emph{gap filling} to integrate signal missing
 values in samples in which no chromatographic peak was found. This
 depends on correspondence results, hence \code{groupChromPeaks} needs to be

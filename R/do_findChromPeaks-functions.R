@@ -1982,6 +1982,10 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
+#' @param scantime ignored.
+#'
+#' @param valsPerSpectrum ignored.
+#'
 #' @param ... Additional parameters to be passed to the
 #'     \code{\link{peakDetectionCWT}} function.
 #'
@@ -2008,7 +2012,9 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_findPeaks_MSW <- function(mz, int, snthresh = 3,
-                             verboseColumns = FALSE, ...) {
+                             verboseColumns = FALSE,
+                             scantime = numeric(),
+                             valsPerSpect = integer(), ...) {
     ## Input argument checking.
     if (missing(int))
         stop("Argument 'int' is missing!")

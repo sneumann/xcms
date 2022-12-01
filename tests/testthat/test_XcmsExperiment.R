@@ -11,6 +11,8 @@ spectra(mse) <- Spectra::Spectra(fls)
 mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
 p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 xmse <- findChromPeaks(mse, param = p)
+pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
@@ -139,6 +141,16 @@ test_that("subsetting,XcmsExperiment works", {
                  cp[cp[, "sample"] == 3, colnames(cp) != "sample"])
     expect_equal(cp1[, colnames(cp1) != "sample"],
                  cp[cp[, "sample"] == 1, colnames(cp) != "sample"])
+
+    ## peak grouping results.
+    res <- .subset_xcms_experiment(xmseg, i = c(3, 1))
+    expect_true(hasChromPeaks(res))
+    expect_true(all(chromPeaks(res)[, "sample"] %in% 1:2))
+    expect_false(hasFeatures(res))
+    res <- .subset_xcms_experiment(xmseg, i = c(3, 1), keepFeatures = TRUE)
+    expect_true(hasChromPeaks(res))
+    expect_true(hasFeatures(res))
+    expect_equal(featureValues(res), featureValues(xmseg)[, c(3, 1)])
 })
 
 test_that("filterRt,XcmsExperiment works", {
@@ -615,8 +627,6 @@ test_that("refineChromPeaks,XcmsExperiment,FilterIntensityParam works", {
 test_that("featureValues,XcmsExperiment works", {
     expect_error(featureValues(xmse), "feature definitions")
 
-    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
-    xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
     expect_error(featureValues(xmseg, msLevel = 2L), "feature definitions")
     res <- featureValues(xmseg)
     expect_true(is.matrix(res))
@@ -632,8 +642,8 @@ test_that("featureValues,XcmsExperiment works", {
 
 test_that("fillChromPeaks,XcmsExperiment,ChromPeakAreaParam works", {
     cpp <- ChromPeakAreaParam()
-    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
-    xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
+    ## pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    ## xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 
     pal <- split.data.frame(chromPeaks(xmseg), chromPeaks(xmseg)[, "sample"])
     res <- .xmse_integrate_chrom_peaks(xmse, pal)
@@ -651,6 +661,11 @@ test_that("fillChromPeaks,XcmsExperiment,ChromPeakAreaParam works", {
     expect_true(sum(is.na(featureValues(res))) <
                 sum(is.na(featureValues(xmseg))))
     expect_true(hasFilledChromPeaks(res))
+    res <- dropFilledChromPeaks(res)
+    expect_false(hasFilledChromPeaks(res))
+    expect_equal(chromPeaks(res), chromPeaks(xmseg))
+    expect_equal(featureDefinitions(res), featureDefinitions(xmseg))
+    expect_true(length(res@processHistory) == length(xmseg@processHistory))
 
     ## With matched filter.
     mfp <- MatchedFilterParam(binSize = 0.2)
@@ -709,4 +724,21 @@ test_that(".chrom_peak_intensity_matchedFilter works", {
     expect_equal(res[, "mz"], pks[, "mz"], tolerance = 0.0001)
     expect_equal(res[, "into"], pks[, "into"])
     expect_equal(res[, "maxo"], pks[, "maxo"])
+})
+
+## That's from XcmsExperiment-functions.R
+test_that(".filter_chrom_peaks works", {
+    res <- .filter_chrom_peaks(xmse, idx = c(4, 2, 34, 1))
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(nrow(chromPeaks(res)) == 4)
+    expect_true(nrow(chromPeakData(res)) == 4)
+    expect_equal(rownames(chromPeaks(res)),
+                 c("CP004", "CP002", "CP034", "CP001"))
+    ## with feature data.
+    res <- .filter_chrom_peaks(xmseg, c(11, 199, 115, 205, 212))
+    expect_true(hasFeatures(res))
+    expect_equal(rownames(chromPeaks(res)), c("CP011", "CP199", "CP115",
+                                              "CP205", "CP212"))
+    expect_equal(featureDefinitions(res)$peakidx,
+                 list(c(1L, 2L), c(3L, 4L), 5L))
 })

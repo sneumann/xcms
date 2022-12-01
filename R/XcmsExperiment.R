@@ -100,6 +100,9 @@
 #'   Alignment results (adjusted retention times) can be retained if parameter
 #'   `keepAdjustedRtime` is set to `TRUE`.
 #'
+#' - `dropFilledChromPeaks`: removes chromatographic peaks added by gap filling
+#'   with `fillChromPeaks`.
+#'
 #' - `fillChromPeaks`: perform *gap filling* to integrate signal missing
 #'   values in samples in which no chromatographic peak was found. This
 #'   depends on correspondence results, hence `groupChromPeaks` needs to be
@@ -551,6 +554,12 @@ setMethod(
     })
 
 #' @rdname XcmsExperiment
+setReplaceMethod("chromPeaks", "XcmsExperiment", function(object, value) {
+    object@chromPeaks <- value
+    object
+})
+
+#' @rdname XcmsExperiment
 setMethod("chromPeaks", "XcmsExperiment", function(object, rt = numeric(),
                                                    mz = numeric(), ppm = 0,
                                                    msLevel = integer(),
@@ -593,6 +602,12 @@ setMethod("chromPeaks", "XcmsExperiment", function(object, rt = numeric(),
         pks <- pks[keep, , drop = FALSE]
     }
     pks
+})
+
+#' @rdname XcmsExperiment
+setReplaceMethod("chromPeakData", "XcmsExperiment", function(object, value) {
+    object@chromPeakData <- value
+    object
 })
 
 #' @rdname XcmsExperiment
@@ -914,6 +929,13 @@ setMethod(
     })
 
 #' @rdname XcmsExperiment
+setReplaceMethod("featureDefinitions", "XcmsExperiment",
+                 function(object, value) {
+                     object@featureDefinitions <- value
+                     object
+                 })
+
+#' @rdname XcmsExperiment
 setMethod(
     "featureDefinitions", "XcmsExperiment",
     function(object, mz = numeric(), rt = numeric(), ppm = 0,
@@ -973,9 +995,10 @@ setMethod(
         if (!hasFeatures(object, msLevel = msLevel))
             stop("No feature definitions for MS level ", msLevel, " present.")
         ## Define region to integrate from for each file
-        fr <- .features_ms_region(object, mzmin = param@mzmin,
+        fr <- xcms:::.features_ms_region(object, mzmin = param@mzmin,
                                   mzmax = param@mzmax, rtmin = param@rtmin,
                                   rtmax = param@rtmax, msLevel = msLevel)
+        fr <- cbind(fr, mzmed = featureDefinitions(object)$mzmed)
         fvals <- featureValues(object, value = "index", msLevel = msLevel)
         pal <- lapply(seq_len(ncol(fvals)), function(i) {
             fr[is.na(fvals[, i]), , drop = FALSE]
@@ -1038,10 +1061,20 @@ setMethod(
         object
     })
 
-## dropFilledChromPeaks
-## identify index of filled peaks
-## remove indices from the $peakidx
-## remove peaks.
+#' @rdname XcmsExperiment
+setMethod("dropFilledChromPeaks", "XcmsExperiment", function(object) {
+    if (!.hasFilledPeaks(object))
+        return(object)
+    keep_pks <- which(!chromPeakData(object)$is_filled)
+    object <- .filter_chrom_peaks(object, keep_pks)
+    object@processHistory <- dropProcessHistoriesList(
+        object@processHistory, type = .PROCSTEP.PEAK.FILLING)
+                type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+                         .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+                         .PROCSTEP.PEAK.REFINEMENT)
+    validObject(object)
+    object
+})
 
 ################################################################################
 ## results
