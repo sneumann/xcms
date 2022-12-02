@@ -29,13 +29,10 @@ columns should be returned.}
 
 \item{scantime}{ignored.}
 
-\item{valsPerSpect}{Numeric vector with the number of values for each
-spectrum.}
+\item{valsPerSpect}{ignored.}
 
 \item{...}{Additional parameters to be passed to the
 \code{\link{peakDetectionCWT}} function.}
-
-\item{valsPerSpectrum}{ignored.}
 }
 \value{
 A matrix, each row representing an identified peak, with columns:

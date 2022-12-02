@@ -14,6 +14,7 @@ xmse <- findChromPeaks(mse, param = p)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 
+
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
     expect_true(nrow(res) == 0)

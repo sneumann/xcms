@@ -1984,7 +1984,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @param scantime ignored.
 #'
-#' @param valsPerSpectrum ignored.
+#' @param valsPerSpect ignored.
 #'
 #' @param ... Additional parameters to be passed to the
 #'     \code{\link{peakDetectionCWT}} function.

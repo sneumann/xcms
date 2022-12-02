@@ -546,6 +546,7 @@ exportClasses("EicSimilarityParam")
 
 ## Spectra things
 importClassesFrom("Spectra", "Spectra")
+importMethodsFrom("Spectra", "Spectra")
 importMethodsFrom("Spectra", "spectrapply")
 importMethodsFrom("Spectra", "peaksData")
 importMethodsFrom("Spectra", "uniqueMsLevels")

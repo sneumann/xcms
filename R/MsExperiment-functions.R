@@ -448,3 +448,38 @@
         rt_adj
     } else adj
 }
+
+#' Read/import MS data from mzML files. The provided files are imported as a
+#' `Spectra` object and samples (defined by `sampleData`) are linked to these.
+#'
+#' @param files `character` with the (absolute) file names of the MS data files.
+#'
+#' @param sampleData `data.frame` of `DataFrame` with the sample annotations.
+#'     Each row is expected to contain annotations for one file (sample). The
+#'     order of the data frame's rows is expected to match the order of the
+#'     provided files.
+#'
+#' @param ... additional parameters to be provided to the `Spectra` call.
+#'
+#' @return `MsExperiment`.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @noRd
+.read_ms_experiment <- function(files = character(),
+                                sampleData = data.frame(), ...) {
+    files <- normalizePath(files)
+    if (!nrow(sampleData))
+        sampleData <- data.frame(sample_index = seq_along(files))
+    if (nrow(sampleData) != length(files))
+        stop("Number of rows in 'sampleData' have to match the number of files")
+    sampleData$dataOrigin <- files
+    if (!inherits(sampleData, "DataFrame"))
+        sampleData <- DataFrame(sampleData)
+    x <- MsExperiment()
+    sampleData(x) <- sampleData
+    spectra(x) <- Spectra(files, ...)
+    linkSampleData(x, with = "sampleData.dataOrigin = spectra.dataOrigin")
+}
