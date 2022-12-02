@@ -168,6 +168,20 @@ test_that("filterRt,XcmsExperiment works", {
                    "ignored")
     expect_equal(chromPeaks(res), chromPeaks(res_2))
     expect_equal(rtime(spectra(res)), rtime(spectra(res_2)))
+
+    res <- filterRt(xmseg, rt = c(3000, 3500))
+    expect_true(all(rtime(spectra(res)) >= 3000 &
+                    rtime(spectra(res)) <= 3500))
+    expect_true(all(chromPeaks(res)[, "rt"] >= 3000 &
+                    chromPeaks(res)[, "rt"] <= 3500))
+    expect_true(hasFeatures(res))
+    expect_true(nrow(featureDefinitions(res)) < nrow(featureDefinitions(xmseg)))
+    expect_true(validObject(res))
+    fv <- featureValues(res)
+    expect_equal(fv[, 1L], featureValues(xmseg)[rownames(fv), 1L])
+    ## no match for other samples because some chrom peaks are out of rt range
+    expect_true(all(unlist(featureDefinitions(res)$peakidx)) %in%
+                seq_len(nrow(chromPeaks(res))))
 })
 
 test_that("filterFile,XcmsExperiment works", {

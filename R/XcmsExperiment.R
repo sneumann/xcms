@@ -61,7 +61,8 @@
 #'   specified retention time range (parameter `rt`). This function will keep
 #'   all preprocessing results present within the retention time range: all
 #'   identified chromatographic peaks with the retention time of the apex
-#'   position within the retention time range `rt` are retained.
+#'   position within the retention time range `rt` are retained along, if
+#'   present, with the associated features.
 #'   Parameter `msLevel.` is currently ignored, i.e. filtering will always
 #'   performed on **all** MS levels of the object.
 #'
@@ -451,10 +452,8 @@ setMethod(
         ## Subset chrom peaks
         if (hasChromPeaks(object)) {
             crt <- object@chromPeaks[, "rt"]
-            keep <- which(crt >= rt[1] & crt <= rt[2])
-            object@chromPeaks <- object@chromPeaks[keep, , drop = FALSE]
+            object <- .filter_chrom_peaks(object, which(between(crt, rt)))
         }
-        ## for features: keep all features for the chrom peaks that we kept.
         callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
     })
 
@@ -751,6 +750,12 @@ setMethod(
         object
     })
 
+## TODO: manualChromPeaks
+
+## TODO: filterChromPeaks (use .filter_chrom_peaks)
+
+## TODO: chromPeakSpectra
+
 ################################################################################
 ## alignment
 ################################################################################
@@ -976,6 +981,18 @@ setMethod(
         object
     })
 
+## TODO: manualFeatures
+
+## TODO: featureChromatograms
+
+## TODO: featureSummary
+
+## TODO: filterFeatureDefinitions
+
+## TODO: featureSpectra
+
+## TODO: overlappingFeatures
+
 ################################################################################
 ## gap filling
 ################################################################################
@@ -1111,3 +1128,11 @@ setMethod(
 ################################################################################
 ## utility and unsorted methods
 ################################################################################
+
+## TODO filterFile
+
+## TODO chromatogram
+
+## TODO filterMz?
+
+## TODO filterMsLevel?

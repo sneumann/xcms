@@ -250,7 +250,8 @@ in arbitrary order.
 specified retention time range (parameter \code{rt}). This function will keep
 all preprocessing results present within the retention time range: all
 identified chromatographic peaks with the retention time of the apex
-position within the retention time range \code{rt} are retained.
+position within the retention time range \code{rt} are retained along, if
+present, with the associated features.
 Parameter \code{msLevel.} is currently ignored, i.e. filtering will always
 performed on \strong{all} MS levels of the object.
 }
