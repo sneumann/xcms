@@ -300,6 +300,7 @@ The \code{\link{do_findPeaks_MSW}} core API function
     the peak detection.
 
 Other peak detection methods: 
+\code{\link{findChromPeaks-centWaveIonMobility}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},

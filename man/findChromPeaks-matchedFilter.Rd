@@ -329,6 +329,7 @@ peak detection in purely chromatographic data.
     the chromatographic peak detection.
 
 Other peak detection methods: 
+\code{\link{findChromPeaks-centWaveIonMobility}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},

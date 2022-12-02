@@ -222,6 +222,7 @@ For more details on the centWave algorithm see
 }
 \seealso{
 Other core peak detection functions: 
+\code{\link{do_findChromPeaks_IM_centWave}()},
 \code{\link{do_findChromPeaks_centWave}()},
 \code{\link{do_findChromPeaks_massifquant}()},
 \code{\link{do_findChromPeaks_matchedFilter}()},

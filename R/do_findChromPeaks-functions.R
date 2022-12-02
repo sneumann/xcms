@@ -2220,8 +2220,219 @@ do_findPeaks_MSW <- function(mz, int, snthresh = 3,
     peaklist
 }
 
+############################################################
+## Ion-mobility peak picking
+##
+#' @title Core API for Centwave-based ion-mobility peak picking 
+#' @name do_findChromPeaks_IM_centWave
+#' 
+#' @description Performs an extension of CentWave peak-picking on LC-IM-MS MS1
+#'   data. First it joins all scans into frames and performs .centWave_orig on
+#'   the summarized LC-MS-like data. From each peak, it calculates its mobilogram and
+#'   performs a second peak-picking on the IM dimension, resolving the peaks.
+#' 
+#' @inheritParams do_findChromPeaks_centWave
+#' @inheritParams findChromPeaks-centWaveIonMobility
+#' 
+#' @return A matrix, each row representing an identified peak, with columns:
+#'     \describe{
+#'     \item{mz}{m/z value of the peak at the apex position.}
+#'     \item{mzmin}{Minimum m/z of the peak.}
+#'     \item{mzmax}{Maximum m/z of the peak.}
+#'     \item{rt}{Retention time value of the peak at the apex position.}
+#'     \item{rtmin}{Minimum retention time of the peak.}
+#'     \item{rtmax}{Maximum retention time of the peak.}
+#'     \item{im}{Ion mobility value of the peak at the apex position.}
+#'     \item{immin}{Minimum ion mobility value of the peak.}
+#'     \item{immax}{Maximum ion mobility value of the peak.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{intb}{Always \code{NA}.}
+#'     \item{sn}{Always \code{NA}}
+#'     }
+#'
+#' @family core peak detection functions
+#' 
+#' @author Roger Gine, Johannes Rainer
+#' 
+#' @importFrom Spectra peaksData rtime combineSpectra mz
+do_findChromPeaks_IM_centWave <- function(spec,
+                                           ppm = 25,
+                                           peakwidth = c(20, 50),
+                                           snthresh = 10,
+                                           prefilter = c(3, 100),
+                                           mzCenterFun = "wMean",
+                                           integrate = 1,
+                                           mzdiff = -0.001,
+                                           fitgauss = FALSE,
+                                           noise = 0,
+                                           verboseColumns = FALSE,
+                                           roiList = list(),
+                                           firstBaselineCheck = TRUE,
+                                           roiScales = NULL,
+                                           sleep = 0,
+                                           extendLengthMSW = FALSE,
+                                           ppmMerging = 10,
+                                           binWidthIM = 0.01
+                                          ){
+    ## Extract frame information
+    pdata <- peaksData(spec, columns = c("mz", "intensity"))
+    rt <- rtime(spec)
+    im <- spec$inv_ion_mobility
+    
+    
+    ## Merging frames into scans and Summarize across IM dimension
+    message("Collapsing data over IM dimension... ", appendLF = F)
+    
+    scans_summarized <-
+        combineSpectra(
+            spec,
+            f = as.factor(spec$frameId),
+            intensityFun = base::sum,
+            weighted = TRUE,
+            ppm = ppmMerging
+        )
+    message("OK")
+    
+    ## Peak-picking on summarized data
+    mzs <- mz(scans_summarized)
+    valsPerSpect <- lengths(mzs, FALSE)
+    mz <- unlist(mzs, use.names = FALSE)
+    int <- unlist(intensity(scans_summarized), use.names = FALSE)
+    scantime <- sort(unique(rt))
+    peaks <- .centWave_orig(mz = mz, int = int, scantime = scantime,
+                   valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
+                   snthresh = snthresh, prefilter = prefilter,
+                   mzCenterFun = mzCenterFun, integrate = integrate,
+                   mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                   verboseColumns = verboseColumns, roiList = roiList,
+                   firstBaselineCheck = firstBaselineCheck,
+                   roiScales = roiScales, sleep = sleep,
+                   extendLengthMSW = extendLengthMSW)
+    
+    ## Resolving peaks across IM dimension
+    message("Resolving peaks over ion-mobility dimension... ", appendLF = F)
+    resolved_peaks <- vector("list", nrow(peaks))
+    for (i in seq_len(nrow(peaks))) {
+        current_peak <- peaks[i,]
+        mobilogram <- .extract_mobilogram(pdata, current_peak, rt, im, binWidthIM)
+        if (length(mobilogram) == 0) {
+            warning(i, " mobilogram is empty")
+            next
+        }
+        bounds <- .split_mobilogram(mobilogram)
+        new_peaks <- data.frame(
+            mz = current_peak["mz"],
+            mzmin = current_peak["mzmin"],
+            mzmax = current_peak["mzmax"],
+            rt = current_peak["rt"],
+            rtmin = current_peak["rtmin"],
+            rtmax = current_peak["rtmax"],
+            im = vapply(bounds, mean, numeric(1)),
+            immin = vapply(bounds, min, numeric(1)),
+            immax = vapply(bounds, max, numeric(1)),
+            row.names = NULL
+        )
+        resolved_peaks[[i]] <- new_peaks
+    }
+    resolved_peaks <- do.call(rbind, resolved_peaks)
+    message("OK")
+    
+    ## Refine and calculate peak parameters
+    vals <- vector("list", nrow(resolved_peaks))
+    for (i in seq(nrow(resolved_peaks))) {
+        peak <- unlist(resolved_peaks[i, , drop = TRUE])
+        
+        ## Create a EIC for mz, rt and IM ranges
+        eic <- .extract_EIC_IM(peak, pdata, rt, im)
+        
+        if (nrow(eic) == 0 | all(eic[, 2] == 0))
+            next
+        
+        ## Refine RT bounds
+        rts <- c(peak["rtmin"], peak["rtmax"])
+        apx <- which.max(eic[, 2])
+        apx_rt <- eic[apx, 1]
+        range <- xcms:::descendMin(eic[, 2], apx)
+        
+        eic <- eic[range[1]:range[2], , drop = FALSE]
+        
+        ## Calculate peak stats
+        vals[[i]] <- data.frame(
+            mz = peak["mz"],
+            mzmin = peak["mzmin"],
+            mzmax = peak["mzmax"],
+            rt = apx_rt,
+            rtmin = min(eic[, 1]),
+            rtmax = max(eic[, 1]),
+            im = peak["im"],
+            immin = peak["immin"],
+            immax = peak["immax"],
+            maxo = max(eic[, 2]),
+            into = sum(eic[, 2]),
+            intb = NA,
+            sn = NA
+        )
+    }
+    resolved_peaks <- do.call(rbind, vals)
+    resolved_peaks <-
+        resolved_peaks[resolved_peaks$into > 0, ] #Remove empty peaks
+    
+    as.matrix(resolved_peaks)
+}
+
+#' @importFrom MsCoreUtils bin
+.extract_mobilogram <- function(pdata, peak, rt, im, binWidthIM = 0.01){
+    rtr <- c(peak["rtmin"], peak["rtmax"])
+    mzr <- c(peak["mzmin"], peak["mzmax"])
+    keep <- dplyr::between(rt, rtr[1], rtr[2])
+    if (length(keep) == 0) return()
+    ims <- im[keep]
+    ints <- vapply(pdata[keep], xcms:::.aggregate_intensities,
+                   mzr = mzr, INTFUN = sum, na.rm = TRUE, numeric(1))   
+    if(all(ints == 0)) return()
+    mob <- MsCoreUtils::bin(x = ints, y = ims, size = binWidthIM, FUN = sum)  
+    mob
+}
 
 
+#' @importFrom MassSpecWavelet peakDetectionCWT
+.split_mobilogram <- function(mob){
+    if(length(mob$x) == 0){return()}
+    vec <- mob$x
+    #Add some padding, which will be removed after
+    padding_size <- 5
+    vec <- c(rep(0, padding_size), vec, rep(0, padding_size))
+    pks <- MassSpecWavelet::peakDetectionCWT(vec, scales = c(1:7))
+    left <- sapply(pks$majorPeakInfo$peakCenterIndex - pks$majorPeakInfo$peakScale, function(x) max(1, x))
+    right <- sapply(pks$majorPeakInfo$peakCenterIndex + pks$majorPeakInfo$peakScale, function(x) min(x, length(vec) - padding_size))
+    limits <- list()
+    for (i in seq_along(pks$majorPeakInfo$peakCenterIndex)){
+        ranges <-  xcms:::descendMinTol(vec, startpos = c(left[i], right[i]), maxDescOutlier = 1) - padding_size
+        ranges[1] <- min(max(1, ranges[1]), length(mob$mids))
+        ranges[2] <- min(ranges[2], length(mob$mids))
+        limits[[i]] <- mob$mids[ranges]
+    }
+    limits <- limits[vapply(limits, function(x){!any(is.na(x))}, logical(1))] 
+    return(limits)
+}
+
+
+
+#' @importFrom dplyr between
+.extract_EIC_IM <- function(peak, pdata, rt, im){
+    rtr <- c(peak["rtmin"], peak["rtmax"])
+    mzr <- c(peak["mzmin"], peak["mzmax"])
+    imr <- c(peak["immin"], peak["immax"])
+    
+    keep <- dplyr::between(rt, rtr[1], rtr[2]) & dplyr::between(im, imr[1], imr[2])
+    rts <- rt[keep]
+    ints <- vapply(pdata[keep], xcms:::.aggregate_intensities,
+                   mzr = mzr, INTFUN = sum, na.rm = TRUE, numeric(1))   
+    ints <- vapply(unique(rts), function(x){sum(ints[rts == x])}, numeric(1))
+    
+    cbind(unique(rts), ints)
+}
 
 
 ############################################################

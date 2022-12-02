@@ -3,7 +3,8 @@
              MatchedFilterParam = "do_findChromPeaks_matchedFilter",
              MassifquantParam = "do_findChromPeaks_massifquant",
              MSWParam = "do_findPeaks_MSW",
-             CentWavePredIsoParam = "do_findChromPeaks_centWaveWithPredIsoROIs")
+             CentWavePredIsoParam = "do_findChromPeaks_centWaveWithPredIsoROIs",
+             CentWaveParamIM = "do_findChromPeaks_IM_centWave")
     fun <- p2f[class(x)[1L]]
     if (is.na(fun))
         stop("No peak detection function for parameter class ", class(x)[1L])
@@ -62,6 +63,11 @@
 #' @noRd
 .mse_find_chrom_peaks_sample <- function(x, msLevel = 1L, param, ...) {
     x <- filterMsLevel(x, msLevel)
+    if(inherits(param, "IMParam")){
+        if(!any(c("inv_ion_mobility") %in% Spectra::spectraVariables(x))) # Add any other column name needed
+            stop("Your Spectra object doesn't contain ion-mobility data")
+        return(do.call(.param_to_fun(param), args = append(list(x), as(param, "list")))) #Append to avoid concatenating spectra
+    }
     pkd <- Spectra::peaksData(x, columns = c("mz", "intensity"),
                               BPPARAM = SerialParam())
     vals_per_spect <- vapply(pkd, nrow, integer(1), USE.NAMES = FALSE)
@@ -74,6 +80,9 @@
     pkd <- do.call(rbind, pkd)
     if (!length(pkd))
         return(NULL)                    # not returning matrix because of rbind
+    rts <- rtime(x)
+    if (is.unsorted(rts))
+        stop("Spectra are not ordered by retention time", .call = FALSE)
     if (inherits(param, "CentWaveParam")) {
         centroided <- all(centroided(x))
         if (is.na(centroided)) {
@@ -83,9 +92,6 @@
                         " works best on data in centroid mode.")
         }
     }
-    rts <- rtime(x)
-    if (is.unsorted(rts))
-        stop("Spectra are not ordered by retention time", .call = FALSE)
     do.call(.param_to_fun(param),
             args = c(list(mz = pkd[, 1L], int = pkd[, 2L], scantime = rts,
                           valsPerSpect = vals_per_spect), as(param, "list")))

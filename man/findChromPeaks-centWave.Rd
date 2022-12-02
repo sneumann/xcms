@@ -385,6 +385,7 @@ detection in purely chromatographic data.
     the peak detection.
 
 Other peak detection methods: 
+\code{\link{findChromPeaks-centWaveIonMobility}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},
