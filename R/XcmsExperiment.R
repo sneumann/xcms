@@ -806,7 +806,7 @@ setMethod(
     "adjustRtime", signature(object = "MsExperiment", param = "ObiwarpParam"),
     function(object, param, chunkSize = 2L, BPPARAM = bpparam()) {
         msLevel <- 1L
-        res <- .mse_obiwarp_chunks(
+        res <- xcms:::.mse_obiwarp_chunks(
             object, param = param, chunkSize = chunkSize, BPPARAM = BPPARAM)
         ## Saving adjusted rtimes into $rtime_adjusted
         rt_adj <- rep(NA_real_, length(spectra(object)))

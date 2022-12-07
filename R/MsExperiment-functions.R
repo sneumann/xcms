@@ -183,7 +183,7 @@
                                          chunkSize = 1L,
                                          BPPARAM = bpparam()) {
     res <- unlist(
-        .mse_spectrapply_chunks(x, FUN = .mse_find_chrom_peaks_chunk,
+        xcms:::.mse_spectrapply_chunks(x, FUN = xcms:::.mse_find_chrom_peaks_chunk,
                                 msLevel = msLevel, param = param,
                                 chunkSize = chunkSize, BPPARAM = BPPARAM),
         recursive = FALSE, use.names = FALSE)
@@ -393,7 +393,7 @@
 
     if (length(subset_idx)) {
         res[[ref_idx]] <- rt_raw[subset_idx][[ref_idx]]
-        rt_adj <- vector("list", length(x))
+        rt_adj <- vector("list", length(rt_raw))
         rt_adj[subset_idx] <- res
         res <- adjustRtimeSubset(rt_raw, rt_adj, subset = subset_idx,
                                  method = subsetAdjust(param))
