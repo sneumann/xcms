@@ -30,7 +30,8 @@ import("BiocParallel")
 
 ## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame", "Hits")
-importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List")
+importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List",
+           "as.matrix")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
                   "extractROWS", "findMatches")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
