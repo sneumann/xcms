@@ -55,7 +55,7 @@ Imports:
     MsCoreUtils,
     MsFeatures,
     MsExperiment,
-    Spectra,
+    Spectra (>= 1.9.4),
     progress
 Suggests:
     BiocStyle,
