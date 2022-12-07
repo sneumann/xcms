@@ -268,9 +268,169 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 setGeneric("chromPeaks", function(object, ...) standardGeneric("chromPeaks"))
 setGeneric("chromPeaks<-", function(object, value)
     standardGeneric("chromPeaks<-"))
-setGeneric("chromPeakData", function(object, ...) standardGeneric("chromPeakData"))
+setGeneric("chromPeakData", function(object, ...)
+    standardGeneric("chromPeakData"))
 setGeneric("chromPeakData<-", function(object, value)
     standardGeneric("chromPeakData<-"))
+
+#' @title Extract spectra associated with chromatographic peaks
+#'
+#' @name chromPeakSpectra
+#'
+#' @description
+#'
+#' Extract (MS1 or MS2) spectra from an [XcmsExperiment] or [XCMSnExp] object
+#' for identified chromatographic peaks. To return spectra for selected
+#' chromatographic peaks, their *peak ID* (i.e., row name in the `chromPeaks`
+#' matrix) can be provided with parameter `peaks`.
+#' For `msLevel = 1L` (only supported for `return.type = "Spectra"` or
+#' `return.type = "List"`) MS1 spectra within the retention time boundaries
+#' (in the file in which the peak was detected) are returned. For
+#' `msLevel = 2L` MS2 spectra are returned for a chromatographic
+#' peak if their precursor m/z is within the retention time and m/z range of
+#' the chromatographic peak. Parameter `method` allows to define whether all
+#' or a single spectrum should be returned:
+#'
+#' - `method = "all"`: (default): return all spectra for each chromatographic
+#'   peak.
+#' - `method = "closest_rt"`: return the spectrum with the retention time
+#'   closest to the peak's retention time (at apex).
+#' - `method = "closest_mz"`: return the spectrum with the precursor m/z
+#'   closest to the peaks's m/z (at apex); only supported for `msLevel > 1`.
+#' - `method = "largest_tic"`: return the spectrum with the largest total
+#'   signal (sum of peaks intensities).
+#' - `method = "largest_bpi"`: return the spectrum with the largest peak
+#'   intensity (maximal peak intensity).
+#' - `method = "signal"`: only for `object` being a `XCMSnExp`: return the
+#'   spectrum with the sum of intensities most similar to the peak's apex
+#'   signal (`"maxo"`); only supported for `msLevel = 2L`.
+#'
+#' Parameter `return.type` allows to specify the *type* of the result object.
+#' With `return.type = "Spectra"` (the default) a [Spectra] object with all
+#' matching spectra is returned. The spectra variable `"peak_id"` of the
+#' returned `Spectra` contains the ID of the chromatographic peak (i.e., the
+#' rowname of the peak in the `chromPeaks` matrix) for each spectrum.
+#' With `return.type = "Spectra"` a `List` of `Spectra` is returned. The
+#' length of the list is equal to the number of rows of `chromPeaks`. Each
+#' element of the list contains thus a `Spectra` with all spectra for one
+#' chromatographic peak (or a `Spectra` of length 0 if no spectrum was found
+#' for the respective chromatographic peak).
+#'
+#' See also the *LC-MS/MS data analysis* vignette for more details and examples.
+#'
+#' @param object [XcmsExperiment] or [XCMSnExp] object with identified
+#'     chromatographic peaks for which spectra should be returned.
+#'
+#' @param msLevel `integer(1)` defining the MS level of the spectra that
+#'     should be returned.
+#'
+#' @param expandRt `numeric(1)` to expand the retention time range of each
+#'     peak by a constant value on each side.
+#'
+#' @param expandMz `numeric(1)` to expand the m/z range of each peak by a
+#'     constant value on each side.
+#'
+#' @param ppm `numeric(1)` to expand the m/z range of each peak (on each side)
+#'     by a value dependent on the peak's m/z.
+#'
+#' @param method `character(1)` specifying which spectra to include in the
+#'     result. Defaults to `method = "all"`. See function description for
+#'     details.
+#'
+#' @param peaks `character`, `logical` or `integer` allowing to specify a
+#'     subset of chromatographic peaks in `chromPeaks` for which spectra should
+#'     be returned (providing either their ID, a logical vector same length
+#'     than `nrow(chromPeaks(x))` or their index in `chromPeaks(x)`). This
+#'     parameter overrides `skipFilled`.
+#'
+#' @param skipFilled `logical(1)` whether spectra for filled-in peaks should
+#'     be reported or not.
+#'
+#' @param return.type `character(1)` defining the type of result object that
+#'     should be returned.
+#'
+#' @param BPPARAM parallel processing setup. Defaults to [bpparam()].
+#'
+#' @param ... ignored.
+#'
+#' @return
+#'
+#' parameter `return.type` allow to specify the type of the returned object:
+#'
+#' - `return.type = "Spectra"` (default): a `Spectra` object (defined in the
+#'   `Spectra` package). The result contains all spectra for all peaks.
+#'   Metadata column `"peak_id"` provides the ID of the respective peak
+#'   (i.e. its rowname in [chromPeaks()].
+#' - `return.type = "List"`: `List` of length equal to the number of
+#'   chromatographic peaks is returned, each element being a `Spectra` with
+#'   the spectra for one chromatographic peak.
+#'
+#' For backward compatibility options `"MSpectra"` and `"list"` are also
+#' supported but are not suggested.
+#'
+#' - `return.type = "MSpectra"` (deprecated): a [MSpectra] object with elements being
+#'   [Spectrum-class] objects. The result objects contains all spectra
+#'   for all peaks. Metadata column `"peak_id"` provides the ID of the
+#'   respective peak (i.e. its rowname in [chromPeaks()]).
+#' - `return.type = "list"`: `list` of `list`s that are either of length
+#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   length of the list matches the number of peaks.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' ## Read a file with DDA LC-MS/MS data
+#' library(MsExperiment)
+#' fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+#'
+#' dda <- readMsExperiment(fl)
+#'
+#' ## Perform MS1 peak detection
+#' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15),
+#'     prefilter = c(5, 1000)))
+#'
+#' ## Return all MS2 spectro for each chromatographic peaks as a Spectra object
+#' ms2_sps <- chromPeakSpectra(dda)
+#' ms2_sps
+#'
+#' ## spectra variable *peak_id* contain the row names of the peaks in the
+#' ## chromPeak matrix and allow thus to map chromatographic peaks to the
+#' ## returned MS2 spectra
+#' ms2_sps$peak_id
+#' chromPeaks(dda)
+#'
+#' ## Alternatively, return the result as a List of Spectra objects. This list
+#' ## is parallel to chromPeaks hence the mapping between chromatographic peaks
+#' ## and MS2 spectra is easier.
+#' ms2_sps <- chromPeakSpectra(dda, return.type = "List")
+#' names(ms2_sps)
+#' rownames(chromPeaks(dda))
+#' ms2_sps[[1L]]
+#'
+#' ## Parameter `msLevel` allows to define from which MS level spectra should
+#' ## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all
+#' ## MS1 spectra with a retention time within the retention time range of
+#' ## a chromatographic peak can be returned. Alternatively, selected
+#' ## spectra can be returned by specifying the selection criteria/method
+#' ## with the `method` parameter. Below we extract for each chromatographic
+#' ## peak the MS1 spectra with a retention time closest to the
+#' ## chromatographic peak's apex position. Alternatively it would also be
+#' ## possible to select the spectrum with the highest total signal or
+#' ## highest (maximal) intensity.
+#' ms1_sps <- chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt")
+#' ms1_sps
+#'
+#' ## Parameter peaks would allow to extract spectra for specific peaks only.
+#' ## Peaks can be defined with parameter `peaks` which can be either an
+#' ## `integer` with the index of the peak in the `chromPeaks` matrix or a
+#' ## `character` with its rowname in `chromPeaks`.
+#' chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
+setGeneric("chromPeakSpectra", function(object, ...)
+    standardGeneric("chromPeakSpectra"))
+
 setGeneric("collect", function(object, ...) standardGeneric("collect"))
 setGeneric("consecMissedLimit", function(object, ...)
     standardGeneric("consecMissedLimit"))

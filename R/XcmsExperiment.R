@@ -94,6 +94,17 @@
 #'   chromatographic peak was *detected* (by `findChromPeaks`) or *filled-in*
 #'   (by `fillChromPeaks`).
 #'
+#' - `chromPeakSpectra`: extract MS spectra for identified chromatographic
+#'   peaks. This can be either all (full scan) MS1 spectra with retention
+#'   times between the retention time range of a chromatographic peak, all
+#'   MS2 spectra (if present) with a retention time within the retention
+#'   time range of a (MS1) chromatographic peak and a precursor m/z within
+#'   the m/z range of the chromatographic peak or single, selected spectra
+#'   depending on their total signal or highest signal. Parameter `msLevel`
+#'   allows to define from which MS level spectra should be extracted,
+#'   parameter `method` allows to define if all or selected spectra should
+#'   be returned. See [chromPeakSpectra()] for details.
+#'
 #' - `dropChromPeaks`: removes (all) chromatographic peak detection results
 #'   from `object`. This will also remove any correspondence results (i.e.
 #'   features) and eventually present adjusted retention times from the object
@@ -754,7 +765,37 @@ setMethod(
 
 ## TODO: filterChromPeaks (use .filter_chrom_peaks)
 
-## TODO: chromPeakSpectra
+#' @rdname chromPeakSpectra
+setMethod(
+    "chromPeakSpectra", "XcmsExperiment",
+    function(object, method = c("all", "closest_rt", "closest_mz",
+                                "largest_tic", "largest_bpi"),
+             msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             skipFilled = FALSE, peaks = character(),
+             return.type = c("Spectra", "List"), BPPARAM = bpparam()) {
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        method <- match.arg(method)
+        return.type <- match.arg(return.type)
+        if (msLevel == 1L && method %in% c("closest_mz")) {
+            warning("method = \"closest_mz\" is not supported for msLevel = 1.",
+                    " Changing to method = \"all\".")
+            method <- "all"
+        }
+        if (length(peaks))
+            pkidx <- .i2index(peaks, rownames(chromPeaks(object)), "peaks")
+        else pkidx <- integer()
+        res <- .mse_spectra_for_peaks(object, method, msLevel, expandRt,
+                                      expandMz, ppm, skipFilled, pkidx,
+                                      BPPARAM)
+        if (!length(pkidx))
+            peaks <- rownames(chromPeaks(object))
+        else peaks <- rownames(chromPeaks(object))[pkidx]
+        if (return.type == "Spectra")
+            res <- res[as.matrix(findMatches(peaks, res$peak_id))[, 2L]]
+        else
+            as(split(res, factor(res$peak_id, levels = peaks)), "List")
+    })
 
 ################################################################################
 ## alignment
@@ -1129,10 +1170,9 @@ setMethod(
 ## utility and unsorted methods
 ################################################################################
 
-## TODO filterFile
-
 ## TODO chromatogram
 
 ## TODO filterMz?
 
-## TODO filterMsLevel?
+## TODO filterMsLevel? Function not yet needed. In case, needs also an
+## implementation for MsExperiment: update the spectra-sample-mapping.

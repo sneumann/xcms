@@ -254,7 +254,8 @@ test_that("chromPeakSpectra works", {
     expect_warning(res <- chromPeakSpectra(xod_x, return.type = "MSpectra"))
     expect_true(is(res, "MSpectra"))
     expect_true(length(res) == 0)
-    expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L))
+    expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L,
+                   return.type = "MSpectra"))
     expect_true(length(res) == 0)
 
     dta <- pest_dda

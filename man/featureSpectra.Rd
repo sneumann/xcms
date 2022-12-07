@@ -19,9 +19,8 @@ featureSpectra(
 \arguments{
 \item{x}{\link{XCMSnExp} object with feature defitions available.}
 
-\item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
-returned. \code{msLevel = 1} is currently only supported for \code{return.type}
-being \code{"Spectra"} or \code{"List"}.}
+\item{msLevel}{\code{integer(1)} defining the MS level of the spectra that
+should be returned.}
 
 \item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
@@ -35,9 +34,8 @@ by a value dependent on the peak's m/z.}
 \item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
 be reported or not.}
 
-\item{return.type}{\code{character(1)} defining the result type. Defaults to
-\code{return.type = "MSpectra"} but \code{return.type = "Spectra"} or
-\code{return.type = "List"} are preferred. See below for more information.}
+\item{return.type}{\code{character(1)} defining the type of result object that
+should be returned.}
 
 \item{features}{\code{character}, \code{logical} or \code{integer} allowing to specify a
 subset of features in \code{featureDefinitions} for which spectra should

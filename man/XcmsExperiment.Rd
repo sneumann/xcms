@@ -284,6 +284,16 @@ for details.
 level in which the peak was identified) and \code{"is_filled"} (whether the
 chromatographic peak was \emph{detected} (by \code{findChromPeaks}) or \emph{filled-in}
 (by \code{fillChromPeaks}).
+\item \code{chromPeakSpectra}: extract MS spectra for identified chromatographic
+peaks. This can be either all (full scan) MS1 spectra with retention
+times between the retention time range of a chromatographic peak, all
+MS2 spectra (if present) with a retention time within the retention
+time range of a (MS1) chromatographic peak and a precursor m/z within
+the m/z range of the chromatographic peak or single, selected spectra
+depending on their total signal or highest signal. Parameter \code{msLevel}
+allows to define from which MS level spectra should be extracted,
+parameter \code{method} allows to define if all or selected spectra should
+be returned. See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} for details.
 \item \code{dropChromPeaks}: removes (all) chromatographic peak detection results
 from \code{object}. This will also remove any correspondence results (i.e.
 features) and eventually present adjusted retention times from the object

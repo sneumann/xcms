@@ -3441,3 +3441,61 @@ setMethod("filterChromPeaks", "XCMSnExp",
               validObject(object)
               object
           })
+
+#' @rdname chromPeakSpectra
+setMethod(
+    "chromPeakSpectra", "XCMSnExp",
+    function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             method = c("all", "closest_rt", "closest_mz", "signal",
+                        "largest_tic", "largest_bpi"),
+             skipFilled = FALSE, return.type = c("Spectra", "MSpectra",
+                                                 "List", "list"),
+             peaks = character()) {
+        method <- match.arg(method)
+        return.type <- match.arg(return.type)
+        if (return.type %in% c("Spectra", "List")) {
+            .require_spectra()
+            if (length(object@spectraProcessingQueue))
+                warning("Lazy evaluation queue is not empty. Will ignore any",
+                        " processing steps as 'return.type = \"Spectra\"' and",
+                        " 'return.type = \"List\"' currently don't support a ",
+                        "non-empty processing queue.")
+            res <- .spectra_for_peaks(
+                object, msLevel = msLevel, method = method,
+                expandRt = expandRt, expandMz = expandMz,
+                ppm = ppm, skipFilled = skipFilled, peaks = peaks)
+            if (return.type == "Spectra") {
+                res <- do.call(c, unname(res[lengths(res) > 0]))
+                if (is(res, "Spectra"))
+                    res@processing <- character()
+            } else res <- List(res)
+        } else {
+            ## DEPRECATE THIS IN BIOC 3.14
+            if (length(peaks))
+                warning("Ignoring parameter 'peaks' which is only supported ",
+                        "for 'return.type = \"Spectra\"' and ",
+                        "'return.type = \"List\"'.")
+            if (msLevel != 2 || (msLevel == 2 & !any(msLevel(object) == 2))) {
+                res <- vector(mode = "list", length = nrow(chromPeaks(object)))
+                names(res) <- rownames(chromPeaks(object))
+                if (msLevel != 2)
+                    warning("msLevel = 1 is currently not supported for",
+                            "return.type = \"MSpectra\" or return.type ",
+                            "= \"list\".")
+                if (msLevel == 2 & !any(msLevel(object) == 2))
+                    warning("No MS2 spectra available in 'object'.")
+            } else {
+                res <- ms2_mspectrum_for_all_peaks(
+                    object, expandRt = expandRt, expandMz = expandMz,
+                    ppm = ppm, method = method, skipFilled = skipFilled)
+            }
+            if (return.type == "MSpectra") {
+                pids <- rep(names(res), lengths(res))
+                res <- res[lengths(res) > 0]
+                if (length(res))
+                    res <- unlist(res)
+                res <- MSpectra(res,elementMetadata = DataFrame(peak_id = pids))
+            }
+        }
+        res
+    })

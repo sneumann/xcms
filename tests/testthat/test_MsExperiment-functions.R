@@ -281,18 +281,18 @@ test_that(".mse_obiwarp_chunks works", {
     expect_error(.mse_obiwarp_chunks(mse, p, msLevel = 2), "MS level")
 })
 
-test_that(".read_ms_experiment works", {
-    expect_error(a <- .read_ms_experiment(), "'files'")
-    expect_error(a <- .read_ms_experiment("a"), "not found")
+test_that("readMsExperiment works", {
+    expect_error(a <- readMsExperiment(), "'files'")
+    expect_error(a <- readMsExperiment("a"), "not found")
 
-    a <- .read_ms_experiment(faahko_3_files[1:2])
+    a <- readMsExperiment(faahko_3_files[1:2])
     expect_s4_class(a, "MsExperiment")
     expect_true(length(a) == 2)
     expect_true(nrow(sampleData(a)) == 2)
 
     df <- data.frame(sidx = 1:3, other_ann = c("a", "b", "c"))
-    expect_error(.read_ms_experiment(faahko_3_files[1:2], df), "of files")
-    a <- .read_ms_experiment(faahko_3_files[1:2], df[1:2, ])
+    expect_error(readMsExperiment(faahko_3_files[1:2], df), "of files")
+    a <- readMsExperiment(faahko_3_files[1:2], df[1:2, ])
     expect_s4_class(a, "MsExperiment")
     expect_true(length(a) == 2)
     expect_true(nrow(sampleData(a)) == 2)

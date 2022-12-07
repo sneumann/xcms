@@ -107,28 +107,6 @@
     if (!ignoreHistory && length(drop))
         x@processHistory <- dropProcessHistoriesList(
             x@processHistory, type = drop)
-
-    ## if (keepFeatures && hasFeatures(x))
-    ##     stop("Not implemented yet", call. = FALSE)
-    ## if (hasChromPeaks(x)) {
-    ##     if (keepChromPeaks) {
-    ##         keep <- x@chromPeaks[, "sample"] %in% i
-    ##         x@chromPeaks <- x@chromPeaks[keep, , drop = FALSE]
-    ##         x@chromPeakData <- x@chromPeakData[keep, , drop = FALSE]
-    ##         if (!keepSampleIndex)
-    ##             x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
-    ##     } else {
-    ##         x@chromPeaks <- .empty_chrom_peaks()
-    ##         x@chromPeakData <- data.frame(ms_level = integer(),
-    ##                                       is_filled = logical())
-    ##         if (!ignoreHistory)
-    ##             x@processHistory <- dropProcessHistoriesList(
-    ##                 x@processHistory,
-    ##                 type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
-    ##                          .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
-    ##                          .PROCSTEP.PEAK.REFINEMENT))
-    ##     }
-    ## }
     getMethod("[", "MsExperiment")(x, i = i)
 }
 
@@ -681,6 +659,10 @@ sumi <- function(x) {
            .chrom_peak_intensity_centWave)
 }
 
+#' Function to subset (eventually re-order) chromPeaks and update in addition
+#' also the feature definitions with the correct indices.
+#'
+#' @noRd
 .filter_chrom_peaks <- function(x, idx = integer()) {
     cpn <- rownames(x@chromPeaks)
     x@chromPeaks <- x@chromPeaks[idx, , drop = FALSE]
@@ -689,4 +671,164 @@ sumi <- function(x) {
         x@featureDefinitions <- .update_feature_definitions(
             x@featureDefinitions, cpn, rownames(chromPeaks(x)))
     x
+}
+
+#' Given a `matrix` with several defined regions determine for each (row)
+#' the indices of the spectra in `x` that have a retention time within
+#' column `"rtmin"` and `"rtmax"` and, for
+#' `msLevel > 1` also a precursor m/z within `region[i, c("mzmin", "mzmax")]`
+#'
+#' @param x `Spectra`
+#'
+#' @param region `matrix` with the definition of the *region*.
+#'
+#' @param msLevel `integer` defining the MS level
+#'
+#' @return `list` with `integer` indices of the matching spectra for each
+#'     region.
+#'
+#' @noRd
+.spectra_index_list <- function(x, region, msLevel) {
+    rt <- rtime(x)
+    if (msLevel > 1) {
+        pmz <- precursorMz(x)
+        lapply(seq_len(nrow(region)), function(z) {
+            which(between(rt, region[z, c("rtmin", "rtmax")]) &
+                  between(pmz, region[z, c("mzmin", "mzmax")]))
+        })
+    } else
+        lapply(seq_len(nrow(region)), function(z) {
+            which(between(rt, region[z, c("rtmin", "rtmax")]))
+        })
+}
+
+#' Same as `.spectra_index_list_closest_rt` but returns only a single index
+#' per region, i.e., the index of the spectra with the retention time that
+#' is closest to `region[i, "rt"]`.
+#'
+#' @noRd
+.spectra_index_list_closest_rt <- function(x, region, msLevel) {
+    rt <- rtime(x)
+    if (msLevel > 1) {
+        pmz <- precursorMz(x)
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
+                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx[which.min(abs(rt[idx] - region[z, "rt"]))]
+        })
+    } else
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx[which.min(abs(rt[idx] - region[z, "rt"]))]
+        })
+}
+
+#' Same as `.spectra_index_list_closest_rt` but returns only a single index
+#' per region, i.e., the index of the spectra with the precursor m/z that
+#' is closest to `region[i, "mz"]`.
+#'
+#' @noRd
+.spectra_index_list_closest_mz <- function(x, region, msLevel) {
+    rt <- rtime(x)
+    pmz <- precursorMz(x)
+    lapply(seq_len(nrow(region)), function(z) {
+        idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
+                     between(pmz, region[z, c("mzmin", "mzmax")]))
+        idx[which.min(abs(pmz[idx] - region[z, "mz"]))]
+    })
+}
+
+#' Get for each region the spectrum with the largest sum of intensity
+#'
+#' @noRd
+.spectra_index_list_largest_tic <- function(x, region, msLevel) {
+    rt <- rtime(x)
+    tic <- ionCount(x)
+    if (msLevel > 1) {
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
+                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx[which.max(tic[idx])]
+        })
+    } else
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx[which.max(tic[idx])]
+        })
+}
+
+#' Get for each region the spectrum with the largest intensity
+#'
+#' @noRd
+.spectra_index_list_largest_bpi <- function(x, region, msLevel) {
+    rt <- rtime(x)
+    bpi <- max(intensity(x), na.rm = TRUE)
+    if (msLevel > 1) {
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
+                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx[which.max(bpi[idx])]
+        })
+    } else
+        lapply(seq_len(nrow(region)), function(z) {
+            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx[which.max(bpi[idx])]
+        })
+}
+
+#' returns a `Spectra` with all spectra for the provided region.
+#'
+#' @param peaks `integer` with the indices of the chromatographic peaks or
+#'     `integer()` for all peaks.
+#'
+#' @noRd
+.mse_spectra_for_peaks <- function(x, method = c("all", "closest_rt",
+                                                 "closest_mz", "largest_tic",
+                                                 "largest_bpi"),
+                                   msLevel = 2L, expandRt = 0, expandMz = 0,
+                                   ppm = 0, skipFilled = FALSE,
+                                   peaks = integer(), BPPARAM = bpparam()) {
+    method <- match.arg(method)
+    pks <- chromPeaks(x)[, c("mz", "mzmin", "mzmax", "rt",
+                             "rtmin", "rtmax", "maxo", "sample")]
+    if (ppm != 0)
+        expandMz <- expandMz + pks[, "mz"] * ppm / 1e6
+    if (expandMz[1L] != 0) {
+        pks[, "mzmin"] <- pks[, "mzmin"] - expandMz
+        pks[, "mzmax"] <- pks[, "mzmax"] + expandMz
+    }
+    if (expandRt != 0) {
+        pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
+        pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
+    }
+    if (length(peaks)) {
+        keep <- rep(FALSE, nrow(pks))
+        keep[peaks] <- TRUE
+    } else {
+        keep <- rep(TRUE, nrow(pks))
+        if (skipFilled && any(chromPeakData(x)$is_filled))
+            keep <- !chromPeakData(x)$is_filled
+    }
+    pks <- pks[keep, , drop = FALSE]
+    f <- as.factor(as.integer(pks[, "sample"]))
+    res <- bpmapply(
+        split.data.frame(pks, f),
+        split(spectra(x), factor(fromFile(x), levels = levels(f))),
+        FUN = function(pk, sp, msLevel, method) {
+            sp <- filterMsLevel(sp, msLevel)
+            idx <- switch(
+                method,
+                all = .spectra_index_list(sp, pk, msLevel),
+                closest_rt = .spectra_index_list_closest_rt(sp, pk, msLevel),
+                closest_mz = .spectra_index_list_closest_mz(sp, pk, msLevel),
+                largest_tic = .spectra_index_list_largest_tic(sp, pk, msLevel),
+                largest_bpi = .spectra_index_list_largest_bpi(sp, pk, msLevel))
+            ids <- rep(rownames(pk), lengths(idx))
+            res <- sp[unlist(idx)]
+            res$peak_id <- ids
+            res
+        },
+        MoreArgs = list(msLevel = msLevel, method = method),
+        BPPARAM = BPPARAM)
+    Spectra:::.concatenate_spectra(res)
 }

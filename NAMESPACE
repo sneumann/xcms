@@ -250,7 +250,6 @@ export(
     "exportMetaboAnalyst",
     "imputeRowMin",
     "imputeRowMinRand",
-    "chromPeakSpectra",
     "featureSpectra",
     "featureChromatograms",
     "hasFilledChromPeaks",
@@ -484,6 +483,7 @@ exportMethods("hasChromPeaks",
               "chromPeaks<-",
               "chromPeakData",
               "chromPeakData<-",
+              "chromPeakSpectra",
               "processHistory",
               "fileIndex",
               "processDate",
@@ -555,6 +555,8 @@ importMethodsFrom("Spectra", "setBackend")
 importMethodsFrom("Spectra", "dataOrigin")
 importMethodsFrom("Spectra", "spectraVariables")
 importMethodsFrom("Spectra", "rtime<-")
+importMethodsFrom("Spectra", "ionCound")
+importMethodsFrom("Spectra", "precursorMz")
 importFrom("Spectra", "MsBackendMemory")
 
 ## MsExperiment things
@@ -562,6 +564,11 @@ importClassesFrom("MsExperiment", "MsExperiment")
 importMethodsFrom("MsExperiment", "spectra")
 importMethodsFrom("BiocGenerics", "do.call")
 importMethodsFrom("BiocGenerics", "rbind")
+importFrom("MsExperiment", "MsExperiment")
+importFrom("MsExperiment", "linkSampleData")
+importFrom("MsExperiment", "sampleData<-")
+importMethodsFrom("MsExperiment", "spectra<-")
+export("readMsExperiment")
 
 importFrom("progress", "progress_bar")
 importFrom("MsCoreUtils", "between")

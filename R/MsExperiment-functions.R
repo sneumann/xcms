@@ -144,12 +144,6 @@
         pb$tick()
         res
     }, ..., pb = pb, BPPARAM = BPPARAM)
-    ## res <- vector("list", length(chunks))
-    ## for (i in seq_along(chunks)) {
-    ##     res[[i]] <- FUN(sps[sps$.SAMPLE_IDX %in% chunks[[i]]], ...,
-    ##                     BPPARAM = BPPARAM)
-    ## }
-    ## res
 }
 
 #' @title Perform peak detection on chunks of data
@@ -449,17 +443,28 @@
     } else adj
 }
 
-#' Read/import MS data from mzML files. The provided files are imported as a
-#' `Spectra` object and samples (defined by `sampleData`) are linked to these.
+#' @title Import MS spectra data of an experiment
 #'
-#' @param files `character` with the (absolute) file names of the MS data files.
+#' @description
 #'
-#' @param sampleData `data.frame` of `DataFrame` with the sample annotations.
+#' Read/import MS spectra data of an experiment from the respective (raw)
+#' data files into an [MsExperiment()] object. The provided files are
+#' imported as a `Spectra` object and each file is optionally *linked* to
+#' samples defined by `sampleData`.
+#'
+#' See the vignette of the [MsExperiment] package for adding additional data
+#' and information to an `MsExperiment` object.
+#'
+#' @param files `character` with the (absolute) file names of the MS data
+#'     files.
+#'
+#' @param sampleData `data.frame` or `DataFrame` with the sample annotations.
 #'     Each row is expected to contain annotations for one file (sample). The
 #'     order of the data frame's rows is expected to match the order of the
 #'     provided files.
 #'
-#' @param ... additional parameters to be provided to the `Spectra` call.
+#' @param ... additional parameters for the [Spectra()] call to import the
+#'     data.
 #'
 #' @return `MsExperiment`.
 #'
@@ -467,9 +472,35 @@
 #'
 #' @md
 #'
-#' @noRd
-.read_ms_experiment <- function(files = character(),
-                                sampleData = data.frame(), ...) {
+#' @export
+#'
+#' @examples
+#'
+#' ## Define the files of the experiment to import
+#' fls <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+#'          system.file("microtofq/MM8.mzML", package = "msdata"))
+#'
+#' ## Define a data frame with some sample annotations
+#' ann <- data.frame(
+#'     injection_index = 1:2,
+#'     sample_id = c("MM14", "MM8"))
+#'
+#' ## Import the data
+#' library(MsExperiment)
+#' mse <- readMsExperiment(fls, ann)
+#' mse
+#'
+#' ## Access the spectra data
+#' spectra(mse)
+#'
+#' ## Access the sample annotations
+#' sampleData(mse)
+#'
+#' ## Import the data reading all MS spectra directly into memory
+#' mse <- readMsExperiment(fls, ann, backend = Spectra::MsBackendMemory())
+#' mse
+readMsExperiment <- function(files = character(),
+                             sampleData = data.frame(), ...) {
     files <- normalizePath(files)
     if (!nrow(sampleData))
         sampleData <- data.frame(sample_index = seq_along(files))
