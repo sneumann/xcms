@@ -29,7 +29,7 @@ import("BiocParallel")
 ## importMethodsFrom("stats4", "plot")
 
 ## import("S4Vectors")
-importClassesFrom("S4Vectors", "Rle", "DataFrame")
+importClassesFrom("S4Vectors", "Rle", "DataFrame", "Hits")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-", "extractROWS")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
