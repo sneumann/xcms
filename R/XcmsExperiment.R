@@ -792,7 +792,8 @@ setMethod(
             peaks <- rownames(chromPeaks(object))
         else peaks <- rownames(chromPeaks(object))[pkidx]
         if (return.type == "Spectra")
-            res <- res[as.matrix(findMatches(peaks, res$peak_id))[, 2L]]
+            res <- res[
+                S4Vectors::as.matrix(findMatches(peaks, res$peak_id))[, 2L]]
         else
             as(split(res, factor(res$peak_id, levels = peaks)), "List")
     })

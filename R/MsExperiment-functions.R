@@ -238,7 +238,6 @@
                 .param_to_fun(prm),
                 args = c(list(mz = p[, 1L], int = p[, 2L], scantime = rt,
                               valsPerSpect = vals_per_spect), as(prm, "list")))
-
         }, MoreArgs = list(prm = param, msl = msLevel), SIMPLIFY = FALSE,
         USE.NAMES = FALSE, BPPARAM = BPPARAM)
 }
