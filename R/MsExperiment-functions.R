@@ -4,7 +4,7 @@
              MassifquantParam = "do_findChromPeaks_massifquant",
              MSWParam = "do_findPeaks_MSW",
              CentWavePredIsoParam = "do_findChromPeaks_centWaveWithPredIsoROIs",
-             CentWaveParamIM = "do_findChromPeaks_IM_centWave")
+             IMCentWaveParam = "do_findChromPeaks_IM_centWave")
     fun <- p2f[class(x)[1L]]
     if (is.na(fun))
         stop("No peak detection function for parameter class ", class(x)[1L])

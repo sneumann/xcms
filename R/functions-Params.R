@@ -227,21 +227,21 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 }
 
 
-#' @return The \code{CentWaveParamIM} function returns a
-#'     \code{CentWaveParamIM} class instance with all of the settings
+#' @return The \code{IMCentWaveParam} function returns a
+#'     \code{IMCentWaveParam} class instance with all of the settings
 #'     specified for the centWave-based peak detection in chromatographic + 
 #'     ion mobility data.
 #'
 #' @rdname findChromPeaks-centWaveIonMobility
 #' 
-CentWaveParamIM <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
+IMCentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                                  prefilter = c(3, 100), mzCenterFun = "wMean",
                                  integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
                                  noise = 0, verboseColumns = FALSE, roiList = list(),
                                  firstBaselineCheck = TRUE, roiScales = numeric(),
                                  extendLengthMSW = FALSE, ppmMerging = 10,
                                  binWidthIM = 0.02) {
-    return(new("CentWaveParamIM", ppm = ppm, peakwidth = peakwidth,
+    return(new("IMCentWaveParam", ppm = ppm, peakwidth = peakwidth,
                snthresh = snthresh, prefilter = prefilter,
                mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,

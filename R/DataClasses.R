@@ -1330,14 +1330,14 @@ setClass("IMParam", contains = "Param")
 #'
 #' @seealso The \code{\link{do_findChromPeaks_IM_centWave}} core
 #'     API function and \code{\link{CentWaveParam}} for the class the
-#'     \code{CentWaveParamIM} extends.
+#'     \code{IMCentWaveParam} extends.
 #'
 #' @name findChromPeaks-centWaveIonMobility
 NULL
 
-#' @description The \code{CentWaveParamIM} class allows to specify all
+#' @description The \code{IMCentWaveParam} class allows to specify all
 #'     settings for 
-#'     Instances should be created with the \code{CentWaveParamIM}
+#'     Instances should be created with the \code{IMCentWaveParam}
 #'     constructor. See also the documentation of the
 #'     \code{\link{CentWaveParam}} for all methods and arguments this class
 #'     inherits.
@@ -1346,7 +1346,7 @@ NULL
 #'      See corresponding parameter above.
 #'
 #' @rdname findChromPeaks-centWaveIonMobility
-setClass("CentWaveParamIM",
+setClass("IMCentWaveParam",
          contains = c("IMParam", "CentWaveParam"),
          slots = c(
              ppmMerging = "numeric",

@@ -4,11 +4,11 @@
 \name{findChromPeaks-centWaveIonMobility}
 \alias{findChromPeaks-centWaveIonMobility}
 \alias{centWaveIonMobility}
-\alias{CentWaveParamIM-class}
-\alias{CentWaveParamIM}
+\alias{IMCentWaveParam-class}
+\alias{IMCentWaveParam}
 \title{Centwave-based ion-mobility peak picking}
 \usage{
-CentWaveParamIM(
+IMCentWaveParam(
   ppm = 25,
   peakwidth = c(20, 50),
   snthresh = 10,
@@ -111,8 +111,8 @@ the peaks into the ion-mobility dimension. Lower values will give better resolut
 if the data allows it, but can also generate spurious peaks.}
 }
 \value{
-The \code{CentWaveParamIM} function returns a
-    \code{CentWaveParamIM} class instance with all of the settings
+The \code{IMCentWaveParam} function returns a
+    \code{IMCentWaveParam} class instance with all of the settings
     specified for the centWave-based peak detection in chromatographic + 
     ion mobility data.
 }
@@ -122,9 +122,9 @@ Performs an extension of CentWave peak-picking on LC-IM-MS MS1
   the summarized LC-MS-like data; then, from each peak, it calculates its mobilogram and
   performs a second peak-picking on the IM dimension, resolving the peaks.
 
-The \code{CentWaveParamIM} class allows to specify all
+The \code{IMCentWaveParam} class allows to specify all
     settings for 
-    Instances should be created with the \code{CentWaveParamIM}
+    Instances should be created with the \code{IMCentWaveParam}
     constructor. See also the documentation of the
     \code{\link{CentWaveParam}} for all methods and arguments this class
     inherits.
@@ -141,7 +141,7 @@ See \code{\link{centWave}} for details on the centWave method.
 \seealso{
 The \code{\link{do_findChromPeaks_IM_centWave}} core
     API function and \code{\link{CentWaveParam}} for the class the
-    \code{CentWaveParamIM} extends.
+    \code{IMCentWaveParam} extends.
 
 Other peak detection methods: 
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
