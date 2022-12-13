@@ -313,6 +313,9 @@ Parameter \code{msLevel} allows to check whether peak detection results are
 available for the specified MS level(s).
 \item \code{hasFilledChromPeaks}: whether gap-filling results (i.e., filled-in
 chromatographic peaks) are present.
+\item \code{manualChromPeaks}: \emph{manually} add chromatographic peaks by defining
+their m/z and retention time ranges. See \code{\link[=manualChromPeaks]{manualChromPeaks()}} for
+details and examples.
 \item \code{refineChromPeaks}: \emph{refines} identified chromatographic peaks in \code{object}.
 See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 }

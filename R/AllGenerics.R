@@ -1046,7 +1046,101 @@ setGeneric("localAlignment<-", function(object, value) standardGeneric("localAli
 setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 
 ## M
-##setGeneric("max", function(x, ...) standardGeneric("max"))
+
+#' @title Manual peak integration and feature definition
+#'
+#' @description
+#'
+#' The `manualChromPeaks` function allows to *manually* define chromatographic
+#' peaks, integrate the intensities within the specified peak area and add
+#' them to the object's `chromPeaks` matrix. A peak is not added for a sample
+#' if no signal was found in the respective data file.
+#'
+#' Because chromatographic peaks are added to eventually previously identified
+#' peaks, it is suggested to run [refineChromPeaks()] with the
+#' [MergeNeighboringPeaksParam()] approach to merge potentially overlapping
+#' peaks.
+#'
+#' The `manualFeatures` function allows to manually group identified
+#' chromatographic peaks into features by providing their index in the
+#' object's `chromPeaks` matrix.
+#'
+#' @param BPPARAM parallel processing settings (see [bpparam()] for details).
+#'
+#' @param chromPeaks For `manualChromPeaks`: `matrix` defining the boundaries
+#'     of the chromatographic peaks with one row per chromatographic peak and
+#'     columns `"mzmin"`, `"mzmax"`, `"rtmin"` and `"rtmax"` defining the
+#'     m/z and retention time region of each peak.
+#'
+#' @param chunkSize `integer(1)` defining the number of files (samples)
+#'     that should be loaded into memory and processed at the same time.
+#'     Peak integration is then performed in parallel (per sample) on this
+#'     subset data. This setting thus allows to balance between memory
+#'     demand and speed (due to parallel processing). Because parallel
+#'     processing can only performed on the subset of data currently loaded
+#'     into memory in each iteration, the value for `chunkSize` should match
+#'     the defined  parallel setting setup. Using a parallel processing setup
+#'     using 4 CPUs (separate processes) but using `chunkSize = `1` will not
+#'     perform any parallel processing, as only the data from one sample is
+#'     loaded in memory at a time. On the other hand, setting `chunkSize` to
+#'     the total number of samples in an experiment will load the full MS data
+#'     into memory and will thus in most settings cause an out-of-memory error.
+#'
+#' @param msLevel `integer(1)` defining the MS level in which peak integration
+#'     should be performed. Only a single MS level at a time is supported.
+#'     Defaults to `msLevel = 1L`.
+#'
+#' @param object [XcmsExperiment], [XCMSnExp] or [OnDiskMSnExp] object.
+#'
+#' @param peakIdx For `manualFeatures`: `list` of `integer` vectors with the
+#'     indices of chromatographic peaks in the object's `chromPeaks` matrix
+#'     that should be grouped into features.
+#'
+#' @param samples For `manualChromPeaks`: optional `integer` defining
+#'     individual samples in which the peak integration should be performed.
+#'     Defaults to all samples.
+#'
+#'
+#' @param ... ignored.
+#'
+#' @return `XcmsExperiment` or `XCMSnExp` with the manually added
+#'     chromatographic peaks or features.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @name manualChromPeaks
+#'
+#' @examples
+#'
+#' ## Read a test dataset.
+#' fls <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+#'          system.file("microtofq/MM8.mzML", package = "msdata"))
+#'
+#' ## Define a data frame with some sample annotations
+#' ann <- data.frame(
+#'     injection_index = 1:2,
+#'     sample_id = c("MM14", "MM8"))
+#'
+#' ## Import the data
+#' library(MsExperiment)
+#' mse <- readMsExperiment(fls)
+#'
+#' ## Define some arbitrary peak areas
+#' pks <- cbind(
+#'     mzmin = c(512, 234.3), mzmax = c(513, 235),
+#'     rtmin = c(10, 33), rtmax = c(19, 50)
+#' )
+#' pks
+#'
+#' res <- manualChromPeaks(mse, pks)
+#' chromPeaks(res)
+#'
+#' ## Peaks were only found in the second file.
+setGeneric("manualChromPeaks", function(object, ...)
+    standardGeneric("manualChromPeaks"))
+
 setGeneric("max")
 setGeneric("max<-", function(object, value) standardGeneric("max<-"))
 setGeneric("maxCharge", function(object) standardGeneric("maxCharge"))

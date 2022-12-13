@@ -3499,3 +3499,91 @@ setMethod(
         }
         res
     })
+
+#' @rdname manualChromPeaks
+setMethod(
+    "manualChromPeaks", "OnDiskMSnExp",
+    function(object, chromPeaks = matrix(),
+             samples = seq_along(fileNames(object)), msLevel = 1L,
+             BPPARAM = bpparam()) {
+        manualChromPeaks(as(object, "XCMSnExp"),
+                         chromPeaks, samples, msLevel, BPPARAM)
+    })
+
+#' @rdname manualChromPeaks
+setMethod(
+    "manualChromPeaks", "XCMSnExp",
+    function(object, chromPeaks = matrix(),
+             samples = seq_along(fileNames(object)), msLevel = 1L,
+             BPPARAM = bpparam()) {
+        if (length(msLevel) > 1L)
+            stop("Length 'msLevel' is > 1: can only add peaks for one MS level",
+                 " at a time.")
+        if (hasFeatures(object))
+            object <- dropFeatureDefinitions(object)
+        if (!all(c("mzmin", "mzmax", "rtmin", "rtmax") %in%
+                 colnames(chromPeaks)))
+            stop("'chromPeaks' lacks one or more of the required columns: ",
+                 "'mzmin', 'mzmax', 'rtmin' and 'rtmax'")
+        if (is.data.frame(chromPeaks)) chromPeaks <- as.matrix(chromPeaks)
+        if (!all(samples %in% seq_along(fileNames(object))))
+            stop("'samples' out of bounds")
+        if (hasChromPeaks(object))
+            cn <- colnames(chromPeaks(object))
+        else cn <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
+                     "intb", "maxo", "sn", "sample")
+        ## Do integration
+        res <- bpmapply(.split_by_file2(object)[samples], samples,
+                        FUN = function(obj, idx, peakArea, msLevel, cn) {
+                            xcms:::.getChromPeakData(obj, peakArea = peakArea,
+                                                     sample_idx = idx,
+                                                     msLevel = msLevel,
+                                                     cn = cn)
+                        }, MoreArgs = list(peakArea = chromPeaks,
+                                           msLevel = msLevel, cn = cn),
+                        BPPARAM = BPPARAM, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+        res <- do.call(rbind, res)
+        res <- res[!is.na(res[, "sample"]), , drop = FALSE]
+        if (nrow(res) == 0)
+            return(object)
+        newFd <- new("MsFeatureData")
+        if (hasChromPeaks(object)) {
+            newFd@.xData <- .copy_env(object@msFeatureData)
+            object@msFeatureData <- new("MsFeatureData")
+            incr <- nrow(chromPeaks(newFd))
+            ## Define IDs for the new peaks; include fix for issue #347
+            maxId <- max(as.numeric(
+                sub("M", "", sub("^CP", "", rownames(chromPeaks(newFd))))))
+            if (maxId < 1)
+                stop("chromPeaks matrix lacks rownames; please update ",
+                     "'object' with the 'updateObject' function.")
+            toId <- maxId + nrow(res)
+            rownames(res) <- sprintf(
+                paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
+                (maxId + 1L):toId)
+            chromPeaks(newFd) <- rbind(chromPeaks(newFd), res)
+            cpd <- extractROWS(chromPeakData(newFd), rep(1L, nrow(res)))
+            cpd[,] <- NA
+            cpd$ms_level <- as.integer(msLevel)
+            cpd$is_filled <- FALSE
+            if (!any(colnames(chromPeakData(newFd)) == "is_filled"))
+                chromPeakData(newFd)$is_filled <- FALSE
+            chromPeakData(newFd) <- rbind(chromPeakData(newFd), cpd)
+            rownames(chromPeakData(newFd)) <- rownames(chromPeaks(newFd))
+            lockEnvironment(newFd, bindings = TRUE)
+            object@msFeatureData <- newFd
+        } else {
+            nr <- nrow(res)
+            rownames(res) <- sprintf(
+                paste0("CP", "%0", ceiling(log10(nr + 1L)), "d"),
+                seq_len(nr))
+            chromPeaks(newFd) <- res
+            cpd <- DataFrame(ms_level = rep(msLevel, nr),
+                             is_filled = rep(FALSE, nr))
+            rownames(cpd) <- rownames(res)
+            chromPeakData(newFd) <- cpd
+            lockEnvironment(newFd, bindings = TRUE)
+            object@msFeatureData <- newFd
+        }
+        object
+    })

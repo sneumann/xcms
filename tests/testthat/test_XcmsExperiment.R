@@ -17,7 +17,7 @@ xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
     expect_true(nrow(res) == 0)
-    expect_equal(colnames(res), .REQ_PEAKS_COLS)
+    expect_equal(colnames(res), c(.REQ_PEAKS_COLS, "maxo"))
 
     res <- .empty_chrom_peaks(sample = FALSE)
     expect_true(nrow(res) == 0)
@@ -890,4 +890,24 @@ test_that("chromPeakSpectra works", {
                     precursorMz(res[[1L]]) <= chromPeaks(tmp)[1, "mzmax"]))
     expect_equal(rtime(chromPeakSpectra(tmp, peaks = c("CP7", "CP1", "CP3"))),
                  rtime(chromPeakSpectra(tmp, peaks = c(7, 1, 3))))
+})
+
+test_that("manualChromPeaks,XcmsExperiment works", {
+    pks <- chromPeaks(xmse)[chromPeaks(xmse)[, "sample"] == 2L, ]
+    res <- manualChromPeaks(xmse, chromPeaks = matrix(numeric()))
+    expect_equal(chromPeaks(res), chromPeaks(xmse))
+    tmp <- as(mse, "XcmsExperiment")
+    expect_error(manualChromPeaks(xmse, msLevel = c(1L, 2L)), "one MS")
+    expect_error(manualChromPeaks(xmse, pks[, c("rt", "mz")]), "required")
+    expect_error(manualChromPeaks(xmse, pks, samples = 2:5), "out of bounds")
+
+    res <- manualChromPeaks(tmp, pks)
+    expect_true(hasChromPeaks(res))
+    pks_2 <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 2L, ]
+    expect_equal(nrow(pks), nrow(pks_2))
+    expect_equal(unname(pks[, c("mz", "into", "maxo")]),
+                 unname(pks_2[, c("mz", "into", "maxo")]))
+
+    res2 <- manualChromPeaks(tmp, pks, samples = 2)
+    expect_equal(unname(chromPeaks(res2)), unname(pks_2))
 })

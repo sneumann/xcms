@@ -130,6 +130,10 @@
 #' - `hasFilledChromPeaks`: whether gap-filling results (i.e., filled-in
 #'   chromatographic peaks) are present.
 #'
+#' - `manualChromPeaks`: *manually* add chromatographic peaks by defining
+#'   their m/z and retention time ranges. See [manualChromPeaks()] for
+#'   details and examples.
+#'
 #' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
 #'   See [refineChromPeaks()] for details.
 #'
@@ -383,7 +387,7 @@
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
-    cols <- .REQ_PEAKS_COLS
+    cols <- c(.REQ_PEAKS_COLS, "maxo")
     if (!sample)
         cols <- cols[cols != "sample"]
     matrix(numeric(), ncol = length(cols), nrow = 0,
@@ -761,7 +765,65 @@ setMethod(
         object
     })
 
-## TODO: manualChromPeaks
+#' @rdname manualChromPeaks
+setMethod("manualChromPeaks", "MsExperiment",
+          function(object, chromPeaks = matrix(numeric()),
+                   samples = seq_along(object), msLevel = 1L,
+                   chunkSize = 2L, BPPARAM = bpparam()) {
+              manualChromPeaks(as(object, "XcmsExperiment"), chromPeaks,
+                               samples, msLevel, chunkSize, BPPARAM)
+          })
+
+#' @rdname manualChromPeaks
+setMethod(
+    "manualChromPeaks", "XcmsExperiment",
+    function(object, chromPeaks = matrix(numeric()),
+             samples = seq_along(object), msLevel = 1L,
+             chunkSize = 2L, BPPARAM = bpparam()) {
+        if (length(msLevel) > 1L)
+            stop("Can only add peaks from one MS level at a time.")
+        if (is.data.frame(chromPeaks)) chromPeaks <- as.matrix(chromPeaks)
+        if (!nrow(chromPeaks)) return(object)
+        if (!all(c("mzmin", "mzmax", "rtmin", "rtmax") %in%
+                 colnames(chromPeaks)))
+            stop("'chromPeaks' lacks one or more of the required colums ",
+                 "\"mzmin\", \"mzmax\", \"rtmin\" and \"rtmax\".")
+        chromPeaks <- chromPeaks[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+        if (!all(samples %in% seq_along(object)))
+            stop("'samples' out of bounds")
+        if (hasFeatures(object))
+            object <- dropFeatureDefinitions(object)
+        pal <- lapply(samples, function(z) chromPeaks)
+        names(pal) <- samples
+        chunks <- split(samples, ceiling(seq_along(samples) / chunkSize))
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks) + 1L, clear = FALSE)
+        pb$tick(0)
+        res <- lapply(chunks, function(z, ...) {
+            pb$tick()
+            .xmse_integrate_chrom_peaks(
+                .subset_xcms_experiment(
+                    object, i = z, keepAdjustedRtime = TRUE,
+                    ignoreHistory = TRUE), pal = pal[as.character(z)],
+                msLevel = msLevel, BPPARAM = BPPARAM)
+        })
+        res <- do.call(rbind, res)
+        nr <- nrow(res)
+        maxi <- max(
+            0, as.integer(sub("CP", "", rownames(chromPeaks(object)))))
+        rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
+        pkd <- data.frame(ms_level = rep(msLevel, nr),
+                          is_filled = rep(FALSE, nr))
+        rownames(pkd) <- rownames(res)
+        pb$tick()
+        object@chromPeakData <- rbindFill(object@chromPeakData, pkd)
+        object@chromPeaks <- rbindFill(object@chromPeaks, res)
+        validObject(object)
+        object
+    })
+
 
 ## TODO: filterChromPeaks (use .filter_chrom_peaks)
 
