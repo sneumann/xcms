@@ -467,7 +467,8 @@ setMethod(
         ## Subset chrom peaks
         if (hasChromPeaks(object)) {
             crt <- object@chromPeaks[, "rt"]
-            object <- .filter_chrom_peaks(object, which(between(crt, rt)))
+            object <- .filter_chrom_peaks(
+                object, which(between(crt, rt[1L], rt[2L])))
         }
         callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
     })

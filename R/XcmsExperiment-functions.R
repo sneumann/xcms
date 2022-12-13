@@ -172,7 +172,7 @@
 .aggregate_intensities <- function(x, mzr = numeric(), INTFUN = sumi, ...) {
     ## x could also be just a numeric vector - to support Chromatogram...
     if (length(mzr))
-        vals <- x[between(x[, "mz"], mzr), "intensity"]
+        vals <- x[between(x[, "mz"], mzr[1L], mzr[2L]), "intensity"]
     else vals <- x[, "intensity"]
     INTFUN(vals, ...)
 }
@@ -184,7 +184,7 @@
 .pmat_filter_mz <- function(x, mzr = numeric()) {
     if (!length(mzr))
         return(x)
-    x[between(x[, "mz"], mzr), , drop = FALSE]
+    x[between(x[, "mz"], mzr[1L], mzr[2L]), , drop = FALSE]
 }
 
 #' @title Sum MS Intensity Values
@@ -412,7 +412,7 @@ sumi <- function(x) {
                 if (msLevels[i] != msLevel)
                     FALSE
                 else {
-                    rtidx <- between(rt , pks[i, c("rtmin", "rtmax")])
+                    rtidx <- between(rt , pks[i, "rtmin"], pks[i, "rtmax"])
                     vals <- vapply(x[rtidx], .aggregate_intensities,
                                    mzr = pks[i, c("mzmin", "mzmax")],
                                    numeric(1))
@@ -526,7 +526,7 @@ sumi <- function(x) {
         peakArea[, c("rtmin", "rtmax", "mzmin", "mzmax")]
     for (i in seq_len(nrow(res))) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
-        keep <- which(between(rt, rtr))
+        keep <- which(between(rt, rtr[1L], rtr[2L]))
         if (length(keep)) {
             xsub <- lapply(x[keep], .pmat_filter_mz,
                            mzr = peakArea[i, c("mzmin", "mzmax")])
@@ -588,8 +588,8 @@ sumi <- function(x) {
     for (i in seq_len(nrow(res))) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
         mzr <- peakArea[i, c("mzmin", "mzmax")]
-        idx_rt <- which(between(rt, rtr))
-        idx_mz <- which(between(mzs, mzr + c(-1, 1) * bin_half))
+        idx_rt <- which(between(rt, rtr[1L], rtr[2L]))
+        idx_mz <- which(between(mzs, mzr[1L] - bin_half, mzr[2L] + bin_half))
         if (length(idx_rt) && length(idx_mz)) {
             imat <- pmat[idx_mz, idx_rt, drop = FALSE]
             if (any(imat > 0)) {
@@ -622,7 +622,8 @@ sumi <- function(x) {
     mzs <- unlist(lapply(x, function(z) z[, "mz"]), use.names = FALSE)
     ints <- unlist(lapply(x, function(z) z[, "intensity"]), use.names = FALSE)
     for (i in 1:nrow(res)) {
-        mz_area <- which(between(mzs, peakArea[i, c("mzmin", "mzmax")]))
+        mz_area <- which(between(mzs, peakArea[i, "mzmin"],
+                                 peakArea[i, "mzmax"]))
         mtx <- cbind(time = -1, mz = mzs[mz_area], intensity = ints[mz_area])
         if (length(mz_area) && !all(is.na(mtx[, 3]))) {
             mzDiff <- abs(mtx[, 2] - peakArea[i, "mzmed"])
@@ -693,12 +694,12 @@ sumi <- function(x) {
     if (msLevel > 1) {
         pmz <- precursorMz(x)
         lapply(seq_len(nrow(region)), function(z) {
-            which(between(rt, region[z, c("rtmin", "rtmax")]) &
-                  between(pmz, region[z, c("mzmin", "mzmax")]))
+            which(between(rt, region[z, "rtmin"], region[z, "rtmax"]) &
+                  between(pmz, region[z, "mzmin"], region[z, "mzmax"]))
         })
     } else
         lapply(seq_len(nrow(region)), function(z) {
-            which(between(rt, region[z, c("rtmin", "rtmax")]))
+            which(between(rt, region[z, "rtmin"], region[z, "rtmax"]))
         })
 }
 
@@ -712,13 +713,13 @@ sumi <- function(x) {
     if (msLevel > 1) {
         pmz <- precursorMz(x)
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
-                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]) &
+                         between(pmz, region[z, "mzmin"], region[z, "mzmax"]))
             idx[which.min(abs(rt[idx] - region[z, "rt"]))]
         })
     } else
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]))
             idx[which.min(abs(rt[idx] - region[z, "rt"]))]
         })
 }
@@ -732,8 +733,8 @@ sumi <- function(x) {
     rt <- rtime(x)
     pmz <- precursorMz(x)
     lapply(seq_len(nrow(region)), function(z) {
-        idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
-                     between(pmz, region[z, c("mzmin", "mzmax")]))
+        idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]) &
+                     between(pmz, region[z, "mzmin"], region[z, "mzmax"]))
         idx[which.min(abs(pmz[idx] - region[z, "mz"]))]
     })
 }
@@ -746,13 +747,13 @@ sumi <- function(x) {
     tic <- ionCount(x)
     if (msLevel > 1) {
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
-                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]) &
+                         between(pmz, region[z, "mzmin"], region[z, "mzmax"]))
             idx[which.max(tic[idx])]
         })
     } else
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]))
             idx[which.max(tic[idx])]
         })
 }
@@ -765,13 +766,13 @@ sumi <- function(x) {
     bpi <- max(intensity(x), na.rm = TRUE)
     if (msLevel > 1) {
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]) &
-                         between(pmz, region[z, c("mzmin", "mzmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]) &
+                         between(pmz, region[z, "mzmin"], region[z, "mzmax"]))
             idx[which.max(bpi[idx])]
         })
     } else
         lapply(seq_len(nrow(region)), function(z) {
-            idx <- which(between(rt, region[z, c("rtmin", "rtmax")]))
+            idx <- which(between(rt, region[z, "rtmin"], region[z, "rtmax"]))
             idx[which.max(bpi[idx])]
         })
 }

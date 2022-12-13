@@ -574,4 +574,4 @@ importMethodsFrom("MsExperiment", "spectra<-")
 export("readMsExperiment")
 
 importFrom("progress", "progress_bar")
-importFrom("MsCoreUtils", "between")
+importFrom("dplyr", "between")
