@@ -2275,52 +2275,53 @@ do_findChromPeaks_IM_centWave <- function(spec,
                                            ppmMerging = 10,
                                            binWidthIM = 0.01
                                           ){
-    ## Extract frame information
-    pdata <- peaksData(spec, columns = c("mz", "intensity"))
-    rt <- rtime(spec)
-    im <- spec$inv_ion_mobility
     
-    
-    ## Merging frames into scans and Summarize across IM dimension
-    message("Collapsing data over IM dimension... ", appendLF = F)
-    
+    ## Merging all scans from the same frame to summarize across IM dimension
     scans_summarized <-
-        combineSpectra(
+        Spectra::combineSpectra(
             spec,
             f = as.factor(spec$frameId),
             intensityFun = base::sum,
             weighted = TRUE,
             ppm = ppmMerging
         )
-    message("OK")
+    Spectra::centroided(scans_summarized) <- TRUE
     
-    ## Peak-picking on summarized data
-    mzs <- mz(scans_summarized)
-    valsPerSpect <- lengths(mzs, FALSE)
-    mz <- unlist(mzs, use.names = FALSE)
-    int <- unlist(intensity(scans_summarized), use.names = FALSE)
-    scantime <- sort(unique(rt))
-    peaks <- .centWave_orig(mz = mz, int = int, scantime = scantime,
-                   valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
-                   snthresh = snthresh, prefilter = prefilter,
-                   mzCenterFun = mzCenterFun, integrate = integrate,
-                   mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
-                   verboseColumns = verboseColumns, roiList = roiList,
-                   firstBaselineCheck = firstBaselineCheck,
-                   roiScales = roiScales, sleep = sleep,
-                   extendLengthMSW = extendLengthMSW)
+    ## 1D Peak-picking on summarized data
+    peaks <- .mse_find_chrom_peaks_sample(scans_summarized,
+                                          msLevel = 1L,
+                                          param = CentWaveParam(ppm = ppm, peakwidth = peakwidth,
+                                                        snthresh = snthresh, prefilter = prefilter,
+                                                        mzCenterFun = mzCenterFun, integrate = integrate,
+                                                        mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                                                        verboseColumns = verboseColumns, roiList = roiList,
+                                                        firstBaselineCheck = firstBaselineCheck,
+                                                        roiScales = roiScales,
+                                                        extendLengthMSW = extendLengthMSW))
+    
+    ## 1D Peak-picking, for each individual peak, to resolve across the IM dimension
+    .do_resolve_IM_peaks_CWT(spec, peaks, binWidthIM)
+    
+}
+
+
+.do_resolve_IM_peaks_CWT <- function(spec, peaks, binWidthIM){
+    ## Extract frame information
+    pdata <- peaksData(spec, columns = c("mz", "intensity"))
+    rt <- rtime(spec)
+    im <- spec$inv_ion_mobility
+    
     
     ## Resolving peaks across IM dimension
-    message("Resolving peaks over ion-mobility dimension... ", appendLF = F)
     resolved_peaks <- vector("list", nrow(peaks))
     for (i in seq_len(nrow(peaks))) {
         current_peak <- peaks[i,]
         mobilogram <- .extract_mobilogram(pdata, current_peak, rt, im, binWidthIM)
         if (length(mobilogram) == 0) {
-            warning(i, " mobilogram is empty")
+            # warning(i, " mobilogram is empty")
             next
         }
-        bounds <- .split_mobilogram(mobilogram)
+        bounds <- .split_mobilogram_CWT(mobilogram)
         new_peaks <- data.frame(
             mz = current_peak["mz"],
             mzmin = current_peak["mzmin"],
@@ -2336,7 +2337,6 @@ do_findChromPeaks_IM_centWave <- function(spec,
         resolved_peaks[[i]] <- new_peaks
     }
     resolved_peaks <- do.call(rbind, resolved_peaks)
-    message("OK")
     
     ## Refine and calculate peak parameters
     vals <- vector("list", nrow(resolved_peaks))
@@ -2397,7 +2397,7 @@ do_findChromPeaks_IM_centWave <- function(spec,
 
 
 #' @importFrom MassSpecWavelet peakDetectionCWT
-.split_mobilogram <- function(mob){
+.split_mobilogram_CWT <- function(mob){
     if(length(mob$x) == 0){return()}
     vec <- mob$x
     #Add some padding, which will be removed after
