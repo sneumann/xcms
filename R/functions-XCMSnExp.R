@@ -3059,64 +3059,6 @@ featureArea <- function(object, mzmin = median, mzmax = median, rtmin = median,
     keep_all
 }
 
-#' @rdname manualChromPeaks
-manualFeatures <- function(object, peakIdx = list(), msLevel = 1L) {
-    if (!length(peakIdx))
-        return(object)
-    if (length(msLevel) > 1L)
-        stop("Length 'msLevel' is > 1: can only add peaks for one MS level",
-             " at a time.")
-    if (!inherits(object, "XCMSnExp"))
-        stop("'object' has to be an XCMSnExp object")
-    if (!hasChromPeaks(object))
-        stop("No features present. Please run 'findChromPeaks' first.")
-    peakIdx <- lapply(peakIdx, as.integer)
-    newFd <- new("MsFeatureData")
-    newFd@.xData <- xcms:::.copy_env(object@msFeatureData)
-    if (hasFeatures(newFd)) {
-        fnew <- as.data.frame(featureDefinitions(newFd))[1L, ]
-        fnew[] <- NA
-        rownames(fnew) <- NULL
-    } else {
-        cn <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax", "npeaks")
-        fnew <- as.data.frame(
-            matrix(ncol = 7, nrow = 1, dimnames = list(character(), cn)))
-    }
-    res <- lapply(peakIdx, function(z) {
-        cp <- chromPeaks(newFd)[z, , drop = FALSE]
-        if (any(is.na(cp[, "sample"])))
-            stop("Some of the provided indices are out of bounds. 'peakIdx' ",
-                 "needs to be a list of valid indices in the 'chromPeaks' ",
-                 "matrix.", call. = FALSE)
-        newf <- fnew
-        newf$mzmed <- median(cp[, "mz"])
-        newf$mzmin <- min(cp[, "mz"])
-        newf$mzmax <- max(cp[, "mz"])
-        newf$rtmed <- median(cp[, "rt"])
-        newf$rtmin <- min(cp[, "rt"])
-        newf$rtmax <- max(cp[, "rt"])
-        newf$npeaks <- length(z)
-        newf
-    })
-    res <- DataFrame(do.call(rbind, res))
-    res$peakidx <- peakIdx
-    res$ms_level <- msLevel
-    ## Define feature IDs
-    if (hasFeatures(newFd))
-        max_id <- max(
-            as.integer(sub("FT", "", rownames(featureDefinitions(newFd)))))
-    else max_id <- 0
-    rownames(res) <- sprintf(
-        paste0("FT", "%0", ceiling(log10(max_id + nrow(res) + 1L)), "d"),
-        (max_id + 1L):(max_id + nrow(res)))
-    suppressWarnings(
-        featureDefinitions(newFd) <- rbind(featureDefinitions(newFd), res)
-    )
-    lockEnvironment(newFd, bindings = TRUE)
-    object@msFeatureData <- newFd
-    object
-}
-
 .subset_feature_definitions <- function(x, mz, rt, ppm, type) {
     if (length(rt) && nrow(x)) {
         rt <- range(rt)

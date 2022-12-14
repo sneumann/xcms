@@ -10,7 +10,6 @@
 \alias{coerce,MChromatograms,XChromatograms-method}
 \alias{show,XChromatogram-method}
 \alias{chromPeaks,XChromatogram-method}
-\alias{filterChromPeaks}
 \alias{chromPeaks<-,XChromatogram-method}
 \alias{plot,XChromatogram,ANY-method}
 \alias{filterMz,XChromatogram-method}

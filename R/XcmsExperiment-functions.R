@@ -833,3 +833,29 @@ sumi <- function(x) {
         BPPARAM = BPPARAM)
     Spectra:::.concatenate_spectra(res)
 }
+
+#' @param peaks `matrix` with chrom peaks.
+#'
+#' @param peakIdx `list` of `integer` indices defining which chromatographic
+#'     peaks should be combined to a feature.
+#'
+#' @noRd
+.manual_feature_definitions <- function(peaks, peakIdx) {
+    peakIdx <- lapply(peakIdx, as.integer)
+    res <- matrix(nrow = length(peakIdx), ncol = 7)
+    colnames(res) <- c("mzmed", "mzmin", "mzmax", "rtmed",
+                       "rtmin", "rtmax", "npeaks")
+    if (!all(unlist(peakIdx) %in% seq_len(nrow(peaks))))
+        stop("Some of the provided indices are out of bounds. 'peakIdx' needs",
+             " to be a list of integer between 1 and ", nrow(peaks),
+             call. = FALSE)
+    for (i in seq_along(peakIdx)) {
+        cp <- peaks[peakIdx[[i]], , drop = FALSE]
+        res[i, ] <- c(median(cp[, "mz"]), min(cp[, "mz"]), max(cp[, "mz"]),
+                      median(cp[, "rt"]), min(cp[, "rt"]), max(cp[, "rt"]),
+                      nrow(cp))
+    }
+    res <- as.data.frame(res)
+    res$peakidx <- peakIdx
+    res
+}

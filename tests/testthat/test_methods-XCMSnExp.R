@@ -2449,3 +2449,27 @@ test_that("manualChromPeaks works", {
     res3 <- manualChromPeaks(od_x, cp, samples = 2)
     expect_true(all(chromPeaks(res3)[, "sample"] == 2))
 })
+
+test_that("manualFeatures works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    idx <- list(1:4, c(4, "a"))
+    ## Add features to an XCMSnExp without features.
+    expect_error(manualFeatures(xod_x, idx), "out of bounds")
+    idx <- list(1:4, c(5, 500, 500))
+    expect_error(manualFeatures(xod_x, idx), "out of bounds")
+    idx <- list(1:5, c(6, 34, 234))
+    res <- manualFeatures(xod_x, idx)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(featureDefinitions(res)) == 2)
+    expect_equal(featureDefinitions(res)$peakidx, idx)
+    ## Append features to an XCMSnExp.
+    idx <- featureDefinitions(xod_xg)$peakidx[c(3, 5, 7)]
+    res <- manualFeatures(xod_xg, idx)
+    nfd <- nrow(featureDefinitions(xod_xg))
+    expect_true(nrow(featureDefinitions(res)) == nfd + 3)
+    expect_equal(featureDefinitions(res)[nfd + 1, "mzmed"],
+                 featureDefinitions(xod_xg)[3, "mzmed"])
+    expect_equal(featureDefinitions(res)[nfd + 2, "rtmin"],
+                 featureDefinitions(xod_xg)[5, "rtmin"])
+})

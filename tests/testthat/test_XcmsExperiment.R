@@ -927,3 +927,39 @@ test_that("filterChromPeaks,XcmsExperiment works", {
     expect_true(all(unlist(featureDefinitions(res)$peakidx) %in%
                     seq_len(nrow(chromPeaks(res)))))
 })
+
+## That's from XcmsExperiment-functions.R
+test_that(".manual_feature_definitions works", {
+    idx <- list(c(13, 15, 220), c(45, 46, 100, 200))
+    expect_error(
+        .manual_feature_definitions(chromPeaks(xmse),
+                                    list(c(1, 2, 1000), c(1, 2))),
+        "out of bounds")
+    res <- .manual_feature_definitions(chromPeaks(xmse), idx)
+    expect_true(is.data.frame(res))
+    expect_true(nrow(res) == 2)
+    expect_equal(colnames(res), c("mzmed", "mzmin", "mzmax", "rtmed",
+                                  "rtmin", "rtmax", "npeaks", "peakidx"))
+    expect_equal(res$npeaks, lengths(idx))
+})
+
+test_that("manualFeatures,XcmsExperiment works", {
+    idx <- list(c(3), c(1, 5, 9), c(34, 121, 247))
+    expect_error(manualFeatures(as(mse, "XcmsExperiment"), idx), "present")
+    res <- manualFeatures(xmse)
+    expect_equal(res, xmse)
+    expect_error(manualFeatures(xmse, idx, msLevel = 1:23), "at a time")
+    res <- manualFeatures(xmse, idx)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(featureDefinitions(res)) == 3)
+    expect_equal(featureDefinitions(res)$peakidx, idx)
+    expect_equal(unname(featureValues(res)[3, ]),
+                 unname(chromPeaks(res)[idx[[3]], "into"]))
+
+    res2 <- manualFeatures(xmseg, idx)
+    expect_true(nrow(featureDefinitions(res2)) ==
+                (nrow(featureDefinitions(xmseg)) + 3))
+    expect_equal(
+        featureDefinitions(res2)[seq_len(nrow(featureDefinitions(xmseg))), ],
+        featureDefinitions(xmseg))
+})

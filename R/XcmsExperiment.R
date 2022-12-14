@@ -1117,7 +1117,31 @@ setMethod(
         object
     })
 
-## TODO: manualFeatures
+#' @rdname manualChromPeaks
+setMethod(
+    "manualFeatures", "XcmsExperiment",
+    function(object, peakIdx = list(), msLevel = 1L) {
+        if (!length(peakIdx))
+            return(object)
+        if (length(msLevel) > 1L)
+            stop("Can only define features for one MS level at a time")
+        if (!hasChromPeaks(object))
+            stop("No chromatographic peaks present. ",
+                 "Please run 'findChromPeaks' first.")
+        res <- .manual_feature_definitions(chromPeaks(object), peakIdx)
+        res$ms_level <- msLevel
+        if (hasFeatures(object)) {
+            maxi <- max(as.integer(
+                sub("FT", "", rownames(featureDefinitions(object)))))
+            rownames(res) <- xcms:::.featureIDs(nrow(res), from = maxi + 1)
+            object@featureDefinitions <- rbindFill(
+                object@featureDefinitions, res)
+        } else {
+            rownames(res) <- xcms:::.featureIDs(nrow(res))
+            object@featureDefinitions <- res
+        }
+        object
+    })
 
 ## TODO: featureChromatograms
 

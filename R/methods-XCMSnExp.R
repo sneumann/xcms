@@ -3587,3 +3587,33 @@ setMethod(
         }
         object
     })
+
+#' @rdname manualChromPeaks
+setMethod("manualFeatures", "XCMSnExp", function(object, peakIdx = list(),
+                                                 msLevel = 1L) {
+    if (!length(peakIdx))
+        return(object)
+    if (length(msLevel) > 1L)
+        stop("Length 'msLevel' is > 1: can only add features for one MS level",
+             " at a time.")
+    if (!hasChromPeaks(object))
+        stop("No chromatographic peaks present. ",
+             "Please run 'findChromPeaks' first.")
+    res <- .manual_feature_definitions(chromPeaks(object), peakIdx)
+    res$ms_level <- msLevel
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    if (hasFeatures(newFd)) {
+        maxi <- max(
+            as.integer(sub("FT", "", rownames(featureDefinitions(newFd)))))
+        rownames(res) <- .featureIDs(nrow(res), from = maxi + 1)
+        featureDefinitions(newFd) <- rbindFill(featureDefinitions(newFd),
+                                               DataFrame(res))
+    } else {
+        rownames(res) <- .featureIDs(nrow(res))
+        featureDefinitions(newFd) <- DataFrame(res)
+    }
+    lockEnvironment(newFd, bindings = TRUE)
+    object@msFeatureData <- newFd
+    object
+})

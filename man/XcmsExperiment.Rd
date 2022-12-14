@@ -9,6 +9,7 @@
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
 \alias{show,XcmsExperiment-method}
+\alias{filterChromPeaks}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{filterRt,XcmsExperiment-method}
 \alias{hasChromPeaks,XcmsExperiment-method}
@@ -258,7 +259,8 @@ keeping only those specified with parameter \code{keep}. Returns the
 retain can be specified either by providing their index in the
 \code{chromPeaks} matrix, their ID (rowname in \code{chromPeaks}) or with a
 \code{logical} vector with the same length than number of rows of
-\code{chromPeaks}.
+\code{chromPeaks}. Assignment of chromatographic peaks are updated to
+eventually present feature definitions after filtering.
 \item \code{filterFile}: filter an \code{XcmsExperiment} (or \code{MsExperiment}) by \emph{file}
 (sample). The index of the samples to which the data should be subsetted
 can be specified with parameter \code{file}. The sole purpose of this function

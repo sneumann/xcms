@@ -1141,6 +1141,10 @@ setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 setGeneric("manualChromPeaks", function(object, ...)
     standardGeneric("manualChromPeaks"))
 
+#' @rdname manualChromPeaks
+setGeneric("manualFeatures", function(object, ...)
+    standardGeneric("manualFeatures"))
+
 setGeneric("max")
 setGeneric("max<-", function(object, value) standardGeneric("max<-"))
 setGeneric("maxCharge", function(object) standardGeneric("maxCharge"))

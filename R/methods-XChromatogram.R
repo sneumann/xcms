@@ -17,8 +17,6 @@ setMethod("show", "XChromatogram", function(object) {
 
 #' @rdname XChromatogram
 #'
-#' @aliases filterChromPeaks
-#'
 #' @section Accessing data:
 #'
 #' See also help of [Chromatogram] in the `MSnbase` package for general
