@@ -17,6 +17,7 @@
 \alias{chromPeaks,XcmsExperiment-method}
 \alias{chromPeakData<-,XcmsExperiment-method}
 \alias{chromPeakData,XcmsExperiment-method}
+\alias{filterChromPeaks,XcmsExperiment-method}
 \alias{dropAdjustedRtime,XcmsExperiment-method}
 \alias{hasAdjustedRtime,MsExperiment-method}
 \alias{rtime,XcmsExperiment-method}
@@ -65,6 +66,13 @@
   object,
   msLevel = integer(),
   return.type = c("DataFrame", "data.frame")
+)
+
+\S4method{filterChromPeaks}{XcmsExperiment}(
+  object,
+  keep = rep(TRUE, nrow(chromPeaks(object))),
+  method = "keep",
+  ...
 )
 
 \S4method{dropAdjustedRtime}{XcmsExperiment}(object)
@@ -166,9 +174,11 @@ this information is also provided in the \code{chromPeakData} data frame.}
 the returned object. Can be either \code{"DataFrame"} (the default) or
 \code{"data.frame"}.}
 
-\item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
-retention times should be returned. The default is to return adjusted
-retention times, if available.}
+\item{keep}{For \code{filterChromPeaks}: \code{logical}, \code{integer} or \code{character}
+specifying which chromatographic peaks to keep. If \code{logical} the
+length of \code{keep} needs to match the number of rows of \code{chromPeaks}.
+Alternatively, \code{keep} allows to specify the \code{index} (row) of peaks
+to keep or their ID (i.e. row name in \code{chromPeaks}).}
 
 \item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
 resolve multi-peak mappings within the same sample (correspondence
@@ -180,7 +190,12 @@ closest to the feature's median retention time.
 with the largest signal (parameter \code{intensity} allows to select the
 column in \code{chromPeaks} that should be used for \emph{signal}).
 \code{method = "sum"}: sum the value for all chromatographic peaks in a
-sample assigned to the same feature. The default is \code{method = "medret"}.}
+sample assigned to the same feature. The default is \code{method = "medret"}.
+For \code{filterChromPeaks}: currently only \code{method = "keep"} is supported.}
+
+\item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
+retention times should be returned. The default is to return adjusted
+retention times, if available.}
 
 \item{intensity}{For \code{featureValues}: \code{character(1)} specifying the name
 of the column in the \code{chromPeaks(objects)} matrix containing the
@@ -237,6 +252,13 @@ samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 \code{keepChromPeaks} (by default \code{TRUE}), \code{keepAdjustedRtime} (by default
 \code{FALSE}) and \code{keepFeatures} (by default \code{FALSE}).
+\item \code{filterChromPeaks}: filter chromatographic peaks of an \code{XcmsExperiment}
+keeping only those specified with parameter \code{keep}. Returns the
+\code{XcmsExperiment} with the filtered data. Chromatographic peaks to
+retain can be specified either by providing their index in the
+\code{chromPeaks} matrix, their ID (rowname in \code{chromPeaks}) or with a
+\code{logical} vector with the same length than number of rows of
+\code{chromPeaks}.
 \item \code{filterFile}: filter an \code{XcmsExperiment} (or \code{MsExperiment}) by \emph{file}
 (sample). The index of the samples to which the data should be subsetted
 can be specified with parameter \code{file}. The sole purpose of this function
@@ -471,6 +493,7 @@ nrow(chromPeaks(a))
 xmse_sub <- filterRt(xmse, rt = c(3000, 3500))
 xmse_sub
 nrow(chromPeaks(xmse_sub))
+
 }
 \author{
 Johannes Rainer

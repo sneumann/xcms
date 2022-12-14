@@ -911,3 +911,19 @@ test_that("manualChromPeaks,XcmsExperiment works", {
     res2 <- manualChromPeaks(tmp, pks, samples = 2)
     expect_equal(unname(chromPeaks(res2)), unname(pks_2))
 })
+
+test_that("filterChromPeaks,XcmsExperiment works", {
+    res <- filterChromPeaks(xmse, keep = 4:9)
+    expect_equal(nrow(chromPeaks(res)), 6)
+    expect_equal(chromPeaks(res), chromPeaks(xmse)[4:9, ])
+
+    ## With features
+    res <- filterChromPeaks(xmseg, keep = 13:60)
+    expect_equal(chromPeaks(res), chromPeaks(xmseg)[13:60, ])
+
+    a <- featureValues(res)
+    b <- featureValues(xmseg)
+    expect_equal(a[, 1], b[rownames(a), 1])
+    expect_true(all(unlist(featureDefinitions(res)$peakidx) %in%
+                    seq_len(nrow(chromPeaks(res)))))
+})

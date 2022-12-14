@@ -1,6 +1,6 @@
 #' @title Next Generation `xcms` Result Object
 #'
-#' @aliases XcmsExperiment-class show,XcmsExperiment-method
+#' @aliases XcmsExperiment-class show,XcmsExperiment-method filterChromPeaks
 #'
 #' @description
 #'
@@ -46,6 +46,15 @@
 #'   kept or dropped can also be configured with optional parameters
 #'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
 #'   `FALSE`) and `keepFeatures` (by default `FALSE`).
+#'
+#' - `filterChromPeaks`: filter chromatographic peaks of an `XcmsExperiment`
+#'   keeping only those specified with parameter `keep`. Returns the
+#'   `XcmsExperiment` with the filtered data. Chromatographic peaks to
+#'   retain can be specified either by providing their index in the
+#'   `chromPeaks` matrix, their ID (rowname in `chromPeaks`) or with a
+#'   `logical` vector with the same length than number of rows of
+#'   `chromPeaks`. Assignment of chromatographic peaks are updated to
+#'   eventually present feature definitions after filtering.
 #'
 #' - `filterFile`: filter an `XcmsExperiment` (or `MsExperiment`) by *file*
 #'   (sample). The index of the samples to which the data should be subsetted
@@ -263,6 +272,12 @@
 #'
 #' @param j For `[`: not supported.
 #'
+#' @param keep For `filterChromPeaks`: `logical`, `integer` or `character`
+#'     specifying which chromatographic peaks to keep. If `logical` the
+#'     length of `keep` needs to match the number of rows of `chromPeaks`.
+#'     Alternatively, `keep` allows to specify the `index` (row) of peaks
+#'     to keep or their ID (i.e. row name in `chromPeaks`).
+#'
 #' @param keepAdjustedRtime `logical(1)`: whether adjusted retention times (if
 #'     present) should be retained.
 #'
@@ -277,6 +292,7 @@
 #'     column in `chromPeaks` that should be used for *signal*).
 #'     `method = "sum"`: sum the value for all chromatographic peaks in a
 #'     sample assigned to the same feature. The default is `method = "medret"`.
+#'     For `filterChromPeaks`: currently only `method = "keep"` is supported.
 #'
 #' @param missing For `featureValues`: default value for missing values.
 #'     Allows to define the value that should be reported for a missing peak
@@ -384,6 +400,7 @@
 #' xmse_sub <- filterRt(xmse, rt = c(3000, 3500))
 #' xmse_sub
 #' nrow(chromPeaks(xmse_sub))
+#'
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
@@ -826,7 +843,22 @@ setMethod(
     })
 
 
-## TODO: filterChromPeaks (use .filter_chrom_peaks)
+#' @rdname XcmsExperiment
+setMethod(
+    "filterChromPeaks", "XcmsExperiment",
+    function(object, keep = rep(TRUE, nrow(chromPeaks(object))),
+             method = "keep", ...) {
+        method <- match.arg(method)
+        object <- switch(
+            method,
+            keep = {
+                idx <- .i2index(keep, ids = rownames(chromPeaks(object)),
+                                name = "keep")
+                .filter_chrom_peaks(object, idx)
+            }
+        )
+        object
+    })
 
 #' @rdname chromPeakSpectra
 setMethod(
