@@ -1375,43 +1375,29 @@ applyAdjustedRtime <- function(object) {
 }
 
 #' @rdname XCMSnExp-filter-methods
-filterFeatureDefinitions <- function(x, features) {
-    if (!is(x, "XCMSnExp"))
-        stop("'x' is expected to be an 'XCMSnExp' object")
-    if (missing(features))
-        return(x)
-    if (!hasFeatures(x))
-        stop("No feature definitions present! Run 'groupChromPeaks' first.")
-    fts <- featureDefinitions(x)
-    ## features input parameter checking:
-    if (is.logical(features))
-        features <- which(features)
-    if (is.character(features))
-        features <- match(features, rownames(fts))
-    if (is.numeric(features)) {
-        if (any(is.na(features)))
-            stop("no 'NA' in 'features' allowed!")
-        if (!all(features %in% 1:nrow(fts)))
-            stop("specified 'features' out of range")
-    } else {
-        stop("'features' has to be either a 'integer' with the indices of the ",
-             "features, a 'logical' or a 'character' matching rownames of the ",
-             "'featureDefinitions' data frame.")
-    }
-    ## Actual sub-setting...
-    newFd <- new("MsFeatureData")
-    newFd@.xData <- .copy_env(x@msFeatureData)
-    featureDefinitions(newFd) <- fts[features, , drop = FALSE]
-    lockEnvironment(newFd, bindings = TRUE)
-    x@msFeatureData <- newFd
-    ## Add a generic filtering process history.
-    x <- addProcessHistory(x, GenericProcessHistory(
-                                  fun = "filterFeatureDefinitions",
-                                  args = list(features = features),
-                                  fileIndex. = 1:length(fileNames(x))))
-    if (validObject(x))
-        x
-}
+setMethod(
+    "filterFeatureDefinitions", "XCMSnExp",
+    function(object, features = integer()) {
+        if (!length(features))
+            return(object)
+        if (!hasFeatures(object))
+            stop("No feature definitions present! Run 'groupChromPeaks' first.")
+        fts <- featureDefinitions(object)
+        idx <- .i2index(features, ids = rownames(fts), name = "features")
+        ## Actual sub-setting...
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        featureDefinitions(newFd) <- fts[idx, , drop = FALSE]
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+        ## Add a generic filtering process history.
+        object <- addProcessHistory(
+            object, GenericProcessHistory(fun = "filterFeatureDefinitions",
+                                          args = list(features = features),
+                                          fileIndex. = 1:length(fileNames(x))))
+        validObject(object)
+        object
+    })
 
 #' @title Simple feature summaries
 #'

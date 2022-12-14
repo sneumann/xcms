@@ -963,3 +963,14 @@ test_that("manualFeatures,XcmsExperiment works", {
         featureDefinitions(res2)[seq_len(nrow(featureDefinitions(xmseg))), ],
         featureDefinitions(xmseg))
 })
+
+test_that("filterFeatureDefinitions works", {
+    expect_error(filterFeatureDefinitions(xmse, 1:3), "No feature")
+    res <- filterFeatureDefinitions(xmseg)
+    expect_equal(res, xmseg)
+
+    expect_error(filterFeatureDefinitions(xmseg, c("a", "b")), "bounds")
+    res <- filterFeatureDefinitions(xmseg, 1:10)
+    expect_true(hasFeatures(res))
+    expect_equal(featureDefinitions(res), featureDefinitions(xmseg)[1:10, ])
+})

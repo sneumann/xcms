@@ -56,6 +56,13 @@
 #'   `chromPeaks`. Assignment of chromatographic peaks are updated to
 #'   eventually present feature definitions after filtering.
 #'
+#' - `filterFeatureDefinitions`: filter feature definitions of an
+#'   `XcmsExperiment` keeping only those defined with parameter `features`,
+#'   which can be a `logical` of length equal to the number of features,
+#'   an `integer` with the index of the features in
+#'   `featureDefinitions(object)` to keep or a `character` with the feature
+#'   IDs (i.e. row names in `featureDefinitions(object)`).
+#'
 #' - `filterFile`: filter an `XcmsExperiment` (or `MsExperiment`) by *file*
 #'   (sample). The index of the samples to which the data should be subsetted
 #'   can be specified with parameter `file`. The sole purpose of this function
@@ -247,6 +254,10 @@
 #'     retention times, if available.
 #'
 #' @param drop For `[`: ignored.
+#'
+#' @param features For `filterFeatureDefinitions`: `logical`, `integer` or
+#'     `character` defining the features to keep. See function description
+#'     for more information.
 #'
 #' @param file For `filterFile`: `integer` with the indices of the samples
 #'     (files) to which the data should be subsetted.
@@ -1147,7 +1158,21 @@ setMethod(
 
 ## TODO: featureSummary
 
-## TODO: filterFeatureDefinitions
+#' @rdname XcmsExperiment
+setMethod(
+    "filterFeatureDefinitions", "XcmsExperiment",
+    function(object, features = integer()) {
+        if (!length(features))
+            return(object)
+        if (!hasFeatures(object))
+            stop("No feature definitions present! Please run ",
+                 "'groupChromPeaks' first.")
+        idx <- .i2index(features, ids = rownames(object@featureDefinitions),
+                        name = "features")
+        object@featureDefinitions <- object@featureDefinitions[idx, ]
+        validObject(object)
+        object
+    })
 
 ## TODO: featureSpectra
 

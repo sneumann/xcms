@@ -729,6 +729,10 @@ setGeneric("filterColumnsIntensityAbove", function(object, ...)
 setGeneric("filterColumnsKeepTop", function(object, ...)
     standardGeneric("filterColumnsKeepTop"))
 
+#' @rdname XcmsExperiment
+setGeneric("filterFeatureDefinitions", function(object, ...)
+           standardGeneric("filterFeatureDefinitions"))
+
 #' @aliases findChromPeaks
 #'
 #' @title Chromatographic Peak Detection

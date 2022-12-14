@@ -240,7 +240,6 @@ export(
     "isCalibrated",
     "plotMsData",
     "applyAdjustedRtime",
-    "filterFeatureDefinitions",
     "peaksWithMatchedFilter",
     "peaksWithCentWave",
     "rla",
@@ -522,9 +521,10 @@ exportMethods("hasChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
               "filterColumnsKeepTop",
-	      "filterChromPeaks",
 	      "plotChromatogramsOverlay",
-	      "transformIntensity"
+	      "transformIntensity",
+              "filterChromPeaks",
+              "filterFeatureDefinitions"
               )
 
 ## feature grouping functions and methods.
