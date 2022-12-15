@@ -833,6 +833,13 @@ test_that(".mse_spectra_for_peaks works", {
     res <- .mse_spectra_for_peaks(xmse, msLevel = 1L, method = "all",
                                   peaks = 220)
     expect_true(all(res$peak_id == "CP220"))
+
+    ## Duplicates index?
+    res <- .mse_spectra_for_peaks(xmse, msLevel = 1L, method = "closest_rt",
+                                  peaks = c(3, 2, 3, 3, 1))
+    expect_equal(res$peak_id, c("CP003", "CP002", "CP003", "CP003", "CP001"))
+    expect_equal(rtime(res)[1], rtime(res)[3])
+    expect_equal(mz(res)[1], mz(res)[3])
 })
 
 test_that("chromPeakSpectra works", {

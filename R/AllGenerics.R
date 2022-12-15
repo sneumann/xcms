@@ -485,6 +485,78 @@ setGeneric("featureDefinitions", function(object, ...)
     standardGeneric("featureDefinitions"))
 setGeneric("featureDefinitions<-", function(object, value)
     standardGeneric("featureDefinitions<-"))
+
+#' @title Extract spectra associated with features
+#'
+#' @name featureSpectra
+#'
+#' @description
+#'
+#' This function returns spectra associated with the identified features in
+#' the input object. By default, spectra are returned for all features (from
+#' all MS levels), but parameter `features` allows to specify/select features
+#' for which the result should be returned.
+#' Parameter `msLevel` allows to define whether MS level 1 or 2 spectra
+#' should be returned. For `msLevel = 1L` all MS1 spectra within the
+#' retention time range of each chromatographic peak (in that respective
+#' data file) associated with a feature are returned. Note that for samples
+#' in which no peak was identified (or even filled-in) no spectra are
+#' returned. For `msLevel = 2L` all MS2 spectra with a retention time within
+#' the retention time range and their precursor m/z within the m/z range of
+#' any chromatographic peak of a feature are returned.
+#'
+#' See also [chromPeakSpectra()] (used internally to extract spectra for
+#' each chromatographic peak of a feature) for additional information,
+#' specifically also on parameter `method`. By default (`method = "all"`)
+#' all spectra associated with any of the chromatographic peaks of a
+#' feature are returned. With any other option for `method`, a single
+#' spectrum **per chromatographic peak** will be returned (hence multiple
+#' spectra per feature).
+#'
+#' The ID of each chromatographic peak (i.e. its row name in `chromPeaks`)
+#' and each feature (i.e., its row name in `featureDefinitions`) are
+#' available in the returned [Spectra()] with spectra variables `"peak_id"`
+#' and `"feature_id"`, respectively.
+#'
+#' @param object [XcmsExperiment] or [XCMSnExp] object with feature defitions.
+#'
+#' @inheritParams chromPeakSpectra
+#'
+#' @param features `character`, `logical` or `integer` allowing to specify a
+#'     subset of features in `featureDefinitions` for which spectra should
+#'     be returned (providing either their ID, a logical vector same length
+#'     than `nrow(featureDefinitions(x))` or their index in
+#'     `featureDefinitions(x)`). This parameter overrides `skipFilled` and is
+#'     only supported for `return.type` being either `"Spectra"` or `"List"`.
+#'
+#' @param ... additional arguments to be passed along to [chromPeakSpectra()],
+#'     such as `method`.
+#'
+#' @return
+#'
+#' parameter `return.type` allow to specify the type of the returned object:
+#'
+#' - `return.type = "MSpectra"`: a [MSpectra] object with elements being
+#'   [Spectrum-class] objects. The result objects contains all spectra
+#'   for all features. Metadata column `"feature_id"` provides the ID of the
+#'   respective feature (i.e. its rowname in [featureDefinitions()]).
+#' - `return.type = "Spectra"`: a `Spectra` object (defined in the `Spectra`
+#'   package). The result contains all spectra for all features. Metadata column
+#'   `"feature_id"` provides the ID of the respective feature (i.e. its rowname
+#'   in [featureDefinitions()].
+#' - `return.type = "list"`: `list` of `list`s that are either of length
+#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   length of the list matches the number of features.
+#' - `return.type = "List"`: `List` of length equal to the number of
+#'   features with MS level `msLevel` is returned with elements being either
+#'   `NULL` (no spectrum found) or a `Spectra` object.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+setGeneric("featureSpectra", function(object, ...)
+    standardGeneric("featureSpectra"))
+
 setGeneric("featureValues", function(object, ...)
     standardGeneric("featureValues"))
 setGeneric("fileIndex", function(object) standardGeneric("fileIndex"))

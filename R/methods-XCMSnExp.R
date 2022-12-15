@@ -3617,3 +3617,98 @@ setMethod("manualFeatures", "XCMSnExp", function(object, peakIdx = list(),
     object@msFeatureData <- newFd
     object
 })
+
+#' @rdname featureSpectra
+setMethod(
+    "featureSpectra", "XCMSnExp",
+    function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             skipFilled = FALSE, return.type = c("MSpectra", "Spectra",
+                                                 "list", "List"),
+             features = character(), ...) {
+        return.type <- match.arg(return.type)
+        if (!hasFeatures(object))
+            stop("No feature definitions present. Please run ",
+                 "'groupChromPeaks' first.")
+        if (return.type %in% c("Spectra", "List")) {
+            .require_spectra()
+            if (length(object@spectraProcessingQueue))
+                warning("Lazy evaluation queue is not empty. Will ignore any",
+                        " processing steps as 'return.type = \"Spectra\"' and",
+                        " 'return.type = \"List\"' currently don't support a ",
+                        "non-empty processing queue.")
+            res <- .spectra_for_features(
+                object, msLevel = msLevel, expandRt = expandRt,
+                expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
+                features = features, ...)
+            if (return.type == "Spectra") {
+                res <- do.call(c, unname(res[lengths(res) > 0]))
+                if (!length(res)) {
+                    warning("No MS level ", msLevel, " spectra found")
+                    if (!is(res, "Spectra"))
+                        res <- Spectra::Spectra()
+                }
+                res@processing <- character()
+            } else res <- List(res)
+        } else {
+            ## DEPRECATE IN BIOC3.14
+            if (length(features))
+                warning("Ignoring parameter 'features': this is only supported",
+                        " for 'return.type = \"Spectra\"' and ",
+                        "'return.type = \"List\"'.")
+            if (msLevel != 2 || (msLevel == 2 & !any(msLevel(object) == 2))) {
+                res <- vector(
+                    mode = "list", length = nrow(featureDefinitions(object)))
+                names(res) <- rownames(featureDefinitions(object))
+                if (msLevel != 2)
+                    warning("msLevel = 1 is currently only supported for ",
+                            "'return.type = \"Spectra\"' and ",
+                            "'return.type = \"List\"'.")
+                if (msLevel == 2 & !any(msLevel(object) == 2))
+                    warning("No MS2 spectra available in 'object'.")
+            } else {
+                res <- ms2_mspectrum_for_features(
+                    object, expandRt = expandRt, expandMz = expandMz,
+                    ppm = ppm, skipFilled = skipFilled, ...)
+            }
+            if (return.type == "MSpectra") {
+                fids <- rep(names(res), lengths(res))
+                res <- res[lengths(res) > 0]
+                if (length(res)) {
+                    res <- unlist(res)
+                    pids <- vapply(strsplit(names(res), ".", TRUE),
+                                   `[`, character(1), 2)
+                } else {
+                    pids <- character()
+                }
+                res <- MSpectra(res, elementMetadata = DataFrame(
+                                         feature_id = fids, peak_id = pids))
+            }
+        }
+        res
+    })
+
+#' @rdname XCMSnExp-filter-methods
+setMethod(
+    "filterFeatureDefinitions", "XCMSnExp",
+    function(object, features = integer()) {
+        if (!length(features))
+            return(object)
+        if (!hasFeatures(object))
+            stop("No feature definitions present! Run 'groupChromPeaks' first.")
+        fts <- featureDefinitions(object)
+        idx <- .i2index(features, ids = rownames(fts), name = "features")
+        ## Actual sub-setting...
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        featureDefinitions(newFd) <- fts[idx, , drop = FALSE]
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+        ## Add a generic filtering process history.
+        object <- addProcessHistory(
+            object, GenericProcessHistory(
+                        fun = "filterFeatureDefinitions",
+                        args = list(features = features),
+                        fileIndex. = 1:length(fileNames(object))))
+        validObject(object)
+        object
+    })

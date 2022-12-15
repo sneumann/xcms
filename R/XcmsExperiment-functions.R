@@ -779,6 +779,8 @@ sumi <- function(x) {
 
 #' returns a `Spectra` with all spectra for the provided region.
 #'
+#' @param x `XcmsExperiment` with all data (for all samples).
+#'
 #' @param peaks `integer` with the indices of the chromatographic peaks or
 #'     `integer()` for all peaks.
 #'
@@ -802,10 +804,8 @@ sumi <- function(x) {
         pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
         pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
     }
-    if (length(peaks)) {
-        keep <- rep(FALSE, nrow(pks))
-        keep[peaks] <- TRUE
-    } else {
+    if (length(peaks)) keep <- peaks
+    else {
         keep <- rep(TRUE, nrow(pks))
         if (skipFilled && any(chromPeakData(x)$is_filled))
             keep <- !chromPeakData(x)$is_filled
@@ -833,6 +833,43 @@ sumi <- function(x) {
         BPPARAM = BPPARAM)
     Spectra:::.concatenate_spectra(res)
 }
+
+## .mse_spectra_for_features <- function() {
+##     x <- xmseg
+## }
+a <- function(x) {
+    res <- mapply(
+        featureDefinitions(x)$peakidx,
+        rownames(featureDefinitions(x)),
+        FUN = function(z, id) {
+            sps <- xcms:::.mse_spectra_for_peaks(x, peaks = z, msLevel = 1L)
+            sps$feature_id <- id
+            sps
+        }
+    )
+    Spectra:::.concatenate_spectra(res)
+}
+
+b <- function(x) {
+    ## Get spectra for all peaks.
+    pkidx <- unique(unlist(featureDefinitions(x)$peakidx))
+    sps <- xcms:::.mse_spectra_for_peaks(x, peaks = pkidx, msLevel = 1L)
+    ## get index for each peak.
+    idx <- match(sps$peak_id, rownames(chromPeaks(x)))
+    ## loop over $peakidx to get those for each feature.
+    res <- mapply(featureDefinitions(x)$peakidx,
+                  rownames(featureDefinitions(x)),
+                  FUN = function(z, id) {
+                      sps_ft <- sps[idx %in% z]
+                      sps_ft$feature_id <- id
+                      sps_ft
+                  })
+}
+
+## A <- a(xmseg)
+## B <- b(xmseg)
+
+## expect_equal(A$peak_id, B$peak_id)
 
 #' @param peaks `matrix` with chrom peaks.
 #'

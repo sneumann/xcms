@@ -1175,6 +1175,13 @@ setMethod(
     })
 
 ## TODO: featureSpectra
+## setMethod(
+##     "featureSpectra", "XcmsExperiment",
+##     function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+##              skipFilled = FALSE, return.type = c("Spectra", "List"),
+##              features = character(), ...) {
+##     })
+
 
 ## TODO: overlappingFeatures
 

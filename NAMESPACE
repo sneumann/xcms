@@ -251,15 +251,12 @@ export(
     "exportMetaboAnalyst",
     "imputeRowMin",
     "imputeRowMinRand",
-    "featureSpectra",
     "featureChromatograms",
     "hasFilledChromPeaks",
     "findChromPeaksIsolationWindow",
     "reconstructChromPeakSpectra",
     "groupOverlaps",
     "estimatePrecursorIntensity",
-    "manualChromPeaks",
-    "manualFeatures",
     "featureArea"
 )
 
@@ -484,7 +481,6 @@ exportMethods("hasChromPeaks",
               "chromPeaks<-",
               "chromPeakData",
               "chromPeakData<-",
-              "chromPeakSpectra",
               "processHistory",
               "fileIndex",
               "processDate",
@@ -524,7 +520,11 @@ exportMethods("hasChromPeaks",
 	      "plotChromatogramsOverlay",
 	      "transformIntensity",
               "filterChromPeaks",
-              "filterFeatureDefinitions"
+              "filterFeatureDefinitions",
+              "manualChromPeaks",
+              "manualFeatures",
+              "featureSpectra",
+              "chromPeakSpectra"
               )
 
 ## feature grouping functions and methods.

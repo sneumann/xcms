@@ -134,28 +134,6 @@ test_that(".concatenate_XCMSnExp works", {
     expect_equal(chromPeaks(res), chromPeaks(res2))
 })
 
-test_that("filterFeatureDefinitions works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    tmp <- xod_xgrg
-    expect_error(filterFeatureDefinitions("a"))
-    expect_error(filterFeatureDefinitions(xod_xgr, 1:3))
-    expect_error(filterFeatureDefinitions(tmp, c("FT01", "other")))
-    expect_error(filterFeatureDefinitions(tmp, 1:4000))
-    expect_error(filterFeatureDefinitions(tmp, features = c(1, 3.4)))
-    tmp <- filterFeatureDefinitions(tmp, features = 11:30)
-    expect_equal(nrow(featureDefinitions(tmp)), 20)
-    expect_equal(rownames(featureDefinitions(tmp)), paste0("FT", 11:30))
-    ## Check if we have the correct process history
-    ph <- processHistory(tmp)[[length(processHistory(tmp))]]
-    expect_true(is(processParam(ph), "GenericParam"))
-    expect_true(processParam(ph)@fun == "filterFeatureDefinitions")
-    tmp <- dropFeatureDefinitions(tmp)
-    expect_true(length(processHistory(tmp)) == 3)
-    ph <- processHistory(tmp)[[length(processHistory(tmp))]]
-    expect_true(!is(processParam(ph), "GenericParam"))
-})
-
 test_that("featureSummary works", {
     skip_on_os(os = "windows", arch = "i386")
 
@@ -296,32 +274,6 @@ test_that("chromPeakSpectra works", {
         expect_true(is(res, "List"))
         expect_true(length(res) == nrow(chromPeaks(pest_dda)))
     }
-})
-
-test_that("featureSpectra works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_mspectrum_for_features(xod_x, method = "other"))
-    expect_error(res <- featureSpectra(xod_x))
-    expect_warning(res <- featureSpectra(xod_xg, return.type = "list"))
-    expect_true(length(res) == nrow(featureDefinitions(xod_xg)))
-    expect_equal(names(res), rownames(featureDefinitions(xod_xg)))
-    expect_warning(res <- featureSpectra(xod_xg, return.type = "MSpectra"))
-    expect_true(is(res, "MSpectra"))
-    expect_true(length(res) == 0)
-    expect_warning(res <- featureSpectra(xod_xg, msLevel = 1L))
-    expect_true(length(res) == 0)
-
-    res <- featureSpectra(xod_xg, method = "closest_rt", msLevel = 1L,
-                          return.type = "List")
-    expect_equal(length(res), nrow(featureDefinitions(xod_xg)))
-    for (i in seq_along(res)) {
-        expect_true(is(res[[i]], "Spectra"))
-    }
-
-    res2 <- featureSpectra(xod_xg, msLevel = 2L, return.type = "Spectra")
-    expect_true(length(res2) == 0)
 })
 
 test_that("featureChromatograms works", {
