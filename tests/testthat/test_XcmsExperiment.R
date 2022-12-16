@@ -981,3 +981,35 @@ test_that("filterFeatureDefinitions works", {
     expect_true(hasFeatures(res))
     expect_equal(featureDefinitions(res), featureDefinitions(xmseg)[1:10, ])
 })
+
+test_that("featureSpectra works", {
+    expect_error(featureSpectra(xmse), "No feature definitions")
+    res_all <- featureSpectra(xmseg, msLevel = 1L)
+    expect_s4_class(res_all, "Spectra")
+    expect_true(all(rownames(featureDefinitions(xmseg)) %in%
+                    res_all$feature_id))
+
+    res_all <- featureSpectra(xmseg, msLevel = 1L, method = "closest_rt",
+                              return.type = "List")
+    expect_s4_class(res_all, "List")
+    expect_equal(length(res_all), nrow(featureDefinitions(xmseg)))
+    expect_equal(names(res_all), rownames(featureDefinitions(xmseg)))
+
+    res <- featureSpectra(xmseg, msLevel = 1L, features = c(3, 1, 2, 1, 5),
+                          method = "closest_rt", return.type = "List")
+    expect_true(length(res) == 5)
+    expect_equal(rtime(res[[1L]]), rtime(res_all[[3L]]))
+    expect_equal(rtime(res[[2L]]), rtime(res_all[[1L]]))
+    expect_equal(rtime(res[[3L]]), rtime(res_all[[2L]]))
+    expect_equal(rtime(res[[4L]]), rtime(res_all[[1L]]))
+    expect_equal(rtime(res[[5L]]), rtime(res_all[[5L]]))
+
+    res_2 <- featureSpectra(xmseg, msLevel = 1L, features = c("FT03", "FT01"),
+                            return.type = "List")
+    expect_true(length(res[[1L]]) < length(res_2[[1L]]))
+    expect_true(all(res[[1L]]$peak_id %in% res_2[[1L]]$peak_id))
+    expect_equal(unique(res[[1L]]$feature_id), unique(res_2[[1L]]$feature_id))
+    expect_true(length(res[[2L]]) < length(res_2[[2L]]))
+    expect_true(all(res[[2L]]$peak_id %in% res_2[[2L]]$peak_id))
+    expect_equal(unique(res[[2L]]$feature_id), unique(res_2[[2L]]$feature_id))
+})

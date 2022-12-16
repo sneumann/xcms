@@ -534,22 +534,14 @@ setGeneric("featureDefinitions<-", function(object, value)
 #'
 #' @return
 #'
-#' parameter `return.type` allow to specify the type of the returned object:
+#' The function returns either a [Spectra()] (for `return.type = "Spectra"`)
+#' or a `List` of `Spectra` (for `return.type = "List"`). For the latter,
+#' the order and the length matches parameter `features` (or if no `features`
+#' is defined the order of the features in `featureDefinitions(object)`).
 #'
-#' - `return.type = "MSpectra"`: a [MSpectra] object with elements being
-#'   [Spectrum-class] objects. The result objects contains all spectra
-#'   for all features. Metadata column `"feature_id"` provides the ID of the
-#'   respective feature (i.e. its rowname in [featureDefinitions()]).
-#' - `return.type = "Spectra"`: a `Spectra` object (defined in the `Spectra`
-#'   package). The result contains all spectra for all features. Metadata column
-#'   `"feature_id"` provides the ID of the respective feature (i.e. its rowname
-#'   in [featureDefinitions()].
-#' - `return.type = "list"`: `list` of `list`s that are either of length
-#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
-#'   length of the list matches the number of features.
-#' - `return.type = "List"`: `List` of length equal to the number of
-#'   features with MS level `msLevel` is returned with elements being either
-#'   `NULL` (no spectrum found) or a `Spectra` object.
+#' Spectra variables `"peak_id"` and `"feature_id"` define to which
+#' chromatographic peak or feature each individual spectrum is associated
+#' with.
 #'
 #' @author Johannes Rainer
 #'

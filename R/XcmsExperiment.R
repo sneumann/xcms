@@ -186,6 +186,10 @@
 #'   defining how these parameters should be used to subset the returned
 #'   `data.frame`. See parameter descriptions for details.
 #'
+#' - `featureSpectra`: returns a [Spectra()] or `List` of `Spectra` with
+#'   (MS1 or MS2) spectra associated to each feature. See [featureSpectra()]
+#'   for more details and available parameters.
+#'
 #' - `groupChromPeaks`: performs the correspondence analysis (i.e., grouping
 #'   of chromatographic peaks into LC-MS *features*). See [groupChromPeaks()]
 #'   for details.
@@ -1174,14 +1178,43 @@ setMethod(
         object
     })
 
-## TODO: featureSpectra
-## setMethod(
-##     "featureSpectra", "XcmsExperiment",
-##     function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
-##              skipFilled = FALSE, return.type = c("Spectra", "List"),
-##              features = character(), ...) {
-##     })
-
+#' @rdname featureSpectra
+setMethod(
+    "featureSpectra", "XcmsExperiment",
+    function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             skipFilled = FALSE, return.type = c("Spectra", "List"),
+             features = character(), ...) {
+        return.type <- match.arg(return.type)
+        if (!hasFeatures(object))
+            stop("No feature definitions present. Please run ",
+                 "'groupChromPeaks' first.")
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        features_all <- rownames(featureDefinitions(object))
+        if (!length(features))
+            features <- features_all
+        findex <- .i2index(features, ids = features_all, name = "features")
+        features <- features_all[findex]
+        findex <- unique(findex)
+        ufeatures <- features_all[findex]
+        pindex <- unlist(featureDefinitions(object)$peakidx[findex],
+                         use.names = FALSE)
+        sps <- .mse_spectra_for_peaks(
+            object, msLevel = msLevel, expandRt = expandRt,
+            expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
+            peaks = unique(pindex), ...)
+        mtch <- as.matrix(
+            findMatches(sps$peak_id, rownames(chromPeaks(object))[pindex]))
+        sps <- sps[mtch[, 1L]]
+        fid <- rep(
+            ufeatures, lengths(featureDefinitions(object)$peakidx[findex]))
+        sps$feature_id <- fid[mtch[, 2L]]
+        if (return.type == "List") {
+            sps <- List(split(sps, f = factor(sps$feature_id,
+                                              levels = ufeatures)))
+            sps[features]
+        } else sps
+    })
 
 ## TODO: overlappingFeatures
 

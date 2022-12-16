@@ -834,43 +834,6 @@ sumi <- function(x) {
     Spectra:::.concatenate_spectra(res)
 }
 
-## .mse_spectra_for_features <- function() {
-##     x <- xmseg
-## }
-a <- function(x) {
-    res <- mapply(
-        featureDefinitions(x)$peakidx,
-        rownames(featureDefinitions(x)),
-        FUN = function(z, id) {
-            sps <- xcms:::.mse_spectra_for_peaks(x, peaks = z, msLevel = 1L)
-            sps$feature_id <- id
-            sps
-        }
-    )
-    Spectra:::.concatenate_spectra(res)
-}
-
-b <- function(x) {
-    ## Get spectra for all peaks.
-    pkidx <- unique(unlist(featureDefinitions(x)$peakidx))
-    sps <- xcms:::.mse_spectra_for_peaks(x, peaks = pkidx, msLevel = 1L)
-    ## get index for each peak.
-    idx <- match(sps$peak_id, rownames(chromPeaks(x)))
-    ## loop over $peakidx to get those for each feature.
-    res <- mapply(featureDefinitions(x)$peakidx,
-                  rownames(featureDefinitions(x)),
-                  FUN = function(z, id) {
-                      sps_ft <- sps[idx %in% z]
-                      sps_ft$feature_id <- id
-                      sps_ft
-                  })
-}
-
-## A <- a(xmseg)
-## B <- b(xmseg)
-
-## expect_equal(A$peak_id, B$peak_id)
-
 #' @param peaks `matrix` with chrom peaks.
 #'
 #' @param peakIdx `list` of `integer` indices defining which chromatographic
