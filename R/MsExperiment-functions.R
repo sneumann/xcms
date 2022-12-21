@@ -225,6 +225,19 @@
     if (lx)
         f <- factor(x$.SAMPLE_IDX, levels = sidx)
     else f <- factor(integer(), levels = sidx)
+    
+    ## Ion mobility peak-picking dispatch point
+    if (inherits(param, "IMParam")){
+        if (!any(c("inv_ion_mobility") %in% Spectra::spectraVariables(x))) # Add any other column name needed
+            stop("Spectra object does not seem to have ion-mobility data")
+        return (
+            bplapply(split(x, f), function(spec){
+                do.call(.param_to_fun(param),
+                        args = append(list(spec), as(param, "list"))) #Append to avoid concatenating spectra
+            }, BPPARAM = BPPARAM)
+        )
+    }
+    
     ## Check for random number of spectra if they are centroided. NOT all.
     if (inherits(param, "CentWaveParam")) {
         cntr <- all(centroided(x[sort(sample(seq_along(x), min(c(100, lx))))]))
