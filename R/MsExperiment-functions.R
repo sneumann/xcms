@@ -183,7 +183,7 @@
                                          chunkSize = 1L,
                                          BPPARAM = bpparam()) {
     res <- unlist(
-        xcms:::.mse_spectrapply_chunks(x, FUN = xcms:::.mse_find_chrom_peaks_chunk,
+        .mse_spectrapply_chunks(x, FUN = .mse_find_chrom_peaks_chunk,
                                 msLevel = msLevel, param = param,
                                 chunkSize = chunkSize, BPPARAM = BPPARAM),
         recursive = FALSE, use.names = FALSE)
@@ -513,3 +513,90 @@ readMsExperiment <- function(files = character(),
     spectra(x) <- Spectra(files, ...)
     linkSampleData(x, with = "sampleData.dataOrigin = spectra.dataOrigin")
 }
+
+#' Function to extract chromatographic data as (in future obsolete)
+#' `MChromatograms` on a `Spectra` of a single file.
+#'
+#' @param pd `peaksData` (single file, single MS level!)
+#'
+#' @param rtime retention times.
+#'
+#' @param rt `matrix` with ranges.
+#'
+#' @param mz `matrix` with ranges.
+#'
+#' @noRd
+.old_chromatogram_sample <- function(pd, rtime, file_idx = 1L, rt, mz,
+                                     aggregationFun = "sum", msLevel = 1L) {
+    nr <- nrow(rt)
+    FUN <- getFunction(aggregationFun)
+    empty_chrom <- MSnbase::Chromatogram(
+                                fromFile = file_idx,
+                                aggregationFun = aggregationFun,
+                                msLevel = msLevel,
+                                intensity = numeric(),
+                                rtime = numeric())
+    res <- list(empty_chrom)[rep(1L, nr)]
+    for (i in seq_len(nr)) {
+        keep <- MsCoreUtils::between(rtime, rt[i, ])
+        res[[i]]@filterMz <- mz[i, ]
+        ## In contrast to the old code we use here also the filter range
+        ## instead of calculating the actual m/z range for each.
+        res[[i]]@mz <- mz[i, ]
+        if (any(keep)) {
+            ## Aggregate intensities.
+            res[[i]]@intensity <- vapply(pd[keep], function(z) {
+                FUN(z[MsCoreUtils::between(z[, "mz"], mz[i, ]), "intensity"])
+            }, numeric(1L))
+            res[[i]]@rtime <- rtime[keep]
+        }
+    }
+    res
+}
+
+.mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
+                              mz = matrix(nrow = 0, ncol = 2),
+                              aggregationFun = "sum", msLevel = 1L,
+                              chunkSize = 2L, BPPARAM = bpparam()) {
+    if (!nrow(rt))
+        rt <- matrix(c(-Inf, Inf), ncol = 2)
+    if (!nrow(mz))
+        mz <- matrix(c(-Inf, Inf), ncol = 2)
+    if (is.matrix(rt) && !nrow(rt) == 2)
+        stop("'rt' is expected to be a two-column matrix", call. = FALSE)
+    if (is.matrix(mz) && !nrow(mz) == 2)
+        stop("'mz' is expected to be a two-column matrix", call. = FALSE)
+    res <- .mse_spectrapply_chunks(
+        x, FUN = function(z, rt, mz, msl, afun, BPPARAM) {
+            sidx <- unique(z$.SAMPLE_IDX)
+            z <- filterMsLevel(z, msLevel = msLevel)
+            lz <- length(z)
+            if (lz)
+                f <- factor(z$.SAMPLE_IDX, levels = sidx)
+            else f <- factor(integer(), levels = sidx)
+            bpmapply(
+                split(Spectra::peaksData(z, columns = c("mz", "intensity"),
+                                         BPPARAM = SerialParam()), f),
+                split(rtime(z), f),
+                sidx, FUN = .old_chromatogram_sample,
+                MoreArgs = list(rt = rt, mz = mz, msLevel = msl,
+                                aggregationFun = afun),
+                SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
+        }, rt = rt, mz = mz, msl = msLevel, afun = aggregationFun,
+        chunkSize = chunkSize, BPPARAM = BPPARAM)
+    res <- as(do.call(cbind, unlist(res, recursive = FALSE, use.names = FALSE)),
+              "MChromatograms")
+    fd <- annotatedDataFrameFrom(res, byrow = TRUE)
+    fd$mzmin <- mz[, 1]
+    fd$mzmax <- mz[, 2]
+    fd$rtmin <- rt[, 1]
+    fd$rtmax <- rt[, 2]
+    res@featureData <- fd
+    rownames(res@.Data) <- rownames(fd)
+    res@phenoData <- AnnotatedDataFrame(as.data.frame(sampleData(x)))
+    colnames(res@.Data) <- rownames(pData(res))
+    res
+}
+
+#' For XcmsExperiment: "inject" chrom peaks afterwards? so, first get the
+#' MS data and then add anything xcms related?
