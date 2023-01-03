@@ -482,6 +482,121 @@ test_that("CentWavePredIsoParam works", {
     expect_equal(L$snthresh, 123)
 })
 
+test_that("IMCentWaveParam works", {
+    skip_on_os(os = "windows", arch = "i386")
+    
+    ## Check getter/setter methods:
+    p <- new("IMCentWaveParam", ppm = 14)
+    expect_equal(ppm(p), 14)
+    ppm(p) <- 13
+    expect_equal(ppm(p), 13)
+    p <- IMCentWaveParam(ppm = 21)
+    expect_equal(ppm(p), 21)
+    expect_error(IMCentWaveParam(ppm = -4))
+    
+    p <- new("IMCentWaveParam", peakwidth = c(1, 2))
+    expect_equal(peakwidth(p), c(1, 2))
+    peakwidth(p) <- c(2, 3)
+    expect_equal(peakwidth(p), c(2, 3))
+    p <- IMCentWaveParam(peakwidth = c(3, 4))
+    expect_equal(peakwidth(p), c(3, 4))
+    expect_error(IMCentWaveParam(peakwidth = 1:3))
+    
+    p <- new("IMCentWaveParam", snthresh = 5)
+    expect_equal(snthresh(p), 5)
+    snthresh(p) <- 6
+    expect_equal(snthresh(p), 6)
+    p <- IMCentWaveParam(snthresh = 7)
+    expect_equal(snthresh(p), 7)
+    expect_error(IMCentWaveParam(snthresh = 1:3))
+    
+    p <- new("IMCentWaveParam", prefilter = c(1, 2))
+    expect_equal(prefilter(p), c(1, 2))
+    prefilter(p) <- c(2, 3)
+    expect_equal(prefilter(p), c(2, 3))
+    p <- IMCentWaveParam(prefilter = c(3, 4))
+    expect_equal(prefilter(p), c(3, 4))
+    expect_error(IMCentWaveParam(prefilter = 1:3))
+    
+    p <- new("IMCentWaveParam", mzCenterFun = "meanApex3")
+    expect_equal(mzCenterFun(p), "meanApex3")
+    mzCenterFun(p) <- "mean"
+    expect_equal(mzCenterFun(p), "mean")
+    p <- IMCentWaveParam(mzCenterFun = "mean")
+    expect_equal(mzCenterFun(p), "mean")
+    expect_error(IMCentWaveParam(mzCenterFun = "median"))
+    
+    p <- new("IMCentWaveParam", integrate = 2L)
+    expect_equal(integrate(p), 2L)
+    integrate(p) <- 1L
+    expect_equal(integrate(p), 1L)
+    p <- IMCentWaveParam(integrate = 2L)
+    expect_equal(integrate(p), 2L)
+    expect_error(IMCentWaveParam(integrate = 3L))
+    
+    p <- new("IMCentWaveParam", mzdiff = 1)
+    expect_equal(mzdiff(p), 1)
+    mzdiff(p) <- 2
+    expect_equal(mzdiff(p), 2)
+    p <- IMCentWaveParam(mzdiff = 3)
+    expect_equal(mzdiff(p), 3)
+    expect_error(IMCentWaveParam(mzdiff = 2:3))
+    
+    p <- new("IMCentWaveParam", fitgauss = TRUE)
+    expect_equal(fitgauss(p), TRUE)
+    fitgauss(p) <- FALSE
+    expect_equal(fitgauss(p), FALSE)
+    p <- IMCentWaveParam(fitgauss = TRUE)
+    expect_equal(fitgauss(p), TRUE)
+    expect_error(IMCentWaveParam(fitgauss = c(TRUE, FALSE)))
+    
+    p <- new("IMCentWaveParam", noise = 3)
+    expect_equal(noise(p), 3)
+    noise(p) <- 6
+    expect_equal(noise(p), 6)
+    p <- IMCentWaveParam(noise = 8)
+    expect_equal(noise(p), 8)
+    expect_error(IMCentWaveParam(noise = c(3, 5)))
+    
+    p <- new("IMCentWaveParam", verboseColumns = TRUE)
+    expect_equal(verboseColumns(p), TRUE)
+    verboseColumns(p) <- FALSE
+    expect_equal(verboseColumns(p), FALSE)
+    p <- IMCentWaveParam(verboseColumns = TRUE)
+    expect_equal(verboseColumns(p), TRUE)
+    expect_error(IMCentWaveParam(verboseColumns = c(TRUE, FALSE)))
+    
+    p <- new("IMCentWaveParam", firstBaselineCheck = TRUE)
+    expect_equal(firstBaselineCheck(p), TRUE)
+    firstBaselineCheck(p) <- FALSE
+    expect_equal(firstBaselineCheck(p), FALSE)
+    p <- IMCentWaveParam(firstBaselineCheck = FALSE)
+    expect_equal(firstBaselineCheck(p), FALSE)
+    expect_error(IMCentWaveParam(firstBaselineCheck = c(TRUE, FALSE)))
+    
+    p <- new("IMCentWaveParam", ppmMerging = 10)
+    expect_equal(ppmMerging(p), 10)
+    ppmMerging(p) <- 20
+    expect_equal(ppmMerging(p), 20)
+    p <- IMCentWaveParam(ppmMerging = 30)
+    expect_equal(ppmMerging(p), 30)
+    expect_error(IMCentWaveParam(ppmMerging = c(10, 60)))
+    
+    p <- new("IMCentWaveParam", binWidthIM = 0.03)
+    expect_equal(binWidthIM(p), 0.03)
+    binWidthIM(p) <- 0.05
+    expect_equal(binWidthIM(p), 0.05)
+    p <- IMCentWaveParam(binWidthIM = 0.01)
+    expect_equal(binWidthIM(p), 0.01)
+    expect_error(IMCentWaveParam(binWidthIM = c(0.01, 0.08)))
+    
+    ## Check the .param2list method:
+    p <- new("IMCentWaveParam", snthresh = 123)
+    L <- .param2list(p)
+    expect_equal(L$snthresh, 123)
+})
+
+
 test_that("PeakDensityParam works", {
     skip_on_os(os = "windows", arch = "i386")
 

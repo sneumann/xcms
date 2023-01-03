@@ -88,6 +88,48 @@ test_that("do_findChromPeaks_massifquant works", {
     expect_true(nrow(res_3) < nrow(res_2))
 })
 
+test_that("do_findChromPeaks_IM_centWave works", {
+    skip_on_os(os = "windows", arch = "i386")
+    skip_if(system.file("data/IM_test_data.rds", package = "xcms") == "")
+    res_1 <- do_findChromPeaks_IM_centWave(im_spec,
+                                         peakwidth = c(1,5),
+                                         snthresh = 0,
+                                         ppmMerging = 50)
+    res_2 <- do_findChromPeaks_IM_centWave(im_spec,
+                                          peakwidth = c(1,5),
+                                          snthresh = 0,
+                                          ppmMerging = 10)
+    expect_true(nrow(res_2) > nrow(res_1)) # Using a higher ppmMerging yields less peaks
+})
+
+test_that("extract_mobilogram works", {
+    skip_on_os(os = "windows", arch = "i386")
+    skip_if(system.file("data/IM_test_data.rds", package = "xcms") == "")
+    mobilogram <- .extract_mobilogram(peaksData(im_spec),
+                        peak = data.frame(mzmin = 286.1982, mzmax = 286.2051,
+                                          rtmin = 357.0347, rtmax = 359.838),
+                        rt = rtime(im_spec),
+                        im = im_spec$inv_ion_mobility)
+    expect_length(mobilogram, 2)
+    expect_equal(range(mobilogram$x), c(0, 12360727))
+    expect_equal(range(mobilogram$mids), c(0.005, 0.995))
+})
+
+
+test_that("split_mobilogram_CWT works", {
+    skip_on_os(os = "windows", arch = "i386")
+    skip_if(system.file("data/IM_test_data.rds", package = "xcms") == "")
+    mobilogram <- .extract_mobilogram(peaksData(im_spec),
+                                      peak = data.frame(mzmin = 286.1982, mzmax = 286.2051,
+                                                        rtmin = 357.0347, rtmax = 359.838),
+                                      rt = rtime(im_spec),
+                                      im = im_spec$inv_ion_mobility)
+    split <- .split_mobilogram_CWT(mobilogram)
+    expect_length(split, 1)
+    expect_equal(split[[1]], c(0.795, 0.895))
+})
+
+
 test_that("do_findChromPeaks_matchedFilter works", {
     skip_on_os(os = "windows", arch = "i386")
 
