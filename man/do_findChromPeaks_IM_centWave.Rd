@@ -18,7 +18,7 @@ do_findChromPeaks_IM_centWave(
   verboseColumns = FALSE,
   roiList = list(),
   firstBaselineCheck = TRUE,
-  roiScales = NULL,
+  roiScales = numeric(),
   sleep = 0,
   extendLengthMSW = FALSE,
   ppmMerging = 10,

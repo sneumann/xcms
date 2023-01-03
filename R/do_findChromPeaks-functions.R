@@ -2269,7 +2269,7 @@ do_findChromPeaks_IM_centWave <- function(spec,
                                            verboseColumns = FALSE,
                                            roiList = list(),
                                            firstBaselineCheck = TRUE,
-                                           roiScales = NULL,
+                                           roiScales = numeric(),
                                            sleep = 0,
                                            extendLengthMSW = FALSE,
                                            ppmMerging = 10,
@@ -2298,6 +2298,11 @@ do_findChromPeaks_IM_centWave <- function(spec,
                                                         firstBaselineCheck = firstBaselineCheck,
                                                         roiScales = roiScales,
                                                         extendLengthMSW = extendLengthMSW))
+    if (!nrow(peaks)) return()
+    
+    #Correcting for the fact that combineSpectra combined close mz values
+    peaks[,"mzmin"] <- peaks[,"mzmin"] * (1 - ppmMerging * 1e-6) 
+    peaks[,"mzmax"] <- peaks[,"mzmax"] * (1 + ppmMerging * 1e-6)
     
     ## 1D Peak-picking, for each individual peak, to resolve across the IM dimension
     .do_resolve_IM_peaks_CWT(spec, peaks, binWidthIM)
@@ -2321,6 +2326,7 @@ do_findChromPeaks_IM_centWave <- function(spec,
             # warning(i, " mobilogram is empty")
             next
         }
+        
         bounds <- .split_mobilogram_CWT(mobilogram)
         new_peaks <- data.frame(
             mz = current_peak["mz"],
@@ -2336,7 +2342,9 @@ do_findChromPeaks_IM_centWave <- function(spec,
         )
         resolved_peaks[[i]] <- new_peaks
     }
+    
     resolved_peaks <- do.call(rbind, resolved_peaks)
+    if(is.null(resolved_peaks) || !nrow(resolved_peaks)) return()
     
     ## Refine and calculate peak parameters
     vals <- vector("list", nrow(resolved_peaks))
@@ -2381,11 +2389,11 @@ do_findChromPeaks_IM_centWave <- function(spec,
     as.matrix(resolved_peaks)
 }
 
-#' @importFrom MsCoreUtils bin
+#' @importFrom MsCoreUtils between bin
 .extract_mobilogram <- function(pdata, peak, rt, im, binWidthIM = 0.01){
-    rtr <- c(peak["rtmin"], peak["rtmax"])
-    mzr <- c(peak["mzmin"], peak["mzmax"])
-    keep <- dplyr::between(rt, rtr[1], rtr[2])
+    rtr <- c(peak[["rtmin"]], peak[["rtmax"]])
+    mzr <- c(peak[["mzmin"]], peak[["mzmax"]]) 
+    keep <- MsCoreUtils::between(rt, rtr)
     if (length(keep) == 0) return()
     ims <- im[keep]
     ints <- vapply(pdata[keep], xcms:::.aggregate_intensities,
