@@ -1300,7 +1300,7 @@ setClass("CentWavePredIsoParam",
 
 #### Ion mobility peak-picking classes ####
 
-setClass("IMParam", contains = "Param")
+setClass("IMParam", contains = "VIRTUAL")
 
 #' @title Centwave-based ion-mobility peak picking
 #'
@@ -1356,7 +1356,23 @@ setClass("IMCentWaveParam",
          prototype = prototype(
              ppmMerging = 10,
              binWidthIM = 0.02
-         ))
+         ), 
+         validity = function(object){
+             msg <- character()
+             if (length(object@ppmMerging) != 1 ||
+                 object@ppmMerging < 0) {
+                 msg <- c(msg,
+                          "'ppmMerging' should be a positive numeric of length 1")
+             }
+             if (length(object@binWidthIM) != 1 ||
+                 object@binWidthIM < 0) {
+                 msg <- c(msg,
+                          "'binWidthIM' should be a positive numeric of length 1")
+             }
+             if (length(msg))
+                 msg
+             else TRUE
+         })
 
 setClass("PeakDensityParam",
          slots = c(sampleGroups = "ANY",

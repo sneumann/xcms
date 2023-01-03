@@ -915,6 +915,38 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
         return(object)
 })
 
+## IMCentWaveParam
+
+#' @description \code{ppmMerging},\code{ppmMerging<-}: getter and
+#'     setter for the \code{ppmMerging} slot of the object.
+#'
+#' @rdname findChromPeaks-centWaveIonMobility
+setMethod("ppmMerging", "IMCentWaveParam", function(object){
+    return(object@ppmMerging)})
+#' @aliases ppmMerging<-
+#'
+#' @rdname findChromPeaks-centWaveIonMobility
+setReplaceMethod("ppmMerging", "IMCentWaveParam", function(object, value) {
+    object@ppmMerging <- value
+    if (validObject(object))
+        return(object)
+})
+
+#' @description \code{binWidthIM},\code{binWidthIM<-}: getter and
+#'     setter for the \code{binWidthIM} slot of the object.
+#'
+#' @rdname findChromPeaks-centWaveIonMobility
+setMethod("binWidthIM", "IMCentWaveParam", function(object){
+    return(object@binWidthIM)})
+#' @aliases binWidthIM<-
+#'
+#' @rdname findChromPeaks-centWaveIonMobility
+setReplaceMethod("binWidthIM", "IMCentWaveParam", function(object, value) {
+    object@binWidthIM <- value
+    if (validObject(object))
+        return(object)
+})
+
 
 ############################################################
 ## PeakDensityParam
