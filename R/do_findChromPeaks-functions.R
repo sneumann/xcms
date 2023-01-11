@@ -2316,7 +2316,6 @@ do_findChromPeaks_IM_centWave <- function(spec,
     rt <- rtime(spec)
     im <- spec$inv_ion_mobility
     
-    
     ## Resolving peaks across IM dimension
     resolved_peaks <- vector("list", nrow(peaks))
     for (i in seq_len(nrow(peaks))) {
@@ -2327,7 +2326,7 @@ do_findChromPeaks_IM_centWave <- function(spec,
             next
         }
         
-        bounds <- .split_mobilogram_CWT(mobilogram)
+        bounds <- .split_mobilogram(mobilogram)
         new_peaks <- data.frame(
             mz = current_peak["mz"],
             mzmin = current_peak["mzmin"],
@@ -2335,9 +2334,9 @@ do_findChromPeaks_IM_centWave <- function(spec,
             rt = current_peak["rt"],
             rtmin = current_peak["rtmin"],
             rtmax = current_peak["rtmax"],
-            im = vapply(bounds, mean, numeric(1)),
-            immin = vapply(bounds, min, numeric(1)),
-            immax = vapply(bounds, max, numeric(1)),
+            im = vapply(bounds, function(x) x[[2]], numeric(1)),
+            immin = vapply(bounds, function(x) x[[1]], numeric(1)),
+            immax = vapply(bounds, function(x) x[[3]], numeric(1)),
             row.names = NULL
         )
         resolved_peaks[[i]] <- new_peaks
@@ -2399,32 +2398,24 @@ do_findChromPeaks_IM_centWave <- function(spec,
     ints <- vapply(pdata[keep], xcms:::.aggregate_intensities,
                    mzr = mzr, INTFUN = sum, na.rm = TRUE, numeric(1))   
     if(all(ints == 0)) return()
-    mob <- MsCoreUtils::bin(x = ints, y = ims, size = binWidthIM, FUN = sum)  
+    mob <- MsCoreUtils::bin(x = ints[order(ims)], y = sort(ims),
+                            size = binWidthIM, FUN = sum)  
     mob
 }
 
 
-#' @importFrom MassSpecWavelet peakDetectionCWT
-.split_mobilogram_CWT <- function(mob){
+.split_mobilogram <- function(mob){
     if(length(mob$x) == 0){return()}
     vec <- mob$x
-    #Add some padding, which will be removed after
-    padding_size <- 5
-    vec <- c(rep(0, padding_size), vec, rep(0, padding_size))
-    pks <- MassSpecWavelet::peakDetectionCWT(vec, scales = c(1:7))
-    left <- sapply(pks$majorPeakInfo$peakCenterIndex - pks$majorPeakInfo$peakScale, function(x) max(1, x))
-    right <- sapply(pks$majorPeakInfo$peakCenterIndex + pks$majorPeakInfo$peakScale, function(x) min(x, length(vec) - padding_size))
+    apex <- which(MsCoreUtils::localMaxima(vec, hws = 4))
     limits <- list()
-    for (i in seq_along(pks$majorPeakInfo$peakCenterIndex)){
-        ranges <-  xcms:::descendMinTol(vec, startpos = c(left[i], right[i]), maxDescOutlier = 1) - padding_size
-        ranges[1] <- min(max(1, ranges[1]), length(mob$mids))
-        ranges[2] <- min(ranges[2], length(mob$mids))
-        limits[[i]] <- mob$mids[ranges]
+    for (i in seq_along(apex)){
+        ranges <-  descendMinTol(vec, startpos = c(apex[i], apex[i]), maxDescOutlier = 2)
+        limits[[i]] <- mob$mids[c(ranges[1], apex[i], ranges[2])]
     }
     limits <- limits[vapply(limits, function(x){!any(is.na(x))}, logical(1))] 
-    return(limits)
+    limits
 }
-
 
 
 #' @importFrom dplyr between

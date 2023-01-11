@@ -116,7 +116,7 @@ test_that("extract_mobilogram works", {
 })
 
 
-test_that("split_mobilogram_CWT works", {
+test_that("split_mobilogram works", {
     skip_on_os(os = "windows", arch = "i386")
     skip_if(system.file("data/IM_test_data.rds", package = "xcms") == "")
     mobilogram <- .extract_mobilogram(peaksData(im_spec),
@@ -124,9 +124,10 @@ test_that("split_mobilogram_CWT works", {
                                                         rtmin = 357.0347, rtmax = 359.838),
                                       rt = rtime(im_spec),
                                       im = im_spec$inv_ion_mobility)
-    split <- .split_mobilogram_CWT(mobilogram)
+    split <- .split_mobilogram(mobilogram)
     expect_length(split, 1)
-    expect_equal(split[[1]], c(0.795, 0.895))
+    expect_length(split[[1]], 3)
+    expect_equal(split[[1]], c(0.795, 0.825, 0.865))
 })
 
 
