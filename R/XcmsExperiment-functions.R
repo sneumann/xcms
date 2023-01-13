@@ -187,31 +187,6 @@
     x[between(x[, "mz"], mzr[1L], mzr[2L]), , drop = FALSE]
 }
 
-#' @title Sum MS Intensity Values
-#'
-#' @description
-#'
-#' `sumi` sums MS intensity values ignoring missing values but returning
-#' `NA_real_` in case all intensity values are `NA`. This is in contrast to
-#' `sum(x, na.rm = TRUE)` that, while ignoring also missing values, returns
-#' `0` if all values in `x` are `NA`.
-#'
-#' @param x `numeric` with the intensity values to sum.
-#'
-#' @return `numeric(1)` with the sum of `x` or `NA_real_` if **all** values in
-#'     `x` are `NA`.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-sumi <- function(x) {
-    ## Note: any(!is.na(x)) would be faster, but ONLY if there are NAs,
-    ## otherwise this version is slightly faster.
-    if (all(is.na(x)))
-        return(NA_real_)
-    sum(x, na.rm = TRUE)
-}
-
 #' Same as functions-Chromatogram.R::.chrom_merge_neighboring_peaks, but this
 #' takes a list of peak matrices as input and does not require creation of a
 #' Chromatogram object.

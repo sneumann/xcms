@@ -52,7 +52,7 @@ Imports:
     robustbase,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils,
+    MsCoreUtils (>= 1.11.3),
     MsFeatures,
     MsExperiment,
     Spectra (>= 1.9.4),

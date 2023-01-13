@@ -57,12 +57,6 @@ test_that(".aggregate_intensities works", {
     expect_equal(res, 5)
 })
 
-test_that("sumi works", {
-    expect_equal(sumi(1:4), sum(1:4))
-    expect_equal(sumi(c(1:4, NA)), sum(c(1:4, NA), na.rm = TRUE))
-    expect_equal(sumi(c(NA, NA)), NA_real_)
-})
-
 test_that(".history2fill_fun works", {
     expect_equal(.history2fill_fun(), .chrom_peak_intensity_centWave)
     h <- xcms:::XProcessHistory()
