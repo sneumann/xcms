@@ -442,6 +442,15 @@ dropGenericProcessHistory <- function(x, fun) {
         return(res)
     }
     spctr <- spectra(object, BPPARAM = SerialParam())
+    ## Issue #653: empty spectra is not supported; this is the same fix applied
+    ## to matchedFilter peak detection.
+    spctr <- lapply(spctr, function(z) {
+        if (!length(z@mz)) {
+            z@mz <- 0.0
+            z@intensity <- 0.0
+        }
+        z
+    })
     mzs <- lapply(spctr, mz)
     vps <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
