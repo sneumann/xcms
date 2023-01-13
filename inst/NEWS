@@ -1,3 +1,10 @@
+Changes in version 3.21.1
+----------------------
+
+- Fix error with `fillChromPeaks` on sparse data (many empty spectra) and peak
+  detection performed with `MatchedFilterParam` (issue #653).
+
+
 Changes in version 3.19.2
 ----------------------
 
