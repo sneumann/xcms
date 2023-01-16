@@ -438,7 +438,7 @@ dropGenericProcessHistory <- function(x, fun) {
         object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
     object <- filterMsLevel(object, msLevel)
     if (!length(object)) {
-        message("FAIL: no MS level ", msLevel, " data available.")
+        message("FAIL: no data available for the requested m/z - rt range.")
         return(res)
     }
     spctr <- spectra(object, BPPARAM = SerialParam())
@@ -484,7 +484,7 @@ dropGenericProcessHistory <- function(x, fun) {
     mass <- brks[-length(brks)] + bin_half ## midpoint for the breaks
     mass_range <- range(mass)
 
-    for (i in 1:nrow(res)) {
+    for (i in seq_len(nrow(res))) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
         mzr <- peakArea[i, c("mzmin", "mzmax")]
         ## Ensure that the rt region is within the rtrange of the data.

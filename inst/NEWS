@@ -5,8 +5,12 @@ Changes in version 3.99.0
 - Fix issue in `refineChromPeaks` with `MergeNeighboringPeaksParam` where a
   wrong apex position was considered in the evaluation whether candidate peaks
   should be merged (would only happen for merging of > 2 candidate peaks).
-- Fix issue in `fillChromPeaks` after `MatchedFilter` peak detection on data
-  with many empty spectra (issue #653).
+
+Changes in version 3.21.1
+
+- Fix error with `fillChromPeaks` on sparse data (many empty spectra) and peak
+  detection performed with `MatchedFilterParam` (issue #653).
+- Update to newer function names in the `rgl` package (issue #654).
 
 Changes in version 3.19.2
 ----------------------

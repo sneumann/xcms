@@ -1740,17 +1740,17 @@ setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
     colorlut <- terrain.colors(256)
     col <- colorlut[y/aspect[3]*255+1]
 
-    rgl.clear("shapes")
-    rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col, shininess = 128)
-    rgl.points(0, 0, 0, alpha = 0)
+    clear3d("shapes")
+    clear3d("bbox")
+    surface3d(x, z, y, color = col, shininess = 128)
+    points3d(0, 0, 0, alpha = 0)
 
     mztics <- pretty(sel$mzrange, n = 5*aspect[1])
     rttics <- pretty(sel$rtrange, n = 5*aspect[2])
     inttics <- pretty(c(0,ylim), n = 10*aspect[3])
     inttics <- inttics[inttics > 0]
 
-    rgl.bbox(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
+    bbox3d(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
              xlab = as.character(mztics),
              yat = inttics/ylim[2]*aspect[3],
              ylab = as.character(inttics),

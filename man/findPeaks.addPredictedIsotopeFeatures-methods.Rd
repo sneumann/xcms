@@ -92,6 +92,18 @@
     \code{sd} the standard deviation of local chromatographic noise.
   }
   \item{egauss}{RMSE of Gaussian fit}
+
+  if \code{verbose.columns} is \code{TRUE} additionally :
+
+  \item{mu}{Gaussian parameter mu}
+  \item{sigma}{Gaussian parameter sigma}
+  \item{h}{Gaussian parameter h}
+  \item{f}{Region number of m/z ROI where the peak was localised}
+  \item{dppm}{m/z deviation of mass trace across scans in ppm}
+  \item{scale}{Scale on which the peak was localised}
+  \item{scpos}{Peak position found by wavelet analysis}
+  \item{scmin}{Left peak limit found by wavelet analysis (scan number)}
+  \item{scmax}{Right peak limit found by wavelet analysis (scan number)}
 }
 \author{Ralf Tautenhahn}
 \encoding{UTF-8}
