@@ -396,6 +396,8 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 
 #' @title Calculate relative log abundances
 #'
+#' @description
+#'
 #' `rla` calculates the relative log abundances (RLA, see reference) on a
 #' `numeric` vector.
 #'

@@ -52,7 +52,10 @@ the \emph{regions of interest}).}
 columns should be returned.}
 
 \item{firstBaselineCheck}{\code{logical(1)}. If \code{TRUE} continuous data within
-regions of interest is checked to be above the first baseline.}
+regions of interest is checked to be above the first baseline. In detail,
+a first \emph{rough} estimate of the noise is calculated and peak detection
+is performed only in regions in which multiple sequential signals are
+higher than this first estimated baseline/noise level.}
 
 \item{extendLengthMSW}{\code{logical(1)}. If \code{TRUE} the "open" method of EIC
 extension is used, rather than the default "reflect" method.}

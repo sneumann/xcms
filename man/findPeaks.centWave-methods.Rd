@@ -104,9 +104,10 @@
     \code{sd} the standard deviation of local chromatographic noise.
   }
   \item{egauss}{RMSE of Gaussian fit}
-  \item{}{
-      if \code{verbose.columns} is \code{TRUE} additionally :
-  }
+
+
+  if \code{verbose.columns} is \code{TRUE} additionally :
+
   \item{mu}{Gaussian parameter mu}
   \item{sigma}{Gaussian parameter sigma}
   \item{h}{Gaussian parameter h}
