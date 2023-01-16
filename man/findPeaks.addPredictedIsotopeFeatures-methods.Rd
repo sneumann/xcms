@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), 
+    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50),
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
     scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, xcmsPeaks, snthresh=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
   }
@@ -92,9 +92,10 @@
     \code{sd} the standard deviation of local chromatographic noise.
   }
   \item{egauss}{RMSE of Gaussian fit}
-  \item{}{
-      if \code{verbose.columns} is \code{TRUE} additionally :
-  }
+
+
+  if \code{verbose.columns} is \code{TRUE} additionally :
+
   \item{mu}{Gaussian parameter mu}
   \item{sigma}{Gaussian parameter sigma}
   \item{h}{Gaussian parameter h}
@@ -111,7 +112,7 @@
   Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
   BMC Bioinformatics 2008, 9:504\\
-  Hendrik Treutler and Steffen Neumann. 
+  Hendrik Treutler and Steffen Neumann.
   "Prediction, detection, and validation of isotope clusters in mass spectrometry data"
   Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }

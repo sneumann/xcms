@@ -28,7 +28,7 @@
 \value{
   A list of \code{xcmsRaw} objects.
 }
-\author{Steffen Neumann, \email{sneumann(at)ipb-halle.de}}
+\author{Steffen Neumann, \email{sneumann@ipb-halle.de}}
 \seealso{
   \code{\link{xcmsRaw-class}}
 }
