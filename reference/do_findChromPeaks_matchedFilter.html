@@ -28,7 +28,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -91,24 +91,24 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span>
-  <span class="va">mz</span>,
-  <span class="va">int</span>,
-  <span class="va">scantime</span>,
-  <span class="va">valsPerSpect</span>,
-  binSize <span class="op">=</span> <span class="fl">0.1</span>,
-  impute <span class="op">=</span> <span class="st">"none"</span>,
-  <span class="va">baseValue</span>,
-  <span class="va">distance</span>,
-  fwhm <span class="op">=</span> <span class="fl">30</span>,
-  sigma <span class="op">=</span> <span class="va">fwhm</span><span class="op">/</span><span class="fl">2.3548</span>,
-  max <span class="op">=</span> <span class="fl">5</span>,
-  snthresh <span class="op">=</span> <span class="fl">10</span>,
-  steps <span class="op">=</span> <span class="fl">2</span>,
-  mzdiff <span class="op">=</span> <span class="fl">0.8</span> <span class="op">-</span> <span class="va">binSize</span> <span class="op">*</span> <span class="va">steps</span>,
-  index <span class="op">=</span> <span class="cn">FALSE</span>,
-  sleep <span class="op">=</span> <span class="fl">0</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span></span>
+<span>  <span class="va">mz</span>,</span>
+<span>  <span class="va">int</span>,</span>
+<span>  <span class="va">scantime</span>,</span>
+<span>  <span class="va">valsPerSpect</span>,</span>
+<span>  binSize <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  impute <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  <span class="va">baseValue</span>,</span>
+<span>  <span class="va">distance</span>,</span>
+<span>  fwhm <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  sigma <span class="op">=</span> <span class="va">fwhm</span><span class="op">/</span><span class="fl">2.3548</span>,</span>
+<span>  max <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  snthresh <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  steps <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  mzdiff <span class="op">=</span> <span class="fl">0.8</span> <span class="op">-</span> <span class="va">binSize</span> <span class="op">*</span> <span class="va">steps</span>,</span>
+<span>  index <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sleep <span class="op">=</span> <span class="fl">0</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -293,25 +293,25 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load the test file</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Subset to one file and restrict to a certain retention time range</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Get m/z and intensity values</span></span>
-<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Define the values per spectrum:</span></span>
-<span class="r-in"><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span>
-<span class="r-in">    scantime <span class="op">=</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load the test file</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Subset to one file and restrict to a certain retention time range</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Get m/z and intensity values</span></span></span>
+<span class="r-in"><span><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Define the values per spectrum:</span></span></span>
+<span class="r-in"><span><span class="va">valsPerSpect</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    scantime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3610062.2 84280</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 205.9819 205.9 206.0 2786.200 2772.115 2800.284  237993.6  448580.3 10681</span>
@@ -340,7 +340,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

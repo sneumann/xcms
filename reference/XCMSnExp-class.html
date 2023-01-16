@@ -193,7 +193,7 @@ as rectangles with border color peakCol."><!-- mathjax --><script src="https://c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -414,156 +414,156 @@ results. If no function is specified the function simply returns the
 <p><code>XCMSnExp</code> objects can be combined with the <code>c</code> function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.</p>
-<p><code>plot</code> plots the spectrum data (see <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></code> for
+<p><code>plot</code> plots the spectrum data (see <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></code> for
 <code><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">MSnExp</a></code> objects in the <code>MSnbase</code> package for more details.
 For <code>type = "XIC"</code>, identified chromatographic peaks will be indicated
 as rectangles with border color <code>peakCol</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">processHistoryTypes</span><span class="op">(</span><span class="op">)</span>
-
-<span class="fu">hasFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="fu">featureArea</span><span class="op">(</span>
-  <span class="va">object</span>,
-  mzmin <span class="op">=</span> <span class="va">median</span>,
-  mzmax <span class="op">=</span> <span class="va">median</span>,
-  rtmin <span class="op">=</span> <span class="va">median</span>,
-  rtmax <span class="op">=</span> <span class="va">median</span>,
-  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,
-  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for OnDiskMSnExp</span>
-<span class="fu"><a href="profMat-xcmsSet.html">profMat</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  method <span class="op">=</span> <span class="st">"bin"</span>,
-  step <span class="op">=</span> <span class="fl">0.1</span>,
-  baselevel <span class="op">=</span> <span class="cn">NULL</span>,
-  basespace <span class="op">=</span> <span class="cn">NULL</span>,
-  mzrange. <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">fileIndex</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">show</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">hasFeatures</span><span class="op">(</span><span class="va">object</span>, msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">hasChromPeaks</span><span class="op">(</span><span class="va">object</span>, msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">hasFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">adjustedRtime</span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">adjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">featureDefinitions</span><span class="op">(</span>
-  <span class="va">object</span>,
-  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  ppm <span class="op">=</span> <span class="fl">0</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,
-  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">featureDefinitions</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">chromPeaks</span><span class="op">(</span>
-  <span class="va">object</span>,
-  bySample <span class="op">=</span> <span class="cn">FALSE</span>,
-  rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  ppm <span class="op">=</span> <span class="fl">0</span>,
-  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,
-  isFilledColumn <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">chromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, adjusted <span class="op">=</span> <span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">spectra</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  bySample <span class="op">=</span> <span class="cn">FALSE</span>,
-  adjusted <span class="op">=</span> <span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">processHistory</span><span class="op">(</span><span class="va">object</span>, <span class="va">fileIndex</span>, <span class="va">type</span>, <span class="va">msLevel</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">dropChromPeaks</span><span class="op">(</span><span class="va">object</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">dropFeatureDefinitions</span><span class="op">(</span><span class="va">object</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">FALSE</span>, dropLastN <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">dropAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="profMat-xcmsSet.html">profMat</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  method <span class="op">=</span> <span class="st">"bin"</span>,
-  step <span class="op">=</span> <span class="fl">0.1</span>,
-  baselevel <span class="op">=</span> <span class="cn">NULL</span>,
-  basespace <span class="op">=</span> <span class="cn">NULL</span>,
-  mzrange. <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">fileIndex</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp,Param</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">param</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
-  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>,
-  add <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">dropFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">spectrapply</a></span><span class="op">(</span><span class="va">object</span>, FUN <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S3 method for XCMSnExp</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for XCMSnExp,missing</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">processHistoryTypes</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">hasFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">featureArea</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  mzmin <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  mzmax <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  rtmin <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  rtmax <span class="op">=</span> <span class="va">median</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">msLevel</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for OnDiskMSnExp</span></span>
+<span><span class="fu"><a href="profMat-xcmsSet.html">profMat</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bin"</span>,</span>
+<span>  step <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  baselevel <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  basespace <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mzrange. <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">fileIndex</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">show</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">hasFeatures</span><span class="op">(</span><span class="va">object</span>, msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">hasChromPeaks</span><span class="op">(</span><span class="va">object</span>, msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">hasFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">adjustedRtime</span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">adjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">featureDefinitions</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ppm <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">featureDefinitions</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">chromPeaks</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  bySample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ppm <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"any"</span>, <span class="st">"within"</span>, <span class="st">"apex_within"</span><span class="op">)</span>,</span>
+<span>  isFilledColumn <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">chromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, adjusted <span class="op">=</span> <span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">object</span>, bySample <span class="op">=</span> <span class="cn">FALSE</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  bySample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  adjusted <span class="op">=</span> <span class="fu">hasAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">processHistory</span><span class="op">(</span><span class="va">object</span>, <span class="va">fileIndex</span>, <span class="va">type</span>, <span class="va">msLevel</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">dropChromPeaks</span><span class="op">(</span><span class="va">object</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">dropFeatureDefinitions</span><span class="op">(</span><span class="va">object</span>, keepAdjustedRtime <span class="op">=</span> <span class="cn">FALSE</span>, dropLastN <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">dropAdjustedRtime</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="profMat-xcmsSet.html">profMat</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"bin"</span>,</span>
+<span>  step <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  baselevel <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  basespace <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mzrange. <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">fileIndex</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp,Param</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">param</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  add <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">dropFilledChromPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectrapply</a></span><span class="op">(</span><span class="va">object</span>, FUN <span class="op">=</span> <span class="cn">NULL</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp,missing</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -949,7 +949,7 @@ help page).</p></li>
 features (see respective help page).</p></li>
 <li><p><code><a href="overlappingFeatures.html">overlappingFeatures</a></code> identify features that are
 overlapping or close in the m/z - rt space (see respective help page).</p></li>
-<li><p><code><a href="https://lgatto.github.io/MSnbase/reference/quantify-methods.html" class="external-link">quantify</a></code> extract feature intensities and put them, along
+<li><p><code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify</a></code> extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
 <code>SummarizedExperiment</code>. See help page for details.</p></li>
 </ul></div>
@@ -986,18 +986,18 @@ with feature definitions and phenodata information, into a
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The results from the peak detection are now stored in the XCMSnExp</span></span>
-<span class="r-in"><span class="co">## object</span></span>
-<span class="r-in"><span class="va">faahko_sub</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Disable parallel processing for this example</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The results from the peak detection are now stored in the XCMSnExp</span></span></span>
+<span class="r-in"><span><span class="co">## object</span></span></span>
+<span class="r-in"><span><span class="va">faahko_sub</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSn experiment data ("XCMSnExp")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object size in memory: 1.23 Mb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Spectra data - - -</span>
@@ -1026,9 +1026,9 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  248 peaks identified in 3 samples.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  On average 82.7 chromatographic peaks per sample.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The detected peaks can be accessed with the chromPeaks method.</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">chromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The detected peaks can be accessed with the chromPeaks method.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">chromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552</span>
@@ -1043,10 +1043,10 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP004    42      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP005    49      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP006    87      1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The settings of the chromatographic peak detection can be accessed with</span></span>
-<span class="r-in"><span class="co">## the processHistory method</span></span>
-<span class="r-in"><span class="fu">processHistory</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The settings of the chromatographic peak detection can be accessed with</span></span></span>
+<span class="r-in"><span><span class="co">## the processHistory method</span></span></span>
+<span class="r-in"><span><span class="fu">processHistory</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
@@ -1056,9 +1056,9 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MS level(s) 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Also the parameter class for the peak detection can be accessed</span></span>
-<span class="r-in"><span class="fu"><a href="ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="fu">processHistory</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Also the parameter class for the peak detection can be accessed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="fu">processHistory</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class:  CentWaveParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - ppm: [1] 25</span>
@@ -1075,45 +1075,45 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - firstBaselineCheck: [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - roiScales: numeric(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - extendLengthMSW: [1] FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes</span></span>
-<span class="r-in"><span class="co">## defined in Bioconductor's MSnbase package. To access the (raw) retention</span></span>
-<span class="r-in"><span class="co">## time for each spectrum we can use the rtime method. Setting bySample = TRUE</span></span>
-<span class="r-in"><span class="co">## would cause the retention times to be grouped by sample</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes</span></span></span>
+<span class="r-in"><span><span class="co">## defined in Bioconductor's MSnbase package. To access the (raw) retention</span></span></span>
+<span class="r-in"><span><span class="co">## time for each spectrum we can use the rtime method. Setting bySample = TRUE</span></span></span>
+<span class="r-in"><span><span class="co">## would cause the retention times to be grouped by sample</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> F1.S0001 F1.S0002 F1.S0003 F1.S0004 F1.S0005 F1.S0006 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2501.378 2502.943 2504.508 2506.073 2507.638 2509.203 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Similarly it is possible to extract the mz values or the intensity values</span></span>
-<span class="r-in"><span class="co">## using the mz and intensity method, respectively, also with the option to</span></span>
-<span class="r-in"><span class="co">## return the results grouped by sample instead of the default, which is</span></span>
-<span class="r-in"><span class="co">## grouped by spectrum. Finally, to extract all of the data we can use the</span></span>
-<span class="r-in"><span class="co">## spectra method which returns Spectrum objects containing all raw data.</span></span>
-<span class="r-in"><span class="co">## Note that all these methods read the information from the original input</span></span>
-<span class="r-in"><span class="co">## files and subsequently apply eventual data processing steps to them.</span></span>
-<span class="r-in"><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">faahko_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Similarly it is possible to extract the mz values or the intensity values</span></span></span>
+<span class="r-in"><span><span class="co">## using the mz and intensity method, respectively, also with the option to</span></span></span>
+<span class="r-in"><span><span class="co">## return the results grouped by sample instead of the default, which is</span></span></span>
+<span class="r-in"><span><span class="co">## grouped by spectrum. Finally, to extract all of the data we can use the</span></span></span>
+<span class="r-in"><span><span class="co">## spectra method which returns Spectrum objects containing all raw data.</span></span></span>
+<span class="r-in"><span><span class="co">## Note that all these methods read the information from the original input</span></span></span>
+<span class="r-in"><span><span class="co">## files and subsequently apply eventual data processing steps to them.</span></span></span>
+<span class="r-in"><span><span class="va">mzs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mz</a></span><span class="op">(</span><span class="va">faahko_sub</span>, bySample <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lengths.html" class="external-link">lengths</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      2      3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 445769 440794 442516 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The full data could also be read using the spectra data, which returns</span></span>
-<span class="r-in"><span class="co">## a list of Spectrum object containing the mz, intensity and rt values.</span></span>
-<span class="r-in"><span class="co">## spctr &lt;- spectra(faahko_sub)</span></span>
-<span class="r-in"><span class="co">## To get all spectra of the first file we can split them by file</span></span>
-<span class="r-in"><span class="co">## head(split(spctr, fromFile(faahko_sub))[[1]])</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">############</span></span>
-<span class="r-in"><span class="co">## Filtering</span></span>
-<span class="r-in"><span class="co">##</span></span>
-<span class="r-in"><span class="co">## XCMSnExp objects can be filtered by file, retention time, mz values or</span></span>
-<span class="r-in"><span class="co">## MS level. For some of these filter preprocessing results (mostly</span></span>
-<span class="r-in"><span class="co">## retention time correction and peak grouping results) will be dropped.</span></span>
-<span class="r-in"><span class="co">## Below we filter the XCMSnExp object by file to extract the results for</span></span>
-<span class="r-in"><span class="co">## only the second file.</span></span>
-<span class="r-in"><span class="va">xod_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xod_2</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The full data could also be read using the spectra data, which returns</span></span></span>
+<span class="r-in"><span><span class="co">## a list of Spectrum object containing the mz, intensity and rt values.</span></span></span>
+<span class="r-in"><span><span class="co">## spctr &lt;- spectra(faahko_sub)</span></span></span>
+<span class="r-in"><span><span class="co">## To get all spectra of the first file we can split them by file</span></span></span>
+<span class="r-in"><span><span class="co">## head(split(spctr, fromFile(faahko_sub))[[1]])</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">############</span></span></span>
+<span class="r-in"><span><span class="co">## Filtering</span></span></span>
+<span class="r-in"><span><span class="co">##</span></span></span>
+<span class="r-in"><span><span class="co">## XCMSnExp objects can be filtered by file, retention time, mz values or</span></span></span>
+<span class="r-in"><span><span class="co">## MS level. For some of these filter preprocessing results (mostly</span></span></span>
+<span class="r-in"><span><span class="co">## retention time correction and peak grouping results) will be dropped.</span></span></span>
+<span class="r-in"><span><span class="co">## Below we filter the XCMSnExp object by file to extract the results for</span></span></span>
+<span class="r-in"><span><span class="co">## only the second file.</span></span></span>
+<span class="r-in"><span><span class="va">xod_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xod_2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MSn experiment data ("XCMSnExp")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object size in memory: 0.48 Mb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Spectra data - - -</span>
@@ -1122,7 +1122,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Wed Jun 29 08:36:03 2022] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Mon Jan 16 12:11:48 2023] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
@@ -1142,9 +1142,9 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  100 peaks identified in 1 samples.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  On average 100 chromatographic peaks per sample.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Now the objects contains only the idenfified peaks for the second file</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">chromPeaks</span><span class="op">(</span><span class="va">xod_2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Now the objects contains only the idenfified peaks for the second file</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">chromPeaks</span><span class="op">(</span><span class="va">xod_2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into        intb</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP088 384.1 384.1 384.1 2603.100 2592.145 2614.054   274906.3   274885.96</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP089 533.3 533.3 533.3 2686.042 2681.347 2689.172    70456.3    70450.04</span>
@@ -1159,14 +1159,14 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP091  77640    42      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP092 692352    68      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP093 345536    48      1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##########</span></span>
-<span class="r-in"><span class="co">## Coercing to an xcmsSet object</span></span>
-<span class="r-in"><span class="co">##</span></span>
-<span class="r-in"><span class="co">## We can also coerce the XCMSnExp object into an xcmsSet object:</span></span>
-<span class="r-in"><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html" class="external-link">as</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="st">"xcmsSet"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##########</span></span></span>
+<span class="r-in"><span><span class="co">## Coercing to an xcmsSet object</span></span></span>
+<span class="r-in"><span><span class="co">##</span></span></span>
+<span class="r-in"><span><span class="co">## We can also coerce the XCMSnExp object into an xcmsSet object:</span></span></span>
+<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="st">"xcmsSet"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="xcmsSet-class.html">peaks</a></span><span class="op">(</span><span class="va">xs</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="xcmsSet-class.html">peaks</a></span><span class="op">(</span><span class="va">xs</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552</span>
@@ -1195,7 +1195,7 @@ with feature definitions and phenodata information, into a
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

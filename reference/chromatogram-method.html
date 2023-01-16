@@ -20,7 +20,7 @@ chromatogram function in the MSnbase package."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -75,19 +75,19 @@ an <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" 
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp</span>
-<span class="fu">chromatogram</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">rt</span>,
-  <span class="va">mz</span>,
-  aggregationFun <span class="op">=</span> <span class="st">"sum"</span>,
-  missing <span class="op">=</span> <span class="cn">NA_real_</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
-  adjustedRtime <span class="op">=</span> <span class="fu"><a href="XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,
-  filled <span class="op">=</span> <span class="cn">FALSE</span>,
-  include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apex_within"</span>, <span class="st">"any"</span>, <span class="st">"none"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu">chromatogram</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">rt</span>,</span>
+<span>  <span class="va">mz</span>,</span>
+<span>  aggregationFun <span class="op">=</span> <span class="st">"sum"</span>,</span>
+<span>  missing <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  adjustedRtime <span class="op">=</span> <span class="fu"><a href="XCMSnExp-class.html">hasAdjustedRtime</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>,</span>
+<span>  filled <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apex_within"</span>, <span class="st">"any"</span>, <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -213,19 +213,19 @@ and use these (for the subsetting based on the provided parameter
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load a test data set with identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract the ion chromatogram for one chromatographic peak in the data.</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">chromatogram</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">chrs</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load a test data set with identified chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Disable parallel processing for this example</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract the ion chromatogram for one chromatographic peak in the data.</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">chromatogram</span><span class="op">(</span><span class="va">faahko_sub</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span>, mz <span class="op">=</span> <span class="fl">335</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">chrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 1 row and 3 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ko15.CDF        ko16.CDF        ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
@@ -235,23 +235,23 @@ and use these (for the subsetting based on the provided parameter
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chromatographic peak detection:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Identified chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       row column</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP095   1      2</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot the chromatogram</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract chromatograms for multiple ranges.</span></span>
-<span class="r-in"><span class="va">mzr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">335</span>, <span class="fl">335</span>, <span class="fl">344</span>, <span class="fl">344</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rtr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span>, <span class="fl">2600</span>, <span class="fl">2750</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">chromatogram</span><span class="op">(</span><span class="va">faahko_sub</span>, mz <span class="op">=</span> <span class="va">mzr</span>, rt <span class="op">=</span> <span class="va">rtr</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the chromatogram</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract chromatograms for multiple ranges.</span></span></span>
+<span class="r-in"><span><span class="va">mzr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">335</span>, <span class="fl">335</span>, <span class="fl">344</span>, <span class="fl">344</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rtr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span>, <span class="fl">2600</span>, <span class="fl">2750</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">chromatogram</span><span class="op">(</span><span class="va">faahko_sub</span>, mz <span class="op">=</span> <span class="va">mzr</span>, rt <span class="op">=</span> <span class="va">rtr</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mz mzmin mzmax       rt    rtmin    rtmax    into    intb   maxo sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP095 335   335   335 2786.199 2764.290 2812.803 1496244 1451652  58736 55</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP003 344   344   344 2679.783 2646.919 2709.517 5210016 5135917 152320 68</span>
@@ -262,12 +262,12 @@ and use these (for the subsetting based on the provided parameter
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP003      1   2      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP090      2   2      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP193      3   2      3</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="chromatogram-method-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Get access to all chromatograms for the second mz/rt range</span></span>
-<span class="r-in"><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Get access to all chromatograms for the second mz/rt range</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 1 row and 3 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ko15.CDF        ko16.CDF        ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
@@ -277,9 +277,9 @@ and use these (for the subsetting based on the provided parameter
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chromatographic peak detection:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot just that one</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot just that one</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="chromatogram-method-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -295,7 +295,7 @@ and use these (for the subsetting based on the provided parameter
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

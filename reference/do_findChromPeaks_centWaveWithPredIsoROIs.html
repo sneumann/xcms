@@ -29,7 +29,7 @@ The do_findChromPeaks_centWaveAddPredIsoROIs performs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -93,53 +93,53 @@ The do_findChromPeaks_centWaveAddPredIsoROIs performs
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">do_findChromPeaks_centWaveWithPredIsoROIs</span><span class="op">(</span>
-  <span class="va">mz</span>,
-  <span class="va">int</span>,
-  <span class="va">scantime</span>,
-  <span class="va">valsPerSpect</span>,
-  ppm <span class="op">=</span> <span class="fl">25</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
-  snthresh <span class="op">=</span> <span class="fl">10</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
-  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
-  integrate <span class="op">=</span> <span class="fl">1</span>,
-  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
-  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,
-  noise <span class="op">=</span> <span class="fl">0</span>,
-  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,
-  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,
-  roiScales <span class="op">=</span> <span class="cn">NULL</span>,
-  snthreshIsoROIs <span class="op">=</span> <span class="fl">6.25</span>,
-  maxCharge <span class="op">=</span> <span class="fl">3</span>,
-  maxIso <span class="op">=</span> <span class="fl">5</span>,
-  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,
-  polarity <span class="op">=</span> <span class="st">"unknown"</span>,
-  extendLengthMSW <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">do_findChromPeaks_addPredIsoROIs</span><span class="op">(</span>
-  <span class="va">mz</span>,
-  <span class="va">int</span>,
-  <span class="va">scantime</span>,
-  <span class="va">valsPerSpect</span>,
-  ppm <span class="op">=</span> <span class="fl">25</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
-  snthresh <span class="op">=</span> <span class="fl">6.25</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
-  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
-  integrate <span class="op">=</span> <span class="fl">1</span>,
-  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
-  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,
-  noise <span class="op">=</span> <span class="fl">0</span>,
-  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,
-  peaks. <span class="op">=</span> <span class="cn">NULL</span>,
-  maxCharge <span class="op">=</span> <span class="fl">3</span>,
-  maxIso <span class="op">=</span> <span class="fl">5</span>,
-  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,
-  polarity <span class="op">=</span> <span class="st">"unknown"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_findChromPeaks_centWaveWithPredIsoROIs</span><span class="op">(</span></span>
+<span>  <span class="va">mz</span>,</span>
+<span>  <span class="va">int</span>,</span>
+<span>  <span class="va">scantime</span>,</span>
+<span>  <span class="va">valsPerSpect</span>,</span>
+<span>  ppm <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  snthresh <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,</span>
+<span>  integrate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,</span>
+<span>  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  noise <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  roiScales <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  snthreshIsoROIs <span class="op">=</span> <span class="fl">6.25</span>,</span>
+<span>  maxCharge <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  maxIso <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  polarity <span class="op">=</span> <span class="st">"unknown"</span>,</span>
+<span>  extendLengthMSW <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">do_findChromPeaks_addPredIsoROIs</span><span class="op">(</span></span>
+<span>  <span class="va">mz</span>,</span>
+<span>  <span class="va">int</span>,</span>
+<span>  <span class="va">scantime</span>,</span>
+<span>  <span class="va">valsPerSpect</span>,</span>
+<span>  ppm <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  snthresh <span class="op">=</span> <span class="fl">6.25</span>,</span>
+<span>  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,</span>
+<span>  integrate <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,</span>
+<span>  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  noise <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  peaks. <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  maxCharge <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  maxIso <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  polarity <span class="op">=</span> <span class="st">"unknown"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -249,7 +249,10 @@ be represented by a <code>list</code> of elements or a single row
 
 <dt>firstBaselineCheck</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
-data within regions of interest is checked to be above the first baseline.</p></dd>
+data within regions of interest is checked to be above the first baseline.
+In detail, a first rough estimate of the noise is calculated and peak
+detection is performed only in regions in which multiple sequential
+signals are higher than this first estimated baseline/noise level.</p></dd>
 
 
 <dt>roiScales</dt>
@@ -408,7 +411,7 @@ are: <code>"mz"</code>, <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"scmin
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

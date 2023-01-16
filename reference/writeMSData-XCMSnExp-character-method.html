@@ -19,7 +19,7 @@ the exported spectra."><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -73,15 +73,15 @@ the exported spectra.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp,character</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/writeMSData.html" class="external-link">writeMSData</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">file</span>,
-  outformat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mzml"</span>, <span class="st">"mzxml"</span><span class="op">)</span>,
-  copy <span class="op">=</span> <span class="cn">FALSE</span>,
-  software_processing <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for XCMSnExp,character</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">writeMSData</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">file</span>,</span>
+<span>  outformat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mzml"</span>, <span class="st">"mzxml"</span><span class="op">)</span>,</span>
+<span>  copy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  software_processing <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -108,11 +108,11 @@ original file names etc) should be copied from the original files.</p></dd>
 <dt>software_processing</dt>
 <dd><p>optionally provide specific data processing steps.
 See documentation of the <code>software_processing</code> parameter of
-<code><a href="https://rdrr.io/pkg/mzR/man/writeMSData.html" class="external-link">mzR::writeMSData()</a></code>.</p></dd>
+<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mzR::writeMSData()</a></code>.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Additional parameters to pass down to the <code><a href="https://lgatto.github.io/MSnbase/reference/writeMSData.html" class="external-link">writeMSData()</a></code>
+<dd><p>Additional parameters to pass down to the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">writeMSData()</a></code>
 function in the <code>MSnbase</code> package, such as <code>outformat</code> to specify the
 output format (<code>"mzml"</code> or <code>"mzxml"</code>) or <code>copy</code> to specify whether
 general information from the original MS data files (such as data
@@ -121,7 +121,7 @@ processing, software etc) should be copied to the new files.</p></dd>
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://lgatto.github.io/MSnbase/reference/writeMSData.html" class="external-link">writeMSData()</a></code> function in the <code>MSnbase</code> package.</p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">writeMSData()</a></code> function in the <code>MSnbase</code> package.</p></div>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -140,7 +140,7 @@ processing, software etc) should be copied to the new files.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

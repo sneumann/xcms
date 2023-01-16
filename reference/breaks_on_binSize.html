@@ -18,7 +18,7 @@ from fromX to toX."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -71,7 +71,7 @@ from <code>fromX</code> to <code>toX</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">binSize</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="va">fromX</span>, <span class="va">toX</span>, <span class="va">binSize</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -116,43 +116,43 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Define breaks with a size of 0.13 for a data range from 1 to 10:</span></span>
-<span class="r-in"><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Define breaks with a size of 0.13 for a data range from 1 to 10:</span></span></span>
+<span class="r-in"><span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1.00  1.13  1.26  1.39  1.52  1.65  1.78  1.91  2.04  2.17  2.30  2.43</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13]  2.56  2.69  2.82  2.95  3.08  3.21  3.34  3.47  3.60  3.73  3.86  3.99</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [25]  4.12  4.25  4.38  4.51  4.64  4.77  4.90  5.03  5.16  5.29  5.42  5.55</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [37]  5.68  5.81  5.94  6.07  6.20  6.33  6.46  6.59  6.72  6.85  6.98  7.11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [49]  7.24  7.37  7.50  7.63  7.76  7.89  8.02  8.15  8.28  8.41  8.54  8.67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61]  8.80  8.93  9.06  9.19  9.32  9.45  9.58  9.71  9.84 10.00</span>
-<span class="r-in"><span class="co">## The size of the last bin is however larger than 0.13:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## The size of the last bin is however larger than 0.13:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.13</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [31] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [46] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.13 0.16</span>
-<span class="r-in"><span class="co">## If we would use seq, the max value would not be included:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.13</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## If we would use seq, the max value would not be included:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.13</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1.00 1.13 1.26 1.39 1.52 1.65 1.78 1.91 2.04 2.17 2.30 2.43 2.56 2.69 2.82</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16] 2.95 3.08 3.21 3.34 3.47 3.60 3.73 3.86 3.99 4.12 4.25 4.38 4.51 4.64 4.77</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [31] 4.90 5.03 5.16 5.29 5.42 5.55 5.68 5.81 5.94 6.07 6.20 6.33 6.46 6.59 6.72</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [46] 6.85 6.98 7.11 7.24 7.37 7.50 7.63 7.76 7.89 8.02 8.15 8.28 8.41 8.54 8.67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [61] 8.80 8.93 9.06 9.19 9.32 9.45 9.58 9.71 9.84 9.97</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## In the next example we use binSize that leads to an additional last bin with</span></span>
-<span class="r-in"><span class="co">## a smaller binSize:</span></span>
-<span class="r-in"><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.51</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## In the next example we use binSize that leads to an additional last bin with</span></span></span>
+<span class="r-in"><span><span class="co">## a smaller binSize:</span></span></span>
+<span class="r-in"><span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.51</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1.00  1.51  2.02  2.53  3.04  3.55  4.06  4.57  5.08  5.59  6.10  6.61</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13]  7.12  7.63  8.14  8.65  9.16  9.67 10.00</span>
-<span class="r-in"><span class="co">## Again, the max value is included, but the size of the last bin is &lt; 0.51.</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Again, the max value is included, but the size of the last bin is &lt; 0.51.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu">breaks_on_binSize</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51 0.51</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16] 0.51 0.51 0.33</span>
-<span class="r-in"><span class="co">## Using just seq would result in the following bin definition:</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.51</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Using just seq would result in the following bin definition:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, by <span class="op">=</span> <span class="fl">0.51</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 1.00 1.51 2.02 2.53 3.04 3.55 4.06 4.57 5.08 5.59 6.10 6.61 7.12 7.63 8.14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [16] 8.65 9.16 9.67</span>
-<span class="r-in"><span class="co">## Thus it defines one bin (break) less.</span></span>
+<span class="r-in"><span><span class="co">## Thus it defines one bin (break) less.</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -167,7 +167,7 @@ See examples for more details and a comparisom to R's <code>seq</code> function.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

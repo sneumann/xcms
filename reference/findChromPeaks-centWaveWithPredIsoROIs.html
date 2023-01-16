@@ -46,7 +46,7 @@ polarity,polarity&amp;lt;-: getter and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -127,66 +127,66 @@ polarity,polarity&amp;lt;-: getter and
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">CentWavePredIsoParam</span><span class="op">(</span>
-  ppm <span class="op">=</span> <span class="fl">25</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
-  snthresh <span class="op">=</span> <span class="fl">10</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
-  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
-  integrate <span class="op">=</span> <span class="fl">1L</span>,
-  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
-  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,
-  noise <span class="op">=</span> <span class="fl">0</span>,
-  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,
-  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,
-  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  snthreshIsoROIs <span class="op">=</span> <span class="fl">6.25</span>,
-  maxCharge <span class="op">=</span> <span class="fl">3</span>,
-  maxIso <span class="op">=</span> <span class="fl">5</span>,
-  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,
-  polarity <span class="op">=</span> <span class="st">"unknown"</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for OnDiskMSnExp,CentWavePredIsoParam</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">param</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
-  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">snthreshIsoROIs</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">snthreshIsoROIs</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">maxCharge</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">maxCharge</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">maxIso</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">maxIso</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">mzIntervalExtension</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu">mzIntervalExtension</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWavePredIsoParam</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CentWavePredIsoParam</span><span class="op">(</span></span>
+<span>  ppm <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  snthresh <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,</span>
+<span>  integrate <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,</span>
+<span>  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  noise <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  snthreshIsoROIs <span class="op">=</span> <span class="fl">6.25</span>,</span>
+<span>  maxCharge <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  maxIso <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  mzIntervalExtension <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  polarity <span class="op">=</span> <span class="st">"unknown"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for OnDiskMSnExp,CentWavePredIsoParam</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">param</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">snthreshIsoROIs</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">snthreshIsoROIs</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">maxCharge</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">maxCharge</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">maxIso</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">maxIso</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">mzIntervalExtension</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu">mzIntervalExtension</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWavePredIsoParam</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">polarity</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -272,7 +272,10 @@ be represented by a <code>list</code> of elements or a single row
 
 <dt>firstBaselineCheck</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
-data within regions of interest is checked to be above the first baseline.</p></dd>
+data within regions of interest is checked to be above the first baseline.
+In detail, a first rough estimate of the noise is calculated and peak
+detection is performed only in regions in which multiple sequential
+signals are higher than this first estimated baseline/noise level.</p></dd>
 
 
 <dt>roiScales</dt>
@@ -417,12 +420,12 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Create a param object</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">CentWavePredIsoParam</span><span class="op">(</span>maxCharge <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Change snthresh parameter</span></span>
-<span class="r-in"><span class="fu"><a href="findChromPeaks-centWave.html">snthresh</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">25</span></span>
-<span class="r-in"><span class="va">p</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create a param object</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">CentWavePredIsoParam</span><span class="op">(</span>maxCharge <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Change snthresh parameter</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="findChromPeaks-centWave.html">snthresh</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">25</span></span></span>
+<span class="r-in"><span><span class="va">p</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class:  CentWavePredIsoParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - snthreshIsoROIs: [1] 6.25</span>
@@ -444,7 +447,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - firstBaselineCheck: [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - roiScales: numeric(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - extendLengthMSW: [1] FALSE</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -459,7 +462,7 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

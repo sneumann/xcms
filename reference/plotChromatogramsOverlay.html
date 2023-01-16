@@ -26,7 +26,7 @@ the plot function for XChromatogram() object for details)."><!-- mathjax --><scr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -87,39 +87,39 @@ the <code>plot</code> function for <code><a href="XChromatogram.html">XChromatog
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for MChromatograms</span>
-<span class="fu">plotChromatogramsOverlay</span><span class="op">(</span>
-  <span class="va">object</span>,
-  col <span class="op">=</span> <span class="st">"#00000060"</span>,
-  type <span class="op">=</span> <span class="st">"l"</span>,
-  main <span class="op">=</span> <span class="cn">NULL</span>,
-  xlab <span class="op">=</span> <span class="st">"rtime"</span>,
-  ylab <span class="op">=</span> <span class="st">"intensity"</span>,
-  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  stacked <span class="op">=</span> <span class="fl">0</span>,
-  transform <span class="op">=</span> <span class="va">identity</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XChromatograms</span>
-<span class="fu">plotChromatogramsOverlay</span><span class="op">(</span>
-  <span class="va">object</span>,
-  col <span class="op">=</span> <span class="st">"#00000060"</span>,
-  type <span class="op">=</span> <span class="st">"l"</span>,
-  main <span class="op">=</span> <span class="cn">NULL</span>,
-  xlab <span class="op">=</span> <span class="st">"rtime"</span>,
-  ylab <span class="op">=</span> <span class="st">"intensity"</span>,
-  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  peakType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"polygon"</span>, <span class="st">"point"</span>, <span class="st">"rectangle"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  peakBg <span class="op">=</span> <span class="cn">NULL</span>,
-  peakCol <span class="op">=</span> <span class="cn">NULL</span>,
-  peakPch <span class="op">=</span> <span class="fl">1</span>,
-  stacked <span class="op">=</span> <span class="fl">0</span>,
-  transform <span class="op">=</span> <span class="va">identity</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for MChromatograms</span></span>
+<span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"#00000060"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"rtime"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"intensity"</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  stacked <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  transform <span class="op">=</span> <span class="va">identity</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XChromatograms</span></span>
+<span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"#00000060"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"rtime"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"intensity"</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  peakType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"polygon"</span>, <span class="st">"point"</span>, <span class="st">"rectangle"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  peakBg <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  peakCol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  peakPch <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  stacked <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  transform <span class="op">=</span> <span class="va">identity</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -224,72 +224,72 @@ each EIC.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load preprocessed data and extract EICs for some features.</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span class="r-in">                    <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"WT"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Subset to the first 3 files.</span></span>
-<span class="r-in"><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, keepFeatures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Define features for which to extract EICs</span></span>
-<span class="r-in"><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FT097"</span>, <span class="st">"FT163"</span>, <span class="st">"FT165"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="va">fts</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load preprocessed data and extract EICs for some features.</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"WT"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Subset to the first 3 files.</span></span></span>
+<span class="r-in"><span><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, keepFeatures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Define features for which to extract EICs</span></span></span>
+<span class="r-in"><span><span class="va">fts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FT097"</span>, <span class="st">"FT163"</span>, <span class="st">"FT165"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="va">fts</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## plot the overlay of EICs in the first sample</span></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Define a different color for each feature (row in chrs). By default, also</span></span>
-<span class="r-in"><span class="co">## all chromatographic peaks of a feature is labeled in the same color.</span></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Alternatively, we can define a color for each individual chromatographic</span></span>
-<span class="r-in"><span class="co">## peak and provide this with the `peakBg` and `peakCol` parameters.</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## plot the overlay of EICs in the first sample</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Define a different color for each feature (row in chrs). By default, also</span></span></span>
+<span class="r-in"><span><span class="co">## all chromatographic peaks of a feature is labeled in the same color.</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Alternatively, we can define a color for each individual chromatographic</span></span></span>
+<span class="r-in"><span><span class="co">## peak and provide this with the `peakBg` and `peakCol` parameters.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           mz mzmin mzmax      rt    rtmin    rtmax     into     intb   maxo sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0150 502.1 502.1 502.1 3174.87 3153.737 3206.719 20072586 19760978 765440 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0130 503.1 503.1 503.1 3174.87 3153.737 3206.719  5456090  5316459 223104 37</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        sample row column</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0150      1   2      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0130      1   3      1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Use a color for each of the two identified peaks in that sample</span></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span>,</span>
-<span class="r-in">    peakBg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ffff0020"</span>, <span class="st">"#00ffff20"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Use a color for each of the two identified peaks in that sample</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    peakBg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ffff0020"</span>, <span class="st">"#00ffff20"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plotting the data in all samples.</span></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plotting the data in all samples.</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Creating a "stacked" EIC plot: the EICs are placed along the y-axis</span></span>
-<span class="r-in"><span class="co">## relative to their m/z value. With `stacked = 1` the y-axis is split in</span></span>
-<span class="r-in"><span class="co">## half, the lower half being used for the stacking of the EICs, the upper</span></span>
-<span class="r-in"><span class="co">## half being used for the *original* intensity axis.</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, stacked <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## add horizontal lines for the m/z values of each EIC</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"grey"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Note that this type of visualization is different than the conventional</span></span>
-<span class="r-in"><span class="co">## plot function for chromatographic data, which will draw the EICs for</span></span>
-<span class="r-in"><span class="co">## multiple samples into the same plot</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Creating a "stacked" EIC plot: the EICs are placed along the y-axis</span></span></span>
+<span class="r-in"><span><span class="co">## relative to their m/z value. With `stacked = 1` the y-axis is split in</span></span></span>
+<span class="r-in"><span><span class="co">## half, the lower half being used for the stacking of the EICs, the upper</span></span></span>
+<span class="r-in"><span><span class="co">## half being used for the *original* intensity axis.</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, stacked <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## add horizontal lines for the m/z values of each EIC</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"grey"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Note that this type of visualization is different than the conventional</span></span></span>
+<span class="r-in"><span><span class="co">## plot function for chromatographic data, which will draw the EICs for</span></span></span>
+<span class="r-in"><span><span class="co">## multiple samples into the same plot</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Converting the object to a MChromatograms without detected peaks</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html" class="external-link">as</a></span><span class="op">(</span><span class="va">chrs</span>, <span class="st">"MChromatograms"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span>,</span>
-<span class="r-in">    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Converting the object to a MChromatograms without detected peaks</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">chrs</span>, <span class="st">"MChromatograms"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plotChromatogramsOverlay</span><span class="op">(</span><span class="va">chrs</span>,</span></span>
+<span class="r-in"><span>    col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-5.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plotChromatogramsOverlay-6.png" alt="" width="700" height="433"></span>
 </code></pre></div>
@@ -306,7 +306,7 @@ each EIC.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

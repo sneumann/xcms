@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -75,13 +75,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">imputeLinInterpol</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">baseValue</span>,
-  method <span class="op">=</span> <span class="st">"lin"</span>,
-  distance <span class="op">=</span> <span class="fl">1L</span>,
-  noInterpolAtEnds <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">imputeLinInterpol</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">baseValue</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"lin"</span>,</span>
+<span>  distance <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  noInterpolAtEnds <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -159,63 +159,63 @@ end of the vector).</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">#######</span></span>
-<span class="r-in"><span class="co">## Impute missing values by linearly interpolating from neighboring</span></span>
-<span class="r-in"><span class="co">## non-empty elements</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">#######</span></span></span>
+<span class="r-in"><span><span class="co">## Impute missing values by linearly interpolating from neighboring</span></span></span>
+<span class="r-in"><span><span class="co">## non-empty elements</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3.000000 2.000000 1.000000 2.000000 2.666667 3.333333 4.000000 3.750000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 3.500000 3.250000 3.000000 2.800000 2.600000 2.400000 2.200000 2.000000</span>
-<span class="r-in"><span class="co">## visualize the interpolation:</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## visualize the interpolation:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="imputeLinInterpol-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## If the first or last elements are NA, interpolation is performed from 0</span></span>
-<span class="r-in"><span class="co">## to the first non-empty element.</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="cn">NA</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## If the first or last elements are NA, interpolation is performed from 0</span></span></span>
+<span class="r-in"><span><span class="co">## to the first non-empty element.</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">4</span>, <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 1 4 2</span>
-<span class="r-in"><span class="co">## visualize the interpolation:</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## visualize the interpolation:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="imputeLinInterpol-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## If noInterpolAtEnds is TRUE no interpolation is performed at both ends</span></span>
-<span class="r-in"><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span>, noInterpolAtEnds <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## If noInterpolAtEnds is TRUE no interpolation is performed at both ends</span></span></span>
+<span class="r-in"><span><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"lin"</span>, noInterpolAtEnds <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 2 1 4 0</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">######</span></span>
-<span class="r-in"><span class="co">## method = "linbase"</span></span>
-<span class="r-in"><span class="co">## "linbase" performs imputation by interpolation for empty elements based on</span></span>
-<span class="r-in"><span class="co">## 'distance' adjacent non-empty elements, setting all remaining empty elements</span></span>
-<span class="r-in"><span class="co">## to the baseValue</span></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Setting distance = 0 skips imputation by linear interpolation</span></span>
-<span class="r-in"><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">######</span></span></span>
+<span class="r-in"><span><span class="co">## method = "linbase"</span></span></span>
+<span class="r-in"><span><span class="co">## "linbase" performs imputation by interpolation for empty elements based on</span></span></span>
+<span class="r-in"><span><span class="co">## 'distance' adjacent non-empty elements, setting all remaining empty elements</span></span></span>
+<span class="r-in"><span><span class="co">## to the baseValue</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="cn">NA</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">4</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">3</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Setting distance = 0 skips imputation by linear interpolation</span></span></span>
+<span class="r-in"><span><span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3.0 0.5 1.0 2.0 0.5 0.5 4.0 0.5 0.5 0.5 3.0 0.5 0.5 0.5 0.5 2.0</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## With distance = 1 for all empty elements next to a non-empty element the value</span></span>
-<span class="r-in"><span class="co">## is imputed by linear interpolation.</span></span>
-<span class="r-in"><span class="va">xInt</span> <span class="op">&lt;-</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xInt</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## With distance = 1 for all empty elements next to a non-empty element the value</span></span></span>
+<span class="r-in"><span><span class="co">## is imputed by linear interpolation.</span></span></span>
+<span class="r-in"><span><span class="va">xInt</span> <span class="op">&lt;-</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xInt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3.000000 2.000000 1.000000 2.000000 2.666667 3.333333 4.000000 2.250000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 0.500000 1.750000 3.000000 1.750000 0.500000 0.500000 1.250000 2.000000</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">xInt</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">xInt</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="imputeLinInterpol-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Setting distance = 2L would cause that for all empty elements for which the</span></span>
-<span class="r-in"><span class="co">## distance to the next non-empty element is &lt;= 2 the value is imputed by</span></span>
-<span class="r-in"><span class="co">## linear interpolation:</span></span>
-<span class="r-in"><span class="va">xInt</span> <span class="op">&lt;-</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xInt</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Setting distance = 2L would cause that for all empty elements for which the</span></span></span>
+<span class="r-in"><span><span class="co">## distance to the next non-empty element is &lt;= 2 the value is imputed by</span></span></span>
+<span class="r-in"><span><span class="co">## linear interpolation:</span></span></span>
+<span class="r-in"><span><span class="va">xInt</span> <span class="op">&lt;-</span> <span class="fu">imputeLinInterpol</span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"linbase"</span>, distance <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xInt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 3.000000 2.000000 1.000000 2.000000 2.666667 3.333333 4.000000 3.750000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9] 3.500000 3.250000 3.000000 2.800000 2.600000 2.400000 2.200000 2.000000</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">xInt</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">x</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">xInt</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="imputeLinInterpol-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -231,7 +231,7 @@ end of the vector).</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

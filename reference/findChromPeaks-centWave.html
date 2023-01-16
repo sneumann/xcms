@@ -55,7 +55,7 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -145,110 +145,110 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">CentWaveParam</span><span class="op">(</span>
-  ppm <span class="op">=</span> <span class="fl">25</span>,
-  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,
-  snthresh <span class="op">=</span> <span class="fl">10</span>,
-  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,
-  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,
-  integrate <span class="op">=</span> <span class="fl">1L</span>,
-  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,
-  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,
-  noise <span class="op">=</span> <span class="fl">0</span>,
-  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,
-  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,
-  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,
-  extendLengthMSW <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for OnDiskMSnExp,CentWaveParam</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">param</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,
-  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,
-  msLevel <span class="op">=</span> <span class="fl">1L</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">ppm</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">ppm</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">peakwidth</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">peakwidth</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">snthresh</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">snthresh</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">prefilter</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">prefilter</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">mzCenterFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">mzCenterFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/integrate.html" class="external-link">integrate</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/integrate.html" class="external-link">integrate</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">mzdiff</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">mzdiff</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">fitgauss</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">fitgauss</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">noise</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">noise</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">verboseColumns</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">verboseColumns</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">roiList</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">roiList</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">firstBaselineCheck</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">firstBaselineCheck</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">roiScales</span><span class="op">(</span><span class="va">object</span><span class="op">)</span>
-
-<span class="co"># S4 method for CentWaveParam</span>
-<span class="fu">roiScales</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CentWaveParam</span><span class="op">(</span></span>
+<span>  ppm <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  peakwidth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span>  snthresh <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span>  mzCenterFun <span class="op">=</span> <span class="st">"wMean"</span>,</span>
+<span>  integrate <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  mzdiff <span class="op">=</span> <span class="op">-</span><span class="fl">0.001</span>,</span>
+<span>  fitgauss <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  noise <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  verboseColumns <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  roiList <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  firstBaselineCheck <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  roiScales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  extendLengthMSW <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for OnDiskMSnExp,CentWaveParam</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">param</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  return.type <span class="op">=</span> <span class="st">"XCMSnExp"</span>,</span>
+<span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">ppm</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">ppm</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">peakwidth</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">peakwidth</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">snthresh</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">snthresh</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">prefilter</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">prefilter</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">mzCenterFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">mzCenterFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/integrate.html" class="external-link">integrate</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/integrate.html" class="external-link">integrate</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">mzdiff</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">mzdiff</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">fitgauss</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">fitgauss</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">noise</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">noise</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">verboseColumns</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">verboseColumns</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">roiList</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">roiList</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">firstBaselineCheck</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">firstBaselineCheck</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">roiScales</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for CentWaveParam</span></span>
+<span><span class="fu">roiScales</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -334,7 +334,10 @@ be represented by a <code>list</code> of elements or a single row
 
 <dt>firstBaselineCheck</dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
-data within regions of interest is checked to be above the first baseline.</p></dd>
+data within regions of interest is checked to be above the first baseline.
+In detail, a first rough estimate of the noise is calculated and peak
+detection is performed only in regions in which multiple sequential
+signals are higher than this first estimated baseline/noise level.</p></dd>
 
 
 <dt>roiScales</dt>
@@ -481,14 +484,14 @@ detection in purely chromatographic data.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Create a CentWaveParam object. Note that the noise is set to 10000 to</span></span>
-<span class="r-in"><span class="co">## speed up the execution of the example - in a real use case the default</span></span>
-<span class="r-in"><span class="co">## value should be used, or it should be set to a reasonable value.</span></span>
-<span class="r-in"><span class="va">cwp</span> <span class="op">&lt;-</span> <span class="fu">CentWaveParam</span><span class="op">(</span>ppm <span class="op">=</span> <span class="fl">20</span>, noise <span class="op">=</span> <span class="fl">10000</span>, prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Change snthresh parameter</span></span>
-<span class="r-in"><span class="fu">snthresh</span><span class="op">(</span><span class="va">cwp</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">25</span></span>
-<span class="r-in"><span class="va">cwp</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create a CentWaveParam object. Note that the noise is set to 10000 to</span></span></span>
+<span class="r-in"><span><span class="co">## speed up the execution of the example - in a real use case the default</span></span></span>
+<span class="r-in"><span><span class="co">## value should be used, or it should be set to a reasonable value.</span></span></span>
+<span class="r-in"><span><span class="va">cwp</span> <span class="op">&lt;-</span> <span class="fu">CentWaveParam</span><span class="op">(</span>ppm <span class="op">=</span> <span class="fl">20</span>, noise <span class="op">=</span> <span class="fl">10000</span>, prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Change snthresh parameter</span></span></span>
+<span class="r-in"><span><span class="fu">snthresh</span><span class="op">(</span><span class="va">cwp</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">25</span></span></span>
+<span class="r-in"><span><span class="va">cwp</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class:  CentWaveParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - ppm: [1] 20</span>
@@ -505,24 +508,24 @@ detection in purely chromatographic data.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - firstBaselineCheck: [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - roiScales: numeric(0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - extendLengthMSW: [1] FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Perform the peak detection using centWave on some of the files from the</span></span>
-<span class="r-in"><span class="co">## faahKO package. Files are read using the readMSData from the MSnbase</span></span>
-<span class="r-in"><span class="co">## package</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Perform the peak detection using centWave on some of the files from the</span></span></span>
+<span class="r-in"><span><span class="co">## faahKO package. Files are read using the readMSData from the MSnbase</span></span></span>
+<span class="r-in"><span><span class="co">## package</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>           full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">raw_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fls</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Perform the peak detection using the settings defined above.</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">raw_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Perform the peak detection using the settings defined above.</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">raw_data</span>, param <span class="op">=</span> <span class="va">cwp</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Detecting mass traces at 20 ppm ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Detecting chromatographic peaks in 937 regions of interest ...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  OK: 120 found.</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982 1007409.0 1007380.8  38152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659  687146.6  671297.8  30552</span>
@@ -551,7 +554,7 @@ detection in purely chromatographic data.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

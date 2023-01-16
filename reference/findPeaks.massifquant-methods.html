@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -167,25 +167,25 @@ if centWave feature is used also (withWave = 1), or Massifquant is called throug
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="co">#load all the wild type and Knock out samples</span></span>
-<span class="r-in"><span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Subset to only the first 2 files.</span></span>
-<span class="r-in"><span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Run the massifquant analysis. Setting the noise level to 10000 to speed up</span></span>
-<span class="r-in"><span class="co">## execution of the examples - in a real use case it should be set to a reasoable</span></span>
-<span class="r-in"><span class="co">## value.</span></span>
-<span class="r-in"><span class="va">xset</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsSet.html">xcmsSet</a></span><span class="op">(</span><span class="va">cdffiles</span>, method <span class="op">=</span> <span class="st">"massifquant"</span>,</span>
-<span class="r-in">                consecMissedLimit <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                snthresh <span class="op">=</span> <span class="fl">10</span>,</span>
-<span class="r-in">                criticalValue <span class="op">=</span> <span class="fl">1.73</span>,</span>
-<span class="r-in">                ppm <span class="op">=</span> <span class="fl">10</span>,</span>
-<span class="r-in">                peakwidth<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">60</span><span class="op">)</span>,</span>
-<span class="r-in">                prefilter<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3000</span><span class="op">)</span>,</span>
-<span class="r-in">                noise <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span class="r-in">                withWave <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#load all the wild type and Knock out samples</span></span></span>
+<span class="r-in"><span><span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Subset to only the first 2 files.</span></span></span>
+<span class="r-in"><span><span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Run the massifquant analysis. Setting the noise level to 10000 to speed up</span></span></span>
+<span class="r-in"><span><span class="co">## execution of the examples - in a real use case it should be set to a reasoable</span></span></span>
+<span class="r-in"><span><span class="co">## value.</span></span></span>
+<span class="r-in"><span><span class="va">xset</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsSet.html">xcmsSet</a></span><span class="op">(</span><span class="va">cdffiles</span>, method <span class="op">=</span> <span class="st">"massifquant"</span>,</span></span>
+<span class="r-in"><span>                consecMissedLimit <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                snthresh <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                criticalValue <span class="op">=</span> <span class="fl">1.73</span>,</span></span>
+<span class="r-in"><span>                ppm <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>                peakwidth<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">60</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                prefilter<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                noise <span class="op">=</span> <span class="fl">10000</span>,</span></span>
+<span class="r-in"><span>                withWave <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Massifquant, Copyright (C) 2013 Brigham Young University.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.</span>
@@ -214,7 +214,7 @@ if centWave feature is used also (withWave = 1), or Massifquant is called throug
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

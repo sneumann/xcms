@@ -28,7 +28,7 @@ The profMat method creates a new profile matrix or returns the
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -91,8 +91,8 @@ The profMat method creates a new profile matrix or returns the
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for xcmsRaw</span>
-<span class="fu">profMat</span><span class="op">(</span><span class="va">object</span>, <span class="va">method</span>, <span class="va">step</span>, <span class="va">baselevel</span>, <span class="va">basespace</span>, <span class="va">mzrange.</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for xcmsRaw</span></span>
+<span><span class="fu">profMat</span><span class="op">(</span><span class="va">object</span>, <span class="va">method</span>, <span class="va">step</span>, <span class="va">baselevel</span>, <span class="va">basespace</span>, <span class="va">mzrange.</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -191,35 +191,35 @@ be used for binnind. If not provided, the whole mz value range is used.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko15.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Load the data without generating the profile matrix (profstep = 0)</span></span>
-<span class="r-in"><span class="va">xraw</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">file</span>, profstep <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Extract the profile matrix</span></span>
-<span class="r-in"><span class="va">profmat</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko15.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Load the data without generating the profile matrix (profstep = 0)</span></span></span>
+<span class="r-in"><span><span class="va">xraw</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">file</span>, profstep <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Extract the profile matrix</span></span></span>
+<span class="r-in"><span><span class="va">profmat</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Create profile matrix with method 'bin' and step 0.3 ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">profmat</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">profmat</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1335 1278</span>
-<span class="r-in"><span class="co">## If not otherwise specified, the settings from the xraw object are used:</span></span>
-<span class="r-in"><span class="fu"><a href="xcmsSet-class.html">profinfo</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## If not otherwise specified, the settings from the xraw object are used:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="xcmsSet-class.html">profinfo</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $method</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "bin"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $step</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="co">## To extract a profile matrix with linear interpolation use</span></span>
-<span class="r-in"><span class="va">profmat</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span>, method <span class="op">=</span> <span class="st">"binlin"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## To extract a profile matrix with linear interpolation use</span></span></span>
+<span class="r-in"><span><span class="va">profmat</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span>, method <span class="op">=</span> <span class="st">"binlin"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Create profile matrix with method 'binlin' and step 0.3 ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-in"><span class="co">## Alternatively, the profMethod of the xraw objects could be changed</span></span>
-<span class="r-in"><span class="fu"><a href="profMethod-methods.html">profMethod</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"binlin"</span></span>
-<span class="r-in"><span class="va">profmat_2</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## Alternatively, the profMethod of the xraw objects could be changed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="profMethod-methods.html">profMethod</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"binlin"</span></span></span>
+<span class="r-in"><span><span class="va">profmat_2</span> <span class="op">&lt;-</span> <span class="fu">profMat</span><span class="op">(</span><span class="va">xraw</span>, step <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Create profile matrix with method 'binlin' and step 0.3 ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">profmat</span>, <span class="va">profmat_2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">profmat</span>, <span class="va">profmat_2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -234,7 +234,7 @@ be used for binnind. If not provided, the whole mz value range is used.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

@@ -26,7 +26,7 @@ detection artifacts."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -87,14 +87,14 @@ detection artifacts.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for Chromatogram,CentWaveParam</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for MChromatograms,CentWaveParam</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for MChromatograms,MatchedFilterParam</span>
-<span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="va">BPPARAM</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for Chromatogram,CentWaveParam</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for MChromatograms,CentWaveParam</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for MChromatograms,MatchedFilterParam</span></span>
+<span><span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, BPPARAM <span class="op">=</span> <span class="va">BPPARAM</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -141,22 +141,22 @@ for details on the method.</p></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Loading a test data set with identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">faahko_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3700</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##</span></span>
-<span class="r-in"><span class="va">od</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html" class="external-link">as</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1L</span><span class="op">)</span>, <span class="st">"OnDiskMSnExp"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract chromatographic data for a small m/z range</span></span>
-<span class="r-in"><span class="va">chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">272.1</span>, <span class="fl">272.3</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Identify peaks with default settings</span></span>
-<span class="r-in"><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chr</span>, <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchr</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Loading a test data set with identified chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">faahko_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3700</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##</span></span></span>
+<span class="r-in"><span><span class="va">od</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="fl">1L</span><span class="op">)</span>, <span class="st">"OnDiskMSnExp"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract chromatographic data for a small m/z range</span></span></span>
+<span class="r-in"><span><span class="va">chr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">272.1</span>, <span class="fl">272.3</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Identify peaks with default settings</span></span></span>
+<span class="r-in"><span><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chr</span>, <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class: XChromatogram</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Intensity values aggregated using: sum </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> length of object: 766</span>
@@ -169,27 +169,27 @@ for details on the method.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2734.556	2709.517	2770.55	286653.221615386	8907	15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3117.97	3097.625	3139.879	372049.599925925	16496	33</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3487.299	3457.565	3509.208	93049.7314242425	2651	15</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot data and identified peaks.</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot data and identified peaks.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="findChromPeaks-Chromatogram-CentWaveParam-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Perform peak detection on an MChromatograms object</span></span>
-<span class="r-in"><span class="va">od3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko15.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>,</span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko16.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>,</span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko18.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">    mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Perform peak detection on an MChromatograms object</span></span></span>
+<span class="r-in"><span><span class="va">od3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko15.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko16.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO/ko18.CDF"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Disable parallel processing for this example</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract chromatograms for a m/z - retention time slice</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od3</span>, mz <span class="op">=</span> <span class="fl">344</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Perform peak detection using CentWave</span></span>
-<span class="r-in"><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chrs</span>, param <span class="op">=</span> <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchrs</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Disable parallel processing for this example</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract chromatograms for a m/z - retention time slice</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od3</span>, mz <span class="op">=</span> <span class="fl">344</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Perform peak detection using CentWave</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chrs</span>, param <span class="op">=</span> <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 1 row and 3 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ko15.CDF        ko16.CDF        ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
@@ -199,18 +199,18 @@ for details on the method.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chromatographic peak detection:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract the identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract the identified chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            rt    rtmin    rtmax      into      intb   maxo sn row column</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2589.015 2571.801 2612.490  592297.3  554533.9  27600 14   1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 2679.783 2646.919 2709.517 5210015.9 5071346.6 152320 30   1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 2593.710 2559.281 2637.529  722415.3  640838.6  30640 14   1      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 2686.042 2648.483 2714.211 5700652.0 5587464.2 151744 45   1      2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28   1      3</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## plot the result</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## plot the result</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="findChromPeaks-Chromatogram-CentWaveParam-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -226,7 +226,7 @@ for details on the method.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

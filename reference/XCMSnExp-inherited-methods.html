@@ -47,7 +47,7 @@ examples."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -103,17 +103,17 @@ calling any of these methods causes all <code>xcms</code> pre-processing
 results to be removed from the <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object to ensure
 its data integrity.</p>
 <p><code>bin</code>: allows to <em>bin</em> spectra. See
-<code><a href="https://lgatto.github.io/MSnbase/reference/bin-methods.html" class="external-link">bin</a></code> documentation in the <code>MSnbase</code> package for more
+<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">bin</a></code> documentation in the <code>MSnbase</code> package for more
 details and examples.</p>
 <p><code>clean</code>: removes unused <code>0</code> intensity data
 points. See <code><a href="https://lgatto.github.io/MSnbase/reference/clean-methods.html" class="external-link">clean</a></code> documentation in the <code>MSnbase</code> package
 for details and examples.</p>
 <p><code>filterAcquisitionNum</code>: filters the
 <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object keeping only spectra with the provided
-acquisition numbers. See <code><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterAcquisitionNum</a></code> for
+acquisition numbers. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterAcquisitionNum</a></code> for
 details and examples.</p>
 <p>The <code>normalize</code> method performs basic normalization of
-spectra intensities. See <code><a href="https://lgatto.github.io/MSnbase/reference/normalise-methods.html" class="external-link">normalize</a></code> documentation
+spectra intensities. See <code><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></code> documentation
 in the <code>MSnbase</code> package for details and examples.</p>
 <p>The <code>pickPeaks</code> method performs peak picking. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code> documentation for details and examples.</p>
@@ -129,38 +129,38 @@ examples.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/bin-methods.html" class="external-link">bin</a></span><span class="op">(</span><span class="va">x</span>, binSize <span class="op">=</span> <span class="fl">1L</span>, <span class="va">msLevel.</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/clean-methods.html" class="external-link">clean</a></span><span class="op">(</span><span class="va">object</span>, all <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">msLevel.</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterAcquisitionNum</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">n</span>, <span class="va">file</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/normalise-methods.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">object</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"sum"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  halfWindowSize <span class="op">=</span> <span class="fl">3L</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAD"</span>, <span class="st">"SuperSmoother"</span><span class="op">)</span>,
-  SNR <span class="op">=</span> <span class="fl">0L</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html" class="external-link">removePeaks</a></span><span class="op">(</span><span class="va">object</span>, t <span class="op">=</span> <span class="st">"min"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">msLevel.</span><span class="op">)</span>
-
-<span class="co"># S4 method for XCMSnExp</span>
-<span class="fu"><a href="adjustRtime-peakGroups.html">smooth</a></span><span class="op">(</span>
-  <span class="va">x</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SavitzkyGolay"</span>, <span class="st">"MovingAverage"</span><span class="op">)</span>,
-  halfWindowSize <span class="op">=</span> <span class="fl">2L</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">bin</a></span><span class="op">(</span><span class="va">x</span>, binSize <span class="op">=</span> <span class="fl">1L</span>, <span class="va">msLevel.</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/clean-methods.html" class="external-link">clean</a></span><span class="op">(</span><span class="va">object</span>, all <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">msLevel.</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterAcquisitionNum</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">n</span>, <span class="va">file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">object</span>, method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"max"</span>, <span class="st">"sum"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  halfWindowSize <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MAD"</span>, <span class="st">"SuperSmoother"</span><span class="op">)</span>,</span>
+<span>  SNR <span class="op">=</span> <span class="fl">0L</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html" class="external-link">removePeaks</a></span><span class="op">(</span><span class="va">object</span>, t <span class="op">=</span> <span class="st">"min"</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">msLevel.</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for XCMSnExp</span></span>
+<span><span class="fu"><a href="adjustRtime-peakGroups.html">smooth</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SavitzkyGolay"</span>, <span class="st">"MovingAverage"</span><span class="op">)</span>,</span>
+<span>  halfWindowSize <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -210,7 +210,7 @@ object by file.</p></dd>
 
 <dt>method</dt>
 <dd><p>For <code>normalize</code>: <code>character(1)</code> specifying the
-normalization method. See <code><a href="https://lgatto.github.io/MSnbase/reference/normalise-methods.html" class="external-link">normalize</a></code> in the <code>MSnbase</code>
+normalization method. See <code><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></code> in the <code>MSnbase</code>
 package for details.
 For <code>pickPeaks</code>: <code>character(1)</code> defining the method. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code> for options. For <code>smooth</code>:
@@ -273,7 +273,7 @@ defining the threshold (method) to be used. See
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

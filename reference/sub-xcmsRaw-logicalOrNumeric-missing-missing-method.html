@@ -21,7 +21,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -124,22 +124,22 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Load a test file</span></span>
-<span class="r-in"><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko15.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xraw</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">file</span>, profstep <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## The number of scans/spectra:</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Load a test file</span></span></span>
+<span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko15.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xraw</span> <span class="op">&lt;-</span> <span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">file</span>, profstep <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## The number of scans/spectra:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1278</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Subset the object to scans with a scan time from 3500 to 4000.</span></span>
-<span class="r-in"><span class="va">xsub</span> <span class="op">&lt;-</span> <span class="va">xraw</span><span class="op">[</span><span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span> <span class="op">&gt;=</span> <span class="fl">3500</span> <span class="op">&amp;</span> <span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span> <span class="op">&lt;=</span> <span class="fl">4000</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Subset the object to scans with a scan time from 3500 to 4000.</span></span></span>
+<span class="r-in"><span><span class="va">xsub</span> <span class="op">&lt;-</span> <span class="va">xraw</span><span class="op">[</span><span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span> <span class="op">&gt;=</span> <span class="fl">3500</span> <span class="op">&amp;</span> <span class="va">xraw</span><span class="op">@</span><span class="va">scantime</span> <span class="op">&lt;=</span> <span class="fl">4000</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3501.383 3999.039</span>
-<span class="r-in"><span class="co">## The number of scans:</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## The number of scans:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">scantime</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 319</span>
-<span class="r-in"><span class="co">## The number of values of the subset:</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/pSet-class.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">## The number of values of the subset:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">xsub</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 130569</span>
 </code></pre></div>
     </div>
@@ -155,7 +155,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

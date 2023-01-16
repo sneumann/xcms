@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -126,16 +126,16 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">## These files do not have this problem to correct for but just</span></span>
-<span class="r-in">    <span class="co">## for an example</span></span>
-<span class="r-in">    <span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">xr</span><span class="op">&lt;-</span><span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">## These files do not have this problem to correct for but just</span></span></span>
+<span class="r-in"><span>    <span class="co">## for an example</span></span></span>
+<span class="r-in"><span>    <span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">xr</span><span class="op">&lt;-</span><span class="fu"><a href="xcmsRaw.html">xcmsRaw</a></span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Create profile matrix with method 'bin' and step 1 ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-in">    <span class="va">xr</span></span>
+<span class="r-in"><span>    <span class="va">xr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An "xcmsRaw" object with 1278 mass spectra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Time range: 2501.4-4499.8 seconds (41.7-75 minutes)</span>
@@ -148,14 +148,14 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Profile step: 1 m/z (401 grid points from 200 to 600 m/z)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Memory usage: 10.8 MB</span>
-<span class="r-in">    <span class="co">##Lets assume that the lockmass starts at 1 and is every 100 scans</span></span>
-<span class="r-in">    <span class="va">lockMass</span><span class="op">&lt;-</span><span class="fu">xcms</span><span class="fu">:::</span><span class="fu">makeacqNum</span><span class="op">(</span><span class="va">xr</span>, freq<span class="op">=</span><span class="fl">100</span>, start<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">## these are equcal</span></span>
-<span class="r-in">    <span class="va">lockmass</span><span class="op">&lt;-</span><span class="fu"><a href="AutoLockMass-methods.html">AutoLockMass</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span></span>
+<span class="r-in"><span>    <span class="co">##Lets assume that the lockmass starts at 1 and is every 100 scans</span></span></span>
+<span class="r-in"><span>    <span class="va">lockMass</span><span class="op">&lt;-</span><span class="fu">xcms</span><span class="fu">:::</span><span class="fu">makeacqNum</span><span class="op">(</span><span class="va">xr</span>, freq<span class="op">=</span><span class="fl">100</span>, start<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">## these are equcal</span></span></span>
+<span class="r-in"><span>    <span class="va">lockmass</span><span class="op">&lt;-</span><span class="fu"><a href="AutoLockMass-methods.html">AutoLockMass</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Lock mass frequency wasn't detected</span>
-<span class="r-in">    <span class="va">ob</span><span class="op">&lt;-</span><span class="fu">stitch</span><span class="op">(</span><span class="va">xr</span>, <span class="va">lockMass</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">ob</span></span>
+<span class="r-in"><span>    <span class="va">ob</span><span class="op">&lt;-</span><span class="fu">stitch</span><span class="op">(</span><span class="va">xr</span>, <span class="va">lockMass</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">ob</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An "xcmsRaw" object with 1304 mass spectra</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Time range: 1.6-2040.7 seconds (0-34 minutes)</span>
@@ -168,17 +168,17 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> Profile step: no profile data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Memory usage: 6.96 MB</span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="co">## plot the old data before correction</span></span>
-<span class="r-in">    <span class="va">foo</span><span class="op">&lt;-</span><span class="fu"><a href="rawEIC-methods.html">rawEIC</a></span><span class="op">(</span><span class="va">xr</span>, m<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">210</span><span class="op">)</span>, scan<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>,<span class="fl">140</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">foo</span><span class="op">$</span><span class="va">scan</span>, <span class="va">foo</span><span class="op">$</span><span class="va">intensity</span>, type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co">## plot the old data before correction</span></span></span>
+<span class="r-in"><span>    <span class="va">foo</span><span class="op">&lt;-</span><span class="fu"><a href="rawEIC-methods.html">rawEIC</a></span><span class="op">(</span><span class="va">xr</span>, m<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">210</span><span class="op">)</span>, scan<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>,<span class="fl">140</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">foo</span><span class="op">$</span><span class="va">scan</span>, <span class="va">foo</span><span class="op">$</span><span class="va">intensity</span>, type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="stitch-methods-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="co">## plot the new corrected data to see what changed</span></span>
-<span class="r-in">    <span class="va">foo</span><span class="op">&lt;-</span><span class="fu"><a href="rawEIC-methods.html">rawEIC</a></span><span class="op">(</span><span class="va">ob</span>, m<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">210</span><span class="op">)</span>, scan<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>,<span class="fl">140</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">foo</span><span class="op">$</span><span class="va">scan</span>, <span class="va">foo</span><span class="op">$</span><span class="va">intensity</span>, type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co">## plot the new corrected data to see what changed</span></span></span>
+<span class="r-in"><span>    <span class="va">foo</span><span class="op">&lt;-</span><span class="fu"><a href="rawEIC-methods.html">rawEIC</a></span><span class="op">(</span><span class="va">ob</span>, m<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">200</span>,<span class="fl">210</span><span class="op">)</span>, scan<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>,<span class="fl">140</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">foo</span><span class="op">$</span><span class="va">scan</span>, <span class="va">foo</span><span class="op">$</span><span class="va">intensity</span>, type<span class="op">=</span><span class="st">"h"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="stitch-methods-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -193,7 +193,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

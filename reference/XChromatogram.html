@@ -26,7 +26,7 @@ Arguments section."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -461,7 +461,7 @@ the same length than <code>chromPeaks(x)</code> has rows.</p></dd>
 
 <dt>peakPch</dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the point character
-to be used for <code>peakType = "point"</code>. See <code><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot()</a></code> in the <code>graphics</code>
+to be used for <code>peakType = "point"</code>. See <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot()</a></code> in the <code>graphics</code>
 package for more details.</p></dd>
 
 
@@ -739,58 +739,58 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## ---- Creation of XChromatograms ----</span></span>
-<span class="r-in"><span class="co">##</span></span>
-<span class="r-in"><span class="co">## Create a XChromatograms from Chromatogram objects</span></span>
-<span class="r-in"><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">12</span>, <span class="fl">8</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">13</span>, <span class="fl">43</span>, <span class="fl">34</span>, <span class="fl">23</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create an XChromatograms without peak data</span></span>
-<span class="r-in"><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create an XChromatograms with peaks data</span></span>
-<span class="r-in"><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">12</span>, <span class="cn">NA</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">    dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">    <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, chromPeaks <span class="op">=</span> <span class="va">pks</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create an XChromatograms from XChromatogram objects</span></span>
-<span class="r-in"><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">dta</span>, <span class="va">as</span>, <span class="st">"XChromatogram"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dta</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ---- Creation of XChromatograms ----</span></span></span>
+<span class="r-in"><span><span class="co">##</span></span></span>
+<span class="r-in"><span><span class="co">## Create a XChromatograms from Chromatogram objects</span></span></span>
+<span class="r-in"><span><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">12</span>, <span class="fl">8</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">13</span>, <span class="fl">43</span>, <span class="fl">34</span>, <span class="fl">23</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create an XChromatograms without peak data</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create an XChromatograms with peaks data</span></span></span>
+<span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">30</span>, <span class="fl">12</span>, <span class="cn">NA</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>    dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, chromPeaks <span class="op">=</span> <span class="va">pks</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create an XChromatograms from XChromatogram objects</span></span></span>
+<span class="r-in"><span><span class="va">dta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">dta</span>, <span class="va">as</span>, <span class="st">"XChromatogram"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dta</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu">XChromatograms</span><span class="op">(</span><span class="va">dta</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1     2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 TRUE FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Loading a test data set with identified chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Subset the dataset to the first and third file.</span></span>
-<span class="r-in"><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">od</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/mzRident2dfr.html" class="external-link">as</a></span><span class="op">(</span><span class="va">xod_sub</span>, <span class="st">"OnDiskMSnExp"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract chromatograms for a m/z - retention time slice</span></span>
-<span class="r-in"><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od</span>, mz <span class="op">=</span> <span class="fl">344</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chrs</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Loading a test data set with identified chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Subset the dataset to the first and third file.</span></span></span>
+<span class="r-in"><span><span class="va">xod_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">od</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">xod_sub</span>, <span class="st">"OnDiskMSnExp"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract chromatograms for a m/z - retention time slice</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">od</span>, mz <span class="op">=</span> <span class="fl">344</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">3500</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MChromatograms with 1 row and 2 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            ko15.CDF       ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;Chromatogram&gt; &lt;Chromatogram&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    length: 639    length: 639</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData with 1 variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData with 5 variables</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## --------------------------------------------------- ##</span></span>
-<span class="r-in"><span class="co">##       Chromatographic peak detection                ##</span></span>
-<span class="r-in"><span class="co">## --------------------------------------------------- ##</span></span>
-<span class="r-in"><span class="co">## Perform peak detection using CentWave</span></span>
-<span class="r-in"><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chrs</span>, param <span class="op">=</span> <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchrs</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## --------------------------------------------------- ##</span></span></span>
+<span class="r-in"><span><span class="co">##       Chromatographic peak detection                ##</span></span></span>
+<span class="r-in"><span><span class="co">## --------------------------------------------------- ##</span></span></span>
+<span class="r-in"><span><span class="co">## Perform peak detection using CentWave</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatographic-peak-detection.html">findChromPeaks</a></span><span class="op">(</span><span class="va">chrs</span>, param <span class="op">=</span> <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 1 row and 2 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             ko15.CDF        ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
@@ -800,61 +800,61 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chromatographic peak detection:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  method: centWave </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Do we have chromatographic peaks?</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Do we have chromatographic peaks?</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ko15.CDF ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     TRUE     TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Process history</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Process history</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Wed Jun 29 08:36:07 2022 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon Jan 16 12:11:52 2023 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The chromatographic peaks, columns "row" and "column" provide information</span></span>
-<span class="r-in"><span class="co">## in which sample the peak was identified.</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The chromatographic peaks, columns "row" and "column" provide information</span></span></span>
+<span class="r-in"><span><span class="co">## in which sample the peak was identified.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            rt    rtmin    rtmax      into      intb   maxo sn row column</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2589.015 2571.801 2612.490  592297.3  554533.9  27600 14   1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 2679.783 2646.919 2709.517 5210015.9 5071346.6 152320 30   1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28   1      2</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Spectifically extract chromatographic peaks for one sample/chromatogram</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Spectifically extract chromatographic peaks for one sample/chromatogram</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            rt   rtmin    rtmax    into    intb   maxo sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2682.914 2643.79 2731.427 5255689 4983389 125632 28</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot the results</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot the results using a different color for each sample</span></span>
-<span class="r-in"><span class="va">sample_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cols</span> <span class="op">&lt;-</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span><span class="op">[</span>, <span class="st">"column"</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakBg <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the results using a different color for each sample</span></span></span>
+<span class="r-in"><span><span class="va">sample_colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000040"</span>, <span class="st">"#00ff0040"</span>, <span class="st">"#0000ff40"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span><span class="op">[</span>, <span class="st">"column"</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakBg <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Indicate the peaks with a rectangle</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakCol <span class="op">=</span> <span class="va">cols</span>, peakType <span class="op">=</span> <span class="st">"rectangle"</span>,</span>
-<span class="r-in">    peakBg <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Indicate the peaks with a rectangle</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakCol <span class="op">=</span> <span class="va">cols</span>, peakType <span class="op">=</span> <span class="st">"rectangle"</span>,</span></span>
+<span class="r-in"><span>    peakBg <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## --------------------------------------------------- ##</span></span>
-<span class="r-in"><span class="co">##       Correspondence analysis                       ##</span></span>
-<span class="r-in"><span class="co">## --------------------------------------------------- ##</span></span>
-<span class="r-in"><span class="co">## Group chromatographic peaks across samples</span></span>
-<span class="r-in"><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span>, param <span class="op">=</span> <span class="va">prm</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">hasFeatures</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## --------------------------------------------------- ##</span></span></span>
+<span class="r-in"><span><span class="co">##       Correspondence analysis                       ##</span></span></span>
+<span class="r-in"><span><span class="co">## --------------------------------------------------- ##</span></span></span>
+<span class="r-in"><span><span class="co">## Group chromatographic peaks across samples</span></span></span>
+<span class="r-in"><span><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span>, param <span class="op">=</span> <span class="va">prm</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">hasFeatures</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 2 rows and 10 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
@@ -864,38 +864,38 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;numeric&gt;  &lt;list&gt; &lt;integer&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT1         2     2,3         1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT2         1       1         1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot the correspondence results. Use simulate = FALSE to show the</span></span>
-<span class="r-in"><span class="co">## actual results. Grouped chromatographic peaks are indicated with</span></span>
-<span class="r-in"><span class="co">## grey shaded rectangles.</span></span>
-<span class="r-in"><span class="fu"><a href="plotChromPeakDensity.html">plotChromPeakDensity</a></span><span class="op">(</span><span class="va">res</span>, simulate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the correspondence results. Use simulate = FALSE to show the</span></span></span>
+<span class="r-in"><span><span class="co">## actual results. Grouped chromatographic peaks are indicated with</span></span></span>
+<span class="r-in"><span><span class="co">## grey shaded rectangles.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plotChromPeakDensity.html">plotChromPeakDensity</a></span><span class="op">(</span><span class="va">res</span>, simulate <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Simulate a correspondence analysis based on different settings. Larger</span></span>
-<span class="r-in"><span class="co">## bw will increase the smoothing of the density estimate hence grouping</span></span>
-<span class="r-in"><span class="co">## chromatographic peaks that are more apart on the retention time axis.</span></span>
-<span class="r-in"><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, bw <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="plotChromPeakDensity.html">plotChromPeakDensity</a></span><span class="op">(</span><span class="va">res</span>, param <span class="op">=</span> <span class="va">prm</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Simulate a correspondence analysis based on different settings. Larger</span></span></span>
+<span class="r-in"><span><span class="co">## bw will increase the smoothing of the density estimate hence grouping</span></span></span>
+<span class="r-in"><span><span class="co">## chromatographic peaks that are more apart on the retention time axis.</span></span></span>
+<span class="r-in"><span><span class="va">prm</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks-density.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, bw <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plotChromPeakDensity.html">plotChromPeakDensity</a></span><span class="op">(</span><span class="va">res</span>, param <span class="op">=</span> <span class="va">prm</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Delete the identified feature definitions</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFeatureDefinitions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">hasFeatures</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Delete the identified feature definitions</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFeatureDefinitions</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">hasFeatures</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Create a XChromatogram object</span></span>
-<span class="r-in"><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
-<span class="r-in"><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">9</span></span>
-<span class="r-in"><span class="va">pks</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span class="r-in"><span class="va">pks</span><span class="op">[</span>, <span class="st">"maxo"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">19</span></span>
-<span class="r-in"><span class="va">pks</span><span class="op">[</span>, <span class="st">"into"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">93</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu">XChromatogram</span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
-<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">19</span>, <span class="fl">18</span>, <span class="fl">12</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">    chromPeaks <span class="op">=</span> <span class="va">pks</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchr</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Create a XChromatogram object</span></span></span>
+<span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">1</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">pks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rt"</span>, <span class="st">"rtmin"</span>, <span class="st">"rtmax"</span>, <span class="st">"into"</span>, <span class="st">"maxo"</span>, <span class="st">"sn"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
+<span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">9</span></span></span>
+<span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"rt"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">4</span></span></span>
+<span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"maxo"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">19</span></span></span>
+<span class="r-in"><span><span class="va">pks</span><span class="op">[</span>, <span class="st">"into"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">93</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu">XChromatogram</span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">19</span>, <span class="fl">18</span>, <span class="fl">12</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    chromPeaks <span class="op">=</span> <span class="va">pks</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class: XChromatogram</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> length of object: 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> from file: </span>
@@ -905,13 +905,13 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> Identified chromatographic peaks (1):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  rt	rtmin	rtmax	into	maxo	sn </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4	2	9	93	19	NA</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Add arbitrary peak annotations</span></span>
-<span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>peak_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu">XChromatogram</span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
-<span class="r-in">    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">19</span>, <span class="fl">18</span>, <span class="fl">12</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">    chromPeaks <span class="op">=</span> <span class="va">pks</span>, chromPeakData <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchr</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add arbitrary peak annotations</span></span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>peak_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchr</span> <span class="op">&lt;-</span> <span class="fu">XChromatogram</span><span class="op">(</span>rtime <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">8</span>, <span class="fl">14</span>, <span class="fl">19</span>, <span class="fl">18</span>, <span class="fl">12</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    chromPeaks <span class="op">=</span> <span class="va">pks</span>, chromPeakData <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class: XChromatogram</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> length of object: 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> from file: </span>
@@ -921,41 +921,41 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> Identified chromatographic peaks (1):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  rt	rtmin	rtmax	into	maxo	sn </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4	2	9	93	19	NA</span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 1 row and 3 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       peak_id  ms_level is_filled</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;character&gt; &lt;integer&gt; &lt;logical&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           a         1     FALSE</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Extract the chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extract the chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      rt rtmin rtmax into maxo sn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  4     2     9   93   19 NA</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plotting of a single XChromatogram object</span></span>
-<span class="r-in"><span class="co">## o Don't highlight chromatographic peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## o Indicate peaks with a polygon</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plotting of a single XChromatogram object</span></span></span>
+<span class="r-in"><span><span class="co">## o Don't highlight chromatographic peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## o Indicate peaks with a polygon</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Add a second peak to the data.</span></span>
-<span class="r-in"><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">10</span>, <span class="cn">NA</span>, <span class="fl">15</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot the peaks in different colors</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakCol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#0000ff80"</span><span class="op">)</span>,</span>
-<span class="r-in">    peakBg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000020"</span>, <span class="st">"#0000ff20"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Indicate the peaks as rectangles</span></span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakCol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000060"</span>, <span class="st">"#0000ff60"</span><span class="op">)</span>, peakBg <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">    peakType <span class="op">=</span> <span class="st">"rectangle"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add a second peak to the data.</span></span></span>
+<span class="r-in"><span><span class="va">pks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">10</span>, <span class="cn">NA</span>, <span class="fl">15</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">pks</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot the peaks in different colors</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakCol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000080"</span>, <span class="st">"#0000ff80"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    peakBg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000020"</span>, <span class="st">"#0000ff20"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Indicate the peaks as rectangles</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, peakCol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#ff000060"</span>, <span class="st">"#0000ff60"</span><span class="op">)</span>, peakBg <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>    peakType <span class="op">=</span> <span class="st">"rectangle"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-7.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Filter the XChromatogram by retention time</span></span>
-<span class="r-in"><span class="va">xchr_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">xchr</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xchr_sub</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Filter the XChromatogram by retention time</span></span></span>
+<span class="r-in"><span><span class="va">xchr_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterRt</a></span><span class="op">(</span><span class="va">xchr</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xchr_sub</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class: XChromatogram</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> length of object: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> from file: </span>
@@ -965,7 +965,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> Identified chromatographic peaks (1):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  rt	rtmin	rtmax	into	maxo	sn </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4	2	9	93	19	NA</span>
-<span class="r-in"><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr_sub</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr_sub</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XChromatogram-8.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -981,7 +981,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

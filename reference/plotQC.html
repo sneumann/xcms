@@ -18,7 +18,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z'><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -71,7 +71,7 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotQC</span><span class="op">(</span><span class="va">object</span>, <span class="va">sampNames</span>, <span class="va">sampColors</span>, <span class="va">sampOrder</span>, <span class="va">what</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">object</span>, <span class="va">sampNames</span>, <span class="va">sampColors</span>, <span class="va">sampOrder</span>, <span class="va">what</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -125,24 +125,24 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">xsg</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xsg</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Processing 3195 mz slices ... </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> OK</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevhist"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevhist"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevhist"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevhist"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevmass"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevmass"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevtime"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevtime"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevsample"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"mzdevsample"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevsample"</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">xsg</span>, what<span class="op">=</span><span class="st">"rtdevsample"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotQC-6.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -157,7 +157,7 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

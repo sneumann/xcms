@@ -27,7 +27,7 @@ represented with the color of the respective cell."><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -89,30 +89,30 @@ represented with the color of the respective cell.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotChromPeaks</span><span class="op">(</span>
-  <span class="va">x</span>,
-  file <span class="op">=</span> <span class="fl">1</span>,
-  xlim <span class="op">=</span> <span class="cn">NULL</span>,
-  ylim <span class="op">=</span> <span class="cn">NULL</span>,
-  add <span class="op">=</span> <span class="cn">FALSE</span>,
-  border <span class="op">=</span> <span class="st">"#00000060"</span>,
-  col <span class="op">=</span> <span class="cn">NA</span>,
-  xlab <span class="op">=</span> <span class="st">"retention time"</span>,
-  ylab <span class="op">=</span> <span class="st">"mz"</span>,
-  main <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">plotChromPeakImage</span><span class="op">(</span>
-  <span class="va">x</span>,
-  binSize <span class="op">=</span> <span class="fl">30</span>,
-  xlim <span class="op">=</span> <span class="cn">NULL</span>,
-  log <span class="op">=</span> <span class="cn">FALSE</span>,
-  xlab <span class="op">=</span> <span class="st">"retention time"</span>,
-  yaxt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"yaxt"</span><span class="op">)</span>,
-  main <span class="op">=</span> <span class="st">"Chromatographic peak counts"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotChromPeaks</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  file <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  add <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  border <span class="op">=</span> <span class="st">"#00000060"</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"retention time"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"mz"</span>,</span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plotChromPeakImage</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  binSize <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"retention time"</span>,</span>
+<span>  yaxt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="st">"yaxt"</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Chromatographic peak counts"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -212,23 +212,23 @@ and <code>par(lty = 2)</code>, respectively.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load a test data set with detected peaks</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Update the path to the files for the local system</span></span>
-<span class="r-in"><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## plotChromPeakImage: plot an image for the identified peaks per file</span></span>
-<span class="r-in"><span class="fu">plotChromPeakImage</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## plotChromPeakImage: plot an image for the identified peaks per file</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromPeakImage</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromPeaks-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Show all detected chromatographic peaks from the first file</span></span>
-<span class="r-in"><span class="fu">plotChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Show all detected chromatographic peaks from the first file</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromPeaks-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Plot all detected peaks from the second file and restrict the plot to a</span></span>
-<span class="r-in"><span class="co">## mz-rt slice</span></span>
-<span class="r-in"><span class="fu">plotChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fl">2</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3500</span>, <span class="fl">3600</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">600</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Plot all detected peaks from the second file and restrict the plot to a</span></span></span>
+<span class="r-in"><span><span class="co">## mz-rt slice</span></span></span>
+<span class="r-in"><span><span class="fu">plotChromPeaks</span><span class="op">(</span><span class="va">faahko_sub</span>, file <span class="op">=</span> <span class="fl">2</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3500</span>, <span class="fl">3600</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">400</span>, <span class="fl">600</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotChromPeaks-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -244,7 +244,7 @@ and <code>par(lty = 2)</code>, respectively.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>

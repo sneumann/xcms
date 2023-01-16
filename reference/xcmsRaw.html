@@ -20,7 +20,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
       </span>
     </div>
 
@@ -75,10 +75,10 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">xcmsRaw</span><span class="op">(</span><span class="va">filename</span>, profstep <span class="op">=</span> <span class="fl">1</span>, profmethod <span class="op">=</span> <span class="st">"bin"</span>, profparam <span class="op">=</span>
-<span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, includeMSn<span class="op">=</span><span class="cn">FALSE</span>, mslevel<span class="op">=</span><span class="cn">NULL</span>, scanrange<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span>
-
-<span class="fu">deepCopy</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xcmsRaw</span><span class="op">(</span><span class="va">filename</span>, profstep <span class="op">=</span> <span class="fl">1</span>, profmethod <span class="op">=</span> <span class="st">"bin"</span>, profparam <span class="op">=</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, includeMSn<span class="op">=</span><span class="cn">FALSE</span>, mslevel<span class="op">=</span><span class="cn">NULL</span>, scanrange<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">deepCopy</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -155,36 +155,36 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">xr</span><span class="op">&lt;-</span><span class="fu">xcmsRaw</span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in">    <span class="va">xr</span></span>
-<span class="r-in">    <span class="co">##This gives some information about the file</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">## Lets have a look at the structure of the object</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">##same but with a preview of each slot in the object</span></span>
-<span class="r-in">    <span class="co">##SO... lets have a look at how this works</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">##[1]    0  429  860 1291 1718 2140</span></span>
-<span class="r-in">    <span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">[</span><span class="fl">425</span><span class="op">:</span><span class="fl">430</span><span class="op">]</span></span>
-<span class="r-in">    <span class="co">##[1] 596.3 597.0 597.3 598.1 599.3 200.1</span></span>
-<span class="r-in">    <span class="co">##We can see that the 429 index is the last mz of scan 1 therefore...</span></span>
-<span class="r-in"></span>
-<span class="r-in">    <span class="va">mz.scan1</span><span class="op">&lt;-</span><span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">:</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in">    <span class="va">intensity.scan1</span><span class="op">&lt;-</span><span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">intensity</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">:</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
-<span class="r-in">    <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/plot-methods.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mz.scan1</span>, <span class="va">intensity.scan1</span>, type<span class="op">=</span><span class="st">"h"</span>,</span>
-<span class="r-in">         main<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Scan 1 of file"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">    <span class="co">##the easier way :p</span></span>
-<span class="r-in">    <span class="va">scan1</span><span class="op">&lt;-</span><span class="fu"><a href="getScan-methods.html">getScan</a></span><span class="op">(</span><span class="va">xr</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Vector-class.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scan1</span><span class="op">)</span></span>
-<span class="r-in">    <span class="fu"><a href="plotScan-methods.html">plotScan</a></span><span class="op">(</span><span class="va">xr</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in">  <span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">cdfpath</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">cdffiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="va">cdfpath</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">xr</span><span class="op">&lt;-</span><span class="fu">xcmsRaw</span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">xr</span></span></span>
+<span class="r-in"><span>    <span class="co">##This gives some information about the file</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">## Lets have a look at the structure of the object</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">xr</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">##same but with a preview of each slot in the object</span></span></span>
+<span class="r-in"><span>    <span class="co">##SO... lets have a look at how this works</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">##[1]    0  429  860 1291 1718 2140</span></span></span>
+<span class="r-in"><span>    <span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">[</span><span class="fl">425</span><span class="op">:</span><span class="fl">430</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="co">##[1] 596.3 597.0 597.3 598.1 599.3 200.1</span></span></span>
+<span class="r-in"><span>    <span class="co">##We can see that the 429 index is the last mz of scan 1 therefore...</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="va">mz.scan1</span><span class="op">&lt;-</span><span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">mz</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">:</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="va">intensity.scan1</span><span class="op">&lt;-</span><span class="va">xr</span><span class="op">@</span><span class="va">env</span><span class="op">$</span><span class="va">intensity</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">+</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">:</span><span class="va">xr</span><span class="op">@</span><span class="va">scanindex</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mz.scan1</span>, <span class="va">intensity.scan1</span>, type<span class="op">=</span><span class="st">"h"</span>,</span></span>
+<span class="r-in"><span>         main<span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Scan 1 of file"</span>, <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">cdffiles</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co">##the easier way :p</span></span></span>
+<span class="r-in"><span>    <span class="va">scan1</span><span class="op">&lt;-</span><span class="fu"><a href="getScan-methods.html">getScan</a></span><span class="op">(</span><span class="va">xr</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scan1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="plotScan-methods.html">plotScan</a></span><span class="op">(</span><span class="va">xr</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -199,7 +199,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>
