@@ -5,6 +5,8 @@ Changes in version 3.99.0
 - Fix issue in `refineChromPeaks` with `MergeNeighboringPeaksParam` where a
   wrong apex position was considered in the evaluation whether candidate peaks
   should be merged (would only happen for merging of > 2 candidate peaks).
+- Improve performance of `reconstructChromPeakSpectra` and fix an issue with
+  SWATH data for chrom peaks with m/z in overlapping isolation windows.
 
 Changes in version 3.21.1
 

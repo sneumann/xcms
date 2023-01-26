@@ -159,3 +159,22 @@ test_that(".data2spectra works", {
     expect_true(is(res, "DataFrame"))
     expect_equal(res$mz, NumericList(c(), compress = FALSE))
 })
+
+test_that(".reconstruct_dia_ms2 works", {
+    res <- .reconstruct_dia_ms2(pest_swth)
+    expect_true(is(res, "Spectra"))
+    expect_equal(length(res), nrow(chromPeaks(pest_swth, msLevel = 1L)))
+    expect_equal(res$peak_id, rownames(chromPeaks(pest_swth, msLevel = 1L)))
+    expect_equal(
+        res$precursorMz, unname(chromPeaks(pest_swth, msLevel = 1L)[, "mz"]))
+
+    ## compare with old code
+    res_s <- .reconstruct_ms2_for_peaks_file(pest_swth, return.type = "Spectra")
+    expect_equal(rtime(res), rtime(res_s))
+    expect_equal(precursorMz(res_s), unname(precursorMz(res)))
+    expect_equal(res$fromFile, res_s$fromFile)
+    expect_equal(mz(res), mz(res_s))
+    expect_equal(intensity(res), intensity(res_s))
+    expect_equal(res$ms2_peak_id, res_s$ms2_peak_id)
+    expect_equal(res$ms2_peak_cor, res_s$ms2_peak_cor)
+})

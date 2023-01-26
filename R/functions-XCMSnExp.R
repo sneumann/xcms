@@ -2312,8 +2312,9 @@ findChromPeaksIsolationWindow <-
 #'   Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 #'   one **mass peak** in the reconstructed spectrum.
 #'
-#' The resulting `MSpectra` object provides also the peak IDs of the MS2
-#' chromatographic peaks for each spectrum as well as their correlation value.
+#' The resulting [Spectra()] object provides also the peak IDs of the MS2
+#' chromatographic peaks for each spectrum as well as their correlation value
+#' with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
 #'
 #' @param object `XCMSnExp` with identified chromatographic peaks.
 #'
@@ -2344,20 +2345,18 @@ findChromPeaksIsolationWindow <-
 #'     information.
 #'
 #' @param return.type `character(1)` defining the type of the returned object.
-#'     Can be either `return.type = "MSpectra"` (the default) to return a
-#'     `MSnbase::MSpectra` object or `return.type = "Spectra"` for the newer
-#'     `Spectra::Spectra` object.
+#'     Only `return.type = "Spectra"` is supported, `return.type = "MSpectra"`
+#'     is deprecated.
 #'
 #' @return
 #'
-#' Depending on `return.type`:
-#'
-#' - [MSpectra()] with the reconstructed MS2 spectra for all MS1 peaks
-#'   in `object`. Contains empty [Spectrum2-class] objects for MS1 peaks for
+#' - [Spectra()] object (defined in the `Spectra` package) with the
+#'   reconstructed MS2 spectra for all MS1 peaks in `object`. Contains
+#'   empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 #'   which reconstruction was not possible (either no MS2 signal was recorded
 #'   or the correlation of the MS2 chromatographic peaks with the MS1
-#'   chromatographic peak was below threshold `minCor`. `MSpectra` metadata
-#'   columns `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
+#'   chromatographic peak was below threshold `minCor`. Spectra variables
+#'   `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
 #'   and [NumericList()] with length equal to the number of peaks per
 #'   reconstructed MS2 spectrum) providing the IDs and the correlation of the
 #'   MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
@@ -2365,8 +2364,6 @@ findChromPeaksIsolationWindow <-
 #'   peaks used for the spectrum reconstruction is reported. The MS1
 #'   chromatographic peak intensity is reported as the reconstructed
 #'   spectrum's `precursorIntensity` value (see parameter `intensity` above).
-#' - `Spectra` object (defined in the `Spectra` package). The same content and
-#'   information than above.
 #'
 #' @author Johannes Rainer, Michael Witting
 #'
@@ -2379,13 +2376,16 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
                                         peakId = rownames(
                                             chromPeaks(object, msLevel = 1L)),
                                         BPPARAM = bpparam(),
-                                        return.type = c("MSpectra", "Spectra")) {
+                                        return.type = c("Spectra", "MSpectra")){
     if (!inherits(object, "XCMSnExp") || !hasChromPeaks(object))
         stop("'object' should be an 'XCMSnExp' object with identified ",
              "chromatographic peaks")
     if (!is.character(peakId))
         stop("'peakId' has to be of type character")
     return.type <- match.arg(return.type)
+    if (return.type != "Spectra")
+        stop("'return.type = \"MSpectra\"' is deprecated. ",
+             "Use `return.type = \"Spectra\"' instead.")
     n_peak_id <- length(peakId)
     peakId <- intersect(peakId, rownames(chromPeaks(object, msLevel = 1L)))
     if (!length(peakId))
@@ -2407,15 +2407,30 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
             object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
         FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
                        return.type) {
-            .reconstruct_ms2_for_peaks_file(
-                x, expandRt = expandRt, diffRt = diffRt,
-                minCor = minCor, fromFile = match(fileNames(x), files),
-                column = col, peakId = pkId, return.type = return.type)
+            .reconstruct_dia_ms2(x, expandRt = expandRt, diffRt = diffRt,
+                                 minCor = minCor, column = col, peakId = pkId,
+                                 fromFile = match(fileNames(x), files))
         },
         files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
-        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM,
-        return.type = return.type)
+        minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
+
     do.call(c, sps)
+
+
+    ## sps <- bplapply(
+    ##     .split_by_file2(
+    ##         object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
+    ##     FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
+    ##                    return.type) {
+    ##         .reconstruct_ms2_for_peaks_file(
+    ##             x, expandRt = expandRt, diffRt = diffRt,
+    ##             minCor = minCor, fromFile = match(fileNames(x), files),
+    ##             column = col, peakId = pkId, return.type = return.type)
+    ##     },
+    ##     files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
+    ##     minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM,
+    ##     return.type = return.type)
+    ## do.call(c, sps)
 }
 
 #' This function *overwrites* the `MSnbase` .plot_XIC function by adding also

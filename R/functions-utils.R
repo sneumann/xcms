@@ -783,3 +783,83 @@ groupOverlaps <- function(xmin, xmax) {
 .match_last <- function(x, table, nomatch = NA_integer_) {
     length(table) - match(x, rev(table), nomatch = nomatch) + 1
 }
+
+#' @description
+#'
+#' Function to extract EICs. In contrast to the other versions, this one
+#' allows to extract `Chromatogram` for all MS levels at the same time.
+#' The EIC is defined by a chrom peak matrix `pks` (column `"rtmin"`,
+#' `"rtmax"`, `"mzmin"` and `"mzmax"`). Additional required parameters are
+#' the MS level of spectra and EICs. Further selection/mapping of spectra
+#' with m/z-rt regions can be defined with the parameter `tmz` and `pks_tmz`
+#' which can e.g. be the *isolation window target m/z* for spectra and EICs.
+#' The latter is important for MS2 data, since that could be generated using
+#' different scanning windows (SWATH): only MS2 spectra from the matching
+#' isolation window will be used for chromatogram generation.
+#'
+#' See also `.old_chromatogram_sample` in *MsExperiment-functions.R* for an
+#' alternative implementation.
+#'
+#' @param pd `list` of peaks matrices (e.g. returned by `Spectra::peaksData`).
+#'
+#' @param rt `numeric` with retention times of spectra.
+#'
+#' @param msl `integer` with the MS levels for the spectra.
+#'
+#' @param tmz `numeric` with the isolation window target m/z for each spectrum
+#'     (for DIA MS2 data).
+#'
+#' @param pks `matrix` with columns `"rtmin"`, `"rtmax"`, `"mzmin"`, `"mzmax"`
+#'     for which the
+#'
+#' @param pks_msl `integer` with the MS levels for the regions from which the
+#'     chromatograms should be extracted.
+#'
+#' @param pks_tmz `numeric` with the isolation window target m/z in which
+#'     the (MS2) chromatographic peak was detected.
+#'
+#' @param file_idx `integer(1)` allowing to optionally set the index of the
+#'     file the EIC is from (parameter `fromFile`).
+#'
+#' @return `list` of `MSnbase::Chromatogram` objects.
+#'
+#' @author Johannes Rainer, Nir Shachaf
+#'
+#' @noRd
+.chromatograms_for_peaks <- function(pd, rt, msl, file_idx = 1L,
+                                     tmz = rep(1, length(pd)), pks, pks_msl,
+                                     pks_tmz = rep(1, nrow(pks)),
+                                     aggregationFun = "sum") {
+    nr <- nrow(pks)
+    if (aggregationFun == "sum")
+        FUN <- getFunction("sumi")
+    else FUN <- getFunction(aggregationFun)
+    empty_chrom <- MSnbase::Chromatogram(
+                                fromFile = file_idx,
+                                aggregationFun = aggregationFun,
+                                intensity = numeric(),
+                                rtime = numeric())
+    res <- list(empty_chrom)[rep(1L, nr)]
+    rtc <- c("rtmin", "rtmax")
+    mzc <- c("mzmin", "mzmax")
+    for (i in seq_len(nr)) {
+        res[[i]]@filterMz <- pks[i, mzc]
+        res[[i]]@mz <- pks[i, mzc]
+        res[[i]]@msLevel <- pks_msl[i]
+        ## if pks_msl > 1: precursor m/z has to match!
+        keep <- between(rt, pks[i, rtc]) & msl == pks_msl[i]
+        if (pks_msl[i] > 1L) {
+            ## for DIA MS2: spectra have to match the isolation window.
+            keep <- keep & tmz == pks_tmz[i]
+        }
+        keep <- which(keep)             # the get rid of `NA`.
+        if (length(keep)) {
+            ## Aggregate intensities.
+            res[[i]]@intensity <- vapply(pd[keep], function(z) {
+                FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
+            }, numeric(1L))
+            res[[i]]@rtime <- rt[keep]
+        }
+    }
+    res
+}

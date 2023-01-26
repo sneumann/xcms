@@ -500,7 +500,7 @@ setMethod(
         if (hasChromPeaks(object)) {
             crt <- object@chromPeaks[, "rt"]
             object <- .filter_chrom_peaks(
-                object, which(between(crt, rt[1L], rt[2L])))
+                object, which(between(crt, rt)))
         }
         callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
     })

@@ -56,8 +56,7 @@ Imports:
     MsFeatures,
     MsExperiment,
     Spectra (>= 1.9.4),
-    progress,
-    dplyr
+    progress
 Suggests:
     BiocStyle,
     caTools,

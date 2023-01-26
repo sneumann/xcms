@@ -382,3 +382,77 @@ test_that(".i2index works", {
     expect_equal(res, c(3L, 4L))
     expect_error(.i2index(12, ids), "out of bounds")
 })
+
+test_that(".chromatograms_for_peaks works", {
+    ## Purely MS1 data.
+    x <- filterFile(faahko_xod, 1L)
+    pd <- spectra(x, BPPARAM = SerialParam())
+    pd <- lapply(pd, function(z) cbind(mz = z@mz, intensity = z@intensity))
+
+    ## out of range
+    pks <- cbind(mzmin = c(200, 301), mzmax = c(202, 303),
+                 rtmin = c(10, 20), rtmax = c(40, 50))
+    res <- .chromatograms_for_peaks(pd, rtime(x), msl = msLevel(x),
+                                    pks = pks, pks_msl = rep(1L, 2))
+    expect_true(length(res) == 2)
+    expect_s4_class(res[[1L]], "Chromatogram")
+    expect_s4_class(res[[2L]], "Chromatogram")
+    expect_equal(rtime(res[[1L]]), numeric())
+    expect_equal(rtime(res[[2L]]), numeric())
+    expect_equal(intensity(res[[1L]]), numeric())
+    expect_equal(intensity(res[[2L]]), numeric())
+
+    pks <- chromPeaks(x)
+    res <- .chromatograms_for_peaks(pd, rtime(x), msLevel(x),
+                                    pks = chromPeaks(x),
+                                    pks_msl = chromPeakData(x)$ms_level)
+    expect_true(length(res) == nrow(pks))
+    expect_true(all(vapply(res, inherits, logical(1), "Chromatogram")))
+    ## Expected results.
+    ref <- chromatogram(as(x, "OnDiskMSnExp"), rt = pks[, c("rtmin", "rtmax")],
+                        mz = pks[, c("mzmin", "mzmax")])
+    expect_equal(lapply(res, intensity), lapply(ref, intensity))
+    expect_equal(lapply(res, rtime), lapply(ref, rtime))
+
+    ## MS1 and MS2 swath data.
+    x <- pest_swth
+    pd <- spectra(x, BPPARAM = SerialParam())
+    pd <- lapply(pd, function(z) cbind(mz = z@mz, intensity = z@intensity))
+
+    pks <- chromPeaks(x)
+    res <- .chromatograms_for_peaks(
+        pd, rtime(x), msLevel(x), tmz = isolationWindowTargetMz(x),
+        pks = pks, pks_msl = chromPeakData(x)$ms_level,
+        pks_tmz = chromPeakData(x)$isolationWindowTargetMZ)
+    expect_true(length(res) == nrow(pks))
+    expect_true(all(vapply(res, inherits, logical(1), "Chromatogram")))
+    msl <- vapply(res, msLevel, integer(1))
+    expect_equal(msl, chromPeakData(x)$ms_level)
+    ## old code. need to do separately for MS levels and isolation window.
+    ref <- chromatogram(x, rt = pks[msl == 1L, c("rtmin", "rtmax")],
+                        msLevel = 1L, mz = pks[msl == 1L, c("mzmin", "mzmax")])
+    expect_equal(lapply(ref, intensity), lapply(res[msl == 1L], intensity))
+    expect_equal(lapply(ref, rtime), lapply(res[msl == 1L], rtime))
+
+    tmz <- chromPeakData(x)$isolationWindowTargetMZ
+    tmp <- filterIsolationWindow(x, mz = 163.75)
+    idx <- which(tmz == 163.75)
+    ref <- chromatogram(tmp, rt = pks[idx, c("rtmin", "rtmax")],
+                        mz = pks[idx, c("mzmin", "mzmax")], msLevel = 2L)
+    expect_equal(lapply(ref, intensity), lapply(res[idx], intensity))
+    expect_equal(lapply(ref, rtime), lapply(res[idx], rtime))
+
+    tmp <- filterIsolationWindow(x, mz = 208.95)
+    idx <- which(tmz == 208.95)
+    ref <- chromatogram(tmp, rt = pks[idx, c("rtmin", "rtmax")],
+                        mz = pks[idx, c("mzmin", "mzmax")], msLevel = 2L)
+    expect_equal(lapply(ref, intensity), lapply(res[idx], intensity))
+    expect_equal(lapply(ref, rtime), lapply(res[idx], rtime))
+
+    tmp <- filterIsolationWindow(x, mz = 299.1)
+    idx <- which(tmz == 299.1)
+    ref <- chromatogram(tmp, rt = pks[idx, c("rtmin", "rtmax")],
+                        mz = pks[idx, c("mzmin", "mzmax")], msLevel = 2L)
+    expect_equal(lapply(ref, intensity), lapply(res[idx], intensity))
+    expect_equal(lapply(ref, rtime), lapply(res[idx], rtime))
+})

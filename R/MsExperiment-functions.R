@@ -526,34 +526,38 @@ readMsExperiment <- function(files = character(),
 #' @param mz `matrix` with ranges.
 #'
 #' @noRd
-.old_chromatogram_sample <- function(pd, rtime, file_idx = 1L, rt, mz,
-                                     aggregationFun = "sum", msLevel = 1L) {
-    nr <- nrow(rt)
-    FUN <- getFunction(aggregationFun)
-    empty_chrom <- MSnbase::Chromatogram(
-                                fromFile = file_idx,
-                                aggregationFun = aggregationFun,
-                                msLevel = msLevel,
-                                intensity = numeric(),
-                                rtime = numeric())
-    res <- list(empty_chrom)[rep(1L, nr)]
-    for (i in seq_len(nr)) {
-        keep <- MsCoreUtils::between(rtime, rt[i, ])
-        res[[i]]@filterMz <- mz[i, ]
-        ## In contrast to the old code we use here also the filter range
-        ## instead of calculating the actual m/z range for each.
-        res[[i]]@mz <- mz[i, ]
-        if (any(keep)) {
-            ## Aggregate intensities.
-            res[[i]]@intensity <- vapply(pd[keep], function(z) {
-                FUN(z[MsCoreUtils::between(z[, "mz"], mz[i, ]), "intensity"])
-            }, numeric(1L))
-            res[[i]]@rtime <- rtime[keep]
-        }
-    }
-    res
-}
+## .old_chromatogram_sample <- function(pd, rtime, file_idx = 1L, rt, mz,
+##                                      aggregationFun = "sum", msLevel = 1L) {
+##     nr <- nrow(rt)
+##     FUN <- getFunction(aggregationFun)
+##     empty_chrom <- MSnbase::Chromatogram(
+##                                 fromFile = file_idx,
+##                                 aggregationFun = aggregationFun,
+##                                 msLevel = msLevel,
+##                                 intensity = numeric(),
+##                                 rtime = numeric())
+##     res <- list(empty_chrom)[rep(1L, nr)]
+##     for (i in seq_len(nr)) {
+##         keep <- between(rtime, rt[i, ])
+##         res[[i]]@filterMz <- mz[i, ]
+##         ## In contrast to the old code we use here also the filter range
+##         ## instead of calculating the actual m/z range for each.
+##         res[[i]]@mz <- mz[i, ]
+##         if (any(keep)) {
+##             ## Aggregate intensities.
+##             res[[i]]@intensity <- vapply(pd[keep], function(z) {
+##                 FUN(z[between(z[, "mz"], mz[i, ]), "intensity"])
+##             }, numeric(1L))
+##             res[[i]]@rtime <- rtime[keep]
+##         }
+##     }
+##     res
+## }
 
+#' Note: this should be improved supporting fully the .chromatograms_for_peaks
+#' from functions-utils.R
+#'
+#' @noRd
 .mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
                               mz = matrix(nrow = 0, ncol = 2),
                               aggregationFun = "sum", msLevel = 1L,
@@ -566,6 +570,8 @@ readMsExperiment <- function(files = character(),
         stop("'rt' is expected to be a two-column matrix", call. = FALSE)
     if (is.matrix(mz) && !nrow(mz) == 2)
         stop("'mz' is expected to be a two-column matrix", call. = FALSE)
+    pks <- cbind(mz, rt)
+    colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
     res <- .mse_spectrapply_chunks(
         x, FUN = function(z, rt, mz, msl, afun, BPPARAM) {
             sidx <- unique(z$.SAMPLE_IDX)
@@ -578,11 +584,13 @@ readMsExperiment <- function(files = character(),
                 split(Spectra::peaksData(z, columns = c("mz", "intensity"),
                                          BPPARAM = SerialParam()), f),
                 split(rtime(z), f),
-                sidx, FUN = .old_chromatogram_sample,
-                MoreArgs = list(rt = rt, mz = mz, msLevel = msl,
+                split(msLevel(z), f),
+                sidx,
+                FUN = .chromatograms_for_peaks,
+                MoreArgs = list(pks = pks, pks_msl = rep(msl, nrow(pks)),
                                 aggregationFun = afun),
                 SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
-        }, rt = rt, mz = mz, msl = msLevel, afun = aggregationFun,
+        }, pks = pks, msl = msLevel, afun = aggregationFun,
         chunkSize = chunkSize, BPPARAM = BPPARAM)
     res <- as(do.call(cbind, unlist(res, recursive = FALSE, use.names = FALSE)),
               "MChromatograms")

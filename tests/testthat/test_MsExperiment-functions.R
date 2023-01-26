@@ -299,70 +299,42 @@ test_that("readMsExperiment works", {
     expect_equal(sampleData(a)$other_ann, c("a", "b"))
 })
 
-test_that(".old_chromatogram_sample works", {
-    rtr <- rbind(c(2600, 2630), c(3500, 3600))
-    mzr <- rbind(c(250, 252), c(400, 410))
-    pd <- Spectra::peaksData(spectra(mse[1L]))
-    rtime <- rtime(spectra(mse[1L]))
-    res <- .old_chromatogram_sample(pd, rtime, rtr, mzr)
-    expect_true(length(res) == 2)
-    expect_s4_class(res[[1L]], "Chromatogram")
-    expect_s4_class(res[[2L]], "Chromatogram")
+## test_that(".mse_chromatogram works", {
+##     rtr <- rbind(c(2600, 2630), c(3500, 3600))
+##     mzr <- rbind(c(250, 252), c(400, 410))
 
-    ref <- chromatogram(filterFile(faahko_od, 1L), mz = mzr, rt = rtr,
-                        aggregationFun = "sum")
-    expect_equal(unname(intensity(ref[[1L]])), intensity(res[[1L]]))
-    expect_equal(unname(rtime(ref[[1L]])), rtime(res[[1L]]))
-    expect_equal(unname(intensity(ref[[2L]])), intensity(res[[2L]]))
-    expect_equal(unname(rtime(ref[[2L]])), rtime(res[[2L]]))
+##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+##     expect_s4_class(res, "MChromatograms")
+##     expect_equal(ncol(res), length(mse))
+##     expect_equal(nrow(res), 2)
+##     expect_true(validObject(res))
 
-    ## out of range
-    res <- .old_chromatogram_sample(pd, rtime, rbind(c(10, 20), c(40, 50)), mzr)
-    expect_true(length(res) == 2)
-    expect_s4_class(res[[1L]], "Chromatogram")
-    expect_s4_class(res[[2L]], "Chromatogram")
-    expect_equal(rtime(res[[1L]]), numeric())
-    expect_equal(rtime(res[[2L]]), numeric())
-    expect_equal(intensity(res[[1L]]), numeric())
-    expect_equal(intensity(res[[2L]]), numeric())
-})
+##     ref <- chromatogram(faahko_od, mz = mzr, rt = rtr)
+##     expect_equal(unname(intensity(ref[1, 2])), intensity(res[1, 2]))
+##     expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))
 
-test_that(".mse_chromatogram works", {
-    rtr <- rbind(c(2600, 2630), c(3500, 3600))
-    mzr <- rbind(c(250, 252), c(400, 410))
+##     ## aggregationFun passed correctly
+##     res_2 <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L,
+##                                aggregationFun = "max")
+##     expect_true(all(intensity(res[1, 1]) > intensity(res_2[1, 1])))
+##     expect_true(all(intensity(res[2, 2]) > intensity(res_2[2, 2])))
 
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
-    expect_s4_class(res, "MChromatograms")
-    expect_equal(ncol(res), length(mse))
-    expect_equal(nrow(res), 2)
-    expect_true(validObject(res))
+##     ## MS Level 2
+##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 2L)
+##     expect_s4_class(res, "MChromatograms")
+##     expect_equal(ncol(res), length(mse))
+##     expect_equal(nrow(res), 2)
+##     expect_true(validObject(res))
+##     expect_equal(intensity(res[1, 2]), numeric())
 
-    ref <- chromatogram(faahko_od, mz = mzr, rt = rtr)
-    expect_equal(unname(intensity(ref[1, 2])), intensity(res[1, 2]))
-    expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))
+##     ## rt, mz out of range
+##     rtr <- rbind(c(20, 30), c(34, 45))
+##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+##     expect_s4_class(res, "MChromatograms")
+##     expect_equal(ncol(res), length(mse))
+##     expect_equal(nrow(res), 2)
+##     expect_true(validObject(res))
+##     expect_equal(intensity(res[1, 2]), numeric())
 
-    ## aggregationFun passed correctly
-    res_2 <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L,
-                               aggregationFun = "max")
-    expect_true(all(intensity(res[1, 1]) > intensity(res_2[1, 1])))
-    expect_true(all(intensity(res[2, 2]) > intensity(res_2[2, 2])))
-
-    ## MS Level 2
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 2L)
-    expect_s4_class(res, "MChromatograms")
-    expect_equal(ncol(res), length(mse))
-    expect_equal(nrow(res), 2)
-    expect_true(validObject(res))
-    expect_equal(intensity(res[1, 2]), numeric())
-
-    ## rt, mz out of range
-    rtr <- rbind(c(20, 30), c(34, 45))
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
-    expect_s4_class(res, "MChromatograms")
-    expect_equal(ncol(res), length(mse))
-    expect_equal(nrow(res), 2)
-    expect_true(validObject(res))
-    expect_equal(intensity(res[1, 2]), numeric())
-
-    ## LLLL TODO FIX test
-})
+##     ## LLLL TODO FIX test
+## })
