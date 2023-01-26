@@ -319,7 +319,7 @@ for more details and examples.
 
 
 
-# SWATH data analysis
+# DIA (SWATH) data analysis
 
 In this section we analyze a small SWATH data set consisting of a single mzML
 file with data from the same sample analyzed in the previous section but
@@ -373,6 +373,17 @@ table(isolationWindowTargetMz(swath_data))
 ```
 
 We have thus 1,000 MS2 spectra measured in each isolation window.
+
+Note that also DIA data from other manufacturers (e.g. Waters MSe) are supported
+as long as a spectra variable `isolationWindowTargetMZ` is available. If that
+variable is empty it can also manually be initialized as shown below (assuming
+that for the `precursorMz` of MS2 spectra the a constant value per isolation
+window (usually the m/z in the middle between the used lower and upper m/z of
+the isolation window).
+
+```{r, eval = FALSE}
+fData(swath_data)$isolationWindowTargetMZ <- precursorMz(swath_data)
+```
 
 
 ## Chromatographic peak detection in MS1 and MS2 data
