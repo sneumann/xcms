@@ -536,7 +536,8 @@ test_that("reconstructChromPeakSpectra works", {
     res <- reconstructChromPeakSpectra(
         pest_swth, peakId = rownames(chromPeaks(pest_swth))[5:6])
     expect_true(length(res) == 2)
-    expect_true(length(intensity(res[[2]])) == 2)
+    expect_s4_class(res, "Spectra")
+    expect_true(length(intensity(res)[[2]]) == 2)
 
     ## errors
     expect_error(reconstructChromPeakSpectra(od_x), "object with")
@@ -547,7 +548,7 @@ test_that("reconstructChromPeakSpectra works", {
 
     expect_warning(res <- reconstructChromPeakSpectra(
                        pest_swth, peakId = c("CP06", "other")))
-    expect_identical(res_3, res)
+    expect_identical(mz(res_3), mz(res))
     expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
                  "None of the provided")
 })
