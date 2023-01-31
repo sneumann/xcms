@@ -238,18 +238,18 @@ test_that(".obiwarp_spectra works", {
 
     a <- spectra(mse[1L])
     b <- spectra(mse[2L])
-    res <- xcms:::.obiwarp_spectra(b, a, param = p)
+    res <- .obiwarp_spectra(b, a, param = p)
     expect_equal(res, unname(ref[[2L]]))
-    res <- xcms:::.obiwarp_spectra(spectra(mse[3L]), a, param = p)
+    res <- .obiwarp_spectra(spectra(mse[3L]), a, param = p)
     expect_equal(res, unname(ref[[3L]]))
 
     ## Test with different MS levels.
-    res_sub <- xcms:::.obiwarp_spectra(b[-seq(1, length(b), by = 3)],
+    res_sub <- .obiwarp_spectra(b[-seq(1, length(b), by = 3)],
                                    a[-seq(1, length(a), by = 3)],
                                    param = p)
     a$msLevel[seq(1, length(a), by = 3)] <- 2L
     b$msLevel[seq(1, length(b), by = 3)] <- 2L
-    res2 <- xcms:::.obiwarp_spectra(b, a, param = p)
+    res2 <- .obiwarp_spectra(b, a, param = p)
     expect_equal(length(res2), length(b))
     expect_equal(res_sub, res2[-seq(1, length(b), by = 3)])
     expect_true(cor(res, res2) > 0.999)
@@ -262,7 +262,7 @@ test_that(".mse_obiwarp_chunks works", {
     expect_error(.mse_obiwarp_chunks(mse, ObiwarpParam(centerSample = 6)),
                  "integer between 1 and 3")
 
-    res <- xcms:::.mse_obiwarp_chunks(mse, p)
+    res <- .mse_obiwarp_chunks(mse, p)
     expect_true(is.list(res))
     expect_equal(length(res), length(mse))
     expect_equal(unname(ref[[1L]]), res[[1L]])
@@ -273,7 +273,7 @@ test_that(".mse_obiwarp_chunks works", {
     p <- ObiwarpParam(binSize = 30, centerSample = 1L, subset = c(1, 3))
     ref <- split(adjustRtime(faahko_od, param = p), fromFile(faahko_od))
 
-    res <- xcms:::.mse_obiwarp_chunks(mse, p, chunkSize = 2L)
+    res <- .mse_obiwarp_chunks(mse, p, chunkSize = 2L)
     expect_equal(unname(ref[[1L]]), res[[1L]])
     expect_equal(unname(ref[[2L]]), res[[2L]])
     expect_equal(unname(ref[[3L]]), res[[3L]])
@@ -299,42 +299,81 @@ test_that("readMsExperiment works", {
     expect_equal(sampleData(a)$other_ann, c("a", "b"))
 })
 
-## test_that(".mse_chromatogram works", {
-##     rtr <- rbind(c(2600, 2630), c(3500, 3600))
-##     mzr <- rbind(c(250, 252), c(400, 410))
+test_that(".mse_chromatogram works", {
+    rtr <- rbind(c(2600, 2630), c(3500, 3600))
+    mzr <- rbind(c(250, 252), c(400, 410))
 
-##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
-##     expect_s4_class(res, "MChromatograms")
-##     expect_equal(ncol(res), length(mse))
-##     expect_equal(nrow(res), 2)
-##     expect_true(validObject(res))
+    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(ncol(res), length(mse))
+    expect_equal(nrow(res), 2)
+    expect_true(validObject(res))
 
-##     ref <- chromatogram(faahko_od, mz = mzr, rt = rtr)
-##     expect_equal(unname(intensity(ref[1, 2])), intensity(res[1, 2]))
-##     expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))
+    ref <- chromatogram(faahko_od, mz = mzr, rt = rtr)
+    expect_equal(unname(intensity(ref[1, 2])), intensity(res[1, 2]))
+    expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))
 
-##     ## aggregationFun passed correctly
-##     res_2 <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L,
-##                                aggregationFun = "max")
-##     expect_true(all(intensity(res[1, 1]) > intensity(res_2[1, 1])))
-##     expect_true(all(intensity(res[2, 2]) > intensity(res_2[2, 2])))
+    ## aggregationFun passed correctly
+    res_2 <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L,
+                               aggregationFun = "max")
+    expect_true(all(intensity(res[1, 1]) > intensity(res_2[1, 1])))
+    expect_true(all(intensity(res[2, 2]) > intensity(res_2[2, 2])))
 
-##     ## MS Level 2
-##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 2L)
-##     expect_s4_class(res, "MChromatograms")
-##     expect_equal(ncol(res), length(mse))
-##     expect_equal(nrow(res), 2)
-##     expect_true(validObject(res))
-##     expect_equal(intensity(res[1, 2]), numeric())
+    ## MS Level 2
+    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 2L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(ncol(res), length(mse))
+    expect_equal(nrow(res), 2)
+    expect_true(validObject(res))
+    expect_equal(intensity(res[1, 2]), numeric())
 
-##     ## rt, mz out of range
-##     rtr <- rbind(c(20, 30), c(34, 45))
-##     res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
-##     expect_s4_class(res, "MChromatograms")
-##     expect_equal(ncol(res), length(mse))
-##     expect_equal(nrow(res), 2)
-##     expect_true(validObject(res))
-##     expect_equal(intensity(res[1, 2]), numeric())
+    ## rt, mz out of range
+    rtr <- rbind(c(20, 30), c(34, 45))
+    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(ncol(res), length(mse))
+    expect_equal(nrow(res), 2)
+    expect_true(validObject(res))
+    expect_equal(intensity(res[1, 2]), numeric())
 
-##     ## LLLL TODO FIX test
-## })
+    rtr <- rbind(c(20, 30), c(3500, 3600))
+    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(ncol(res), length(mse))
+    expect_equal(nrow(res), 2)
+    expect_true(validObject(res))
+    expect_equal(intensity(res[1, 1]), numeric())
+    expect_equal(intensity(res[1, 2]), numeric())
+    expect_equal(intensity(res[1, 3]), numeric())
+    expect_equal(unname(intensity(res[2, 1])), unname(intensity(ref[2, 1])))
+    expect_equal(unname(intensity(res[2, 2])), unname(intensity(ref[2, 2])))
+    expect_equal(unname(intensity(res[2, 3])), unname(intensity(ref[2, 3])))
+
+    ## MsExperiment with non-overlapping rt ranges: check if results are
+    ## correct.
+    micro_mse <- MsExperiment()
+    micro_fls <- normalizePath(microtofq_fs)
+    df <- data.frame(mzML_file = basename(micro_fls),
+                 dataOrigin = micro_fls,
+                 sample = c("MM14", "MM8"))
+
+    spectra(micro_mse) <- Spectra::Spectra(micro_fls)
+    sampleData(micro_mse) <- DataFrame(df)
+    ## Link samples to spectra.
+    micro_mse <- linkSampleData(
+        micro_mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+    ## sample 1: rt 270-307, mz 94 1004
+    ## sample 2: rt 0.4-66, mz 95 1005
+    rtr <- rbind(c(13, 20), c(290, 301))
+    mzr <- rbind(c(100, 200), c(100, 200))
+    res <- .mse_chromatogram(micro_mse, rt = rtr, mz = mzr, msLevel = 1L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(ncol(res), 2L)
+    expect_equal(nrow(res), 2L)
+    expect_true(validObject(res))
+    expect_equal(intensity(res[1, 1]), numeric())
+    expect_equal(intensity(res[2, 2]), numeric())
+    ref <- chromatogram(microtofq_od, mz = mzr, rt = rtr)
+    expect_equal(unname(intensity(res[1, 2])), unname(intensity(ref[1, 2])))
+    expect_equal(unname(intensity(res[2, 1])), unname(intensity(ref[2, 1])))
+})

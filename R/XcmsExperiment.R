@@ -1322,7 +1322,7 @@ setMethod("dropFilledChromPeaks", "XcmsExperiment", function(object) {
 ## results
 ################################################################################
 
-## quantify
+## TODO quantify
 
 #' @rdname XcmsExperiment
 setMethod(

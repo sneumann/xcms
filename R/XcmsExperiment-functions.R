@@ -731,6 +731,7 @@
     mzc <- c("mzmin", "mzmax")
     rtc <- c("rtmin", "rtmax")
     if (msLevel > 1) {
+        pmz <- precursorMz(x)
         lapply(seq_len(nrow(region)), function(z) {
             idx <- which(between(rt, region[z, rtc]) &
                          between(pmz, region[z, mzc]))
@@ -752,6 +753,7 @@
     mzc <- c("mzmin", "mzmax")
     rtc <- c("rtmin", "rtmax")
     if (msLevel > 1) {
+        pmz <- precursorMz(x)
         lapply(seq_len(nrow(region)), function(z) {
             idx <- which(between(rt, region[z, rtc]) &
                          between(pmz, region[z, mzc]))

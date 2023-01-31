@@ -514,48 +514,10 @@ readMsExperiment <- function(files = character(),
     linkSampleData(x, with = "sampleData.dataOrigin = spectra.dataOrigin")
 }
 
-#' Function to extract chromatographic data as (in future obsolete)
-#' `MChromatograms` on a `Spectra` of a single file.
-#'
-#' @param pd `peaksData` (single file, single MS level!)
-#'
-#' @param rtime retention times.
-#'
-#' @param rt `matrix` with ranges.
-#'
-#' @param mz `matrix` with ranges.
-#'
-#' @noRd
-## .old_chromatogram_sample <- function(pd, rtime, file_idx = 1L, rt, mz,
-##                                      aggregationFun = "sum", msLevel = 1L) {
-##     nr <- nrow(rt)
-##     FUN <- getFunction(aggregationFun)
-##     empty_chrom <- MSnbase::Chromatogram(
-##                                 fromFile = file_idx,
-##                                 aggregationFun = aggregationFun,
-##                                 msLevel = msLevel,
-##                                 intensity = numeric(),
-##                                 rtime = numeric())
-##     res <- list(empty_chrom)[rep(1L, nr)]
-##     for (i in seq_len(nr)) {
-##         keep <- between(rtime, rt[i, ])
-##         res[[i]]@filterMz <- mz[i, ]
-##         ## In contrast to the old code we use here also the filter range
-##         ## instead of calculating the actual m/z range for each.
-##         res[[i]]@mz <- mz[i, ]
-##         if (any(keep)) {
-##             ## Aggregate intensities.
-##             res[[i]]@intensity <- vapply(pd[keep], function(z) {
-##                 FUN(z[between(z[, "mz"], mz[i, ]), "intensity"])
-##             }, numeric(1L))
-##             res[[i]]@rtime <- rtime[keep]
-##         }
-##     }
-##     res
-## }
-
 #' Note: this should be improved supporting fully the .chromatograms_for_peaks
 #' from functions-utils.R
+#'
+#' @importFrom MsExperiment sampleData
 #'
 #' @noRd
 .mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
@@ -566,16 +528,17 @@ readMsExperiment <- function(files = character(),
         rt <- matrix(c(-Inf, Inf), ncol = 2)
     if (!nrow(mz))
         mz <- matrix(c(-Inf, Inf), ncol = 2)
-    if (is.matrix(rt) && !nrow(rt) == 2)
+    if (is.matrix(rt) && ncol(rt) != 2)
         stop("'rt' is expected to be a two-column matrix", call. = FALSE)
-    if (is.matrix(mz) && !nrow(mz) == 2)
+    if (is.matrix(mz) && ncol(mz) != 2)
         stop("'mz' is expected to be a two-column matrix", call. = FALSE)
     pks <- cbind(mz, rt)
     colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
     res <- .mse_spectrapply_chunks(
-        x, FUN = function(z, rt, mz, msl, afun, BPPARAM) {
+        x, FUN = function(z, pks, msl, afun, BPPARAM) {
             sidx <- unique(z$.SAMPLE_IDX)
             z <- filterMsLevel(z, msLevel = msLevel)
+            z <- filterRt(z, rt = range(pks[, c("rtmin", "rtmax")]))
             lz <- length(z)
             if (lz)
                 f <- factor(z$.SAMPLE_IDX, levels = sidx)

@@ -13,7 +13,7 @@ importFrom("Biobase", "AnnotatedDataFrame")
 importClassesFrom("Biobase", "AnnotatedDataFrame")
 importMethodsFrom("Biobase", "phenoData",
                   "phenoData<-", "pData", "rowMedians", "varLabels",
-                  "fvarLabels")
+                  "fvarLabels", "annotatedDataFramFrom")
 importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
@@ -570,6 +570,7 @@ importMethodsFrom("BiocGenerics", "rbind")
 importFrom("MsExperiment", "MsExperiment")
 importFrom("MsExperiment", "linkSampleData")
 importFrom("MsExperiment", "sampleData<-")
+importFrom("MsExperiment", "sampleData")
 importMethodsFrom("MsExperiment", "spectra<-")
 export("readMsExperiment")
 

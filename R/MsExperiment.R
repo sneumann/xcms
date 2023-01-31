@@ -55,3 +55,8 @@ setMethod("fileNames", "MsExperiment", function(object) {
         unique(dataOrigin(spectra(object)))
     else character()
 })
+
+## TODO chromatogram
+## add parameter return.type . also have mz and rt parameters and the others
+## setMethod("chromatogram", "MsExperiment", function(object, ,
+## return.type = "MChromatograms"))
