@@ -54,3 +54,32 @@ test_that("fileNames,MsExperiment works", {
     res <- fileNames(mse)
     expect_equal(res, unique(dataOrigin(spectra(mse))))
 })
+
+test_that("chromatogram,MsExperiment works", {
+    res <- chromatogram(mse)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(length(mse), ncol(res))
+    expect_equal(1L, nrow(res))
+    ref <- chromatogram(faahko_od)
+    expect_equal(rtime(res[1, 1]), unname(rtime(ref[1, 1])))
+    expect_equal(rtime(res[1, 2]), unname(rtime(ref[1, 2])))
+    expect_equal(rtime(res[1, 3]), unname(rtime(ref[1, 3])))
+    expect_equal(intensity(res[1, 1]), unname(intensity(ref[1, 1])))
+    expect_equal(intensity(res[1, 2]), unname(intensity(ref[1, 2])))
+    expect_equal(intensity(res[1, 3]), unname(intensity(ref[1, 3])))
+
+    ## Subset.
+    res <- chromatogram(mse, rt = c(10, 3000))
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(length(mse), ncol(res))
+    expect_equal(1L, nrow(res))
+    expect_true(all(rtime(res[1, 1]) <= 3000))
+
+    res <- chromatogram(mse, msLevel = 2L)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(length(mse), ncol(res))
+    expect_equal(1L, nrow(res))
+    expect_equal(intensity(res[1, 1]), numeric())
+    expect_equal(intensity(res[1, 2]), numeric())
+    expect_equal(intensity(res[1, 2]), numeric())
+})

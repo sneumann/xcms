@@ -8,6 +8,7 @@
 \alias{rtime,MsExperiment-method}
 \alias{fromFile,MsExperiment-method}
 \alias{fileNames,MsExperiment-method}
+\alias{chromatogram,MsExperiment-method}
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
 \alias{show,XcmsExperiment-method}
@@ -45,6 +46,17 @@ filterFeatureDefinitions(object, ...)
 \S4method{fromFile}{MsExperiment}(object)
 
 \S4method{fileNames}{MsExperiment}(object)
+
+\S4method{chromatogram}{MsExperiment}(
+  object,
+  rt = matrix(nrow = 0, ncol = 2),
+  mz = matrix(nrow = 0, ncol = 2),
+  aggregationFun = "sum",
+  msLevel = 1L,
+  chunkSize = 2L,
+  return.type = "MChromatograms",
+  BPPARAM = bpparam()
+)
 
 \S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -125,10 +137,46 @@ filterFeatureDefinitions(object, ...)
 
 \item{rt}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining
 the retention time range for which chromatographic peaks or features
-should be returned. The full range is used by default.}
+should be returned. The full range is used by default.
+For \code{chromatogram}: two column numerical \code{matrix} with each row
+representing the lower and upper retention time window(s) for the
+chromatograms. If not provided the full retention time range is used.}
 
 \item{file}{For \code{filterFile}: \code{integer} with the indices of the samples
 (files) to which the data should be subsetted.}
+
+\item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
+defining the m/z range for which chromatographic peaks or feature
+definitions should be returned. The full m/z range is used by default.
+For \code{chromatogram}: two-column numerical \code{matrix} with each row
+representing m/z range that should be aggregated into a chromatogram.
+If not provided the full m/z range of the data will be used (and hence
+a total ion chromatogram will be returned if \code{aggregationFun = "sum"}
+is used).}
+
+\item{aggregationFun}{For \code{chromatogram}: \code{character(1)} defining the
+function that should be used to \emph{aggregate} intensities for retention
+time (i.e. each spectrum) along the specified m/z range (parameter
+\code{mz}). Defaults to \code{aggregationFun = "sum"} and hence all intensities
+will be summed up. Alternatively, use \code{aggregationFun = "max"} to use
+the maximal intensity per m/z range to create a base peak
+chromatogram (BPC).}
+
+\item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
+function supports it).}
+
+\item{chunkSize}{For \code{chromatogram}: \code{integer(1)} defining the number of
+files from which the data should be loaded at a time into memory.
+Defaults to \code{chunkSize = 2L}.}
+
+\item{return.type}{For \code{chromPeakData}: \code{character(1)} defining the
+class of the returned object. Can be either \code{"DataFrame"} (the default)
+or \code{"data.frame"}. For \code{chromatogram}: \code{character(1)} defining the
+type of the returned object. Currently only
+\code{return.type = "MChromatograms"} is supported.}
+
+\item{BPPARAM}{For \code{chromatogram}: parallel processing setup. Defaults
+to \code{BPPARAM = bpparam()}. See \code{\link[=bbparam]{bbparam()}} for more information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
 
@@ -140,10 +188,12 @@ subset.}
 \item{drop}{For \code{[}: ignored.}
 
 \item{msLevel.}{For \code{filterRt}: ignored. \code{filterRt} will always filter
-by retention times on all MS levels regardless of this parameter.}
-
-\item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
-function supports it).}
+by retention times on all MS levels regardless of this parameter.
+For \code{chromatogram}: \code{integer} with the MS level from which the
+chromatogram(s) should be extracted. Has to be either of length 1 or
+length equal to the numer of rows of the parameters \code{mz} and \code{rt}
+defining the m/z and rt regions from which the chromatograms should
+be created. Defaults to \code{msLevel = 1L}.}
 
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
@@ -153,10 +203,6 @@ be reported for each feature in each sample. Can be any column of the
 \code{chromPeaks} matrix or \code{"index"} if simply the index of the assigned
 peak should be returned. Defaults to \code{value = "into"} thus the
 integrated peak area is reported.}
-
-\item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
-defining the m/z range for which chromatographic peaks or feature
-definitions should be returned. The full m/z range is used by default.}
 
 \item{ppm}{For \code{chromPeaks} and \code{featureDefinitions}: optional \code{numeric(1)}
 specifying the ppm by which the m/z range (defined by \code{mz} should be
@@ -177,10 +223,6 @@ and retention time of the peak's apex is within the region defined by
 \code{"is_filled"} should be included in the returned \code{matrix} with the
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
-
-\item{return.type}{For \code{chromPeakData}: \code{character(1)} defining the class of
-the returned object. Can be either \code{"DataFrame"} (the default) or
-\code{"data.frame"}.}
 
 \item{keep}{For \code{filterChromPeaks}: \code{logical}, \code{integer} or \code{character}
 specifying which chromatographic peaks to keep. If \code{logical} the
@@ -301,6 +343,14 @@ performed on \strong{all} MS levels of the object.
 \section{Functionality related to chromatographic peaks}{
 
 \itemize{
+\item \code{chromatogram}: extract chromatographic data from a data set. Parameters
+\code{mz} and \code{rt} allow to define specific m/z - retention time regions to
+extract the data from (to e.g. for extracted ion chromatograms EICs).
+Both parameters are expected to be numerical two-column matrices with
+the first column defining the lower and the second the upper margin.
+Each row can define a separate m/z - retention time region. Currently
+the function returns a \code{\link[=MChromatograms]{MChromatograms()}} object but in future more a
+efficient data structure will be used.
 \item \code{chromPeaks}: returns a \code{numeric} matrix with the identified
 chromatographic peaks. Each row represents a chromatographic peak
 identified in one sample (file). The number of columns depends on the
@@ -493,6 +543,16 @@ spectra(mse) <- Spectra::Spectra(fls)
 ## which spectra (and eventually files) belong to which sample
 mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
 
+## Extract a total ion chromatogram and base peak chromatogram
+## from the data
+bpc <- chromatogram(mse, aggregationFun = "max")
+tic <- chromatogram(mse)
+
+## Plot them
+par(mfrow = c(2, 1))
+plot(bpc, main = "BPC")
+plot(tic, main = "TIC")
+
 ## Perform peak detection on the data using the centWave algorith. Note
 ## that the parameters are chosen to reduce the run time of the example.
 p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
@@ -504,6 +564,17 @@ head(chromPeaks(xmse))
 
 ## Extract chromatographic peaks identified between 3000 and 3300 seconds
 chromPeaks(xmse, rt = c(3000, 3300), type = "within")
+
+## Extract ion chromatograms (EIC) for the first two chromatographic
+## peaks.
+chrs <- chromatogram(xmse, mz = chromPeaks(xmse)[, c("mzmin", "mzmax")],
+    rt = chromPeaks(xmse)[, c("rtmin", "rtmax")])
+
+## An EIC for each sample and each of the two regions was extracted.
+chrs
+
+## Plot the EICs for the second defined region
+plot(chrs[2, ])
 
 ## Subsetting the data to the results (and data) for the second sample
 a <- xmse[2]

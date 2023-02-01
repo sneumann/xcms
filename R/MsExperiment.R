@@ -56,7 +56,18 @@ setMethod("fileNames", "MsExperiment", function(object) {
     else character()
 })
 
-## TODO chromatogram
-## add parameter return.type . also have mz and rt parameters and the others
-## setMethod("chromatogram", "MsExperiment", function(object, ,
-## return.type = "MChromatograms"))
+#' @rdname XcmsExperiment
+setMethod(
+    "chromatogram", "MsExperiment",
+    function(object, rt = matrix(nrow = 0, ncol = 2),
+             mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
+             msLevel = 1L, chunkSize = 2L, return.type = "MChromatograms",
+             BPPARAM = bpparam()) {
+        if (!is.matrix(rt))
+            rt <- matrix(rt, ncol = 2L)
+        if (!is.matrix(mz))
+            mz <- matrix(mz, ncol = 2L)
+        .mse_chromatogram(
+            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+            msLevel = msLevel, chunkSize = chunkSize, BPPARAM = BPPARAM)
+    })

@@ -84,6 +84,15 @@
 #'
 #' @section Functionality related to chromatographic peaks:
 #'
+#' - `chromatogram`: extract chromatographic data from a data set. Parameters
+#'   `mz` and `rt` allow to define specific m/z - retention time regions to
+#'   extract the data from (to e.g. for extracted ion chromatograms EICs).
+#'   Both parameters are expected to be numerical two-column matrices with
+#'   the first column defining the lower and the second the upper margin.
+#'   Each row can define a separate m/z - retention time region. Currently
+#'   the function returns a [MChromatograms()] object but in future more a
+#'   efficient data structure will be used.
+#'
 #' - `chromPeaks`: returns a `numeric` matrix with the identified
 #'   chromatographic peaks. Each row represents a chromatographic peak
 #'   identified in one sample (file). The number of columns depends on the
@@ -257,6 +266,21 @@
 #'     retention times should be returned. The default is to return adjusted
 #'     retention times, if available.
 #'
+#' @param aggregationFun For `chromatogram`: `character(1)` defining the
+#'     function that should be used to *aggregate* intensities for retention
+#'     time (i.e. each spectrum) along the specified m/z range (parameter
+#'     `mz`). Defaults to `aggregationFun = "sum"` and hence all intensities
+#'     will be summed up. Alternatively, use `aggregationFun = "max"` to use
+#'     the maximal intensity per m/z range to create a base peak
+#'     chromatogram (BPC).
+#'
+#' @param BPPARAM For `chromatogram`: parallel processing setup. Defaults
+#'     to `BPPARAM = bpparam()`. See [bbparam()] for more information.
+#'
+#' @param chunkSize For `chromatogram`: `integer(1)` defining the number of
+#'     files from which the data should be loaded at a time into memory.
+#'     Defaults to `chunkSize = 2L`.
+#'
 #' @param drop For `[`: ignored.
 #'
 #' @param features For `filterFeatureDefinitions`: `logical`, `integer` or
@@ -318,10 +342,20 @@
 #'
 #' @param msLevel. For `filterRt`: ignored. `filterRt` will always filter
 #'     by retention times on all MS levels regardless of this parameter.
+#'     For `chromatogram`: `integer` with the MS level from which the
+#'     chromatogram(s) should be extracted. Has to be either of length 1 or
+#'     length equal to the numer of rows of the parameters `mz` and `rt`
+#'     defining the m/z and rt regions from which the chromatograms should
+#'     be created. Defaults to `msLevel = 1L`.
 #'
 #' @param mz For `chromPeaks` and `featureDefinitions`: `numeric(2)` optionally
 #'     defining the m/z range for which chromatographic peaks or feature
 #'     definitions should be returned. The full m/z range is used by default.
+#'     For `chromatogram`: two-column numerical `matrix` with each row
+#'     representing m/z range that should be aggregated into a chromatogram.
+#'     If not provided the full m/z range of the data will be used (and hence
+#'     a total ion chromatogram will be returned if `aggregationFun = "sum"`
+#'     is used).
 #'
 #' @param ppm For `chromPeaks` and `featureDefinitions`: optional `numeric(1)`
 #'     specifying the ppm by which the m/z range (defined by `mz` should be
@@ -330,13 +364,18 @@
 #'
 #' @param object An `XcmsExperiment` object.
 #'
-#' @param return.type For `chromPeakData`: `character(1)` defining the class of
-#'     the returned object. Can be either `"DataFrame"` (the default) or
-#'     `"data.frame"`.
+#' @param return.type For `chromPeakData`: `character(1)` defining the
+#'     class of the returned object. Can be either `"DataFrame"` (the default)
+#'     or `"data.frame"`. For `chromatogram`: `character(1)` defining the
+#'     type of the returned object. Currently only
+#'     `return.type = "MChromatograms"` is supported.
 #'
 #' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
 #'     the retention time range for which chromatographic peaks or features
 #'     should be returned. The full range is used by default.
+#'     For `chromatogram`: two column numerical `matrix` with each row
+#'     representing the lower and upper retention time window(s) for the
+#'     chromatograms. If not provided the full retention time range is used.
 #'
 #' @param type For `chromPeaks` and `featureDefinitions` and only if either
 #'     `mz` and `rt` are defined too: `character(1)`: defining which peaks
@@ -393,6 +432,16 @@
 #' ## which spectra (and eventually files) belong to which sample
 #' mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
 #'
+#' ## Extract a total ion chromatogram and base peak chromatogram
+#' ## from the data
+#' bpc <- chromatogram(mse, aggregationFun = "max")
+#' tic <- chromatogram(mse)
+#'
+#' ## Plot them
+#' par(mfrow = c(2, 1))
+#' plot(bpc, main = "BPC")
+#' plot(tic, main = "TIC")
+#'
 #' ## Perform peak detection on the data using the centWave algorith. Note
 #' ## that the parameters are chosen to reduce the run time of the example.
 #' p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
@@ -404,6 +453,17 @@
 #'
 #' ## Extract chromatographic peaks identified between 3000 and 3300 seconds
 #' chromPeaks(xmse, rt = c(3000, 3300), type = "within")
+#'
+#' ## Extract ion chromatograms (EIC) for the first two chromatographic
+#' ## peaks.
+#' chrs <- chromatogram(xmse, mz = chromPeaks(xmse)[, c("mzmin", "mzmax")],
+#'     rt = chromPeaks(xmse)[, c("rtmin", "rtmax")])
+#'
+#' ## An EIC for each sample and each of the two regions was extracted.
+#' chrs
+#'
+#' ## Plot the EICs for the second defined region
+#' plot(chrs[2, ])
 #'
 #' ## Subsetting the data to the results (and data) for the second sample
 #' a <- xmse[2]

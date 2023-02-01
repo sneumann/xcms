@@ -533,6 +533,8 @@ readMsExperiment <- function(files = character(),
     if (is.matrix(mz) && ncol(mz) != 2)
         stop("'mz' is expected to be a two-column matrix", call. = FALSE)
     pks <- cbind(mz, rt)
+    if (length(msLevel) != nrow(pks))
+        msLevel <- rep(msLevel[1L], nrow(pks))
     colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
     res <- .mse_spectrapply_chunks(
         x, FUN = function(z, pks, msl, afun, BPPARAM) {
@@ -550,7 +552,7 @@ readMsExperiment <- function(files = character(),
                 split(msLevel(z), f),
                 sidx,
                 FUN = .chromatograms_for_peaks,
-                MoreArgs = list(pks = pks, pks_msl = rep(msl, nrow(pks)),
+                MoreArgs = list(pks = pks, pks_msl = msl,
                                 aggregationFun = afun),
                 SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
         }, pks = pks, msl = msLevel, afun = aggregationFun,
