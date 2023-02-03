@@ -843,9 +843,9 @@ groupOverlaps <- function(xmin, xmax) {
     rtc <- c("rtmin", "rtmax")
     mzc <- c("mzmin", "mzmax")
     for (i in seq_len(nr)) {
-        res[[i]]@filterMz <- pks[i, mzc]
-        res[[i]]@mz <- pks[i, mzc]
-        res[[i]]@msLevel <- pks_msl[i]
+        slot(res[[i]], "filterMz", check = FALSE) <- pks[i, mzc]
+        slot(res[[i]], "mz", check = FALSE) <- pks[i, mzc]
+        slot(res[[i]], "msLevel", check = FALSE) <- pks_msl[i]
         ## if pks_msl > 1: precursor m/z has to match!
         keep <- between(rt, pks[i, rtc]) & msl == pks_msl[i]
         if (pks_msl[i] > 1L) {
@@ -855,10 +855,11 @@ groupOverlaps <- function(xmin, xmax) {
         keep <- which(keep)             # the get rid of `NA`.
         if (length(keep)) {
             ## Aggregate intensities.
-            res[[i]]@intensity <- vapply(pd[keep], function(z) {
-                FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
+            slot(res[[i]], "intensity", check = FALSE) <-
+                vapply(pd[keep], function(z) {
+                    FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
             }, numeric(1L))
-            res[[i]]@rtime <- rt[keep]
+            slot(res[[i]], "rtime", check = FALSE) <- rt[keep]
         }
     }
     res

@@ -282,7 +282,6 @@ test_that(".mse_obiwarp_chunks works", {
 })
 
 test_that("readMsExperiment works", {
-    expect_error(a <- readMsExperiment(), "'files'")
     expect_error(a <- readMsExperiment("a"), "not found")
 
     a <- readMsExperiment(faahko_3_files[1:2])

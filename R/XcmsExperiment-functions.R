@@ -848,3 +848,60 @@
     res$peakidx <- peakIdx
     res
 }
+
+#' Function to help extracting the *old* MChromatograms and XChromatograms
+#' from an XcmsExperiment. This is based on the code for XCMSnExp objects,
+#' but there could be room for improvement.
+#'
+#' @noRd
+.xmse_extract_chromatograms_old <- function(object, rt, mz, aggregationFun,
+                                            msLevel, chunkSize, chromPeaks,
+                                            return.type, BPPARAM) {
+    chrs <- as(.mse_chromatogram(
+        as(object, "MsExperiment"), rt = rt, mz = mz,
+        aggregationFun = aggregationFun, msLevel = msLevel,
+        chunkSize = chunkSize, BPPARAM = BPPARAM), return.type)
+    if (return.type == "MChromatograms" || chromPeaks == "none")
+        return(chrs)
+    js <- seq_len(ncol(chrs))
+    fd <- fData(chrs)
+    rtc <- c("rtmin", "rtmax")
+    mzc <- c("mzmin", "mzmax")
+    cpd <- chromPeakData(object)
+    pks_empty <- chromPeaks(object)[integer(), ]
+    pkd_empty <- cpd[integer(), ]
+    for (i in seq_len(nrow(chrs))) {
+        pks <- chromPeaks(object, rt = fd[i, rtc], mz = fd[i, mzc],
+                          msLevel = chrs[i, 1]@msLevel, type = chromPeaks)
+        for (j in js) {
+            sel <- which(pks[, "sample"] == j)
+            if (length(sel)) {
+                slot(chrs@.Data[i, j][[1L]],
+                     "chromPeaks", check = FALSE) <- pks[sel, , drop=FALSE]
+                slot(chrs@.Data[i, j][[1L]],
+                     "chromPeakData", check = FALSE) <-
+                    extractROWS(cpd, rownames(pks)[sel])
+            } else {
+                slot(chrs@.Data[i, j][[1L]],
+                     "chromPeaks", check = FALSE) <- pks_empty
+                slot(chrs@.Data[i, j][[1L]],
+                     "chromPeakData", check = FALSE) <- pkd_empty
+            }
+        }
+    }
+    ## Process features - that is not perfect.
+    if (hasFeatures(object)) {
+        pks_sub <- chromPeaks(chrs)
+        fts <- lapply(seq_len(nrow(chrs)), function(r) {
+            fdev <- featureDefinitions(object, mz = fd[r, mzc], rt = fd[r, rtc])
+            if (nrow(fdev)) {
+                fdev$row <- r
+                .subset_features_on_chrom_peaks(
+                    fdev, chromPeaks(object), pks_sub)
+            } else data.frame()
+        })
+        chrs@featureDefinitions <- DataFrame(do.call(rbind, fts))
+    }
+    chrs@.processHistory <- object@processHistory
+    chrs
+}

@@ -1013,3 +1013,51 @@ test_that("featureSpectra works", {
     expect_true(all(res[[2L]]$peak_id %in% res_2[[2L]]$peak_id))
     expect_equal(unique(res[[2L]]$feature_id), unique(res_2[[2L]]$feature_id))
 })
+
+test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
+    expect_error(chromatogram(xmse, adjustedRtime = FALSE), "unused")
+    expect_warning(res <- chromatogram(xmse, include = "apex_within",
+                                       return.type = "MChromatograms"),
+                   "deprecated")
+    expect_s4_class(res, "MChromatograms")
+    expect_true(nrow(res) == 1L)
+    ref <- chromatogram(faahko_od)
+    expect_equal(intensity(res[1, 1]), unname(intensity(ref[1, 1])))
+
+    rtr <- c(2600, 2700)
+    mzr <- c(340, 400)
+    res <- chromatogram(xmse, mz = mzr, rt = rtr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    ref <- chromatogram(xod_x, mz = mzr, rt = rtr)
+    expect_equal(chromPeaks(res), chromPeaks(ref))
+
+    ## Multiple rows.
+    res <- .xmse_extract_chromatograms_old(
+        xmse, mz = chromPeaks(xmse)[1:10, c("mzmin", "mzmax")],
+        rt = chromPeaks(xmse)[1:10, c("rtmin", "rtmax")],
+        msLevel = 1L, aggregationFun = "sum", chunkSize = 2L,
+        chromPeaks = "apex_within", BPPARAM = bpparam(),
+        return.type = "XChromatograms")
+    expect_true(nrow(res) == 10L)
+
+    ## with features
+    res <- .xmse_extract_chromatograms_old(
+        xmseg, mz = chromPeaks(xmse)[1:5, c("mzmin", "mzmax")],
+        rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")], chunkSize = 2L,
+        BPPARAM = bpparam(), msLevel = 1L, aggregationFun = "sum",
+        chromPeaks = "apex_within", return.type = "XChromatograms")
+    expect_true(nrow(featureDefinitions(res)) == 3)
+    expect_true(all(unlist(featureDefinitions(res)$peakidx) %in%
+                    seq_len(nrow(chromPeaks(res)))))
+    ref <- chromatogram(xod_xg,
+                        mz = chromPeaks(xmse)[1:5, c("mzmin", "mzmax")],
+                        rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")])
+    expect_equal(featureDefinitions(ref), featureDefinitions(res))
+})

@@ -33,6 +33,7 @@
 \alias{hasFilledChromPeaks,XcmsExperiment-method}
 \alias{dropFilledChromPeaks,XcmsExperiment-method}
 \alias{featureValues,XcmsExperiment-method}
+\alias{chromatogram,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 filterFeatureDefinitions(object, ...)
@@ -129,6 +130,19 @@ filterFeatureDefinitions(object, ...)
   missing = NA_real_,
   msLevel = integer()
 )
+
+\S4method{chromatogram}{XcmsExperiment}(
+  object,
+  rt = matrix(nrow = 0, ncol = 2),
+  mz = matrix(nrow = 0, ncol = 2),
+  aggregationFun = "sum",
+  msLevel = 1L,
+  chunkSize = 2L,
+  return.type = c("XChromatograms", "MChromatograms"),
+  include = character(),
+  chromPeaks = c("apex_within", "any", "none"),
+  BPPARAM = bpparam()
+)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -176,7 +190,7 @@ type of the returned object. Currently only
 \code{return.type = "MChromatograms"} is supported.}
 
 \item{BPPARAM}{For \code{chromatogram}: parallel processing setup. Defaults
-to \code{BPPARAM = bpparam()}. See \code{\link[=bbparam]{bbparam()}} for more information.}
+to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
 
@@ -265,6 +279,18 @@ detected.}
 \item{missing}{For \code{featureValues}: default value for missing values.
 Allows to define the value that should be reported for a missing peak
 intensity. Defaults to \code{missing = NA_real_}.}
+
+\item{include}{For \code{chromatogram}: deprecated; use parameter \code{chromPeaks}
+instead.}
+
+\item{chromPeaks}{For \code{chromatogram}: \code{character(1)} defining which
+chromatographic peaks should be returned. Can be either
+\code{chromPeaks = "apex_within"} (default) to return all chromatographic
+peaks with the m/z and RT of their apex within the m/z and retention
+time window, \code{chromPeaks = "any"} for all chromatographic peaks that
+are overlapping with the m/z - retention time window or
+\code{chromPeaks = "none"} to not include any chromatographic peaks. See
+also parameter \code{type} below for additional information.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
@@ -349,8 +375,19 @@ extract the data from (to e.g. for extracted ion chromatograms EICs).
 Both parameters are expected to be numerical two-column matrices with
 the first column defining the lower and the second the upper margin.
 Each row can define a separate m/z - retention time region. Currently
-the function returns a \code{\link[=MChromatograms]{MChromatograms()}} object but in future more a
-efficient data structure will be used.
+the function returns a \code{\link[=MChromatograms]{MChromatograms()}} object for \code{object} being a
+\code{MsExperiment} or, for \code{object} being an \code{XcmsExperiment}, either a
+\code{MChromatograms} or \code{\link[=XChromatograms]{XChromatograms()}} depending on parameter
+\code{return.type} (can be either \code{"MChromatograms"} or \code{"XChromatograms"}).
+For the latter also chromatographic peaks detected within the provided
+m/z and retention times are returned. Parameter \code{chromPeaks} allows
+to specify which chromatographic peaks should be reported. See
+documentation on the \code{chromPeaks} parameter for more information.
+If the \code{XcmsExperiment} contains correspondence results, also the
+associated feature definitions will be included in the returned
+\code{XChromatograms}.
+Note that in future more efficient data structures for chromatographic
+data will be available as well.
 \item \code{chromPeaks}: returns a \code{numeric} matrix with the identified
 chromatographic peaks. Each row represents a chromatographic peak
 identified in one sample (file). The number of columns depends on the
@@ -567,8 +604,9 @@ chromPeaks(xmse, rt = c(3000, 3300), type = "within")
 
 ## Extract ion chromatograms (EIC) for the first two chromatographic
 ## peaks.
-chrs <- chromatogram(xmse, mz = chromPeaks(xmse)[, c("mzmin", "mzmax")],
-    rt = chromPeaks(xmse)[, c("rtmin", "rtmax")])
+chrs <- chromatogram(xmse,
+    mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+    rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")])
 
 ## An EIC for each sample and each of the two regions was extracted.
 chrs

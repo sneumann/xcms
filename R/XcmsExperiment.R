@@ -90,8 +90,19 @@
 #'   Both parameters are expected to be numerical two-column matrices with
 #'   the first column defining the lower and the second the upper margin.
 #'   Each row can define a separate m/z - retention time region. Currently
-#'   the function returns a [MChromatograms()] object but in future more a
-#'   efficient data structure will be used.
+#'   the function returns a [MChromatograms()] object for `object` being a
+#'   `MsExperiment` or, for `object` being an `XcmsExperiment`, either a
+#'   `MChromatograms` or [XChromatograms()] depending on parameter
+#'   `return.type` (can be either `"MChromatograms"` or `"XChromatograms"`).
+#'   For the latter also chromatographic peaks detected within the provided
+#'   m/z and retention times are returned. Parameter `chromPeaks` allows
+#'   to specify which chromatographic peaks should be reported. See
+#'   documentation on the `chromPeaks` parameter for more information.
+#'   If the `XcmsExperiment` contains correspondence results, also the
+#'   associated feature definitions will be included in the returned
+#'   `XChromatograms`.
+#'   Note that in future more efficient data structures for chromatographic
+#'   data will be available as well.
 #'
 #' - `chromPeaks`: returns a `numeric` matrix with the identified
 #'   chromatographic peaks. Each row represents a chromatographic peak
@@ -275,7 +286,16 @@
 #'     chromatogram (BPC).
 #'
 #' @param BPPARAM For `chromatogram`: parallel processing setup. Defaults
-#'     to `BPPARAM = bpparam()`. See [bbparam()] for more information.
+#'     to `BPPARAM = bpparam()`. See [bpparam()] for more information.
+#'
+#' @param chromPeaks For `chromatogram`: `character(1)` defining which
+#'     chromatographic peaks should be returned. Can be either
+#'     `chromPeaks = "apex_within"` (default) to return all chromatographic
+#'     peaks with the m/z and RT of their apex within the m/z and retention
+#'     time window, `chromPeaks = "any"` for all chromatographic peaks that
+#'     are overlapping with the m/z - retention time window or
+#'     `chromPeaks = "none"` to not include any chromatographic peaks. See
+#'     also parameter `type` below for additional information.
 #'
 #' @param chunkSize For `chromatogram`: `integer(1)` defining the number of
 #'     files from which the data should be loaded at a time into memory.
@@ -298,6 +318,9 @@
 #'
 #' @param i For `[`: `integer` or `logical` defining the samples/files to
 #'     subset.
+#'
+#' @param include For `chromatogram`: deprecated; use parameter `chromPeaks`
+#'      instead.
 #'
 #' @param intensity For `featureValues`: `character(1)` specifying the name
 #'     of the column in the `chromPeaks(objects)` matrix containing the
@@ -456,10 +479,13 @@
 #'
 #' ## Extract ion chromatograms (EIC) for the first two chromatographic
 #' ## peaks.
-#' chrs <- chromatogram(xmse, mz = chromPeaks(xmse)[, c("mzmin", "mzmax")],
-#'     rt = chromPeaks(xmse)[, c("rtmin", "rtmax")])
+#' chrs <- chromatogram(xmse,
+#'     mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+#'     rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")])
 #'
 #' ## An EIC for each sample and each of the two regions was extracted.
+#' ## Identified chromatographic peaks in the defined regions are extracted
+#' ## as well.
 #' chrs
 #'
 #' ## Plot the EICs for the second defined region
@@ -1219,6 +1245,17 @@ setMethod(
     })
 
 ## TODO: featureChromatograms
+## - apply adjusted rtimes
+## - define regions for the features: might need to lapply through the
+##   $peakidx.
+## - get the chromatograms for all defined regions (in one go, on MsExperiment)
+## - loop through features again and assign chrom peaks to the chrs.
+##   also update and define the feature definitions.
+## fts <- featureDefinitions(xmseg)
+## cpks <- chromPeaks(xmseg)[fts$peakidx[[1L]], , drop = FALSE]
+## tmp <- lapply(fts$peakidx, function(z) {
+##     chromPeaks()
+## })
 
 ## TODO: featureSummary
 
@@ -1414,7 +1451,32 @@ setMethod(
 ## utility and unsorted methods
 ################################################################################
 
-## TODO chromatogram
+#' @rdname XcmsExperiment
+setMethod(
+    "chromatogram", "XcmsExperiment",
+    function(object, rt = matrix(nrow = 0, ncol = 2),
+             mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
+             msLevel = 1L, chunkSize = 2L,
+             return.type = c("XChromatograms", "MChromatograms"),
+             include = character(),
+             chromPeaks = c("apex_within", "any", "none"),
+             BPPARAM = bpparam()) {
+        if (!is.matrix(rt)) rt <- matrix(rt, ncol = 2L)
+        if (!is.matrix(mz)) mz <- matrix(mz, ncol = 2L)
+        if (length(include)) {
+            warning("Parameter 'include' is deprecated, please use ",
+                    "'chromPeaks' instead")
+            chromPeaks <- include
+        }
+        return.type <- match.arg(return.type)
+        chromPeaks <- match.arg(chromPeaks)
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        .xmse_extract_chromatograms_old(
+            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+            msLevel = msLevel, chunkSize = chunkSize, chromPeaks = chromPeaks,
+            return.type = return.type, BPPARAM = BPPARAM)
+    })
 
 ## TODO filterMz?
 
