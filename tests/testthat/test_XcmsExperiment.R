@@ -1061,3 +1061,31 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
                         rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")])
     expect_equal(featureDefinitions(ref), featureDefinitions(res))
 })
+
+test_that("featureChromatograms,XcmsExperiment works", {
+    res <- featureChromatograms(xmseg, return.type = "XChromatograms")
+    expect_s4_class(res, "XChromatograms")
+    expect_equal(nrow(res), nrow(featureDefinitions(xmseg)))
+    expect_equal(rownames(featureDefinitions(res)),
+                 rownames(featureDefinitions(xmseg)))
+    expect_equal(featureValues(res), featureValues(xmseg))
+
+    ref <- featureChromatograms(xod_xg)
+    expect_equal(chromPeaks(ref), chromPeaks(res))
+    expect_equal(featureDefinitions(ref)$peakidx,
+                 featureDefinitions(res)$peakidx)
+    expect_equal(featureDefinitions(res),
+                 featureDefinitions(ref))
+
+    expect_error(featureChromatograms(xmseg, features = "a"), "not available")
+
+    ## Duplicated features
+    res <- featureChromatograms(xmseg, features = c("FT12", "FT03", "FT12"))
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 3L)
+    expect_equal(rownames(featureDefinitions(res)), c("FT12", "FT03", "FT12.1"))
+    expect_equal(chromPeaks(res)[featureDefinitions(res)$peakidx[[1L]], 1:11],
+                 chromPeaks(res)[featureDefinitions(res)$peakidx[[3L]], 1:11])
+    expect_equal(unname(chromPeaks(res)[, "row"]),
+                 c(1, 1, 1, 2, 2, 2, 2, 3, 3, 3))
+})

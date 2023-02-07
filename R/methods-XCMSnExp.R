@@ -3712,3 +3712,121 @@ setMethod(
         validObject(object)
         object
     })
+
+#' @rdname featureChromatograms
+setMethod(
+    "featureChromatograms",
+    "XCMSnExp", function(object, expandRt = 0, aggregationFun = "max",
+                         features, include = c("feature_only", "apex_within",
+                                               "any", "all"),
+                         filled = FALSE, n = length(fileNames(object)),
+                         value = c("maxo", "into"), expandMz = 0, ...) {
+        include <- match.arg(include)
+        value <- match.arg(value)
+        if (!hasFeatures(object))
+            stop("No feature definitions present. Please run ",
+                 "first 'groupChromPeaks'")
+        if (!missing(features)) {
+            features <- .i2index(
+                features, ids = rownames(featureDefinitions(object)),
+                "features")
+        } else features <- seq_len(nrow(featureDefinitions(object)))
+        if (!length(features))
+            return(MChromatograms(ncol = length(fileNames(object)), nrow = 0))
+        ## If we want to get chromatograms only in a reduced number of samples
+        n <- ceiling(n[1])
+        if (n != length(fileNames(object))) {
+            fids <- rownames(featureDefinitions(object))[features]
+            if (n > length(fileNames(object)) || n < 1)
+                stop("'n' has to be a positive integer between 1 and ",
+                     length(fileNames(object)))
+            pks <- chromPeaks(object)
+            if (!filled)
+                pks[chromPeakData(object)$is_filled, ] <- NA
+            vals <- apply(.feature_values(
+                pks, extractROWS(featureDefinitions(object), features),
+                method = "maxint", value = value, intensity = "maxo",
+                colnames = basename(fileNames(object))),
+                MARGIN = 2, sum, na.rm = TRUE)
+            sample_idx <- order(vals, decreasing = TRUE)[seq_len(n)]
+            object <- .filter_file_XCMSnExp(object, sample_idx,
+                                            keepFeatures = TRUE)
+            features <- match(fids, rownames(featureDefinitions(object)))
+            features <- features[!is.na(features)]
+            if (length(features) < length(fids))
+                warning(length(fids) - length(features), " of ", length(fids),
+                        " features not present in the selected samples")
+            if (!length(features))
+                return(MChromatograms(ncol = length(fileNames(object)),
+                                      nrow = 0))
+        }
+        pks <- chromPeaks(object)
+        if (length(unique(rownames(pks))) != nrow(pks)) {
+            rownames(pks) <- .featureIDs(nrow(pks), "CP")
+            rownames(chromPeaks(object)) <- rownames(pks)
+        }
+        pk_idx <- featureDefinitions(object)$peakidx[features]
+        rt_cols <- c("rtmin", "rtmax")
+        mz_cols <- c("mzmin", "mzmax")
+        mat <- do.call(rbind, lapply(pk_idx, function(z) {
+            pks_current <- pks[z, , drop = FALSE]
+            c(range(pks_current[, rt_cols]),
+              range(pks_current[, mz_cols]))
+        }))
+        include_peaks <- "apex_within"
+        if (include %in% c("any", "all"))
+            include_peaks <- "any"
+        mat[, 1] <- mat[, 1] - expandRt
+        mat[, 2] <- mat[, 2] + expandRt
+        mat[, 3] <- mat[, 3] - expandMz
+        mat[, 4] <- mat[, 4] + expandMz
+        colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
+        chrs <- chromatogram(object, rt = mat[, 1:2], mz = mat[, 3:4],
+                             aggregationFun = aggregationFun, filled = filled,
+                             include = include_peaks, ...)
+        if (include == "feature_only") {
+            ## Loop over rows/features:
+            ## subset to peaks of a feature.
+            fts_all <- featureDefinitions(chrs)
+            pks_all <- chromPeaks(chrs)
+            chrs@featureDefinitions <- fts_all[integer(), ]
+            nr <- nrow(chrs)
+            nc <- ncol(chrs)
+            ft_defs <- vector("list", nr)
+            ft_ids <- rownames(featureDefinitions(object))[features]
+            ## Keep only a single feature per row
+            ## Keep only peaks for the features of interest.
+            for (i in seq_len(nr)) {
+                is_feature <- which(fts_all$row == i &
+                                    rownames(fts_all) == ft_ids[i])
+                if (!length(is_feature))
+                    next
+                ft_def <- extractROWS(fts_all, is_feature)
+                ft_defs[[i]] <- ft_def
+                pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
+                tmp <- chrs@.Data
+                for (j in seq_len(nc)) {
+                    cur_pks <- tmp[i, j][[1]]@chromPeaks
+                    if (nrow(cur_pks)) {
+                        keep <- which(rownames(cur_pks) %in% pk_ids)
+                        slot(tmp[i, j][[1]], "chromPeaks", check = FALSE) <-
+                            cur_pks[keep, , drop = FALSE]
+                        slot(tmp[i, j][[1]], "chromPeakData", check = FALSE) <-
+                            extractROWS(tmp[i, j][[1]]@chromPeakData,
+                                        keep)
+                    }
+                }
+                chrs@.Data <- tmp
+            }
+            pks_sub <- chromPeaks(chrs)
+            ## Update the index/mapping between features and peaks (in a loop to
+            ## support duplicated features).
+            fts <- lapply(seq_len(nr), function(r) {
+                .subset_features_on_chrom_peaks(
+                    ft_defs[[r]], pks_all, pks_sub)
+            })
+            chrs@featureDefinitions <- do.call(rbind, fts)
+        }
+        if (validObject(chrs))
+            chrs
+    })

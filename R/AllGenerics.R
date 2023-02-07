@@ -481,6 +481,134 @@ setGeneric("factorGap", function(object) standardGeneric("factorGap"))
 setGeneric("factorGap<-", function(object, value) standardGeneric("factorGap<-"))
 setGeneric("family", function(object, ...) standardGeneric("family"))
 setGeneric("family<-", function(object, value) standardGeneric("family<-"))
+
+#' @title Extract ion chromatograms for each feature
+#'
+#' @description
+#'
+#' Extract ion chromatograms for features in an [XcmsExperiment] or
+#' [XCMSnExp-class] object. The function returns for each feature the
+#' extracted ion chromatograms (along with all associated chromatographic
+#' peaks) in each sample. The chromatogram is extracted from the m/z - rt
+#' region including all chromatographic peaks of that features (i.e. based on
+#' the ranges of `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"` of all
+#' chromatographic peaks of the feature).
+#'
+#' By default only chromatographic peaks associated with a feature are
+#' included. For `object` being a `XCMSnExp` object parameter `include`
+#' allows also to return all chromatographic peaks with their apex
+#' position within the selected region (`include = "apex_within"`) or any
+#' chromatographic peak overlapping the m/z and retention time range
+#' (`include = "any"`).
+#'
+#' @note
+#'
+#' Parameters `include`, `filled`, `n` and `value` are only supported
+#' for `object` being an `XCMSnExp`.
+#'
+#' When extracting EICs from only the top `n` samples it can happen that one
+#' or more of the features specified with `features` are dropped because they
+#' have no detected peak in the *top n* samples. The chance for this to happen
+#' is smaller if `x` contains also filled-in peaks (with `fillChromPeaks`).
+#'
+#' @param aggregationFun `character(1)` specifying the name that should be
+#'     used to aggregate intensity values across the m/z value range for
+#'     the same retention time. The default `"max"` returns a base peak
+#'     chromatogram.
+#'
+#' @param BPPARAM For `object` being an `XcmsExperiment`: parallel processing
+#'     setup. Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more
+#'     information.
+#'
+#' @param chunkSize For `object` being an `XcmsExperiment`: `integer(1)`
+#'     defining the number of files from which the data should be loaded at
+#'     a time into memory. Defaults to `chunkSize = 2L`.
+#'
+#' @param expandMz `numeric(1)` to expand the m/z range for each chromatographic
+#'     peak by a constant value on each side. Be aware that by extending the
+#'     m/z range the extracted EIC might **no longer** represent the actual
+#'     identified chromatographic peak because intensities of potential
+#'     additional mass peaks within each spectra would be aggregated into the
+#'     final reported intensity value per spectrum (retention time).
+#'
+#' @param expandRt `numeric(1)` to expand the retention time range for each
+#'     chromatographic peak by a constant value on each side.
+#'
+#' @param features `integer`, `character` or `logical` defining a subset of
+#'     features for which chromatograms should be returned. Can be the index
+#'     of the features in `featureDefinitions`, feature IDs (row names of
+#'     `featureDefinitions`) or a logical vector.
+#'
+#' @param filled Only for `object` being an `XCMSnExp`: `logical(1)` whether
+#'     filled-in peaks should be included in the result object. The default
+#'     is `filled = FALSE`, i.e. only detected peaks are reported.
+#'
+#' @param include Only for `object` being an `XCMSnExp`: `character(1)`
+#'     defining which chromatographic peaks (and related feature definitions)
+#'     should be included in the returned [XChromatograms()].
+#'     Defaults to `"feature_only"`; See description above for options and
+#'     details.
+#'
+#' @param n Only for `object` being an `XCMSnExp`: `integer(1)` to optionally
+#'     specify the number of *top n* samples from which the EIC should be
+#'     extracted.
+#'
+#' @param object `XcmsExperiment` or `XCMSnExp` object with grouped
+#'     chromatographic peaks.
+#'
+#' @param return.type `character(1)` defining how the result should be
+#'     returned. At present only `return.type = "XChromatograms"` is
+#'     supported and the results are thus returned as an [XChromatograms()]
+#'     object.
+#'
+#' @param value Only for `object` being an `XCMSnExp`: `character(1)`
+#'     specifying the column to be used to sort the samples. Can be either
+#'     `"maxo"` (the default) or `"into"` to use the maximal peak intensity
+#'     or the integrated peak area, respectively.
+#'
+#' @param ... optional arguments to be passed along to the [chromatogram()]
+#'     function.
+#'
+#' @return [XChromatograms()] object. In future, depending on parameter
+#'     `return.type`, the data might be returned as a different object.
+#'
+#' @name featureChromatograms
+#'
+#' @md
+#'
+#' @seealso [filterColumnsKeepTop()] to filter the extracted EICs keeping only
+#'     the *top n* columns (samples) with the highest intensity.
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## Disable parallel processing for this example
+#' register(SerialParam())
+#'
+#' ## Subset the object to a smaller retention time range
+#' xdata <- filterRt(faahko_sub, c(2500, 3500))
+#'
+#' xdata <- groupChromPeaks(xdata,
+#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
+#'
+#' ## Get the feature definitions
+#' featureDefinitions(xdata)
+#'
+#' ## Extract ion chromatograms for the first 3 features. Parameter
+#' ## `features` can be either the feature IDs or feature indices.
+#' chrs <- featureChromatograms(xdata, features = 1:3)
+#'
+#' ## Plot the XIC for the first feature using different colors for each file
+#' plot(chrs[1, ], col = c("red", "green", "blue"))
+setGeneric("featureChromatograms", function(object, ...)
+    standardGeneric("featureChromatograms"))
+
 setGeneric("featureDefinitions", function(object, ...)
     standardGeneric("featureDefinitions"))
 setGeneric("featureDefinitions<-", function(object, value)

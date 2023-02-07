@@ -570,6 +570,3 @@ readMsExperiment <- function(files = character(),
     colnames(res@.Data) <- rownames(pData(res))
     res
 }
-
-#' For XcmsExperiment: "inject" chrom peaks afterwards? so, first get the
-#' MS data and then add anything xcms related?

@@ -251,7 +251,6 @@ export(
     "exportMetaboAnalyst",
     "imputeRowMin",
     "imputeRowMinRand",
-    "featureChromatograms",
     "hasFilledChromPeaks",
     "findChromPeaksIsolationWindow",
     "reconstructChromPeakSpectra",
@@ -524,7 +523,8 @@ exportMethods("hasChromPeaks",
               "manualChromPeaks",
               "manualFeatures",
               "featureSpectra",
-              "chromPeakSpectra"
+              "chromPeakSpectra",
+              "featureChromatograms"
               )
 
 ## feature grouping functions and methods.

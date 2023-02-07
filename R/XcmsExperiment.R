@@ -199,6 +199,21 @@
 #'   will be removed if alignment was performed **after** the correspondence
 #'   analysis. This can be overruled with `keepAdjustedRtime = TRUE`.
 #'
+#' - `featureArea`: returns a `matrix` with columns `"mzmin"`, `"mzmax"`,
+#'   `"rtmin"` and `"rtmax"` with the m/z and retention time range for each
+#'   feature (row) in `object`. By default these represent the minimal m/z
+#'   and retention times as well as maximal m/z and retention times for
+#'   the chromatographi peaks assigned to that feature. Note that if in
+#'   one sample more than one chromatographic peak is assigned to a feature
+#'   only the one with the higher intensity is considered. Parameter
+#'   `features` allows to extract these values for selected features only.
+#'   Parameters `mzmin`, `mzmax`, `rtmin` and `rtmax` allow to define
+#'   the function to calculate the reported `"mzmin"`, `"mzmax"`, `"rtmin"`
+#'   and `"rtmax"` values.
+#'
+#' - `featureChromatograms`: extract ion chromatograms (EICs) for each
+#'   feature in `object`. See [featureChromatograms()] for more details.
+#'
 #' - `featureDefinitions`: returns a `data.frame` with feature definitions or
 #'   an empty `data.frame` if no correspondence analysis results are present.
 #'   Parameters `msLevel`, `mz`, `ppm` and `rt` allow to define subsets of
@@ -303,8 +318,9 @@
 #'
 #' @param drop For `[`: ignored.
 #'
-#' @param features For `filterFeatureDefinitions`: `logical`, `integer` or
-#'     `character` defining the features to keep. See function description
+#' @param features For `filterFeatureDefinitions` and `featureArea`: `logical`,
+#'     `integer` or `character` defining the features to keep or from which
+#'     to extract the feature are, respectively. See function description
 #'     for more information.
 #'
 #' @param file For `filterFile`: `integer` with the indices of the samples
@@ -380,6 +396,16 @@
 #'     a total ion chromatogram will be returned if `aggregationFun = "sum"`
 #'     is used).
 #'
+#' @param mzmax For `featureArea`: function to calculate the `"mzmax"` of
+#'     a feature based on the `"mzmax"` values of the individual
+#'     chromatographic peaks assigned to that feature. Defaults to
+#'     `mzmax = max`.
+#'
+#' @param mzmin For `featureArea`: function to calculate the `"mzmin"` of
+#'     a feature based on the `"mzmin"` values of the individual
+#'     chromatographic peaks assigned to that feature. Defaults to
+#'     `mzmin = min`.
+#'
 #' @param ppm For `chromPeaks` and `featureDefinitions`: optional `numeric(1)`
 #'     specifying the ppm by which the m/z range (defined by `mz` should be
 #'     extended. For a value of `ppm = 10`, all peaks within `mz[1] - ppm / 1e6`
@@ -399,6 +425,16 @@
 #'     For `chromatogram`: two column numerical `matrix` with each row
 #'     representing the lower and upper retention time window(s) for the
 #'     chromatograms. If not provided the full retention time range is used.
+#'
+#' @param rtmax For `featureArea`: function to calculate the `"rtmax"` of
+#'     a feature based on the `"rtmax"` values of the individual
+#'     chromatographic peaks assigned to that feature. Defaults to
+#'     `rtmax = max`.
+#'
+#' @param rtmin For `featureArea`: function to calculate the `"rtmin"` of
+#'     a feature based on the `"rtmin"` values of the individual
+#'     chromatographic peaks assigned to that feature. Defaults to
+#'     `rtmin = min`.
 #'
 #' @param type For `chromPeaks` and `featureDefinitions` and only if either
 #'     `mz` and `rt` are defined too: `character(1)`: defining which peaks
@@ -1244,18 +1280,72 @@ setMethod(
         object
     })
 
-## TODO: featureChromatograms
-## - apply adjusted rtimes
-## - define regions for the features: might need to lapply through the
-##   $peakidx.
-## - get the chromatograms for all defined regions (in one go, on MsExperiment)
-## - loop through features again and assign chrom peaks to the chrs.
-##   also update and define the feature definitions.
-## fts <- featureDefinitions(xmseg)
-## cpks <- chromPeaks(xmseg)[fts$peakidx[[1L]], , drop = FALSE]
-## tmp <- lapply(fts$peakidx, function(z) {
-##     chromPeaks()
-## })
+#' @rdname featureChromatograms
+setMethod(
+    "featureChromatograms", "XcmsExperiment",
+    function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
+             features = character(), return.type = "XChromatograms",
+             chunkSize = 2L, BPPARAM = bpparam()) {
+        return.type <- match.arg(return.type)
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        area <- featureArea(object, mzmin = min, mzmax = max, rtmin = min,
+                            rtmax = max, features = features, msLevel = 1:10)
+        if (expandRt != 0) {
+            area[, "rtmin"] <- area[, "rtmin"] - expandRt
+            area[, "rtmax"] <- area[, "rtmax"] + expandRt
+        }
+        if (expandMz != 0) {
+            area[, "mzmin"] <- area[, "mzmin"] - expandMz
+            area[, "mzmax"] <- area[, "mzmax"] + expandMz
+        }
+        fts <- featureDefinitions(object)[rownames(area), ]
+        chrs <- as(.mse_chromatogram(
+            as(object, "MsExperiment"),
+            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
+            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
+            aggregationFun = aggregationFun, msLevel = fts$ms_level,
+            chunkSize = chunkSize, BPPARAM = BPPARAM), "XChromatograms")
+        ## Populate with chrom peaks.
+        nf <- nrow(fts)
+        js <- seq_len(ncol(chrs))
+        pks_empty <- chromPeaks(object)[integer(), ]
+        pkd_empty <- chromPeakData(object)[integer(), ]
+        tmp <- chrs@.Data
+        for (i in seq_len(nf)) {
+            idx <- fts$peakidx[[i]]
+            smpl <- chromPeaks(object)[idx, "sample"]
+            for (j in js) {
+                keep <- smpl == j
+                if (any(keep)) {
+                    slot(tmp[i, j][[1L]], "chromPeaks", check = FALSE) <-
+                        chromPeaks(object)[idx[keep], , drop = FALSE]
+                    slot(tmp[i, j][[1L]], "chromPeakData",
+                         check = FALSE) <- as(
+                        object@chromPeakData[idx[keep], ], "DataFrame")
+                } else {
+                    slot(tmp[i, j][[1L]], "chromPeaks", check = FALSE) <-
+                        pks_empty
+                    slot(tmp[i, j][[1L]], "chromPeakData",
+                         check = FALSE) <- pkd_empty
+                }
+            }
+        }
+        chrs@.Data <- tmp
+        ## Update peakidx in feature definitions.
+        fts$row <- seq_len(nf)
+        pkid_all <- rownames(chromPeaks(object))
+        pkid <- chromPeaks(chrs)[, c("row", "column")]
+        pkid <- cbind(pkid, index = seq_len(nrow(pkid)))
+        pkidl <- split.data.frame(pkid, pkid[, "row"])
+        fts$peakidx <- lapply(fts$row, function(z) {
+            unname(pkidl[[z]][pkid_all[fts$peakidx[[z]]], "index"])
+        })
+        colnames(chrs) <- basename(fileNames(object))
+        chrs@featureDefinitions <- DataFrame(fts)
+        chrs@.processHistory <- object@processHistory
+        chrs
+    })
 
 ## TODO: featureSummary
 

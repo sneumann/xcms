@@ -905,3 +905,16 @@
     chrs@.processHistory <- object@processHistory
     chrs
 }
+
+#' @rdname XcmsExperiment
+featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
+                        rtmax = max, msLevel = integer(),
+                        features = character()) {
+    if (!hasFeatures(object))
+        stop("No correspondence results available. Please run ",
+             "'groupChromPeaks' first.")
+    if (!length(msLevel))
+        msLevel <- seq_len(10)
+    .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                        rtmax = rtmax, msLevel = msLevel, features = features)
+}

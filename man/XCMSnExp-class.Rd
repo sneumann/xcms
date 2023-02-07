@@ -8,7 +8,6 @@
 \alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
 \alias{hasFilledChromPeaks,XCMSnExp-method}
-\alias{featureArea}
 \alias{profMat,OnDiskMSnExp-method}
 \alias{show,XCMSnExp-method}
 \alias{show,MsFeatureData-method}
@@ -76,16 +75,6 @@
 processHistoryTypes()
 
 \S4method{hasFilledChromPeaks}{XCMSnExp}(object)
-
-featureArea(
-  object,
-  mzmin = median,
-  mzmax = median,
-  rtmin = median,
-  rtmax = median,
-  msLevel = unique(msLevel(object)),
-  features = character()
-)
 
 \S4method{profMat}{OnDiskMSnExp}(
   object,
@@ -195,26 +184,6 @@ featureArea(
 \code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
 object, for all other methods a \code{XCMSnExp} object.}
 
-\item{mzmin}{for \code{featureArea}: \code{function} to be applied to values
-in the \code{"mzmin"} column of all chromatographic peaks of a feature
-to define the lower m/z value of the feature area.
-Defaults to \code{median}.}
-
-\item{mzmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"mzmax"} column.}
-
-\item{rtmin}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"rtmin"} column.}
-
-\item{rtmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"rtmax"} column.}
-
-\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
-chromatographic peaks should be returned.}
-
-\item{features}{for \code{featureArea}: IDs of features for which the area
-should be extracted.}
-
 \item{method}{\code{character(1)} defining the profile matrix generation method.
 Allowed are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}.
 See details section for more information.}
@@ -247,6 +216,9 @@ specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
 
 \item{...}{Additional parameters.}
+
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
 
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
@@ -431,17 +403,6 @@ correspondence results):
     \code{processHistory} method to extract specific process step(s).
 
 \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
-
-\code{featureArea} extracts the m/z - retention time region for each feature.
-This area is defined by the m/z - retention time regions of all
-chromatographic peaks associated with a feature. Parameters \code{mzmin},
-\code{mzmax}, \code{rtmin} and \code{rtmax} allow to define functions how
-the corresponding value is calculated from the individual values (such as
-the \code{"rtmin"}) of all chromatographic peaks of that feature. By default
-the median \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}
-is reported. Parameter \code{features} allows to provide feature IDs for
-which the area should be extracted. By default it is extracted for all
-features.
 
 \code{profMat}: creates a \emph{profile matrix}, which
     is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
