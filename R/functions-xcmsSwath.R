@@ -73,6 +73,8 @@
 #'
 #' Be aware that this function does only support returning a `Spectra`!
 #'
+#' @author Johannes Rainer, Michael Witting
+#'
 #' @noRd
 .reconstruct_dia_ms2 <-
     function(object, expandRt = 2, diffRt = 5, minCor = 0.8, fromFile = 1L,
@@ -145,12 +147,3 @@
         .require_spectra()
         Spectra::Spectra(res)
     }
-
-#' Add a function that takes two chromatograms and returns a `logical(1)`
-#' whether the two should be merged? Or better maybe some data.frame? That
-#' function could then be called by the *framework* function for SWATH data
-#' (i.e. identify potentially matching chromatograms and calculating stuff
-#' on them.
-#'
-#' @noRd
-NULL
