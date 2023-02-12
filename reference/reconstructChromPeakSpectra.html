@@ -19,7 +19,7 @@ LC-MS/MS analysis vignette for more details and examples."><!-- mathjax --><scri
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.21.2</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ for data independent acquisition (DIA) data (such as SWATH). See the
 <span>  intensity <span class="op">=</span> <span class="st">"maxo"</span>,</span>
 <span>  peakId <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">object</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MSpectra"</span>, <span class="st">"Spectra"</span><span class="op">)</span></span>
+<span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Spectra"</span>, <span class="st">"MSpectra"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -131,21 +131,21 @@ information.</p></dd>
 
 <dt>return.type</dt>
 <dd><p><code>character(1)</code> defining the type of the returned object.
-Can be either <code>return.type = "MSpectra"</code> (the default) to return a
-<code><a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSnbase::MSpectra</a></code> object or <code>return.type = "Spectra"</code> for the newer
-<code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra</a></code> object.</p></dd>
+Only <code>return.type = "Spectra"</code> is supported, <code>return.type = "MSpectra"</code>
+is deprecated.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>Depending on <code>return.type</code>:</p><ul><li><p><code><a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSpectra()</a></code> with the reconstructed MS2 spectra for all MS1 peaks
-in <code>object</code>. Contains empty <a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html" class="external-link">Spectrum2</a> objects for MS1 peaks for
+<ul><li><p><code>Spectra</code> object (defined in the <code>Spectra</code> package) with the
+reconstructed MS2 spectra for all MS1 peaks in <code>object</code>. Contains
+empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
-chromatographic peak was below threshold <code>minCor</code>. <code>MSpectra</code> metadata
-columns <code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code>CharacterList()</code>
+chromatographic peak was below threshold <code>minCor</code>. Spectra variables
+<code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code>CharacterList()</code>
 and <code>NumericList()</code> with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
@@ -153,8 +153,6 @@ As retention time the median retention times of all MS2 chromatographic
 peaks used for the spectrum reconstruction is reported. The MS1
 chromatographic peak intensity is reported as the reconstructed
 spectrum's <code>precursorIntensity</code> value (see parameter <code>intensity</code> above).</p></li>
-<li><p><code>Spectra</code> object (defined in the <code>Spectra</code> package). The same content and
-information than above.</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
@@ -169,8 +167,9 @@ for which the correlation is <code>&gt; minCor</code>.</p></li>
 chromatographic peaks and their intensity (either <code>"maxo"</code> or <code>"into"</code>).
 Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
-</ul><p>The resulting <code>MSpectra</code> object provides also the peak IDs of the MS2
-chromatographic peaks for each spectrum as well as their correlation value.</p>
+</ul><p>The resulting <code>Spectra</code> object provides also the peak IDs of the MS2
+chromatographic peaks for each spectrum as well as their correlation value
+with spectra variables <em>ms2_peak_id</em> and <em>ms2_peak_cor</em>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
