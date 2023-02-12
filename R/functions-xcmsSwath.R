@@ -54,170 +54,96 @@
     which(abs(pks[, "rt"] - x["rt"]) <= diffRt)
 }
 
-#' @description
+#' *Reconstruct* MS2 spectra for DIA data:
+#' For each MS1 chromatographic peak:
 #'
-#' Reconstruct MS2 spectra for all MS1 chromatographic peaks of one file.
-#' See `.reconstruct_ms2_for_chrom_peak` for details and parameters.
+#' - find all MS2 chrom peaks from the same isolation window
+#' - reduce to MS2 chrom peaks with an rt similar to the one from the MS1
+#'   chrom peak
+#' - remove EICs with 2 or less data points
+#' - create an MS2 spectrum from all MS2 chrom peaks with peak shape
+#'   correlation > `minCor`.
 #'
-#' @return `MSpectra` with the reconstructed MS2 spectra (emtpy `MSpectra` if
-#'     no spectrum was reconstructed for any peak or if no MS1 chromatographic
-#'     peaks are present).
+#' @param object `XCMSnExp` with data from a **single** file.
 #'
-#' @author Johannes Rainer, Micheal Witting
+#' @note
+#'
+#' this function first extracts EICs for all chromatographic peaks, thus it
+#' will not be efficient for predicting MS2 spectra for selected MS1 peaks.
+#'
+#' Be aware that this function does only support returning a `Spectra`!
+#'
+#' @author Johannes Rainer, Michael Witting
 #'
 #' @noRd
-.reconstruct_ms2_for_peaks_file <-
+.reconstruct_dia_ms2 <-
     function(object, expandRt = 2, diffRt = 5, minCor = 0.8, fromFile = 1L,
              column = "maxo",
-             peakId = rownames(chromPeaks(object, msLevel = 1L)),
-             return.type = c("MSpectra", "Spectra")) {
-        return.type <- match.arg(return.type)
+             peakId = rownames(chromPeaks(object, msLevel = 1L))) {
         if (hasAdjustedRtime(object))
             fData(object)$retentionTime <- rtime(object)
-        idx <- match(peakId, rownames(chromPeaks(object)))
-        idx <- idx[!is.na(idx)]
-        if (!length(idx)) {
-            return(MSpectra(elementMetadata = DataFrame(
-                                peak_id = character(),
-                                ms2_peak_id = CharacterList(),
-                                ms2_peak_cor = NumericList())))
-        }
-        res <- vector("list", length(idx))
-        message("Reconstructing MS2 spectra for ", length(idx),
+        message("Reconstructing MS2 spectra for ", length(peakId),
                 " chrom peaks ...", appendLF = FALSE)
-        for (i in seq_along(idx))
-            res[[i]] <- .reconstruct_ms2_for_chrom_peak(
-                chromPeaks(object)[idx[i], ], object = object,
-                expandRt = expandRt, diffRt = diffRt, minCor = minCor,
-                fromFile = fromFile, column = column, return.type = return.type)
-        message(" OK")
-        if (return.type == "MSpectra") {
-            res <- do.call(c, res)
-            mcols(res)$peak_id <- rownames(chromPeaks(object))[idx]
-        } else {
-            .require_spectra()
-            res <- cbind(do.call(rbind, res),
-                         DataFrame(peak_id = rownames(chromPeaks(object))[idx]))
-            res <- Spectra::Spectra(res)
+        pks <- chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                      "rtmax", column)]
+        pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
+        pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
+        ord <- order(pks[, "mz"])       # m/z need to be ordered in a Spectra
+        pks <- pks[ord, ]
+        ilmz <- chromPeakData(object)$isolationWindowLowerMz[ord]
+        iumz <- chromPeakData(object)$isolationWindowUpperMz[ord]
+        ## Get EICs for all chrom peaks (all MS levels)
+        object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
+        chrs <- .chromatograms_for_peaks(
+            lapply(spectra(object),
+                   function(z) cbind(mz = z@mz, intensity = z@intensity)),
+            rt = rtime(object), msl = msLevel(object), file_idx = fromFile,
+            tmz = isolationWindowTargetMz(object), pks = pks,
+            pks_msl = chromPeakData(object)$ms_level[ord],
+            pks_tmz = chromPeakData(object)$isolationWindowTargetMZ[ord])
+        idx <- match(peakId, rownames(pks)) # MS1 peaks to loop over
+        res <- data.frame(
+            peak_id = peakId, precursorMz = pks[idx, "mz"],
+            rtime = pks[idx, "rt"], msLevel = 2L,
+            polarity = polarity(object)[1L],
+            precursorIntensity = pks[idx, column],
+            fromFile = fromFile)
+        ms2_peak_id <- lapply(idx, function(z) character())
+        mzs <- ints <- ms2_peak_cor <-
+            lapply(seq_len(nrow(res)), function(z) numeric())
+        for (i in seq_along(idx)) {
+            ii <- idx[i]
+            imz <- .which_mz_in_range(pks[ii, "mz"], ilmz, iumz)
+            irt <- .which_chrom_peak_diff_rt(pks[ii, c("rt", "rtmax")],
+                                             pks, diffRt = diffRt)
+            ix <- intersect(imz, irt)
+            if (!length(ix))
+                next
+            ## Filter empty or sparse chromatograms
+            ix <- ix[vapply(
+                chrs@.Data[ix], function(z) sum(!is.na(z@intensity)),
+                integer(1)) > 2]
+            if (!length(ix))
+                next
+            ## Correlate
+            cors <- vapply(
+                chrs@.Data[ix], compareChromatograms, numeric(1),
+                y = chrs[[ii]], ALIGNFUNARGS = list(method = "approx"))
+            keep <- which(cors >= minCor)
+            if (length(keep)) {
+                ix <- ix[keep]
+                res$rtime[i] <- median(pks[ix, "rt"])
+                ms2_peak_id[[i]] <- rownames(pks)[ix]
+                ms2_peak_cor[[i]] <- unname(cors[keep])
+                mzs[[i]] <- unname(pks[ix, "mz"])
+                ints[[i]] <- unname(pks[ix, column])
+            }
         }
-        res
+        res$mz <- mzs
+        res$intensity <- ints
+        res$ms2_peak_id <- ms2_peak_id
+        res$ms2_peak_cor <- ms2_peak_cor
+        message(" OK")
+        .require_spectra()
+        Spectra::Spectra(res)
     }
-
-#' @description
-#'
-#' Reconstruct the MS2 spectrum for a chromatographic peak from a set of MS2
-#' chromatographic peaks within the isolation window matching the MS1 peak's
-#' m/z.
-#'
-#' @param x `numeric` representing one line of a `chromPeaks` `matrix`.
-#'
-#' @param object `XCMSnExp` with M2 chromatographic peaks identified in
-#'     isolation windows.
-#'
-#' @param fromFile optional `integer(1)` to be used for slot `fromFile` in the
-#'     `Spectrum2` object.
-#'
-#' @param column `character(1)` specifying the column from the chrom peak matrix
-#'     from which the intensity values for the reconstructed spectrum should be
-#'     taken (recommended, either `"maxo"` or `"into"`).
-#'
-#' @param return.type `character(1)` defines the type of the returned object.
-#'
-#' @return [MSpectra] object with the reconstructed MS2 spectrum. The spectrum
-#'     is empty if no MS2 chromatographic peak with a good enough correlation
-#'     was found for the MS1 chromatographic peak. The `MSpectra` contains
-#'     metadata columns `"ms2_peak_id"` and `"ms2_peak_cor"` of type
-#'     [CharacterList()] and [NumericList()] (length equal to number of peaks
-#'     per spectrum) providing the IDs and the correlation of the MS2
-#'     chromatographic peaks from which the MS2 spectrum was reconstructed.
-#'
-#' @author Johannes Rainer, Micheal Witting
-#'
-#' @noRd
-.reconstruct_ms2_for_chrom_peak <- function(x, object, fromFile = 1L,
-                                            expandRt = 2, diffRt = 5,
-                                            minCor = 0.8, column = "maxo",
-                                            return.type = "MSpectra") {
-    if (is.matrix(x))
-        x <- x[1, ]
-    ## find MS2 chrom peaks from the isolation window matching the peak's m/z
-    idx_mz <- .which_mz_in_range(x["mz"],
-                                 chromPeakData(object)$isolationWindowLowerMz,
-                                 chromPeakData(object)$isolationWindowUpperMz)
-    ## reduce to peaks with overlapping retention times.
-    idx_rt <- .which_chrom_peak_diff_rt(x, chromPeaks(object), diffRt = diffRt)
-    idx <- intersect(idx_mz, idx_rt)
-    pol <- polarity(object)[1]
-    ## Only look into the peaks/spectra of the correct isolation window
-    od_object <- filterIsolationWindow(as(object, "OnDiskMSnExp"), mz = x["mz"])
-    if (!length(idx) | !length(od_object))
-        return(.data2spectra(fromFile = fromFile, rt = x["rt"], polarity = pol,
-                             precursorIntensity = x[column],
-                             precursorMz = x["mz"], return.type = return.type))
-    ## extract ion chromatograms for all chromatographic peaks
-    pks <- chromPeaks(object)[idx, , drop = FALSE]
-    pks <- pks[order(pks[, "mz"]), , drop = FALSE]
-    rts_1 <- c(x["rtmin"] - expandRt, x["rtmax"] + expandRt)
-    mzs_1 <- x[c("mzmin", "mzmax")]
-    rts_2 <- cbind(pks[, "rtmin"] - expandRt, pks[, "rtmax"] + expandRt)
-    mzs_2 <- pks[, c("mzmin", "mzmax")]
-    chr_1 <- chromatogram(as(object, "OnDiskMSnExp"), mz = mzs_1, rt = rts_1)
-    chr_2 <- chromatogram(od_object, mz = mzs_2, rt = rts_2, msLevel = 2L)
-    ## Filter for chromatograms that are empty or have too few data points
-    chr_2 <- chr_2[vapply(chr_2, function(z) sum(!is.na(z@intensity)),
-                          integer(1)) > 2, ]
-    if (is(chr_2, "Chromatogram"))
-        chr_2 <- MChromatograms(list(chr_2))
-    if (!length(chr_2))
-        return(.data2spectra(fromFile = fromFile, rt = x["rt"], polarity = pol,
-                             precursorIntensity = x[column],
-                             precursorMz = x["mz"], return.type = return.type))
-    cors <- vapply(chr_2@.Data, compareChromatograms, y = chr_1[1, 1],
-                   numeric(1), ALIGNFUNARGS = list(method = "approx"))
-    pks <- pks[which(cors >= minCor), , drop = FALSE]
-    if (nrow(pks))
-        .data2spectra(fromFile = fromFile, polarity = pol,
-                      mz = pks[, "mz"], intensity = pks[, column],
-                      precursorMz = x["mz"], rt = median(pks[, "rt"]),
-                      precursorIntensity = x[column], peak_id = rownames(pks),
-                      peak_cor = cors[cors >= minCor],
-                      return.type = return.type)
-    else .data2spectra(fromFile = fromFile, rt = x["rt"], polarity = pol,
-                       precursorIntensity = x[column], precursorMz = x["mz"],
-                       return.type = return.type)
-}
-
-#' Helper function to combine spectra data either into a MSpectra object or
-#' a DataFrame
-#'
-#' @noRd
-.data2spectra <- function(mz = numeric(), intensity = numeric(),
-                          fromFile = 1L, rt = numeric(), msLevel = 2L,
-                          polarity = integer(),
-                          precursorMz = numeric(),
-                          precursorIntensity = numeric(),
-                          peak_id = character(), peak_cor = numeric(),
-                          return.type) {
-    switch(return.type,
-           MSpectra = MSpectra(
-               new("Spectrum2", mz = mz, intensity = intensity,
-                   fromFile = fromFile, centroided = TRUE,
-                   polarity = polarity, precursorMz = precursorMz,
-                   rt = rt, precursorIntensity = precursorIntensity),
-               elementMetadata = DataFrame(
-                   ms2_peak_id = CharacterList(peak_id, compress = FALSE),
-                   ms2_peak_cor = NumericList(peak_cor, compress = FALSE)
-               )),
-           Spectra = DataFrame(
-               mz = NumericList(unname(mz), compress = FALSE),
-               intensity = NumericList(unname(intensity), compress = FALSE),
-               fromFile = unname(fromFile),
-               rtime = unname(rt),
-               msLevel = msLevel,
-               polarity = unname(polarity),
-               precursorMz = unname(precursorMz),
-               precursorIntensity = unname(precursorIntensity),
-               ms2_peak_id = CharacterList(unname(peak_id), compress = FALSE),
-               ms2_peak_cor = NumericList(unname(peak_cor), compress = FALSE))
-           )
-}

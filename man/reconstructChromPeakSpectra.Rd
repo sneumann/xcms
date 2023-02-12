@@ -12,7 +12,7 @@ reconstructChromPeakSpectra(
   intensity = "maxo",
   peakId = rownames(chromPeaks(object, msLevel = 1L)),
   BPPARAM = bpparam(),
-  return.type = c("MSpectra", "Spectra")
+  return.type = c("Spectra", "MSpectra")
 )
 }
 \arguments{
@@ -45,19 +45,18 @@ By default they are reconstructed for all MS1 chromatographic peaks.}
 information.}
 
 \item{return.type}{\code{character(1)} defining the type of the returned object.
-Can be either \code{return.type = "MSpectra"} (the default) to return a
-\code{MSnbase::MSpectra} object or \code{return.type = "Spectra"} for the newer
-\code{Spectra::Spectra} object.}
+Only \code{return.type = "Spectra"} is supported, \code{return.type = "MSpectra"}
+is deprecated.}
 }
 \value{
-Depending on \code{return.type}:
 \itemize{
-\item \code{\link[=MSpectra]{MSpectra()}} with the reconstructed MS2 spectra for all MS1 peaks
-in \code{object}. Contains empty \linkS4class{Spectrum2} objects for MS1 peaks for
+\item \code{Spectra} object (defined in the \code{Spectra} package) with the
+reconstructed MS2 spectra for all MS1 peaks in \code{object}. Contains
+empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
-chromatographic peak was below threshold \code{minCor}. \code{MSpectra} metadata
-columns \code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=CharacterList]{CharacterList()}}
+chromatographic peak was below threshold \code{minCor}. Spectra variables
+\code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=CharacterList]{CharacterList()}}
 and \code{\link[=NumericList]{NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
@@ -65,8 +64,6 @@ As retention time the median retention times of all MS2 chromatographic
 peaks used for the spectrum reconstruction is reported. The MS1
 chromatographic peak intensity is reported as the reconstructed
 spectrum's \code{precursorIntensity} value (see parameter \code{intensity} above).
-\item \code{Spectra} object (defined in the \code{Spectra} package). The same content and
-information than above.
 }
 }
 \description{
@@ -90,8 +87,9 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one \strong{mass peak} in the reconstructed spectrum.
 }
 
-The resulting \code{MSpectra} object provides also the peak IDs of the MS2
-chromatographic peaks for each spectrum as well as their correlation value.
+The resulting \code{Spectra} object provides also the peak IDs of the MS2
+chromatographic peaks for each spectrum as well as their correlation value
+with spectra variables \emph{ms2_peak_id} and \emph{ms2_peak_cor}.
 }
 \seealso{
 \code{\link[=findChromPeaksIsolationWindow]{findChromPeaksIsolationWindow()}} for the function to perform MS2
