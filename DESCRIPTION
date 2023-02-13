@@ -54,7 +54,7 @@ Imports:
     SummarizedExperiment,
     MsCoreUtils (>= 1.11.5),
     MsFeatures,
-    MsExperiment,
+    MsExperiment (>= 1.1.2),
     Spectra (>= 1.9.4),
     progress
 Suggests:

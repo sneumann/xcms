@@ -1,14 +1,9 @@
 library(MsExperiment)
-mse <- MsExperiment()
 fls <- normalizePath(faahko_3_files)
 df <- data.frame(mzML_file = basename(fls),
                  dataOrigin = fls,
                  sample = c("ko15", "ko16", "ko18"))
-
-spectra(mse) <- Spectra::Spectra(fls)
-sampleData(mse) <- DataFrame(df)
-## Link samples to spectra.
-mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
 
 test_that("filterRt,MsExperiment works", {
     res <- filterRt(mse, rt = c(2700, 2900))

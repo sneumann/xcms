@@ -281,23 +281,6 @@ test_that(".mse_obiwarp_chunks works", {
     expect_error(.mse_obiwarp_chunks(mse, p, msLevel = 2), "MS level")
 })
 
-test_that("readMsExperiment works", {
-    expect_error(a <- readMsExperiment("a"), "not found")
-
-    a <- readMsExperiment(faahko_3_files[1:2])
-    expect_s4_class(a, "MsExperiment")
-    expect_true(length(a) == 2)
-    expect_true(nrow(sampleData(a)) == 2)
-
-    df <- data.frame(sidx = 1:3, other_ann = c("a", "b", "c"))
-    expect_error(readMsExperiment(faahko_3_files[1:2], df), "of files")
-    a <- readMsExperiment(faahko_3_files[1:2], df[1:2, ])
-    expect_s4_class(a, "MsExperiment")
-    expect_true(length(a) == 2)
-    expect_true(nrow(sampleData(a)) == 2)
-    expect_equal(sampleData(a)$other_ann, c("a", "b"))
-})
-
 test_that(".mse_chromatogram works", {
     rtr <- rbind(c(2600, 2630), c(3500, 3600))
     mzr <- rbind(c(250, 252), c(400, 410))
