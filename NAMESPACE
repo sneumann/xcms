@@ -35,7 +35,8 @@ importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List",
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
                   "extractROWS", "findMatches")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
-importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between")
+importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
+           "maxi")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",

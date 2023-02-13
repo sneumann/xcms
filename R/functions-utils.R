@@ -831,9 +831,10 @@ groupOverlaps <- function(xmin, xmax) {
                                      pks_tmz = rep(1, nrow(pks)),
                                      aggregationFun = "sum") {
     nr <- nrow(pks)
-    if (aggregationFun == "sum")
-        FUN <- getFunction("sumi")
-    else FUN <- getFunction(aggregationFun)
+    FUN <- switch(aggregationFun,
+                  "sum" = getFunction("sumi"),
+                  "max" = getFunction("maxi"),
+                  getFunction(aggregationFun))
     empty_chrom <- MSnbase::Chromatogram(
                                 fromFile = file_idx,
                                 aggregationFun = aggregationFun,
