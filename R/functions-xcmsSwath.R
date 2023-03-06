@@ -73,6 +73,8 @@
 #'
 #' Be aware that this function does only support returning a `Spectra`!
 #'
+#' @author Johannes Rainer, Michael Witting
+#'
 #' @noRd
 .reconstruct_dia_ms2 <-
     function(object, expandRt = 2, diffRt = 5, minCor = 0.8, fromFile = 1L,
