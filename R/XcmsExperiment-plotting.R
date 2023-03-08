@@ -2,9 +2,7 @@
 
 ## plot: don't think that would be possible... has lower priority, maybe just
 ## provide a XIC plot.
-
-## plotChromPeakDensity: modify functions-XCMSnExp/.plotChromPeakDensity
-## Wait - that's deprecated! Use that on an XChromatograms instead!
+## plotXIC
 
 #' @title Visualization of Alignment Results
 #'
@@ -187,8 +185,227 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
                 lty = lty[i], type = type, lwd = lwd[i])
 }
 
+#' @title General visualizations of peak detection results
+#'
+#' @description
+#'
+#' `plotChromPeaks` plots the identified chromatographic
+#' peaks from one file into the plane spanned by the retention time (x-axis)
+#' and m/z (y-axis) dimension. Each chromatographic peak is plotted as a
+#' rectangle representing its width in RT and m/z dimension.
+#'
+#' `plotChromPeakImage` plots the number of detected peaks for
+#' each sample along the retention time axis as an *image* plot, i.e.
+#' with the number of peaks detected in each bin along the retention time
+#' represented with the color of the respective cell.
+#'
+#' @details
+#'
+#' The width and line type of the rectangles indicating the detected
+#' chromatographic peaks for the `plotChromPeaks` function can be
+#' specified using the `par` function, i.e. with `par(lwd = 3)`
+#' and `par(lty = 2)`, respectively.
+#'
+#' @param add For `plotChromPeaks`: `logical(1)` whether the plot
+#'     should be added to an existing plot or if a new plot should be created.
+#'
+#' @param binSize For `plotChromPeakImage`: `numeric(1)` defining the
+#'     size of the bins along the x-axis (retention time). Defaults to
+#'     `binSize = 30`, peaks within each 30 seconds will thus counted and
+#'     plotted.
+#'
+#' @param border For `plotChromPeaks`: the color for the rectangles'
+#'     border.
+#'
+#' @param col For `plotChromPeaks`: the color to be used to fill the
+#'     rectangles.
+#'
+#' @param file For `plotChromPeaks`: `integer(1)` specifying the
+#'     index of the file within `x` for which the plot should be created.
+#'     Defaults to `file = 1`.
+#'
+#' @param log For `plotChromPeakImage`: `logical(1)` whether the peak
+#'     counts should be log2 transformed before plotting.
+#'
+#' @param main `character(1)` defining the plot title. By default (i.e.
+#'     `main = NULL`) the name of the file will be used as title.
+#'
+#' @param msLevel `integer(1)` defining the MS level from which the peaks
+#'     should be visualized.
+#'
+#' @param x A [XcmsExperiment()] or [XCMSnExp()] object.
+#'
+#' @param xlim `numeric(2)` specifying the x-axis limits (retention time
+#'     dimension). Defaults to `xlim = NULL` in which case the full retention
+#'     time range of the file is used.
+#'
+#' @param yaxt For `plotChromPeakImage`: `character(1)` defining
+#'     whether y-axis labels should be added. To disable the y-axis use
+#'     `yaxt = "n"`. For any other value of `yaxt` the axis will be
+#'     drawn. See [par()] help page for more details.
+#'
+#' @param ylim For `plotChromPeaks`: `numeric(2)` specifying the
+#'     y-axis limits (m/z dimension). Defaults to `ylim = NULL` in which
+#'     case the full m/z range of the file is used.
+#'
+#' @param xlab `character(1)` defining the x-axis label.
+#'
+#' @param ylab For `plotChromPeaks`: `character(1)` defining the
+#'     y-axis label.
+#'
+#' @param ... Additional arguments passed to the `plot` (for
+#'     `plotChromPeaks`) and `image` (for
+#'     `plotChromPeakImage`) functions. Ignored for `add = TRUE`.
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#'
+#' ## plotChromPeakImage: plot an image for the identified peaks per file
+#' plotChromPeakImage(faahko_sub)
+#'
+#' ## Show all detected chromatographic peaks from the first file
+#' plotChromPeaks(faahko_sub)
+#'
+#' ## Plot all detected peaks from the second file and restrict the plot to a
+#' ## mz-rt slice
+#' plotChromPeaks(faahko_sub, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
+plotChromPeaks <- function(x, file = 1, xlim = NULL, ylim = NULL,
+                           add = FALSE, border = "#00000060", col = NA,
+                           xlab = "retention time", ylab = "mz",
+                           main = NULL, msLevel = 1L, ...) {
+    if (!(is(x, "XCMSnExp") | inherits(x, "XcmsExperiment")))
+        stop("'x' is supposed to be an 'XcmsExperiment' or 'XCMSnExp' object.")
+    suppressMessages(
+        x_file <- filterFile(x, file = file[1], keepAdjustedRtime = TRUE)
+    )
+    if (is.null(xlim))
+        xlim <- range(rtime(x_file))
+    if (is.null(ylim)) {
+        if (is(x, "XcmsExperiment"))
+            ylim <- range(unlist(mz(spectra(x_file)), use.names = FALSE))
+        else ylim <- range(mz(x_file))
+    }
+    if (is.null(main))
+        main <- basename(fileNames(x_file))
+    pks <- chromPeaks(x_file, mz = ylim, rt = xlim, msLevel = msLevel)
+    ## Initialize plot
+    if (!add)
+        plot(3, 3, pch = NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab,
+             main = main, ...)
+    if (nrow(pks))
+        rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+             ybottom = pks[, "mzmin"], ytop = pks[, "mzmax"], col = col,
+             border = border)
+    invisible(TRUE)
+}
 
+#' @rdname plotChromPeaks
+plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
+                               xlab = "retention time", yaxt = par("yaxt"),
+                               main = "Chromatographic peak counts",
+                               msLevel = 1L, ...) {
+    if (!(is(x, "XCMSnExp") | inherits(x, "XcmsExperiment")))
+        stop("'x' is supposed to be an 'XcmsExperiment' or 'XCMSnExp' object.")
+    if (is.null(xlim))
+        xlim <- c(floor(min(rtime(x))), ceiling(max(rtime(x))))
+    brks <- seq(xlim[1], xlim[2], by = binSize)
+    if (brks[length(brks)] < xlim[2])
+        brks <- c(brks, brks[length(brks)] + binSize)
+    pks <- chromPeaks(x, rt = xlim, msLevel = msLevel)
+    if (nrow(pks)) {
+        rts <- split(pks[, "rt"], as.factor(as.integer(pks[, "sample"])))
+        cnts <- lapply(rts, function(z) {
+            hst <- hist(z, breaks = brks, plot = FALSE)
+            hst$counts
+        })
+        ## Add 0 vectors for samples in which no peaks were found.
+        n_samples <- length(fileNames(x))
+        sample_idxs <- 1:n_samples
+        sample_idxs <- sample_idxs[!(as.character(sample_idxs) %in% names(rts))]
+        if (length(sample_idxs)) {
+            all_cnts <- vector("list", n_samples)
+            all_cnts[as.numeric(names(cnts))] <- cnts
+            zeros <- rep(0, (length(brks) - 1))
+            all_cnts[sample_idxs] <- list(zeros)
+            cnts <- all_cnts
+        }
+        cnts <- t(do.call(rbind, cnts))
+        if (log)
+            cnts <- log2(cnts)
+        image(z = cnts, x = brks - (brks[2] - brks[1]) / 2, xaxs = "r",
+              xlab = xlab, yaxt = "n", ...)
+        if (yaxt != "n")
+            axis(side = 2, at = seq(0, 1, length.out = n_samples),
+                 labels = basename(fileNames(x)), las = 2)
+    }
+    invisible(TRUE)
+}
 
-## plotChromPeaks: modify functions-XCMSnExp/plotChromPeaks
+#' @rdname XcmsExperiment
+setMethod(
+    "plot", c("MsExperiment", "missing"),
+    function(x, y, msLevel = 1L, peakCol = "#ff000060", ...) {
+        if (length(msLevel) > 1)
+            warning("'plot' does support only a single MS level. ",
+                    "Will use msLevel[1].")
+        msLevel <- msLevel[1L]
+        .xmse_plot_xic(x, msLevel = msLevel, peakCol = peakCol, ...)
+    })
 
-## plotChromPeakImage: modify functions-XCMSnExp/plotChromPeakImage
+#' same as plot( type = "XIC") on a `XCMSnExp`. This supports both
+#' `MsExperiment` and `XcmsExperiment` objects.
+#'
+#' @noRd
+.xmse_plot_xic <- function(x, msLevel = 1L, peakCol = "#00000060", ...) {
+    dots <- list(...)
+    dots$type <- NULL
+    if (any(names(dots) == "layout")) {
+        if (!is.null(dots$layout))
+            layout(layout)
+        dots$layout <- NULL
+    } else layout(MSnbase:::.vertical_sub_layout(length(x)))
+    dev.hold()
+    on.exit(dev.flush())
+    peakCol <- peakCol[1L]
+    if (inherits(x, "XcmsExperiment")) {
+        if (hasAdjustedRtime(x))
+            x <- applyAdjustedRtime(x)
+        pkl <- chromPeaks(x, msLevel = msLevel)
+        pkl <- split.data.frame(
+            pkl, factor(pkl[, "sample"], levels = seq_along(x)))
+        x <- as(x, "MsExperiment")
+    } else pkl <- vector("list", length(x))
+    fns <- basename(fileNames(x))
+    for (i in seq_along(x)) {
+        z <- x[i]
+        lst <- as(filterMsLevel(spectra(z), msLevel = msLevel), "list")
+        lns <- lengths(lst) / 2
+        lst <- do.call(rbind, lst)
+        if (!length(lst))
+            next
+        df <- data.frame(rt = rep(rtime(z), lns), lst)
+        colnames(df)[colnames(df) == "intensity"] <- "i"
+        do.call(MSnbase:::.plotXIC,
+                c(list(x = df, main = fns[i], layout = NULL), dots))
+        mzr <- range(df$mz, na.rm = TRUE)
+        rtr <- range(df$rt, na.rm = TRUE)
+        pks <- pkl[[i]]
+        if (length(pks)) {
+            pks <- pks[(pks[, "rtmax"] > rtr[1L] | pks[, "rtmin"] < rtr[2L]) &
+                       (pks[, "mzmax"] > mzr[1L] | pks[, "mzmin"] < mzr[2L]),
+                     , drop = FALSE]
+            if (nrow(pks))
+                do.call(rect, c(list(xleft = pks[, "rtmin"],
+                                     ybottom = pks[, "mzmin"],
+                                     xright = pks[, "rtmax"],
+                                     ytop = pks[, "mzmax"],
+                                     border = peakCol), dots))
+        }
+    }
+}

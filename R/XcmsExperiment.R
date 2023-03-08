@@ -170,6 +170,13 @@
 #'   their m/z and retention time ranges. See [manualChromPeaks()] for
 #'   details and examples.
 #'
+#' - `plotChromPeakImage`: show the *density* of identified chromatographic
+#'   peaks per file along the retention time. See [plotChromPeakImage()] for
+#'   details.
+#'
+#' - `plotChromPeaks`: indicate identified chromatographic peaks from one
+#'   sample in the RT-m/z space. See [plotChromPeaks()] for details.
+#'
 #' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
 #'   See [refineChromPeaks()] for details.
 #'
@@ -267,6 +274,28 @@
 #'   to define the column in `chromPeaks` that should be selected; defaults to
 #'   `intensity = "into"). `method = "sum"`: sum the values for all
 #'   chromatographic peaks assigned to the feature in the same sample.
+#'
+#' @section Visualization:
+#'
+#' - `plot`: plot for each file the position of individual peaks in the m/z -
+#'   retention time space (with color-coded intensity) and a base peak
+#'   chromatogram. This function should ideally be called only on a data subset
+#'   (i.e. after using `filterRt` and `filterMz` to restrict to a region of
+#'   interest). Parameter `msLevel` allows to define from which MS level the
+#'   plot should be created. If `x` is a `XcmsExperiment` with available
+#'   identified chromatographic peaks, also the region defining the peaks
+#'   are indicated with a rectangle. Parameter `peakCol` allows to define the
+#'   color of the border for these rectangles.
+#'
+#' - `plotAdjustedRtime`: plot the alignment results; see [plotAdjustedRtime()]
+#'   for more information.
+#'
+#' - `plotChromPeakImage`: show the *density* of identified chromatographic
+#'   peaks per file along the retention time. See [plotChromPeakImage()] for
+#'   details.
+#'
+#' - `plotChromPeaks`: indicate identified chromatographic peaks from one
+#'   sample in the RT-m/z space. See [plotChromPeaks()] for details.
 #'
 #' @section Functionality for backward compatibility:
 #'

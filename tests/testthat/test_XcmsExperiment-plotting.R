@@ -32,3 +32,19 @@ test_that("plotAdjustedRtime,XcmsExperiment works", {
     plotAdjustedRtime(xmsegr, col = "red")
     plotAdjustedRtime(xmsegr, adjustedRtime = FALSE)
 })
+
+test_that("plotChromPeaks,XcmsExperiment works", {
+    expect_true(plotChromPeaks(xmse, 2))
+})
+
+test_that("plotChromPeakImage,XcmsExperiment works", {
+    expect_true(plotChromPeakImage(xmse))
+})
+
+test_that("plot,XcmsExperiment and .xmse_plot_xic works", {
+    tmp <- filterRt(mse, c(3000, 3100))
+    plot(tmp, cex = 0.1)
+    plot(tmp, msLevel = 2L)
+    tmp <- filterRt(xmse, c(3000, 3100))
+    .xmse_plot_xic(tmp, lwd = 3, col = NA, cex = 0.2)
+})
