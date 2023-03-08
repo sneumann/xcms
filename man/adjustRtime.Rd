@@ -423,6 +423,9 @@ Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
 Nonlinear Peak Alignment, Matching, and Identification" \emph{Anal. Chem.}
 78:779-787.
 }
+\seealso{
+\code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for visualization of alignment results.
+}
 \author{
 Colin Smith, Johannes Rainer
 }

@@ -35,6 +35,7 @@
 \alias{dropFilledChromPeaks,XcmsExperiment-method}
 \alias{featureValues,XcmsExperiment-method}
 \alias{chromatogram,XcmsExperiment-method}
+\alias{processHistory,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 filterFeatureDefinitions(object, ...)
@@ -154,6 +155,8 @@ featureArea(
   chromPeaks = c("apex_within", "any", "none"),
   BPPARAM = bpparam()
 )
+
+\S4method{processHistory}{XcmsExperiment}(object, type)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -267,7 +270,9 @@ the provided ranges. For \code{type = "within"}: returns only peaks or
 features completely within the region defined by \code{mz} and/or \code{rt}.
 For \code{type = "apex_within"}: returns peaks or features for which the m/z
 and retention time of the peak's apex is within the region defined by
-\code{mz} and/or \code{rt}.}
+\code{mz} and/or \code{rt}.
+For \code{processHistory}: restrict returned processing steps to specific
+types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all supported values.}
 
 \item{isFilledColumn}{For \code{chromPeaks}: \code{logical(1)} whether a column
 \code{"is_filled"} should be included in the returned \code{matrix} with the
@@ -496,6 +501,8 @@ dropped too (if the correspondence analysis was performed \strong{after} the
 alignment). This can be overruled with \code{keepAdjustedRtime = TRUE}.
 \item \code{hasAdjustedRtime}: whether alignment was performed on the object (i.e.,
 the object contains alignment results).
+\item \code{plotAdjustedRtime}: plot the alignment results; see \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}}
+for more information.
 }
 }
 
@@ -580,6 +587,10 @@ object's \code{spectra} should be used instead.
 \item \code{fromFile}: returns the file (sample) index for each spectrum within
 \code{object}. Generally, subsetting by sample using the \code{[} is the preferred
 way to get spectra from a specific sample.
+\item \code{processHistory}: returns a \code{list} with \link{ProcessHistory} \emph{process history}
+objects that contain also the parameter object used for the different
+processings. Optional parameter \code{type} allows to query for specific
+processing steps.
 \item \code{rtime}: extract retention times of the \strong{spectra} from the
 \code{MsExperiment} or \code{XcmsExperiment} object. It is thus a shortcut for
 \code{rtime(spectra(object))} which would be the preferred way to extract
@@ -603,27 +614,18 @@ default adjusted retention times are returned if available.
 ## Creating a MsExperiment object representing the data from an LC-MS
 ## experiment.
 library(MsExperiment)
-mse <- MsExperiment()
 
 ## Defining the raw data files
 fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-fls <- normalizePath(fls)
 
 ## Defining a data frame with the sample characterization
 df <- data.frame(mzML_file = basename(fls),
-                dataOrigin = fls,
                 sample = c("ko15", "ko16", "ko18"))
-## Adding the sample definition to the experiment
-sampleData(mse) <- DataFrame(df)
-
-## Load the MS data as a Spectra object and add it to the experiment
-spectra(mse) <- Spectra::Spectra(fls)
-
-## Linking samples to MS spectra. This step is required to define
-## which spectra (and eventually files) belong to which sample
-mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+## Importing the data. This will initialize a `Spectra` object representing
+## the raw data and assign these to the individual samples.
+mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
 
 ## Extract a total ion chromatogram and base peak chromatogram
 ## from the data

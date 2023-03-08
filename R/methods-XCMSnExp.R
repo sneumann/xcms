@@ -3396,7 +3396,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               if (param@nValues == 1) {
                   ## Simple subsetting of the chromPeaks matrix.
                   if (!any(colnames(chromPeaks(object)) %in% param@value))
-                      stop("Column '", value, "' not found in chromPeaks matrix")
+                      stop( "Column '", param@value,
+                           "' not found in chromPeaks matrix")
                   keep <- chromPeaks(object)[, param@value] >= param@threshold |
                       !chromPeakData(object)$ms_level %in% msLevel
               } else {

@@ -226,6 +226,8 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @family retention time correction methods
 #'
+#' @seealso [plotAdjustedRtime()] for visualization of alignment results.
+#'
 #' @author Colin Smith, Johannes Rainer
 #'
 #' @references

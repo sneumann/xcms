@@ -214,6 +214,13 @@ test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
     expect_equal(rtime(res, adjusted = FALSE),
                  unname(rtime(ref, adjusted = FALSE)))
 
+    ## .plot_adjusted_rtime
+    expect_warning(
+        .plot_adjusted_rtime(rtime(res, adjusted = FALSE),
+                             rtime(res), from_file = fromFile(res),
+                             col = c("blue", "red")), "length"
+        )
+
     ## applyAdjustedRtime
     res2 <- applyAdjustedRtime(res)
     expect_false(hasAdjustedRtime(res2))
@@ -1083,4 +1090,20 @@ test_that("featureChromatograms,XcmsExperiment works", {
                  chromPeaks(res)[featureDefinitions(res)$peakidx[[3L]], 1:11])
     expect_equal(unname(chromPeaks(res)[, "row"]),
                  c(1, 1, 1, 2, 2, 2, 2, 3, 3, 3))
+})
+
+test_that("processHistory,XcmsExperiment works", {
+    res <- processHistory(new("XcmsExperiment"))
+    expect_equal(res, list())
+    res <- processHistory(xmse)
+    expect_true(length(res) == 1)
+
+    res2 <- processHistory(xmseg, type = .PROCSTEP.PEAK.DETECTION)
+    expect_equal(res, res2)
+
+    res <- processHistory(xmseg)
+    expect_true(length(res) == 2)
+
+    res <- processHistory(xmseg, type = "other")
+    expect_true(length(res) == 0)
 })

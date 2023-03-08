@@ -191,6 +191,9 @@
 #' - `hasAdjustedRtime`: whether alignment was performed on the object (i.e.,
 #'   the object contains alignment results).
 #'
+#' - `plotAdjustedRtime`: plot the alignment results; see [plotAdjustedRtime()]
+#'   for more information.
+#'
 #' @section Functionality related to correspondence analysis:
 #'
 #' - `dropFeatureDefinitions`: removes any correspondence analysis results from
@@ -274,6 +277,11 @@
 #' - `fromFile`: returns the file (sample) index for each spectrum within
 #'   `object`. Generally, subsetting by sample using the `[` is the preferred
 #'    way to get spectra from a specific sample.
+#'
+#' - `processHistory`: returns a `list` with [ProcessHistory] *process history*
+#'   objects that contain also the parameter object used for the different
+#'   processings. Optional parameter `type` allows to query for specific
+#'   processing steps.
 #'
 #' - `rtime`: extract retention times of the **spectra** from the
 #'   `MsExperiment` or `XcmsExperiment` object. It is thus a shortcut for
@@ -445,6 +453,8 @@
 #'     For `type = "apex_within"`: returns peaks or features for which the m/z
 #'     and retention time of the peak's apex is within the region defined by
 #'     `mz` and/or `rt`.
+#'     For `processHistory`: restrict returned processing steps to specific
+#'     types. Use [processHistoryTypes()] to list all supported values.
 #'
 #' @param value For `featureValues`: `character(1)` defining which value should
 #'     be reported for each feature in each sample. Can be any column of the
@@ -469,27 +479,18 @@
 #' ## Creating a MsExperiment object representing the data from an LC-MS
 #' ## experiment.
 #' library(MsExperiment)
-#' mse <- MsExperiment()
 #'
 #' ## Defining the raw data files
 #' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-#' fls <- normalizePath(fls)
 #'
 #' ## Defining a data frame with the sample characterization
 #' df <- data.frame(mzML_file = basename(fls),
-#'                 dataOrigin = fls,
 #'                 sample = c("ko15", "ko16", "ko18"))
-#' ## Adding the sample definition to the experiment
-#' sampleData(mse) <- DataFrame(df)
-#'
-#' ## Load the MS data as a Spectra object and add it to the experiment
-#' spectra(mse) <- Spectra::Spectra(fls)
-#'
-#' ## Linking samples to MS spectra. This step is required to define
-#' ## which spectra (and eventually files) belong to which sample
-#' mse <- linkSampleData(mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
+#' ## Importing the data. This will initialize a `Spectra` object representing
+#' ## the raw data and assign these to the individual samples.
+#' mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
 #'
 #' ## Extract a total ion chromatogram and base peak chromatogram
 #' ## from the data
@@ -1038,7 +1039,7 @@ setMethod(
     "adjustRtime", signature(object = "MsExperiment", param = "ObiwarpParam"),
     function(object, param, chunkSize = 2L, BPPARAM = bpparam()) {
         msLevel <- 1L
-        res <- xcms:::.mse_obiwarp_chunks(
+        res <- .mse_obiwarp_chunks(
             object, param = param, chunkSize = chunkSize, BPPARAM = BPPARAM)
         ## Saving adjusted rtimes into $rtime_adjusted
         rt_adj <- rep(NA_real_, length(spectra(object)))
@@ -1152,6 +1153,8 @@ setMethod(
             spectra(object)$rtime_adjusted
         else rtime(spectra(object))
     })
+
+## TODO adjustedRtime
 
 ################################################################################
 ## correspondence
@@ -1270,11 +1273,11 @@ setMethod(
         if (hasFeatures(object)) {
             maxi <- max(as.integer(
                 sub("FT", "", rownames(featureDefinitions(object)))))
-            rownames(res) <- xcms:::.featureIDs(nrow(res), from = maxi + 1)
+            rownames(res) <- .featureIDs(nrow(res), from = maxi + 1)
             object@featureDefinitions <- rbindFill(
                 object@featureDefinitions, res)
         } else {
-            rownames(res) <- xcms:::.featureIDs(nrow(res))
+            rownames(res) <- .featureIDs(nrow(res))
             object@featureDefinitions <- res
         }
         object
@@ -1424,7 +1427,7 @@ setMethod(
         if (!hasFeatures(object, msLevel = msLevel))
             stop("No feature definitions for MS level ", msLevel, " present.")
         ## Define region to integrate from for each file
-        fr <- xcms:::.features_ms_region(object, mzmin = param@mzmin,
+        fr <- .features_ms_region(object, mzmin = param@mzmin,
                                   mzmax = param@mzmax, rtmin = param@rtmin,
                                   rtmax = param@rtmax, msLevel = msLevel)
         fr <- cbind(fr, mzmed = featureDefinitions(object)$mzmed)
@@ -1568,7 +1571,15 @@ setMethod(
             return.type = return.type, BPPARAM = BPPARAM)
     })
 
-## TODO filterMz?
+#' @rdname XcmsExperiment
+setMethod("processHistory", "XcmsExperiment", function(object, type) {
+    ph <- object@processHistory
+    if (length(ph) && !missing(type))
+        ph <- ph[vapply(ph, function(z) processType(z) %in% type, logical(1))]
+    ph
+})
+
+## TODO filterMz? Do we need that? Maybe for plotXIC.
 
 ## TODO filterMsLevel? Function not yet needed. In case, needs also an
 ## implementation for MsExperiment: update the spectra-sample-mapping.

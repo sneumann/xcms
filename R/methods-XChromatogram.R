@@ -125,7 +125,7 @@ setMethod("show", "XChromatogram", function(object) {
 #' @param method For `featureValues`: `character(1)` specifying the method to
 #'     resolve multi-peak mappings within the sample sample, i.e. to select
 #'     the *representative* peak for a feature for which more than one peak
-#'     was assigned in one sample. Options are `"medret"` (default): select the
+ #'     was assigned in one sample. Options are `"medret"` (default): select the
 #'     peak closest to the median retention time of the feature, `"maxint"`:
 #'     select the peak with the largest signal and `"sum"`: sum the values
 #'     of all peaks (only if `value` is `"into"` or `"maxo"`).
