@@ -245,6 +245,9 @@ test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
                     b[b[, "sample"] == 2L, "rt"]))
     expect_true(length(res2@processHistory) == 2L)
 
+    ## adjustedRtime
+    expect_equal(adjustedRtime(res2), rtime(res2, adjusted = TRUE))
+
     ## Order: peak detection, alignment.
     ## dropAdjustedRtime:
     res3 <- dropAdjustedRtime(res2)

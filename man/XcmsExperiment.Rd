@@ -26,6 +26,7 @@
 \alias{dropAdjustedRtime,XcmsExperiment-method}
 \alias{hasAdjustedRtime,MsExperiment-method}
 \alias{rtime,XcmsExperiment-method}
+\alias{adjustedRtime,XcmsExperiment-method}
 \alias{hasFeatures,XcmsExperiment-method}
 \alias{featureDefinitions<-,XcmsExperiment-method}
 \alias{featureDefinitions,XcmsExperiment-method}
@@ -111,6 +112,8 @@ featureArea(
 \S4method{hasAdjustedRtime}{MsExperiment}(object)
 
 \S4method{rtime}{XcmsExperiment}(object, adjusted = hasAdjustedRtime(object))
+
+\S4method{adjustedRtime}{XcmsExperiment}(object)
 
 \S4method{hasFeatures}{XcmsExperiment}(object, msLevel = integer())
 
@@ -489,6 +492,8 @@ See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 \section{Functionality related to alignment}{
 
 \itemize{
+\item \code{adjustedRtime}: extract adjusted retention times. This is just an
+alias for \code{rtime(object, adjusted = TRUE)}.
 \item \code{adjustRtime}: performs retention time adjustment (alignment) of the data.
 See \code{\link[=adjustRtime]{adjustRtime()}} for details.
 \item \code{applyAdjustedRtime}: replaces the original (raw) retention times with the

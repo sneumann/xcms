@@ -175,6 +175,9 @@
 #'
 #' @section Functionality related to alignment:
 #'
+#' - `adjustedRtime`: extract adjusted retention times. This is just an
+#'   alias for `rtime(object, adjusted = TRUE)`.
+#'
 #' - `adjustRtime`: performs retention time adjustment (alignment) of the data.
 #'   See [adjustRtime()] for details.
 #'
@@ -1154,7 +1157,10 @@ setMethod(
         else rtime(spectra(object))
     })
 
-## TODO adjustedRtime
+#' @rdname XcmsExperiment
+setMethod("adjustedRtime", "XcmsExperiment", function(object) {
+    rtime(object, adjusted = TRUE)
+})
 
 ################################################################################
 ## correspondence
