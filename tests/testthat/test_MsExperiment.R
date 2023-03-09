@@ -78,3 +78,19 @@ test_that("chromatogram,MsExperiment works", {
     expect_equal(intensity(res[1, 2]), numeric())
     expect_equal(intensity(res[1, 2]), numeric())
 })
+
+test_that("uniqueMsLevels,MsExperiment works", {
+    expect_equal(uniqueMsLevels(mse), 1L)
+})
+
+test_that("filterMzRange,MsExperiment works", {
+    res <- filterMzRange(mse[1L], mz = c(100, 500))
+    mzs <- unlist(mz(res))
+    expect_true(all(mzs <= 500))
+    expect_true(all(mzs >= 100))
+    expect_warning(
+        res <- filterMzRange(mse[1L], mz = c(100, 500), msLevel. = 2L),
+        "not available")
+    mzs <- unlist(mz(res))
+    expect_true(any(mzs > 500))
+})

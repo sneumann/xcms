@@ -561,6 +561,8 @@ importMethodsFrom("Spectra", "rtime<-")
 importMethodsFrom("Spectra", "ionCount")
 importMethodsFrom("Spectra", "precursorMz")
 importMethodsFrom("Spectra", "$")
+importMethodsFrom("Spectra", "uniqueMsLevels")
+importMethodsFrom("Spectra", "filterMzRange")
 importFrom("Spectra", "MsBackendMemory")
 
 ## MsExperiment things
@@ -576,3 +578,7 @@ importFrom("MsExperiment", "readMsExperiment")
 importMethodsFrom("MsExperiment", "spectra<-")
 
 importFrom("progress", "progress_bar")
+
+exportClasses("XcmsExperiment")
+exportMethods("uniqueMsLevels")
+exportMethods("filterMzRange")

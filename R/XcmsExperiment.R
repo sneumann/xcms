@@ -73,6 +73,13 @@
 #'   Note also that in contrast to `[`, `filterFile` does not support subsetting
 #'   in arbitrary order.
 #'
+#' - `filterMz`, `filterMzRange`: filter the spectra within an
+#'   `XcmsExperiment` or `MsExperiment` to the specified m/z range (parameter
+#'   `mz`). For `XcmsExperiment` also identified chromatographic peaks and
+#'   features are filtered keeping only those that are within the specified
+#'   m/z range. Parameter `msLevels.` allows to restrict the filtering to
+#'   only specified MS levesl. By default data from all MS levels are filtered.
+#'
 #' - `filterRt`: filter an `XcmsExperiment` keeping only data within the
 #'   specified retention time range (parameter `rt`). This function will keep
 #'   all preprocessing results present within the retention time range: all
@@ -297,10 +304,12 @@
 #' - `plotChromPeaks`: indicate identified chromatographic peaks from one
 #'   sample in the RT-m/z space. See [plotChromPeaks()] for details.
 #'
-#' @section Functionality for backward compatibility:
+#' @section General functionality and functions for backward compatibility:
 #'
-#' These functions for `MsExperiment` and `XcmsExperiment` ensure compatibility
-#' with the *older* [XCMSnExp()] xcms result object.
+#' - `uniqueMsLevels`: returns the unique MS levels of the spectra in `object`.
+#'
+#' The functions listed below ensure compatibility with the *older*
+#' [XCMSnExp()] xcms result object.
 #'
 #' - `fileNames`: returns the original data file names for the spectra data.
 #'   Ideally, the `dataOrigin` or `dataStorage` spectra variables from the
@@ -446,6 +455,10 @@
 #'     chromatographic peaks assigned to that feature. Defaults to
 #'     `mzmin = min`.
 #'
+#' @param peakCol For `plot`: defines the border color of the rectangles
+#'     indicating the identified chromatographic peaks. Only a single color
+#'     is supported. Defaults to `peakCol = "#ff000060".
+#'
 #' @param ppm For `chromPeaks` and `featureDefinitions`: optional `numeric(1)`
 #'     specifying the ppm by which the m/z range (defined by `mz` should be
 #'     extended. For a value of `ppm = 10`, all peaks within `mz[1] - ppm / 1e6`
@@ -495,6 +508,8 @@
 #'     integrated peak area is reported.
 #'
 #' @param x An `XcmsExperiment` object.
+#'
+#' @param y For `plot`: should not be defined as it is not supported.
 #'
 #' @param ... Additional optional parameters.
 #'

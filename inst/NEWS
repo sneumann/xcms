@@ -1,7 +1,8 @@
 Changes in version 3.99.0
 ----------------------
 
-- Add `XcmsExperiment` and support for `MsExperiment`/`Spectra`.
+- Add `XcmsExperiment` and support for `MsExperiment`/`Spectra`: add all
+  functionality for a full xcms processing on a `MsExperiment` object.
 - Fix issue in `refineChromPeaks` with `MergeNeighboringPeaksParam` where a
   wrong apex position was considered in the evaluation whether candidate peaks
   should be merged (would only happen for merging of > 2 candidate peaks).

@@ -5,6 +5,9 @@
 \name{filterFeatureDefinitions}
 \alias{filterFeatureDefinitions}
 \alias{filterRt,MsExperiment-method}
+\alias{filterMzRange,MsExperiment-method}
+\alias{filterMz,MsExperiment-method}
+\alias{uniqueMsLevels,MsExperiment-method}
 \alias{filterFile,MsExperiment-method}
 \alias{rtime,MsExperiment-method}
 \alias{fromFile,MsExperiment-method}
@@ -44,6 +47,12 @@
 filterFeatureDefinitions(object, ...)
 
 \S4method{filterRt}{MsExperiment}(object, rt = numeric(), ...)
+
+\S4method{filterMzRange}{MsExperiment}(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
+
+\S4method{filterMz}{MsExperiment}(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
+
+\S4method{uniqueMsLevels}{MsExperiment}(object)
 
 \S4method{filterFile}{MsExperiment}(object, file = integer(), ...)
 
@@ -177,9 +186,6 @@ For \code{chromatogram}: two column numerical \code{matrix} with each row
 representing the lower and upper retention time window(s) for the
 chromatograms. If not provided the full retention time range is used.}
 
-\item{file}{For \code{filterFile}: \code{integer} with the indices of the samples
-(files) to which the data should be subsetted.}
-
 \item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
 defining the m/z range for which chromatographic peaks or feature
 definitions should be returned. The full m/z range is used by default.
@@ -188,6 +194,17 @@ representing m/z range that should be aggregated into a chromatogram.
 If not provided the full m/z range of the data will be used (and hence
 a total ion chromatogram will be returned if \code{aggregationFun = "sum"}
 is used).}
+
+\item{msLevel.}{For \code{filterRt}: ignored. \code{filterRt} will always filter
+by retention times on all MS levels regardless of this parameter.
+For \code{chromatogram}: \code{integer} with the MS level from which the
+chromatogram(s) should be extracted. Has to be either of length 1 or
+length equal to the numer of rows of the parameters \code{mz} and \code{rt}
+defining the m/z and rt regions from which the chromatograms should
+be created. Defaults to \code{msLevel = 1L}.}
+
+\item{file}{For \code{filterFile}: \code{integer} with the indices of the samples
+(files) to which the data should be subsetted.}
 
 \item{aggregationFun}{For \code{chromatogram}: \code{character(1)} defining the
 function that should be used to \emph{aggregate} intensities for retention
@@ -240,20 +257,18 @@ for more information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
 
+\item{y}{For \code{plot}: should not be defined as it is not supported.}
+
+\item{peakCol}{For \code{plot}: defines the border color of the rectangles
+indicating the identified chromatographic peaks. Only a single color
+is supported. Defaults to `peakCol = "#ff000060".}
+
 \item{i}{For \code{[}: \code{integer} or \code{logical} defining the samples/files to
 subset.}
 
 \item{j}{For \code{[}: not supported.}
 
 \item{drop}{For \code{[}: ignored.}
-
-\item{msLevel.}{For \code{filterRt}: ignored. \code{filterRt} will always filter
-by retention times on all MS levels regardless of this parameter.
-For \code{chromatogram}: \code{integer} with the MS level from which the
-chromatogram(s) should be extracted. Has to be either of length 1 or
-length equal to the numer of rows of the parameters \code{mz} and \code{rt}
-defining the m/z and rt regions from which the chromatograms should
-be created. Defaults to \code{msLevel = 1L}.}
 
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
@@ -399,6 +414,12 @@ subsetting. Parameters \code{keepChromPeaks}, \code{keepAdjustedRtime} and
 \code{keepChromPeaks} can be passed using \code{...}.
 Note also that in contrast to \code{[}, \code{filterFile} does not support subsetting
 in arbitrary order.
+\item \code{filterMz}, \code{filterMzRange}: filter the spectra within an
+\code{XcmsExperiment} or \code{MsExperiment} to the specified m/z range (parameter
+\code{mz}). For \code{XcmsExperiment} also identified chromatographic peaks and
+features are filtered keeping only those that are within the specified
+m/z range. Parameter \code{msLevels.} allows to restrict the filtering to
+only specified MS levesl. By default data from all MS levels are filtered.
 \item \code{filterRt}: filter an \code{XcmsExperiment} keeping only data within the
 specified retention time range (parameter \code{rt}). This function will keep
 all preprocessing results present within the retention time range: all
@@ -611,11 +632,14 @@ sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} 
 }
 }
 
-\section{Functionality for backward compatibility}{
+\section{General functionality and functions for backward compatibility}{
 
+\itemize{
+\item \code{uniqueMsLevels}: returns the unique MS levels of the spectra in \code{object}.
+}
 
-These functions for \code{MsExperiment} and \code{XcmsExperiment} ensure compatibility
-with the \emph{older} \code{\link[=XCMSnExp]{XCMSnExp()}} xcms result object.
+The functions listed below ensure compatibility with the \emph{older}
+\code{\link[=XCMSnExp]{XCMSnExp()}} xcms result object.
 \itemize{
 \item \code{fileNames}: returns the original data file names for the spectra data.
 Ideally, the \code{dataOrigin} or \code{dataStorage} spectra variables from the

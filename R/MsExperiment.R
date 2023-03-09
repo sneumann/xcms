@@ -7,6 +7,24 @@ setMethod("filterRt", "MsExperiment",
           })
 
 #' @rdname XcmsExperiment
+setMethod("filterMzRange", "MsExperiment",
+          function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
+              message("Filter spectra")
+              object@spectra <- filterMzRange(object@spectra, mz, msLevel.)
+          })
+
+#' @rdname XcmsExperiment
+setMethod("filterMz", "MsExperiment",
+          function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
+              filterMzRange(object, mz, msLevel.)
+          })
+
+#' @rdname XcmsExperiment
+setMethod("uniqueMsLevels", "MsExperiment", function(object) {
+    uniqueMsLevels(spectra(object))
+})
+
+#' @rdname XcmsExperiment
 setMethod("filterFile", "MsExperiment", function(object,
                                                  file = integer(), ...) {
     object[i = sort(unique(file)), ...]
