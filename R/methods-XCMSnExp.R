@@ -844,14 +844,14 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 #'   documentation in `MSnbase` for details and examples.
 #'
 #' - `filterMz`: filters the data set based on the provided m/z value range.
-#'   All chromatographic peaks and features (grouped peaks) falling
-#'   **completely** within the provided mz value range are retained
-#'   (i.e. if their minimal m/z value is `>= mz[1]` and the maximal m/z value
-#'   `<= mz[2]`. Adjusted retention times, if present, are kept.
+#'   All chromatographic peaks and features (grouped peaks) with their apex
+#'   falling within the provided mz value range are retained
+#'   (i.e. if `chromPeaks(object)[, "mz"]` is `>= mz[1]` and `<= mz[2]`).
+#'   Adjusted retention times, if present, are kept.
 #'
 #' - `filterRt`: filters the data set based on the provided retention time
 #'   range. All chromatographic peaks and features (grouped peaks)
-#'   **completely** within the specified retention time window are retained
+#'   within the specified retention time window are retained
 #'   (i.e. if the retention time corresponding to the peak's apex is within the
 #'   specified rt range). If retention time correction has been performed,
 #'   the method will by default filter the object by adjusted retention times.
@@ -1259,8 +1259,7 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
     object <- callNextMethod()  # just adds to processing queue.
 
     if (hasChromPeaks(object)) {
-        pks <- chromPeaks(object)
-        keepIdx <- which(pks[, "mzmin"] >= mz[1] & pks[, "mzmax"] <= mz[2])
+        keepIdx <- base::which(between(chromPeaks(object)[, "mz"], mz))
         newE <- .filterChromPeaks(object@msFeatureData, idx = keepIdx)
         lockEnvironment(newE, bindings = TRUE)
         object@msFeatureData <- newE
@@ -1311,10 +1310,9 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
         ftrt <- chromPeaks(object)[, "rt"]
         if (!adjusted & hasAdjustedRtime(object)) {
             ## Have to convert the rt before subsetting.
-            fts <- .applyRtAdjToChromPeaks(chromPeaks(object),
-                                           rtraw = rtime(object, bySample = TRUE),
-                                           rtadj = rtime(object, bySample = TRUE,
-                                                         adjusted = FALSE))
+            fts <- .applyRtAdjToChromPeaks(
+                chromPeaks(object), rtraw = rtime(object, bySample = TRUE),
+                rtadj = rtime(object, bySample = TRUE, adjusted = FALSE))
             ftrt <- fts[, "rt"]
         }
         keep_fts <- base::which(ftrt >= rt[1] & ftrt <= rt[2])

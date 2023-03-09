@@ -21,6 +21,7 @@
 \alias{filterChromPeaks}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{filterRt,XcmsExperiment-method}
+\alias{filterMzRange,XcmsExperiment-method}
 \alias{hasChromPeaks,XcmsExperiment-method}
 \alias{dropChromPeaks,XcmsExperiment-method}
 \alias{chromPeaks<-,XcmsExperiment-method}
@@ -88,6 +89,8 @@ featureArea(
 \S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{filterRt}{XcmsExperiment}(object, rt, msLevel.)
+
+\S4method{filterMzRange}{XcmsExperiment}(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
 
 \S4method{hasChromPeaks}{XcmsExperiment}(object, msLevel = integer())
 
@@ -418,8 +421,10 @@ in arbitrary order.
 \code{XcmsExperiment} or \code{MsExperiment} to the specified m/z range (parameter
 \code{mz}). For \code{XcmsExperiment} also identified chromatographic peaks and
 features are filtered keeping only those that are within the specified
-m/z range. Parameter \code{msLevels.} allows to restrict the filtering to
-only specified MS levesl. By default data from all MS levels are filtered.
+m/z range (i.e. for which the m/z of the peak apex is within the m/z
+range). Parameter \code{msLevels.} allows to restrict the filtering to
+only specified MS levels. By default data from all MS levels are
+filtered.
 \item \code{filterRt}: filter an \code{XcmsExperiment} keeping only data within the
 specified retention time range (parameter \code{rt}). This function will keep
 all preprocessing results present within the retention time range: all

@@ -151,8 +151,10 @@ test_that("subsetting,XcmsExperiment works", {
 test_that("filterRt,XcmsExperiment works", {
     res <- filterRt(xmse)
     expect_equal(res, xmse)
+    expect_s4_class(res, "XcmsExperiment")
 
     res <- filterRt(xmse, rt = c(3000, 3500))
+    expect_s4_class(res, "XcmsExperiment")
     expect_true(all(rtime(spectra(res)) >= 3000 &
                     rtime(spectra(res)) <= 3500))
     expect_true(all(chromPeaks(res)[, "rt"] >= 3000 &
@@ -1109,4 +1111,22 @@ test_that("processHistory,XcmsExperiment works", {
 
     res <- processHistory(xmseg, type = "other")
     expect_true(length(res) == 0)
+})
+
+test_that("filterMzRange,XcmsExperiment works", {
+    mzr <- c(340, 350)
+    res <- filterMzRange(xmse, mzr)
+    expect_s4_class(res, "XcmsExperiment")
+    mzs <- unlist(mz(spectra(res)))
+    expect_true(all(mzs >= 340 & mzs <= 350))
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 350))
+
+    expect_warning(res2 <- filterMzRange(xmse, mzr, msLevel. = 2L), "not")
+    expect_s4_class(res, "XcmsExperiment")
+    expect_equal(mz(spectra(res2[1L])), mz(spectra(xmse[1L])))
+    expect_equal(chromPeaks(xmse), chromPeaks(res2))
+
+    res <- filterMzRange(xmse)
+    expect_equal(res, xmse)
 })

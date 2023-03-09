@@ -140,13 +140,13 @@ specified MS level(s). Chromatographic peaks and identified features are
 also subsetted to the respective MS level. See also the \code{filterMsLevel}
 documentation in \code{MSnbase} for details and examples.
 \item \code{filterMz}: filters the data set based on the provided m/z value range.
-All chromatographic peaks and features (grouped peaks) falling
-\strong{completely} within the provided mz value range are retained
-(i.e. if their minimal m/z value is \verb{>= mz[1]} and the maximal m/z value
-\verb{<= mz[2]}. Adjusted retention times, if present, are kept.
+All chromatographic peaks and features (grouped peaks) with their apex
+falling within the provided mz value range are retained
+(i.e. if \code{chromPeaks(object)[, "mz"]} is \verb{>= mz[1]} and \verb{<= mz[2]}).
+Adjusted retention times, if present, are kept.
 \item \code{filterRt}: filters the data set based on the provided retention time
 range. All chromatographic peaks and features (grouped peaks)
-\strong{completely} within the specified retention time window are retained
+within the specified retention time window are retained
 (i.e. if the retention time corresponding to the peak's apex is within the
 specified rt range). If retention time correction has been performed,
 the method will by default filter the object by adjusted retention times.

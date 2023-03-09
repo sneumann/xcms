@@ -77,8 +77,10 @@
 #'   `XcmsExperiment` or `MsExperiment` to the specified m/z range (parameter
 #'   `mz`). For `XcmsExperiment` also identified chromatographic peaks and
 #'   features are filtered keeping only those that are within the specified
-#'   m/z range. Parameter `msLevels.` allows to restrict the filtering to
-#'   only specified MS levesl. By default data from all MS levels are filtered.
+#'   m/z range (i.e. for which the m/z of the peak apex is within the m/z
+#'   range). Parameter `msLevels.` allows to restrict the filtering to
+#'   only specified MS levels. By default data from all MS levels are
+#'   filtered.
 #'
 #' - `filterRt`: filter an `XcmsExperiment` keeping only data within the
 #'   specified retention time range (parameter `rt`). This function will keep
@@ -665,14 +667,26 @@ setMethod(
         rt <- range(rt)
         if (!missing(msLevel.))
             warning("Parameter 'msLevel.' currently ignored.", call. = FALSE)
-        msLevel. <- uniqueMsLevels(spectra(object))
-        ## Subset chrom peaks
-        if (hasChromPeaks(object)) {
-            crt <- object@chromPeaks[, "rt"]
+        msLevel. <- uniqueMsLevels(object)
+        if (hasChromPeaks(object))
             object <- .filter_chrom_peaks(
-                object, which(between(crt, rt)))
-        }
+                object, base::which(between(chromPeaks(object)[, "rt"], rt)))
         callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
+    })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "filterMzRange", "XcmsExperiment",
+    function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
+        if (missing(mz) || !length(mz))
+            return(object)
+        mz <- range(mz)
+        if (hasChromPeaks(object)) {
+            keep <- between(chromPeaks(object)[, "mz"], mz)
+            keep <- keep | (!chromPeakData(object)$ms_level %in% msLevel.)
+            object <- .filter_chrom_peaks(object, idx = base::which(keep))
+        }
+        callNextMethod(object = object, mz = mz, msLevel. = msLevel.)
     })
 
 ################################################################################

@@ -11,6 +11,7 @@ setMethod("filterMzRange", "MsExperiment",
           function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
               message("Filter spectra")
               object@spectra <- filterMzRange(object@spectra, mz, msLevel.)
+              object
           })
 
 #' @rdname XcmsExperiment

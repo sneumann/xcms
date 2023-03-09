@@ -85,12 +85,14 @@ test_that("uniqueMsLevels,MsExperiment works", {
 
 test_that("filterMzRange,MsExperiment works", {
     res <- filterMzRange(mse[1L], mz = c(100, 500))
-    mzs <- unlist(mz(res))
+    expect_s4_class(res, "MsExperiment")
+    mzs <- unlist(mz(spectra(res)))
     expect_true(all(mzs <= 500))
     expect_true(all(mzs >= 100))
     expect_warning(
         res <- filterMzRange(mse[1L], mz = c(100, 500), msLevel. = 2L),
         "not available")
-    mzs <- unlist(mz(res))
+    expect_s4_class(res, "MsExperiment")
+    mzs <- unlist(mz(spectra(res)))
     expect_true(any(mzs > 500))
 })

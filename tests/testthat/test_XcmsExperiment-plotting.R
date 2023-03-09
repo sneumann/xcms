@@ -47,4 +47,7 @@ test_that("plot,XcmsExperiment and .xmse_plot_xic works", {
     plot(tmp, msLevel = 2L)
     tmp <- filterRt(xmse, c(3000, 3100))
     .xmse_plot_xic(tmp, lwd = 3, col = NA, cex = 0.2)
+
+    tmp <- filterMz(filterRt(xmse, rt = c(2550, 2800)), mz = c(342.5, 344.5))
+    plot(tmp)
 })
