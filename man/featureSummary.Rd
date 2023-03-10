@@ -13,7 +13,8 @@ featureSummary(
 )
 }
 \arguments{
-\item{x}{`XCMSnExp` object with correspondence results.}
+\item{x}{[XcmsExperiment()] or [XCMSnExp()] object with correspondence
+results.}
 
 \item{group}{`numeric`, `logical`, `character` or `factor` with the same
 length than `x` has samples to aggregate counts by the groups defined
