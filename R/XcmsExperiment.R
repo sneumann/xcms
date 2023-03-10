@@ -247,6 +247,9 @@
 #'   (MS1 or MS2) spectra associated to each feature. See [featureSpectra()]
 #'   for more details and available parameters.
 #'
+#' - `featuresSummary`: calculate a simple summary on features. See
+#'   [featureSummary()] for details.
+#'
 #' - `groupChromPeaks`: performs the correspondence analysis (i.e., grouping
 #'   of chromatographic peaks into LC-MS *features*). See [groupChromPeaks()]
 #'   for details.
@@ -255,6 +258,9 @@
 #'   `object`. The optional parameter `msLevel` allows to define the  MS
 #'   level(s) for which it should be determined if feature definitions are
 #'   available.
+#'
+#' - `overlappingFeatures`: identify features that overlapping or close in
+#'   m/z - rt dimension. See [overlappingFeatures()] for more information.
 #'
 #' @section Extracting data and results from an `XcmsExperiment`:
 #'
@@ -283,6 +289,14 @@
 #'   to define the column in `chromPeaks` that should be selected; defaults to
 #'   `intensity = "into"). `method = "sum"`: sum the values for all
 #'   chromatographic peaks assigned to the feature in the same sample.
+#'
+#' - `quantify`: extract the correspondence analysis results as a
+#'   [SummarizedExperiment()]. The feature *values* are used as `assay` in
+#'   the returned `SummarizedExperiment`, `rowData` contains the
+#'   `featureDefinitions` (without column `"peakidx"`) and `colData` the
+#'   `sampleData` of `object`. Additional parameters to the `featureValues`
+#'   function (that is used to extract the feature value matrix) can be
+#'   passed *via* `...`.
 #'
 #' @section Visualization:
 #'
@@ -513,7 +527,8 @@
 #'
 #' @param y For `plot`: should not be defined as it is not supported.
 #'
-#' @param ... Additional optional parameters.
+#' @param ... Additional optional parameters. For `quantify`: any parameter
+#'     for the `featureValues` call used to extract the feature value matrix.
 #'
 #' @name XcmsExperiment
 #'
@@ -588,6 +603,43 @@
 #' xmse_sub
 #' nrow(chromPeaks(xmse_sub))
 #'
+#' ## Perform an initial feature grouping to allow alignment using the
+#' ## peak groups method:
+#' pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+#' xmse <- groupChromPeaks(xmse, param = pdp)
+#'
+#' ## Perform alignment using the peak groups method.
+#' pgp <- PeakGroupsParam(span = 0.4)
+#' xmse <- adjustRtime(xmse, param = pgp)
+#'
+#' ## Visualizing the alignment results
+#' plotAdjustedRtime(xmse)
+#'
+#' ## Performing the final correspondence analysis
+#' xmse <- groupChromPeaks(xmse, param = pdp)
+#'
+#' ## Show the definition of the first 6 features
+#' featureDefinitions(xmse) |> head()
+#'
+#' ## Extract the feature values; show the results for the first 6 rows.
+#' featureValues(xmse) |> head()
+#'
+#' ## The full results can also be extracted as a `SummarizedExperiment`
+#' ## that would eventually simplify subsequent analyses with other packages.
+#' ## Any additional parameters passed to the function are passed to the
+#' ## `featureValues` function that is called to generate the feature value
+#' ## matrix.
+#' se <- quantify(xmse, method = "sum")
+#'
+#' ## EICs for all features can be extracted with the `featureChromatograms`
+#' ## function. Note that, depending on the data set, extracting this for
+#' ## all features might take some time. Below we extract EICs for the
+#' ## first 10 features by providing the feature IDs.
+#' chrs <- featureChromatograms(xmse,
+#'     features = rownames(featureDefinitions(xmse))[1:10])
+#' chrs
+#'
+#' plot(chrs[3, ])
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
@@ -1409,12 +1461,11 @@ setMethod(
             unname(pkidl[[z]][pkid_all[fts$peakidx[[z]]], "index"])
         })
         colnames(chrs) <- basename(fileNames(object))
+        rownames(chrs@phenoData) <- colnames(chrs)
         chrs@featureDefinitions <- DataFrame(fts)
         chrs@.processHistory <- object@processHistory
         chrs
     })
-
-## TODO: featureSummary
 
 #' @rdname XcmsExperiment
 setMethod(
@@ -1469,8 +1520,6 @@ setMethod(
             sps[features]
         } else sps
     })
-
-## TODO: overlappingFeatures
 
 ################################################################################
 ## gap filling
@@ -1576,7 +1625,18 @@ setMethod("dropFilledChromPeaks", "XcmsExperiment", function(object) {
 ## results
 ################################################################################
 
-## TODO quantify
+#' @rdname XcmsExperiment
+setMethod("quantify", "XcmsExperiment", function(object, ...) {
+    if (!hasFeatures(object))
+        stop("No correspondence results present. Pease run ",
+             "'groupChromPeaks' first.")
+    fd <- featureDefinitions(object)
+    SummarizedExperiment(
+        assays = list(raw = featureValues(object, ...)),
+        rowData = fd[, colnames(fd) != "peakidx"],
+        colData = sampleData(object),
+        metadata = processHistory(object))
+})
 
 #' @rdname XcmsExperiment
 setMethod(
@@ -1642,8 +1702,6 @@ setMethod("processHistory", "XcmsExperiment", function(object, type) {
         ph <- ph[vapply(ph, function(z) processType(z) %in% type, logical(1))]
     ph
 })
-
-## TODO filterMz? Do we need that? Maybe for plotXIC.
 
 ## TODO filterMsLevel? Function not yet needed. In case, needs also an
 ## implementation for MsExperiment: update the spectra-sample-mapping.

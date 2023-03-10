@@ -1072,12 +1072,14 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
 test_that("featureChromatograms,XcmsExperiment works", {
     res <- featureChromatograms(xmseg, return.type = "XChromatograms")
     expect_s4_class(res, "XChromatograms")
+    expect_true(validObject(res))
     expect_equal(nrow(res), nrow(featureDefinitions(xmseg)))
     expect_equal(rownames(featureDefinitions(res)),
                  rownames(featureDefinitions(xmseg)))
     expect_equal(featureValues(res), featureValues(xmseg))
 
     ref <- featureChromatograms(xod_xg)
+    expect_true(validObject(ref))
     expect_equal(chromPeaks(ref), chromPeaks(res))
     expect_equal(featureDefinitions(ref)$peakidx,
                  featureDefinitions(res)$peakidx)
@@ -1089,6 +1091,7 @@ test_that("featureChromatograms,XcmsExperiment works", {
     ## Duplicated features
     res <- featureChromatograms(xmseg, features = c("FT12", "FT03", "FT12"))
     expect_s4_class(res, "XChromatograms")
+    expect_true(validObject(res))
     expect_true(nrow(res) == 3L)
     expect_equal(rownames(featureDefinitions(res)), c("FT12", "FT03", "FT12.1"))
     expect_equal(chromPeaks(res)[featureDefinitions(res)$peakidx[[1L]], 1:11],
@@ -1129,4 +1132,26 @@ test_that("filterMzRange,XcmsExperiment works", {
 
     res <- filterMzRange(xmse)
     expect_equal(res, xmse)
+})
+
+test_that("featureSummary works for XcmsExperiment", {
+    res <- featureSummary(xmseg)
+    expect_true(nrow(res) == nrow(featureDefinitions(xmseg)))
+})
+
+test_that("quantify,XcmsExperiment works", {
+    expect_error(quantify(xmse), "No correspondence")
+    res <- quantify(xmseg, method = "sum")
+    expect_s4_class(res, "SummarizedExperiment")
+    fd <- featureDefinitions(xmseg)
+    expect_equal(rownames(fd), rownames(SummarizedExperiment::rowData(res)))
+    a <- SummarizedExperiment::rowData(res)
+    b <- as(fd[, colnames(fd) != "peakidx"], "DataFrame")
+    expect_equal(a, b)
+    expect_equal(SummarizedExperiment::assay(res),
+                 featureValues(xmseg, method = "sum"))
+    a <- SummarizedExperiment::colData(res)
+    b <- sampleData(xmseg)
+    rownames(b) <- colnames(SummarizedExperiment::assay(res))
+    expect_equal(a, b)
 })

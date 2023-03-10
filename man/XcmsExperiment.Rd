@@ -40,6 +40,7 @@
 \alias{filterFeatureDefinitions,XcmsExperiment-method}
 \alias{hasFilledChromPeaks,XcmsExperiment-method}
 \alias{dropFilledChromPeaks,XcmsExperiment-method}
+\alias{quantify,XcmsExperiment-method}
 \alias{featureValues,XcmsExperiment-method}
 \alias{chromatogram,XcmsExperiment-method}
 \alias{processHistory,XcmsExperiment-method}
@@ -152,6 +153,8 @@ featureArea(
 
 \S4method{dropFilledChromPeaks}{XcmsExperiment}(object)
 
+\S4method{quantify}{XcmsExperiment}(object, ...)
+
 \S4method{featureValues}{XcmsExperiment}(
   object,
   method = c("medret", "maxint", "sum"),
@@ -180,7 +183,8 @@ featureArea(
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
 
-\item{...}{Additional optional parameters.}
+\item{...}{Additional optional parameters. For \code{quantify}: any parameter
+for the \code{featureValues} call used to extract the feature value matrix.}
 
 \item{rt}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining
 the retention time range for which chromatographic peaks or features
@@ -576,6 +580,8 @@ defining how these parameters should be used to subset the returned
 \item \code{featureSpectra}: returns a \code{\link[=Spectra]{Spectra()}} or \code{List} of \code{Spectra} with
 (MS1 or MS2) spectra associated to each feature. See \code{\link[=featureSpectra]{featureSpectra()}}
 for more details and available parameters.
+\item \code{featuresSummary}: calculate a simple summary on features. See
+\code{\link[=featureSummary]{featureSummary()}} for details.
 \item \code{groupChromPeaks}: performs the correspondence analysis (i.e., grouping
 of chromatographic peaks into LC-MS \emph{features}). See \code{\link[=groupChromPeaks]{groupChromPeaks()}}
 for details.
@@ -583,6 +589,8 @@ for details.
 \code{object}. The optional parameter \code{msLevel} allows to define the  MS
 level(s) for which it should be determined if feature definitions are
 available.
+\item \code{overlappingFeatures}: identify features that overlapping or close in
+m/z - rt dimension. See \code{\link[=overlappingFeatures]{overlappingFeatures()}} for more information.
 }
 }
 
@@ -612,6 +620,13 @@ chromatographic peak with the largest signal (parameter \code{intensity} allows
 to define the column in \code{chromPeaks} that should be selected; defaults to
 \verb{intensity = "into"). }method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.
+\item \code{quantify}: extract the correspondence analysis results as a
+\code{\link[=SummarizedExperiment]{SummarizedExperiment()}}. The feature \emph{values} are used as \code{assay} in
+the returned \code{SummarizedExperiment}, \code{rowData} contains the
+\code{featureDefinitions} (without column \code{"peakidx"}) and \code{colData} the
+\code{sampleData} of \code{object}. Additional parameters to the \code{featureValues}
+function (that is used to extract the feature value matrix) can be
+passed \emph{via} \code{...}.
 }
 }
 
@@ -739,6 +754,43 @@ xmse_sub <- filterRt(xmse, rt = c(3000, 3500))
 xmse_sub
 nrow(chromPeaks(xmse_sub))
 
+## Perform an initial feature grouping to allow alignment using the
+## peak groups method:
+pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+xmse <- groupChromPeaks(xmse, param = pdp)
+
+## Perform alignment using the peak groups method.
+pgp <- PeakGroupsParam(span = 0.4)
+xmse <- adjustRtime(xmse, param = pgp)
+
+## Visualizing the alignment results
+plotAdjustedRtime(xmse)
+
+## Performing the final correspondence analysis
+xmse <- groupChromPeaks(xmse, param = pdp)
+
+## Show the definition of the first 6 features
+featureDefinitions(xmse) |> head()
+
+## Extract the feature values; show the results for the first 6 rows.
+featureValues(xmse) |> head()
+
+## The full results can also be extracted as a `SummarizedExperiment`
+## that would eventually simplify subsequent analyses with other packages.
+## Any additional parameters passed to the function are passed to the
+## `featureValues` function that is called to generate the feature value
+## matrix.
+se <- quantify(xmse, method = "sum")
+
+## EICs for all features can be extracted with the `featureChromatograms`
+## function. Note that, depending on the data set, extracting this for
+## all features might take some time. Below we extract EICs for the
+## first 10 features by providing the feature IDs.
+chrs <- featureChromatograms(xmse,
+    features = rownames(featureDefinitions(xmse))[1:10])
+chrs
+
+plot(chrs[3, ])
 }
 \author{
 Johannes Rainer
