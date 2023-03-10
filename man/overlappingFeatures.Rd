@@ -7,7 +7,7 @@
 overlappingFeatures(x, expandMz = 0, expandRt = 0, ppm = 0)
 }
 \arguments{
-\item{x}{\code{XCMSnExp} with the features.}
+\item{x}{\code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with the features.}
 
 \item{expandMz}{\code{numeric(1)} with the value to expand each feature (on each
 side) in m/z dimension before identifying overlapping features.

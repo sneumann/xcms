@@ -1064,7 +1064,8 @@ applyAdjustedRtime <- function(object) {
 #' across samples. For `perSampleCounts = TRUE` also the individual
 #' chromatographic peak counts per sample are returned.
 #'
-#' @param x `XCMSnExp` object with correspondence results.
+#' @param x [XcmsExperiment()] or [XCMSnExp()] object with correspondence
+#'     results.
 #'
 #' @param group `numeric`, `logical`, `character` or `factor` with the same
 #'     length than `x` has samples to aggregate counts by the groups defined
@@ -1102,8 +1103,8 @@ applyAdjustedRtime <- function(object) {
 #' @author Johannes Rainer
 featureSummary <- function(x, group, perSampleCounts = FALSE,
                            method = "maxint", skipFilled = TRUE) {
-    if (!is(x, "XCMSnExp"))
-        stop("'x' is expected to be an 'XCMSnExp' object")
+    if (!(is(x, "XCMSnExp") | inherits(x, "XcmsExperiment")))
+        stop("'x' is expected to be an 'XcmsExperiment' or 'XCMSnExp' object")
     if (!hasFeatures(x))
         stop("No feature definitions found in 'x'. Please perform first a ",
              "correspondence analysis with the 'groupChromPeaks' function.")
@@ -1163,7 +1164,7 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' `overlappingFeatures` identifies features that are overlapping or close in
 #' the m/z - rt space.
 #'
-#' @param x `XCMSnExp` with the features.
+#' @param x [XcmsExperiment()] or [XCMSnExp()] object with the features.
 #'
 #' @param expandMz `numeric(1)` with the value to expand each feature (on each
 #'     side) in m/z dimension before identifying overlapping features.
@@ -1207,8 +1208,8 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' ## 2 minutes
 #' overlappingFeatures(xdata, expandRt = 60)
 overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
-    if (!is(x, "XCMSnExp"))
-        stop("'x' is expected to be an 'XCMSnExp' object")
+    if (!(is(x, "XCMSnExp") | is(x, "XcmsExperiment")))
+        stop("'x' is expected to be an 'XcmsExperiment' or 'XCMSnExp' object")
     if (!hasFeatures(x))
         stop("No feature definitions found in 'x'. Please perform first a ",
              "correspondence analysis with the 'groupChromPeaks' function.")
@@ -1871,22 +1872,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
         minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
 
     do.call(c, sps)
-
-
-    ## sps <- bplapply(
-    ##     .split_by_file2(
-    ##         object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
-    ##     FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
-    ##                    return.type) {
-    ##         .reconstruct_ms2_for_peaks_file(
-    ##             x, expandRt = expandRt, diffRt = diffRt,
-    ##             minCor = minCor, fromFile = match(fileNames(x), files),
-    ##             column = col, peakId = pkId, return.type = return.type)
-    ##     },
-    ##     files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
-    ##     minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM,
-    ##     return.type = return.type)
-    ## do.call(c, sps)
 }
 
 #' This function *overwrites* the `MSnbase` .plot_XIC function by adding also
