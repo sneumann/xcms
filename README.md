@@ -1,13 +1,34 @@
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R-CMD-check-bioc](https://github.com/sneumann/xcms/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check-bioc)
 [![codecov.io](https://codecov.io/github/sneumann/xcms/coverage.svg?branch=master)](https://codecov.io/github/sneumann/xcms?branch=master)
 [![Years in Bioconductor](http://www.bioconductor.org/shields/years-in-bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
+[![Ranking by downloads](http://bioconductor.org/shields/downloads/release/xcms.svg)](https://bioconductor.org/packages/stats/bioc/xcms/)
 [![Bioconductor release build status](http://www.bioconductor.org/shields/build/release/bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
 [![Bioconductor devel build status](http://www.bioconductor.org/shields/build/devel/bioc/xcms.svg)](http://www.bioconductor.org/checkResults/devel/bioc-LATEST/xcms.html)
 
-# The `xcms` package (version >= 3)
+
+# The `xcms` package: pre-processing GC/LC-MS/MS data
 
 <img align = "right" src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/xcms/xcms.png" height="200">
 
+## Version 4
+
+Version 4 adds native support for the
+[Spectra](https://github.com/RforMassSpectrometry/Spectra) package to `xcms` and
+allows to perform the pre-processing on `MsExperiment` objects (from the
+[MsExperiment](https://github.com/RforMassSpectrometry/MsExperiment). The new
+supported data containers (`Spectra`, `MsExperiment` and `XcmsExperiment`) allow
+more flexible analyses and seamless future extensions to additional types of
+data (such as ion mobility data). Ultimately, these changes will also allow
+easier integration of `xcms` with other R packages such as
+[MsFeatures](https://github.com/RforMassSpectrometry/MsFeatures) or
+[MetaboAnnotation](https://github.com/RforMassSpectrometry/MetaboAnnotation).
+
+While it is suggested that users switch to the newer data and result objects,
+all functionality from version 3 and before remain fully supported.
+
+
+## Version 3
 
 Version >= 3 of the `xcms` package are updated and partially re-written versions
 of the original `xcms` package. The version number *3* was selected to avoid
@@ -41,5 +62,3 @@ version >= 3 aims at:
 
 Discussions and suggestions are welcome:
 https://github.com/sneumann/xcms/issues
-
-For more information see the package [vignette](vignettes/xcms.Rmd).
