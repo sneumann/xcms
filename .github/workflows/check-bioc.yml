@@ -197,7 +197,7 @@ jobs:
           BiocManager::install(c("faahKO"))
           BiocManager::install("ProtGenerics")
           BiocManager::install("MSnbase")
-          BiocManager::install("mzR")
+          BiocManager::install("mzR", type = "source", force = TRUE)
           BiocManager::install("Spectra")
           BiocManager::install("MsBackendMgf")
           BiocManager::install("magick")
