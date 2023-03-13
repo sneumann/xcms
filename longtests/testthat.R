@@ -13,7 +13,6 @@ if (.Platform$OS.type == "unix") {
     prm <- SnowParam(3)
 }
 register(bpstart(prm))
-## register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -56,7 +55,7 @@ microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
 microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
 
 ## Direct injection data:
-fticrf <- list.files(system.file("fticr", package = "msdata"),
+fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
                      recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),

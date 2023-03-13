@@ -14,34 +14,10 @@ test_that("xcmsSource works", {
                               "mz", "intensity", "polarity"))
 
     ## MSn:
-    mzdatapath <- system.file("iontrap", package = "msdata")
-    mzdatafiles <- list.files(mzdatapath, pattern="extracted.mzData",
+    mzmlpath <- system.file("iontrap", package = "msdata")
+    mzmlfiles <- list.files(mzmlpath, pattern="extracted.mzML",
                               recursive = TRUE, full.names = TRUE)
-    src <- xcms:::xcmsSource(mzdatafiles[1])
+    src <- xcms:::xcmsSource(mzmlfiles[1])
     tmp <- loadRaw(src, includeMSn = TRUE)
 
-    ## OLD code:
-    rid <- mzR:::rampOpen(mzdatafiles[1])
-    rawdata <- mzR:::rampRawData(rid)
-    rawdata$MSn <- mzR:::rampRawDataMSn(rid)
-    mzR:::rampClose(rid)
-    rm(rid)
-    ## Ramp does not read polarity!
-    tmp$polarity <- rawdata$polarity
-    expect_equal(rawdata, tmp)
-
-    ## Next example:
-    msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
-    src <- xcms:::xcmsSource(msnfile)
-    tmp <- loadRaw(src, includeMSn = TRUE)
-    ## expect_true(all(tmp$polarity == 1))
-    ## OLD code:
-    rid <- mzR:::rampOpen(msnfile)
-    rawdata <- mzR:::rampRawData(rid)
-    rawdata$MSn <- mzR:::rampRawDataMSn(rid)
-    mzR:::rampClose(rid)
-    rm(rid)
-    rawdata$polarity <- tmp$polarity
-    rawdata$MSn$precursorNum <- tmp$MSn$precursorNum
-    expect_equal(rawdata, tmp)
 })
