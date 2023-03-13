@@ -7,12 +7,7 @@ attr(faahko, "filepaths") <- sapply(
     as.list(basename(attr(faahko, "filepaths"))),
     function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else "WT",
                             x, package = "faahKO"))
-if (.Platform$OS.type == "unix") {
-    prm <- MulticoreParam(3)
-} else {
-    prm <- SnowParam(3)
-}
-register(bpstart(prm))
+register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
