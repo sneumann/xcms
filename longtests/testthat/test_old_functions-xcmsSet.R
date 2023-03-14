@@ -47,13 +47,13 @@ test_that(".getPeaks_xxx functions works", {
 })
 
 test_that("xcmsSet can handle MS2 data", {
-    filename <- system.file('iontrap/extracted.mzData', package = "msdata")
-    expect_warning(xs2 <- xcmsSet(filename, snthresh = 4, mslevel = 2))
+    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
+    expect_equal(xcmsSet(filename, snthresh = 4, mslevel = 2)@mslevel, 2)
 })
 
 test_that("xcmsSet works with MS2... again", {
-    filename <- system.file('iontrap/extracted.mzData', package = "msdata")
-    expect_warning(xs2 <- xcmsSet(filename, method="centWave", mslevel = 2))
+    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
+    expect_equal(xcmsSet(filename, snthresh = 4, mslevel = 2)@mslevel, 2)
 })
 
 test_that("phenoDataFromPaths and others don't fail", {
@@ -262,7 +262,7 @@ test_that(".getProcessHistory works", {
 })
 
 test_that("xcmsSet centWave works", {
-    file <- system.file('microtofq/MM14.mzdata', package = "msdata")
+    file <- system.file('microtofq/MM14.mzML', package = "msdata")
     xset1 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
                       profparam = list(step = 0))
     xset2 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
@@ -274,7 +274,7 @@ test_that("xcmsSet centWave works", {
 })
 
 test_that("xcmsSet matchedFilter works", {
-    file <- system.file('microtofq/MM14.mzdata', package = "msdata")
+    file <- system.file('microtofq/MM14.mzML', package = "msdata")
     xset1 <- xcmsSet(files=file, method="matchedFilter", fwhm=10)
     xset2 <- xcmsSet(files=file, method="matchedFilter", fwhm=10,
                      scanrange=c(1,112))
@@ -285,7 +285,7 @@ test_that("xcmsSet matchedFilter works", {
 })
 
 test_that("xcmsSet parallel works", {
-    file <- system.file('microtofq/MM14.mzdata', package = "msdata")
+    file <- system.file('microtofq/MM14.mzML', package = "msdata")
     xset1 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
                       scanrange=c(1,80), profparam = list(step = 0))
     xset2 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),

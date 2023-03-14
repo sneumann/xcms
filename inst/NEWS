@@ -3,7 +3,6 @@ Changes in version 3.99.1
 
 - `featureSummary` and `overlappingFeatures` gain support for `XcmsExperiment`.
 - Fix in `featureChromatograms` to ensure a valid object is returned.
-- Update vignettes to use the new objects.
 
 
 Changes in version 3.99.0
@@ -18,7 +17,16 @@ Changes in version 3.99.0
   issue with chromatographic peaks in overlapping SWATH isolation windows and
   generally to improve performance.
 
+Changes in version 3.21.3
+---------------------
+
+- Only fixes in the long running tests
+
+Changes in version 3.21.2
+---------------------
+
 Changes in version 3.21.1
+---------------------
 
 - Fix error with `fillChromPeaks` on sparse data (many empty spectra) and peak
   detection performed with `MatchedFilterParam` (issue #653).

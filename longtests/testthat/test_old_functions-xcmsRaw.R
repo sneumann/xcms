@@ -1,11 +1,11 @@
 test_that("xcmsRaw on MS1 asking for MS2 doesn't fail", {
-    filename <- system.file('microtofq/MM14.mzdata', package = "msdata")
+    filename <- system.file('microtofq/MM14.mzML', package = "msdata")
     ## This file has no MS/MS data at all, but should not fail
     expect_warning(x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0))
 })
 
 test_that("xcmsRaw with multiple MS levels works", {
-    filename <- system.file('iontrap/extracted.mzData', package = "msdata")
+    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
     x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0)
     expect_warning(x2 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=2,
                                  profstep = 0))
