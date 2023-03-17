@@ -635,7 +635,7 @@ test_that(".features_ms_region works", {
     expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
 
     expect_error(.features_ms_region(xod_xgrg, msLevel = 1L,
-                                     features = c("a", "b")), "not available")
+                                     features = c("a", "b")), "out of")
 })
 
 test_that(".which_peaks_above_threshold works", {

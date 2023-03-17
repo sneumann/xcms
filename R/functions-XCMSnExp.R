@@ -2258,10 +2258,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     pk_idx <- featureValues(x, value = "index", method = "maxint",
                             msLevel = msLevel)
     if (length(features)) {
-        if (!all(features %in% rownames(pk_idx)))
-            stop(sum(!features %in% rownames(pk_idx)), " IDs defined with ",
-                 "'features' are not available in 'object' for MS level ",
-                 msLevel)
+        features <- .i2index(
+            features, ids = rownames(featureDefinitions(x)), "features")
         pk_idx <- pk_idx[features, , drop = FALSE]
     }
     n_ft <- nrow(pk_idx)

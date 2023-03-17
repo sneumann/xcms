@@ -1,3 +1,10 @@
+Changes in version 3.99.2
+----------------------
+
+- Fix issue in `featureArea` for `XcmsExperiment`.
+- Update main vignette to use and describe the new data objects.
+
+
 Changes in version 3.99.1
 ----------------------
 
