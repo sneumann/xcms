@@ -1,3 +1,8 @@
+Changes in version 3.21.4
+---------------------
+
+- Move multtest from Suggests to Imports in dependencies
+
 Changes in version 3.21.3
 ---------------------
 
