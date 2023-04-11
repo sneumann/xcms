@@ -1342,6 +1342,8 @@ do_findChromPeaks_massifquant <- function(mz,
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
              " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
+    if (!length(mz))
+        stop("No spectra available for the specified MS level")
     if (!is.double(mz))
         mz <- as.double(mz)
     if (!is.double(int))

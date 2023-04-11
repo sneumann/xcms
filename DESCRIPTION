@@ -56,7 +56,8 @@ Imports:
     MsFeatures,
     MsExperiment (>= 1.1.2),
     Spectra (>= 1.9.4),
-    progress
+    progress,
+    multtest
 Suggests:
     BiocStyle,
     caTools,
@@ -68,7 +69,6 @@ Suggests:
     pander,
     magrittr,
     rmarkdown,
-    multtest,
     MALDIquant,
     pheatmap,
     MsBackendMgf,
