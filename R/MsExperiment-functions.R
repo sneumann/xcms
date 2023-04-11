@@ -197,7 +197,10 @@
 
 #' Perform the peak detection on a *chunk* of samples. Data realization (i.e.
 #' loading of the peak data) is performed without parallel processing while
-#' peak detection is performed in parallel.
+#' peak detection is performed in parallel. Note: we could even perform the
+#' data realization in parallel using the supported BPPARAM (i.e. using the
+#' `backendBpparam` function). It would however not help much since
+#' parallelization if performed on `dataStorage`.
 #'
 #' @param x `Spectra` representing a chunk of samples. Needs a spectra variable
 #'     `.SAMPLE_IDX` that defined the sample to which the spectra belong to.

@@ -82,9 +82,9 @@
              "'[,XcmsExperiment'", call. = FALSE)
     drop <- character()
     if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
-        svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
-        object@spectra <- selectSpectraVariables(
-            object@spectra, svs[svs != "rtime_adjusted"])
+        svs <- unique(c(spectraVariables(x@spectra), "mz", "intensity"))
+        x@spectra <- selectSpectraVariables(
+            x@spectra, svs[svs != "rtime_adjusted"])
         drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
     }
     if (!keepFeatures && hasFeatures(x)) {
