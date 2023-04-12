@@ -49,19 +49,20 @@ grouping functionality if defined by the `r Biocpkg("MsFeatures")` package with
 additional functionality being implemented in the `xcms` package to enable the
 compounding of LC-MS data.
 
-This document provides a simple compounding workflow using `xcms`. Note that the
-present functionality does not (yet) *aggregate* or combine the actual features
-per values, but does only define the feature groups (one per compound).
+This document provides a simple compounding workflow using
+`r Biocpkg("xcms")`. Note that the present functionality does not (yet)
+*aggregate* or combine the actual features per values, but does only define
+the feature groups (one per compound).
 
 
 # Compounding of LC-MS data
 
 We demonstrate the compounding (feature grouping) functionality on the simple
 toy data set used also in the `r Biocpkg("xcms")` package and provided through
-the `faahKO` package. This data set consists of samples from 4 mice with
+the *faahKO* package. This data set consists of samples from 4 mice with
 knock-out of the fatty acid amide hydrolase (FAAH) and 4 wild type
-mice. Pre-processing of this data set is described in detail in the *xcms*
-vignette of the `xcms` package. Below we load all required packages and the
+mice. Pre-processing of this data set is described in detail in the *main*
+vignette of the *xcms* package. Below we load all required packages and the
 result from this pre-processing updating also the location of the respective raw
 data files on the current machine.
 

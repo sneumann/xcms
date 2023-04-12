@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.99.1
+Version: 3.99.2
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -119,6 +119,7 @@ Collate:
     'functions-xcmsSet.R'
     'functions-xcmsSwath.R'
     'init.R'
+    'loadXcmsData.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'
     'methods-IO.R'
@@ -146,5 +147,4 @@ Collate:
     'writemzdata.R'
     'writemztab.R'
     'xcmsSource.R'
-    'xdata.R'
     'zzz.R'

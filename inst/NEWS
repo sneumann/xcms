@@ -1,3 +1,11 @@
+Changes in version 3.99.2
+----------------------
+
+- Add the `xmse` data set representing an `XcmsExperiment` object.
+- Update the *compounding* vignette to use the new objects.
+- Add `loadXcmsData` to load test data objects (and fix/update paths).
+
+
 Changes in version 3.99.1
 ----------------------
 

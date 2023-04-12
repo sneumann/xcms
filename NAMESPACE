@@ -257,7 +257,8 @@ export(
     "reconstructChromPeakSpectra",
     "groupOverlaps",
     "estimatePrecursorIntensity",
-    "featureArea"
+    "featureArea",
+    "loadXcmsData"
 )
 
 ## New analysis methods
