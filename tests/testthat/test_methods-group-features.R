@@ -3,6 +3,7 @@ library(MsFeatures)
 xodgg <- groupFeatures(xodg, param = SimilarRtimeParam(4))
 xodgg <- groupFeatures(xodgg, param = AbundanceSimilarityParam(threshold = 0.3))
 
+xm <- loadXcmsData("xmse")
 
 test_that("featureGroups,featureGroups<-,XCMSnExp works", {
     skip_on_os(os = "windows", arch = "i386")
@@ -16,6 +17,18 @@ test_that("featureGroups,featureGroups<-,XCMSnExp works", {
 
     expect_error(featureGroups(xod_x) <- "a", "Please run")
     expect_error(featureGroups(xodg) <- 1:2, "length")
+})
+
+test_that("featureGroups,featureGroups<-,XcmsExperiment works", {
+    expect_error(featureGroups(dropFeatureDefinitions(xm)), "Please run")
+    res <- featureGroups(xm)
+    expect_true(all(is.na(res)))
+    tmp <- xm
+    featureGroups(tmp) <- "a"
+    expect_true(all(featureGroups(tmp) == "a"))
+
+    expect_error(featureGroups(dropFeatureDefinitions(xm)) <- "a", "Please run")
+    expect_error(featureGroups(xm) <- 1:2, "length")
 })
 
 test_that("SimilarRtimeParam works", {
@@ -55,6 +68,44 @@ test_that("SimilarRtimeParam works", {
     expect_true(all(is.na(featureGroups(res))[idx]))
     expect_false(any(is.na(featureGroups(res))[-idx]))
 })
+
+test_that("SimilarRtimeParam,XcmsExperiment works", {
+    LLLLLLLLLL
+    prm <- SimilarRtimeParam(3)
+
+    expect_error(groupFeatures(xod_x, prm), "No feature definitions")
+    expect_error(groupFeatures(xodg, prm, msLevel = 1:2), "single MS")
+    res <- groupFeatures(xodg, prm)
+    expect_true(any(colnames(featureDefinitions(res)) == "feature_group"))
+    expect_false(any(is.na(featureGroups(res))))
+    expect_true(is.character(featureGroups(res)))
+
+    res2 <- groupFeatures(xodg,
+                          SimilarRtimeParam(3, groupFun = MsCoreUtils::group))
+    expect_true(length(table(featureGroups(res2))) <
+                length(table(featureGroups(res))))
+
+    ## Different MS levels
+    tmp <- xodg
+    idx <- c(1:3, 5, 45, 47)
+    featureDefinitions(tmp)$ms_level[idx] <- 2
+    res <- groupFeatures(tmp, prm)
+    expect_true(all(is.na(featureGroups(res))[idx]))
+    expect_false(any(is.na(featureGroups(res))[-idx]))
+    res <- groupFeatures(tmp, prm, msLevel = 2L)
+    expect_false(any(is.na(featureGroups(res))[idx]))
+    expect_true(all(is.na(featureGroups(res))[-idx]))
+
+    ## Pre-defined groups
+    fgs <- rep("AB", nrow(featureDefinitions(xodg)))
+    fgs[idx] <- NA
+    tmp <- xodg
+    featureGroups(tmp) <- fgs
+    res <- groupFeatures(tmp, prm)
+    expect_true(all(is.na(featureGroups(res))[idx]))
+    expect_false(any(is.na(featureGroups(res))[-idx]))
+})
+
 
 test_that("AbundanceSimilarityParam works", {
     skip_on_os(os = "windows", arch = "i386")

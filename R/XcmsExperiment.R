@@ -671,6 +671,8 @@ setClass("XcmsExperiment",
              featureDefinitions = .empty_feature_definitions(),
              processHistory = list()))
 
+setClassUnion("XcmsResult", c("XcmsExperiment", "XCMSnExp"))
+
 setValidity("XcmsExperiment", function(object) {
     msg <- c(.mse_valid_chrom_peaks(object@chromPeaks),
              .mse_valid_chrom_peak_data(object@chromPeakData),
@@ -772,7 +774,7 @@ setMethod(
                               msLevel = msLevel)
         if (!is(object, "XcmsExperiment"))
             object <- as(object, "XcmsExperiment")
-        object@processHistory <- c(object@processHistory, list(ph))
+        object <- addProcessHistory(object, ph)
         object <- .mse_add_chrom_peaks(object, res, pkd)
         validObject(object)
         object
@@ -934,7 +936,7 @@ setMethod(
                                type. = .PROCSTEP.PEAK.REFINEMENT,
                                fileIndex = seq_along(object),
                                msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(xph))
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -989,7 +991,7 @@ setMethod(
                                type. = .PROCSTEP.PEAK.REFINEMENT,
                                fileIndex = seq_along(object),
                                msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(xph))
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -1029,7 +1031,7 @@ setMethod(
                                type. = .PROCSTEP.PEAK.REFINEMENT,
                                fileIndex = seq_along(object),
                                msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(xph))
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -1172,7 +1174,7 @@ setMethod(
                               type. = .PROCSTEP.RTIME.CORRECTION,
                               fileIndex. = seq_along(object),
                               msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(ph))
+        object <- addProcessHistory(object, ph)
         validObject(object)
         object
 })
@@ -1311,7 +1313,7 @@ setMethod(
         }
         xph <- XProcessHistory(param = param, type. = .PROCSTEP.PEAK.GROUPING,
                                fileIndex = seq_along(object), msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(xph))
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -1601,7 +1603,7 @@ setMethod(
                               type. = .PROCSTEP.PEAK.FILLING,
                               fileIndex = seq_along(object),
                               msLevel = msLevel)
-        object@processHistory <- c(object@processHistory, list(ph))
+        object <- addProcessHistory(object, ph)
         validObject(object)
         object
     })
@@ -1702,6 +1704,15 @@ setMethod("processHistory", "XcmsExperiment", function(object, type) {
         ph <- ph[vapply(ph, function(z) processType(z) %in% type, logical(1))]
     ph
 })
+
+setMethod("addProcessHistory", "XcmsExperiment", function(object, ph) {
+    if (!inherits(ph, "ProcessHistory"))
+        stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
+             "extending it!")
+    object@processHistory[[(length(object@processHistory) + 1)]] <- ph
+    object
+})
+
 
 ## TODO filterMsLevel? Function not yet needed. In case, needs also an
 ## implementation for MsExperiment: update the spectra-sample-mapping.

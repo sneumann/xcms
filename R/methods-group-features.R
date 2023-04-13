@@ -9,9 +9,10 @@
 #' originating compound.
 #' The [MsFeatures](https://bioconductor.org/packages/MsFeatures) package
 #' provides a general framework and functionality to group features based on
-#' different properties. The `groupFeatures` methods for [XCMSnExp-class]
-#' objects implemented in `xcms` extend these to enable the *compounding* of
-#' LC-MS data. Note that these functions simply define feature groups but don't
+#' different properties. The `groupFeatures` methods for [XcmsExperiment()] or
+#' [XCMSnExp-class] objects implemented in `xcms` extend these to enable
+#' the *compounding* of LC-MS data considering also e.g. feature peak shaped.
+#' Note that these functions simply define feature groups but don't
 #' actually *aggregate* or combine the features.
 #'
 #' See [MsFeatures::groupFeatures()] for an overview on the general feature
@@ -19,8 +20,8 @@
 #' parameters.
 #'
 #' The available options for `groupFeatures` on `xcms` preprocessing results
-#' (i.e. on `XCMSnExp` objects after correspondence analysis with
-#' [groupChromPeaks()]) are:
+#' (i.e. on `XcmsExperiment` or `XCMSnExp` objects after correspondence
+#' analysis with [groupChromPeaks()]) are:
 #'
 #' - Grouping by similar retention times: [groupFeatures-similar-rtime()].
 #'
@@ -35,7 +36,8 @@
 #'
 #' Compounded feature groups can be accessed with the `featureGroups` function.
 #'
-#' @param object an [XCMSnExp()] object.
+#' @param object an [XcmsExperiment()] or [XCMSnExp()] object with LC-MS
+#'     pre-processing results.
 #'
 #' @param value for `featureGroups<-`: replacement for the feature groups in
 #'     `object`. Has to be of length 1 or length equal to the number of features
@@ -51,7 +53,7 @@ NULL
 #' @rdname feature-grouping
 #'
 #' @export
-setMethod("featureGroups", "XCMSnExp", function(object) {
+setMethod("featureGroups", "XcmsResult", function(object) {
     if (!hasFeatures(object))
         stop("No feature definitions present. Please run 'groupChromPeak'",
              call. = FALSE)
@@ -63,7 +65,7 @@ setMethod("featureGroups", "XCMSnExp", function(object) {
 #' @rdname feature-grouping
 #'
 #' @export
-setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
+setReplaceMethod("featureGroups", "XcmsResult", function(object, value) {
     if (!hasFeatures(object))
         stop("No feature definitions present. Please run 'groupChromPeak'",
              call. = FALSE)
@@ -94,14 +96,15 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 #' @param msLevel `integer(1)` defining the MS level on which the features
 #'     should be grouped.
 #'
-#' @param object [XCMSnExp()] object containing also correspondence results.
+#' @param object [XcmsExperiment()] or [XCMSnExp()] object containing also
+#'     correspondence results.
 #'
 #' @param param `SimilarRtimeParam` object with the settings for the method. See
 #'     [MsFeatures::SimilarRtimeParam()] for details and options.
 #'
 #' @param ... passed to the `groupFeatures` function on numeric values.
 #'
-#' @return input `XCMSnExp` with feature groups added (i.e. in column
+#' @return the input object with feature groups added (i.e. in column
 #'     `"feature_group"` of its `featureDefinitions` data frame.
 #'
 #' @family feature grouping methods
@@ -124,9 +127,7 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 #'
 #' library(MsFeatures)
 #' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
 #' register(SerialParam())
@@ -151,8 +152,6 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 NULL
 
 #' @rdname groupFeatures-similar-rtime
-#'
-#' @importMethodsFrom xcms hasFeatures featureDefinitions featureDefinitions<-
 #'
 #' @importFrom MsCoreUtils group
 #'
@@ -184,11 +183,11 @@ setMethod(
         if (any(nas))
             res[nas] <- NA_character_
         featureGroups(object) <- res
-        xph <- new("XProcessHistory", param = param, date = date(),
-                   type = .PROCSTEP.FEATURE.GROUPING,
-                   fileIndex = 1:length(fileNames(object)),
-                   msLevel = as.integer(msLevel))
-        object@.processHistory[[(length(object@.processHistory) + 1)]] <- xph
+        p <- new("XProcessHistory", param = param, date = date(),
+                 type = .PROCSTEP.FEATURE.GROUPING,
+                 fileIndex = 1:length(fileNames(object)),
+                 msLevel = as.integer(msLevel))
+        object <- addProcessHistory(object, p)
         validObject(object)
         object
     })
@@ -254,9 +253,7 @@ setMethod(
 #'
 #' library(MsFeatures)
 #' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
 #' register(SerialParam())
@@ -502,9 +499,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 ## #'
 ## #' ## Load test data set from xcms
 ## #' library(xcms)
-## #' data(faahko_sub)
-## #' ## Update the path to the files for the local system
-## #' dirname(faahko_sub) <- system.file("cdf/KO/", package = "faahKO")
+## #' faahko_sub <- loadXcmsData("faahko_sub2")
 ## #'
 ## #' ## Group chromatographic peaks across samples
 ## #' xodg <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = rep(1, 3)))
@@ -784,9 +779,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'
 #' library(MsFeatures)
 #' ## Load a test data set with detected peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
 #' register(SerialParam())

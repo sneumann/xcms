@@ -46,13 +46,11 @@
 #' @examples
 #'
 #' ## Loading a test data set with identified chromatographic peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #' faahko_sub <- filterRt(faahko_sub, c(2500, 3700))
 #'
 #' ##
-#' od <- as(filterFile(faahko_sub, 1L), "OnDiskMSnExp")
+#' od <- as(filterFile(faahko_sub, 1L), "MsExperiment")
 #'
 #' ## Extract chromatographic data for a small m/z range
 #' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
@@ -113,13 +111,11 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' @examples
 #'
 #' ## Loading a test data set with identified chromatographic peaks
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #' faahko_sub <- filterRt(faahko_sub, c(2500, 3700))
 #'
 #' ##
-#' od <- as(filterFile(faahko_sub, 1L), "OnDiskMSnExp")
+#' od <- as(filterFile(faahko_sub, 1L), "MsExperiment")
 #'
 #' ## Extract chromatographic data for a small m/z range
 #' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]

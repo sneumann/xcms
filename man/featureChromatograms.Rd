@@ -124,9 +124,7 @@ is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}
 \examples{
 
 ## Load a test data set with detected peaks
-data(faahko_sub)
-## Update the path to the files for the local system
-dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example
 register(SerialParam())
@@ -142,7 +140,8 @@ featureDefinitions(xdata)
 
 ## Extract ion chromatograms for the first 3 features. Parameter
 ## `features` can be either the feature IDs or feature indices.
-chrs <- featureChromatograms(xdata, features = 1:3)
+chrs <- featureChromatograms(xdata,
+    features = rownames(featureDefinitions)[1:3])
 
 ## Plot the XIC for the first feature using different colors for each file
 plot(chrs[1, ], col = c("red", "green", "blue"))

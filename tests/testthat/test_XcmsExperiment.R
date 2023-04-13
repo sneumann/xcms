@@ -1155,3 +1155,12 @@ test_that("quantify,XcmsExperiment works", {
     rownames(b) <- colnames(SummarizedExperiment::assay(res))
     expect_equal(a, b)
 })
+
+test_that("addProcessHistory,XcmsExperiment works", {
+    tmp <- xmse
+    expect_error(addProcessHistory(tmp, "A"), "ProcessHistory")
+    ph <- xcms:::ProcessHistory()
+    tmp <- addProcessHistory(tmp, ph)
+    expect_true(length(processHistory(tmp)) == 2L)
+    expect_equal(processHistory(tmp)[[2L]], ph)
+})

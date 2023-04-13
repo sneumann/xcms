@@ -4,9 +4,11 @@
 \alias{loadXcmsData}
 \alias{xdata}
 \alias{xmse}
+\alias{faahko_sub}
+\alias{faahko_sub2}
 \title{LC-MS preprocessing result test data sets}
 \usage{
-loadXcmsData(x = c("xmse", "xdata"))
+loadXcmsData(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2"))
 }
 \arguments{
 \item{x}{For `loadXcmsData`: `character(1)` with the name of the data file
@@ -26,6 +28,14 @@ Test data sets are:
   data set and pre-processing settings as for the `xdata` data set).
   The pre-processing of this data set is described in detail in the *xcms*
   vignette of the `xcms` package.
+
+- `faahko_sub`: an [XCMSnExp()] object with identified
+  chromatographic peaks in 3 samples from the data files in the `faahKO`
+  R package.
+
+- `faahko_sub2`: an [XcmsExperiment()] object with identified
+  chromatographic peaks in 3 samples from the data files in the `faahKO`
+  R package.
 
 Data sets can also be loaded using `data`, which would however require to
 update objects to point to the location of the raw data files. The
