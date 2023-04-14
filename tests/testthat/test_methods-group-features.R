@@ -70,23 +70,23 @@ test_that("SimilarRtimeParam works", {
 })
 
 test_that("SimilarRtimeParam,XcmsExperiment works", {
-    LLLLLLLLLL
     prm <- SimilarRtimeParam(3)
 
-    expect_error(groupFeatures(xod_x, prm), "No feature definitions")
-    expect_error(groupFeatures(xodg, prm, msLevel = 1:2), "single MS")
-    res <- groupFeatures(xodg, prm)
+    expect_error(groupFeatures(dropFeatureDefinitions(xm), prm),
+                 "No feature definitions")
+    expect_error(groupFeatures(xm, prm, msLevel = 1:2), "single MS")
+    res <- groupFeatures(xm, prm)
     expect_true(any(colnames(featureDefinitions(res)) == "feature_group"))
     expect_false(any(is.na(featureGroups(res))))
     expect_true(is.character(featureGroups(res)))
 
-    res2 <- groupFeatures(xodg,
-                          SimilarRtimeParam(3, groupFun = MsCoreUtils::group))
+    res2 <- groupFeatures(
+        xm, SimilarRtimeParam(3, groupFun = MsCoreUtils::group))
     expect_true(length(table(featureGroups(res2))) <
                 length(table(featureGroups(res))))
 
     ## Different MS levels
-    tmp <- xodg
+    tmp <- xm
     idx <- c(1:3, 5, 45, 47)
     featureDefinitions(tmp)$ms_level[idx] <- 2
     res <- groupFeatures(tmp, prm)
@@ -97,15 +97,14 @@ test_that("SimilarRtimeParam,XcmsExperiment works", {
     expect_true(all(is.na(featureGroups(res))[-idx]))
 
     ## Pre-defined groups
-    fgs <- rep("AB", nrow(featureDefinitions(xodg)))
+    fgs <- rep("AB", nrow(featureDefinitions(xm)))
     fgs[idx] <- NA
-    tmp <- xodg
+    tmp <- xm
     featureGroups(tmp) <- fgs
     res <- groupFeatures(tmp, prm)
     expect_true(all(is.na(featureGroups(res))[idx]))
     expect_false(any(is.na(featureGroups(res))[-idx]))
 })
-
 
 test_that("AbundanceSimilarityParam works", {
     skip_on_os(os = "windows", arch = "i386")
@@ -150,6 +149,44 @@ test_that("AbundanceSimilarityParam works", {
     res_2 <- groupFeatures(tmp, AbundanceSimilarityParam())
     expect_equal(featureGroups(res), featureGroups(res_2))
 })
+
+test_that("groupFeatures,XcmsExperiment,AbundanceSimilarityParam works", {
+    expect_error(groupFeatures(dropFeatureDefinitions(xm),
+                               AbundanceSimilarityParam()), "feature")
+    expect_error(
+        groupFeatures(xm, AbundanceSimilarityParam(subset = c(1, 4, 5, 10))),
+        "should be between")
+
+    res <- groupFeatures(xm, AbundanceSimilarityParam())
+    expect_true(any(colnames(featureDefinitions(res)) == "feature_group"))
+    expect_true(length(unique(featureDefinitions(res)$feature_group)) <
+                nrow(featureDefinitions(res)))
+    res_2 <- groupFeatures(xm, AbundanceSimilarityParam(subset = c(2, 3)))
+
+    plotFeatureGroups(res_2)
+    expect_error(plotFeatureGroups(res_2, featureGroups = "a"), "None of the")
+    expect_error(plotFeatureGroups(xm), "None of the")
+
+    ## With pre-defined grps.
+    tmp <- xm
+    featureDefinitions(tmp)$feature_group <- "FG.2"
+    idx <- c(4, 12, 23, 46)
+    featureDefinitions(tmp)$ms_level[idx] <- 2
+
+    res <- groupFeatures(tmp, AbundanceSimilarityParam(), msLevel = 1)
+    expect_true(all(featureGroups(res)[idx] == "FG.2"))
+    expect_true(all(featureGroups(res)[-idx] != "FG.2"))
+    res_2 <- groupFeatures(tmp, AbundanceSimilarityParam(), msLevel = 2)
+    expect_true(all(featureGroups(res_2)[-idx] == "FG.2"))
+    expect_true(all(featureGroups(res_2)[idx] != "FG.2"))
+
+    tmp <- quantify(xm, filled = TRUE, method = "sum", value = "maxo")
+    res <- groupFeatures(xm, AbundanceSimilarityParam(), filled = TRUE,
+                         method = "sum", value = "maxo")
+    res_2 <- groupFeatures(tmp, AbundanceSimilarityParam())
+    expect_equal(featureGroups(res), featureGroups(res_2))
+})
+
 
 ## test_that("featureGroupPseudoSpectrum works", {
     ## skip_on_os(os = "windows", arch = "i386")
@@ -321,11 +358,11 @@ test_that("EicSimilarityParam works", {
 
 })
 
-test_that("groupFeatures,EicSimilarityParam works", {
+test_that("groupFeatures,XCMSnExp,EicSimilarityParam works", {
     skip_on_os(os = "windows", arch = "i386")
 
-    ## n bigger than 3
-    expect_error(groupFeatures(xodg, param = EicSimilarityParam(n = 5)),
+    ## n outside number of samples
+    expect_error(groupFeatures(xodg, param = EicSimilarityParam(n = 10)),
                  "smaller than or")
     ## no feature definitions
     expect_error(groupFeatures(xod_x, param = EicSimilarityParam()), "No")
@@ -359,5 +396,41 @@ test_that("groupFeatures,EicSimilarityParam works", {
 
     res <- groupFeatures(xodgg, param = EicSimilarityParam(threshold = 0.7))
     expect_true(length(table(featureGroups(xodgg))) <
+                length(table(featureGroups(res))))
+})
+
+test_that("groupFeatures,XcmsExperiment,EicSimilarityParam works", {
+    ## n outside number of samples
+    expect_error(groupFeatures(xm, param = EicSimilarityParam(n = 10)),
+                 "smaller than or")
+    ## no feature definitions
+    expect_error(groupFeatures(dropFeatureDefinitions(xm),
+                               param = EicSimilarityParam()), "No")
+    ## MS level length > 1
+    expect_error(
+        groupFeatures(xm, param = EicSimilarityParam(), msLevel = 1:2),
+        "single MS level")
+
+    tmp <- loadXcmsData("xmse")
+    tmp <- filterFeatureDefinitions(tmp, 1:50)
+    res_all <- groupFeatures(tmp, param = EicSimilarityParam())
+    expect_true(is.character(featureGroups(res_all)))
+
+    idx <- c(1, 2, 3, 9, 10, 14)
+    featureDefinitions(tmp)$feature_group <- NA
+    featureDefinitions(tmp)$feature_group[idx] <- "FG"
+    res <- groupFeatures(tmp, param = EicSimilarityParam())
+    expect_true(all(is.na(featureGroups(res)[-idx])))
+    expect_true(length(unique(featureGroups(res))) < length(idx))
+    a <- featureGroups(res)[idx]
+    b <- featureGroups(res_all)[idx]
+    expect_equal(as.integer(factor(a, levels = unique(a))),
+                 as.integer(factor(b, levels = unique(b))))
+
+    ##
+    featureGroups(tmp) <- NA
+    tmp <- groupFeatures(tmp, param = SimilarRtimeParam(4))
+    res <- groupFeatures(tmp, param = EicSimilarityParam(threshold = 0.7))
+    expect_true(length(table(featureGroups(tmp))) <
                 length(table(featureGroups(res))))
 })

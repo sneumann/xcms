@@ -4,7 +4,7 @@
 \alias{groupFeatures-eic-similarity}
 \alias{EicSimilarityParam-class}
 \alias{EicSimilarityParam}
-\alias{groupFeatures,XCMSnExp,EicSimilarityParam-method}
+\alias{groupFeatures,XcmsResult,EicSimilarityParam-method}
 \title{Compounding/feature grouping based on similarity of extracted ion chromatograms}
 \usage{
 EicSimilarityParam(
@@ -20,7 +20,7 @@ EicSimilarityParam(
   ...
 )
 
-\S4method{groupFeatures}{XCMSnExp,EicSimilarityParam}(object, param, msLevel = 1L)
+\S4method{groupFeatures}{XcmsResult,EicSimilarityParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{threshold}{\code{numeric(1)} with the minimal required similarity score to
@@ -62,7 +62,8 @@ See \code{\link[=cor]{cor()}} and \code{\link[=compareChromatograms]{compareChro
 \code{groupFun} and \code{featureChromatograms} (such as \code{expandRt} to expand the
 retention time range of each feature).}
 
-\item{object}{\code{\link[=XCMSnExp]{XCMSnExp()}} object containing also correspondence results.}
+\item{object}{\code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with LC-MS
+pre-processing results.}
 
 \item{param}{\code{EicSimilarityParam} object with the settings for the method.}
 
@@ -70,7 +71,7 @@ retention time range of each feature).}
 should be grouped.}
 }
 \value{
-input \code{XCMSnExp} with feature groups added (i.e. in column
+input object with feature groups added (i.e. in column
 \code{"feature_group"} of its \code{featureDefinitions} data frame.
 }
 \description{

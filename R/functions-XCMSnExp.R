@@ -2217,19 +2217,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 0, diffRt = 2,
     if (hasAdjustedRtime(newFd) && !keepAdjustedRtime)
         newFd <- dropAdjustedRtime(newFd, rtime(nobject, bySample = TRUE,
                                                 adjusted = FALSE))
-    ## Remove ProcessHistory not related to any of the files.
-    ## if (length(ph)) {
-    ##     kp <- unlist(lapply(ph, function(z) {
-    ##         any(fileIndex(z) %in% file)
-    ##     }))
-    ##     ph <- ph[kp]
-    ## }
-    ## ## Update file index in process histories.
-    ## if (length(ph)) {
-    ##     ph <- lapply(ph, function(z) {
-    ##         updateFileIndex(z, old = file, new = 1:length(file))
-    ##     })
-    ## }
     lockEnvironment(newFd, bindings = TRUE)
     nobject@msFeatureData <- newFd
     nobject@.processHistory <- ph

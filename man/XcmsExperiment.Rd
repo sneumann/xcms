@@ -44,6 +44,7 @@
 \alias{featureValues,XcmsExperiment-method}
 \alias{chromatogram,XcmsExperiment-method}
 \alias{processHistory,XcmsExperiment-method}
+\alias{filterFile,XcmsExperiment-method}
 \title{Next Generation \code{xcms} Result Object}
 \usage{
 filterFeatureDefinitions(object, ...)
@@ -179,6 +180,14 @@ featureArea(
 )
 
 \S4method{processHistory}{XcmsExperiment}(object, type)
+
+\S4method{filterFile}{XcmsExperiment}(
+  object,
+  file,
+  keepAdjustedRtime = hasAdjustedRtime(object),
+  keepFeatures = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -357,6 +366,10 @@ time window, \code{chromPeaks = "any"} for all chromatographic peaks that
 are overlapping with the m/z - retention time window or
 \code{chromPeaks = "none"} to not include any chromatographic peaks. See
 also parameter \code{type} below for additional information.}
+
+\item{keepFeatures}{for most subsetting functions (\code{[}, \code{filterFile}):
+\code{logical(1)}: wheter eventually present feature definitions should
+be retained in the returned (filtered) object.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results

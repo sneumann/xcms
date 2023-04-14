@@ -17,6 +17,8 @@ featureChromatograms(object, ...)
   features = character(),
   return.type = "XChromatograms",
   chunkSize = 2L,
+  ...,
+  progressbar = TRUE,
   BPPARAM = bpparam()
 )
 
@@ -68,6 +70,8 @@ object.}
 \item{chunkSize}{For \code{object} being an \code{XcmsExperiment}: \code{integer(1)}
 defining the number of files from which the data should be loaded at
 a time into memory. Defaults to \code{chunkSize = 2L}.}
+
+\item{progressbar}{\code{logical(1)} defining whether a progress bar is shown.}
 
 \item{BPPARAM}{For \code{object} being an \code{XcmsExperiment}: parallel processing
 setup. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more

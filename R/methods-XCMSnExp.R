@@ -2082,6 +2082,8 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #'     m/z and rt ranges overlap the `mz` and `rt` or `include = "none"` to
 #'     not include any chromatographic peaks.
 #'
+#' @param ... optional parameters - currently ignored.
+#'
 #' @return
 #'
 #' `chromatogram` returns a [XChromatograms] object with
@@ -2151,7 +2153,7 @@ setMethod(
     function(object, rt, mz, aggregationFun = "sum", missing = NA_real_,
              msLevel = 1L, BPPARAM = bpparam(),
              adjustedRtime = hasAdjustedRtime(object), filled = FALSE,
-             include = c("apex_within", "any", "none")) {
+             include = c("apex_within", "any", "none"), ...) {
         include <- match.arg(include)
         if (adjustedRtime)
             adj_rt <- rtime(object, adjusted = TRUE)
@@ -2242,8 +2244,6 @@ setMethod(
     })
 
 #' @rdname XCMSnExp-class
-#'
-#' @aliases faahko_sub
 #'
 #' @description
 #'

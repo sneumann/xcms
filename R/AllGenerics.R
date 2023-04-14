@@ -558,6 +558,8 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' @param object `XcmsExperiment` or `XCMSnExp` object with grouped
 #'     chromatographic peaks.
 #'
+#' @param progressbar `logical(1)` defining whether a progress bar is shown.
+#'
 #' @param return.type `character(1)` defining how the result should be
 #'     returned. At present only `return.type = "XChromatograms"` is
 #'     supported and the results are thus returned as an [XChromatograms()]

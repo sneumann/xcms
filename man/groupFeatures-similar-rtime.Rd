@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-group-features.R
 \name{groupFeatures-similar-rtime}
 \alias{groupFeatures-similar-rtime}
-\alias{groupFeatures,XCMSnExp,SimilarRtimeParam-method}
+\alias{groupFeatures,XcmsResult,SimilarRtimeParam-method}
 \title{Compounding/feature grouping based on similar retention times}
 \usage{
-\S4method{groupFeatures}{XCMSnExp,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
+\S4method{groupFeatures}{XcmsResult,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
 }
 \arguments{
 \item{object}{\code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object containing also

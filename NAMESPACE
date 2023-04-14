@@ -1,6 +1,6 @@
 useDynLib(xcms)
 
-importFrom("utils", "capture.output")
+importFrom("utils", "capture.output", "data")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
@@ -557,6 +557,7 @@ importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "selectSpectraVariables")
 importMethodsFrom("Spectra", "setBackend")
 importMethodsFrom("Spectra", "dataOrigin")
+importMethodsFrom("Spectra", "dataStorage")
 importMethodsFrom("Spectra", "spectraVariables")
 importMethodsFrom("Spectra", "rtime<-")
 importMethodsFrom("Spectra", "ionCount")

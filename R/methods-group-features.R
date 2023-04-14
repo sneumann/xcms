@@ -156,11 +156,9 @@ NULL
 #' @importFrom MsCoreUtils group
 #'
 #' @exportMethod groupFeatures
-#'
-#' @importClassesFrom xcms XCMSnExp XProcessHistory
 setMethod(
     "groupFeatures",
-    signature(object = "XCMSnExp", param = "SimilarRtimeParam"),
+    signature(object = "XcmsResult", param = "SimilarRtimeParam"),
     function(object, param, msLevel = 1L, ...) {
         fgs <- featureGroups(object)
         if (length(msLevel) > 1)
@@ -199,14 +197,16 @@ setMethod(
 #' @description
 #'
 #' Features from the same originating compound are expected to have similar
-#' intensities across samples. This method this groups features based on
-#' similarity of abundances (i.e. *feature values*) across samples.
-#' See also [AbundanceSimilarityParam()] for additional information and details.
+#' intensities across samples. This method thus groups features based on
+#' similarity of abundances (i.e. *feature values*) across samples in a
+#' data set.
+#' See also [AbundanceSimilarityParam()] for additional information and
+#' details.
 #'
-#' This help page lists parameters specific for `xcms` result objects (i.e. the
-#' [XCMSnExp()] object). Documentation of the parameters for the similarity
-#' calculation is available in the [AbundanceSimilarityParam()] help page in
-#' the `MsFeatures` package.
+#' This help page lists parameters specific for `xcms` result objects (i.e.
+#' [XcmsExperiment()] and [XCMSnExp()] objects). Documentation of the
+#' parameters for the similarity calculation is available in the
+#' [AbundanceSimilarityParam()] help page in the `MsFeatures` package.
 #'
 #' @param filled `logical(1)` whether filled-in values should be included in
 #'     the correlation analysis. Defaults to `filled = TRUE`.
@@ -220,7 +220,8 @@ setMethod(
 #' @param msLevel `integer(1)` defining the MS level on which the features
 #'     should be grouped.
 #'
-#' @param object [XCMSnExp()] object containing also correspondence results.
+#' @param object [XcmsExperiment()] or [XCMSnExp()] object containing LC-MS
+#'     pre-processing results.
 #'
 #' @param param `AbudanceSimilarityParam` object with the settings for the
 #'     method. See [AbundanceSimilarityParam()] for details on the grouping
@@ -232,8 +233,8 @@ setMethod(
 #' @param ... additional parameters passed to the `groupFeatures` method for
 #'     `matrix`.
 #'
-#' @return input `XCMSnExp` with feature group definitions added to a column
-#'     `"feature_group"` in its `featureDefinitions` data frame.
+#' @return input object with feature group definitions added to (or updated
+#'     in) a column `"feature_group"` in its `featureDefinitions` data frame.
 #'
 #' @family feature grouping methods
 #'
@@ -279,7 +280,7 @@ NULL
 #'
 setMethod(
     "groupFeatures",
-    signature(object = "XCMSnExp", param = "AbundanceSimilarityParam"),
+    signature(object = "XcmsResult", param = "AbundanceSimilarityParam"),
     function(object, param, msLevel = 1L, method = c("medret", "maxint", "sum"),
              value = "into", intensity = "into", filled = TRUE, ...) {
         if (!hasFeatures(object))
@@ -310,10 +311,10 @@ setMethod(
             res[nas] <- fgs_orig[nas]
         featureGroups(object) <- res
         xph <- new("XProcessHistory", param = param, date = date(),
-                   type = .PROCSTEP.FEATURE.GROUPING,
+                   type = xcms:::.PROCSTEP.FEATURE.GROUPING,
                    fileIndex = 1:length(fileNames(object)),
                    msLevel = as.integer(msLevel))
-        object@.processHistory[[(length(object@.processHistory) + 1)]] <- xph
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -328,8 +329,8 @@ setMethod(
 #' the same feature group being connected by a line. See [featureGroups()]
 #' for details on and options for feature grouping.
 #'
-#' @param x [XCMSnExp()] object with grouped features (i.e. after calling
-#'     [groupFeatures()].
+#' @param x [XcmsExperiment] or [XCMSnExp()] object with grouped features
+#'     (i.e. after calling [groupFeatures()].
 #'
 #' @param xlim `numeric(2)` with the lower and upper limit for the x-axis.
 #'
@@ -367,8 +368,8 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
                               pch = 4, col = "#00000060", type = "o",
                               main = "Feature groups",
                               featureGroups = character()) {
-    if (!inherits(x, "XCMSnExp"))
-        stop("'x' is supposed to be an xcms result object ('XCMSnExp')")
+    if (!(inherits(x, "XCMSnExp") | inherits(x, "XcmsExperiment")))
+        stop("'x' is supposed to be an xcms result object")
     if (!length(featureGroups(x)))
         stop("No feature groups present. Please run 'groupFeatures' first")
     fts <- factor(featureGroups(x))
@@ -740,7 +741,8 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'     on which this similarity calculation should be performed. This value is
 #'     rounded up to the next larger integer value.
 #'
-#' @param object [XCMSnExp()] object containing also correspondence results.
+#' @param object [XcmsExperiment()] or [XCMSnExp()] object with LC-MS
+#'     pre-processing results.
 #'
 #' @param onlyPeak `logical(1)` whether the correlation should be performed only
 #'     on the signals within the identified chromatographic peaks
@@ -760,7 +762,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'     `groupFun` and `featureChromatograms` (such as `expandRt` to expand the
 #'     retention time range of each feature).
 #'
-#' @return input `XCMSnExp` with feature groups added (i.e. in column
+#' @return input object with feature groups added (i.e. in column
 #'     `"feature_group"` of its `featureDefinitions` data frame.
 #'
 #' @family feature grouping methods
@@ -865,7 +867,7 @@ EicSimilarityParam <- function(threshold = 0.9, n = 1, onlyPeak = TRUE,
 #' @rdname groupFeatures-eic-similarity
 setMethod(
     "groupFeatures",
-    signature(object = "XCMSnExp", param = "EicSimilarityParam"),
+    signature(object = "XcmsResult", param = "EicSimilarityParam"),
     function(object, param, msLevel = 1L) {
         if (!hasFeatures(object))
             stop("No feature definitions present. Please run ",
@@ -891,11 +893,10 @@ setMethod(
         f[!is_msLevel] <- NA
         if (is.factor(f)) {
             f <- droplevels(f)
-            fgroups <- levels(f)
         } else {
-            fgroups <- unique(f)
-            f <- factor(f, levels = fgroups)
+            f <- factor(f, levels = unique(f))
         }
+        fgroups <- levels(f)
         fvals <- featureValues(object, method = "maxint", value = param@value)
         ffun <- function(z, na.rm = TRUE)
             quantile(z, probs = 0.75, na.rm = na.rm)
@@ -903,15 +904,20 @@ setMethod(
                                                "total (:percent) in ",
                                                ":elapsed"),
                                total = length(fgroups),
-                               clear = FALSE, force = TRUE)
+                               clear = FALSE, show_after = 0)
+        pb$tick(0)
+        if (inherits(object, "XcmsExperiment"))
+            filt_fun <- .subset_xcms_experiment
+        else filt_fun <- .filter_file_XCMSnExp
         for (fg in fgroups) {
             idx <- which(f == fg)
             idxl <- length(idx)
             if (idxl > 1) {
                 vals <- apply(fvals[idx, ], MARGIN = 2, sum, na.rm = TRUE)
                 sample_idx <- order(vals, decreasing = TRUE)[seq_len(n)]
-                obj_sub <- .filter_file_XCMSnExp(object, sample_idx,
-                                                 keepFeatures = TRUE)
+                obj_sub <- filt_fun(
+                    object, sample_idx, keepFeatures = TRUE,
+                    keepAdjustedRtime = hasAdjustedRtime(object))
                 ## Can happen that some of the features are not present in the
                 ## subsetted object. Will put them into their own individual
                 ## groups later.
@@ -926,10 +932,11 @@ setMethod(
                     eics <- do.call(
                         featureChromatograms,
                         args = c(list(obj_sub, features = rownames(fvals)[idx],
-                                      filled = TRUE), param@dots))
+                                      filled = TRUE, progressbar = FALSE),
+                                 param@dots))
                     if (param@onlyPeak)
-                        eics <- removeIntensity(eics,
-                                                which = "outside_chromPeak")
+                        eics <- removeIntensity(
+                            eics, which = "outside_chromPeak")
                     res <- do.call(
                         .group_eic_similarity,
                         args = c(list(as(eics, "MChromatograms"),
@@ -950,15 +957,14 @@ setMethod(
                                                           idx_miss))))
             } else
                 f_new[idx] <- paste0(fg, ".001")
-            pb$tick(1)
+            pb$tick()
         }
         featureDefinitions(object)$feature_group <- f_new
         xph <- new("XProcessHistory", param = param, date = date(),
                    type = .PROCSTEP.FEATURE.GROUPING,
                    fileIndex = seq_along(fileNames(object)),
                    msLevel = as.integer(msLevel))
-        object@.processHistory[[(length(object@.processHistory) + 1)]] <- xph
-        validObject(object)
+        object <- addProcessHistory(object, xph)
         object
     })
 

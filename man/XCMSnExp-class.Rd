@@ -62,7 +62,6 @@
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
-\alias{faahko_sub}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}

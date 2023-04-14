@@ -421,6 +421,10 @@
 #'     Alternatively, `keep` allows to specify the `index` (row) of peaks
 #'     to keep or their ID (i.e. row name in `chromPeaks`).
 #'
+#' @param keepFeatures for most subsetting functions (`[`, `filterFile`):
+#'     `logical(1)`: wheter eventually present feature definitions should
+#'     be retained in the returned (filtered) object.
+#'
 #' @param keepAdjustedRtime `logical(1)`: whether adjusted retention times (if
 #'     present) should be retained.
 #'
@@ -1406,7 +1410,7 @@ setMethod(
     "featureChromatograms", "XcmsExperiment",
     function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
              features = character(), return.type = "XChromatograms",
-             chunkSize = 2L, BPPARAM = bpparam()) {
+             chunkSize = 2L, ..., progressbar = TRUE, BPPARAM = bpparam()) {
         return.type <- match.arg(return.type)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
@@ -1426,7 +1430,8 @@ setMethod(
             rt = area[, c("rtmin", "rtmax"), drop = FALSE],
             mz = area[, c("mzmin", "mzmax"), drop = FALSE],
             aggregationFun = aggregationFun, msLevel = fts$ms_level,
-            chunkSize = chunkSize, BPPARAM = BPPARAM), "XChromatograms")
+            chunkSize = chunkSize, progressbar = progressbar,
+            BPPARAM = BPPARAM), "XChromatograms")
         ## Populate with chrom peaks.
         nf <- nrow(fts)
         js <- seq_len(ncol(chrs))
@@ -1713,6 +1718,15 @@ setMethod("addProcessHistory", "XcmsExperiment", function(object, ph) {
     object
 })
 
+#' @rdname XcmsExperiment
+setMethod(
+    "filterFile", "XcmsExperiment",
+    function(object, file, keepAdjustedRtime = hasAdjustedRtime(object),
+             keepFeatures = FALSE, ...) {
+        if (missing(file)) return(object)
+        object[i = sort(unique(file)), keepAdjustedRtime = keepAdjustedRtime,
+               keepFeatures = keepFeatures, ...]
+    })
 
 ## TODO filterMsLevel? Function not yet needed. In case, needs also an
 ## implementation for MsExperiment: update the spectra-sample-mapping.

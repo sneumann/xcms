@@ -120,7 +120,7 @@
 #'
 #' @noRd
 .mse_spectrapply_chunks <- function(x, FUN, ..., chunkSize = 1L,
-                                    BPPARAM = bpparam()) {
+                                    progressbar = TRUE, BPPARAM = bpparam()) {
     if (!length(spectra(x)))
         stop("No spectra available.")
     if (!any(names(x@sampleDataLinks) == "spectra"))
@@ -129,19 +129,21 @@
              "samples.")
     idx <- seq_along(x)
     chunks <- split(idx, ceiling(idx / chunkSize))
-    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-                                           "total (:percent) in ",
-                                           ":elapsed"),
-                           total = length(chunks),
-                           clear = FALSE, show_after = 0)
-    pb$tick(0)
+    if (progressbar) {
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks),
+                               clear = FALSE, show_after = 0)
+        pb$tick(0)
+    }
     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
     lapply(chunks, function(z, ..., pb) {
         suppressMessages(
             res <- FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
         )
-        pb$tick()
+        if (progressbar) pb$tick()
         res
     }, ..., pb = pb, BPPARAM = BPPARAM)
 }
@@ -454,7 +456,8 @@
 .mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
                               mz = matrix(nrow = 0, ncol = 2),
                               aggregationFun = "sum", msLevel = 1L,
-                              chunkSize = 2L, BPPARAM = bpparam()) {
+                              chunkSize = 2L, progressbar = TRUE,
+                              BPPARAM = bpparam()) {
     if (!nrow(rt))
         rt <- matrix(c(-Inf, Inf), ncol = 2)
     if (!nrow(mz))
@@ -487,7 +490,7 @@
                                 aggregationFun = afun),
                 SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
         }, pks = pks, msl = msLevel, afun = aggregationFun,
-        chunkSize = chunkSize, BPPARAM = BPPARAM)
+        chunkSize = chunkSize, progressbar = progressbar, BPPARAM = BPPARAM)
     res <- as(do.call(cbind, unlist(res, recursive = FALSE, use.names = FALSE)),
               "MChromatograms")
     fd <- annotatedDataFrameFrom(res, byrow = TRUE)

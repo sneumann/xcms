@@ -183,8 +183,7 @@ test_that("filterRt,XcmsExperiment works", {
 test_that("filterFile,XcmsExperiment works", {
     res <- filterFile(xmse)
     expect_s4_class(res, "XcmsExperiment")
-    expect_true(length(res) == 0)
-    expect_false(hasChromPeaks(res))
+    expect_equal(res, xmse)
 
     res <- filterFile(xmse, 2)
     expect_equal(res, xmse[2])

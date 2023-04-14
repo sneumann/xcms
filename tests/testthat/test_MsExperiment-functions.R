@@ -94,6 +94,9 @@ test_that(".mse_spectrapply_chunks works", {
     expect_equal(rtime(res[[3L]]), rtime(spectra(mse[3L])))
 
     res <- .mse_spectrapply_chunks(mse, FUN = myident, chunkSize = 2)
+    res2 <- .mse_spectrapply_chunks(mse, FUN = myident, chunkSize = 2,
+                                    progressbar = FALSE)
+    expect_equal(res, res2)
     expect_true(is.list(res))
     expect_true(length(res) == 2)
     expect_equal(rtime(res[[1L]]), c(rtime(spectra(mse[1L])),

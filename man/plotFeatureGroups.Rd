@@ -18,8 +18,8 @@ plotFeatureGroups(
 )
 }
 \arguments{
-\item{x}{\code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features (i.e. after calling
-\code{\link[=groupFeatures]{groupFeatures()}}.}
+\item{x}{\link{XcmsExperiment} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features
+(i.e. after calling \code{\link[=groupFeatures]{groupFeatures()}}.}
 
 \item{xlim}{\code{numeric(2)} with the lower and upper limit for the x-axis.}
 
