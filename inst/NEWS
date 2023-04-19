@@ -1,3 +1,8 @@
+Changes in version 3.21.5
+---------------------
+
+- Fix issue in `chromatogram` after filtering a result object (issue #511).
+
 Changes in version 3.21.4
 ---------------------
 
