@@ -5,6 +5,8 @@ Changes in version 3.99.2
 - Update the *compounding* vignette to use the new objects.
 - Add `loadXcmsData` to load test data objects (and fix/update paths).
 - Add `groupFeatures` methods for `XcmsExperiment`.
+- Fix issue in `featureArea` for `XcmsExperiment`.
+- Update main vignette to use and describe the new data objects.
 
 
 Changes in version 3.99.1

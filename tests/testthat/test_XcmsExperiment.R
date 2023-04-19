@@ -1085,7 +1085,7 @@ test_that("featureChromatograms,XcmsExperiment works", {
     expect_equal(featureDefinitions(res),
                  featureDefinitions(ref))
 
-    expect_error(featureChromatograms(xmseg, features = "a"), "not available")
+    expect_error(featureChromatograms(xmseg, features = "a"), "out of")
 
     ## Duplicated features
     res <- featureChromatograms(xmseg, features = c("FT12", "FT03", "FT12"))
