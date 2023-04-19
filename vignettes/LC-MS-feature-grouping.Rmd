@@ -72,7 +72,6 @@ library(faahKO)
 library(MsFeatures)
 
 xmse <- loadXcmsData("xmse")
-xdata <- loadXcmsData("xdata")
 ```
 
 Before performing the feature grouping we inspect the result object. With
@@ -265,11 +264,21 @@ Many of the larger retention time-based feature groups have been splitted into
 two or more sub-groups based on the correlation of their feature abundances
 (e.g. the feature group *FG.004* has been further split into feature groups
 *FG.004.001*, *FG.004.002* and *FG.004.003*). We evaluate this further
-refinement for feature group `"FG.040"` by plotting their pairwise correlation.
+refinement for feature group `"FG.040"` by plotting their pairwise
+correlation. To better visualize the feature grouping we in addition define a
+custom *panel plot* for the `pairs` function that plots data points in blue for
+features with a correlation coefficient above the selected threshold (`0.7`) and
+red otherwise.
 
 ```{r abundance-correlation-fg040, fig.width = 8, fig.height = 8, fig.cap = "Pairwise correlation plot for all features initially grouped into the feature group FG.040."}
+cor_plot <- function(x, y) {
+    C <- cor(x, y, use = "pairwise.complete.obs")
+    col <- ifelse(C >= 0.7, yes = "#0000ff80", no = "#ff000080")
+    points(x, y, pch = 16, col = col)
+    grid()
+}
 fts <- grep("FG.040", featureGroups(xmse))
-pairs(t(fvals[fts, ]), gap = 0.1, main = "FG.040")
+pairs(t(fvals[fts, ]), gap = 0.1, main = "FG.040", panel = cor_plot)
 ```
 
 Indeed, correlation seems only to be present between some of the features in
@@ -324,12 +333,12 @@ of the grouping are shown below.
 table(featureGroups(xmse))
 ```
 
-In most cases, pre-defined feature groups (by the abundance correlation) were
-not further subdivided. Below we evaluate some of the feature groups, starting
-with *FG.008.001* which was split into two different feature groups based on EIC
-correlation. We first extract the EICs for all features from this initial
-feature group. With `n = 1` we specify to extract the EIC only from the sample
-with the highest intensity.
+In many cases, pre-defined feature groups (by the retention time similarity and
+abundance correlation) were not further subdivided. Below we evaluate some of
+the feature groups, starting with *FG.008.001* which was split into two
+different feature groups based on EIC correlation. We first extract the EICs for
+all features from this initial feature group. With `n = 1` we specify to extract
+the EIC only from the sample with the highest intensity.
 
 ```{r}
 LLLLL
