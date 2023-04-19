@@ -356,6 +356,8 @@ setMethod(
 #'     specified feature group(s). If not provided, all feature groups are
 #'     drawn.
 #'
+#' @param ... additional parameters to be passed to the `lines` function.
+#'
 #' @importFrom graphics lines
 #'
 #' @md
@@ -367,7 +369,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
                               xlab = "retention time", ylab = "m/z",
                               pch = 4, col = "#00000060", type = "o",
                               main = "Feature groups",
-                              featureGroups = character()) {
+                              featureGroups = character(), ...) {
     if (!(inherits(x, "XCMSnExp") | inherits(x, "XcmsExperiment")))
         stop("'x' is supposed to be an xcms result object")
     if (!length(featureGroups(x)))
@@ -390,7 +392,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
     if (length(ylim) != 2)
         ylim <- range(unlist(mzs, use.names = FALSE))
     plot(3, 3, pch = NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab)
-    lines(xy, type = type, col = col, pch = pch)
+    lines(xy, type = type, col = col, pch = pch, ...)
 }
 
 ## #' @title Extract spectra for feature groups
