@@ -2478,6 +2478,8 @@ setMethod(
             smpls <- factor(pks[, "sample"], levels = lvls)
             pks <- split.data.frame(pks, smpls)
             pkd <- split.data.frame(pkd, smpls)
+            mz <- matrix(mz, ncol = 2)
+            rt <- matrix(rt, ncol = 2)
         }
         res <- as(res, "XChromatograms")
         res@.Data <- matrix(
@@ -2492,8 +2494,8 @@ setMethod(
             ## Loop through each EIC "row" to ensure all features in
             ## that EIC are retained.
             fts <- lapply(seq_len(nrow(res)), function(r) {
-                fdev <- featureDefinitions(object, mz = mz(res)[r, ],
-                                           rt = rt)
+                fdev <- featureDefinitions(object, mz = mz[r, ],
+                                           rt = rt[r, ])
                 if (nrow(fdev)) {
                     fdev$row <- r
                     .subset_features_on_chrom_peaks(
