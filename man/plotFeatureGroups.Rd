@@ -14,7 +14,8 @@ plotFeatureGroups(
   col = "#00000060",
   type = "o",
   main = "Feature groups",
-  featureGroups = character()
+  featureGroups = character(),
+  ...
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ feature group with a line.}
 \item{featureGroups}{optional \code{character} of feature group IDs to draw only
 specified feature group(s). If not provided, all feature groups are
 drawn.}
+
+\item{...}{additional parameters to be passed to the \code{lines} function.}
 }
 \description{
 \code{plotFeatureGroups} visualizes defined feature groups in the m/z by

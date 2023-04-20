@@ -341,62 +341,69 @@ all features from this initial feature group. With `n = 1` we specify to extract
 the EIC only from the sample with the highest intensity.
 
 ```{r}
-LLLLL
-fts <- grep("FG.008.001", featureGroups(xdata))
-eics <- featureChromatograms(xdata, features = fts,
-                             filled = TRUE, n = 1)
+fidx <- grep("FG.013.001.", featureGroups(xmse))
+eics <- featureChromatograms(
+    xmse, features = rownames(featureDefinitions(xmse))[fidx],
+    filled = TRUE, n = 1)
 ```
 
 Next we plot the EICs using a different color for each of the subgroups. With
 `peakType = "none"` we disable the highlighting of the detected chromatographic
 peaks.
 
-```{r example-1-eic, fig.width = 8, fig.height = 6, fig.cap = "EICs of features from feature group FG.008.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color."}
-cols <- c("#ff000080", "#00ff0080")
-names(cols) <- unique(featureGroups(xdata)[fts])
+```{r example-1-eic, fig.width = 8, fig.height = 6, fig.cap = "Feature EICs per sample for features from a feature group defined by rentention time and feature abudances across samples. Features with high correlation of their EICs are shown in the same color."}
+cols <- c("#ff000080", "#0000ff80")
+names(cols) <- unique(featureGroups(xmse)[fidx])
 
-par(mfrow = c(1, 2))
-plotChromatogramsOverlay(eics, col = cols[featureGroups(xdata)[fts]],
-                         lwd = 2, peakType = "none")
-plotChromatogramsOverlay(normalize(eics),
-                         col = cols[featureGroups(xdata)[fts]],
+plotChromatogramsOverlay(eics, col = cols[featureGroups(xmse)[fidx]],
                          lwd = 2, peakType = "none")
 ```
 
-One of the features within the original feature group was separated from the
-other two because of a low similarity of their EICs. In fact, the feature's EIC
-is shifted in retention time dimension and can thus not represent the signal
-from the same compound.
+```{r example-1-eic-norm, fig.width = 8, fig.height = 6, fig.cap = "Feature EICs per sample normalized to an absolute intensity of 1 for features from a feature group defined by rentention time and feature abudances across samples. Features with high correlation of their EICs are shown in the same color."}
+plotChromatogramsOverlay(normalize(eics),
+                         col = cols[featureGroups(xmse)[fidx]],
+                         lwd = 2, peakType = "none")
+```
+
+
+One of the features (highlighted in red in the plots above) within the original
+feature group was separated from the other two because of a low similarity of
+their EICs. In fact, the feature's EIC is shifted in some samples along the
+retention time dimension and can thus not represent the signal from the same
+compound.
 
 We evaluate next the sub-grouping in another feature group.
 
 ```{r}
-fts <- grep("FG.068.001", featureGroups(xdata))
-eics <- featureChromatograms(xdata, features = fts,
-                             filled = TRUE, n = 1)
+fidx <- grep("FG.045.001.", featureGroups(xmse))
+eics <- featureChromatograms(
+    xmse, features = rownames(featureDefinitions(xmse))[fidx],
+    filled = TRUE, n = 1)
 ```
 
 Next we plot the EICs using a different color for each of the subgroups.
 
-```{r example-2-eic, fig.width = 8, fig.height = 6, fig.cap = "EICs for features from feature group FG.068.001 in the same sample. Shown are the actual intensities (left) and intensities normalized to 1 (right). Features being part of the same feature group after grouping by EIC similarity are shown in the same color."}
-cols <- c("#ff000080", "#00ff0080")
-names(cols) <- unique(featureGroups(xdata)[fts])
+```{r example-2-eic, fig.width = 8, fig.height = 6, fig.cap = "Feature EICs per sample for features from a feature group defined by rentention time and feature abudances across samples. Features with high correlation of their EICs are shown in the same color."}
+cols <- c("#ff000080", "#0000ff80")
+names(cols) <- unique(featureGroups(xmse)[fidx])
 
-par(mfrow = c(1, 2))
-plotChromatogramsOverlay(eics, col = cols[featureGroups(xdata)[fts]],
+plotChromatogramsOverlay(eics, col = cols[featureGroups(xmse)[fidx]],
                          lwd = 2, peakType = "none")
-plotChromatogramsOverlay(normalize(eics),
-                         col = cols[featureGroups(xdata)[fts]],
-                         lwd = 2, peakType = "none")
-
 ```
 
-Based on the EIC correlation, the initial feature group *FG.068.001* was grouped
+```{r example-2-eic-norm, fig.width = 8, fig.height = 6, fig.cap = "Feature EICs per sample normalized to an absolute intensity of 1 for features from a feature group defined by rentention time and feature abudances across samples. Features with high correlation of their EICs are shown in the same color."}
+plotChromatogramsOverlay(normalize(eics),
+                         col = cols[featureGroups(xmse)[fidx]],
+                         lwd = 2, peakType = "none")
+```
+
+Based on the EIC correlation, the initial feature group *FG.045.001* was grouped
 into two separate sub-groups.
 
 The grouping based on EIC correlation on the pre-defined feature groups from the
-previous sections grouped the `r nrow(featureDefinitions(xdata))` features into
-`r length(unique(featureGroups(xdata)))` feature groups.
+previous sections grouped the `r nrow(featureDefinitions(xmse))` features into
+`r length(unique(featureGroups(xmse)))` feature groups.
+
 
 ## Grouping of subsets of features
 
@@ -412,11 +419,11 @@ assign our features of interest (in this example just 30 randomly selected
 features) to an initial feature group `"FG"`.
 
 ```{r reset-feature-groups}
-featureDefinitions(xdata)$feature_group <- NA_character_
+featureDefinitions(xmse)$feature_group <- NA_character_
 
 set.seed(123)
-fts_idx <- sample(1:nrow(featureDefinitions(xdata)), 30)
-featureDefinitions(xdata)$feature_group[fts_idx] <- "FG"
+fts_idx <- sample(1:nrow(featureDefinitions(xmse)), 30)
+featureDefinitions(xmse)$feature_group[fts_idx] <- "FG"
 ```
 
 Any call to `groupFeatures` would now simply sub-group this set of 30
@@ -424,9 +431,9 @@ features. Any feature which has an `NA` in the `"feature_group"` column will be
 ignored.
 
 ```{r rtime-grouping}
-xdata <- groupFeatures(xdata, SimilarRtimeParam(diffRt = 20))
-xdata <- groupFeatures(xdata, AbundanceSimilarityParam(threshold = 0.7))
-table(featureGroups(xdata))
+xmse <- groupFeatures(xmse, SimilarRtimeParam(diffRt = 20))
+xmse <- groupFeatures(xmse, AbundanceSimilarityParam(threshold = 0.7))
+table(featureGroups(xmse))
 ```
 
 
