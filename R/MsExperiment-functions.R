@@ -474,7 +474,9 @@
         x, FUN = function(z, pks, msl, afun, BPPARAM) {
             sidx <- unique(z$.SAMPLE_IDX)
             z <- filterMsLevel(z, msLevel = msLevel)
-            z <- filterRt(z, rt = range(pks[, c("rtmin", "rtmax")]))
+            rtr <- range(pks[, c("rtmin", "rtmax")], na.rm = TRUE)
+            if (all(is.finite(rtr)))
+                z <- filterRt(z, rt = rtr)
             lz <- length(z)
             if (lz)
                 f <- factor(z$.SAMPLE_IDX, levels = sidx)
