@@ -362,3 +362,52 @@ test_that(".mse_chromatogram works", {
     expect_equal(unname(intensity(res[1, 2])), unname(intensity(ref[1, 2])))
     expect_equal(unname(intensity(res[2, 1])), unname(intensity(ref[2, 1])))
 })
+
+test_that(".mse_split_spectra_variable works", {
+    ## MS level - results should be the same.
+    res <- .mse_split_spectra_variable(mse, msLevel(spectra(mse)))
+    expect_true(length(res) == 1L)
+    expect_equal(res[[1L]]@sampleDataLinks, mse@sampleDataLinks)
+    expect_equal(rtime(spectra(res[[1L]])), rtime(spectra(mse)))
+    expect_equal(spectraVariables(spectra(res[[1L]])),
+                 spectraVariables(spectra(mse)))
+
+    ## create custom spectra variable.
+    spv <- rep("A", length(spectra(mse)))
+    spv[rtime(spectra(mse)) < 4000] <- "B"
+    res <- .mse_split_spectra_variable(mse, spv)
+    expect_true(length(res) == 2)
+    expect_true(all(rtime(spectra(res[[1L]])) > 4000))
+    expect_true(all(rtime(spectra(res[[2L]])) < 4000))
+    a <- filterRt(spectra(mse[2]), c(0, 4000))
+    expect_equal(rtime(a), rtime(spectra(res[[2L]][2])))
+    a <- filterRt(spectra(mse[3]), c(4000, 10000))
+    expect_equal(rtime(a), rtime(spectra(res[[1L]][3])))
+
+    ## custom spectra variable with NAs in between.
+    spv[rtime(spectra(mse)) > 3500 & rtime(spectra(mse)) < 4000] <- NA
+    res <- .mse_split_spectra_variable(mse, spv)
+    expect_true(length(res) == 2)
+    expect_true(all(rtime(spectra(res[[1L]])) > 4000))
+    expect_true(all(rtime(spectra(res[[2L]])) < 4000))
+    a <- filterRt(spectra(mse[2]), c(0, 3500))
+    expect_equal(rtime(a), rtime(spectra(res[[2L]][2])))
+    a <- filterRt(spectra(mse[3]), c(4000, 10000))
+    expect_equal(rtime(a), rtime(spectra(res[[1L]][3])))
+})
+
+test_that(".update_sample_data_links_spectra works", {
+    tmp <- mse
+    tmp@spectra$._SAMPLE_IDX <- seq_along(tmp@spectra)
+    tmp@spectra <- tmp@spectra[c(5, 14, 3800, 2, 200)]
+    res <- .update_sample_data_links_spectra(tmp)
+    res@sampleDataLinks[["spectra"]]
+    expect_equal(res@spectra$scanIndex, c(5, 14, 1244, 2, 200))
+    expect_equal(res@sampleData, tmp@sampleData)
+
+    ## !Order of spectra index in sampleDataLinks is NOT ordered
+    expect_equal(res@sampleDataLinks[["spectra"]][, 2L], c(4, 1, 2, 5, 3))
+    expect_true(length(spectra(res[1L])) == 4)
+    expect_true(length(spectra(res[2L])) == 0)
+    expect_true(length(spectra(res[3L])) == 1)
+})

@@ -266,20 +266,14 @@
     ls <- length(spectra(x))
     have_links <- length(x@sampleDataLinks[["spectra"]]) > 0
     if (have_links)
-        x@spectra$._SAMPLE_IDX <- seq_len(ls)
+        x@spectra$._SPECTRA_IDX <- seq_len(ls)
     x@spectra <- FUN(x@spectra, ...)
     if (have_links) {
-        if (ls != length(spectra(x))) {
-            sdl <- x@sampleDataLinks[["spectra"]]
-            idx <- match(sdl[, 2L], x@spectra$._SAMPLE_IDX)
-            keep <- !is.na(idx)
-            sdl <- sdl[keep, , drop = FALSE]
-            sdl[, 2L] <- idx[keep]
-            x@sampleDataLinks[["spectra"]] <- sdl
-        }
+        if (ls != length(spectra(x)))
+            x <- .update_sample_data_links_spectra(x)
         svs <- unique(c(spectraVariables(spectra(x)), "mz", "intensity"))
         x@spectra <- selectSpectraVariables(
-            x@spectra, svs[svs != "._SAMPLE_IDX"])
+            x@spectra, svs[svs != "._SPECTRA_IDX"])
     }
     x
 }
@@ -505,4 +499,45 @@
     res@phenoData <- AnnotatedDataFrame(as.data.frame(sampleData(x)))
     colnames(res@.Data) <- rownames(pData(res))
     res
+}
+
+#' Split an `MsExperiment` by a spectra variable keeping sample to spectra
+#' mapping.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.mse_split_spectra_variable <- function(x, f = msLevel(spectra(x))) {
+    ls <- length(spectra(x))
+    have_links <- length(x@sampleDataLinks[["spectra"]]) > 0
+    if (have_links)
+        x@spectra$._SPECTRA_IDX <- seq_len(ls)
+    spl <- split(x@spectra, f)
+    res <- lapply(spl, function(z) {
+        tmp <- x
+        tmp@spectra <- z
+        if (have_links)
+            tmp <- .update_sample_data_links_spectra(tmp)
+        svs <- unique(c(spectraVariables(z), "mz", "intensity"))
+        tmp@spectra <- selectSpectraVariables(z, svs[svs != "._SPECTRA_IDX"])
+        tmp
+    })
+}
+
+#' Update the sampleDataLinks for spectra. **Not** updating/fixing the
+#' sampleData slot to keep only elements with spectra.
+#'
+#' This function requires the presence of a `spectraVariables` `"._SPECTRA_IDX"`
+#' to be present in `@spectra` that contains the index of the sample to which
+#' the spectra belongs.
+#'
+#' @noRd
+.update_sample_data_links_spectra <- function(x) {
+    sdl <- x@sampleDataLinks[["spectra"]]
+    idx <- match(sdl[, 2L], x@spectra$._SPECTRA_IDX)
+    keep <- !is.na(idx)
+    sdl <- sdl[keep, , drop = FALSE]
+    sdl[, 2L] <- idx[keep]
+    x@sampleDataLinks[["spectra"]] <- sdl
+    x
 }

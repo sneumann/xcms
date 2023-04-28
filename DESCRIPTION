@@ -67,7 +67,6 @@ Suggests:
     ncdf4,
     testthat,
     pander,
-    magrittr,
     rmarkdown,
     MALDIquant,
     pheatmap,
