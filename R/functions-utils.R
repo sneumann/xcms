@@ -357,15 +357,14 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' ## Read two files from the faahKO package
 #' library(faahKO)
-#' library(magrittr)
 #' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
 #'     recursive = TRUE)[1:2]
 #' raw_data <- readMSData(cdfs, mode = "onDisk")
 #'
 #' ## Subset the object to a rt and mz range and plot the data.
-#' raw_data %>%
-#'     filterRt(rt = c(2700, 2900)) %>%
-#'     filterMz(mz = c(334.9, 335.1)) %>%
+#' raw_data |>
+#'     filterRt(rt = c(2700, 2900)) |>
+#'     filterMz(mz = c(334.9, 335.1)) |>
 #'     plot(type = "XIC")
 plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
                        grid.color = "lightgrey",

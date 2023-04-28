@@ -803,6 +803,52 @@ setMethod(
         callNextMethod()
     })
 
+#' @rdname findChromPeaksIsolationWindow
+setMethod(
+    "findChromPeaksIsolationWindow", "MsExperiment",
+    function(object, param, msLevel = 2L,
+             isolationWindow = isolationWindowTargetMz(spectra(object)),
+             chunkSize = 2L, ..., BPPARAM = bpparam()) {
+        if (length(isolationWindow) != length(spectra(object)))
+            stop("Length of 'isolationWindow' has to match the ",
+                 "number of spectra in 'object'")
+        if (all(is.na(isolationWindow)))
+            stop("No non-missing values in 'isolationWindow'")
+        object@spectra$isolationWindow <- isolationWindow
+        if (hasAdjustedRtime(object)) {
+            rts <- spectra(object)$rtime
+            object@spectra$rtime <- object@spectra$rtime_adjusted
+        }
+        res <- lapply(.mse_split_spectra_variable(as(object, "MsExperiment"),
+                                                  isolationWindow),
+                      FUN = findChromPeaks, param = param, msLevel = msLevel,
+                      chunkSize = chunkSize, BPPARAM = BPPARAM)
+        pks <- lapply(res, chromPeaks)
+        lns <- lengths(pks)
+        if (any(lns > 0)) {
+            pks <- do.call(rbind, pks[lns > 0])
+            pkd <- do.call(rbind, lapply(res[lns > 0], function(z) {
+                p <- chromPeakData(z, return.type = "data.frame")
+                s <- z@spectra[1L]
+                p$isolationWindow <- s$isolationWindow
+                p$isolationWindowLowerMz <- s$isolationWindowLowerMz
+                p$isolationWindowUpperMz <- s$isolationWindowUpperMz
+                p
+            }))
+        }
+        xph <- XProcessHistory(param = param, date. = date(),
+                               type. = .PROCSTEP.PEAK.DETECTION,
+                               msLevel = msLevel)
+        if (!is(object, "XcmsExperiment"))
+            object <- as(object, "XcmsExperiment")
+        object <- addProcessHistory(object, xph)
+        if (hasAdjustedRtime(object))
+            object@spectra$rtime <- rts
+        object <- .mse_add_chrom_peaks(object, pks, pkd)
+        validObject(object)
+        object
+    })
+
 #' @rdname XcmsExperiment
 setMethod("hasChromPeaks", "XcmsExperiment",
           function(object, msLevel = integer()) {

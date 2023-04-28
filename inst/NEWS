@@ -7,6 +7,8 @@ Changes in version 3.99.2
 - Add `groupFeatures` methods for `XcmsExperiment`.
 - Fix issue in `featureArea` for `XcmsExperiment`.
 - Update main vignette to use and describe the new data objects.
+- Add `findChromPeaksIsolationWindow` method for `MsExperiment` and
+  `XcmsExperiment`.
 
 
 Changes in version 3.99.1

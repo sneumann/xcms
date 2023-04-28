@@ -9,6 +9,9 @@ xmse <- findChromPeaks(mse, param = p)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 
+fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
+mse_dia <- readMsExperiment(fl)
+
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
     expect_true(nrow(res) == 0)
@@ -1162,4 +1165,23 @@ test_that("addProcessHistory,XcmsExperiment works", {
     tmp <- addProcessHistory(tmp, ph)
     expect_true(length(processHistory(tmp)) == 2L)
     expect_equal(processHistory(tmp)[[2L]], ph)
+})
+
+test_that("findChromPeaksIsolationWindow,MsExperiment works", {
+    cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                         peakwidth = c(3, 30), prefilter = c(2, 1000))
+
+    expect_error(
+        findChromPeaksIsolationWindow(mse_dia, cwp, isolationWindow = 3),
+        "Length")
+
+    expect_warning(res <- findChromPeaksIsolationWindow(mse_dia, cwp), "No")
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(all(chromPeakData(res)$ms_level == 2L))
+    expect_true(length(processHistory(res)) == 1L)
+
+    a <- findChromPeaks(mse_dia, cwp)
+    a <- findChromPeaksIsolationWindow(a, cwp)
+    expect_true(nrow(chromPeaks(a)) > nrow(chromPeaks(res)))
+    expect_true(length(processHistory(a)) == 2L)
 })

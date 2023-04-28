@@ -252,7 +252,6 @@ export(
     "imputeRowMin",
     "imputeRowMinRand",
     "hasFilledChromPeaks",
-    "findChromPeaksIsolationWindow",
     "plotAdjustedRtime",
     "reconstructChromPeakSpectra",
     "groupOverlaps",
@@ -266,7 +265,8 @@ exportMethods(
     "showError",
     "findChromPeaks",
     "groupChromPeaks",
-    "adjustRtime"
+    "adjustRtime",
+    "findChromPeaksIsolationWindow"
 )
 
 ## New Param classes

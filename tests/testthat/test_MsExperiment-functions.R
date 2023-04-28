@@ -398,7 +398,7 @@ test_that(".mse_split_spectra_variable works", {
 
 test_that(".update_sample_data_links_spectra works", {
     tmp <- mse
-    tmp@spectra$._SAMPLE_IDX <- seq_along(tmp@spectra)
+    tmp@spectra$._SPECTRA_IDX <- seq_along(tmp@spectra)
     tmp@spectra <- tmp@spectra[c(5, 14, 3800, 2, 200)]
     res <- .update_sample_data_links_spectra(tmp)
     res@sampleDataLinks[["spectra"]]

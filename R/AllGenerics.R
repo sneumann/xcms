@@ -1013,6 +1013,74 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 setGeneric("findChromPeaks", function(object, param, ...)
            standardGeneric("findChromPeaks"))
 
+#' @title Data independent acquisition (DIA): peak detection in isolation windows
+#'
+#' @description
+#'
+#' The `findChromPeaksIsolationWindow` function allows to perform a
+#' chromatographic peak detection in MS level > 1 spectra of certain isolation
+#' windows (e.g. SWATH pockets). The function performs a peak detection,
+#' separately for all spectra belonging to the same isolation window and adds
+#' them to the [chromPeaks()] matrix of the result object. Information about
+#' the isolation window in which they were detected is added to
+#' [chromPeakData()] data frame.
+#'
+#' Note that peak detection with this method does not remove previously
+#' identified chromatographic peaks (e.g. on MS1 level using the
+#' [findChromPeaks()] function but adds newly identified peaks to the existing
+#' [chromPeaks()] matrix.
+#'
+#' Isolation windows can be defined with the `isolationWindow` parameter, that
+#' by default uses the definition of [isolationWindowTargetMz()], i.e.
+#' chromatographic peak detection is performed for all spectra with the same
+#' isolation window target m/z (seprarately for each file). The parameter
+#' `param` allows to define and configure the peak detection algorithm (see
+#' [findChromPeaks()] for more information).
+#'
+#' @param object `MsExperiment`, `XcmsExperiment`, `OnDiskMSnExp` or `XCMSnExp`
+#'     object with the DIA data.
+#'
+#' @param param Peak detection parameter object, such as a
+#'     [CentWaveParam-class] object defining and configuring the chromographic
+#'     peak detection algorithm.
+#'     See also [findChromPeaks()] for more details.
+#'
+#' @param msLevel `integer(1)` specifying the MS level in which the peak
+#'     detection should be performed. By default `msLevel = 2L`.
+#'
+#' @param isolationWindow `factor` or similar defining the isolation windows in
+#'     which the peak detection should be performed with length equal to the
+#'     number of spectra in `object`.
+#'
+#' @param chunkSize if `object` is an `MsExperiment` or `XcmsExperiment`:
+#'     `integer(1)` defining the number of files (samples) that should be
+#'     loaded into memory and processed at a time. See [findChromPeaks()] for
+#'     more information.
+#'
+#' @param BPPARAM if `object` is an `MsExperiment` or `XcmsExperiment`:
+#'     parallel processing setup. See [bpparam()] for more information.
+#'
+#' @param ... currently not used.
+#'
+#' @return
+#'
+#' An `XcmsExperiment` or `XCMSnExp` object with the chromatographic peaks
+#' identified in spectra of each isolation window from each file added to the
+#' `chromPeaks` matrix.
+#' Isolation window definition for each identified peak are stored as additional
+#' columns in [chromPeakData()].
+#'
+#' @author Johannes Rainer, Michael Witting
+#'
+#' @seealso [reconstructChromPeakSpectra()] for the function to reconstruct
+#'     MS2 spectra for each MS1 chromatographic peak.
+#'
+#' @md
+#'
+#' @aliases findChromPeaksIsolationWindow
+setGeneric("findChromPeaksIsolationWindow", function(object, ...)
+           standardGeneric("findChromPeaksIsolationWindow"))
+
 setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE)
     standardGeneric("findMZ"))
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))

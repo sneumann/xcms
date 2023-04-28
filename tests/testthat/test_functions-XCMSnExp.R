@@ -446,43 +446,6 @@ test_that(".swath_collect_chrom_peaks works", {
     expect_equal(res_5, msf)
 })
 
-test_that("findChromPeaksIsolationWindow works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    obj <- filterRt(as(pest_swth, "OnDiskMSnExp"), rt = c(0, 300))
-    cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                         peakwidth = c(3, 30), prefilter = c(2, 1000))
-    res <- findChromPeaksIsolationWindow(obj, param = cwp)
-    expect_true(is(res, "XCMSnExp"))
-    expect_equal(length(processHistory(res)), 1)
-    expect_true(all(c("isolationWindow", "isolationWindowTargetMZ") %in%
-                    colnames(chromPeakData(res))))
-    expect_true(all(chromPeakData(res)$ms_level == 2L))
-
-    ## Add to existing peaks
-    obj <- findChromPeaks(obj, param = cwp)
-    res_2 <- findChromPeaksIsolationWindow(obj, param = cwp)
-    expect_equal(chromPeaks(res_2)[1:nrow(chromPeaks(obj)), , drop = FALSE],
-                 chromPeaks(obj))
-    expect_true(length(processHistory(res_2)) == 2)
-
-    ## no isolation window/add isolation window
-    expect_error(findChromPeaksIsolationWindow(od_x), "are NA")
-    tmp <- od_x
-    cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
-    fData(tmp)$my_win <- 1
-    res_3 <- findChromPeaksIsolationWindow(
-        tmp, param = cwp, isolationWindow = fData(tmp)$my_win, msLevel = 1L)
-    expect_equal(chromPeaks(xod_x), chromPeaks(res_3))
-    expect_true(all(chromPeakData(res_3)$isolationWindow == 1))
-
-    res_4 <- findChromPeaksIsolationWindow(
-        xod_x, param = cwp, isolationWindow = rep(1, length(xod_x)),
-        msLevel = 1L)
-    expect_equal(chromPeaks(res_4)[1:nrow(chromPeaks(xod_x)), ],
-                 chromPeaks(xod_x))
-})
-
 test_that("reconstructChromPeakSpectra works", {
     skip_on_os(os = "windows", arch = "i386")
 

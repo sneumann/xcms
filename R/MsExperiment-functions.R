@@ -513,7 +513,7 @@
     if (have_links)
         x@spectra$._SPECTRA_IDX <- seq_len(ls)
     spl <- split(x@spectra, f)
-    res <- lapply(spl, function(z) {
+    lapply(spl, function(z) {
         tmp <- x
         tmp@spectra <- z
         if (have_links)
@@ -524,12 +524,11 @@
     })
 }
 
-#' Update the sampleDataLinks for spectra. **Not** updating/fixing the
-#' sampleData slot to keep only elements with spectra.
-#'
-#' This function requires the presence of a `spectraVariables` `"._SPECTRA_IDX"`
-#' to be present in `@spectra` that contains the index of the sample to which
-#' the spectra belongs.
+#' Update the sampleDataLinks for a subsetted `@spectra` slot within an
+#' `MsExperiment`. This function requires the presence of a spectra variable
+#' `"._SPECTRA_IDX"` in `@spectra`. Note that this function  **only** updates
+#' the `@sampleDataLinks[["spectra"]]` matrix but does **not** update or
+#' subset the `@sampleData`.
 #'
 #' @noRd
 .update_sample_data_links_spectra <- function(x) {
