@@ -446,29 +446,6 @@ test_that(".swath_collect_chrom_peaks works", {
     expect_equal(res_5, msf)
 })
 
-test_that("reconstructChromPeakSpectra works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    res <- reconstructChromPeakSpectra(
-        pest_swth, peakId = rownames(chromPeaks(pest_swth))[5:6])
-    expect_true(length(res) == 2)
-    expect_s4_class(res, "Spectra")
-    expect_true(length(intensity(res)[[2]]) == 2)
-
-    ## errors
-    expect_error(reconstructChromPeakSpectra(od_x), "object with")
-
-    ## peakId
-    res_3 <- reconstructChromPeakSpectra(pest_swth, peakId = c("CP06"))
-    expect_identical(intensity(res_3), intensity(res[2]))
-
-    expect_warning(res <- reconstructChromPeakSpectra(
-                       pest_swth, peakId = c("CP06", "other")))
-    expect_identical(mz(res_3), mz(res))
-    expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
-                 "None of the provided")
-})
-
 test_that(".plot_XIC works", {
     skip_on_os(os = "windows", arch = "i386")
 

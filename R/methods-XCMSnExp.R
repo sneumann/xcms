@@ -3831,3 +3831,49 @@ setMethod(
         if (validObject(chrs))
             chrs
     })
+
+#' @rdname reconstructChromPeakSpectra
+setMethod(
+    "reconstructChromPeakSpectra", "XCMSnExp",
+    function(object, expandRt = 0, diffRt = 2, minCor = 0.8, intensity = "maxo",
+             peakId = rownames(chromPeaks(object, msLevel = 1L)),
+             BPPARAM = bpparam(), return.type = c("Spectra", "MSpectra")) {
+        if (!hasChromPeaks(object))
+            stop("'object' should be an 'XCMSnExp' object with identified ",
+                 "chromatographic peaks")
+        return.type <- match.arg(return.type)
+        if (return.type != "Spectra")
+            stop("'return.type = \"MSpectra\"' is deprecated. ",
+                 "Use `return.type = \"Spectra\"' instead.")
+        n_peak_id <- length(peakId)
+        peakId <- intersect(peakId, rownames(chromPeaks(object, msLevel = 1L)))
+        if (!length(peakId))
+            stop("None of the provided 'peakId' matches IDs of MS1 ",
+                 "chromatographic peaks")
+        if (length(peakId) < n_peak_id)
+            warning("Only ", length(peakId), " of the provided",
+                    " identifiers match IDs of MS1 chromatographic peaks")
+        if (hasAdjustedRtime(object))
+            fData(object)$retentionTime <- rtime(object)
+        object <- selectFeatureData(object,
+                                    fcol = c(MSnbase:::.MSnExpReqFvarLabels,
+                                             "centroided",
+                                             "polarity",
+                                             "isolationWindow",
+                                             "isolationWindowTargetMZ",
+                                             "isolationWindowLowerOffset",
+                                             "isolationWindowUpperOffset"))
+        sps <- bplapply(
+            .split_by_file2(
+                object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
+            FUN = function(x, files, expandRt, diffRt, minCor, col, pkId,
+                           return.type) {
+                .reconstruct_dia_ms2(
+                    x, expandRt = expandRt, diffRt = diffRt, minCor = minCor,
+                    column = col, peakId = pkId,
+                    fromFile = match(fileNames(x), files))
+            },
+            files = fileNames(object), expandRt = expandRt, diffRt = diffRt,
+            minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
+        do.call(c, sps)
+})

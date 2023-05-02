@@ -64,7 +64,8 @@
 #' - create an MS2 spectrum from all MS2 chrom peaks with peak shape
 #'   correlation > `minCor`.
 #'
-#' @param object `XCMSnExp` with data from a **single** file.
+#' @param object `XCMSnExp` or `XcmsExperiment` with data from a **single**
+#'     file.
 #'
 #' @note
 #'
@@ -80,8 +81,6 @@
     function(object, expandRt = 2, diffRt = 5, minCor = 0.8, fromFile = 1L,
              column = "maxo",
              peakId = rownames(chromPeaks(object, msLevel = 1L))) {
-        if (hasAdjustedRtime(object))
-            fData(object)$retentionTime <- rtime(object)
         message("Reconstructing MS2 spectra for ", length(peakId),
                 " chrom peaks ...", appendLF = FALSE)
         pks <- chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
@@ -93,14 +92,23 @@
         ilmz <- chromPeakData(object)$isolationWindowLowerMz[ord]
         iumz <- chromPeakData(object)$isolationWindowUpperMz[ord]
         ## Get EICs for all chrom peaks (all MS levels)
-        object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
-        chrs <- .chromatograms_for_peaks(
-            lapply(spectra(object),
-                   function(z) cbind(mz = z@mz, intensity = z@intensity)),
-            rt = rtime(object), msl = msLevel(object), file_idx = fromFile,
-            tmz = isolationWindowTargetMz(object), pks = pks,
-            pks_msl = chromPeakData(object)$ms_level[ord],
-            pks_tmz = chromPeakData(object)$isolationWindowTargetMZ[ord])
+        suppressMessages(
+            object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")])))
+        if (inherits(object, "MsExperiment"))
+            chrs <- .chromatograms_for_peaks(
+                peaksData(object@spectra), rt = rtime(object@spectra),
+                msl = msLevel(object@spectra), file_idx = fromFile,
+                tmz = isolationWindowTargetMz(object@spectra), pks = pks,
+                pks_msl = object@chromPeakData$ms_level[ord],
+                pks_tmz = object@chromPeakData$isolationWindowTargetMZ[ord])
+        else
+            chrs <- .chromatograms_for_peaks(
+                lapply(spectra(object),
+                       function(z) cbind(mz = z@mz, intensity = z@intensity)),
+                rt = rtime(object), msl = msLevel(object), file_idx = fromFile,
+                tmz = isolationWindowTargetMz(object), pks = pks,
+                pks_msl = chromPeakData(object)$ms_level[ord],
+                pks_tmz = chromPeakData(object)$isolationWindowTargetMZ[ord])
         idx <- match(peakId, rownames(pks)) # MS1 peaks to loop over
         res <- data.frame(
             peak_id = peakId, precursorMz = pks[idx, "mz"],

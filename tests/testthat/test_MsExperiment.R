@@ -96,3 +96,11 @@ test_that("filterMzRange,MsExperiment works", {
     mzs <- unlist(mz(spectra(res)))
     expect_true(any(mzs > 500))
 })
+
+test_that("polarity,MsExperiment works", {
+    res <- polarity(MsExperiment())
+    expect_equal(res, integer())
+
+    res <- polarity(mse)
+    expect_equal(res, polarity(spectra(mse)))
+})

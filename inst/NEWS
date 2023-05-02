@@ -9,6 +9,8 @@ Changes in version 3.99.2
 - Update main vignette to use and describe the new data objects.
 - Add `findChromPeaksIsolationWindow` method for `MsExperiment` and
   `XcmsExperiment`.
+- Make `reconstructChromPeakSpectra` a method.
+- Add `reconstructChromPeakSpectra` implementation for `XcmsExperiment`.
 
 
 Changes in version 3.99.1

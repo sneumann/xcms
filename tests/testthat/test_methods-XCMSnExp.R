@@ -2557,3 +2557,21 @@ test_that("findChromPeaksIsolationWindow works", {
     expect_equal(chromPeaks(res_4)[1:nrow(chromPeaks(xod_x)), ],
                  chromPeaks(xod_x))
 })
+
+test_that("reconstructChromPeakSpectra works", {
+    res <- reconstructChromPeakSpectra(
+        pest_swth, peakId = rownames(chromPeaks(pest_swth))[5:6])
+    expect_true(length(res) == 2)
+    expect_s4_class(res, "Spectra")
+    expect_true(length(intensity(res)[[2]]) == 2)
+
+    ## peakId
+    res_3 <- reconstructChromPeakSpectra(pest_swth, peakId = c("CP06"))
+    expect_identical(intensity(res_3), intensity(res[2]))
+
+    expect_warning(res <- reconstructChromPeakSpectra(
+                       pest_swth, peakId = c("CP06", "other")))
+    expect_identical(mz(res_3), mz(res))
+    expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
+                 "None of the provided")
+})

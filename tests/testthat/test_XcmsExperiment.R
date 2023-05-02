@@ -1169,13 +1169,13 @@ test_that("addProcessHistory,XcmsExperiment works", {
 
 test_that("findChromPeaksIsolationWindow,MsExperiment works", {
     cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                         peakwidth = c(3, 30), prefilter = c(2, 1000))
+                         peakwidth = c(3, 20), prefilter = c(3, 1000))
 
     expect_error(
         findChromPeaksIsolationWindow(mse_dia, cwp, isolationWindow = 3),
         "Length")
 
-    expect_warning(res <- findChromPeaksIsolationWindow(mse_dia, cwp), "No")
+    res <- findChromPeaksIsolationWindow(mse_dia, cwp)
     expect_s4_class(res, "XcmsExperiment")
     expect_true(all(chromPeakData(res)$ms_level == 2L))
     expect_true(length(processHistory(res)) == 1L)
@@ -1184,4 +1184,28 @@ test_that("findChromPeaksIsolationWindow,MsExperiment works", {
     a <- findChromPeaksIsolationWindow(a, cwp)
     expect_true(nrow(chromPeaks(a)) > nrow(chromPeaks(res)))
     expect_true(length(processHistory(a)) == 2L)
+
+    ## Compare against XCMSnExp results
+    expect_equal(nrow(chromPeaks(pest_swth)), nrow(chromPeaks(a)))
+    expect_equal(chromPeaks(pest_swth), chromPeaks(a))
+
+    ## reconstructChromPeakSpectra
+    expect_error(reconstructChromPeakSpectra(a, peakId = c("a", "b")))
+
+    ref <- reconstructChromPeakSpectra(pest_swth)
+    res <- reconstructChromPeakSpectra(a)
+    ref@processing <- ""
+    res@processing <- ""
+    expect_equal(ref, res)
+
+    ## Change some settings.
+    ref2 <- reconstructChromPeakSpectra(pest_swth, expandRt = 2, diffRt = 4,
+                                        minCor = 0.9, intensity = "into")
+    res2 <- reconstructChromPeakSpectra(a, expandRt = 2, diffRt = 4,
+                                        minCor = 0.9, intensity = "into")
+    ref2@processing <- ""
+    res2@processing <- ""
+    expect_equal(ref2, res2)
+
+    expect_false(all(lengths(res2) == lengths(res)))
 })

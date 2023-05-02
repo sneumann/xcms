@@ -76,6 +76,13 @@ setMethod("fileNames", "MsExperiment", function(object) {
 })
 
 #' @rdname XcmsExperiment
+setMethod("polarity", "MsExperiment", function(object) {
+    if (length(spectra(object)))
+        polarity(spectra(object))
+    else integer()
+})
+
+#' @rdname XcmsExperiment
 setMethod(
     "chromatogram", "MsExperiment",
     function(object, rt = matrix(nrow = 0, ncol = 2),

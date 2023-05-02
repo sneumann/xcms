@@ -1513,6 +1513,96 @@ setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
 setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 
+#' @title Data independent acquisition (DIA): reconstruct MS2 spectra
+#'
+#' @description
+#'
+#' *Reconstructs* MS2 spectra for each MS1 chromatographic peak (if possible)
+#' for data independent acquisition (DIA) data (such as SWATH). See the
+#' *LC-MS/MS analysis* vignette for more details and examples.
+#'
+#' @details
+#'
+#' In detail, the function performs for each MS1 chromatographic peak:
+#'
+#' - Identify all MS2 chromatographic peaks from the isolation window
+#'   containing the m/z of the ion (i.e. the MS1 chromatographic peak) with
+#'   approximately the same retention time than the MS1 peak (accepted rt shift
+#'   can be specified with the `diffRt` parameter).
+#' - Correlate the peak shapes of the candidate MS2 chromatographic peaks with
+#'   the peak shape of the MS1 peak retaining only MS2 chromatographic peaks
+#'   for which the correlation is `> minCor`.
+#' - Reconstruct the MS2 spectrum using the m/z of all above selected MS2
+#'   chromatographic peaks and their intensity (either `"maxo"` or `"into"`).
+#'   Each MS2 chromatographic peak selected for an MS1 peak will thus represent
+#'   one **mass peak** in the reconstructed spectrum.
+#'
+#' The resulting [Spectra()] object provides also the peak IDs of the MS2
+#' chromatographic peaks for each spectrum as well as their correlation value
+#' with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
+#'
+#' @param object `XCMSnExp` with identified chromatographic peaks.
+#'
+#' @param expandRt `numeric(1)` allowing to expand the retention time range
+#'     for extracted ion chromatograms by a constant value (for the peak
+#'     shape correlation). Defaults to `expandRt = 0` hence correlates only
+#'     the signal included in the identified chromatographic peaks.
+#'
+#' @param diffRt `numeric(1)` defining the maximal allowed difference between
+#'     the retention time of the chromatographic peak (apex) and the retention
+#'     times of MS2 chromatographic peaks (apex) to consider them as
+#'     representing candidate fragments of the original ion.
+#'
+#' @param minCor `numeric(1)` defining the minimal required correlation
+#'     coefficient for MS2 chromatographic peaks to be considered for MS2
+#'     spectrum reconstruction.
+#'
+#' @param intensity `character(1)` defining the column in the `chromPeaks`
+#'     matrix that should be used for the intensities of the reconstructed
+#'     spectra's peaks. The same value from the MS1 chromatographic peaks will
+#'     be used as `precursorIntensity` of the resulting spectra.
+#'
+#' @param peakId optional `character` vector with peak IDs (i.e. rownames of
+#'     `chromPeaks`) of MS1 peaks for which MS2 spectra should be reconstructed.
+#'     By default they are reconstructed for all MS1 chromatographic peaks.
+#'
+#' @param BPPARAM parallel processing setup. See [bpparam()] for more
+#'     information.
+#'
+#' @param return.type `character(1)` defining the type of the returned object.
+#'     Only `return.type = "Spectra"` is supported, `return.type = "MSpectra"`
+#'     is deprecated.
+#'
+#' @param ... ignored.
+#'
+#' @return
+#'
+#' - [Spectra()] object (defined in the `Spectra` package) with the
+#'   reconstructed MS2 spectra for all MS1 peaks in `object`. Contains
+#'   empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
+#'   which reconstruction was not possible (either no MS2 signal was recorded
+#'   or the correlation of the MS2 chromatographic peaks with the MS1
+#'   chromatographic peak was below threshold `minCor`. Spectra variables
+#'   `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
+#'   and [NumericList()] with length equal to the number of peaks per
+#'   reconstructed MS2 spectrum) providing the IDs and the correlation of the
+#'   MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+#'   As retention time the median retention times of all MS2 chromatographic
+#'   peaks used for the spectrum reconstruction is reported. The MS1
+#'   chromatographic peak intensity is reported as the reconstructed
+#'   spectrum's `precursorIntensity` value (see parameter `intensity` above).
+#'
+#' @author Johannes Rainer, Michael Witting
+#'
+#' @md
+#'
+#' @seealso [findChromPeaksIsolationWindow()] for the function to perform MS2
+#'     peak detection in DIA isolation windows and for examples.
+#'
+#' @aliases reconstructChromPeakSpectra
+setGeneric("reconstructChromPeakSpectra", function(object, ...)
+    standardGeneric("reconstructChromPeakSpectra"))
+
 #' @title Refine Identified Chromatographic Peaks
 #'
 #' @aliases FilterIntensityParam-class show,FilterIntensityParam-method

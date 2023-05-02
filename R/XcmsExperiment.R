@@ -335,6 +335,9 @@
 #'   `object`. Generally, subsetting by sample using the `[` is the preferred
 #'    way to get spectra from a specific sample.
 #'
+#' - `polarity`: returns the polarity information for each spectrum in
+#'   `object`.
+#'
 #' - `processHistory`: returns a `list` with [ProcessHistory] *process history*
 #'   objects that contain also the parameter object used for the different
 #'   processings. Optional parameter `type` allows to query for specific
@@ -831,6 +834,7 @@ setMethod(
                 p <- chromPeakData(z, return.type = "data.frame")
                 s <- z@spectra[1L]
                 p$isolationWindow <- s$isolationWindow
+                p$isolationWindowTargetMZ <- s$isolationWindowTargetMz
                 p$isolationWindowLowerMz <- s$isolationWindowLowerMz
                 p$isolationWindowUpperMz <- s$isolationWindowUpperMz
                 p
@@ -1193,6 +1197,34 @@ setMethod(
             res <- res[as.matrix(findMatches(peaks, res$peak_id))[, 2L]]
         else
             as(split(res, factor(res$peak_id, levels = peaks)), "List")
+    })
+
+#' @rdname reconstructChromPeakSpectra
+setMethod(
+    "reconstructChromPeakSpectra", "XcmsExperiment",
+    function(object, expandRt = 0, diffRt = 2, minCor = 0.8, intensity = "maxo",
+             peakId = rownames(chromPeaks(object, msLevel = 1L)),
+             BPPARAM = bpparam()) {
+        if (!hasChromPeaks(object))
+            stop("'object' does not contain chromatographic peaks")
+        peakId <- intersect(peakId, rownames(chromPeaks(object, msLevel = 1L)))
+        if (!length(peakId))
+            stop("None of the IDs provided with 'peakId' match the ID of ",
+                 "available chromatographic peaks")
+        if (hasAdjustedRtime(object))
+            object@spectra$rtime <- object@spectra$rtime_adjusted
+        BPPARAM <- backendBpparam(object@spectra)
+        ## If performance is bad we could alternatively split the object
+        ## first and then apply on subsets. Unclear how to provide the fromFile
+        res <- bplapply(seq_along(object), function(i) {
+            .reconstruct_dia_ms2(
+                .subset_xcms_experiment(
+                    object, i, keepChromPeaks = TRUE, keepAdjustedRtime = TRUE,
+                    keepFeatures = TRUE, keepSampleIndex = TRUE),
+                expandRt = expandRt, diffRt = diffRt, minCor = minCor,
+                column = intensity, peakId = peakId, fromFile = i)
+        }, BPPARAM = BPPARAM)
+        do.call(c, res)
     })
 
 ################################################################################

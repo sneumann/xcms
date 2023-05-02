@@ -253,7 +253,6 @@ export(
     "imputeRowMinRand",
     "hasFilledChromPeaks",
     "plotAdjustedRtime",
-    "reconstructChromPeakSpectra",
     "groupOverlaps",
     "estimatePrecursorIntensity",
     "featureArea",
@@ -266,7 +265,8 @@ exportMethods(
     "findChromPeaks",
     "groupChromPeaks",
     "adjustRtime",
-    "findChromPeaksIsolationWindow"
+    "findChromPeaksIsolationWindow",
+    "reconstructChromPeakSpectra"
 )
 
 ## New Param classes
@@ -565,6 +565,7 @@ importMethodsFrom("Spectra", "precursorMz")
 importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "filterMzRange")
+importMethodsFrom("Spectra", "backendBpparam")
 importFrom("Spectra", "MsBackendMemory")
 
 ## MsExperiment things

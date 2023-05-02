@@ -12,6 +12,7 @@
 \alias{rtime,MsExperiment-method}
 \alias{fromFile,MsExperiment-method}
 \alias{fileNames,MsExperiment-method}
+\alias{polarity,MsExperiment-method}
 \alias{chromatogram,MsExperiment-method}
 \alias{featureArea}
 \alias{plot,MsExperiment,missing-method}
@@ -64,6 +65,8 @@ filterFeatureDefinitions(object, ...)
 \S4method{fromFile}{MsExperiment}(object)
 
 \S4method{fileNames}{MsExperiment}(object)
+
+\S4method{polarity}{MsExperiment}(object)
 
 \S4method{chromatogram}{MsExperiment}(
   object,
@@ -680,6 +683,8 @@ object's \code{spectra} should be used instead.
 \item \code{fromFile}: returns the file (sample) index for each spectrum within
 \code{object}. Generally, subsetting by sample using the \code{[} is the preferred
 way to get spectra from a specific sample.
+\item \code{polarity}: returns the polarity information for each spectrum in
+\code{object}.
 \item \code{processHistory}: returns a \code{list} with \link{ProcessHistory} \emph{process history}
 objects that contain also the parameter object used for the different
 processings. Optional parameter \code{type} allows to query for specific
