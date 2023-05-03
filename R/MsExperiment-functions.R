@@ -442,7 +442,8 @@
 }
 
 #' Note: this should be improved supporting fully the .chromatograms_for_peaks
-#' from functions-utils.R
+#' from functions-utils.R, i.e. to specify also the isolation window as an
+#' additional selection criteria. Otherwise `x` needs to eventually subsetted.
 #'
 #' @importFrom MsExperiment sampleData
 #'

@@ -13,6 +13,7 @@
 \alias{fromFile,MsExperiment-method}
 \alias{fileNames,MsExperiment-method}
 \alias{polarity,MsExperiment-method}
+\alias{filterIsolationWindow,MsExperiment-method}
 \alias{chromatogram,MsExperiment-method}
 \alias{featureArea}
 \alias{plot,MsExperiment,missing-method}
@@ -21,6 +22,7 @@
 \alias{show,XcmsExperiment-method}
 \alias{filterChromPeaks}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
+\alias{filterIsolationWindow,XcmsExperiment-method}
 \alias{filterRt,XcmsExperiment-method}
 \alias{filterMzRange,XcmsExperiment-method}
 \alias{hasChromPeaks,XcmsExperiment-method}
@@ -68,6 +70,8 @@ filterFeatureDefinitions(object, ...)
 
 \S4method{polarity}{MsExperiment}(object)
 
+\S4method{filterIsolationWindow}{MsExperiment}(object, mz = numeric())
+
 \S4method{chromatogram}{MsExperiment}(
   object,
   rt = matrix(nrow = 0, ncol = 2),
@@ -92,6 +96,8 @@ featureArea(
 \S4method{plot}{MsExperiment,missing}(x, y, msLevel = 1L, peakCol = "#ff000060", ...)
 
 \S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{filterIsolationWindow}{XcmsExperiment}(object, mz = numeric())
 
 \S4method{filterRt}{XcmsExperiment}(object, rt, msLevel.)
 
@@ -212,7 +218,8 @@ For \code{chromatogram}: two-column numerical \code{matrix} with each row
 representing m/z range that should be aggregated into a chromatogram.
 If not provided the full m/z range of the data will be used (and hence
 a total ion chromatogram will be returned if \code{aggregationFun = "sum"}
-is used).}
+is used). For \code{filterIsolationWindow}: \code{numeric(1)} defining the m/z
+that should be contained within the spectra's isolation window.}
 
 \item{msLevel.}{For \code{filterRt}: ignored. \code{filterRt} will always filter
 by retention times on all MS levels regardless of this parameter.
@@ -437,6 +444,15 @@ subsetting. Parameters \code{keepChromPeaks}, \code{keepAdjustedRtime} and
 \code{keepChromPeaks} can be passed using \code{...}.
 Note also that in contrast to \code{[}, \code{filterFile} does not support subsetting
 in arbitrary order.
+\item \code{filterIsolationWindow}: filter the \strong{spectra} within an \code{MsExperiment}
+or \code{XcmsExperiment} object keeping only those with an isolation window
+containing the specified m/z (i.e., keeping spectra with an
+\code{"isolationWindowLowerMz"} smaller than the user-provided \code{mz} and an
+\code{"isolationWindowUpperMz"} larger than \code{mz}). For an \code{XcmsExperiment} also
+all chromatographic peaks (and subsequently also features) are removed for
+which the range of their \code{"isolationWindowLowerMz"} and
+\code{"isolationWindowUpperMz"} (columns in \code{chromPeakData}) do not contain
+the user provided \code{mz}.
 \item \code{filterMz}, \code{filterMzRange}: filter the spectra within an
 \code{XcmsExperiment} or \code{MsExperiment} to the specified m/z range (parameter
 \code{mz}). For \code{XcmsExperiment} also identified chromatographic peaks and

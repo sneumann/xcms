@@ -1167,7 +1167,10 @@ test_that("addProcessHistory,XcmsExperiment works", {
     expect_equal(processHistory(tmp)[[2L]], ph)
 })
 
-test_that("findChromPeaksIsolationWindow,MsExperiment works", {
+test_that("findChromPeaksIsolationWindow, etc, MsExperiment works", {
+
+    ############################################################################
+    ## findChromPeaksIsolationWindow
     cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                          peakwidth = c(3, 20), prefilter = c(3, 1000))
 
@@ -1189,6 +1192,7 @@ test_that("findChromPeaksIsolationWindow,MsExperiment works", {
     expect_equal(nrow(chromPeaks(pest_swth)), nrow(chromPeaks(a)))
     expect_equal(chromPeaks(pest_swth), chromPeaks(a))
 
+    ############################################################################
     ## reconstructChromPeakSpectra
     expect_error(reconstructChromPeakSpectra(a, peakId = c("a", "b")))
 
@@ -1208,4 +1212,27 @@ test_that("findChromPeaksIsolationWindow,MsExperiment works", {
     expect_equal(ref2, res2)
 
     expect_false(all(lengths(res2) == lengths(res)))
+
+    ############################################################################
+    ## filterIsolationWindow
+    res <- filterIsolationWindow(mse_dia)
+    expect_equal(length(spectra(res)), length(spectra(mse_dia)))
+    expect_equal(rtime(spectra(res)), rtime(spectra(mse_dia)))
+
+    ## with an isolation window.
+    res <- filterIsolationWindow(mse_dia, mz = 301)
+    expect_true(length(spectra(res)) < length(spectra(mse_dia)))
+    expect_true(all(isolationWindowLowerMz(res@spectra) < 301))
+    expect_true(all(isolationWindowUpperMz(res@spectra) > 301))
+    expect_true(all(res@sampleDataLinks[["spectra"]][, 2L] %in%
+                    seq_along(res@spectra)))
+
+    ## on an XcmsExperiment.
+    res <- filterIsolationWindow(a)
+    expect_equal(chromPeaks(res), chromPeaks(a))
+
+    res <- filterIsolationWindow(a, mz = 301)
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(a)))
+    expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
+    expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
 })

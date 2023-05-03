@@ -84,6 +84,12 @@ setMethod("polarity", "MsExperiment", function(object) {
 
 #' @rdname XcmsExperiment
 setMethod(
+    "filterIsolationWindow", "MsExperiment", function(object, mz = numeric()) {
+        .mse_filter_spectra(object, filterIsolationWindow, mz = mz)
+    })
+
+#' @rdname XcmsExperiment
+setMethod(
     "chromatogram", "MsExperiment",
     function(object, rt = matrix(nrow = 0, ncol = 2),
              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",

@@ -73,6 +73,16 @@
 #'   Note also that in contrast to `[`, `filterFile` does not support subsetting
 #'   in arbitrary order.
 #'
+#' - `filterIsolationWindow`: filter the **spectra** within an `MsExperiment`
+#'   or `XcmsExperiment` object keeping only those with an isolation window
+#'   containing the specified m/z (i.e., keeping spectra with an
+#'   `"isolationWindowLowerMz"` smaller than the user-provided `mz` and an
+#'   `"isolationWindowUpperMz"` larger than `mz`). For an `XcmsExperiment` also
+#'   all chromatographic peaks (and subsequently also features) are removed for
+#'   which the range of their `"isolationWindowLowerMz"` and
+#'   `"isolationWindowUpperMz"` (columns in `chromPeakData`) do not contain
+#'   the user provided `mz`.
+#'
 #' - `filterMz`, `filterMzRange`: filter the spectra within an
 #'   `XcmsExperiment` or `MsExperiment` to the specified m/z range (parameter
 #'   `mz`). For `XcmsExperiment` also identified chromatographic peaks and
@@ -466,7 +476,8 @@
 #'     representing m/z range that should be aggregated into a chromatogram.
 #'     If not provided the full m/z range of the data will be used (and hence
 #'     a total ion chromatogram will be returned if `aggregationFun = "sum"`
-#'     is used).
+#'     is used). For `filterIsolationWindow`: `numeric(1)` defining the m/z
+#'     that should be contained within the spectra's isolation window.
 #'
 #' @param mzmax For `featureArea`: function to calculate the `"mzmax"` of
 #'     a feature based on the `"mzmax"` values of the individual
@@ -718,6 +729,23 @@ setMethod("[", "XcmsExperiment", function(x, i, j, ...) {
         stop("subsetting by j not supported")
     .subset_xcms_experiment(x, i = i, ...)
 })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "filterIsolationWindow", "XcmsExperiment",
+    function(object, mz = numeric()) {
+        if (length(mz) > 1L)
+            mz <- mz[1L]
+        object <- .mse_filter_spectra(object, filterIsolationWindow, mz = mz)
+        if (hasChromPeaks(object) && length(mz) &&
+            all(c("isolationWindowLowerMz", "isolationWindowUpperMz") %in%
+                colnames(object@chromPeakData))) {
+            idx <- which(object@chromPeakData$isolationWindowLowerMz < mz &
+                         object@chromPeakData$isolationWindowUpperMz > mz)
+            object <- .filter_chrom_peaks(object, idx)
+        }
+        object
+    })
 
 #' @rdname XcmsExperiment
 setMethod(
