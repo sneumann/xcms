@@ -952,7 +952,7 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         iumz <- chromPeakData(object)$isolationWindowUpperMz[ord]
         ## Get EICs for all chrom peaks (all MS levels)
         object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
-        chrs <- xcms:::.chromatograms_for_peaks(
+        chrs <- .chromatograms_for_peaks(
             peaksData(object@spectra), rt = rtime(object@spectra),
             msl = msLevel(object@spectra), file_idx = fromFile,
             tmz = isolationWindowTargetMz(object@spectra), pks = pks,

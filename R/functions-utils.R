@@ -87,13 +87,6 @@ useOriginalCode <- function(x) {
     return(options()$XCMSuseOriginalCode)
 }
 
-## .getOriginalFunction <- function(x) {
-##     if (!any(names(.ORIGINAL_FUNCTIONS)))
-## }
-## .ORIGINAL_FUNCTIONS <- c(
-##     matchedFilter = ".matchedFilter_orig"
-## )
-
 #' @title Copy the content from an environment to another one
 #'
 #' @description This function copies the content of an environment into another
@@ -122,14 +115,6 @@ useOriginalCode <- function(x) {
     }
     return(new_e)
 }
-
-## #' Simulates the \code{findRange} function.
-## #' @noRd
-## findRangeR <- function(x, values) {
-##     start <- min(which(x >= values[1]))
-##     end <- max(which(x <= values[2]))
-##     return(c(start, end))
-## }
 
 ############################################################
 ## .createProfileMatrix

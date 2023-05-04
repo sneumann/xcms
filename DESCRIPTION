@@ -71,6 +71,7 @@ Suggests:
     MALDIquant,
     pheatmap,
     MsBackendMgf,
+    MetaboCoreUtils,
     signal
 Enhances:
     Rgraphviz,

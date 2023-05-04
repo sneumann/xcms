@@ -13,6 +13,8 @@ Changes in version 3.99.2
 - Add `reconstructChromPeakSpectra` implementation for `XcmsExperiment`.
 - Add `filterIsolationWindow` for `MsExperiment` and `XcmsExperiment` to filter
   spectra (and eventually chromatographic peaks) based on the isolation window.
+- Update the LC-MS/MS vignette adding also an example how to deisotope SWATH
+  MS2 spectra.
 
 
 Changes in version 3.99.1
