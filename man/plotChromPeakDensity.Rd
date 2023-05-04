@@ -92,7 +92,7 @@ black line. Parameters for the \code{density} function are taken from the
 \code{param} object. Grey rectangles indicate which chromatographic peaks
 would be grouped into a feature by the \verb{peak density} correspondence
 method. Parameters for the algorithm are also taken from \code{param}.
-See \code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for more information about the
+See \code{\link[=groupChromPeaks]{groupChromPeaks()}} for more information about the
 algorithm and its supported settings.
 }
 \examples{
@@ -111,7 +111,7 @@ plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
 
 }
 \seealso{
-\code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for details on the
+\code{\link[=groupChromPeaks]{groupChromPeaks()}} for details on the
 \emph{peak density} correspondence method and supported settings.
 }
 \author{

@@ -111,9 +111,7 @@
 #'
 #' @examples
 #' ## Load the test file
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub")
 #'
 #' ## Subset to one file and restrict to a certain retention time range
 #' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
@@ -1287,9 +1285,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 #' @examples
 #'
 #' ## Load the test file
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub")
 #'
 #' ## Subset to one file and restrict to a certain retention time range
 #' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
@@ -1526,9 +1522,7 @@ do_findChromPeaks_massifquant <- function(mz,
 #' @examples
 #'
 #' ## Load the test file
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub")
 #'
 #' ## Subset to one file and restrict to a certain retention time range
 #' data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))
@@ -1984,6 +1978,10 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
+#' @param scantime ignored.
+#'
+#' @param valsPerSpect ignored.
+#'
 #' @param ... Additional parameters to be passed to the
 #'     \code{\link{peakDetectionCWT}} function.
 #'
@@ -2010,7 +2008,9 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_findPeaks_MSW <- function(mz, int, snthresh = 3,
-                             verboseColumns = FALSE, ...) {
+                             verboseColumns = FALSE,
+                             scantime = numeric(),
+                             valsPerSpect = integer(), ...) {
     ## Input argument checking.
     if (missing(int))
         stop("Argument 'int' is missing!")
@@ -3057,9 +3057,7 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #' @examples
 #'
 #' ## Load the test file
-#' data(faahko_sub)
-#' ## Update the path to the files for the local system
-#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' faahko_sub <- loadXcmsData("faahko_sub")
 #'
 #' ## Subset to one file and drop identified chromatographic peaks
 #' data <- dropChromPeaks(filterFile(faahko_sub, 1))

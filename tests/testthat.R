@@ -46,6 +46,7 @@ fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                             peakThr = 80000, ampTh = 0.005,
                                             SNR.method = "data.mean",
                                             winSize.noise = 500))
+
 ## Pesticide data
 fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
 pest_swth <- readMSData(fl, mode = "onDisk")
@@ -66,4 +67,3 @@ pest_dda <- findChromPeaks(pest_dda, param = cwp)
 test_check("xcms")
 
 bpstop(prm)
-

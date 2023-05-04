@@ -262,7 +262,7 @@ The \code{CentWaveParam} class allows to specify all settings
     for a chromatographic peak detection using the centWave method. Instances
     should be created with the \code{CentWaveParam} constructor.
 
-The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
+The \code{findChromPeaks,OnDiskMSnExp,CentWaveParam} method
     performs chromatographic peak detection using the \emph{centWave}
     algorithm on all samples from an \code{\link{OnDiskMSnExp}}
     object. \code{\link{OnDiskMSnExp}} objects encapsule all
@@ -385,10 +385,10 @@ detection in purely chromatographic data.
     the peak detection.
 
 Other peak detection methods: 
-\code{\link{chromatographic-peak-detection}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findChromPeaks}()},
 \code{\link{findPeaks-MSW}}
 }
 \author{

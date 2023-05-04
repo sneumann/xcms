@@ -38,3 +38,12 @@ test_that(".reconstruct_dia_ms2 works", {
     expect_equal(
         res$precursorMz, unname(chromPeaks(pest_swth, msLevel = 1L)[, "mz"]))
 })
+
+test_that(".reconstruct_dia_ms2 works", {
+    res <- .reconstruct_dia_ms2(pest_swth)
+    expect_true(is(res, "Spectra"))
+    expect_equal(length(res), nrow(chromPeaks(pest_swth, msLevel = 1L)))
+    expect_equal(res$peak_id, rownames(chromPeaks(pest_swth, msLevel = 1L)))
+    expect_equal(
+        res$precursorMz, unname(chromPeaks(pest_swth, msLevel = 1L)[, "mz"]))
+})

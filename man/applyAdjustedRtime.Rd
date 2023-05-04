@@ -7,11 +7,11 @@
 applyAdjustedRtime(object)
 }
 \arguments{
-\item{object}{An \link{XCMSnExp} object.}
+\item{object}{An \link{XCMSnExp} or \link{XcmsExperiment} object.}
 }
 \value{
-A \code{XCMSnExp} with the raw retention times being replaced with the
-adjusted retention time.
+An \code{XCMSnExp} or \code{XcmsExperiment} object with the raw (original) retention
+times being replaced with the adjusted retention time.
 }
 \description{
 Replaces the raw retention times with the adjusted retention
@@ -19,9 +19,9 @@ time or returns the object unchanged if none are present.
 }
 \details{
 Adjusted retention times are stored \emph{in parallel} to the adjusted
-retention times in the \code{XCMSnExp}. The \code{applyAdjustedRtime} replaces the
-raw retention times (stored in the \emph{feature data} (\code{fData} \code{data.frame}))
-with the adjusted retention times.
+retention times in \code{XCMSnExp} or \code{XcmsExperiment} objects. The
+\code{applyAdjustedRtime} replaces the raw (original) retention times with the
+adjusted retention times.
 }
 \note{
 Replacing the raw retention times with adjusted retention times

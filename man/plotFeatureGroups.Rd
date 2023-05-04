@@ -14,12 +14,13 @@ plotFeatureGroups(
   col = "#00000060",
   type = "o",
   main = "Feature groups",
-  featureGroups = character()
+  featureGroups = character(),
+  ...
 )
 }
 \arguments{
-\item{x}{\code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features (i.e. after calling
-\code{\link[=groupFeatures]{groupFeatures()}}.}
+\item{x}{\link{XcmsExperiment} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features
+(i.e. after calling \code{\link[=groupFeatures]{groupFeatures()}}.}
 
 \item{xlim}{\code{numeric(2)} with the lower and upper limit for the x-axis.}
 
@@ -44,6 +45,8 @@ feature group with a line.}
 \item{featureGroups}{optional \code{character} of feature group IDs to draw only
 specified feature group(s). If not provided, all feature groups are
 drawn.}
+
+\item{...}{additional parameters to be passed to the \code{lines} function.}
 }
 \description{
 \code{plotFeatureGroups} visualizes defined feature groups in the m/z by

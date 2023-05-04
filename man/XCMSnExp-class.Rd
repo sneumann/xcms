@@ -7,8 +7,7 @@
 \alias{XCMSnExp}
 \alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
-\alias{hasFilledChromPeaks}
-\alias{featureArea}
+\alias{hasFilledChromPeaks,XCMSnExp-method}
 \alias{profMat,OnDiskMSnExp-method}
 \alias{show,XCMSnExp-method}
 \alias{show,MsFeatureData-method}
@@ -22,7 +21,7 @@
 \alias{hasChromPeaks,XCMSnExp-method}
 \alias{hasChromPeaks}
 \alias{hasChromPeaks,MsFeatureData-method}
-\alias{hasFilledChromPeaks,XCMSnExp-method}
+\alias{hasFilledChromPeaks}
 \alias{adjustedRtime,XCMSnExp-method}
 \alias{adjustedRtime}
 \alias{adjustedRtime,MsFeatureData-method}
@@ -63,7 +62,6 @@
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
-\alias{faahko_sub}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}
@@ -75,17 +73,7 @@
 \usage{
 processHistoryTypes()
 
-hasFilledChromPeaks(object)
-
-featureArea(
-  object,
-  mzmin = median,
-  mzmax = median,
-  rtmin = median,
-  rtmax = median,
-  msLevel = unique(msLevel(object)),
-  features = character()
-)
+\S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
 \S4method{profMat}{OnDiskMSnExp}(
   object,
@@ -195,57 +183,41 @@ featureArea(
 \code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
 object, for all other methods a \code{XCMSnExp} object.}
 
-\item{mzmin}{for \code{featureArea}: \code{function} to be applied to values
-in the \code{"mzmin"} column of all chromatographic peaks of a feature
-to define the lower m/z value of the feature area.
-Defaults to \code{median}.}
+\item{method}{\code{character(1)} defining the profile matrix generation method.
+Allowed are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}.
+See details section for more information.}
 
-\item{mzmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"mzmax"} column.}
+\item{step}{\code{numeric(1)} representing the m/z bin size.}
 
-\item{rtmin}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"rtmin"} column.}
-
-\item{rtmax}{for \code{featureArea}: \code{function} same as \code{mzmin}
-but for the \code{"rtmax"} column.}
-
-\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
-chromatographic peaks should be returned.}
-
-\item{features}{for \code{featureArea}: IDs of features for which the area
-should be extracted.}
-
-\item{method}{The profile matrix generation method. Allowed are \code{"bin"},
-\code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
-section for more information.}
-
-\item{step}{numeric(1) representing the m/z bin size.}
-
-\item{baselevel}{numeric(1) representing the base value to which
+\item{baselevel}{\code{numeric(1)} representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if \code{method = "binlinbase"}. See
-\code{baseValue} parameter of \code{\link{imputeLinInterpol}} for more
+\code{baseValue} parameter of \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more
 details.}
 
-\item{basespace}{numeric(1) representing the m/z length after
+\item{basespace}{\code{numeric(1)} representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will
 be used between consecutive data points falling within
 \code{2 * basespace} to each other. Only considered if
 \code{method = "binlinbase"}. If not specified, it defaults to
 \code{0.075}. Internally this parameter is translated into the
-\code{distance} parameter of the \code{\link{imputeLinInterpol}}
+\code{distance} parameter of the \code{\link[=imputeLinInterpol]{imputeLinInterpol()}}
 function by \code{distance = floor(basespace / step)}. See
-\code{distance} parameter of \code{\link{imputeLinInterpol}} for more
+\code{distance} parameter of \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more
 details.}
 
-\item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
-be used for binnind. If not provided, the whole mz value range is used.}
+\item{mzrange.}{Optional \code{numeric(2)} manually specifying the mz value range
+to be used for binnind. If not provided, the whole m/z value range is
+used.}
 
 \item{fileIndex}{For \code{processHistory}: optional \code{integer}
 specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
 
 \item{...}{Additional parameters.}
+
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
 
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
@@ -431,17 +403,6 @@ correspondence results):
 
 \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
 
-\code{featureArea} extracts the m/z - retention time region for each feature.
-This area is defined by the m/z - retention time regions of all
-chromatographic peaks associated with a feature. Parameters \code{mzmin},
-\code{mzmax}, \code{rtmin} and \code{rtmax} allow to define functions how
-the corresponding value is calculated from the individual values (such as
-the \code{"rtmin"}) of all chromatographic peaks of that feature. By default
-the median \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}
-is reported. Parameter \code{features} allows to provide feature IDs for
-which the area should be extracted. By default it is extracted for all
-features.
-
 \code{profMat}: creates a \emph{profile matrix}, which
     is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
     and m (columns) the retention time of the corresponding scans. Each cell
@@ -587,7 +548,7 @@ peak detection results. Correspondence results (features) are always removed
 prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
-aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
+aligned using e.g. obiwarp (\code{\link{adjustRtime}}).
 
 \code{dropFilledChromPeaks}: drops any filled-in chromatographic
 peaks (filled in by the \code{\link{fillChromPeaks}} method) and all

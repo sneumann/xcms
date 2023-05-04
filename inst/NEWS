@@ -1,3 +1,41 @@
+Changes in version 3.99.2
+----------------------
+
+- Add the `xmse` data set representing an `XcmsExperiment` object.
+- Update the *compounding* vignette to use the new objects.
+- Add `loadXcmsData` to load test data objects (and fix/update paths).
+- Add `groupFeatures` methods for `XcmsExperiment`.
+- Fix issue in `featureArea` for `XcmsExperiment`.
+- Update main vignette to use and describe the new data objects.
+- Add `findChromPeaksIsolationWindow` method for `MsExperiment` and
+  `XcmsExperiment`.
+- Make `reconstructChromPeakSpectra` a method.
+- Add `reconstructChromPeakSpectra` implementation for `XcmsExperiment`.
+- Add `filterIsolationWindow` for `MsExperiment` and `XcmsExperiment` to filter
+  spectra (and eventually chromatographic peaks) based on the isolation window.
+- Update the LC-MS/MS vignette adding also an example how to deisotope SWATH
+  MS2 spectra.
+
+
+Changes in version 3.99.1
+----------------------
+
+- `featureSummary` and `overlappingFeatures` gain support for `XcmsExperiment`.
+- Fix in `featureChromatograms` to ensure a valid object is returned.
+
+
+Changes in version 3.99.0
+----------------------
+
+- Add `XcmsExperiment` and support for `MsExperiment`/`Spectra`: add all
+  functionality for a full xcms processing on a `MsExperiment` object.
+- Fix issue in `refineChromPeaks` with `MergeNeighboringPeaksParam` where a
+  wrong apex position was considered in the evaluation whether candidate peaks
+  should be merged (would only happen for merging of > 2 candidate peaks).
+- Re-write the `reconstructChromPeakSpectra` for DIA data analysis to fix an
+  issue with chromatographic peaks in overlapping SWATH isolation windows and
+  generally to improve performance.
+
 Changes in version 3.21.5
 ---------------------
 
@@ -16,17 +54,12 @@ Changes in version 3.21.3
 Changes in version 3.21.2
 ---------------------
 
-- Re-write the `reconstructChromPeakSpectra` for DIA data analysis to fix an
-  issue with chromatographic peaks in overlapping SWATH isolation windows and
-  generally to improve performance.
-
 Changes in version 3.21.1
-----------------------
+---------------------
 
 - Fix error with `fillChromPeaks` on sparse data (many empty spectra) and peak
   detection performed with `MatchedFilterParam` (issue #653).
 - Update to newer function names in the `rgl` package (issue #654).
-
 
 Changes in version 3.19.2
 ----------------------

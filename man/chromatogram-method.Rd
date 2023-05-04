@@ -15,7 +15,8 @@
   BPPARAM = bpparam(),
   adjustedRtime = hasAdjustedRtime(object),
   filled = FALSE,
-  include = c("apex_within", "any", "none")
+  include = c("apex_within", "any", "none"),
+  ...
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ returns chromatographic peaks that have their apex within the \code{mz} \code{rt
 range, \code{include = "any"} to return all chromatographic peaks which
 m/z and rt ranges overlap the \code{mz} and \code{rt} or \code{include = "none"} to
 not include any chromatographic peaks.}
+
+\item{...}{optional parameters - currently ignored.}
 }
 \value{
 \code{chromatogram} returns a \link{XChromatograms} object with

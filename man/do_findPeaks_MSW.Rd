@@ -5,7 +5,15 @@
 \title{Core API function for single-spectrum non-chromatography MS data
     peak detection}
 \usage{
-do_findPeaks_MSW(mz, int, snthresh = 3, verboseColumns = FALSE, ...)
+do_findPeaks_MSW(
+  mz,
+  int,
+  snthresh = 3,
+  verboseColumns = FALSE,
+  scantime = numeric(),
+  valsPerSpect = integer(),
+  ...
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -18,6 +26,10 @@ scans/spectra of one file/sample.}
 
 \item{verboseColumns}{\code{logical(1)} whether additional peak meta data
 columns should be returned.}
+
+\item{scantime}{ignored.}
+
+\item{valsPerSpect}{ignored.}
 
 \item{...}{Additional parameters to be passed to the
 \code{\link{peakDetectionCWT}} function.}

@@ -226,16 +226,7 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
 
-#' @return The `PeakDensityParam` function returns a
-#'     `PeakDensityParam` class instance with all of the settings
-#'     specified for chromatographic peak alignment based on peak densities.
-#'     Note that argument `sampleGroups` is mandatory and should represent
-#'     either the sample grouping in the experiment. It's length has to match
-#'     the number of sample in the experiments.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                                 minFraction = 0.5, minSamples = 1,
                              binSize = 0.25, maxFeatures = 50) {
@@ -247,15 +238,7 @@ PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
         binSize = binSize, maxFeatures = maxFeatures)
 }
 
-#' @return
-#'
-#' The `MzClustParam` function returns a `MzClustParam` class instance with
-#' all of the settings specified for high resolution single spectra peak
-#' alignment.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                                 minFraction = 0.5, minSamples = 1) {
     return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
@@ -263,11 +246,7 @@ MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                minSamples = minSamples))
 }
 
-#' @return The \code{NearestPeaksParam} function returns a
-#'     \code{NearestPeaksParam} class instance with all of the settings
-#'     specified for peak alignment based on peak proximity.
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                               absMz = 0.2, absRt = 15, kNN = 10) {
     return(new("NearestPeaksParam", sampleGroups = sampleGroups,
@@ -275,12 +254,7 @@ NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                kNN = kNN))
 }
 
-#' @return The \code{PeakGroupsParam} function returns a
-#'     \code{PeakGroupsParam} class instance with all of the settings
-#'     specified for retention time adjustment based on \emph{house keeping}
-#'     features/peak groups.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                             family = "gaussian",
@@ -294,11 +268,7 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
         subset = as.integer(subset), subsetAdjust = subsetAdjust)
 }
 
-#' @return The \code{ObiwarpParam} function returns a
-#'     \code{ObiwarpParam} class instance with all of the settings
-#'     specified for obiwarp retention time adjustment and alignment.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
@@ -361,16 +331,12 @@ CalibrantMassParam <- function(mz = list(), mzabs = 0.0001, mzppm = 5,
 .mz <- function(x)
     x@mz
 
-#' @rdname refineChromPeaks-clean
-#'
-#' @md
+#' @rdname refineChromPeaks
 CleanPeaksParam <- function(maxPeakwidth = 10) {
     new("CleanPeaksParam", maxPeakwidth = as.numeric(maxPeakwidth))
 }
 
-#' @rdname refineChromPeaks-merge
-#'
-#' @md
+#' @rdname refineChromPeaks
 MergeNeighboringPeaksParam <- function(expandRt = 2, expandMz = 0, ppm = 10,
                                        minProp = 0.75) {
     new("MergeNeighboringPeaksParam", expandRt = as.numeric(expandRt),
@@ -387,9 +353,7 @@ ChromPeakAreaParam <- function(mzmin = function(z) quantile(z, probs = 0.25),
         rtmax = rtmax)
 }
 
-#' @rdname refineChromPeaks-filter-intensity
-#'
-#' @md
+#' @rdname refineChromPeaks
 FilterIntensityParam <- function(threshold = 0, nValues = 1L, value = "maxo") {
     new("FilterIntensityParam", threshold = as.numeric(threshold),
         nValues = as.integer(nValues), value = value)

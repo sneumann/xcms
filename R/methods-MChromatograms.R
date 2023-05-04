@@ -365,6 +365,7 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 #'
 #' ## Load preprocessed data and extract EICs for some features.
 #' library(xcms)
+#' xdata <- loadXcmsData()
 #' data(xdata)
 #' ## Update the path to the files for the local system
 #' dirname(xdata) <- c(rep(system.file("cdf", "KO", package = "faahKO"), 4),

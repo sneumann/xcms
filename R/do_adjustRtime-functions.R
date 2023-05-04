@@ -35,7 +35,7 @@
 #' with their retention times being still adjusted based on the alignment
 #' results of the \emph{real} samples.
 #'
-#' @inheritParams adjustRtime-peakGroups
+#' @inheritParams adjustRtime
 #'
 #' @param peaks a \code{matrix} or \code{data.frame} with the identified
 #'     chromatographic peaks in the samples.
@@ -164,6 +164,11 @@ do_adjustRtime_peakGroups <-
     warn.overcorrect <- FALSE
     warn.tweak.rt <- FALSE
 
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = length(subset),
+                           clear = FALSE)
     rtime_adj <- rtime
     ## Adjust samples in subset.
     for (i in seq_along(subset)) {
@@ -233,6 +238,7 @@ do_adjustRtime_peakGroups <-
         }
         ## Finally applying the correction
         rtime_adj[[i_all]] <- rtime[[i_all]] - rtdevsmo[[i]]
+        pb$tick()
     }
     ## Adjust the remaining samples.
     rtime_adj <- adjustRtimeSubset(rtime, rtime_adj, subset = subset,
@@ -461,9 +467,9 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
         stop("'rtraw' and 'rtadj' have to have the same length!")
     ## Going to adjust the columns rt, rtmin and rtmax in x.
     ## Using a for loop here.
-    for (i in 1:length(rtraw)) {
+    for (i in seq_along(rtraw)) {
         whichSample <- which(x[, "sample"] == i)
-        if (length(whichSample)) {
+        if (length(whichSample) && any(rtraw[[i]] != rtadj[[i]])) {
             x[whichSample, c("rt", "rtmin", "rtmax")] <-
                 .applyRtAdjustment(x[whichSample, c("rt", "rtmin", "rtmax")],
                                    rtraw = rtraw[[i]], rtadj = rtadj[[i]])

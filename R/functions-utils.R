@@ -87,13 +87,6 @@ useOriginalCode <- function(x) {
     return(options()$XCMSuseOriginalCode)
 }
 
-## .getOriginalFunction <- function(x) {
-##     if (!any(names(.ORIGINAL_FUNCTIONS)))
-## }
-## .ORIGINAL_FUNCTIONS <- c(
-##     matchedFilter = ".matchedFilter_orig"
-## )
-
 #' @title Copy the content from an environment to another one
 #'
 #' @description This function copies the content of an environment into another
@@ -122,14 +115,6 @@ useOriginalCode <- function(x) {
     }
     return(new_e)
 }
-
-## #' Simulates the \code{findRange} function.
-## #' @noRd
-## findRangeR <- function(x, values) {
-##     start <- min(which(x >= values[1]))
-##     end <- max(which(x <= values[2]))
-##     return(c(start, end))
-## }
 
 ############################################################
 ## .createProfileMatrix
@@ -274,7 +259,7 @@ useOriginalCode <- function(x) {
 #'
 #' @noRd
 .featureIDs <- function(x, prefix = "FT", from = 1L) {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"),
+    sprintf(paste0(prefix, "%0", ceiling(log10(x + from)), "d"),
             seq(from = from, length.out = x))
 }
 
@@ -357,15 +342,14 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' ## Read two files from the faahKO package
 #' library(faahKO)
-#' library(magrittr)
 #' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
 #'     recursive = TRUE)[1:2]
 #' raw_data <- readMSData(cdfs, mode = "onDisk")
 #'
 #' ## Subset the object to a rt and mz range and plot the data.
-#' raw_data %>%
-#'     filterRt(rt = c(2700, 2900)) %>%
-#'     filterMz(mz = c(334.9, 335.1)) %>%
+#' raw_data |>
+#'     filterRt(rt = c(2700, 2900)) |>
+#'     filterMz(mz = c(334.9, 335.1)) |>
 #'     plot(type = "XIC")
 plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
                        grid.color = "lightgrey",
@@ -780,6 +764,10 @@ groupOverlaps <- function(xmin, xmax) {
     x
 }
 
+.match_last <- function(x, table, nomatch = NA_integer_) {
+    length(table) - match(x, rev(table), nomatch = nomatch) + 1
+}
+
 #' @description
 #'
 #' Function to extract EICs. In contrast to the other versions, this one
@@ -827,9 +815,10 @@ groupOverlaps <- function(xmin, xmax) {
                                      pks_tmz = rep(1, nrow(pks)),
                                      aggregationFun = "sum") {
     nr <- nrow(pks)
-    if (aggregationFun == "sum")
-        FUN <- getFunction("sumi")
-    else FUN <- getFunction(aggregationFun)
+    FUN <- switch(aggregationFun,
+                  "sum" = getFunction("sumi"),
+                  "max" = getFunction("maxi"),
+                  getFunction(aggregationFun))
     empty_chrom <- MSnbase::Chromatogram(
                                 fromFile = file_idx,
                                 aggregationFun = aggregationFun,
@@ -839,9 +828,9 @@ groupOverlaps <- function(xmin, xmax) {
     rtc <- c("rtmin", "rtmax")
     mzc <- c("mzmin", "mzmax")
     for (i in seq_len(nr)) {
-        res[[i]]@filterMz <- pks[i, mzc]
-        res[[i]]@mz <- pks[i, mzc]
-        res[[i]]@msLevel <- pks_msl[i]
+        slot(res[[i]], "filterMz", check = FALSE) <- pks[i, mzc]
+        slot(res[[i]], "mz", check = FALSE) <- pks[i, mzc]
+        slot(res[[i]], "msLevel", check = FALSE) <- pks_msl[i]
         ## if pks_msl > 1: precursor m/z has to match!
         keep <- between(rt, pks[i, rtc]) & msl == pks_msl[i]
         if (pks_msl[i] > 1L) {
@@ -851,10 +840,11 @@ groupOverlaps <- function(xmin, xmax) {
         keep <- which(keep)             # the get rid of `NA`.
         if (length(keep)) {
             ## Aggregate intensities.
-            res[[i]]@intensity <- vapply(pd[keep], function(z) {
-                FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
+            slot(res[[i]], "intensity", check = FALSE) <-
+                vapply(pd[keep], function(z) {
+                    FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
             }, numeric(1L))
-            res[[i]]@rtime <- rt[keep]
+            slot(res[[i]], "rtime", check = FALSE) <- rt[keep]
         }
     }
     res

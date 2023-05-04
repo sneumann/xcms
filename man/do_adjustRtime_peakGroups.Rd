@@ -29,36 +29,36 @@ information of the chromatographic peaks (across and within samples).}
 \item{rtime}{a \code{list} of \code{numeric} vectors with the retention
 times per file/sample.}
 
-\item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
-required fraction of samples in which peaks for the peak group were
-identified. Peak groups passing this criteria will aligned across
-samples and retention times of individual spectra will be adjusted
-based on this alignment. For \code{minFraction = 1} the peak group
-has to contain peaks in all samples of the experiment. Note that if
+\item{minFraction}{For \code{PeakGroupsParam}: \code{numeric(1)} between 0 and 1
+defining the minimum required fraction of samples in which peaks for
+the peak group were identified. Peak groups passing this criteria will
+be aligned across samples and retention times of individual spectra will
+be adjusted based on this alignment. For \code{minFraction = 1} the peak
+group has to contain peaks in all samples of the experiment. Note that if
 \code{subset} is provided, the specified fraction is relative to the
 defined subset of samples and not to the total number of samples within
 the experiment (i.e. a peak has to be present in the specified
 proportion of subset samples).}
 
-\item{extraPeaks}{\code{numeric(1)} defining the maximal number of
-additional peaks for all samples to be assigned to a peak group (i.e.
-feature) for retention time correction. For a data set with 6 samples,
-\code{extraPeaks = 1} uses all peak groups with a total peak count
-\code{<= 6 + 1}. The total peak count is the total number of peaks being
+\item{extraPeaks}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the maximal
+number of additional peaks for all samples to be assigned to a peak
+group (feature) for retention time correction. For a data set with 6
+samples, \code{extraPeaks = 1} uses all peak groups with a total peak count
+\verb{<= 6 + 1}. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
-sample being assigned to the group.}
+sample that are assigned to the group.}
 
-\item{smooth}{character defining the function to be used, to interpolate
-corrected retention times for all peak groups. Either \code{"loess"} or
-\code{"linear"}.}
+\item{smooth}{For \code{PeakGroupsParam}: \code{character(1)} defining the function to
+be used to interpolate corrected retention times for all peak groups.
+Can be either \code{"loess"} or \code{"linear"}.}
 
-\item{span}{\code{numeric(1)} defining the degree of smoothing (if
-\code{smooth = "loess"}). This parameter is passed to the internal call
-to \code{\link{loess}}.}
+\item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the degree of
+smoothing (if \code{smooth = "loess"}). This parameter is passed to the
+internal call to \code{\link[=loess]{loess()}}.}
 
-\item{family}{character defining the method to be used for loess smoothing.
-Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
-\code{\link{loess}} for more information.}
+\item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
+loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
+\code{\link[=loess]{loess()}} for more information.}
 
 \item{peakGroupsMatrix}{optional \code{matrix} of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
@@ -67,15 +67,16 @@ this matrix will be determined depending on parameters
 \code{minFraction} and \code{extraPeaks}. If provided,
 \code{minFraction} and \code{extraPeaks} will be ignored.}
 
-\item{subset}{\code{integer} with the indices of samples within the
-experiment on which the alignment models should be estimated. Samples
-not part of the subset are adjusted based on the closest subset sample.
-See description above for more details.}
+\item{subset}{For \code{ObiwarpParam} and \code{PeakGroupsParam}: \code{integer} with the
+indices of samples within the experiment on which the alignment models
+should be estimated.
+Samples not part of the subset are adjusted based on the closest subset
+sample. See \emph{Subset-based alignment} section for details.}
 
-\item{subsetAdjust}{\code{character} specifying the method with which
-non-subset samples should be adjusted. Supported options are
-\code{"previous"} and \code{"average"} (default). See description above
-for more information.}
+\item{subsetAdjust}{For \code{ObiwarpParam} and \code{PeakGroupsParam}: \code{character(1)}
+specifying the method with which non-subset samples should be adjusted.
+Supported options are \code{"previous"} and \code{"average"} (default).
+See \emph{Subset-based alignment} section for details.}
 }
 \value{
 A \code{list} with \code{numeric} vectors with the adjusted

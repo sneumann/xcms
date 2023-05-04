@@ -13,7 +13,8 @@ do_groupChromPeaks_density(
   minSamples = 1,
   binSize = 0.25,
   maxFeatures = 50,
-  sleep = 0
+  sleep = 0,
+  index = seq_len(nrow(peaks))
 )
 }
 \arguments{
@@ -23,33 +24,37 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 
-\item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample
+\item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
+samples defining the sample group assignments (i.e. which samples
+belong to which sample
 group). This parameter is mandatory for the \code{PeakDensityParam}
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).}
 
-\item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
-smoothing kernel) to be used. This argument is passed to the
-[density() method.}
+\item{bw}{For \code{PeakDensityParam}: \code{numeric(1)} defining the bandwidth
+(standard deviation ot the smoothing kernel) to be used. This argument
+is passed to the [density() method.}
 
-\item{minFraction}{\code{numeric(1)} defining the minimum fraction of samples
-in at least one sample group in which the peaks have to be present to be
-considered as a peak group (feature).}
+\item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
+fraction of samples in at least one sample group in which the peaks
+have to be present to be considered as a peak group (feature).}
 
-\item{minSamples}{\code{numeric(1)} with the minimum number of samples in at
-least one sample group in which the peaks have to be detected to be
-considered a peak group (feature).}
+\item{minSamples}{For \code{PeakDensityParam}: \code{numeric(1)} with the minimum
+number of samples in at least one sample group in which the peaks have
+to be detected to be considered a peak group (feature).}
 
-\item{binSize}{\code{numeric(1)} defining the size of the overlapping slices
-in mz dimension.}
+\item{binSize}{For \code{PeakDensityParam}: \code{numeric(1)} defining the size of the
+overlapping slices in m/z dimension.}
 
-\item{maxFeatures}{\code{numeric(1)} with the maximum number of peak groups
-to be identified in a single mz slice.}
+\item{maxFeatures}{For \code{PeakDensityParam}: \code{numeric(1)} with the maximum
+number of peak groups to be identified in a single mz slice.}
 
 \item{sleep}{\code{numeric(1)} defining the time to \emph{sleep} between
 iterations and plot the result from the current iteration.}
+
+\item{index}{An optional \code{integer} providing the indices of the peaks in the
+original peak matrix.}
 }
 \value{
 A \code{data.frame}, each row representing a (mz-rt) feature (i.e. a peak group)
@@ -87,9 +92,7 @@ accordingly.
 }
 \examples{
 ## Load the test file
-data(faahko_sub)
-## Update the path to the files for the local system
-dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example
 register(SerialParam())

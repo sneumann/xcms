@@ -921,23 +921,12 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
 
 #' @aliases sampleGroups
 #'
-#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
-#'     for the `sampleGroups` slot of the object. Its length should match
-#'     the number of samples in the experiment and it should not contain
-#'     `NA`s.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("sampleGroups", "PeakDensityParam", function(object){
     return(object@sampleGroups)})
 #' @aliases sampleGroups<-
 #'
-#' @param value The value for the slot.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
     if (length(value) == 0 | any(is.na(value)))
         stop("'sampleGroups' should not contain any NAs and its length has ",
@@ -949,17 +938,12 @@ setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
 
 #' @aliases bw
 #'
-#' @description `bw`,`bw<-`: getter and setter for the `bw` slot
-#'     of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("bw", "PeakDensityParam", function(object){
     return(object@bw)})
 #' @aliases bw<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
     object@bw <- value
     if (validObject(object))
@@ -968,17 +952,12 @@ setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
 
 #' @aliases minFraction
 #'
-#' @description `minFraction`,`minFraction<-`: getter and setter for
-#'     the `minFraction` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("minFraction", "PeakDensityParam", function(object){
     return(object@minFraction)})
 #' @aliases minFraction<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
@@ -987,32 +966,22 @@ setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
 
 #' @aliases minSamples
 #'
-#' @description `minSamples`,`minSamples<-`: getter and setter for the
-#'     `minSamples` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("minSamples", "PeakDensityParam", function(object){
     return(object@minSamples)})
 #' @aliases minSamples<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `binSize`,`binSize<-`: getter and setter for the
-#'     `binSize` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("binSize", "PeakDensityParam", function(object){
     return(object@binSize)})
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
@@ -1021,17 +990,12 @@ setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
 
 #' @aliases maxFeatures
 #'
-#' @description `maxFeatures`,`maxFeatures<-`: getter and setter for
-#'     the `maxFeatures` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setMethod("maxFeatures", "PeakDensityParam", function(object){
     return(object@maxFeatures)})
 #' @aliases maxFeatures<-
 #'
-#' @rdname groupChromPeaks-density
+#' @rdname groupChromPeaks
 setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
     object@maxFeatures <- value
     if (validObject(object))
@@ -1042,32 +1006,22 @@ setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
 ############################################################
 ## MzClustParam
 
-#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
-#'     for the `sampleGroups` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("sampleGroups", "MzClustParam", function(object){
     return(object@sampleGroups)})
 #' @param value The value for the slot.
 #'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `ppm`,`ppm<-`: getter and setter for the `ppm`
-#'     slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("ppm", "MzClustParam", function(object){
     return(object@ppm)})
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setReplaceMethod("ppm", "MzClustParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
@@ -1076,47 +1030,32 @@ setReplaceMethod("ppm", "MzClustParam", function(object, value) {
 
 #' @aliases absMz
 #'
-#' @description `absMz`,`absMz<-`: getter and setter for the
-#'     `absMz` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("absMz", "MzClustParam", function(object){
     return(object@absMz)})
 #' @aliases absMz<-
 #'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setReplaceMethod("absMz", "MzClustParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `minFraction`,`minFraction<-`: getter and setter for
-#'     the `minFraction` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("minFraction", "MzClustParam", function(object){
     return(object@minFraction)})
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `minSamples`,`minSamples<-`: getter and setter for the
-#'     `minSamples` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setMethod("minSamples", "MzClustParam", function(object){
     return(object@minSamples)})
-#' @rdname groupChromPeaks-mzClust
+#' @rdname groupChromPeaks
 setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
@@ -1127,17 +1066,12 @@ setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
 ############################################################
 ## NearestPeaksParam
 
-#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
-#'     for the `sampleGroups` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("sampleGroups", "NearestPeaksParam", function(object){
     return(object@sampleGroups)})
 #' @param value The value for the slot.
 #'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
@@ -1146,32 +1080,22 @@ setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
 
 #' @aliases mzVsRtBalance
 #'
-#' @description `mzVsRtBalance`,`mzVsRtBalance<-`: getter and setter
-#'     for the `mzVsRtBalance` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("mzVsRtBalance", "NearestPeaksParam", function(object){
     return(object@mzVsRtBalance)})
 #' @aliases mzVsRtBalance<-
 #'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
     object@mzVsRtBalance <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `absMz`,`absMz<-`: getter and setter for the
-#'     `absMz` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("absMz", "NearestPeaksParam", function(object){
     return(object@absMz)})
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
@@ -1180,17 +1104,12 @@ setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
 
 #' @aliases absRt
 #'
-#' @description `absRt`,`absRt<-`: getter and setter for the
-#'     `absRt` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("absRt", "NearestPeaksParam", function(object){
     return(object@absRt)})
 #' @aliases absRt<-
 #'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
     object@absRt <- value
     if (validObject(object))
@@ -1199,17 +1118,12 @@ setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
 
 #' @aliases kNN
 #'
-#' @description `kNN`,`kNN<-`: getter and setter for the
-#'     `kNN` slot of the object.
-#'
-#' @md
-#'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setMethod("kNN", "NearestPeaksParam", function(object){
     return(object@kNN)})
 #' @aliases kNN<-
 #'
-#' @rdname groupChromPeaks-nearest
+#' @rdname groupChromPeaks
 setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
     object@kNN <- value
     if (validObject(object))
@@ -1220,15 +1134,12 @@ setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
 ############################################################
 ## PeakGroupsParam
 
-#' @description \code{minFraction},\code{minFraction<-}: getter and setter
-#'     for the \code{minFraction} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("minFraction", "PeakGroupsParam", function(object){
     return(object@minFraction)})
 #' @param value The value for the slot.
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
@@ -1237,15 +1148,12 @@ setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
 
 #' @aliases extraPeaks
 #'
-#' @description \code{extraPeaks},\code{extraPeaks<-}: getter and setter
-#'     for the \code{extraPeaks} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("extraPeaks", "PeakGroupsParam", function(object){
     return(object@extraPeaks)})
 #' @aliases extraPeaks<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
     object@extraPeaks <- value
     if (validObject(object))
@@ -1254,17 +1162,12 @@ setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
 
 #' @aliases smooth
 #'
-#' @description \code{smooth},\code{smooth<-}: getter and setter
-#'     for the \code{smooth} slot of the object.
-#'
-#' @param x a \code{PeakGroupsParam} object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("smooth", "PeakGroupsParam", function(x){
     return(x@smooth)})
 #' @aliases smooth<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
     object@smooth <- value
     if (validObject(object))
@@ -1273,15 +1176,12 @@ setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
 
 #' @aliases span
 #'
-#' @description \code{span},\code{span<-}: getter and setter
-#'     for the \code{span} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("span", "PeakGroupsParam", function(object){
     return(object@span)})
 #' @aliases span<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
     object@span <- value
     if (validObject(object))
@@ -1290,15 +1190,12 @@ setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
 
 #' @aliases family
 #'
-#' @description \code{family},\code{family<-}: getter and setter
-#'     for the \code{family} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("family", "PeakGroupsParam", function(object){
     return(object@family)})
 #' @aliases family<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
     object@family <- value
     if (validObject(object))
@@ -1307,15 +1204,12 @@ setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
 
 #' @aliases peakGroupsMatrix
 #'
-#' @description \code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
-#'     setter for the \code{peakGroupsMatrix} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("peakGroupsMatrix", "PeakGroupsParam", function(object){
     return(object@peakGroupsMatrix)})
 #' @aliases peakGroupsMatrix<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) {
     object@peakGroupsMatrix <- value
     if (validObject(object))
@@ -1323,15 +1217,12 @@ setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) 
 })
 #' @aliases subset
 #'
-#' @description \code{subset},\code{subset<-}: getter and
-#'     setter for the \code{subset} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("subset", "PeakGroupsParam", function(x){
     return(x@subset)})
 #' @aliases subset<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("subset", "PeakGroupsParam", function(object, value) {
     object@subset <- value
     if (validObject(object))
@@ -1339,15 +1230,12 @@ setReplaceMethod("subset", "PeakGroupsParam", function(object, value) {
 })
 #' @aliases subsetAdjust
 #'
-#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
-#'     setter for the \code{subsetAdjust} slot of the object.
-#'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setMethod("subsetAdjust", "PeakGroupsParam", function(object){
     return(object@subsetAdjust)})
 #' @aliases subsetAdjust<-
 #'
-#' @rdname adjustRtime-peakGroups
+#' @rdname adjustRtime
 setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
     object@subsetAdjust <- value
     if (validObject(object))
@@ -1358,15 +1246,10 @@ setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
 ############################################################
 ## ObiwarpParam
 
-#' @description \code{binSize},\code{binSize<-}: getter and setter
-#'     for the \code{binSize} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("binSize", "ObiwarpParam", function(object){
     return(object@binSize)})
-#' @param value The value for the slot.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
@@ -1375,15 +1258,12 @@ setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
 
 #' @aliases centerSample
 #'
-#' @description \code{centerSample},\code{centerSample<-}: getter and setter
-#'     for the \code{centerSample} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("centerSample", "ObiwarpParam", function(object){
     return(object@centerSample)})
 #' @aliases centerSample<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
     object@centerSample <- as.integer(value)
     if (validObject(object))
@@ -1392,15 +1272,12 @@ setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
 
 #' @aliases response
 #'
-#' @description \code{response},\code{response<-}: getter and setter
-#'     for the \code{response} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("response", "ObiwarpParam", function(object){
     return(object@response)})
 #' @aliases response<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("response", "ObiwarpParam", function(object, value) {
     object@response <- as.integer(value)
     if (validObject(object))
@@ -1409,15 +1286,12 @@ setReplaceMethod("response", "ObiwarpParam", function(object, value) {
 
 #' @aliases distFun
 #'
-#' @description \code{distFun},\code{distFun<-}: getter and setter
-#'     for the \code{distFun} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("distFun", "ObiwarpParam", function(object){
     return(object@distFun)})
 #' @aliases distFun<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
     object@distFun <- value
     if (validObject(object))
@@ -1426,10 +1300,7 @@ setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
 
 #' @aliases gapInit
 #'
-#' @description \code{gapInit},\code{gapInit<-}: getter and setter
-#'     for the \code{gapInit} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("gapInit", "ObiwarpParam", function(object){
     if (length(object@gapInit) == 0) {
         if (object@distFun == "cor" | object@distFun == "cor_opt")
@@ -1442,7 +1313,7 @@ setMethod("gapInit", "ObiwarpParam", function(object){
     return(object@gapInit)})
 #' @aliases gapInit<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
     object@gapInit <- value
     if (validObject(object))
@@ -1451,10 +1322,7 @@ setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
 
 #' @aliases gapExtend
 #'
-#' @description \code{gapExtend},\code{gapExtend<-}: getter and setter
-#'     for the \code{gapExtend} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("gapExtend", "ObiwarpParam", function(object){
     if (length(object@gapExtend) == 0) {
         if (object@distFun == "cor" | object@distFun == "cor_opt")
@@ -1469,7 +1337,7 @@ setMethod("gapExtend", "ObiwarpParam", function(object){
     return(object@gapExtend)})
 #' @aliases gapExtend<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
     object@gapExtend <- value
     if (validObject(object))
@@ -1478,15 +1346,12 @@ setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
 
 #' @aliases factorDiag
 #'
-#' @description \code{factorDiag},\code{factorDiag<-}: getter and setter
-#'      for the \code{factorDiag} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("factorDiag", "ObiwarpParam", function(object){
     return(object@factorDiag)})
 #' @aliases factorDiag<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
     object@factorDiag <- value
     if (validObject(object))
@@ -1495,15 +1360,12 @@ setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
 
 #' @aliases factorGap
 #'
-#' @description \code{factorGap},\code{factorGap<-}: getter and setter
-#'     for the \code{factorGap} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("factorGap", "ObiwarpParam", function(object){
     return(object@factorGap)})
 #' @aliases factorGap<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
     object@factorGap <- value
     if (validObject(object))
@@ -1512,15 +1374,12 @@ setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
 
 #' @aliases localAlignment
 #'
-#' @description \code{localAlignment},\code{localAlignment<-}: getter and setter
-#'     for the \code{localAlignment} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("localAlignment", "ObiwarpParam", function(object){
     return(object@localAlignment)})
 #' @aliases localAlignment<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
     object@localAlignment <- value
     if (validObject(object))
@@ -1529,40 +1388,31 @@ setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
 
 #' @aliases initPenalty
 #'
-#' @description \code{initPenalty},\code{initPenalty<-}: getter and setter
-#'     for the \code{initPenalty} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("initPenalty", "ObiwarpParam", function(object){
     return(object@initPenalty)})
 #' @aliases initPenalty<-
 #'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
     object@initPenalty <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description \code{subset},\code{subset<-}: getter and
-#'     setter for the \code{subset} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("subset", "ObiwarpParam", function(x){
     return(x@subset)})
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("subset", "ObiwarpParam", function(object, value) {
     object@subset <- value
     if (validObject(object))
         return(object)
 })
-#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
-#'     setter for the \code{subsetAdjust} slot of the object.
-#'
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("subsetAdjust", "ObiwarpParam", function(object){
     return(object@subsetAdjust)})
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
     object@subsetAdjust <- value
     if (validObject(object))

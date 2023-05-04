@@ -2,13 +2,14 @@
 % Please edit documentation in R/methods-group-features.R
 \name{groupFeatures-similar-rtime}
 \alias{groupFeatures-similar-rtime}
-\alias{groupFeatures,XCMSnExp,SimilarRtimeParam-method}
+\alias{groupFeatures,XcmsResult,SimilarRtimeParam-method}
 \title{Compounding/feature grouping based on similar retention times}
 \usage{
-\S4method{groupFeatures}{XCMSnExp,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
+\S4method{groupFeatures}{XcmsResult,SimilarRtimeParam}(object, param, msLevel = 1L, ...)
 }
 \arguments{
-\item{object}{\code{\link[=XCMSnExp]{XCMSnExp()}} object containing also correspondence results.}
+\item{object}{\code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object containing also
+correspondence results.}
 
 \item{param}{\code{SimilarRtimeParam} object with the settings for the method. See
 \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}} for details and options.}
@@ -19,7 +20,7 @@ should be grouped.}
 \item{...}{passed to the \code{groupFeatures} function on numeric values.}
 }
 \value{
-input \code{XCMSnExp} with feature groups added (i.e. in column
+the input object with feature groups added (i.e. in column
 \code{"feature_group"} of its \code{featureDefinitions} data frame.
 }
 \description{
@@ -36,9 +37,7 @@ See \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtime
 
 library(MsFeatures)
 ## Load a test data set with detected peaks
-data(faahko_sub)
-## Update the path to the files for the local system
-dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example
 register(SerialParam())

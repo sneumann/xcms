@@ -103,7 +103,7 @@
             rt_mid <- (pks[i, "rtmin"] + pks_new[current_peak, "rtmax"]) / 2
             ## If rt_mid is NOT between the peaks, take the midpoint between
             ## the apexes instead.
-            apexes <- range(c(pks[i, "rt"], pks[current_peak, "rt"]))
+            apexes <- range(c(pks[i, "rt"], pks_new[current_peak, "rt"]))
             if (rt_mid < apexes[1] || rt_mid > apexes[2])
                 rt_mid <- sum(apexes) / 2
             ## Calculate the mean of the 3 data points closest to rt_mid. Skip

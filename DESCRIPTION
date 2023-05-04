@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.23.0
+Version: 3.99.2
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -8,23 +8,23 @@ Description: Framework for processing and visualization of chromatographically
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Ralf", family = "Tautenhahn",
 	   email = "rtautenh@gmail.com",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Steffen", family = "Neumann",
 	   email = "sneumann@ipb-halle.de",
 	   role = c("aut", "cre"),
 	   comment = c(ORCID = "0000-0002-7899-7192")),
 	   person(given = "Paul", family = "Benton",
 	   email = "hpbenton@scripps.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Christopher", family = "Conley",
 	   email = "cjconley@ucdavis.edu",
-	   role = "ctb"),
+	   role = "aut"),
 	   person(given = "Johannes", family = "Rainer",
 	   email = "johannes.rainer@eurac.edu",
-	   role = "ctb",
+	   role = "aut",
 	   comment = c(ORCID = "0000-0002-6977-7147")),
 	   person(given = "Michael", family = "Witting",
 	   email = "michael.witting@helmholtz-muenchen.de",
@@ -36,13 +36,13 @@ Authors@R: c(
 Depends:
     R (>= 4.0.0),
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.21.4)
+    MSnbase (>= 2.23.1)
 Imports:
     mzR (>= 2.25.3),
     methods,
     Biobase,
     BiocGenerics,
-    ProtGenerics (>= 1.25.1),
+    ProtGenerics (>= 1.29.1),
     lattice,
     RColorBrewer,
     plyr,
@@ -52,8 +52,11 @@ Imports:
     robustbase,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils (>= 1.11.3),
+    MsCoreUtils (>= 1.11.5),
     MsFeatures,
+    MsExperiment (>= 1.1.2),
+    Spectra (>= 1.9.4),
+    progress,
     multtest
 Suggests:
     BiocStyle,
@@ -64,13 +67,11 @@ Suggests:
     ncdf4,
     testthat,
     pander,
-    magrittr,
     rmarkdown,
     MALDIquant,
     pheatmap,
-    Spectra (>= 1.1.17),
     MsBackendMgf,
-    progress,
+    MetaboCoreUtils,
     signal
 Enhances:
     Rgraphviz,
@@ -89,6 +90,11 @@ Collate:
     'DataClasses.R'
     'Deprecated.R'
     'MPI.R'
+    'MsExperiment-functions.R'
+    'MsExperiment.R'
+    'XcmsExperiment-functions.R'
+    'XcmsExperiment-plotting.R'
+    'XcmsExperiment.R'
     'c.R'
     'cwTools.R'
     'databases.R'
@@ -113,6 +119,7 @@ Collate:
     'functions-xcmsSet.R'
     'functions-xcmsSwath.R'
     'init.R'
+    'loadXcmsData.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'
     'methods-IO.R'
@@ -140,5 +147,4 @@ Collate:
     'writemzdata.R'
     'writemztab.R'
     'xcmsSource.R'
-    'xdata.R'
     'zzz.R'

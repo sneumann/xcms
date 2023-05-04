@@ -10,7 +10,7 @@ vignette: >
   %\VignetteIndexEntry{LC-MS/MS data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,BiocStyle,magrittr,pander,Spectra,MsBackendMgf}
+  %\VignetteDepends{xcms,msdata,BiocStyle,pander,Spectra,MsBackendMgf,MetaboCoreUtils}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -44,11 +44,13 @@ generate fragmentation spectra of detected metabolites (LC-MS/MS), which are
 then compared to fragmentation spectra of known metabolites. Different
 approaches exist for the generation of these fragmentation spectra, whereas the
 most used is data dependent acquisition (DDA) also known as the top-n method. In
-this method the top N most intense m/z values from a MS1 scan are selected for
-fragmentation in the next N scans before the cycle starts again. This method
-allows to generate clean MS2 fragmentation spectra on the fly during acquisition
-without the need for further experiments, but suffers from poor coverage of the
-detected metabolites (since only a limited number of ions are fragmented).
+this method the top N most intense ions (m/z values) from a MS1 scan are
+selected for fragmentation in the next N scans before the cycle starts
+again. This method allows to generate clean MS2 fragmentation spectra on the fly
+during acquisition without the need for further experiments, but suffers from
+poor coverage of the detected metabolites (since only a limited number of ions
+are fragmented) and less accurate quantification of the compounds (since fewer
+MS1 scans are generated).
 
 Data independent approaches (DIA) like Bruker bbCID, Agilent AllIons or Waters
 MSe don't use such a preselection, but rather fragment all detected molecules at
@@ -67,82 +69,96 @@ This document showcases the analysis of two small LC-MS/MS data sets using
 Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH
 acquisition mode. For comparison a DDA file from the same sample is included.
 
+
 # Analysis of DDA data
 
-Below we load the example DDA data set using the `readMSData` function from the
-`r Biocpkg("MSnbase")` package.
+Below we load the example DDA data set and create a total ion chromatogram of
+its MS1 data.
 
 ```{r load-dda-data, message = FALSE}
 library(xcms)
+library(MsExperiment)
 
 dda_file <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
                         package = "msdata")
-dda_data <- readMSData(dda_file, mode = "onDisk")
+dda_data <- readMsExperiment(dda_file)
+chr <- chromatogram(dda_data, aggregationFun = "sum", msLevel = 1L)
 ```
 
-```{r subset-dda, echo = FALSE, message = FALSE, eval = TRUE}
-#' Silently sub-setting the object to speed-up analysis
-dda_data <- filterRt(dda_data, rt = c(200, 600))
+According to the TIC most of the signal is measured between ~ 200 and 600
+seconds (see plot below). We thus filter the DDA data to this retention time
+range.
+
+```{r, fig.caption = "Total ion chromatogram (MS1) of the DDA data."}
+plot(chr)
+abline(v = c(230, 610))
+## filter the data
+dda_data <- filterRt(dda_data, rt = c(230, 610))
 ```
 
 The variable `dda_data` contains now all MS1 and MS2 spectra from the specified
-mzML file. The number of spectra for each MS level is listed below.
+mzML file. The number of spectra for each MS level is listed below. Note that we
+subset the experiment to the first data file (using `[1]`) and then access
+directly the spectra within this sample with the `spectra` function (which
+returns a `Spectra` object from the `r Biocpkg("Spectra")` package). Note that
+we use the pipe operator `|>` for better readability.
 
 ```{r dda-table-mslevel}
-table(msLevel(dda_data))
+dda_data[1] |>
+spectra() |>
+msLevel() |>
+table()
 ```
 
 For the MS2 spectra we can get the m/z of the precursor ion with the
-`precursorMz` function. Below we first filter the data set by MS level, extract
-the precursor m/z and call `head` to just show the first 6 elements. For easier
-readability we use the forward pipe operator `%>%` from the `magrittr` package.
+`precursorMz` function. Below we first subset the data set again to a single
+sample and filter to spectra from MS level 2 extracting then their precursor m/z
+values.
 
 ```{r precursor}
-library(magrittr)
-
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorMz() %>%
-    head()
+dda_data[1] |>
+spectra() |>
+filterMsLevel(2) |>
+precursorMz() |>
+head()
 ```
 
 With the `precursorIntensity` function it is also possible to extract the
 intensity of the precursor ion.
 
 ```{r precursor-intensity}
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorIntensity() %>%
-    head()
+dda_data[1] |>
+spectra() |>
+filterMsLevel(2) |>
+precursorIntensity() |>
+head()
 ```
 
-Some manufacturers (like Sciex for the present test data) don't define/export
-the precursor intensity and thus either `NA` or `0` is reported. We can however
-use the `estimatePrecursorIntensity` function from the `xcms` package to
+Some manufacturers (like Sciex) don't define/export the precursor intensity and
+thus either `NA` or `0` is reported. We can however use the
+`estimatePrecursorIntensity` function from the `r Biocpkg("Spectra")` package to
 determine the precursor intensity for a MS 2 spectrum based on the intensity of
-the respective ion in the previous MS1 scan (note that with
-`method = "interpolation"` the precursor intensity would be defined based on
-interpolation between the intensity in the previous and subsequent MS1 scan).
-Below we estimate the precursor intensities, on the full data (for MS1 spectra
-a `NA` value is reported). Note also that we use `xcms::` to call the function
-from the `xcms` package, because a function with the same name is also
-implemented in the `Spectra` package, which would however not support
-`OnDiskMSnExp` objects as input.
+the respective ion in the previous MS1 scan (note that with `method =
+"interpolation"` the precursor intensity would be defined based on interpolation
+between the intensity in the previous and subsequent MS1 scan).  Below we
+estimate the precursor intensities, on the full data (for MS1 spectra a `NA`
+value is reported).
 
 ```{r estimate-precursor}
-prec_int <- xcms::estimatePrecursorIntensity(dda_data)
+prec_int <- estimatePrecursorIntensity(spectra(dda_data))
 ```
 
 We next set the precursor intensity in the spectrum metadata of `dda_data`. So
 that it can be extracted later with the `precursorIntensity` function.
 
 ```{r set-precursor-intensity}
-fData(dda_data)$precursorIntensity <- prec_int
+spectra(dda_data)$precursorIntensity <- prec_int
 
-dda_data %>%
-    filterMsLevel(2L) %>%
-    precursorIntensity() %>%
-    head()
+dda_data[1] |>
+spectra() |>
+filterMsLevel(2) |>
+precursorIntensity() |>
+head()
 ```
 
 Next we perform the chromatographic peak detection on the MS level 1 data with
@@ -152,7 +168,7 @@ peak detection and perform the analysis.
 ```{r dda-find-chrom-peaks-ms1, message = FALSE}
 cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                      peakwidth = c(3, 30))
-dda_data <- findChromPeaks(dda_data, param = cwp)
+dda_data <- findChromPeaks(dda_data, param = cwp, msLevel = 1L)
 ```
 
 In total `r nrow(chromPeaks(dda_data))` peaks were identified in the present
@@ -165,14 +181,11 @@ annotation of the respective MS1 chromatographic peaks (or MS1 features after a
 correspondence analysis). Spectra for identified chromatographic peaks can be
 extracted with the `chromPeakSpectra` method. MS2 spectra with their precursor
 m/z and retention time within the rt and m/z range of the chromatographic peak
-are returned. Parameter `return.type` allows to define in which format these are
-returned. With `return.type = "List"` or `return.type = "Spectra"` the data is
-represented by a `Spectra` object from the `r BiocStyle::Biocpkg("Spectra")`.
+are returned.
 
-```{r dda-spectra, message = FALSE, eval = TRUE}
+```{r dda-spectra, message = FALSE}
 library(Spectra)
-dda_spectra <- chromPeakSpectra(
-    dda_data, msLevel = 2L, return.type = "Spectra")
+dda_spectra <- chromPeakSpectra(dda_data, msLevel = 2L)
 dda_spectra
 ```
 
@@ -183,25 +196,25 @@ details). Also, it would be possible to extract MS1 spectra for each peak by
 specifying `msLevel = 1L` in the call above (e.g. to evaluate the full MS1
 signal at the peak's apex position).
 
-In the example above we selected to return the data as a `Spectra`
-object. Spectra variables `"peak_id"` and `"peak_index"` contain the identifiers
-and the index (in the `chromPeaks` matrix) of the chromatographic peaks the MS2
-spectrum is associated with.
+The returned `Spectra` contains also the reference to the respective
+chromatographic peak as additional *spectra variable* `"peak_id"` that contains
+the identifier for the chromatographic peak (i.e. its row name in the
+`chromPeaks` matrix).
 
-```{r peak_id, eval = TRUE}
+```{r peak_id}
 dda_spectra$peak_id
 ```
 
 Note also that with `return.type = "List"` a list parallel to the `chromPeaks`
 matrix would be returned, i.e. each element in that list would contain the
-spectra for the chromatographic peak with the same index. This data
+spectra for the chromatographic peak with the same index. Such data
 representation might eventually simplify further processing.
 
 We next use the MS2 information to aid in the annotation of a chromatographic
 peak. As an example we use a chromatographic peak of an ion with an m/z of
 304.1131 which we extract in the code block below.
 
-```{r dda-ms2-example, message = FALSE, eval = TRUE}
+```{r dda-ms2-example, message = FALSE}
 ex_mz <- 304.1131
 chromPeaks(dda_data, mz = ex_mz, ppm = 20)
 ```
@@ -216,7 +229,7 @@ for the identified chromatographic peak against these to annotate our ion. Below
 we extract all MS2 spectra that were associated with the candidate
 chromatographic peak using the ID of the peak in the present data set.
 
-```{r dda-ms2-get-ms2, message = FALSE, eval = TRUE}
+```{r dda-ms2-get-ms2, message = FALSE}
 ex_id <- rownames(chromPeaks(dda_data, mz = ex_mz, ppm = 20))
 ex_spectra <- dda_spectra[dda_spectra$peak_id == ex_id]
 ex_spectra
@@ -227,9 +240,11 @@ in our candidate chromatographic peak. We next reduce this to a single MS2
 spectrum using the `combineSpectra` method employing the `combinePeaks`
 function to determine which peaks to keep in the resulting spectrum (have a look
 at the `?combinePeaks` help page for details). Parameter `f` allows to specify
-which spectra in the input object should be combined into one.
+which spectra in the input object should be combined into one. Note that this
+combination of multiple fragment spectra into a single spectrum might not be
+generally the best approach or suggested for all types of data.
 
-```{r dda-ms2-consensus, message = FALSE, eval = TRUE}
+```{r dda-ms2-consensus, message = FALSE}
 ex_spectrum <- combineSpectra(ex_spectra, FUN = combinePeaks, ppm = 20,
                               peaks = "intersect", minProp = 0.8,
                               intensityFun = median, mzFun = median,
@@ -244,7 +259,7 @@ spectrum contains only peaks that were present in 80% of the input spectra.
 
 A plot of this *consensus* spectrum is shown below.
 
-```{r dda-ms2-consensus-plot, message = FALSE, fig.cap = "Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromatographic peak CP53.", fig.width = 8, fig.height = 8, eval = TRUE}
+```{r dda-ms2-consensus-plot, message = FALSE, fig.cap = "Consensus MS2 spectrum created from all measured MS2 spectra for ions of chromatographic peak CP53.", fig.width = 8, fig.height = 8}
 plotSpectra(ex_spectrum)
 ```
 
@@ -254,22 +269,24 @@ exported from Metlin. For each of the compounds MS2 spectra created with
 collision energies of 0V, 10V, 20V and 40V are available. Below we import the
 respective data and plot our candidate spectrum against the MS2 spectra of
 Flumanezil and Fenamiphos (from a collision energy of 20V). To import files in
-MGF format we have to load the `MsBackendMgf` R package which adds MGF file
-support to the `Spectra` package. This package can be installed with
-`BiocManager::install("RforMassSpectrometry/MsBackendMgf")`.
+MGF format we have to load the `r Biocpkg("MsBackendMgf")` Bioconductor package
+which adds MGF file support to the `Spectra` package.
 
-Prior plotting we *normalize* our experimental spectra.
+Prior plotting we *scale* our experimental spectra to replace all peak
+intensities with values relative to the maximum peak intensity (which is set to
+a value of 100).
 
-```{r normalize, eval = TRUE}
-norm_fun <- function(z, ...) {
+```{r normalize}
+scale_fun <- function(z, ...) {
     z[, "intensity"] <- z[, "intensity"] /
         max(z[, "intensity"], na.rm = TRUE) * 100
     z
 }
-ex_spectrum <- addProcessing(ex_spectrum, FUN = norm_fun)
+ex_spectrum <- addProcessing(ex_spectrum, FUN = scale_fun)
 ```
 
-```{r dda-ms2-metlin-match, fig.cap = "Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot.", fig.width = 12, fig.height = 6, eval = TRUE}
+
+```{r dda-ms2-metlin-match, fig.cap = "Mirror plots for the candidate MS2 spectrum against Flumanezil (left) and Fenamiphos (right). The upper panel represents the candidate MS2 spectrum, the lower the target MS2 spectrum. Matching peaks are indicated with a dot.", fig.width = 12, fig.height = 6}
 library(MsBackendMgf)
 flumanezil <- Spectra(
     system.file("mgf", "metlin-2724.mgf", package = "xcms"),
@@ -291,7 +308,7 @@ spectra, we can also calculate similarities between them with the
 `compareSpectra` method (which uses by default the normalized dot-product to
 calculate the similarity).
 
-```{r dda-ms2-dotproduct, eval = TRUE}
+```{r dda-ms2-dotproduct}
 compareSpectra(ex_spectrum, flumanezil, ppm = 40)
 compareSpectra(ex_spectrum, fenamiphos, ppm = 40)
 ```
@@ -300,7 +317,9 @@ Clearly, the candidate spectrum does not match Flumanezil, while it has a high
 similarity to Fenamiphos. While we performed here the MS2-based annotation on a
 single chromatographic peak, this could be easily extended to the full list of
 MS2 spectra (returned by `chromPeakSpectra`) for all chromatographic peaks in an
-experiment. See also [here](https://jorainer.github.io/SpectraTutorials/).
+experiment. See also [here](https://jorainer.github.io/SpectraTutorials/) or
+[here](https://jorainer.github.io/MetaboAnnotationTutorials) for alternative
+tutorials on matching experimental fragment spectra against a reference.
 
 In the present example we used only a single data file and we did thus not need
 to perform a sample alignment and correspondence analysis. These tasks could
@@ -323,45 +342,54 @@ for more details and examples.
 
 In this section we analyze a small SWATH data set consisting of a single mzML
 file with data from the same sample analyzed in the previous section but
-recorded in SWATH mode. We again read the data with the `readMSData`
+recorded in SWATH mode. We again read the data with the `readMsExperiment`
 function. The resulting object will contain all recorded MS1 and MS2
-spectra in the specified file.
+spectra in the specified file. Similar to the previous data file, we filter the
+file to signal between 230 and 610 seconds.
 
 ```{r load-swath-data, message = FALSE}
 swath_file <- system.file("TripleTOF-SWATH",
                           "PestMix1_SWATH.mzML",
                           package = "msdata")
 
-swath_data <- readMSData(swath_file, mode = "onDisk")
-```
+swath_data <- readMsExperiment(swath_file)
+swath_data <- filterRt(swath_data, rt = c(230, 610))
 
-```{r echo = FALSE, message = FALSE}
-swath_data <- filterRt(swath_data, rt = c(200, 600))
 ```
 
 Below we determine the number of MS level 1 and 2 spectra in the present data
 set.
 
 ```{r swath-table-mslevel}
-table(msLevel(swath_data))
+spectra(swath_data) |>
+msLevel() |>
+table()
 ```
 
 As described in the introduction, in SWATH mode all ions within pre-defined
 isolation windows are fragmented and MS2 spectra measured. The definition of
 these isolation windows (SWATH pockets) is imported from the mzML files and
-stored in the object's `fData` (which provides additional annotations for each
-individual spectrum). Below we inspect the respective information for the first
-few spectra. The upper and lower isolation window m/z can be extracted with the
-`isolationWindowLowerMz` and `isolationWindowUpperMz`.
+available as additional *spectra variables*. Below we inspect the respective
+information for the first few spectra. The upper and lower isolation window m/z
+is available with spectra variables `"isolationWindowLowerMz"` and
+`"isolationWindowUpperMz"` respectively and the *target* m/z of the isolation
+window with `"isolationWindowTargetMz"`. We can use the `spectraData` function
+to extract this information from the spectra within our `swath_data` object.
 
 ```{r fdata-isolationwindow}
-head(fData(swath_data)[, c("isolationWindowTargetMZ",
-                           "isolationWindowLowerOffset",
-                           "isolationWindowUpperOffset",
-                           "msLevel", "retentionTime")])
+spectra(swath_data) |>
+spectraData(c("isolationWindowTargetMz", "isolationWindowLowerMz",
+              "isolationWindowUpperMz", "msLevel", "rtime")) |>
+head()
 
-head(isolationWindowLowerMz(swath_data))
-head(isolationWindowUpperMz(swath_data))
+```
+
+We could also access these variables directly with the dedicated
+`isolationWindowLowerMz` and `isolationWindowUpperMz` functions.
+
+```{r}
+head(isolationWindowLowerMz(spectra(swath_data)))
+head(isolationWindowUpperMz(spectra(swath_data)))
 ```
 
 In the present data set we use the value of the *isolation window target m/z* to
@@ -369,20 +397,20 @@ define the individual SWATH pockets. Below we list the number of spectra that
 are recorded in each pocket/isolation window.
 
 ```{r}
-table(isolationWindowTargetMz(swath_data))
+table(isolationWindowTargetMz(spectra(swath_data)))
 ```
 
-We have thus 1,000 MS2 spectra measured in each isolation window.
+We have thus between 422 and 423 MS2 spectra measured in each isolation window.
 
 Note that also DIA data from other manufacturers (e.g. Waters MSe) are supported
-as long as a spectra variable `isolationWindowTargetMZ` is available. If that
-variable is empty it can also manually be initialized as shown below (assuming
-that for the `precursorMz` of MS2 spectra the a constant value per isolation
-window (usually the m/z in the middle between the used lower and upper m/z of
-the isolation window).
+as long as a spectra variable `isolationWindowTargetMz` is available. If that
+variable is not provided in the raw data files it can also be manually assigned
+to each spectrum in the data set. In the example below the precursor m/z from
+the individual spectra would be used as their `"isolationWindowTargetMz"` (note:
+the line below is only shown as an example but not evaluated).
 
 ```{r, eval = FALSE}
-fData(swath_data)$isolationWindowTargetMZ <- precursorMz(swath_data)
+spectra(swath_data)$isolationWindowTargetMz <- precursorMz(spectra(swath_data))
 ```
 
 
@@ -397,30 +425,29 @@ analysis.
 cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                      peakwidth = c(3, 30))
 swath_data <- findChromPeaks(swath_data, param = cwp)
+swath_data
 ```
 
-Next we perform a chromatographic peak detection in the MS level 2 data of each
-isolation window. We use the `findChromPeaksIsolationWindow` function employing
-the same peak detection algorithm reducing however the required signal-to-noise
-ratio. The `isolationWindow` parameter allows to specify which MS2 spectra
-belong to which isolation window and hence defines in which set of MS2 spectra
-chromatographic peak detection should be performed. While the default value for
-this parameter uses isolation windows provided by calling
-`isolationWindowTargetMz` on the object, it would also be possible to manually
-define the isolation windows, e.g. if the corresponding information is not
-available in the input mzML files.
+Next we perform a chromatographic peak detection in MS level 2 data separately
+for each individual isolation window. We use the `findChromPeaksIsolationWindow`
+function employing the same peak detection algorithm reducing however the
+required signal-to-noise ratio. The `isolationWindow` parameter allows to
+specify which MS2 spectra belong to which isolation window and hence defines in
+which set of MS2 spectra chromatographic peak detection should be performed. As
+a default the `"isolationWindowTargetMz"` variable of the object's spectra is
+used.
 
 ```{r find-chrom-peaks-ms2, message = FALSE}
 cwp <- CentWaveParam(snthresh = 3, noise = 10, ppm = 10,
                      peakwidth = c(3, 30))
 swath_data <- findChromPeaksIsolationWindow(swath_data, param = cwp)
+swath_data
 ```
 
 The `findChromPeaksIsolationWindow` function added all peaks identified in the
 individual isolation windows to the `chromPeaks` matrix containing already the
-MS1 chromatographic peaks. These newly added peaks can be identified by the
-value of the `"isolationWindow"` column in the corresponding row in
-`chromPeakData`, which lists also the MS level in which the peak was identified.
+MS1 chromatographic peaks. These newly added peaks can be identified through the
+`"isolationWindow"` column in the object's `chromPeakData`.
 
 ```{r}
 chromPeakData(swath_data)
@@ -435,9 +462,9 @@ table(chromPeakData(swath_data)$isolationWindow)
 ```
 
 We thus successfully identified chromatographic peaks in the different MS levels
-and isolation windows, but don't have any actual MS2 *spectra* yet. These have
-to be reconstructed from the available chromatographic peak data which we will
-done in the next section.
+and isolation windows. As a next step we have to identify which of the measured
+signals represents data from the same original compound to *reconstruct*
+fragment spectra for each MS1 signal (chromatographic peak).
 
 
 ## Reconstruction of MS2 spectra
@@ -446,7 +473,7 @@ Identifying the signal of the fragment ions for the precursor measured by each
 MS1 chromatographic peak is a non-trivial task. The MS2 spectrum of the fragment
 ion for each MS1 chromatographic peak has to be reconstructed from the available
 MS2 signal (i.e. the chromatographic peaks identified in MS level 2). For SWATH
-data, fragment ion signal should be present in the isolation window that
+data, fragment ion signal should be present in the same isolation window that
 contains the m/z of the precursor ion and the chromatographic peak shape of the
 MS2 chromatographic peaks of fragment ions of a specific precursor should have a
 similar retention time and peak shape than the precursor's MS1 chromatographic
@@ -471,7 +498,7 @@ peak based on the following approach:
   reconstructed spectrum.
 
 To illustrate this process we perform the individual steps on the example of
-Fenamiphos (exact mass 303.105800777 and m/z of [M+H]+ adduct 304.113077). As
+fenamiphos (exact mass 303.105800777 and m/z of [M+H]+ adduct 304.113077). As
 a first step we extract the chromatographic peak for this ion.
 
 ```{r fena-extract-peak}
@@ -481,10 +508,9 @@ fenamiphos_ms1_peak
 ```
 
 Next we identify all MS2 chromatographic peaks that were identified in the
-isolation window containing the m/z of Fenamiphos. The information on the
+isolation window containing the m/z of fenamiphos. The information on the
 isolation window in which a chromatographic peak was identified is available in
-the `chromPeakData` (which contains arbitrary additional annotations to each
-individual chromatographic peak).
+the `chromPeakData`.
 
 ```{r fena-identify-ms2}
 keep <- chromPeakData(swath_data)$isolationWindowLowerMz < fenamiphos_mz &
@@ -493,7 +519,9 @@ keep <- chromPeakData(swath_data)$isolationWindowLowerMz < fenamiphos_mz &
 
 We also require the retention time of the MS2 chromatographic peaks to be
 similar to the retention time of the MS1 peak and extract the corresponding peak
-information.
+information. We thus below select all chromatographic peaks for which the
+retention time range contains the retention time of the apex position of the MS1
+chromatographic peak.
 
 ```{r fena-check-rt}
 keep <- keep &
@@ -504,22 +532,22 @@ fenamiphos_ms2_peak <- chromPeaks(swath_data)[which(keep), ]
 ```
 
 In total `r sum(keep, na.rm = TRUE)` MS2 chromatographic peaks match all the
-above condition. Next we extract their corresponding ion chromatograms, as well
-as the ion chromatogram of the MS1 peak. In addition we have to filter the
-object first by isolation window, keeping only spectra that were measured in
-that specific window and to specify to extract the chromatographic data from MS2
-spectra (with `msLevel = 2L`).
+above conditions. Next we extract the ion chromatogram of the MS1 peak and of
+all selected candidate MS2 signals. To ensure chromatograms are extracted from
+spectra in the correct isolation window we need to first filter the data by
+isolation window.
 
 ```{r fena-eic-extract, warning = FALSE}
+## TODO continue here.
 rtr <- fenamiphos_ms1_peak[, c("rtmin", "rtmax")]
 mzr <- fenamiphos_ms1_peak[, c("mzmin", "mzmax")]
 fenamiphos_ms1_chr <- chromatogram(swath_data, rt = rtr, mz = mzr)
 
 rtr <- fenamiphos_ms2_peak[, c("rtmin", "rtmax")]
 mzr <- fenamiphos_ms2_peak[, c("mzmin", "mzmax")]
-fenamiphos_ms2_chr <- chromatogram(
-    filterIsolationWindow(swath_data, mz = fenamiphos_mz),
-    rt = rtr, mz = mzr, msLevel = 2L)
+fenamiphos_ms2_chr <- swath_data |>
+filterIsolationWindow(mz = fenamiphos_mz) |>
+chromatogram(rt = rtr, mz = mzr, msLevel = 2L)
 ```
 
 We can now plot the extracted ion chromatogram of the MS1 and the extracted MS2
@@ -538,50 +566,56 @@ tmp <- lapply(fenamiphos_ms2_chr@.Data,
 ```
 
 Next we can calculate correlations between the peak shapes of each MS2
-chromatogram with the MS1 peak. We perform the correlation below for one of the
-MS2 chromatographic peaks. Note that, because spectra are recorded
-consecutively, the retention times of the individual data points will differ for
-the MS2 and MS1 chromatographic data and data points have thus to be matched
-(aligned) before performing the correlation analysis. This is done automatically
-by the `correlate` function. See the help for the `align` method for more
-information on alignment options.
+chromatogram with the MS1 peak. We illustrate this process on the example of one
+MS2 chromatographic peaks. Note that, because MS1 and MS2 spectra are recorded
+consecutively, the retention times of the individual data points will differ
+between the MS2 and MS1 chromatographic data and data points have thus to be
+matched (aligned) before performing the correlation analysis. This is done
+automatically by the `correlate` function. See the help for the `align` method
+for more information on alignment options.
 
 ```{r fena-cor}
-correlate(fenamiphos_ms2_chr[1, 1],
-          fenamiphos_ms1_chr[1, 1], align = "approx")
+compareChromatograms(fenamiphos_ms2_chr[1, 1],
+               fenamiphos_ms1_chr[1, 1],
+               ALIGNFUNARGS = list(method = "approx"))
+
 ```
 
 After identifying the MS2 chromatographic peaks with shapes of enough high
 similarity to the MS1 chromatographic peaks, an MS2 spectrum could be
 *reconstructed* based on the m/z and intensities of the MS2 chromatographic
-peaks.
+peaks (i.e., using their `"mz"` and `"maxo"` or `"into"` values).
 
-The `reconstructChromPeakSpectra` function performs the above analysis for each
-individual MS1 chromatographic peak in a SWATH data set. Below we reconstruct
-MS2 spectra for our example data requiring a peak shape correlation higher than
-`0.9` between the candidate MS2 chromatographic peak and the target MS1
-chromatographic peak. Again, we use `return.type = "Spectra"` to return the
-results as a `Spectra` object (instead to the default, but older/obsolete
-`MSpectra` object).
+Instead of performing this assignment of MS2 signal to MS1 chromatographic peaks
+manually as above, we can use the `reconstructChromPeakSpectra` function that
+performs the exact same steps for all MS1 chromatographic peaks in a DIA data
+set. Below we use this function to reconstruct MS2 spectra for our example data
+requiring a peak shape correlation higher than `0.9` between the candidate MS2
+chromatographic peak and the target MS1 chromatographic peak.
 
 ```{r reconstruct-ms2, message = FALSE}
-swath_spectra <- reconstructChromPeakSpectra(swath_data, minCor = 0.9,
-                                             return.type = "Spectra")
+swath_spectra <- reconstructChromPeakSpectra(swath_data, minCor = 0.9)
 swath_spectra
 ```
 
 As a result we got a `Spectra` object of length equal to the number of MS1 peaks
-in our data. A `peaksCount` of `0` indicates that no MS2 spectrum could be
-defined based on the used settings. For reconstructed spectra additional
-annotations are available such as the IDs of the MS2 chromatographic peaks from
-which the spectrum was reconstructed (`"ms2_peak_id"`) as well as the
-correlation coefficient of their chromatographic peak shape with the precursor's
-shape (`"ms2_peak_cor"`). Metadata column `"peak_id"` contains the ID of the MS1
+in our data. The length of a spectrum represents the number of peaks it
+contains. Thus, a length of 0 indicates that no matching peak (MS2 signal) could
+be found for the respective MS1 chromatographic peak.
+
+```{r}
+lengths(swath_spectra)
+```
+
+For reconstructed spectra additional annotations are available such as the IDs
+of the MS2 chromatographic peaks from which the spectrum was reconstructed
+(`"ms2_peak_id"`) as well as the correlation coefficient of their
+chromatographic peak shape with the precursor's shape
+(`"ms2_peak_cor"`). Metadata column `"peak_id"` contains the ID of the MS1
 chromatographic peak:
 
 ```{r}
-swath_spectra$ms2_peak_id
-swath_spectra$peak_id
+spectraData(swath_spectra, c("peak_id", "ms2_peak_id", "ms2_peak_cor"))
 ```
 
 We next extract the MS2 spectrum for our example peak most likely representing
@@ -601,7 +635,7 @@ DDA spectrum.
 
 ```{r}
 fenamiphos_swath_spectrum <- addProcessing(fenamiphos_swath_spectrum,
-                                           norm_fun)
+                                           scale_fun)
 ```
 
 ```{r fena-swath-plot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Fenamiphos (upper panel) against the measured spectrum from the DDA data and the Fenamiphhos spectrum from Metlin.", fig.width = 12, fig.height = 6}
@@ -641,7 +675,11 @@ ms2_eics <- chromatogram(swath_data_iwindow, rt = rt_range,
 ```
 
 Each row of this `ms2_eics` contains now the EIC of one of the MS2
-chromatographic peaks.
+chromatographic peaks. We can also plot these in an *overlay plot*.
+
+```{r, fig.cap = "Overlay of EICs of chromatographic peaks used to reconstruct the MS2 spectrum for fenamiphos."}
+plotChromatogramsOverlay(ms2_eics)
+```
 
 As a second example we analyze the signal from an [M+H]+ ion with an m/z of
 376.0381 (which would match
@@ -658,7 +696,11 @@ prochloraz_ms1_peak
 
 prochloraz_swath_spectrum <- swath_spectra[
     swath_spectra$peak_id == rownames(prochloraz_ms1_peak)]
+lengths(prochloraz_swath_spectrum)
 ```
+
+The MS2 spectrum for the (tentative) MS1 signal for prochloraz reconstructed
+from the SWATH MS2 data has thus 9 peaks.
 
 In addition we identify the corresponding MS1 peak in the DDA data set, extract
 all measured MS2 chromatographic peaks and build the consensus spectrum from
@@ -703,8 +745,8 @@ spectrum and the MS2 spectrum for Prochloraz (for a collision energy of 10V)
 from Metlin.
 
 ```{r pro-swath-plot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Prochloraz (upper panel) against the measured spectrum from the DDA data and the Prochloraz spectrum from Metlin.", fig.width = 12, fig.height = 6}
-prochloraz_swath_spectrum <- addProcessing(prochloraz_swath_spectrum, norm_fun)
-prochloraz_dda_spectrum <- addProcessing(prochloraz_dda_spectrum, norm_fun)
+prochloraz_swath_spectrum <- addProcessing(prochloraz_swath_spectrum, scale_fun)
+prochloraz_dda_spectrum <- addProcessing(prochloraz_dda_spectrum, scale_fun)
 
 par(mfrow = c(1, 2))
 plotSpectraMirror(prochloraz_swath_spectrum, prochloraz_dda_spectrum,
@@ -715,10 +757,62 @@ plotSpectraMirror(prochloraz_swath_spectrum, prochloraz[2],
 
 The spectra fit relatively well. Interestingly, the peak representing the
 precursor (the right-most peak) seems to have a slightly shifted m/z value in
-the reconstructed spectrum.
+the reconstructed spectrum. Also, by closer inspecting the spectrum two groups
+of peaks with small differences in m/z can be observed (see plot below).
+
+```{r, fig.cap = "SWATH-derived MS2 spectrum for prochloraz."}
+plotSpectra(prochloraz_swath_spectrum)
+```
+
+These could represent fragments from isotopes of the original compound. DIA MS2
+data, since all ions at a given retention time are fragmented, can contain
+fragments from isotopes. We thus below use the `isotopologues` function from the
+`r Biocpkg("MetaboCoreUtils")` package to check for presence of potential
+isotope peaks in the reconstructed MS2 spectrum for prochloraz.
+
+```{r}
+library(MetaboCoreUtils)
+isotopologues(peaksData(prochloraz_swath_spectrum)[[1]])
+```
+
+Indeed, peaks 3, 4 and 5 as well as 6 and 7 have been assigned to a group of
+potential isotope peaks. While this is no proof that the peaks are indeed
+fragment isotopes of prochloraz it is highly likely (given their difference in
+m/z and relative intensity differences). Below we thus define a function that
+keeps only the monoisotopic peak for each isotope group in a spectrum.
+
+```{r}
+## Function to keep only the first (monoisotopic) peak for potential
+## isotopologue peak groups.
+rem_iso <- function(x, ...) {
+    idx <- isotopologues(x)
+    idx <- unlist(lapply(idx, function(z) z[-1]), use.names = FALSE)
+    if (length(idx))
+        x[-idx, , drop = FALSE]
+    else x
+}
+prochloraz_swath_spectrum2 <- addProcessing(prochloraz_swath_spectrum,
+                                            rem_iso)
+```
+
+```{r, fig.cap = "SWATH MS2 spectrum for prochloraz before (left) and after deisotoping (right)."}
+par(mfrow = c(1, 2))
+plotSpectra(prochloraz_swath_spectrum)
+plotSpectra(prochloraz_swath_spectrum2)
+```
+
+Removing the isotope peaks from the SWATH MS2 spectrum increases also the
+spectra similarity score (since reference spectra generally will contain only
+fragments of the ion of interest, but not of any of its isotopes).
+
+```{r}
+compareSpectra(prochloraz_swath_spectrum, prochloraz_dda_spectrum)
+compareSpectra(prochloraz_swath_spectrum2, prochloraz_dda_spectrum)
+```
 
 Similar to the DDA data, the reconstructed MS2 spectra from SWATH data could be
 used in the annotation of the MS1 chromatographic peaks.
+
 
 <!-- Other compounds with some issues to check: -->
 <!-- - 306.162857, Buprofezin, Metlin 68681, consensus matches OKish with -->

@@ -105,7 +105,6 @@
   }
   \item{egauss}{RMSE of Gaussian fit}
 
-
   if \code{verbose.columns} is \code{TRUE} additionally :
 
   \item{mu}{Gaussian parameter mu}

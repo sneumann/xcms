@@ -183,9 +183,7 @@ The \emph{centWave} was designed to work on centroided mode, thus it
 }
 \examples{
 ## Load the test file
-data(faahko_sub)
-## Update the path to the files for the local system
-dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+faahko_sub <- loadXcmsData("faahko_sub")
 
 ## Subset to one file and restrict to a certain retention time range
 data <- filterRt(filterFile(faahko_sub, 1), c(2500, 3000))

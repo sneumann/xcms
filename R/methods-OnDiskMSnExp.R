@@ -8,7 +8,7 @@
 ## The centWave peak detection method for OnDiskMSnExp:
 #' @title Chromatographic peak detection using the centWave method
 #'
-#' @description The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
+#' @description The \code{findChromPeaks,OnDiskMSnExp,CentWaveParam} method
 #'     performs chromatographic peak detection using the \emph{centWave}
 #'     algorithm on all samples from an \code{\link{OnDiskMSnExp}}
 #'     object. \code{\link{OnDiskMSnExp}} objects encapsule all
@@ -427,14 +427,14 @@ setMethod("findChromPeaks",
 #' @inheritParams profMat-xcmsSet
 #'
 #' @rdname XCMSnExp-class
-setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
-                                                                  method = "bin",
-                                                                  step = 0.1,
-                                                                  baselevel = NULL,
-                                                                  basespace = NULL,
-                                                                  mzrange. = NULL,
-                                                                  fileIndex,
-                                                                  ...) {
+setMethod("profMat", "OnDiskMSnExp", function(object,
+                                              method = "bin",
+                                              step = 0.1,
+                                              baselevel = NULL,
+                                              basespace = NULL,
+                                              mzrange. = NULL,
+                                              fileIndex,
+                                              ...) {
     ## Subset the object by fileIndex.
     if (!missing(fileIndex)) {
         if (!is.numeric(fileIndex))
@@ -494,7 +494,7 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
     res
 })
 
-#' @rdname adjustRtime-obiwarp
+#' @rdname adjustRtime
 setMethod("adjustRtime",
           signature(object = "OnDiskMSnExp", param = "ObiwarpParam"),
           function(object, param, msLevel = 1L) {
@@ -586,3 +586,43 @@ setMethod("isolationWindowTargetMz", "OnDiskMSnExp", function(object) {
         return(.fdata(object)$isolationWindowTargetMZ)
     rep(NA_real_, length(object))
 })
+
+#' @rdname findChromPeaksIsolationWindow
+setMethod(
+    "findChromPeaksIsolationWindow", "OnDiskMSnExp",
+    function(object, param, msLevel = 2L,
+             isolationWindow = isolationWindowTargetMz(object), ...) {
+        startDate <- date()
+        if (!is.factor(isolationWindow))
+            isolationWindow <- factor(isolationWindow)
+        if (length(isolationWindow) != length(object))
+            stop("length of 'isolationWindow' has to match length of 'object'")
+        if (all(is.na(isolationWindow)))
+            stop("all isolation windows in 'isolationWindow' are NA")
+        fData(object)$isolationWindow <- isolationWindow
+        obj_sub <- selectFeatureData(as(object, "OnDiskMSnExp"),
+                                     fcol = c(MSnbase:::.MSnExpReqFvarLabels,
+                                              "centroided",
+                                              "isolationWindow",
+                                              "isolationWindowTargetMZ",
+                                              "isolationWindowLowerOffset",
+                                              "isolationWindowUpperOffset"))
+        if (inherits(object, "XCMSnExp"))
+            fData(obj_sub)$retentionTime <- rtime(object)
+        res <- lapply(split(obj_sub, f = isolationWindow),
+                      FUN = findChromPeaks, param = param, msLevel = msLevel)
+        if (!inherits(object, "XCMSnExp"))
+            object <- as(object, "XCMSnExp")
+        msf <- new("MsFeatureData")
+        msf@.xData <- .copy_env(object@msFeatureData)
+        msf <- .swath_collect_chrom_peaks(res, msf, fileNames(object))
+        lockEnvironment(msf, bindings = TRUE)
+        object@msFeatureData <- msf
+        xph <- XProcessHistory(param = param, date. = startDate,
+                               type. = .PROCSTEP.PEAK.DETECTION,
+                               fileIndex = 1:length(fileNames(object)),
+                               msLevel = msLevel)
+        object@.processHistory <- c(processHistory(object), list(xph))
+        validObject(object)
+        object
+    })

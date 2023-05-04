@@ -411,10 +411,10 @@ The \code{\link{do_findChromPeaks_massifquant}} core API function
     the peak detection.
 
 Other peak detection methods: 
-\code{\link{chromatographic-peak-detection}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findChromPeaks}()},
 \code{\link{findPeaks-MSW}}
 }
 \author{

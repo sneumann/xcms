@@ -20,26 +20,27 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 
-\item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample
+\item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
+samples defining the sample group assignments (i.e. which samples
+belong to which sample
 group). This parameter is mandatory for the \code{PeakDensityParam}
 and has to be provided also if there is no sample grouping in the
 experiment (in which case all samples should be assigned to the
 same group).}
 
-\item{ppm}{\code{numeric(1)} representing the relative mz error for the
-clustering/grouping (in parts per million).}
+\item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
+error for the clustering/grouping (in parts per million).}
 
-\item{absMz}{\code{numeric(1)} representing the absolute mz error for the
-clustering.}
+\item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
+maximum tolerated distance for m/z values.}
 
-\item{minFraction}{\code{numeric(1)} defining the minimum fraction of samples
-in at least one sample group in which the peaks have to be present to be
-considered as a peak group (feature).}
+\item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
+fraction of samples in at least one sample group in which the peaks
+have to be present to be considered as a peak group (feature).}
 
-\item{minSamples}{\code{numeric(1)} with the minimum number of samples in at
-least one sample group in which the peaks have to be detected to be
-considered a peak group (feature).}
+\item{minSamples}{For \code{PeakDensityParam}: \code{numeric(1)} with the minimum
+number of samples in at least one sample group in which the peaks have
+to be detected to be considered a peak group (feature).}
 }
 \value{
 A \code{list} with elements \code{"featureDefinitions"} and
