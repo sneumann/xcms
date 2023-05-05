@@ -9,7 +9,9 @@
 
 # The `xcms` package: pre-processing GC/LC-MS/MS data
 
-<img align = "right" src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/xcms/xcms.png" height="200">
+Please see the [package documentation](https://sneumann.github.io/xcms/) for
+more information and examples.
+
 
 ## Version 4
 
