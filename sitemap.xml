@@ -55,13 +55,10 @@
     <loc>/reference/XChromatogram.html</loc>
   </url>
   <url>
+    <loc>/reference/XcmsExperiment.html</loc>
+  </url>
+  <url>
     <loc>/reference/absent-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/adjustRtime-obiwarp.html</loc>
-  </url>
-  <url>
-    <loc>/reference/adjustRtime-peakGroups.html</loc>
   </url>
   <url>
     <loc>/reference/adjustRtime.html</loc>
@@ -92,9 +89,6 @@
   </url>
   <url>
     <loc>/reference/chromatogram-method.html</loc>
-  </url>
-  <url>
-    <loc>/reference/chromatographic-peak-detection.html</loc>
   </url>
   <url>
     <loc>/reference/colMax.html</loc>
@@ -205,6 +199,9 @@
     <loc>/reference/findChromPeaks-matchedFilter.html</loc>
   </url>
   <url>
+    <loc>/reference/findChromPeaks.html</loc>
+  </url>
+  <url>
     <loc>/reference/findChromPeaksIsolationWindow.html</loc>
   </url>
   <url>
@@ -271,15 +268,6 @@
     <loc>/reference/group.nearest.html</loc>
   </url>
   <url>
-    <loc>/reference/groupChromPeaks-density.html</loc>
-  </url>
-  <url>
-    <loc>/reference/groupChromPeaks-mzClust.html</loc>
-  </url>
-  <url>
-    <loc>/reference/groupChromPeaks-nearest.html</loc>
-  </url>
-  <url>
     <loc>/reference/groupChromPeaks.html</loc>
   </url>
   <url>
@@ -329,6 +317,9 @@
   </url>
   <url>
     <loc>/reference/loadRaw-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/loadXcmsData.html</loc>
   </url>
   <url>
     <loc>/reference/manualChromPeaks.html</loc>
@@ -448,13 +439,7 @@
     <loc>/reference/rectUnique.html</loc>
   </url>
   <url>
-    <loc>/reference/refineChromPeaks-clean.html</loc>
-  </url>
-  <url>
-    <loc>/reference/refineChromPeaks-filter-intensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/refineChromPeaks-merge.html</loc>
+    <loc>/reference/refineChromPeaks.html</loc>
   </url>
   <url>
     <loc>/reference/removeIntensity-Chromatogram.html</loc>
@@ -569,8 +554,5 @@
   </url>
   <url>
     <loc>/reference/xcmsSource-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/xdata.html</loc>
   </url>
 </urlset>
