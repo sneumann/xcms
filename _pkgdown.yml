@@ -1,0 +1,5 @@
+url: https://sneumann.github.io/xcms
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
