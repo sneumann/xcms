@@ -361,6 +361,64 @@ test_that(".mse_chromatogram works", {
     ref <- chromatogram(microtofq_od, mz = mzr, rt = rtr)
     expect_equal(unname(intensity(res[1, 2])), unname(intensity(ref[1, 2])))
     expect_equal(unname(intensity(res[2, 1])), unname(intensity(ref[2, 1])))
+
+    ## MS2 chromatogram with isolationWindow.
+    ## Fails to extract chromatograms because DDA will not support that
+    ## properly.
+    fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
+                      package = "msdata")
+    mse_dda <- readMsExperiment(fl)
+    mzr <- rbind(c(100, 110),
+                 c(500, 510))
+    rtr <- rbind(c(200, 220),
+                 c(500, 520))
+    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 1L)
+    expect_true(validObject(res))
+    expect_true(all(intensity(res[[1L]]) > 0))
+    expect_true(all(intensity(res[[2L]]) > 0))
+    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
+    expect_true(validObject(res))
+    expect_equal(msLevel(res[[1L]]), 2L)
+    expect_true(length(intensity(res[[1L]])) == 0)
+    expect_equal(msLevel(res[[2L]]), 2L)
+    expect_true(length(intensity(res[[2L]])) == 0)
+
+    ## Set isolationWindowTargetMz.
+    isolationWindowTargetMz(spectra(mse_dda)) <- as.numeric(
+        as.integer(isolationWindowTargetMz(spectra(mse_dda))))
+    mzr <- rbind(c(55, 57),
+                 c(81, 83))
+    rtr <- rbind(c(10, 700),
+                 c(10, 700))
+    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L,
+                                    isolationWindow = c(56, 40))
+    expect_true(all(intensity(res[[1L]]) > 0))
+    expect_true(length(intensity(res[[2L]])) == 0)
+    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L,
+                             isolationWindow = c(56, 82))
+    expect_true(all(intensity(res[[1L]]) > 0))
+    expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
+
+    ## Can extract chromatograms if providing the correct isolationWindow.
+    fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML",
+                      package = "msdata")
+    mse_dia <- readMsExperiment(fl)
+    mzr <- rbind(c(100, 110),
+                 c(500, 510))
+    res <- .mse_chromatogram(mse_dia, mz = mzr, rt = rtr, msLevel = 1L)
+    expect_equal(msLevel(res[[1L]]), 1L)
+    expect_equal(msLevel(res[[2L]]), 1L)
+    expect_true(length(intensity(res[[1L]])) > 0)
+    expect_true(length(intensity(res[[2L]])) > 0)
+
+    mzr <- rbind(c(40, 200),
+                 c(40, 200))
+    res <- .mse_chromatogram(mse_dia, mz = mzr, rt = rtr, msLevel = 2L,
+                             isolationWindow = c(163.75, 367.35))
+    expect_equal(msLevel(res[[1L]]), 2L)
+    expect_equal(msLevel(res[[2L]]), 2L)
+    expect_true(all(intensity(res[[1L]]) > 0))
+    expect_true(all(intensity(res[[2L]]) > 0))
 })
 
 test_that(".mse_split_spectra_variable works", {

@@ -35,10 +35,10 @@ Prior to any other analysis step, peaks have to be identified in the mass spec
 data. In contrast to the typical metabolomics workflow, in which peaks are
 identified in the chromatographic (time) dimension, in direct injection mass
 spec data sets peaks are identified in the m/z dimension. `r Biocpkg("xcms")`
-uses functionality from the `MassSpecWavelet` package to identify such peaks.
+uses functionality from the *MassSpecWavelet* package to identify such peaks.
 
 Below we load the required packages. For information on the parallel processing
-setup please see the `BiocParallel` vignette.
+setup please see the *BiocParallel* vignette.
 
 ```{r load-libs, message = FALSE, results = "hide"}
 library(xcms)
@@ -241,3 +241,9 @@ head(featureValues(ham_prep, value = "into"))
 Further analysis, i.e. detection of features/metabolites with significantly
 different abundances, or PCA analyses can be performed on the feature matrix
 using functionality from other R packages, such as `r Biocpkg("limma")`.
+
+# Session information
+
+```{r sessionInfo}
+sessionInfo()
+```

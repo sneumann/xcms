@@ -811,8 +811,8 @@ groupOverlaps <- function(xmin, xmax) {
 #'
 #' @noRd
 .chromatograms_for_peaks <- function(pd, rt, msl, file_idx = 1L,
-                                     tmz = rep(1, length(pd)), pks, pks_msl,
-                                     pks_tmz = rep(1, nrow(pks)),
+                                     tmz = rep(1L, length(pd)), pks, pks_msl,
+                                     pks_tmz = rep(1L, nrow(pks)),
                                      aggregationFun = "sum") {
     nr <- nrow(pks)
     FUN <- switch(aggregationFun,

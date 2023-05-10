@@ -441,16 +441,38 @@
     } else adj
 }
 
-#' Note: this should be improved supporting fully the .chromatograms_for_peaks
-#' from functions-utils.R, i.e. to specify also the isolation window as an
-#' additional selection criteria. Otherwise `x` needs to eventually subsetted.
+#' This function extracts a chromatogram for the provided rt, m/z ranges, MS
+#' level and isolationWindow from the `MsExperiment`. Parameter
+#' `isolationWindow` ensures that, for MS2 spectra, not simply all MS2 spectra
+#' are used for the chromatogram, but only those with matching
+#' `isolationWindowTargetMz` (and hence the same set of ions). Chromatograms
+#' for MS1 will not need `isolationWindow`.
 #'
 #' @importFrom MsExperiment sampleData
+#'
+#' @param msLevel MS level. Can be of length 1 or equal to the number of rows
+#'     of rt.
+#'
+#' @param isolationWindow additional variable eventually subsetting spectra,
+#'     e.g. for SWATH data or similar to ensure chromatograms for MS level 2
+#'     data are extracted from MS2 spectra of the correct (same) isolation
+#'     window. Set to `NULL` (the default) if there are not isoaltion windows
+#'     defined. Has to be the same lengths than there are chromatograms to be
+#'     extracted.
+#'
+#' @note
+#'
+#' This function will also pass the `isolationWindowTargetMz` spectra variable
+#' to the downstream function to ensure chromatograms from MS2 levels are
+#' extracted from the isolation window matching `isolationWindow`. If one of
+#' the two variables is not provided (or just `NA`) no chromatogram for MS2
+#' data will be extracted!
 #'
 #' @noRd
 .mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
                               mz = matrix(nrow = 0, ncol = 2),
                               aggregationFun = "sum", msLevel = 1L,
+                              isolationWindow = NULL,
                               chunkSize = 2L, progressbar = TRUE,
                               BPPARAM = bpparam()) {
     if (!nrow(rt))
@@ -462,8 +484,14 @@
     if (is.matrix(mz) && ncol(mz) != 2)
         stop("'mz' is expected to be a two-column matrix", call. = FALSE)
     pks <- cbind(mz, rt)
-    if (length(msLevel) != nrow(pks))
-        msLevel <- rep(msLevel[1L], nrow(pks))
+    npks <- nrow(pks)
+    if (length(msLevel) != npks)
+        msLevel <- rep(msLevel[1L], npks)
+    if (!length(isolationWindow))
+        isolationWindow <- rep(1L, npks)
+    if (length(isolationWindow) && length(isolationWindow) != npks)
+        stop("Length of 'isolationWindow' (if provided) should match the ",
+             "number of chromatograms to extract.")
     colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
     res <- .mse_spectrapply_chunks(
         x, FUN = function(z, pks, msl, afun, BPPARAM) {
@@ -482,8 +510,10 @@
                 split(rtime(z), f),
                 split(msLevel(z), f),
                 sidx,
+                split(isolationWindowTargetMz(z), f),
                 FUN = .chromatograms_for_peaks,
                 MoreArgs = list(pks = pks, pks_msl = msl,
+                                pks_tmz = isolationWindow,
                                 aggregationFun = afun),
                 SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
         }, pks = pks, msl = msLevel, afun = aggregationFun,
