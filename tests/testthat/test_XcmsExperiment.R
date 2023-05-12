@@ -1052,6 +1052,7 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
         xmse, mz = chromPeaks(xmse)[1:10, c("mzmin", "mzmax")],
         rt = chromPeaks(xmse)[1:10, c("rtmin", "rtmax")],
         msLevel = 1L, aggregationFun = "sum", chunkSize = 2L,
+        isolationWindow = NULL,
         chromPeaks = "apex_within", BPPARAM = bpparam(),
         return.type = "XChromatograms")
     expect_true(nrow(res) == 10L)
@@ -1061,6 +1062,7 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
         xmseg, mz = chromPeaks(xmse)[1:5, c("mzmin", "mzmax")],
         rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")], chunkSize = 2L,
         BPPARAM = bpparam(), msLevel = 1L, aggregationFun = "sum",
+        isolationWindow = NULL,
         chromPeaks = "apex_within", return.type = "XChromatograms")
     expect_true(nrow(featureDefinitions(res)) == 3)
     expect_true(all(unlist(featureDefinitions(res)$peakidx) %in%
@@ -1069,6 +1071,25 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
                         mz = chromPeaks(xmse)[1:5, c("mzmin", "mzmax")],
                         rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")])
     expect_equal(featureDefinitions(ref), featureDefinitions(res))
+
+    ## MS2 data.
+    res <- chromatogram(xmseg, msLevel = 2L,
+                        mz = chromPeaks(xmse)[1:5, c("mzmin", "mzmax")],
+                        rt = chromPeaks(xmse)[1:5, c("rtmin", "rtmax")])
+    expect_true(validObject(res))
+    expect_true(length(intensity(res[[1L]])) == 0)
+    expect_true(length(intensity(res[[2L]])) == 0)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(chromPeaks(res)) == 0)
+
+    ## real MS2 data.
+    res <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                        rt = c(100, 600))
+    expect_true(length(intensity(res[[1L]])) == 0)
+    res <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                        rt = c(100, 600), isolationWindowTargetMz = 270.85,
+                        aggregationFun = "sum")
+    expect_true(all(intensity(res[[1L]]) > 0))
 })
 
 test_that("featureChromatograms,XcmsExperiment works", {

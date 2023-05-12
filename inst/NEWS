@@ -2,6 +2,10 @@ Changes in version 3.99.3
 ----------------------
 
 - Small fixes in the *direct injection* vignette.
+- Add parameter `isolationWindowTargetMz` to the `chromatogram` function for
+  `MsExperiment` and `XcmsExperiment` to ensure MS2 chromatographic data is
+  extracted from the MS2 spectra containing fragments of the compound of
+  interest.
 
 
 Changes in version 3.99.2

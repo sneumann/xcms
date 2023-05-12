@@ -78,6 +78,7 @@ filterFeatureDefinitions(object, ...)
   mz = matrix(nrow = 0, ncol = 2),
   aggregationFun = "sum",
   msLevel = 1L,
+  isolationWindowTargetMz = NULL,
   chunkSize = 2L,
   return.type = "MChromatograms",
   BPPARAM = bpparam()
@@ -182,6 +183,7 @@ featureArea(
   aggregationFun = "sum",
   msLevel = 1L,
   chunkSize = 2L,
+  isolationWindowTargetMz = NULL,
   return.type = c("XChromatograms", "MChromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
@@ -242,6 +244,13 @@ chromatogram (BPC).}
 
 \item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
 function supports it).}
+
+\item{isolationWindowTargetMz}{For \code{chromatogram}: \code{numeric} (of length
+equal to the number of rows of \code{rt} and \code{mz}) with the isolation window
+target m/z of the MS2 spectra from which the chromatgrom should be
+generated. For MS1 data (\code{msLevel = 1L}, the default), this parameter
+is ignored. See examples on \code{chromatogram} below for further
+information.}
 
 \item{chunkSize}{For \code{chromatogram}: \code{integer(1)} defining the number of
 files from which the data should be loaded at a time into memory.
@@ -491,7 +500,14 @@ to specify which chromatographic peaks should be reported. See
 documentation on the \code{chromPeaks} parameter for more information.
 If the \code{XcmsExperiment} contains correspondence results, also the
 associated feature definitions will be included in the returned
-\code{XChromatograms}.
+\code{XChromatograms}. By default the function returns chromatograms from MS1
+data, but by setting parameter \code{msLevel = 2L} it is possible to e.g.
+extract also MS2 chromatograms. For \code{msLevel} other than 1 it is in
+addition important to also specify the \code{isolationWindowTargetMz} for which
+MS2 data should be extracted (e.g. for SWATH data MS2 spectra are created
+for different m/z isolation windows and the \code{isolationWindowTargetMz}
+parameter allows to define from which of these the MS2 chromatogram
+should be extracted.
 Note that in future more efficient data structures for chromatographic
 data will be available as well.
 \item \code{chromPeaks}: returns a \code{numeric} matrix with the identified
@@ -750,6 +766,30 @@ tic <- chromatogram(mse)
 par(mfrow = c(2, 1))
 plot(bpc, main = "BPC")
 plot(tic, main = "TIC")
+
+## Extracting MS2 chromatographic data
+##
+## To show how MS2 chromatograms can be extracted we first load a DIA
+## (SWATH) data set.
+mse_dia <- readMsExperiment(system.file("TripleTOF-SWATH",
+    "PestMix1_SWATH.mzML", package = "msdata"))
+
+## Extracting MS2 chromatogram requires also to specify the isolation
+## window from which to extract the data. Without that chromatograms
+## will be empty:
+chr_ms2 <- chromatogram(mse_dia, msLevel = 2L)
+intensity(chr_ms2[[1L]])
+
+## First we list available isolation windows
+table(isolationWindowTargetMz(spectra(mse_dia)))
+
+## We can then extract the TIC of MS2 data for a specific isolation window
+chr_ms2 <- chromatogram(mse_dia, msLevel = 2L,
+    isolationWindowTargetMz = 244.05)
+plot(chr_ms2)
+
+####
+## Chromatographic peak detection
 
 ## Perform peak detection on the data using the centWave algorith. Note
 ## that the parameters are chosen to reduce the run time of the example.

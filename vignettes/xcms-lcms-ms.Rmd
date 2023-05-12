@@ -402,6 +402,21 @@ table(isolationWindowTargetMz(spectra(swath_data)))
 
 We have thus between 422 and 423 MS2 spectra measured in each isolation window.
 
+To inspect the data we can also extract chromatograms from both the measured MS1
+as well as MS2 data. For MS2 data we have to set parameter `msLevel = 2L` and in
+addition also specify the isolation window from which we want to extract the
+data. Below we extract the TIC of the MS1 data and of one of the isolation
+windows (isolation window target m/z of 270.85) and plot these.
+
+```{r, fig.cap = "TIC for MS1 (upper panel) and MS2 data from the isolation window with target m/z 270.85 (lower panel)."}
+tic_ms1 <- chromatogram(swath_data, msLevel = 1L, aggregationFun = "sum")
+tic_ms2 <- chromatogram(swath_data, msLevel = 2L, aggregationFun = "sum",
+                        isolationWindowTargetMz = 270.85)
+par(mfrow = c(2, 1))
+plot(tic_ms1, main = "MS1")
+plot(tic_ms2, main = "MS2, isolation window m/z 270.85")
+```
+
 Note that also DIA data from other manufacturers (e.g. Waters MSe) are supported
 as long as a spectra variable `isolationWindowTargetMz` is available. If that
 variable is not provided in the raw data files it can also be manually assigned
@@ -534,20 +549,37 @@ fenamiphos_ms2_peak <- chromPeaks(swath_data)[which(keep), ]
 In total `r sum(keep, na.rm = TRUE)` MS2 chromatographic peaks match all the
 above conditions. Next we extract the ion chromatogram of the MS1 peak and of
 all selected candidate MS2 signals. To ensure chromatograms are extracted from
-spectra in the correct isolation window we need to first filter the data by
-isolation window.
+spectra in the correct isolation window we need to specify the respective
+isolation window by passing its isolation window target m/z to the
+`chromatogram` function (in addition to setting `msLevel = 2`). This can be done
+by either getting the `isolationWindowTargetMz` of the spectra after the data
+was subset using `filterIsolationWindow` (as done below) or by selecting the
+`isolationWindowTargetMz` closest to the m/z of the compound of interest.
 
 ```{r fena-eic-extract, warning = FALSE}
-## TODO continue here.
 rtr <- fenamiphos_ms1_peak[, c("rtmin", "rtmax")]
 mzr <- fenamiphos_ms1_peak[, c("mzmin", "mzmax")]
 fenamiphos_ms1_chr <- chromatogram(swath_data, rt = rtr, mz = mzr)
 
 rtr <- fenamiphos_ms2_peak[, c("rtmin", "rtmax")]
 mzr <- fenamiphos_ms2_peak[, c("mzmin", "mzmax")]
-fenamiphos_ms2_chr <- swath_data |>
+## Get the isolationWindowTargetMz for spectra containing the m/z of the
+## compound of interest
+swath_data |>
 filterIsolationWindow(mz = fenamiphos_mz) |>
-chromatogram(rt = rtr, mz = mzr, msLevel = 2L)
+spectra() |>
+isolationWindowTargetMz() |>
+table()
+```
+
+The target m/z of the isolation window containing the m/z of interest is thus
+299.1 and we can use this in the `chromatogram` call below to extract the data
+from the correct (MS2) spectra.
+
+```{r}
+fenamiphos_ms2_chr <- chromatogram(
+    swath_data, rt = rtr, mz = mzr, msLevel = 2L,
+    isolationWindowTargetMz = rep(299.1, nrow(rtr)))
 ```
 
 We can now plot the extracted ion chromatogram of the MS1 and the extracted MS2
@@ -662,16 +694,25 @@ different isolation windows. Thus we have to first filter the `swath_data`
 object by the isolation window containing the precursor m/z with the
 `filterIsolationWindow` to subset the data to MS2 spectra related to the ion of
 interest. In addition, we have to use `msLevel = 2L` in the `chromatogram` call
-because `chromatogram` extracts by default only data from MS1 spectra.
+because `chromatogram` extracts by default only data from MS1 spectra and we
+need to specify the target m/z of the isolation window containing the fragment
+data from the compound of interest.
 
 ```{r}
 rt_range <- chromPeaks(swath_data)[pk_ids, c("rtmin", "rtmax")]
 mz_range <- chromPeaks(swath_data)[pk_ids, c("mzmin", "mzmax")]
 
 pmz <- precursorMz(fenamiphos_swath_spectrum)[1]
-swath_data_iwindow <- filterIsolationWindow(swath_data, mz = pmz)
-ms2_eics <- chromatogram(swath_data_iwindow, rt = rt_range,
-                         mz = mz_range, msLevel = 2L)
+## Determine the isolation window target m/z
+tmz <- swath_data |>
+filterIsolationWindow(mz = pmz) |>
+spectra() |>
+isolationWindowTargetMz() |>
+unique()
+
+ms2_eics <- chromatogram(
+    swath_data, rt = rt_range, mz = mz_range, msLevel = 2L,
+    isolationWindowTargetMz = rep(tmz, nrow(rt_range)))
 ```
 
 Each row of this `ms2_eics` contains now the EIC of one of the MS2

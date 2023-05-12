@@ -375,7 +375,7 @@ test_that(".mse_chromatogram works", {
     res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 1L)
     expect_true(validObject(res))
     expect_true(all(intensity(res[[1L]]) > 0))
-    expect_true(all(intensity(res[[2L]]) > 0))
+    expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
     res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
     expect_true(validObject(res))
     expect_equal(msLevel(res[[1L]]), 2L)

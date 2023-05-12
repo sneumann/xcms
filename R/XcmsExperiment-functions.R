@@ -855,12 +855,14 @@
 #'
 #' @noRd
 .xmse_extract_chromatograms_old <- function(object, rt, mz, aggregationFun,
-                                            msLevel, chunkSize, chromPeaks,
+                                            msLevel, isolationWindow = NULL,
+                                            chunkSize, chromPeaks,
                                             return.type, BPPARAM) {
     chrs <- as(.mse_chromatogram(
         as(object, "MsExperiment"), rt = rt, mz = mz,
         aggregationFun = aggregationFun, msLevel = msLevel,
-        chunkSize = chunkSize, BPPARAM = BPPARAM), return.type)
+        isolationWindow = isolationWindow, chunkSize = chunkSize,
+        BPPARAM = BPPARAM), return.type)
     if (return.type == "MChromatograms" || chromPeaks == "none")
         return(chrs)
     js <- seq_len(ncol(chrs))
