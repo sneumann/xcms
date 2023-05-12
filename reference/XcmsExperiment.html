@@ -56,7 +56,7 @@ be reported. This can be performed using the fillChromPeaks() function.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -164,6 +164,7 @@ chromatogram(
   mz = matrix(nrow = 0, ncol = 2),
   aggregationFun = "sum",
   msLevel = 1L,
+  isolationWindowTargetMz = NULL,
   chunkSize = 2L,
   return.type = "MChromatograms",
   BPPARAM = bpparam()
@@ -294,6 +295,7 @@ chromatogram(
   aggregationFun = "sum",
   msLevel = 1L,
   chunkSize = 2L,
+  isolationWindowTargetMz = NULL,
   return.type = c("XChromatograms", "MChromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
@@ -373,6 +375,15 @@ chromatogram (BPC).</p></dd>
 <dt>msLevel</dt>
 <dd><p><code>integer</code> defining the MS level (or multiple MS level if the
 function supports it).</p></dd>
+
+
+<dt>isolationWindowTargetMz</dt>
+<dd><p>For <code>chromatogram</code>: <code>numeric</code> (of length
+equal to the number of rows of <code>rt</code> and <code>mz</code>) with the isolation window
+target m/z of the MS2 spectra from which the chromatgrom should be
+generated. For MS1 data (<code>msLevel = 1L</code>, the default), this parameter
+is ignored. See examples on <code>chromatogram</code> below for further
+information.</p></dd>
 
 
 <dt>chunkSize</dt>
@@ -650,7 +661,14 @@ to specify which chromatographic peaks should be reported. See
 documentation on the <code>chromPeaks</code> parameter for more information.
 If the <code>XcmsExperiment</code> contains correspondence results, also the
 associated feature definitions will be included in the returned
-<code>XChromatograms</code>.
+<code>XChromatograms</code>. By default the function returns chromatograms from MS1
+data, but by setting parameter <code>msLevel = 2L</code> it is possible to e.g.
+extract also MS2 chromatograms. For <code>msLevel</code> other than 1 it is in
+addition important to also specify the <code>isolationWindowTargetMz</code> for which
+MS2 data should be extracted (e.g. for SWATH data MS2 spectra are created
+for different m/z isolation windows and the <code>isolationWindowTargetMz</code>
+parameter allows to define from which of these the MS2 chromatogram
+should be extracted.
 Note that in future more efficient data structures for chromatographic
 data will be available as well.</p></li>
 <li><p><code>chromPeaks</code>: returns a <code>numeric</code> matrix with the identified
@@ -904,6 +922,34 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tic</span>, main <span class="op">=</span> <span class="st">"TIC"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="XcmsExperiment-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extracting MS2 chromatographic data</span></span></span>
+<span class="r-in"><span><span class="co">##</span></span></span>
+<span class="r-in"><span><span class="co">## To show how MS2 chromatograms can be extracted we first load a DIA</span></span></span>
+<span class="r-in"><span><span class="co">## (SWATH) data set.</span></span></span>
+<span class="r-in"><span><span class="va">mse_dia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html" class="external-link">readMsExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"PestMix1_SWATH.mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Extracting MS2 chromatogram requires also to specify the isolation</span></span></span>
+<span class="r-in"><span><span class="co">## window from which to extract the data. Without that chromatograms</span></span></span>
+<span class="r-in"><span><span class="co">## will be empty:</span></span></span>
+<span class="r-in"><span><span class="va">chr_ms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">mse_dia</span>, msLevel <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">chr_ms2</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## First we list available isolation windows</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">mse_dia</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1000   1000   1000   1000   1000   1000   1000   1000 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## We can then extract the TIC of MS2 data for a specific isolation window</span></span></span>
+<span class="r-in"><span><span class="va">chr_ms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">mse_dia</span>, msLevel <span class="op">=</span> <span class="fl">2L</span>,</span></span>
+<span class="r-in"><span>    isolationWindowTargetMz <span class="op">=</span> <span class="fl">244.05</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_ms2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">####</span></span></span>
+<span class="r-in"><span><span class="co">## Chromatographic peak detection</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Perform peak detection on the data using the centWave algorith. Note</span></span></span>
 <span class="r-in"><span><span class="co">## that the parameters are chosen to reduce the run time of the example.</span></span></span>
 <span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="findChromPeaks-centWave.html">CentWaveParam</a></span><span class="op">(</span>noise <span class="op">=</span> <span class="fl">10000</span>, snthresh <span class="op">=</span> <span class="fl">40</span>, prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -998,6 +1044,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the EICs for the second defined region</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="XcmsExperiment-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Subsetting the data to the results (and data) for the second sample</span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">xmse</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
@@ -1033,7 +1080,6 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Visualizing the alignment results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plotAdjustedRtime.html">plotAdjustedRtime</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="XcmsExperiment-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Performing the final correspondence analysis</span></span></span>
 <span class="r-in"><span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">xmse</span>, param <span class="op">=</span> <span class="va">pdp</span><span class="op">)</span></span></span>
