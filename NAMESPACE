@@ -526,6 +526,7 @@ exportMethods("hasChromPeaks",
               "manualFeatures",
               "featureSpectra",
               "chromPeakSpectra",
+              "chromPeakChromatograms",
               "featureChromatograms"
               )
 

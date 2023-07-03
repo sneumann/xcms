@@ -267,6 +267,81 @@ setGeneric("centerSample", function(object) standardGeneric("centerSample"))
 setGeneric("centerSample<-", function(object, value)
     standardGeneric("centerSample<-"))
 setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-"))
+
+#' @title Extract an ion chromatogram for each chromatographic peak
+#'
+#' @name chromPeakChromatograms
+#'
+#' @description
+#'
+#' Extract an ion chromatogram (EIC) for each chromatographic peak in an
+#' [XcmsExperiment()] object. The result is returned as an [XChromatograms()]
+#' of length equal to the number of chromatographic peaks (and one column).
+#'
+#' @param object An [XcmsExperiment()] with identified chromatographic peaks.
+#'
+#' @param expandRt `numeric(1)` to eventually expand the retention time range
+#'     from which the signal should be integrated. The chromatogram will
+#'     contain signal from `chromPeaks[, "rtmin"] - expandRt` to
+#'     `chromPeaks[, "rtmax"] + expandRt`. The default is `expandRt = 0`.
+#'
+#' @param expandMz `numeric(1)` to eventually expand the m/z range
+#'     from which the signal should be integrated. The chromatogram will
+#'     contain signal from `chromPeaks[, "mzmin"] - expandMz` to
+#'     `chromPeaks[, "mzmax"] + expandMz`. The default is `expandMz = 0`.
+#'
+#' @param aggregationFun `character(1)` defining the function how signals
+#'     within the m/z range in each spectrum (i.e. for each discrete retention
+#'     time) should be aggregated. The default (`aggregationFun = "max"`)
+#'     reports the largest signal for each spectrum.
+#'
+#' @param peaks optional `character` providing the IDs of the chromatographic
+#'     peaks (i.e. the row names of the peaks in `chromPeaks(object)`) for
+#'     which chromatograms should be returned.
+#'
+#' @param return.type `character(1)` specifying the type of the returned object.
+#'     Can be either `return.type = "XChromatograms"` (the default) or
+#'     `return.type = "MChromatograms"` to return either a chromatographic
+#'     object with or without the identified chromatographic peaks,
+#'     respectively.
+#'
+#' @param ... currently ignored.
+#'
+#' @param progressbar `logical(1)` whether the progress of the extraction
+#'     process should be displayed.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @seealso [featureChromatograms()] to extract an EIC for each feature.
+#'
+#' @examples
+#'
+#' ## Load a test data set with detected peaks
+#' faahko_sub <- loadXcmsData("faahko_sub2")
+#'
+#' ## Get EICs for every detected chromatographic peak
+#' chrs <- chromPeakChromatograms(faahko_sub)
+#' chrs
+#'
+#' ## Order of EICs matches the order in chromPeaks
+#' chromPeaks(faahko_sub) |> head()
+#'
+#' ## variable "sample_index" provides the index of the sample the EIC was
+#' ## extracted from
+#' fData(chrs)$sample_index
+#'
+#' ## Get the EIC for selected peaks only.
+#' pks <- rownames(chromPeaks(faahko_sub))[c(6, 12)]
+#' pks
+#'
+#' ## Expand the data on retention time dimension by 15 seconds (on each side)
+#' res <- chromPeakChromatograms(faahko_sub, peaks = pks, expandRt = 5)
+#' plot(res[1, ])
+setGeneric("chromPeakChromatograms", function(object, ...)
+    standardGeneric("chromPeakChromatograms"))
+
 setGeneric("chromPeaks", function(object, ...) standardGeneric("chromPeaks"))
 setGeneric("chromPeaks<-", function(object, value)
     standardGeneric("chromPeaks<-"))
@@ -582,6 +657,8 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #'
 #' @seealso [filterColumnsKeepTop()] to filter the extracted EICs keeping only
 #'     the *top n* columns (samples) with the highest intensity.
+#'     [chromPeakChromatograms()] for a function to extract an EIC for each
+#'     chromatographic peak.
 #'
 #' @author Johannes Rainer
 #'

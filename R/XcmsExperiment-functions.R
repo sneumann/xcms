@@ -879,7 +879,7 @@
             sel <- which(pks[, "sample"] == j)
             if (length(sel)) {
                 slot(chrs@.Data[i, j][[1L]],
-                     "chromPeaks", check = FALSE) <- pks[sel, , drop=FALSE]
+                     "chromPeaks", check = FALSE) <- pks[sel, , drop = FALSE]
                 slot(chrs@.Data[i, j][[1L]],
                      "chromPeakData", check = FALSE) <-
                     extractROWS(cpd, rownames(pks)[sel])

@@ -1293,8 +1293,6 @@ setMethod(
         do.call(c, res)
     })
 
-## TODO chromPeakChromatograms
-
 ################################################################################
 ## alignment
 ################################################################################
@@ -1549,6 +1547,87 @@ setMethod(
             object@featureDefinitions <- res
         }
         object
+    })
+
+#' @rdname chromPeakChromatograms
+setMethod(
+    "chromPeakChromatograms", "XcmsExperiment",
+    function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
+             peaks = character(),
+             return.type = c("XChromatograms", "MChromatograms"),
+             ..., progressbar = TRUE) {
+        return.type <- match.arg(return.type)
+        if (!hasChromPeaks(object))
+            stop("'object' does not have any 'chromPeaks'. Please run ",
+                 "'findChromPeaks' first.")
+        pks <- chromPeaks(object)
+        pkd <- chromPeakData(object)
+        if (length(peaks)) {
+            msg <- paste0("If provided, 'peaks' is expected to be a character ",
+                          "vector with the IDs (row names) of the ",
+                          "chromatographic peaks.")
+            if (!is.character(peaks))
+                stop(msg)
+            if (!all(peaks %in% rownames(chromPeaks(object))))
+                stop("'peaks' don't match row names of 'chromPeaks'. ", msg)
+            pks <- pks[peaks, , drop = FALSE]
+            pkd <- extractROWS(pkd, peaks)
+        }
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = (length(object) + 1), clear = FALSE)
+        pb$tick(0)
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        ph <- object@processHistory
+        object <- as(object, "MsExperiment")
+        res <- lapply(seq_along(object), function(z) {
+            idx <- which(pks[, "sample"] == z)
+            if (length(idx)) {
+                mzr <- pks[idx, c("mzmin", "mzmax"), drop = FALSE]
+                rtr <- pks[idx, c("rtmin", "rtmax"), drop = FALSE]
+                if (expandMz != 0) {
+                    mzr[, 1] <- mzr[, 1] - expandMz
+                    mzr[, 2] <- mzr[, 2] + expandMz
+                }
+                if (expandRt != 0) {
+                    rtr[, 1] <- rtr[, 1] - expandRt
+                    rtr[, 2] <- rtr[, 2] + expandRt
+                }
+                chrs <- .mse_chromatogram(
+                    object[z], rt = rtr, mz = mzr,
+                    aggregationFun = aggregationFun,
+                    msLevel = pkd$ms_level[idx],
+                    isolationWindow = pkd$isolationWindow[idx],
+                    chunkSize = 1L, progressbar = FALSE,
+                    BPPARAM = SerialParam())
+                fData(chrs)$sample_index <- z # report sample index
+                pb$tick()
+                rownames(chrs) <- rownames(pks)[idx]
+                rownames(fData(chrs)) <- rownames(chrs)
+                chrs
+            } else {
+                pb$tick()
+                NULL
+            }
+        })
+        res <- as(do.call(c, res[lengths(res) > 0]), return.type)
+        pData(res)[,] <- NA             # it's not from a single file.
+        ## re-order the result - if needed.
+        if (any(rownames(res) != rownames(pks)))
+            res <- res[match(rownames(pks), rownames(res)), 1L]
+        if (return.type == "XChromatograms") {
+            for (i in seq_along(res)) {
+                slot(res@.Data[i, 1L][[1L]], "chromPeaks", check = FALSE) <-
+                    pks[i, , drop = FALSE]
+                slot(res@.Data[i, 1L][[1L]], "chromPeakData", check = FALSE) <-
+                    extractROWS(pkd, i)
+            }
+            res@.processHistory <- ph
+        }
+        pb$tick()
+        res
     })
 
 #' @rdname featureChromatograms

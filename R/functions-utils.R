@@ -800,7 +800,8 @@ groupOverlaps <- function(xmin, xmax) {
 #'     chromatograms should be extracted.
 #'
 #' @param pks_tmz `numeric` with the isolation window target m/z in which
-#'     the (MS2) chromatographic peak was detected.
+#'     the (MS2) chromatographic peak was detected. Does not need to be
+#'     provided for MS1 data.
 #'
 #' @param file_idx `integer(1)` allowing to optionally set the index of the
 #'     file the EIC is from (parameter `fromFile`).

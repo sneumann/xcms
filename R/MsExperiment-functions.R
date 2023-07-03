@@ -456,7 +456,7 @@
 #' @param isolationWindow additional variable eventually subsetting spectra,
 #'     e.g. for SWATH data or similar to ensure chromatograms for MS level 2
 #'     data are extracted from MS2 spectra of the correct (same) isolation
-#'     window. Set to `NULL` (the default) if there are not isoaltion windows
+#'     window. Set to `NULL` (the default) if there are not isolation windows
 #'     defined. Has to be the same lengths than there are chromatograms to be
 #'     extracted.
 #'
