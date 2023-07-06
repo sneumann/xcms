@@ -10,7 +10,7 @@
 # The `xcms` package: pre-processing GC/LC-MS/MS data
 
 Please see the [package documentation](https://sneumann.github.io/xcms/) for
-more information and examples.
+more information and examples and [news](inst/NEWS) for the latest changes.
 
 
 ## Version 4
