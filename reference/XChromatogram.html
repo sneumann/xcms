@@ -314,10 +314,10 @@ filter chromatographic peaks. See function description below for details.</p></d
 <dt>intensity</dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric</code> with the intensity values
 (length has to be equal to the length of <code>rtime</code>).</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>For <span class="st">`</span><span class="at">featureValues</span><span class="st">`</span><span class="sc">:</span> <span class="st">`</span><span class="at">character(1)</span><span class="st">`</span> specifying the name</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>of the column <span class="cf">in</span> <span class="st">`</span><span class="at">chromPeaks(object)</span><span class="st">`</span> containing the intensity value</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>of the peak that should be used <span class="cf">for</span> the <span class="st">`</span><span class="at">method = "maxint"</span><span class="st">`</span> conflict</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>resolution if.</span></code></pre><p></p></div></dd>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>For <span class="st">`</span><span class="at">featureValues</span><span class="st">`</span><span class="sc">:</span> <span class="st">`</span><span class="at">character(1)</span><span class="st">`</span> specifying the name</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>of the column <span class="cf">in</span> <span class="st">`</span><span class="at">chromPeaks(object)</span><span class="st">`</span> containing the intensity value</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>of the peak that should be used <span class="cf">for</span> the <span class="st">`</span><span class="at">method = "maxint"</span><span class="st">`</span> conflict</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>resolution if.</span></code></pre><p></p></div></dd>
 
 
 <dt>mz</dt>
@@ -390,21 +390,21 @@ defining which peaks or features to return if <code>rt</code> or <code>mz</code>
 partially overlapping with <code>rt</code>, <code>"within"</code> return peaks that are
 completely within <code>rt</code> and <code>"apex_within"</code> return peaks which apex
 is within <code>rt</code>.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>For <span class="st">`</span><span class="at">plot</span><span class="st">`</span><span class="sc">:</span> what type of plot should be used <span class="cf">for</span> the</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chromatogram</span> (such as <span class="st">`</span><span class="at">"l"</span><span class="st">`</span> <span class="cf">for</span> lines, <span class="st">`</span><span class="at">"p"</span><span class="st">`</span> <span class="cf">for</span> points etc), see help</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>of [<span class="fu">plot</span>()] <span class="cf">in</span> the <span class="st">`</span><span class="at">graphics</span><span class="st">`</span> package <span class="cf">for</span> more details.</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>For <span class="st">`</span><span class="at">processHistory</span><span class="st">`</span><span class="sc">:</span> restrict returned processing steps to specific</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>types. Use [<span class="fu">processHistoryTypes</span>()] to list all supported values.</span></code></pre><p></p></div></dd>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>For <span class="st">`</span><span class="at">plot</span><span class="st">`</span><span class="sc">:</span> what type of plot should be used <span class="cf">for</span> the</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">chromatogram</span> (such as <span class="st">`</span><span class="at">"l"</span><span class="st">`</span> <span class="cf">for</span> lines, <span class="st">`</span><span class="at">"p"</span><span class="st">`</span> <span class="cf">for</span> points etc), see help</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>of [<span class="fu">plot</span>()] <span class="cf">in</span> the <span class="st">`</span><span class="at">graphics</span><span class="st">`</span> package <span class="cf">for</span> more details.</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>For <span class="st">`</span><span class="at">processHistory</span><span class="st">`</span><span class="sc">:</span> restrict returned processing steps to specific</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>types. Use [<span class="fu">processHistoryTypes</span>()] to list all supported values.</span></code></pre><p></p></div></dd>
 
 
 <dt>value</dt>
 <dd><p>For <code>chromPeaks&lt;-</code>: a numeric <code>matrix</code> with required columns
 <code>"rt"</code>, <code>"rtmin"</code>, <code>"rtmax"</code>, <code>"into"</code> and <code>"maxo"</code>.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>For <span class="st">`</span><span class="at">featureValues</span><span class="st">`</span><span class="sc">:</span> <span class="st">`</span><span class="at">character(1)</span><span class="st">`</span> specifying the name of the column <span class="cf">in</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">chromPeaks(object)</span><span class="st">`</span> that should be returned or <span class="st">`</span><span class="at">"index"</span><span class="st">`</span> (default) to</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>return the index of the peak associated with the feature <span class="cf">in</span> each sample.</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>To return the integrated peak area instead of the index use</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">value = "into"</span><span class="st">`</span>.</span></code></pre><p></p></div></dd>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>For <span class="st">`</span><span class="at">featureValues</span><span class="st">`</span><span class="sc">:</span> <span class="st">`</span><span class="at">character(1)</span><span class="st">`</span> specifying the name of the column <span class="cf">in</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="st">`</span><span class="at">chromPeaks(object)</span><span class="st">`</span> that should be returned or <span class="st">`</span><span class="at">"index"</span><span class="st">`</span> (default) to</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>return the index of the peak associated with the feature <span class="cf">in</span> each sample.</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>To return the integrated peak area instead of the index use</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">`</span><span class="at">value = "into"</span><span class="st">`</span>.</span></code></pre><p></p></div></dd>
 
 
 <dt>x</dt>
@@ -808,7 +808,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Fri May 12 14:26:23 2023 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Jul  6 09:19:37 2023 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
