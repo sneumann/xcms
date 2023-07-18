@@ -561,6 +561,28 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm <- .narrow_rt_boundaries(lm, d)
                 lm_seq <- lm[1]:lm[2]
                 pd <- d[lm_seq]
+                
+                # Implement a fit of a skewed gaussian (beta distribution)
+                # for peak shape and within-peak signal-to-noise ratio
+                # See [biorxiv link]
+                if(verboseBetaColumns){
+                  if(length(pd)<5){
+                    best_cor <- NA
+                    beta_snr <- NA
+                  } else {
+                    beta_sequence <- rep(seq(0, 1, length.out=length(pd)), each=5)
+                    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = c(3, 3.5, 4, 4.5, 5), shape2 = 5), nrow = 5))
+                    # matplot(beta_vals)
+                    beta_cors <- cor(pd, beta_vals)
+                    best_cor <- max(beta_cors)
+                    best_curve <- beta_vals[,which.max(beta_cors)]
+                    scale_zero_one <- function(x)(x-min(x))/(max(x)-min(x))
+                    noise_level <- sd(diff(scale_zero_one(best_curve)-scale_zero_one(pd)))
+                    beta_snr <- log10(max(pd)/noise_level)
+                  }
+                  peaks[p, "beta_cor"] <- best_cor
+                  peaks[p, "beta_snr"] <- beta_snr
+                }
 
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
