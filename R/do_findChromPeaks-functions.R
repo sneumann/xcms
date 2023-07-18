@@ -145,7 +145,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        firstBaselineCheck = TRUE,
                                        roiScales = NULL,
                                        sleep = 0,
-                                       extendLengthMSW = FALSE) {
+                                       extendLengthMSW = FALSE,
+                                       verboseBetaColumns = FALSE) {
     if (getOption("originalCentWave", default = TRUE)) {
         ## message("DEBUG: using original centWave.")
         .centWave_orig(mz = mz, int = int, scantime = scantime,
@@ -156,7 +157,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
                        roiScales = roiScales, sleep = sleep,
-                       extendLengthMSW = extendLengthMSW)
+                       extendLengthMSW = extendLengthMSW, 
+                       verboseBetaColumns = verboseBetaColumns)
     } else {
         ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
@@ -178,7 +180,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                            noise = 0, ## noise.local=TRUE,
                            sleep = 0, verboseColumns = FALSE, roiList = list(),
                            firstBaselineCheck = TRUE, roiScales = NULL,
-                           extendLengthMSW = FALSE) {
+                           extendLengthMSW = FALSE, verboseBetaColumns = FALSE) {
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",

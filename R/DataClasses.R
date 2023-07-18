@@ -533,7 +533,8 @@ setClass("CentWaveParam",
              roiList = "list",
              firstBaselineCheck = "logical",
              roiScales = "numeric",
-             extendLengthMSW = "logical"
+             extendLengthMSW = "logical",
+             verboseBetaColumns = "logical"
          ),
          contains = c("Param"),
          prototype = prototype(
@@ -550,7 +551,8 @@ setClass("CentWaveParam",
              roiList = list(),
              firstBaselineCheck = TRUE,
              roiScales = numeric(),
-             extendLengthMSW = FALSE
+             extendLengthMSW = FALSE,
+             verboseBetaColumns = FALSE
          ),
          validity = function(object) {
              msg <- character()
