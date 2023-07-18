@@ -220,6 +220,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                    "into", "intb", "maxo", "sn")
     verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
                       "scpos", "scmin", "scmax", "lmin", "lmax")
+    betanames <- c("beta_cor", "beta_snr")
 
     ## Peak width: seconds to scales
     scalerange <- round((peakwidth / mean(diff(scantime))) / 2)
@@ -228,15 +229,19 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         scalerange <- scalerange[-z]
     if (length(scalerange) < 1) {
         warning("No scales? Please check peak width!")
-        if (verboseColumns) {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                            length(verbosenames))
-            colnames(nopeaks) <- c(basenames, verbosenames)
-        } else {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-            colnames(nopeaks) <- c(basenames)
-        }
-        return(invisible(nopeaks))
+      matrix_length <- length(basenames)
+      matrix_names <- basenames
+      if (verboseColumns) {
+        matrix_length <- matrix_length + length(verbosenames)
+        matrix_names <- c(matrix_names, verbosenames)
+      }
+      if (verboseBetaColumns) {
+        matrix_length <- matrix_length + length(betanames)
+        matrix_names <- c(matrix_names, betanames)
+      }
+      nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+      colnames(nopeaks) <- matrix_names
+      return(invisible(nopeaks))
     }
 
     if (length(scalerange) > 1)
@@ -321,15 +326,19 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         ## ROI.list <- findmzROI(object,scanrange=scanrange,dev=ppm * 1e-6,minCentroids=minCentroids, prefilter=prefilter, noise=noise)
         if (length(roiList) == 0) {
             warning("No ROIs found! \n")
-            if (verboseColumns) {
-                nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                                length(verbosenames))
-                colnames(nopeaks) <- c(basenames, verbosenames)
-            } else {
-                nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-                colnames(nopeaks) <- c(basenames)
-            }
-            return(invisible(nopeaks))
+          matrix_length <- length(basenames)
+          matrix_names <- basenames
+          if (verboseColumns) {
+            matrix_length <- matrix_length + length(verbosenames)
+            matrix_names <- c(matrix_names, verbosenames)
+          }
+          if (verboseBetaColumns) {
+            matrix_length <- matrix_length + length(betanames)
+            matrix_names <- c(matrix_names, betanames)
+          }
+          nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+          colnames(nopeaks) <- matrix_names
+          return(invisible(nopeaks))
         }
     }
 
@@ -527,7 +536,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                              td[best.scale.pos],
                                              td[lwpos],
                                              td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
-                                             NA, NA))                    ## Peak limits (scan nr)
+                                             NA, NA,     ## Peak limits (scan nr)
+                                             NA, NA))    ## Beta fitting values
                             peakinfo <- rbind(peakinfo,
                                               c(best.scale, best.scale.nr,
                                                 best.scale.pos, lwpos, rwpos))
@@ -540,7 +550,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 
         ##  postprocessing
         if (!is.null(peaks)) {
-            colnames(peaks) <- c(basenames, verbosenames)
+            colnames(peaks) <- c(basenames, verbosenames, betanames)
             colnames(peakinfo) <- c("scale", "scaleNr", "scpos",
                                     "scmin", "scmax")
             for (p in 1:dim(peaks)[1]) {
@@ -699,22 +709,30 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 
     if (length(peaklist) == 0) {
         warning("No peaks found!")
-
-        if (verboseColumns) {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                            length(verbosenames))
-            colnames(nopeaks) <- c(basenames, verbosenames)
-        } else {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-            colnames(nopeaks) <- c(basenames)
-        }
-        message(" FAIL: none found!")
-        return(nopeaks)
+      matrix_length <- length(basenames)
+      matrix_names <- basenames
+      if (verboseColumns) {
+        matrix_length <- matrix_length + length(verbosenames)
+        matrix_names <- c(matrix_names, verbosenames)
+      }
+      if (verboseBetaColumns) {
+        matrix_length <- matrix_length + length(betanames)
+        matrix_names <- c(matrix_names, betanames)
+      }
+      nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+      colnames(nopeaks) <- matrix_names
+      message(" FAIL: none found!")
+      return(nopeaks)
     }
     p <- do.call(rbind, peaklist)
-    if (!verboseColumns)
-        p <- p[, basenames, drop = FALSE]
-
+    keepcols <- basenames
+    if (verboseColumns){
+      keepcols <- c(keepcols, verbosenames)
+    }
+    if(verboseBetaColumns){
+      keepcols <- c(keepcols, betanames)
+    }
+    p <- p[, keepcols, drop = FALSE]
     uorder <- order(p[, "into"], decreasing = TRUE)
     pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
