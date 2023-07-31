@@ -23,7 +23,8 @@ do_findChromPeaks_centWave(
   firstBaselineCheck = TRUE,
   roiScales = NULL,
   sleep = 0,
-  extendLengthMSW = FALSE
+  extendLengthMSW = FALSE,
+  verboseBetaColumns = FALSE
 )
 }
 \arguments{
@@ -149,6 +150,12 @@ A matrix, each row representing an identified chromatographic peak,
     \item{scpos}{Peak position found by wavelet analysis (scan number).}
     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+    }
+    Additional columns for \code{verboseBetaColumns = TRUE}:
+    \describe{
+
+    \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
+    \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
     }
 }
 \description{

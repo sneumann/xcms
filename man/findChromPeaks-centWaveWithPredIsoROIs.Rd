@@ -43,6 +43,8 @@ CentWavePredIsoParam(
   roiList = list(),
   firstBaselineCheck = TRUE,
   roiScales = numeric(),
+  extendLengthMSW = FALSE,
+  verboseBetaColumns = FALSE,
   snthreshIsoROIs = 6.25,
   maxCharge = 3,
   maxIso = 5,
@@ -146,6 +148,12 @@ signals are higher than this first estimated baseline/noise level.}
 \item{roiScales}{Optional numeric vector with length equal to \code{roiList}
 defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
+
+\item{extendLengthMSW}{Option to force centWave to use all scales when
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to
+\code{convolve} rather than the default "reflect" method. See
+https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{snthreshIsoROIs}{\code{numeric(1)} defining the signal to noise ratio
 cutoff to be used in the second centWave run to identify peaks for

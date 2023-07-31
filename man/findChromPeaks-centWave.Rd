@@ -75,7 +75,8 @@ CentWaveParam(
   roiList = list(),
   firstBaselineCheck = TRUE,
   roiScales = numeric(),
-  extendLengthMSW = FALSE
+  extendLengthMSW = FALSE,
+  verboseBetaColumns = FALSE
 )
 
 \S4method{findChromPeaks}{OnDiskMSnExp,CentWaveParam}(

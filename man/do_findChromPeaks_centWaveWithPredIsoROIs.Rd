@@ -28,7 +28,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs(
   maxIso = 5,
   mzIntervalExtension = TRUE,
   polarity = "unknown",
-  extendLengthMSW = FALSE
+  extendLengthMSW = FALSE,
+  verboseBetaColumns = FALSE
 )
 
 do_findChromPeaks_addPredIsoROIs(
@@ -198,6 +199,11 @@ A matrix, each row representing an identified chromatographic peak.
     \item{scpos}{Peak position found by wavelet analysis (scan number).}
     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+    }
+    Additional columns for \code{verboseBetaColumns = TRUE}:
+    \describe{
+    \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
+    \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
     }
 }
 \description{
