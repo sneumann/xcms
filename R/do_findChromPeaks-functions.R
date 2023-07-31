@@ -2676,7 +2676,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
              verboseColumns = FALSE, roiList = list(),
              firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-             polarity = "unknown", extendLengthMSW = FALSE) {
+             polarity = "unknown", extendLengthMSW = FALSE, 
+             verboseBetaColumns = FALSE) {
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
@@ -2697,7 +2698,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
                                               roiScales = roiScales,
-                                              extendLengthMSW = extendLengthMSW)
+                                              extendLengthMSW = extendLengthMSW,
+                                              verboseBetaColumns = verboseBetaColumns)
         return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
