@@ -499,7 +499,7 @@ NULL
 #'     for a chromatographic peak detection using the centWave method. Instances
 #'     should be created with the \code{CentWaveParam} constructor.
 #'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. Slots values should exclusively be accessed
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns See corresponding parameter above. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
 #' @rdname findChromPeaks-centWave
@@ -1252,7 +1252,7 @@ NULL
 #'     \code{\link{CentWaveParam}} for all methods and arguments this class
 #'     inherits.
 #'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
 #'      See corresponding parameter above.
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs

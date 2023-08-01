@@ -271,7 +271,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above.}
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity}}{See corresponding parameter above.}
 }}
 
 \note{

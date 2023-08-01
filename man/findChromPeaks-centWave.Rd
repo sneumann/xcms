@@ -343,7 +343,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW}}{See corresponding parameter above. Slots values should exclusively be accessed
+\item{\code{ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns}}{See corresponding parameter above. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 
