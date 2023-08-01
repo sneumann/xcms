@@ -214,6 +214,14 @@ method to extend the EIC to a integer base-2 length prior to being passed to
 \code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
 
+\item{verboseBetaColumns}{Option to calculate two additional metrics of peak
+quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
+\code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
+correlation coefficient to a bell curve with several degrees of skew as well
+as an estimate of signal-to-noise using the residuals from the best-fitting
+bell curve. See https://github.com/sneumann/xcms/pull/685 for more 
+information.}
+
 \item{object}{For \code{findChromPeaks}: an
     \code{\link{OnDiskMSnExp}}  object containing the MS- and all
     other experiment-relevant data.
