@@ -13,7 +13,7 @@ importFrom("Biobase", "AnnotatedDataFrame")
 importClassesFrom("Biobase", "AnnotatedDataFrame")
 importMethodsFrom("Biobase", "phenoData",
                   "phenoData<-", "pData", "rowMedians", "varLabels",
-                  "fvarLabels", "annotatedDataFrameFrom")
+                  "fvarLabels", "annotatedDataFrameFrom", "pData<-")
 importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
