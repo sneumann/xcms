@@ -61,6 +61,7 @@ version >= 3 aims at:
 8) The user interface's analysis methods should take the (raw) data object and a
    parameter class, that is used for dispatching to the corresponding analysis
    algorithm.
+9) Add unit tests.
 
 Discussions and suggestions are welcome:
 https://github.com/sneumann/xcms/issues
