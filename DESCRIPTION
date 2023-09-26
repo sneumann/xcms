@@ -55,7 +55,7 @@ Imports:
     MsCoreUtils (>= 1.11.5),
     MsFeatures,
     MsExperiment (>= 1.1.2),
-    Spectra (>= 1.9.4),
+    Spectra (>= 1.11.10),
     progress,
     multtest
 Suggests:
