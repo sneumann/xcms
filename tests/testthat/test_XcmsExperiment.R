@@ -1257,3 +1257,37 @@ test_that("findChromPeaksIsolationWindow, etc, MsExperiment works", {
     expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
     expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
 })
+
+test_that("chromPeaksChromatograms,XcmsExperiment works", {
+    expect_error(chromPeakChromatograms(xmse, peaks = 1:3), "expected to")
+
+    chrs <- chromPeakChromatograms(xmse)
+
+    ## Test providing peaks. Only those from one file.
+    pks <- rownames(chromPeaks(xmse)[chromPeaks(xmse)[, "sample"] == 2, ])
+    res <- chromPeakChromatograms(xmse, peaks = pks)
+    expect_equal(rownames(res), pks)
+    ref <- chrs[rownames(chrs) %in% pks, 1L]
+    expect_equal(ref@.Data, res@.Data)
+    expect_equal(fData(ref), fData(res))
+    expect_equal(chromPeaks(ref), chromPeaks(res))
+
+    ## Test providing peaks. different order.
+    pks <- sample(rownames(chromPeaks(xmseg)), 10)
+    res <- chromPeakChromatograms(xmseg, peaks = pks)
+    ref <- chrs[match(rownames(res), rownames(chrs)), 1L]
+    expect_equal(res@.Data, ref@.Data)
+    expect_equal(fData(res), fData(ref))
+    expect_equal(chromPeaks(res), chromPeaks(ref))
+
+    ## Test on a SWATH data set: are MS1 and MS2 chrom peaks extracted
+    ## correctly?
+    cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                         peakwidth = c(3, 20), prefilter = c(3, 1000))
+    xmse_dia <- findChromPeaks(mse_dia, param = cwp)
+    xmse_dia <- findChromPeaksIsolationWindow(xmse_dia, param = cwp)
+    res <- chromPeakChromatograms(xmse_dia)
+    ## To compare against what?
+    ints <- vapply(res, function(z) sum(intensity(z), na.rm = TRUE), numeric(1))
+    expect_true(cor(chromPeaks(res)[, "into"], ints) >= 0.97)
+})

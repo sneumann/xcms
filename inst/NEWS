@@ -1,3 +1,10 @@
+Changes in version 3.99.4
+----------------------
+
+- Add `chromPeakChromatograms` function to extract (EIC) chromatograms for
+  chromatographic peaks.
+
+
 Changes in version 3.99.3
 ----------------------
 

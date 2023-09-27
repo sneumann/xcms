@@ -153,6 +153,8 @@ plot(chrs[1, ], col = c("red", "green", "blue"))
 \seealso{
 \code{\link[=filterColumnsKeepTop]{filterColumnsKeepTop()}} to filter the extracted EICs keeping only
 the \emph{top n} columns (samples) with the highest intensity.
+\code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} for a function to extract an EIC for each
+chromatographic peak.
 }
 \author{
 Johannes Rainer
