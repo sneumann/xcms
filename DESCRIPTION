@@ -47,7 +47,7 @@ Imports:
     RColorBrewer,
     plyr,
     RANN,
-    MassSpecWavelet (>= 1.61.3),
+    MassSpecWavelet (>= 1.66.0),
     S4Vectors,
     robustbase,
     IRanges,
