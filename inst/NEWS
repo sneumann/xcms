@@ -1,3 +1,9 @@
+Changes in version 3.99.5
+----------------------
+
+- Only `mz` or `rt` need to be provided for `chromatograms`.
+
+
 Changes in version 3.99.4
 ----------------------
 
