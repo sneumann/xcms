@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.18/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2023-09-28 05:23:29.892961<br><strong>Compiled</strong>: Thu Sep 28 06:17:32 2023</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.18/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2023-10-08 17:17:46.732554<br><strong>Compiled</strong>: Sun Oct 8 18:21:58 2023</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -1593,7 +1593,7 @@ available as <code>metadata</code> in the
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:12 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:37 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1602,7 +1602,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:14 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:39 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1611,7 +1611,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:28 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:53 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1620,7 +1620,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:28 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:53 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1629,7 +1629,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:33 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:59 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1638,7 +1638,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:38 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:23:04 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1650,7 +1650,7 @@ extract the information for the first processing step.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Thu Sep 28 06:18:12 2023 </span></span>
+<span><span class="co">##  date: Sun Oct  8 18:22:37 2023 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1829,11 +1829,11 @@ package and its functionality.</li>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] SummarizedExperiment_1.31.1 GenomicRanges_1.53.1       </span></span>
-<span><span class="co">##  [3] GenomeInfoDb_1.37.4         IRanges_2.35.2             </span></span>
+<span><span class="co">##  [3] GenomeInfoDb_1.37.6         IRanges_2.35.2             </span></span>
 <span><span class="co">##  [5] MatrixGenerics_1.13.1       matrixStats_1.0.0          </span></span>
 <span><span class="co">##  [7] MsExperiment_1.3.0          pheatmap_1.0.12            </span></span>
 <span><span class="co">##  [9] RColorBrewer_1.1-3          pander_0.6.5               </span></span>
-<span><span class="co">## [11] faahKO_1.41.0               xcms_3.99.4                </span></span>
+<span><span class="co">## [11] faahKO_1.41.0               xcms_3.99.5                </span></span>
 <span><span class="co">## [13] MSnbase_2.27.1              ProtGenerics_1.33.1        </span></span>
 <span><span class="co">## [15] S4Vectors_0.39.2            mzR_2.35.1                 </span></span>
 <span><span class="co">## [17] Rcpp_1.0.11                 Biobase_2.61.0             </span></span>
@@ -1845,7 +1845,7 @@ package and its functionality.</li>
 <span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
 <span><span class="co">##   [5] MassSpecWavelet_1.67.0      compiler_4.3.1             </span></span>
 <span><span class="co">##   [7] systemfonts_1.0.4           vctrs_0.6.3                </span></span>
-<span><span class="co">##   [9] stringr_1.5.0               MetaboCoreUtils_1.9.2      </span></span>
+<span><span class="co">##   [9] stringr_1.5.0               MetaboCoreUtils_1.9.4      </span></span>
 <span><span class="co">##  [11] pkgconfig_2.0.3             crayon_1.5.2               </span></span>
 <span><span class="co">##  [13] fastmap_1.1.1               XVector_0.41.1             </span></span>
 <span><span class="co">##  [15] utf8_1.2.3                  rmarkdown_2.25             </span></span>
@@ -1857,15 +1857,15 @@ package and its functionality.</li>
 <span><span class="co">##  [27] prettyunits_1.2.0           parallel_4.3.1             </span></span>
 <span><span class="co">##  [29] cluster_2.1.4               R6_2.5.1                   </span></span>
 <span><span class="co">##  [31] bslib_0.5.1                 stringi_1.7.12             </span></span>
-<span><span class="co">##  [33] limma_3.57.8                jquerylib_0.1.4            </span></span>
+<span><span class="co">##  [33] limma_3.57.9                jquerylib_0.1.4            </span></span>
 <span><span class="co">##  [35] bookdown_0.35               iterators_1.0.14           </span></span>
 <span><span class="co">##  [37] knitr_1.44                  igraph_1.5.1               </span></span>
 <span><span class="co">##  [39] splines_4.3.1               Matrix_1.6-1.1             </span></span>
 <span><span class="co">##  [41] tidyselect_1.2.0            abind_1.4-5                </span></span>
 <span><span class="co">##  [43] yaml_2.3.7                  doParallel_1.0.17          </span></span>
 <span><span class="co">##  [45] codetools_0.2-19            affy_1.79.3                </span></span>
-<span><span class="co">##  [47] lattice_0.21-8              tibble_3.2.1               </span></span>
-<span><span class="co">##  [49] plyr_1.8.8                  evaluate_0.21              </span></span>
+<span><span class="co">##  [47] lattice_0.21-9              tibble_3.2.1               </span></span>
+<span><span class="co">##  [49] plyr_1.8.9                  evaluate_0.22              </span></span>
 <span><span class="co">##  [51] survival_3.5-7              desc_1.4.2                 </span></span>
 <span><span class="co">##  [53] Spectra_1.11.11             pillar_1.9.0               </span></span>
 <span><span class="co">##  [55] affyio_1.71.0               BiocManager_1.30.22        </span></span>
@@ -1886,10 +1886,10 @@ package and its functionality.</li>
 <span><span class="co">##  [85] fansi_1.0.4                 S4Arrays_1.1.6             </span></span>
 <span><span class="co">##  [87] dplyr_1.1.3                 AnnotationFilter_1.25.0    </span></span>
 <span><span class="co">##  [89] pcaMethods_1.93.0           gtable_0.3.4               </span></span>
-<span><span class="co">##  [91] DEoptimR_1.1-2              sass_0.4.7                 </span></span>
+<span><span class="co">##  [91] DEoptimR_1.1-3              sass_0.4.7                 </span></span>
 <span><span class="co">##  [93] digest_0.6.33               SparseArray_1.1.12         </span></span>
 <span><span class="co">##  [95] farver_2.1.1                multtest_2.57.0            </span></span>
-<span><span class="co">##  [97] memoise_2.0.1               htmltools_0.5.6            </span></span>
+<span><span class="co">##  [97] memoise_2.0.1               htmltools_0.5.6.1          </span></span>
 <span><span class="co">##  [99] pkgdown_2.0.7.9000          lifecycle_1.0.3            </span></span>
 <span><span class="co">## [101] statmod_1.5.0               MASS_7.3-60</span></span></code></pre>
 </div>
