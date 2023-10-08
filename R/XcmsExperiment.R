@@ -1917,6 +1917,10 @@ setMethod(
                     "'chromPeaks' instead")
             chromPeaks <- include
         }
+        if (nrow(mz) && !nrow(rt))
+            rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
+        if (nrow(rt) && !nrow(mz))
+            mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
         return.type <- match.arg(return.type)
         chromPeaks <- match.arg(chromPeaks)
         if (hasAdjustedRtime(object))

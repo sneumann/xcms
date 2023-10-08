@@ -1090,6 +1090,35 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
                         rt = c(100, 600), isolationWindowTargetMz = 270.85,
                         aggregationFun = "sum")
     expect_true(all(intensity(res[[1L]]) > 0))
+
+    ## Defining only mz or rt.
+    rtr <- c(2600, 2700)
+    mzr <- c(340, 400)
+    res <- chromatogram(xmse, mz = mzr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    rrt <- range(lapply(res, rtime))
+    expect_true(rrt[1] < 2600)
+    expect_true(rrt[2] > 4400)
+
+    res <- chromatogram(xmse, rt = rtr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(any(chromPeaks(res)[, "mz"] < 340 |
+                    chromPeaks(res)[, "mz"] > 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    rrt <- range(lapply(res, rtime))
+    expect_true(rrt[1] >= 2600)
+    expect_true(rrt[2] <= 2700)
 })
 
 test_that("featureChromatograms,XcmsExperiment works", {
