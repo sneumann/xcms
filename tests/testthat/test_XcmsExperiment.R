@@ -1320,3 +1320,9 @@ test_that("chromPeaksChromatograms,XcmsExperiment works", {
     ints <- vapply(res, function(z) sum(intensity(z), na.rm = TRUE), numeric(1))
     expect_true(cor(chromPeaks(res)[, "into"], ints) >= 0.97)
 })
+
+test_that("setAs,XcmsExperiment,xcmsSet works", {
+    res <- as(xmseg, "xcmsSet")
+    expect_s4_class(res, "xcmsSet")
+    expect_equal(peaks(res), chromPeaks(xmseg))
+})

@@ -29,12 +29,13 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @noRd
 .XCMSnExp2xcmsSet <- function(from) {
-    if (any(msLevel(from) > 1))
-        stop("Coercing an XCMSnExp with MS level > 1 is not yet supported!")
     xs <- new("xcmsSet")
-    ## @peaks <- chromPeaks
-    if (hasChromPeaks(from))
+    if (hasChromPeaks(from)) {
+        if (any(chromPeakData(from)$ms_level) > 1)
+            stop("Coercing from an ", class(from)[1L],
+                 " with results on MS levels > 1 is not supported.")
         xs@peaks <- chromPeaks(from)
+    }
     ## @groups <- part of featureDefinitions
     ## @groupidx <- featureDefinitions(x)$peakidx
     if (hasFeatures(from)){
@@ -46,15 +47,17 @@ dropGenericProcessHistory <- function(x, fun) {
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
     ## Ensure we're getting the raw rt
-    rts$raw <- rtime(from, bySample = TRUE, adjusted = FALSE)
+    rts$raw <- split(rtime(from, adjusted = FALSE), fromFile(from))
     if (hasAdjustedRtime(from))
-        rts$corrected <- adjustedRtime(from, bySample = TRUE)
+        rts$corrected <- split(rtime(from, adjusted = TRUE), fromFile(from))
     else
         rts$corrected <- rts$raw
     xs@rt <- rts
 
     ## @phenoData
-    pd <- pData(from)
+    if (inherits(from, "XcmsExperiment"))
+        pd <- as.data.frame(sampleData(from))
+    else  pd <- pData(from)
     if (nrow(pd) != length(fileNames(from))) {
         pd <- data.frame(file_name = basename(fileNames(from)))
         rownames(pd) <- pd$file_name
@@ -88,10 +91,12 @@ dropGenericProcessHistory <- function(x, fun) {
     profinfo(xs) <- c(list(method = profMethod, step = profStep), profParam)
 
     ## @mslevel <- msLevel?
-    xs@mslevel <- unique(msLevel(from))
+    xs@mslevel <- 1L
 
     ## @scanrange
-    xs@scanrange <- range(scanIndex(from))
+    if (inherits(from, "XcmsExperiment"))
+        xs@scanrange <- range(scanIndex(spectra(from)))
+    else xs@scanrange <- range(scanIndex(from))
 
     ## .processHistory: just take the processHistory as is.
     xs@.processHistory <- processHistory(from)
@@ -108,7 +113,7 @@ dropGenericProcessHistory <- function(x, fun) {
     ## @dataCorrection (numeric) ? in xcmsSet function, if lockMassFreq.
     ## @progressInfo skip
     ## @progressCallback skip
-    if (!any(colnames(pData(from)) == "class"))
+    if (!any(colnames(xs@phenoData) == "class"))
         message("Note: you might want to set/adjust the",
                 " 'sampclass' of the returned xcmSet object",
                 " before proceeding with the analysis.")
