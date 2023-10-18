@@ -99,6 +99,10 @@ setMethod(
             rt <- matrix(rt, ncol = 2L)
         if (!is.matrix(mz))
             mz <- matrix(mz, ncol = 2L)
+        if (nrow(mz) && !nrow(rt))
+            rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
+        if (nrow(rt) && !nrow(mz))
+            mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
         .mse_chromatogram(
             object, rt = rt, mz = mz, aggregationFun = aggregationFun,
             msLevel = msLevel, isolationWindow = isolationWindowTargetMz,

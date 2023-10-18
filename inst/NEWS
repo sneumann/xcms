@@ -1,7 +1,14 @@
+Changes in version 3.99.6
+----------------------
+
+- Add method to coerce a `XcmsExperiment` to a `xcmsSet` (issue #696).
+- Support providing only `mz` or `rt` also for `chromatogram,MsExperiment`.
+
+
 Changes in version 3.99.5
 ----------------------
 
-- Only `mz` or `rt` need to be provided for `chromatograms`.
+- Only `mz` or `rt` need to be provided for `chromatogram`.
 
 
 Changes in version 3.99.4

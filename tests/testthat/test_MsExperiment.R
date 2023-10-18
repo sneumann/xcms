@@ -77,6 +77,11 @@ test_that("chromatogram,MsExperiment works", {
     expect_equal(intensity(res[1, 1]), numeric())
     expect_equal(intensity(res[1, 2]), numeric())
     expect_equal(intensity(res[1, 2]), numeric())
+
+    res <- chromatogram(mse, rt = rbind(c(3000, 3500), c(4000, 4500)))
+    expect_equal(nrow(res), 2)
+    res <- chromatogram(mse, mz = rbind(c(200, 210), c(330, 331)))
+    expect_equal(nrow(res), 2)
 })
 
 test_that("uniqueMsLevels,MsExperiment works", {
