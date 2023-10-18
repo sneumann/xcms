@@ -286,6 +286,7 @@ The \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} core
     the peak detection.
 
 Other peak detection methods: 
+\code{\link{findChromPeaks-centWaveIonMobility}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},

@@ -67,6 +67,7 @@ This is a wrapper around the peak picker in Bioconductor's
     \code{MassSpecWavelet} package.
 
 Other core peak detection functions: 
+\code{\link{do_findChromPeaks_IM_centWave}()},
 \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_centWave}()},
 \code{\link{do_findChromPeaks_massifquant}()},

@@ -1298,6 +1298,82 @@ setClass("CentWavePredIsoParam",
              else TRUE
          })
 
+#### Ion mobility peak-picking classes ####
+
+setClass("IMParam", contains = "VIRTUAL")
+
+#' @title Centwave-based ion-mobility peak picking
+#'
+#' @aliases centWaveIonMobility
+#'
+#' @description Performs an extension of CentWave peak-picking on LC-IM-MS MS1
+#'   data: first it joins all mobility scans into frames and performs .centWave_orig on
+#'   the summarized LC-MS-like data; then, from each peak, it calculates its mobilogram and
+#'   performs a second peak-picking on the IM dimension, resolving the peaks.
+#'
+#' @inheritParams findChromPeaks-centWave
+#'
+#' @param ppmMerging The maximum mass deviation allowed when grouping individual
+#'   IM scans into frames. Data points within \code{ppmMerging} ppm will be
+#'   summed up into a single value and the reported mz will be their weighted
+#'   average.
+#'
+#' @param binWidthIM The bin size used when calculating the mobilograms to resolve
+#' the peaks into the ion-mobility dimension. Lower values will give better resolution
+#' if the data allows it, but can also generate spurious peaks.
+#'
+#' @details See \code{\link{centWave}} for details on the centWave method.
+#'
+#' @family peak detection methods
+#' 
+#' @author Roger Gine, Johannes Rainer
+#'
+#' @seealso The \code{\link{do_findChromPeaks_IM_centWave}} core
+#'     API function and \code{\link{CentWaveParam}} for the class the
+#'     \code{IMCentWaveParam} extends.
+#'
+#' @name findChromPeaks-centWaveIonMobility
+NULL
+
+#' @description The \code{IMCentWaveParam} class allows to specify all
+#'     settings for 
+#'     Instances should be created with the \code{IMCentWaveParam}
+#'     constructor. See also the documentation of the
+#'     \code{\link{CentWaveParam}} for all methods and arguments this class
+#'     inherits.
+#'
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,ppmMerging,binWidthIM
+#'      See corresponding parameter above.
+#'
+#' @rdname findChromPeaks-centWaveIonMobility
+setClass("IMCentWaveParam",
+         contains = c("IMParam", "CentWaveParam"),
+         slots = c(
+             ppmMerging = "numeric",
+             binWidthIM = "numeric"
+             
+         ), 
+         prototype = prototype(
+             ppmMerging = 10,
+             binWidthIM = 0.02
+         ), 
+         validity = function(object){
+             msg <- character()
+             if (length(object@ppmMerging) != 1 ||
+                 object@ppmMerging < 0) {
+                 msg <- c(msg,
+                          "'ppmMerging' should be a positive numeric of length 1")
+             }
+             if (length(object@binWidthIM) != 1 ||
+                 object@binWidthIM < 0) {
+                 msg <- c(msg,
+                          "'binWidthIM' should be a positive numeric of length 1")
+             }
+             if (length(msg))
+                 msg
+             else TRUE
+         })
+
 setClass("PeakDensityParam",
          slots = c(sampleGroups = "ANY",
                    bw = "numeric",

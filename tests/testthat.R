@@ -64,6 +64,20 @@ pest_dda <- findChromPeaks(pest_dda, param = cwp)
 ## sciex_data <- readMSData(fl, mode = "onDisk")
 ## sciex_data <- pickPeaks(sciex_data)
 
+## IM data
+if(system.file("data/IM_test_data.rds", package = "xcms") != ""){
+    library(MsExperiment)
+    im_spec <- readRDS(system.file("data/IM_test_data.rds", package = "xcms"))
+    im_exp <- MsExperiment()
+    spectra(im_exp) <- im_spec
+    sampleData(im_exp) <- DataFrame(
+        raw_file = "testfile"
+    )
+    im_exp <- linkSampleData(im_exp,
+                             with = "sampleData.raw_file = spectra.dataOrigin")
+    
+}
+
 test_check("xcms")
 
 bpstop(prm)
