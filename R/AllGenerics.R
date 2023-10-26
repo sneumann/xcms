@@ -1975,15 +1975,15 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' 
 #' @author Philippine Louail, Johannes Rainer
 #' 
-#' @example 
+#' @examples
 #' 
 #' ## Load a test `XcmsExperiment` object
 #' x <- 
 #' 
-#' Set up parameter to save as .RData file 
+#' ## Set up parameter to save as .RData file 
 #' param <- RDataParam(fileName = "example_xcms_results")
 #' 
-#' save as .RData
+#' ## save as .RData
 #' storeResults(object = x, param = param)
 #' 
 #' @md
