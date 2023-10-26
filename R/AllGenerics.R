@@ -1943,6 +1943,51 @@ setGeneric("stitch", function(object, lockMass, ...) standardGeneric("stitch"))
 setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"))
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
+
+#' @title Save Xcms objects in a specified format
+#'
+#' @description
+#'
+#' The `storeResults` function saves an `object` resulting from processing with
+#' the `xcms` package (mainly `XcmsExperiment`). Multiple formats for storing
+#' and exporting are available and can be defined by the `param` argument.
+#'
+#' Supported `param` objects are:
+#' 
+#' - `RDataParam`: Save in an .RData format file.
+#' 
+#' - `PlainTextParam`: Save in a plain text format (to be defined).
+#' 
+#' - `MzTabMParam`: Save in MzTab format (to be defined).
+#' 
+#' For specific examples, see the help pages of the individual parameter classes
+#' listed above.
+#'
+#' @param object The data object that needs to be saved.
+#'
+#' @param param The parameter object selecting and configuring the format for
+#' saving. It can be one of the following classes: `RDataParam`,
+#' `PlainTextParam`, or `MzTabMParam`.
+#'
+#' @param ... Optional parameters.
+#'
+#' @name storeResults
+#' 
+#' @author Philippine Louail, Johannes Rainer
+#' 
+#' @example 
+#' 
+#' ## Load a test `XcmsExperiment` object
+#' x <- 
+#' 
+#' Set up parameter to save as .RData file 
+#' param <- RDataParam(fileName = "example_xcms_results")
+#' 
+#' save as .RData
+#' storeResults(object = x, param = param)
+#' 
+#' @md
+setGeneric("storeResults", function(object, param, ...) standardGeneric("storeResults"))
 setGeneric("subset<-", function(object, value) standardGeneric("subset<-"))
 setGeneric("subsetAdjust", function(object, ...) standardGeneric("subsetAdjust"))
 setGeneric("subsetAdjust<-", function(object, value) standardGeneric("subsetAdjust<-"))

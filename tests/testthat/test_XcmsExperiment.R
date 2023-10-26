@@ -1,14 +1,3 @@
-library(MsExperiment)
-fls <- normalizePath(faahko_3_files)
-df <- data.frame(mzML_file = basename(fls),
-                 dataOrigin = fls,
-                 sample = c("ko15", "ko16", "ko18"))
-mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
-p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
-xmse <- findChromPeaks(mse, param = p)
-pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
-xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
-
 fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
 mse_dia <- readMsExperiment(fl)
 
@@ -1325,4 +1314,12 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
     res <- as(xmseg, "xcmsSet")
     expect_s4_class(res, "xcmsSet")
     expect_equal(peaks(res), chromPeaks(xmseg))
+})
+
+test_that("storeResults,RDataParam works", {
+    param <- RDataParam(fileName ="test")
+    param2 <- RDataParam()
+    expect_false(is.null(param2))
+    storeResults(xmse, param = param)
+    expect_true(file.exists("test"))
 })
