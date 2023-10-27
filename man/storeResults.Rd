@@ -2,7 +2,7 @@
 % Please edit documentation in R/AllGenerics.R
 \name{storeResults}
 \alias{storeResults}
-\title{Save Xcms objects in a specified format}
+\title{Save xcms result objects in a specified format}
 \usage{
 storeResults(object, param, ...)
 }
@@ -22,7 +22,7 @@ and exporting are available and can be defined by the \code{param} argument.
 
 Supported \code{param} objects are:
 \itemize{
-\item \code{RDataParam}: Save in an .RData format file.
+\item \code{\link{RDataParam}}: Save in an .RData format file.
 \item \code{PlainTextParam}: Save in a plain text format (to be defined).
 \item \code{MzTabMParam}: Save in MzTab format (to be defined).
 }
@@ -32,16 +32,16 @@ listed above.
 }
 \examples{
 
-## Load a test `XcmsExperiment` object
-x <- 
+## Load a test data set with detected peaks
+faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Set up parameter to save as .RData file 
 param <- RDataParam(fileName = "example_xcms_results")
 
 ## save as .RData
-storeResults(object = x, param = param)
+storeResults(object = faahko_sub, param = param)
 
 }
 \author{
-Philippine Louail, Johannes Rainer
+Philippine Louail
 }

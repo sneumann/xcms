@@ -1944,7 +1944,7 @@ setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
 
-#' @title Save Xcms objects in a specified format
+#' @title Save xcms result objects in a specified format
 #'
 #' @description
 #'
@@ -1954,7 +1954,7 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #'
 #' Supported `param` objects are:
 #' 
-#' - `RDataParam`: Save in an .RData format file.
+#' - [`RDataParam`]: Save in an .RData format file.
 #' 
 #' - `PlainTextParam`: Save in a plain text format (to be defined).
 #' 
@@ -1973,18 +1973,18 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #'
 #' @name storeResults
 #' 
-#' @author Philippine Louail, Johannes Rainer
+#' @author Philippine Louail
 #' 
 #' @examples
 #' 
-#' ## Load a test `XcmsExperiment` object
-#' x <- 
+#' ## Load a test data set with detected peaks
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #' 
 #' ## Set up parameter to save as .RData file 
 #' param <- RDataParam(fileName = "example_xcms_results")
 #' 
 #' ## save as .RData
-#' storeResults(object = x, param = param)
+#' storeResults(object = faahko_sub, param = param)
 #' 
 #' @md
 setGeneric("storeResults", function(object, param, ...) standardGeneric("storeResults"))

@@ -1322,4 +1322,7 @@ test_that("storeResults,RDataParam works", {
     expect_false(is.null(param2))
     storeResults(xmse, param = param)
     expect_true(file.exists("test"))
+    load("test")
+    expect_s4_class(object, "XcmsExperiment")
+    expect_equal(object, xmse)
 })

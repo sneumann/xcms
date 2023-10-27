@@ -22,9 +22,9 @@ The saved object as an .RData file.
 }
 \description{
 The `RDataParam` class and method allow users to save an `XcmsExperiment`
-object as an .RData file with a chosen filename. This new `param` class and
-method are part of the possible dispatch of the generic function
-`storeResults`. 
+object as an .RData file with a chosen filename. The object gets exported
+using [`save()`] function.  This `param` class and method are part of the
+possible dispatch of the generic function `storeResults`. 
 
 Other available `param` classes and linked methods include:
 
