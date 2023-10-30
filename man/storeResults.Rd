@@ -22,7 +22,8 @@ and exporting are available and can be defined by the \code{param} argument.
 
 Supported \code{param} objects are:
 \itemize{
-\item \code{\link{RDataParam}}: Save in an .RData format file.
+\item \code{\link{RDataParam}}: Save in an .RData format file. The name of the file can be
+specified in the \code{fileName} argument.
 \item \code{PlainTextParam}: Save in a plain text format (to be defined).
 \item \code{MzTabMParam}: Save in MzTab format (to be defined).
 }

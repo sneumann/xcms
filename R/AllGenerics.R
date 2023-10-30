@@ -1954,7 +1954,8 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #'
 #' Supported `param` objects are:
 #' 
-#' - [`RDataParam`]: Save in an .RData format file.
+#' - [`RDataParam`]: Save in an .RData format file. The name of the file can be
+#'  specified in the `fileName` argument. 
 #' 
 #' - `PlainTextParam`: Save in a plain text format (to be defined).
 #' 

@@ -3,40 +3,40 @@
 #' @name RDataParam
 #'
 #' @export
-#'
+#' 
+#' @family xcms result export formats.
+#' 
 #' @description
 #' The `RDataParam` class and method allow users to save an `XcmsExperiment`
 #' object as an .RData file with a chosen filename. The object gets exported
 #' using [`save()`] function.  This `param` class and method are part of the
 #' possible dispatch of the generic function `storeResults`. 
 #' 
-#' Other available `param` classes and linked methods include:
-#'
-#' - `PlainTextParam`: ...
-#'
-#' - `MzTabMParam`: ...
+#' @param fileName A parameter of `RDataParam`, that define its `fileName` slot
+#' and therefore the name of the saved .RData file.The default will be
+#' `tempfile()`.
 #' 
-#' @param param A parameter defining the format in which the object should be
-#' saved. For the `RDataParam`, it has one slot for the `fileName` in which the
-#' object is going to be saved. The default will be `tempfile()`.
+#' @param param A parameter of `storeResults` defining the format in which the
+#' object should be saved.
 #'
 #' @param object An object of class `XcmsExperiment` that will be saved as an
-#' .RData file.
+#' .RData file by the function `storeResults`.
 #' 
-#' @return The saved object as an .RData file. 
+#' @return for `RDataParam`: a `RDataParam` class. `storeResults` does not
+#' return anything but saves the object to a *RData* file.
 #'
 #' @author Philippine Louail
 #'
 #' @examples
 #'
-#'## Get an `XcmsExperiment` object
-#' x <- ...
+#' ## Load a test data set with detected peaks
+#' faahko_sub <- loadXcmsData("faahko_sub2")
 #' 
 #' ## Define param 
 #' param <- RDataParam(fileName = "example_xcms_object")
 #' 
 #' ## Save as RData
-#' storeResults(object = x, param = param)
+#' storeResults(object = faahko_sub, param = param)
 #' 
 NULL
 
