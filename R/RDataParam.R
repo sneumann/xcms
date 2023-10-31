@@ -12,18 +12,13 @@
 #' using [`save()`] function.  This `param` class and method are part of the
 #' possible dispatch of the generic function `storeResults`. 
 #' 
-#' @param fileName A parameter of `RDataParam`, that define its `fileName` slot
-#' and therefore the name of the saved .RData file.The default will be
-#' `tempfile()`.
+#' @param fileName for `RDataParam` `character(1)`, defining the file name. The
+#' default will be `tempfile()`.
 #' 
-#' @param param A parameter of `storeResults` defining the format in which the
-#' object should be saved.
-#'
-#' @param object An object of class `XcmsExperiment` that will be saved as an
-#' .RData file by the function `storeResults`.
+#' @inheritParams storeResults
 #' 
 #' @return for `RDataParam`: a `RDataParam` class. `storeResults` does not
-#' return anything but saves the object to a *RData* file.
+#' return anything but saves the object to a RData file.
 #'
 #' @author Philippine Louail
 #'
