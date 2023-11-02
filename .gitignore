@@ -24,3 +24,5 @@ xcms.Rproj
 
 Rplots.pdf
 .DS_Store
+
+*.dll
