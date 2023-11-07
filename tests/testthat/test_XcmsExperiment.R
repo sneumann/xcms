@@ -622,7 +622,7 @@ test_that(".xmse_filter_peaks_intensities works", {
     res <- .xmse_filter_peaks_intensities(xmse, nValues = 1, threshold = 50000)
     expect_equal(res, unname(chromPeaks(xmse)[, "maxo"] >= 50000))
 
-    res <- .xmse_filter_peaks_intensities(xmse, nValues = 1, , msLevel = 2L)
+    res <- .xmse_filter_peaks_intensities(xmse, nValues = 1, msLevel = 2L)
     expect_true(length(res) == 0)
 })
 
