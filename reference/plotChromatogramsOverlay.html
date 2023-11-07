@@ -28,7 +28,7 @@ the plot function for XChromatogram() object for details)."><meta property="og:i
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -231,7 +231,7 @@ each EIC.</p>
 <span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf"</span>, <span class="st">"WT"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in (function (classes, fdef, mtable) {    methods &lt;- .findInheritedMethods(classes, fdef, mtable)    if (length(methods) == 1L)         return(methods[[1L]])    else if (length(methods) == 0L) {        cnames &lt;- paste0("\"", vapply(classes, as.character,             ""), "\"", collapse = ", ")        stop(gettextf("unable to find an inherited method for function %s for signature %s",             sQuote(fdef@generic), sQuote(cnames)), domain = NA)    }    else stop("Internal error in finding inherited methods; didn't return a unique method",         domain = NA)})(list(structure("XcmsExperiment", package = "xcms")), new("standardGeneric",     .Data = function (object, ...)     standardGeneric("path"), generic = structure("path", package = "BiocGenerics"),     package = "BiocGenerics", group = list(), valueClass = character(0),     signature = "object", default = NULL, skeleton = (function (object,         ...)     stop(gettextf("invalid call in method dispatch to '%s' (no default method)",         "path"), domain = NA))(object, ...)), &lt;environment&gt;):</span> unable to find an inherited method for function ‘path’ for signature ‘"XcmsExperiment"’</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> unable to find an inherited method for function ‘path’ for signature ‘object = "XcmsExperiment"’</span>
 <span class="r-in"><span><span class="co">## Subset to the first 3 files.</span></span></span>
 <span class="r-in"><span><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">filterFile</a></span><span class="op">(</span><span class="va">xdata</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, keepFeatures <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -302,7 +302,7 @@ each EIC.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer.</p>
+  <p></p><p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, Philippine Louail.</p>
 </div>
 
 <div class="pkgdown-footer-right">

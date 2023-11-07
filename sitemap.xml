@@ -37,6 +37,9 @@
     <loc>https://sneumann.github.io/xcms/reference/ProcessHistory-class.html</loc>
   </url>
   <url>
+    <loc>https://sneumann.github.io/xcms/reference/RDataParam.html</loc>
+  </url>
+  <url>
     <loc>https://sneumann.github.io/xcms/reference/SSgauss.html</loc>
   </url>
   <url>
@@ -494,6 +497,9 @@
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/stitch-methods.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/storeResults.html</loc>
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html</loc>
