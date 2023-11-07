@@ -31,7 +31,11 @@ Authors@R: c(
 	   role = "ctb"),
 	   person(given = "William", family = "Kumler",
 	   email = "wkumler@uw.edu", role = "ctb",
-	   comment = c(ORCID = "0000-0002-5022-8009"))
+	   comment = c(ORCID = "0000-0002-5022-8009")),
+	   person(given = "Philippine", family = "Louail",
+	   email = "philippine.louail@eurac.edu",
+	   role = "aut",
+	   comment = c(ORCID = "0009-0007-5429-6846"))
 	   )
 Depends:
     R (>= 4.0.0),

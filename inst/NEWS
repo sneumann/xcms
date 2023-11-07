@@ -1,8 +1,8 @@
-Changes in version 3.99.7
+Changes in version 4.1.1
 ----------------------
 
 - Add method `storeResults` and one of its `param =`: `RDataParam` to save an
-  `XcmsExperiment` object as an .RData file. 
+  `XcmsExperiment` object as an .RData file.
 
 Changes in version 3.99.6
 ----------------------
