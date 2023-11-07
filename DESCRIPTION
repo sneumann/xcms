@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.99.6
+Version: 3.99.7
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -92,6 +92,7 @@ Collate:
     'MPI.R'
     'MsExperiment-functions.R'
     'MsExperiment.R'
+    'RDataParam.R'
     'XcmsExperiment-functions.R'
     'XcmsExperiment-plotting.R'
     'XcmsExperiment.R'

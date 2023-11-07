@@ -586,3 +586,8 @@ importFrom("progress", "progress_bar")
 exportClasses("XcmsExperiment")
 exportMethods("uniqueMsLevels")
 exportMethods("filterMzRange")
+
+## saving xcms objects things
+export("RDataParam")
+exportMethods("storeResults")
+
