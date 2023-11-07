@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">3.99.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2023-11-07 12:01:51.089242<br><strong>Compiled</strong>: Tue Nov 7 13:32:14 2023</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2023-11-07 11:32:47.939555<br><strong>Compiled</strong>: Tue Nov 7 13:53:38 2023</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -264,9 +264,9 @@ chromatographic peak are returned.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:32:26 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:32:33 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:32:33 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:53:56 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:54:09 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:54:09 2023]</span></span></code></pre>
 <p>By default <code>chromPeakSpectra</code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -340,9 +340,9 @@ peak in the present data set.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:32:26 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:32:33 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:32:33 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:53:56 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:54:09 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:54:09 2023]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
 single MS2 spectrum using the <code>combineSpectra</code> method
@@ -368,9 +368,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 34 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:32:26 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:32:33 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:32:33 2023]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:53:56 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:54:09 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:54:09 2023]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -827,7 +827,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:32:41 2023]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:54:20 2023]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -988,9 +988,9 @@ peak.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:32:26 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:32:33 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:32:33 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Nov  7 13:53:56 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Nov  7 13:54:09 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Nov  7 13:54:09 2023]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
@@ -1152,7 +1152,7 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] MetaboCoreUtils_1.11.0 MsBackendMgf_1.11.0    MsExperiment_1.5.1    </span></span>
-<span><span class="co">##  [4] pander_0.6.5           Spectra_1.13.0         xcms_4.1.1            </span></span>
+<span><span class="co">##  [4] pander_0.6.5           Spectra_1.13.0         xcms_3.99.7           </span></span>
 <span><span class="co">##  [7] MSnbase_2.29.0         ProtGenerics_1.35.0    S4Vectors_0.41.1      </span></span>
 <span><span class="co">## [10] mzR_2.37.0             Rcpp_1.0.11            Biobase_2.63.0        </span></span>
 <span><span class="co">## [13] BiocGenerics_0.49.1    BiocParallel_1.37.0    BiocStyle_2.31.0      </span></span>
@@ -1233,7 +1233,7 @@ systems biology</em> 2018, <strong>14</strong>:e8126.
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, Philippine Louail.</p>
+<p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer.</p>
 </div>
 
 <div class="pkgdown-footer-right">
