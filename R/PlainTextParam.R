@@ -57,8 +57,7 @@
 #'
 #' @author Philippine Louail, Johannes Rainer.
 #'
-#' @importFrom ("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
-#' "read_json")
+#' @importFrom jsonlite serializeJSON write_json unserializeJSON read_json
 #'
 #' @examples
 #' ## Load test data set of class `MsExperiment`
