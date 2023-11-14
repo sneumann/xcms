@@ -92,6 +92,7 @@ Collate:
     'MPI.R'
     'MsExperiment-functions.R'
     'MsExperiment.R'
+    'PlainTextParam.R'
     'RDataParam.R'
     'XcmsExperiment-functions.R'
     'XcmsExperiment-plotting.R'

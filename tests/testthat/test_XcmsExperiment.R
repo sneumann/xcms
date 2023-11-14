@@ -1317,7 +1317,7 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
 })
 
 test_that("storeResults,RDataParam works", {
-    param <- RDataParam(fileName ="test")
+    param <- RDataParam(fileName = "test")
     param2 <- RDataParam()
     expect_false(is.null(param2))
     storeResults(xmse, param = param)
@@ -1325,4 +1325,35 @@ test_that("storeResults,RDataParam works", {
     load("test")
     expect_s4_class(object, "XcmsExperiment")
     expect_equal(object, xmse)
+})
+
+test_that("storeResults,PlainTextParam,MsExperiment works", {
+    param <- PlainTextParam(path = "/path/test/")
+    param2 <- PlainTextParam()
+    expect_false(is.null(param2))
+    # Test if PlainTextParam is invalid with multiple paths
+    expect_error(new("PlainTextParam", path = c(tempdir(), tempdir())))
+    mse <- filterRt(mse, c(100,150)) #this adds to processing but not processingQueue
+    storeResults(mse, param = param)
+    expect_true(dir.exists("/path/test/"))
+    expect_true(file.exists(file.path(param@path, "sample_data.txt")))
+    expect_true(file.exists(file.path(param@path, "spectra_files.txt")))
+    expect_true(file.exists(file.path(param@path, "spectra_processing_queue.json"))) # empty so does not work
+})
+
+test_that("storeResults,PlainTextParam,XcmsExperiment works", {
+    param <- PlainTextParam(path = "/path/test/")
+    param2 <- PlainTextParam()
+    expect_false(is.null(param2))
+    storeResults(xmse, param = param)
+    expect_true(dir.exists("/path/test/"))
+    expect_true(file.exists(file.path(param@path, "sample_data.txt")))
+    expect_true(file.exists(file.path(param@path, "spectra_files.txt")))
+    expect_true(file.exists(file.path(param@path, "spectra_processing_queue.json")))
+    expect_true(file.exists(file.path(param@path, "process_history.json")))
+    expect_true(file.exists(file.path(param@path, "chrom_peaks.txt")))
+    expect_true(file.exists(file.path(param@path, "chrom_peaks_data.txt")))
+    expect_true(file.exists(file.path(param@path, "rtime_adjusted.txt")))
+    expect_true(file.exists(file.path(param@path, "feature_definitions.txt")))
+    expect_true(file.exists(file.path(param@path, "feature_peak_index.txt")))
 })
