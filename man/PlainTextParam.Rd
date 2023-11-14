@@ -80,7 +80,7 @@ rownames(pd) <- c("1", "2")
 mse <- readMsExperiment(fls, sampleData = pd)
 
 ## Define param
-param <- PlainTextParam(path = "test/path/")
+param <- PlainTextParam(path = "/test/path/")
 
 ## Save as a collection of plain text files
 storeResults(object = mse, param = param)
@@ -89,7 +89,7 @@ storeResults(object = mse, param = param)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Define param
-param <- PlainTextParam(path = "test/path/")
+param <- PlainTextParam(path = "/test/path/")
 
 ## Save as a collection of plain text files
 storeResults(object = faahko_sub, param = param)

@@ -113,7 +113,7 @@ setMethod("storeResults",
           signature(object = "MsExperiment",
                     param = "PlainTextParam"),
           function(object, param){
-              dir.create(path, recursive = TRUE, showWarnings = TRUE)
+              dir.create(path = param@path, recursive = TRUE, showWarnings = TRUE)
               .store_msexperiment(x = object, path = param@path)
           }
 )
