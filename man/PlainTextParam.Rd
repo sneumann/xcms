@@ -4,8 +4,8 @@
 \alias{PlainTextParam}
 \alias{storeResults,MsExperiment,PlainTextParam-method}
 \alias{storeResults,XcmsExperiment,PlainTextParam-method}
-\title{Store `MsExperiment` and `XcmsExperiment` object as a folder of plain
-text files}
+\title{Store contents of `MsExperiment` and `XcmsExperiment` objects as
+plain text files}
 \usage{
 PlainTextParam(path = tempdir())
 
@@ -32,41 +32,48 @@ text files to a folder.
 \description{
 The `PlainTextParam` class and method enable users to save `MsExperiment` or
 `XcmsExperiment` objects as collections of plain text files in a specified
-folder.
+folder. Note that, while for all xcms results within the `XcmsExperiment` can
+and will be exported, the full raw MS data (of the object's `Spectra` object)
+will currently not be exported in plain text format. For `Spectra` using the
+[MsBackendMzR()] backend, the names of the raw data files will however be
+exported (which enables to *restore* the full `Spectra` respectively
+`MsExperiment` objects).
 
 For an `MsExperiment` object, the exported files include:
 
-- The [`sampleData()`] stored as a text file named "sample_data.txt".
+- The [sampleData()] stored as a text file named *sample_data.txt*.
 
-- The [`fileNames()`] of the *Spectra* object stored in a tabular format in a
-text file named "spectra_files.txt". This method only works if the `Spectra`
-object has an backend `MsBackendMzR`. If it does not, not spectra data will
-be exported.
+- The [fileNames()] of the *Spectra* object stored in a tabular format in a
+text file named *spectra_files.txt*.The file names will only be exported if
+the `Spectra` object uses a [MsBackendMzR()] backend. For other backends no
+information on raw spectra data is currently exported with `PlainTextParam`.
 
 - Processing queue of the `Spectra` object, ensuring that any spectra data
 modifications are retained. It is stored in a `json` file named
-"spectra_processing_queue.json".
+*spectra_processing_queue.json*.
 
 For an `XcmsExperiment` object, the exported files are the same as those
 for an `MsExperiment` object, with the addition of the following:
 
-- The [`processHistory()`] information of the object, stored in a `json` file
-named "process_history.json".
+- The [processHistory()] information of the object, stored in a `json` file
+named *process_history.json*.
 
-- The chromatographic peak information obtained with [`chromPeaks()`] and
-[`chromPeaksData()`], stored in tabular format in the text files
-"chrom_peaks.txt" and "chrom_peaks_data.txt" respectively.
+- The chromatographic peak information obtained with [chromPeaks()] and
+[chromPeaksData()], stored in tabular format in the text files
+*chrom_peaks.txt* and *chrom_peaks_data.txt* respectively.
 
-- The retention time information obtained with [`adjustedRtime()`] stored
-in the text file named "rtime_adjusted.txt".
+- The retention time information obtained with [adjustedRtime()] stored
+in the text file named *rtime_adjusted.txt*.
 
-- The [`featureDefinitions()`] stored in a text file named
-"feature_definitions.txt". Additionally, a second file named
-"feature_peak_index.txt" is generated to connect the features' definitions
+- The [featureDefinitions()] stored in a text file named
+*feature_definitions.txt*. Additionally, a second file named
+*feature_peak_index.txt* is generated to connect the features' definitions
 with their names.
 
 This `param` class and method are part of the possible dispatch of the
-generic function `storeResults`.
+generic function `storeResults`. The folder will be created by calling
+`storeResults`. If the folder already exists, previous exports in that
+folder might get overwritten.
 }
 \examples{
 ## Load test data set of class `MsExperiment`
