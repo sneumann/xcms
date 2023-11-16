@@ -78,7 +78,8 @@
 #' mse <- readMsExperiment(fls, sampleData = pd)
 #'
 #' ## Define param
-#' param <- PlainTextParam(path = "/test/path/")
+#' pth = file.path(tempdir(), "test")
+#' param <- PlainTextParam(path = pth)
 #'
 #' ## Save as a collection of plain text files
 #' storeResults(object = mse, param = param)
@@ -87,7 +88,8 @@
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Define param
-#' param <- PlainTextParam(path = "/test/path/")
+#' pth = file.path(tempdir(), "test")
+#' param <- PlainTextParam(path = pth)
 #'
 #' ## Save as a collection of plain text files
 #' storeResults(object = faahko_sub, param = param)
