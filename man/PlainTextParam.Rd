@@ -60,7 +60,7 @@ named *process_history.json*.
 
 - The chromatographic peak information obtained with [chromPeaks()] and
 [chromPeaksData()], stored in tabular format in the text files
-*chrom_peaks.txt* and *chrom_peaks_data.txt* respectively.
+*chrom_peaks.txt* and *chrom_peak_data.txt* respectively.
 
 - The retention time information obtained with [adjustedRtime()] stored
 in the text file named *rtime_adjusted.txt*.
@@ -87,7 +87,8 @@ rownames(pd) <- c("1", "2")
 mse <- readMsExperiment(fls, sampleData = pd)
 
 ## Define param
-param <- PlainTextParam(path = "/test/path/")
+pth = file.path(tempdir(), "test")
+param <- PlainTextParam(path = pth)
 
 ## Save as a collection of plain text files
 storeResults(object = mse, param = param)
@@ -96,7 +97,8 @@ storeResults(object = mse, param = param)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Define param
-param <- PlainTextParam(path = "/test/path/")
+pth = file.path(tempdir(), "test")
+param <- PlainTextParam(path = pth)
 
 ## Save as a collection of plain text files
 storeResults(object = faahko_sub, param = param)
