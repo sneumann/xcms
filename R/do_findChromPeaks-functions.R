@@ -595,8 +595,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                     beta_cors <- cor(pd, beta_vals)
                     best_cor <- max(beta_cors)
                     best_curve <- beta_vals[,which.max(beta_cors)]
-                    scale_zero_one <- function(x)(x-min(x))/(max(x)-min(x))
-                    noise_level <- sd(diff(scale_zero_one(best_curve)-scale_zero_one(pd)))
+                    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(pd)))
                     beta_snr <- log10(max(pd)/noise_level)
                   }
                   peaks[p, "beta_cor"] <- best_cor
@@ -3723,4 +3722,18 @@ peaksWithCentWave <- function(int, rt,
         lm <- range(lm_seq[above_thresh], na.rm = TRUE)
     }
     lm
+}
+
+#' @description
+#'
+#' Simple helper function to scale a numeric vector between zero and one by
+#' subtracting the lowest value and dividing by the maximum.
+#'
+#' @param num_vec `numeric` vector, typically chromatographic intensities.
+#'
+#' @author William Kumler
+#'
+#' @noRd
+.scale_zero_one <- function(num_vec){
+  (num_vec-min(num_vec))/(max(num_vec)-min(num_vec))
 }
