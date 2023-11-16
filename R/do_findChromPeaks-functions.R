@@ -582,7 +582,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 
                 # Implement a fit of a skewed gaussian (beta distribution)
                 # for peak shape and within-peak signal-to-noise ratio
-                # See [biorxiv link]
+                # See https://doi.org/10.1186/s12859-023-05533-4 and
+                # https://github.com/sneumann/xcms/pull/685
                 if(verboseBetaColumns){
                   if(length(pd)<5){
                     best_cor <- NA
