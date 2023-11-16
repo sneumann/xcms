@@ -585,21 +585,9 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 # See https://doi.org/10.1186/s12859-023-05533-4 and
                 # https://github.com/sneumann/xcms/pull/685
                 if(verboseBetaColumns){
-                  if(length(pd)<5){
-                    best_cor <- NA
-                    beta_snr <- NA
-                  } else {
-                    beta_sequence <- rep(seq(0, 1, length.out=length(pd)), each=5)
-                    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = c(3, 3.5, 4, 4.5, 5), shape2 = 5), nrow = 5))
-                    # matplot(beta_vals)
-                    beta_cors <- cor(pd, beta_vals)
-                    best_cor <- max(beta_cors)
-                    best_curve <- beta_vals[,which.max(beta_cors)]
-                    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(pd)))
-                    beta_snr <- log10(max(pd)/noise_level)
-                  }
-                  peaks[p, "beta_cor"] <- best_cor
-                  peaks[p, "beta_snr"] <- beta_snr
+                  beta_vals <- .get_beta_values(pd)
+                  peaks[p, "beta_cor"] <- beta_vals$best_cor
+                  peaks[p, "beta_snr"] <- beta_vals$beta_snr
                 }
 
                 peakrange <- td[lm]
@@ -3722,6 +3710,38 @@ peaksWithCentWave <- function(int, rt,
         lm <- range(lm_seq[above_thresh], na.rm = TRUE)
     }
     lm
+}
+
+
+#' @description
+#'
+#' Calculate beta parameters for a chromatographic peak, both its similarity
+#' to a bell curve of varying degrees of skew and the standard deviation of the
+#' residuals after the best-fit bell is normalized and subtracted.
+#'
+#' @param eic_ints A numeric vector corresponding to the peak intensities
+#' @param skews A numeric vector of the skews to try, corresponding to the
+#' shape1 of dbeta with a shape2 of 5. Values less than 5 will be increasingly
+#' right-skewed, while values greater than 5 will be left-skewed.
+#'
+#' @author William Kumler
+#'
+#' @noRd
+.get_beta_values <- function(eic_ints, skews=c(3, 3.5, 4, 4.5, 5)){
+  if(length(pd)<5){
+    best_cor <- NA
+    beta_snr <- NA
+  } else {
+    beta_sequence <- rep(seq(0, 1, length.out=length(pd)), each=5)
+    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), nrow = 5))
+    # matplot(beta_vals)
+    beta_cors <- cor(pd, beta_vals)
+    best_cor <- max(beta_cors)
+    best_curve <- beta_vals[,which.max(beta_cors)]
+    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(pd)))
+    beta_snr <- log10(max(pd)/noise_level)
+  }
+  list(beta_cor, beta_snr)
 }
 
 #' @description
