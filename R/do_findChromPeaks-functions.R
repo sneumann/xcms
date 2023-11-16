@@ -3728,20 +3728,20 @@ peaksWithCentWave <- function(int, rt,
 #'
 #' @noRd
 .get_beta_values <- function(eic_ints, skews=c(3, 3.5, 4, 4.5, 5)){
-  if(length(pd)<5){
+  if(length(eic_ints)<5){
     best_cor <- NA
     beta_snr <- NA
   } else {
-    beta_sequence <- rep(seq(0, 1, length.out=length(pd)), each=5)
+    beta_sequence <- rep(seq(0, 1, length.out=length(eic_ints)), each=5)
     beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), nrow = 5))
     # matplot(beta_vals)
-    beta_cors <- cor(pd, beta_vals)
+    beta_cors <- cor(eic_ints, beta_vals)
     best_cor <- max(beta_cors)
     best_curve <- beta_vals[,which.max(beta_cors)]
-    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(pd)))
-    beta_snr <- log10(max(pd)/noise_level)
+    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(eic_ints)))
+    beta_snr <- log10(max(eic_ints)/noise_level)
   }
-  list(beta_cor, beta_snr)
+  list(best_cor=best_cor, beta_snr=beta_snr)
 }
 
 #' @description

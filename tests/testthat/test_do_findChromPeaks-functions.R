@@ -41,6 +41,30 @@ test_that("do_findChromPeaks_centWave works", {
     expect_true(nrow(res1) > nrow(res2))
 })
 
+test_that("beta calculation returns expected values", {
+  expect_equal(.get_beta_values(1:10)$best_cor, 0)
+  expect_lt(.get_beta_values(1:10)$beta_snr, 2)
+  
+  ideal_beta <- dbeta(seq(0, 1, length.out=10), 5, 5)
+  expect_equal(.get_beta_values(ideal_beta)$best_cor, 1)
+  expect_equal(.get_beta_values(ideal_beta)$beta_snr, Inf)
+  
+  skew_beta <- dbeta(seq(0, 1, length.out=10), 3, 5)
+  expect_equal(.get_beta_values(ideal_beta)$best_cor, 1)
+  expect_equal(.get_beta_values(ideal_beta)$beta_snr, Inf)
+  
+  noise_beta <- dbeta(seq(0, 1, length.out=21), 5, 5)*10+runif(21)
+  expect_gt(.get_beta_values(noise_beta)$best_cor, 0.9)
+  
+  expect_no_error(.get_beta_values(runif(1)))
+  expect_no_error(.get_beta_values(runif(10)))
+  expect_no_error(.get_beta_values(runif(100)))
+  
+  expect_length(.get_beta_values(1), 2)
+  expect_true(is.na(.get_beta_values(1)$best_cor))
+  expect_true(is.na(.get_beta_values(1)$beta_snr))
+})
+
 test_that("New beta columns perform as expected", {
   # faahko_xod comes from testthat.R
   # faahko_xod <- findChromPeaks(
