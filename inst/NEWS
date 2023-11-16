@@ -1,11 +1,11 @@
-Changes in version 3.99.8
+Changes in version 4.1.2
 ----------------------
 
 - Add a `param =` to generic function `storeResults`: `PlainTextParam` to save
   an `XcmsExperiment` or `MsExperiment` object as colleciton of plain text
   files.
 
-Changes in version 3.99.7
+Changes in version 4.1.1
 ----------------------
 
 - Add method `storeResults` and one of its `param =`: `RDataParam` to save an
