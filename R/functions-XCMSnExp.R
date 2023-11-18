@@ -295,6 +295,13 @@ dropGenericProcessHistory <- function(x, fun) {
                 meanMz <- do.call(mzCenterFun, list(mtx[, 2], mtx[, 3]))
                 if (is.na(meanMz)) meanMz <- mtx[maxi[1], 2]
                 res[i, "mz"] <- meanMz
+                
+                # if(verboseBetaColumns){
+                if(TRUE){
+                  beta_vals <- .get_beta_values(mtx[,3])
+                  res[i, "beta_cor"] <- beta_vals$best_cor
+                  res[i, "beta_snr"] <- beta_vals$beta_snr
+                }
             } else {
                 res[i, ] <- rep(NA_real_, ncols)
             }
