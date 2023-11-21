@@ -1,0 +1,4 @@
+"sample_index" "spectraOrigin"
+"1" 1 "/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko15.CDF"
+"2" 2 "/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko16.CDF"
+"3" 3 "/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko18.CDF"
