@@ -13,11 +13,12 @@ RDataParam(fileName = tempfile())
 \item{fileName}{for `RDataParam` `character(1)`, defining the file name. The
 default will be `tempfile()`.}
 
-\item{object}{The data object that needs to be saved.}
+\item{object}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
+to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
-saving. It can be one of the following classes: \code{RDataParam},
-\code{PlainTextParam}, or \code{MzTabMParam}.}
+saving. It can be one of the following classes: \code{\link{RDataParam}},
+\code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
 }
 \value{
 for `RDataParam`: a `RDataParam` class. `storeResults` does not
@@ -40,6 +41,10 @@ param <- RDataParam(fileName = "example_xcms_object")
 ## Save as RData
 storeResults(object = faahko_sub, param = param)
 
+}
+\seealso{
+Other xcms result export formats.: 
+\code{\link{PlainTextParam}}
 }
 \author{
 Philippine Louail

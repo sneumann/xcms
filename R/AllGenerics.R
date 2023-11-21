@@ -1953,40 +1953,48 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' and exporting are available and can be defined by the `param` argument.
 #'
 #' Supported `param` objects are:
-#' 
+#'
 #' - [`RDataParam`]: Save in an .RData format file. The name of the file can be
-#'  specified in the `fileName` argument. 
-#' 
-#' - `PlainTextParam`: Save in a plain text format (to be defined).
-#' 
+#'  specified in the `fileName` argument.
+#'
+#' - [`PlainTextParam`]: Store `MsExperiment` and `XcmsExperiment` objects as a
+#' folder of plain text files, folder path defined in the `path` argument.
+#'
 #' - `MzTabMParam`: Save in MzTab format (to be defined).
-#' 
+#'
 #' For specific examples, see the help pages of the individual parameter classes
 #' listed above.
 #'
-#' @param object The data object that needs to be saved.
+#' @param object `MsExperiment` or `XcmsExperiment` The data object that needs
+#' to be saved.
 #'
 #' @param param The parameter object selecting and configuring the format for
-#' saving. It can be one of the following classes: `RDataParam`,
-#' `PlainTextParam`, or `MzTabMParam`.
+#' saving. It can be one of the following classes: [`RDataParam`],
+#' [`PlainTextParam`], or `MzTabMParam`.
 #'
 #' @param ... Optional parameters.
 #'
 #' @name storeResults
-#' 
+#'
 #' @author Philippine Louail
-#' 
+#'
 #' @examples
-#' 
+#'
 #' ## Load a test data set with detected peaks
 #' faahko_sub <- loadXcmsData("faahko_sub2")
-#' 
-#' ## Set up parameter to save as .RData file 
+#'
+#' ## Set up parameter to save as .RData file
 #' param <- RDataParam(fileName = "example_xcms_results")
-#' 
+#'
 #' ## save as .RData
 #' storeResults(object = faahko_sub, param = param)
-#' 
+#'
+#' ## Set up parameter to save as a collection of plain text file
+#' param <- PlainTextParam(path = "test/path/")
+#'
+#' ## Save as a collection of plain text files
+#' storeResults(object = faahko_sub, param = param)
+#'
 #' @md
 setGeneric("storeResults", function(object, param, ...) standardGeneric("storeResults"))
 setGeneric("subset<-", function(object, value) standardGeneric("subset<-"))

@@ -1317,7 +1317,7 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
 })
 
 test_that("storeResults,RDataParam works", {
-    param <- RDataParam(fileName ="test")
+    param <- RDataParam(fileName = "test")
     param2 <- RDataParam()
     expect_false(is.null(param2))
     storeResults(xmse, param = param)

@@ -7,11 +7,12 @@
 storeResults(object, param, ...)
 }
 \arguments{
-\item{object}{The data object that needs to be saved.}
+\item{object}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
+to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
-saving. It can be one of the following classes: \code{RDataParam},
-\code{PlainTextParam}, or \code{MzTabMParam}.}
+saving. It can be one of the following classes: \code{\link{RDataParam}},
+\code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
 
 \item{...}{Optional parameters.}
 }
@@ -24,7 +25,8 @@ Supported \code{param} objects are:
 \itemize{
 \item \code{\link{RDataParam}}: Save in an .RData format file. The name of the file can be
 specified in the \code{fileName} argument.
-\item \code{PlainTextParam}: Save in a plain text format (to be defined).
+\item \code{\link{PlainTextParam}}: Store \code{MsExperiment} and \code{XcmsExperiment} objects as a
+folder of plain text files, folder path defined in the \code{path} argument.
 \item \code{MzTabMParam}: Save in MzTab format (to be defined).
 }
 
@@ -36,10 +38,16 @@ listed above.
 ## Load a test data set with detected peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 
-## Set up parameter to save as .RData file 
+## Set up parameter to save as .RData file
 param <- RDataParam(fileName = "example_xcms_results")
 
 ## save as .RData
+storeResults(object = faahko_sub, param = param)
+
+## Set up parameter to save as a collection of plain text file
+param <- PlainTextParam(path = "test/path/")
+
+## Save as a collection of plain text files
 storeResults(object = faahko_sub, param = param)
 
 }
