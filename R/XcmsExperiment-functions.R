@@ -507,6 +507,9 @@
         if (length(keep)) {
             xsub <- lapply(x[keep], .pmat_filter_mz,
                            mzr = peakArea[i, c("mzmin", "mzmax")])
+            ## length of xsub is the number of spectra, the number of peaks can
+            ## however be 0 if no peak was found. Maybe we should/need to
+            ## consider adding 0 or NA intensity for those.
             mat <- do.call(rbind, xsub)
             if (nrow(mat)) {
                 ## can have 0, 1 or x values per rt; repeat rt accordingly

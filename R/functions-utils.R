@@ -850,3 +850,74 @@ groupOverlaps <- function(xmin, xmax) {
     }
     res
 }
+
+## @jo TODO LLL replace that with an implementation in C.
+## Note: this function silently drops retention times for which no intensity-mz
+## pair was measured.
+.rawMat <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
+                    rtrange = numeric(), scanrange = numeric(),
+                    log = FALSE) {
+    if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        ## Fix for issue #267. rtrange outside scanrange causes scanrange
+        ## being c(Inf, -Inf)
+        scns <- which((scantime >= rtrange[1]) & (scantime <= rtrange[2]))
+        if (!length(scns))
+            return(matrix(
+                nrow = 0, ncol = 3,
+                dimnames = list(character(), c("time", "mz", "intensity"))))
+        scanrange <- range(scns)
+    }
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(valsPerSpect))
+    else scanrange <- range(scanrange)
+    if (!all(is.finite(scanrange)))
+        stop("'scanrange' does not contain finite values")
+    if (!all(is.finite(mzrange)))
+        stop("'mzrange' does not contain finite values")
+    if (!all(is.finite(rtrange)))
+        stop("'rtrange' does not contain finite values")
+    if (scanrange[1] == 1)
+        startidx <- 1
+    else
+        startidx <- sum(valsPerSpect[1:(scanrange[1] - 1)]) + 1
+    endidx <- sum(valsPerSpect[1:scanrange[2]])
+    scans <- rep(scanrange[1]:scanrange[2],
+                 valsPerSpect[scanrange[1]:scanrange[2]])
+    masses <- mz[startidx:endidx]
+    massidx <- 1:length(masses)
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        massidx <- massidx[(masses >= mzrange[1] & (masses <= mzrange[2]))]
+    }
+    int <- int[startidx:endidx][massidx]
+    if (log && (length(int) > 0))
+        int <- log(int + max(1 - min(int), 0))
+    cbind(time = scantime[scans[massidx]],
+          mz = masses[massidx],
+          intensity = int)
+}
+
+#' Helper function to use the internal getEIC C call to extract (TIC) EIC
+#' data.
+#'
+#' @noRd
+.getEIC <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
+                    rtrange = numeric(), log = FALSE) {
+    rtrange <- range(rtrange)
+    scns <- which((scantime >= rtrange[1]) & (scantime <= rtrange[2]))
+    if (!length(scns))
+        return(matrix(
+            nrow = 0, ncol = 3,
+            dimnames = list(character(), c("time", "mz", "intensity"))))
+    if (!all(is.finite(mzrange)))
+        stop("'mzrange' does not contain finite values")
+    if (!all(is.finite(rtrange)))
+        stop("'rtrange' does not contain finite values")
+    scanindex <- valueCount2ScanIndex(valsPerSpect)
+    res <- .Call("getEIC", mz, int, scanindex, mzrange,
+                 as.integer(range(scns) - 1L), as.integer(length(scanindex)),
+                 PACKAGE = "xcms")
+    cbind(rtime = scantime[scns],
+          intensity = res$intensity)
+}

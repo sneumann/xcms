@@ -456,3 +456,40 @@ test_that(".chromatograms_for_peaks works", {
     expect_equal(lapply(ref, intensity), lapply(res[idx], intensity))
     expect_equal(lapply(ref, rtime), lapply(res[idx], rtime))
 })
+
+test_that(".rawMat, .getEIC etc", {
+    mzr <- c(532.2000, 532.20003)
+    rtr <- c(2855.057, 2883.226)
+
+    ## Testing rawMat
+    s <- spectra(xmse[2L])
+    mz <- unlist(mz(s))
+    int <- unlist(intensity(s))
+    scantime <- rtime(s)
+    valsPerSpect <- lengths(s)
+    mzrange <- mzr
+    rtrange <- rtr
+
+    res <- .rawMat(mz = mz, int, scantime, valsPerSpect, mzrange,
+                   rtrange)
+    expect_true(is.matrix(res))
+    expect_true(ncol(res) == 3)
+    ## That is actually an issue. .rawMat skips scans/retention times if
+    ## no peak was recorded. Thus is introduces gaps in the data.
+    expect_true(!any(res[, "intensity"] == 0))
+
+    ## Compare to getEIC
+    scns <- which((scantime >= rtrange[1]) & (scantime <= rtrange[2]))
+    scanindex <- valueCount2ScanIndex(valsPerSpect)
+    sr <- range(scns) - 1
+    res2 <- .Call("getEIC", mz, int, scanindex, mzrange, as.integer(sr),
+                  as.integer(length(scanindex)), PACKAGE = "xcms")
+    expect_true(is.list(res2))
+    expect_true(any(res2$intensity == 0))
+
+    res3 <- .getEIC(mz, int, scantime, valsPerSpect, mzrange = mzrange,
+                    rtrange = rtr)
+    expect_true(is.matrix(res3))
+    expect_true(ncol(res3) == 2)
+    expect_true(any(res3[, "intensity"] == 0))
+})

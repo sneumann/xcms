@@ -138,6 +138,28 @@ test_that("subsetting,XcmsExperiment works", {
     expect_true(hasChromPeaks(res))
     expect_true(hasFeatures(res))
     expect_equal(featureValues(res), featureValues(xmseg)[, c(3, 1)])
+
+    ## Duplicating
+    expect_error(xmse[c(2, 1, 2)], "Duplicated")
+
+    ## there and back again
+    sampleData(xmse)$original_index <- seq_along(xmse)
+    res <- xmse[c(3, 1, 2)]
+    res <- res[order(sampleData(res)$original_index)]
+    expect_equal(sampleData(res)$original_index,
+                 sampleData(xmse)$original_index)
+    expect_equal(sampleData(res), sampleData(xmse))
+    expect_equal(chromPeaks(res), chromPeaks(xmse))
+    expect_equal(res@spectra, xmse@spectra)
+
+    sampleData(xmseg)$original_index <- seq_along(xmseg)
+    res <- xmseg[c(3, 1, 2), keepFeatures = TRUE]
+    res <- res[order(sampleData(res)$original_index), keepFeatures = TRUE]
+    expect_equal(sampleData(res)$original_index,
+                 sampleData(xmseg)$original_index)
+    expect_equal(sampleData(res), sampleData(xmseg))
+    expect_equal(chromPeaks(res), chromPeaks(xmseg))
+    expect_equal(featureDefinitions(res), featureDefinitions(xmseg))
 })
 
 test_that("filterRt,XcmsExperiment works", {
@@ -731,6 +753,9 @@ test_that(".chrom_peak_intensity_centWave works", {
     ## expect_equal(res[, "rt"], unname(pks[, "rt"])) # that is different.
     expect_equal(unname(res[, "into"]), unname(pks[, "into"]))
     expect_equal(unname(res[, "maxo"]), unname(pks[, "maxo"]))
+
+    ## One example with missing values within the range:
+    ## pks[11, ].
 })
 
 ## That's from XcmsExperiment-functions.R
