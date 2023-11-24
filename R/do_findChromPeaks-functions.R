@@ -585,9 +585,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 # See https://doi.org/10.1186/s12859-023-05533-4 and
                 # https://github.com/sneumann/xcms/pull/685
                 if(verboseBetaColumns){
-                  beta_vals <- .get_beta_values(pd)
-                  peaks[p, "beta_cor"] <- beta_vals["best_cor"]
-                  peaks[p, "beta_snr"] <- beta_vals["beta_snr"]
+                  peaks[p, c("beta_cor", "beta_snr")] <- .get_beta_values(pd)
                 }
 
                 peakrange <- td[lm]

@@ -297,9 +297,7 @@ dropGenericProcessHistory <- function(x, fun) {
                 res[i, "mz"] <- meanMz
                 
                 if("beta_cor"%in%cn){
-                  beta_vals <- .get_beta_values(mtx[,3])
-                  res[i, "beta_cor"] <- beta_vals["best_cor"]
-                  res[i, "beta_snr"] <- beta_vals["beta_snr"]
+                  res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(mtx[,3])
                 }
             } else {
                 res[i, ] <- rep(NA_real_, ncols)
