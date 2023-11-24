@@ -63,7 +63,7 @@
 .mse_find_chrom_peaks_sample <- function(x, msLevel = 1L, param, ...) {
     x <- filterMsLevel(x, msLevel)
     pkd <- Spectra::peaksData(x, columns = c("mz", "intensity"),
-                              BPPARAM = SerialParam())
+                              f = factor(), BPPARAM = SerialParam())
     vals_per_spect <- vapply(pkd, nrow, integer(1), USE.NAMES = FALSE)
     ## Open questions:
     ## - What to do with empty spectra? Remove them? MatchFilter does not like
@@ -229,7 +229,7 @@
         }
     }
     bpmapply(
-        split(peaksData(x, columns = c("mz", "intensity"),
+        split(peaksData(x, columns = c("mz", "intensity"), f = factor(),
                         BPPARAM = SerialParam()), f),
         split(rtime(x), f),
         FUN = function(p, rt, prm, msl) {
@@ -311,6 +311,7 @@
     else f <- factor(integer(), levels = sidx)
     bplapply(
         split(Spectra::peaksData(x, columns = c("mz", "intensity"),
+                                 f = factor(),
                                  BPPARAM = SerialParam()), f),
         FUN = .peaksdata_profmat, method = method, step = step,
         baselevel = baselevel, basespace = basespace, mzrange. = mzrange.,
@@ -374,8 +375,9 @@
     if (!(ref_idx %in% seq_along(x)))
         stop("'centerSample' needs to be an integer between 1 and ", length(x))
     ref_sps <- filterMsLevel(spectra(x[ref_idx]), msLevel = msLevel)
-    ref_pm <- .peaksdata_profmat(peaksData(ref_sps), method = "bin",
-                                 step = binSize(param), returnBreaks = TRUE)
+    ref_pm <- .peaksdata_profmat(peaksData(ref_sps, f = factor()),
+                                 method = "bin", step = binSize(param),
+                                 returnBreaks = TRUE)
     res <- unlist(.mse_spectrapply_chunks(
         x, FUN = function(z, ref, ref_pm, param, msLevel, BPPARAM) {
             z <- setBackend(
@@ -416,10 +418,12 @@
     if (!(length(ref) & length(other)))
         stop("No spectra with MS level ", msLevel, " present")
     if (!length(ref_pm))
-        ref_pm <- .peaksdata_profmat(peaksData(ref), method = "bin",
+        ref_pm <- .peaksdata_profmat(peaksData(ref, f = factor()),
+                                     method = "bin",
                                      step = binSize(param),
                                      returnBreaks = TRUE)
-    other_pm <- .peaksdata_profmat(peaksData(other), method = "bin",
+    other_pm <- .peaksdata_profmat(peaksData(other, f = factor()),
+                                   method = "bin",
                                    step = binSize(param),
                                    returnBreaks = TRUE)
     adj <- .obiwarp_bare(rtime(ref), rtime(other), ref_pr = ref_pm,
@@ -506,6 +510,7 @@
             else f <- factor(integer(), levels = sidx)
             bpmapply(
                 split(Spectra::peaksData(z, columns = c("mz", "intensity"),
+                                         f = factor(),
                                          BPPARAM = SerialParam()), f),
                 split(rtime(z), f),
                 split(msLevel(z), f),

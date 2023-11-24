@@ -355,7 +355,8 @@
                       levels = levels(f))
     res <- bpmapply(
         .merge_neighboring_peaks2,
-        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel)), f),
+        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
+                        f = factor()), f),
         split.data.frame(chromPeaks(x, msLevel = msLevel), f = f_peaks),
         split.data.frame(chromPeakData(
             x, msLevel = msLevel, return.type = "data.frame"), f = f_peaks),
@@ -397,7 +398,8 @@
                 }
             }, logical(1))
         },
-        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel)), f),
+        split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
+                        f = factor()), f),
         split(rt, f),
         split.data.frame(chromPeaks(x), f = f_peaks),
         split(chromPeakData(x)$ms_level, f = f_peaks),
@@ -467,7 +469,8 @@
     if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
     else rt <- rtime(spectra(x))[keep]
     cn <- colnames(chromPeaks(x))
-    res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel)), f),
+    res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel),
+                                    f = factor()), f),
                     split(rt, f),
                     pal,
                     as.integer(names(pal)),
@@ -958,7 +961,8 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         ## Get EICs for all chrom peaks (all MS levels)
         object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
         chrs <- .chromatograms_for_peaks(
-            peaksData(object@spectra), rt = rtime(object@spectra),
+            peaksData(object@spectra, f = factor()),
+            rt = rtime(object@spectra),
             msl = msLevel(object@spectra), file_idx = fromFile,
             tmz = isolationWindowTargetMz(object@spectra), pks = pks,
             pks_msl = chromPeakData(object)$ms_level[ord],
