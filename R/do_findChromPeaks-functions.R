@@ -3715,7 +3715,8 @@ peaksWithCentWave <- function(int, rt,
 #'
 #' Calculate beta parameters for a chromatographic peak, both its similarity
 #' to a bell curve of varying degrees of skew and the standard deviation of the
-#' residuals after the best-fit bell is normalized and subtracted.
+#' residuals after the best-fit bell is normalized and subtracted. This function
+#' requires at least 5 scans or it will return NA for both parameters.
 #'
 #' @param intensity A numeric vector corresponding to the peak intensities
 #' @param rtime A numeric vector corresponding to the retention times of each
@@ -3725,7 +3726,7 @@ peaksWithCentWave <- function(int, rt,
 #' right-skewed, while values greater than 5 will be left-skewed.
 #' @param zero.rm Boolean value controlling whether "missing" scans are dropped
 #' prior to curve fitting. The default, TRUE, will remove intensities of zero
-#' or NA.
+#' or NA
 #'
 #' @author William Kumler
 #'
@@ -3735,15 +3736,16 @@ peaksWithCentWave <- function(int, rt,
   if (zero.rm) {
     ## remove 0 or NA intensities
     keep <- which(intensity > 0)
-    intensity <- intensity[keep]
     rtime <- rtime[keep]
+    intensity <- intensity[keep]
   }
   if(length(intensity)<5){
     best_cor <- NA
     beta_snr <- NA
   } else {
     beta_sequence <- rep(.scale_zero_one(rtime), each=length(skews))
-    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), nrow = 5))
+    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), 
+                          nrow = length(skews)))
     # matplot(beta_vals)
     beta_cors <- cor(intensity, beta_vals)
     best_cor <- max(beta_cors)
@@ -3753,6 +3755,7 @@ peaksWithCentWave <- function(int, rt,
   }
   c(best_cor=best_cor, beta_snr=beta_snr)
 }
+
 
 #' @description
 #'

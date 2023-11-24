@@ -42,16 +42,25 @@ test_that("do_findChromPeaks_centWave works", {
 })
 
 test_that("beta calculation returns expected values", {
-  expect_equal(.get_beta_values(1:10)["best_cor"], 0)
+  expect_lt(.get_beta_values(1:10, zero.rm = FALSE)["best_cor"], 0.0001)
+  expect_lt(.get_beta_values(1:10, zero.rm = FALSE)["beta_snr"], 2)
+  expect_lt(.get_beta_values(1:10)["best_cor"], 0.0001)
   expect_lt(.get_beta_values(1:10)["beta_snr"], 2)
   
   ideal_beta <- dbeta(seq(0, 1, length.out=10), 5, 5)
-  expect_equal(.get_beta_values(ideal_beta)["best_cor"], 1)
-  expect_equal(.get_beta_values(ideal_beta)["beta_snr"], Inf)
-  
+  expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["best_cor"], 1)
+  expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["beta_snr"], 16)
+  expect_gte(.get_beta_values(ideal_beta)["best_cor"], 0.97)
+  expect_gte(.get_beta_values(ideal_beta)["beta_snr"], 1)
+    
   skew_beta <- dbeta(seq(0, 1, length.out=10), 3, 5)
-  expect_equal(.get_beta_values(ideal_beta)["best_cor"], 1)
-  expect_equal(.get_beta_values(ideal_beta)["beta_snr"], Inf)
+  expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["best_cor"], 1)
+  expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["beta_snr"], 16)
+  expect_gte(.get_beta_values(ideal_beta)["best_cor"], 0.97)
+  expect_gte(.get_beta_values(ideal_beta)["beta_snr"], 1)
+  
+  rightskew_beta <- dbeta(seq(0, 1, length.out=10), 7, 5)
+  expect_gt(.get_beta_values(rightskew_beta, skews = c(3,5,7))["best_cor"], 0.95)
   
   noise_beta <- dbeta(seq(0, 1, length.out=21), 5, 5)*10+runif(21)
   expect_gt(.get_beta_values(noise_beta)["best_cor"], 0.9)
@@ -84,6 +93,10 @@ test_that("New beta columns perform as expected", {
   orig_chrompeaks <- chromPeaks(faahko_xod)
   beta_chrompeaks <- chromPeaks(faahko_xod_beta)
   expect_identical(orig_chrompeaks, beta_chrompeaks[,colnames(orig_chrompeaks)])
+  
+  # Object will contain NAs because there are peaks <5 scans wide
+  expect_true(any(is.na(beta_chrompeaks[,"beta_snr"])))
+  beta_chrompeaks <- beta_chrompeaks[!is.na(beta_chrompeaks[,"beta_cor"]),]
   
   # Unit test - check that beta values make sense
   expect_true(all(beta_chrompeaks[,"beta_cor"]<=1))
