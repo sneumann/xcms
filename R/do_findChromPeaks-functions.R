@@ -586,8 +586,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 # https://github.com/sneumann/xcms/pull/685
                 if(verboseBetaColumns){
                   beta_vals <- .get_beta_values(pd)
-                  peaks[p, "beta_cor"] <- beta_vals$best_cor
-                  peaks[p, "beta_snr"] <- beta_vals$beta_snr
+                  peaks[p, "beta_cor"] <- beta_vals["best_cor"]
+                  peaks[p, "beta_snr"] <- beta_vals["beta_snr"]
                 }
 
                 peakrange <- td[lm]
@@ -3719,29 +3719,41 @@ peaksWithCentWave <- function(int, rt,
 #' to a bell curve of varying degrees of skew and the standard deviation of the
 #' residuals after the best-fit bell is normalized and subtracted.
 #'
-#' @param eic_ints A numeric vector corresponding to the peak intensities
+#' @param intensity A numeric vector corresponding to the peak intensities
+#' @param rtime A numeric vector corresponding to the retention times of each
+#' intensity. If not provided, intensities will be assumed to be equally spaced.
 #' @param skews A numeric vector of the skews to try, corresponding to the
 #' shape1 of dbeta with a shape2 of 5. Values less than 5 will be increasingly
 #' right-skewed, while values greater than 5 will be left-skewed.
+#' @param zero.rm Boolean value controlling whether "missing" scans are dropped
+#' prior to curve fitting. The default, TRUE, will remove intensities of zero
+#' or NA.
 #'
 #' @author William Kumler
 #'
 #' @noRd
-.get_beta_values <- function(eic_ints, skews=c(3, 3.5, 4, 4.5, 5)){
-  if(length(eic_ints)<5){
+.get_beta_values <- function(intensity, rtime = seq_along(intensity), 
+                             skews=c(3, 3.5, 4, 4.5, 5), zero.rm = TRUE){
+  if (zero.rm) {
+    ## remove 0 or NA intensities
+    keep <- which(intensity > 0)
+    intensity <- intensity[keep]
+    rtime <- rtime[keep]
+  }
+  if(length(intensity)<5){
     best_cor <- NA
     beta_snr <- NA
   } else {
-    beta_sequence <- rep(seq(0, 1, length.out=length(eic_ints)), each=5)
+    beta_sequence <- rep(.scale_zero_one(rtime), each=length(skews))
     beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), nrow = 5))
     # matplot(beta_vals)
-    beta_cors <- cor(eic_ints, beta_vals)
+    beta_cors <- cor(intensity, beta_vals)
     best_cor <- max(beta_cors)
-    best_curve <- beta_vals[,which.max(beta_cors)]
-    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(eic_ints)))
-    beta_snr <- log10(max(eic_ints)/noise_level)
+    best_curve <- beta_vals[, which.max(beta_cors)]
+    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(intensity)))
+    beta_snr <- log10(max(intensity)/noise_level)
   }
-  list(best_cor=best_cor, beta_snr=beta_snr)
+  c(best_cor=best_cor, beta_snr=beta_snr)
 }
 
 #' @description
