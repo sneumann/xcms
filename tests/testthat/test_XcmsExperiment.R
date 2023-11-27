@@ -194,6 +194,16 @@ test_that("filterRt,XcmsExperiment works", {
                 seq_len(nrow(chromPeaks(res))))
 })
 
+test_that("filterMsLevel,XcmsExperiment works", {
+    res <- filterMsLevel(xmse, c(1L, 2L))
+    expect_equal(rtime(res), rtime(xmse))
+    expect_equal(chromPeaks(res), chromPeaks(xmse))
+
+    res <- filterMsLevel(xmse, msLevel = 2L)
+    expect_equal(rtime(res), numeric())
+    expect_true(nrow(chromPeaks(res)) == 0L)
+})
+
 test_that("filterFile,XcmsExperiment works", {
     res <- filterFile(xmse)
     expect_s4_class(res, "XcmsExperiment")

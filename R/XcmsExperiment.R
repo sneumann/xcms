@@ -83,6 +83,9 @@
 #'   `"isolationWindowUpperMz"` (columns in `chromPeakData`) do not contain
 #'   the user provided `mz`.
 #'
+#' - `filterMsLevel`: filter the data of the `XcmsExperiment` or `MsExperiment`
+#'   to keep only data of the MS level(s) specified with parameter `msLevel.`.
+#'
 #' - `filterMz`, `filterMzRange`: filter the spectra within an
 #'   `XcmsExperiment` or `MsExperiment` to the specified m/z range (parameter
 #'   `mz`). For `XcmsExperiment` also identified chromatographic peaks and
@@ -482,6 +485,8 @@
 #'     length equal to the numer of rows of the parameters `mz` and `rt`
 #'     defining the m/z and rt regions from which the chromatograms should
 #'     be created. Defaults to `msLevel = 1L`.
+#'     for `filterMsLevel`: `integer` defining the MS level(s) to which the
+#'     data should be subset.
 #'
 #' @param mz For `chromPeaks` and `featureDefinitions`: `numeric(2)` optionally
 #'     defining the m/z range for which chromatographic peaks or feature
@@ -815,6 +820,20 @@ setMethod(
         }
         callNextMethod(object = object, mz = mz, msLevel. = msLevel.)
     })
+
+#' @rdname XcmsExperiment
+setMethod(
+    "filterMsLevel", "XcmsExperiment",
+    function(object, msLevel. = uniqueMsLevels(object)) {
+        if (!length(msLevel.))
+            return(object)
+        if (hasChromPeaks(object)) {
+            keep <- chromPeakData(object)$ms_level %in% msLevel.
+            object <- .filter_chrom_peaks(object, idx = base::which(keep))
+        }
+        callNextMethod(object = object, msLevel. = msLevel.)
+    })
+
 
 ################################################################################
 ## chromatographic peaks

@@ -16,6 +16,18 @@ test_that("filterRt,MsExperiment works", {
     expect_equal(rtime(spectra(res)), rtime(spectra(mse)))
 })
 
+test_that("filterMsLevel,MsExperiment works", {
+    res <- filterMsLevel(mse, msLevel = 1)
+    expect_equal(rtime(res), rtime(mse))
+
+    res <- filterMsLevel(mse, msLevel = integer())
+    expect_equal(rtime(res), rtime(mse))
+
+    res <- filterMsLevel(mse, msLevel = 2L)
+    expect_equal(rtime(res), numeric())
+    expect_equal(length(res), 3L)
+})
+
 test_that("filterFile,MsExperiment works", {
     res <- filterFile(mse)
     expect_s4_class(res, "MsExperiment")

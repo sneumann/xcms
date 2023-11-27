@@ -1460,6 +1460,8 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
 #' @rdname XcmsExperiment
+#'
+#' @name XcmsExperiment
 setAs(from = "XcmsExperiment", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
 #' @rdname XCMSnExp-peak-grouping-results
