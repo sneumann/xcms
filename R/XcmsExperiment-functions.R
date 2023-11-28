@@ -519,6 +519,9 @@
                     sum(mat[, 2L], na.rm = TRUE) *
                     ((rtr[2L] - rtr[1L]) / max(1L, (length(keep) - 1L)))
                 )
+                if ("beta_cor" %in% cn)
+                    res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
+                        mat[, 2L], rts)
             }
         }
     }

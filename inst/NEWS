@@ -1,3 +1,10 @@
+Changes in version 4.1.3
+----------------------
+
+- Add parameter `verboseBetaColumns` to `CentWaveParam` to enable calculation
+  of additional peak quality metrics comparing the EIC to an idealized bell
+  curve.
+
 Changes in version 4.1.2
 ----------------------
 
