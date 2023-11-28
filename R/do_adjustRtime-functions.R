@@ -261,135 +261,185 @@ do_adjustRtime_peakGroups <-
     }
     rtime_adj
 }
-## That's the original code that fails to fix unsorted adjusted retention times
-## (see issue #146).
-do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
-                                           minFraction = 0.9, extraPeaks = 1,
-                                           smooth = c("loess", "linear"), span = 0.2,
-                                           family = c("gaussian", "symmetric")) {
-    ## Check input.
-    if (missing(peaks) | missing(peakIndex) | missing(rtime))
-        stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")
-    smooth <- match.arg(smooth)
-    family <- match.arg(family)
-    ## minFraction
-    if (any(minFraction > 1) | any(minFraction < 0))
-        stop("'minFraction' has to be between 0 and 1!")
 
-    ## Check peaks:
-    OK <- .validChromPeaksMatrix(peaks)
-    if (is.character(OK))
-        stop(OK)
-    ## Check peakIndex:
-    if (any(!(unique(unlist(peakIndex)) %in% seq_len(nrow(peaks)))))
-        stop("Some indices listed in 'peakIndex' are outside of ",
-             "1:nrow(peaks)!")
-    ## Check rtime: in line with the total number of samples we've got in
-    ## peaks?
-    if (!is.list(rtime))
-        stop("'rtime' should be a list of numeric vectors with the retention ",
-             "times of the spectra per sample!")
-    if (!all(unlist(lapply(rtime, is.numeric), use.names = FALSE)))
-        stop("'rtime' should be a list of numeric vectors with the retention ",
-             "times of the spectra per sample!")
-    if (length(rtime) != max(peaks[, "sample"]))
-        stop("The length of 'rtime' does not match with the total number of ",
-             "samples according to the 'peaks' matrix!")
+#' @param peakGroupsMatrix needs to be a matrix with retention times with
+#'     number of columns being equal to the length of `subset` or number of
+#'     samples (if `subset` is not defined).
+#'
+#' @noRd
+do_adjustRtime_peakGroupsMatrix <-
+    function(rtime, peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
+             smooth = c("loess", "linear"), span = 0.2,
+             family = c("gaussian", "symmetric"),
+             subset = integer(), subsetAdjust = c("average", "previous")) {
+        subsetAdjust <- match.arg(subsetAdjust)
+        smooth <- match.arg(smooth)
+        family <- match.arg(family)
+        if (!nrow(peakGroupsMatrix))
+            stop("Parameter 'peakGroupsMatrix' is empty")
+        if (missing(rtime))
+            stop("Parameter 'rtime' is empty")
+        ## Check rtime:
+        if (!is.list(rtime))
+            stop("'rtime' should be a list of numeric vectors with the ",
+                 "retention times of the spectra per sample!")
+        if (!all(unlist(lapply(rtime, is.numeric), use.names = FALSE)))
+            stop("'rtime' should be a list of numeric vectors with the ",
+                 "retention times of the spectra per sample!")
+        total_samples <- length(rtime)
+        if (length(subset)) {
+            if (!is.numeric(subset))
+                stop("If provided, 'subset' is expected to be an integer")
+            if (!all(subset %in% seq_len(total_samples)))
+                stop("One or more indices in 'subset' are out of range.")
+            if (length(subset) < 2)
+                stop("Length of 'subset' too small: minimum required ",
+                     "samples for alignment is 2.")
+        } else subset <- seq_len(total_samples)
+        nSamples <- length(subset)
+        ## Check if we've got a valid peakGroupsMatrix
+        ## o Same number of samples.
+        ## o range of rt values is within the rtime.
+        if (ncol(peakGroupsMatrix) != nSamples)
+            stop("Number of columns of 'peakGroupsMatrix' is ",
+                 ncol(peakGroupsMatrix), " while ", nSamples,
+                 " columns are expected")
+        pg_range <- range(peakGroupsMatrix, na.rm = TRUE)
+        rt_range <- range(rtime)
+        if (!(pg_range[1] >= rt_range[1] & pg_range[2] <= rt_range[2]))
+            stop("The retention times in 'peakGroupsMatrix' have to be within",
+                 " the retention time range of the experiment!")
+        rt <- peakGroupsMatrix
+        message("Performing retention time correction using ", nrow(rt),
+                " peak groups.")
 
-    nSamples <- length(rtime)
-    ## Translate minFraction to number of allowed missing samples.
-    missingSample <- nSamples - (nSamples * minFraction)
-
-    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, seq_len(nSamples),
-                                 missingSample, extraPeaks)
-
-    message("Performing retention time correction using ", nrow(rt),
-            " peak groups.")
-
-    ## Calculate the deviation of each peak group in each sample from its
-    ## median
-    rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
-
-    if (smooth == "loess") {
-        mingroups <- min(colSums(!is.na(rt)))
-        if (mingroups < 4) {
-            smooth <- "linear"
-            warning("Too few peak groups for 'loess', reverting to linear",
-                    " method")
-        } else if (mingroups * span < 4) {
-            span <- 4 / mingroups
-            warning("Span too small for 'loess' and the available number of ",
-                    "peak groups, resetting to ", round(span, 2))
-        }
-    }
-
-    rtdevsmo <- vector("list", nSamples)
-
-    ## Code for checking to see if retention time correction is overcorrecting
-    rtdevrange <- range(rtdev, na.rm = TRUE)
-    warn.overcorrect <- FALSE
-
-    for (i in 1:nSamples) {
-        pts <- na.omit(data.frame(rt = rt[, i], rtdev = rtdev[, i]))
+        ## Calculate the deviation of each peak group in each sample from its
+        ## median
+        rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
         if (smooth == "loess") {
-            lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
-                                         degree = 1, family = family))
-
-            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
-            ## Remove singularities from the loess function
-            rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
-                          quantile(abs(rtdevsmo[[i]]), 0.9) * 2] <- NA
-            if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
-                rtdevsmo[[i]][naidx] <- suppressWarnings(
-                    approx(na.omit(data.frame(rtime[[i]], rtdevsmo[[i]])),
-                           xout = rtime[[i]][naidx], rule = 2)$y
-                )
-            ## That's to ensure that the adjusted retention times are in the
-            ## same order than the raw retention times - I guess...
-            ## Check if adjustment changes the order of the adjusted retention
-            ## times. If yes, the difference between consecutive retention times
-            ## will be negative.
-            ## What does this code do:
-            ## o move the last adjusted retention time to the left by its
-            ##   difference to the next one.
-            while (length(decidx <- which(diff(rtime[[i]] - rtdevsmo[[i]]) < 0))) {
-                d <- diff(rtime[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
-                rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
-                if (abs(d) <= 1e-06)
-                    break
+            mingroups <- min(colSums(!is.na(rt)))
+            if (mingroups < 4) {
+                smooth <- "linear"
+                warning("Too few peak groups for 'loess', reverting to linear",
+                        " method")
+            } else if (mingroups * span < 4) {
+                span <- 4 / mingroups
+                warning("Span too small for 'loess' and the available number ",
+                        "of peak groups, resetting to ", round(span, 2))
             }
-
-            rtdevsmorange <- range(rtdevsmo[[i]])
-            if (any(rtdevsmorange / rtdevrange > 2))
-                warn.overcorrect <- TRUE
-        } else {
-            if (nrow(pts) < 2) {
-                stop("Not enough peak groups even for linear smoothing ",
-                     "available!")
-            }
-            ## Use lm instead?
-            fit <- lsfit(pts$rt, pts$rtdev)
-            rtdevsmo[[i]] <- rtime[[i]] * fit$coef[2] + fit$coef[1]
-            ptsrange <- range(pts$rt)
-            minidx <- rtime[[i]] < ptsrange[1]
-            maxidx <- rtime[[i]] > ptsrange[2]
-            rtdevsmo[[i]][minidx] <- rtdevsmo[[i]][head(which(!minidx), n = 1)]
-            rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
         }
-        ## Finally applying the correction
-        rtime[[i]] <- rtime[[i]] - rtdevsmo[[i]]
+
+        rtdevsmo <- vector("list", nSamples)
+
+        ## Code for checking to see if retention time correction is
+        ## overcorrecting
+        rtdevrange <- range(rtdev, na.rm = TRUE)
+        warn.overcorrect <- FALSE
+        warn.tweak.rt <- FALSE
+
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(subset),
+                               clear = FALSE)
+        rtime_adj <- rtime
+        ## Adjust samples in subset.
+        for (i in seq_along(subset)) {
+            i_all <- subset[i]              # Index of sample in whole dataset.
+            pts <- na.omit(data.frame(rt = rt[, i], rtdev = rtdev[, i]))
+
+            ## order the data.frame such that rt and rtdev are increasingly
+            ## ordered.
+            pk_idx <- order(pts$rt, pts$rtdev)
+            pts <- pts[pk_idx, ]
+            if (smooth == "loess") {
+                lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
+                                             degree = 1, family = family))
+
+                rtdevsmo[[i]] <- na.flatfill(
+                    predict(lo, data.frame(rt = rtime[[i_all]])))
+                ## Remove singularities from the loess function
+                rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
+                              quantile(abs(rtdevsmo[[i]]), 0.9,
+                                       na.rm = TRUE) * 2] <- NA
+                if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
+                    rtdevsmo[[i]][naidx] <- suppressWarnings(
+                        approx(na.omit(data.frame(rtime[[i_all]],
+                                                  rtdevsmo[[i]])),
+                               xout = rtime[[i_all]][naidx], rule = 2)$y
+                    )
+
+                ## Check if there are adjusted retention times that are not
+                ## ordered increasingly. If there are, search for each first
+                ## unordered rt the next rt that is larger and linearly
+                ## interpolate the values in between (see issue #146 for an
+                ## illustration).
+                while (length(decidx <- which(diff(rtime[[i_all]] - rtdevsmo[[i]]) < 0))) {
+                    warn.tweak.rt <- TRUE  ## Warn that we had to tweak the rts
+                    rtadj <- rtime[[i_all]] - rtdevsmo[[i]]
+                    rtadj_start <- rtadj[decidx[1]] ## start interpolating from here
+                    next_larger <- which(rtadj > rtadj[decidx[1]])
+                    if (length(next_larger) == 0) {
+                        ## Fix if there is no larger adjusted rt up to the end.
+                        next_larger <- length(rtadj) + 1
+                        rtadj_end <- rtadj_start
+                    } else {
+                        next_larger <- min(next_larger)
+                        rtadj_end <- rtadj[next_larger]
+                    }
+                    ## linearly interpolate the values in between.
+                    adj_idxs <- (decidx[1] + 1):(next_larger - 1)
+                    incr <- (rtadj_end - rtadj_start) / length(adj_idxs)
+                    rtdevsmo[[i]][adj_idxs] <- rtime[[i_all]][adj_idxs] -
+                        (rtadj_start + (1:length(adj_idxs)) * incr)
+                }
+
+                rtdevsmorange <- range(rtdevsmo[[i]])
+                if (any(rtdevsmorange / rtdevrange > 2))
+                    warn.overcorrect <- TRUE
+            } else {
+                if (nrow(pts) < 2) {
+                    stop("Not enough peak groups even for linear smoothing ",
+                         "available!")
+                }
+                ## Use lm instead?
+                fit <- lsfit(pts$rt, pts$rtdev)
+                rtdevsmo[[i]] <- rtime[[i_all]] * fit$coef[2] + fit$coef[1]
+                ptsrange <- range(pts$rt)
+                minidx <- rtime[[i_all]] < ptsrange[1]
+                maxidx <- rtime[[i_all]] > ptsrange[2]
+                rtdevsmo[[i]][minidx] <- rtdevsmo[[i]][head(which(!minidx), n = 1)]
+                rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
+            }
+            ## Finally applying the correction
+            rtime_adj[[i_all]] <- rtime[[i_all]] - rtdevsmo[[i]]
+            pb$tick()
+        }
+        ## Adjust the remaining samples.
+        rtime_adj <- adjustRtimeSubset(rtime, rtime_adj, subset = subset,
+                                       method = subsetAdjust)
+        if (warn.overcorrect) {
+            warning("Fitted retention time deviation curves exceed points ",
+                    "by more than 2x. This is dangerous and the algorithm ",
+                    "is probably overcorrecting your data. Consider ",
+                    "increasing the span parameter or switching to the ",
+                    "linear smoothing method.")
+        }
+
+        if (warn.tweak.rt) {
+            warning(call. = FALSE, "Adjusted retention times had to be ",
+                    "re-adjusted for some files to ensure them being in ",
+                    "the same order than the raw retention times. A call to ",
+                    "'dropAdjustedRtime' might thus fail to restore retention ",
+                    "times of chromatographic peaks to their original values. ",
+                    "Eventually consider to increase the value of the 'span' ",
+                    "parameter.")
+        }
+        rtime_adj
     }
 
-    if (warn.overcorrect) {
-        warning("Fitted retention time deviation curves exceed points by more",
-                " than 2x. This is dangerous and the algorithm is probably ",
-                "overcorrecting your data. Consider increasing the span ",
-                "parameter or switching to the linear smoothing method.")
-    }
 
-    return(rtime)
-}
 
 #' This function adjusts retentin times in the vector/matrix `x` given the
 #' provided `numeric` vectors `rtraw` and `rtadj`.

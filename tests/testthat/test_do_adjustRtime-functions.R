@@ -183,3 +183,15 @@ test_that("adjustRtimeSubset works", {
     points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
     points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
 })
+
+test_that("do_adjustRtime_peakGroupsMatrix works", {
+    ## Expect the same results by running just this function with a pre-defined
+    ## peakGroupsMatrix.
+    ph <- processHistory(xod_xgr)
+    pgm <- peakGroupsMatrix(ph[[length(ph)]]@param)
+    rts <- split(rtime(xod_xg), fromFile(xod_xg))
+
+    ## Errors
+
+    ## Works with subset.
+})
