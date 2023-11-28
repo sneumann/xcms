@@ -104,6 +104,12 @@
 #'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 #'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 #'     }
+#'     Additional columns for \code{verboseBetaColumns = TRUE}:
+#'     \describe{
+#'
+#'     \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
+#'     \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
+#'     }
 #'
 #' @author Ralf Tautenhahn, Johannes Rainer
 #'
@@ -145,7 +151,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        firstBaselineCheck = TRUE,
                                        roiScales = NULL,
                                        sleep = 0,
-                                       extendLengthMSW = FALSE) {
+                                       extendLengthMSW = FALSE,
+                                       verboseBetaColumns = FALSE) {
     if (getOption("originalCentWave", default = TRUE)) {
         ## message("DEBUG: using original centWave.")
         .centWave_orig(mz = mz, int = int, scantime = scantime,
@@ -156,7 +163,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
                        roiScales = roiScales, sleep = sleep,
-                       extendLengthMSW = extendLengthMSW)
+                       extendLengthMSW = extendLengthMSW, 
+                       verboseBetaColumns = verboseBetaColumns)
     } else {
         ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
@@ -178,7 +186,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                            noise = 0, ## noise.local=TRUE,
                            sleep = 0, verboseColumns = FALSE, roiList = list(),
                            firstBaselineCheck = TRUE, roiScales = NULL,
-                           extendLengthMSW = FALSE) {
+                           extendLengthMSW = FALSE, verboseBetaColumns = FALSE) {
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
@@ -218,6 +226,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                    "into", "intb", "maxo", "sn")
     verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
                       "scpos", "scmin", "scmax", "lmin", "lmax")
+    betanames <- c("beta_cor", "beta_snr")
 
     ## Peak width: seconds to scales
     scalerange <- round((peakwidth / mean(diff(scantime))) / 2)
@@ -226,15 +235,19 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         scalerange <- scalerange[-z]
     if (length(scalerange) < 1) {
         warning("No scales? Please check peak width!")
-        if (verboseColumns) {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                            length(verbosenames))
-            colnames(nopeaks) <- c(basenames, verbosenames)
-        } else {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-            colnames(nopeaks) <- c(basenames)
-        }
-        return(invisible(nopeaks))
+      matrix_length <- length(basenames)
+      matrix_names <- basenames
+      if (verboseColumns) {
+        matrix_length <- matrix_length + length(verbosenames)
+        matrix_names <- c(matrix_names, verbosenames)
+      }
+      if (verboseBetaColumns) {
+        matrix_length <- matrix_length + length(betanames)
+        matrix_names <- c(matrix_names, betanames)
+      }
+      nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+      colnames(nopeaks) <- matrix_names
+      return(invisible(nopeaks))
     }
 
     if (length(scalerange) > 1)
@@ -319,15 +332,19 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         ## ROI.list <- findmzROI(object,scanrange=scanrange,dev=ppm * 1e-6,minCentroids=minCentroids, prefilter=prefilter, noise=noise)
         if (length(roiList) == 0) {
             warning("No ROIs found! \n")
-            if (verboseColumns) {
-                nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                                length(verbosenames))
-                colnames(nopeaks) <- c(basenames, verbosenames)
-            } else {
-                nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-                colnames(nopeaks) <- c(basenames)
-            }
-            return(invisible(nopeaks))
+          matrix_length <- length(basenames)
+          matrix_names <- basenames
+          if (verboseColumns) {
+            matrix_length <- matrix_length + length(verbosenames)
+            matrix_names <- c(matrix_names, verbosenames)
+          }
+          if (verboseBetaColumns) {
+            matrix_length <- matrix_length + length(betanames)
+            matrix_names <- c(matrix_names, betanames)
+          }
+          nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+          colnames(nopeaks) <- matrix_names
+          return(invisible(nopeaks))
         }
     }
 
@@ -525,7 +542,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                              td[best.scale.pos],
                                              td[lwpos],
                                              td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
-                                             NA, NA))                    ## Peak limits (scan nr)
+                                             NA, NA,     ## Peak limits (scan nr)
+                                             NA, NA))    ## Beta fitting values
                             peakinfo <- rbind(peakinfo,
                                               c(best.scale, best.scale.nr,
                                                 best.scale.pos, lwpos, rwpos))
@@ -538,7 +556,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 
         ##  postprocessing
         if (!is.null(peaks)) {
-            colnames(peaks) <- c(basenames, verbosenames)
+            colnames(peaks) <- c(basenames, verbosenames, betanames)
             colnames(peakinfo) <- c("scale", "scaleNr", "scpos",
                                     "scmin", "scmax")
             for (p in 1:dim(peaks)[1]) {
@@ -561,6 +579,14 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm <- .narrow_rt_boundaries(lm, d)
                 lm_seq <- lm[1]:lm[2]
                 pd <- d[lm_seq]
+                
+                # Implement a fit of a skewed gaussian (beta distribution)
+                # for peak shape and within-peak signal-to-noise ratio
+                # See https://doi.org/10.1186/s12859-023-05533-4 and
+                # https://github.com/sneumann/xcms/pull/685
+                if(verboseBetaColumns){
+                  peaks[p, c("beta_cor", "beta_snr")] <- .get_beta_values(pd)
+                }
 
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
@@ -675,22 +701,30 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 
     if (length(peaklist) == 0) {
         warning("No peaks found!")
-
-        if (verboseColumns) {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
-                                            length(verbosenames))
-            colnames(nopeaks) <- c(basenames, verbosenames)
-        } else {
-            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
-            colnames(nopeaks) <- c(basenames)
-        }
-        message(" FAIL: none found!")
-        return(nopeaks)
+      matrix_length <- length(basenames)
+      matrix_names <- basenames
+      if (verboseColumns) {
+        matrix_length <- matrix_length + length(verbosenames)
+        matrix_names <- c(matrix_names, verbosenames)
+      }
+      if (verboseBetaColumns) {
+        matrix_length <- matrix_length + length(betanames)
+        matrix_names <- c(matrix_names, betanames)
+      }
+      nopeaks <- matrix(nrow = 0, ncol = matrix_length)
+      colnames(nopeaks) <- matrix_names
+      message(" FAIL: none found!")
+      return(nopeaks)
     }
     p <- do.call(rbind, peaklist)
-    if (!verboseColumns)
-        p <- p[, basenames, drop = FALSE]
-
+    keepcols <- basenames
+    if (verboseColumns){
+      keepcols <- c(keepcols, verbosenames)
+    }
+    if(verboseBetaColumns){
+      keepcols <- c(keepcols, betanames)
+    }
+    p <- p[, keepcols, drop = FALSE]
     uorder <- order(p[, "into"], decreasing = TRUE)
     pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
@@ -2623,6 +2657,11 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 #'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 #'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 #'     }
+#'     Additional columns for \code{verboseBetaColumns = TRUE}:
+#'     \describe{
+#'     \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
+#'     \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
+#'     }
 #'
 #' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
 #'
@@ -2634,7 +2673,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
              verboseColumns = FALSE, roiList = list(),
              firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-             polarity = "unknown", extendLengthMSW = FALSE) {
+             polarity = "unknown", extendLengthMSW = FALSE, 
+             verboseBetaColumns = FALSE) {
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
@@ -2655,7 +2695,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
                                               roiScales = roiScales,
-                                              extendLengthMSW = extendLengthMSW)
+                                              extendLengthMSW = extendLengthMSW,
+                                              verboseBetaColumns = verboseBetaColumns)
         return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
@@ -3667,4 +3708,65 @@ peaksWithCentWave <- function(int, rt,
         lm <- range(lm_seq[above_thresh], na.rm = TRUE)
     }
     lm
+}
+
+
+#' @description
+#'
+#' Calculate beta parameters for a chromatographic peak, both its similarity
+#' to a bell curve of varying degrees of skew and the standard deviation of the
+#' residuals after the best-fit bell is normalized and subtracted. This function
+#' requires at least 5 scans or it will return NA for both parameters.
+#'
+#' @param intensity A numeric vector corresponding to the peak intensities
+#' @param rtime A numeric vector corresponding to the retention times of each
+#' intensity. If not provided, intensities will be assumed to be equally spaced.
+#' @param skews A numeric vector of the skews to try, corresponding to the
+#' shape1 of dbeta with a shape2 of 5. Values less than 5 will be increasingly
+#' right-skewed, while values greater than 5 will be left-skewed.
+#' @param zero.rm Boolean value controlling whether "missing" scans are dropped
+#' prior to curve fitting. The default, TRUE, will remove intensities of zero
+#' or NA
+#'
+#' @author William Kumler
+#'
+#' @noRd
+.get_beta_values <- function(intensity, rtime = seq_along(intensity), 
+                             skews=c(3, 3.5, 4, 4.5, 5), zero.rm = TRUE){
+  if (zero.rm) {
+    ## remove 0 or NA intensities
+    keep <- which(intensity > 0)
+    rtime <- rtime[keep]
+    intensity <- intensity[keep]
+  }
+  if(length(intensity)<5){
+    best_cor <- NA
+    beta_snr <- NA
+  } else {
+    beta_sequence <- rep(.scale_zero_one(rtime), each=length(skews))
+    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), 
+                          nrow = length(skews)))
+    # matplot(beta_vals)
+    beta_cors <- cor(intensity, beta_vals)
+    best_cor <- max(beta_cors)
+    best_curve <- beta_vals[, which.max(beta_cors)]
+    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(intensity)))
+    beta_snr <- log10(max(intensity)/noise_level)
+  }
+  c(best_cor=best_cor, beta_snr=beta_snr)
+}
+
+
+#' @description
+#'
+#' Simple helper function to scale a numeric vector between zero and one by
+#' subtracting the lowest value and dividing by the maximum.
+#'
+#' @param num_vec `numeric` vector, typically chromatographic intensities.
+#'
+#' @author William Kumler
+#'
+#' @noRd
+.scale_zero_one <- function(num_vec){
+  (num_vec-min(num_vec))/(max(num_vec)-min(num_vec))
 }

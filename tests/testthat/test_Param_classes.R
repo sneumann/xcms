@@ -16,6 +16,8 @@ test_that("CentWaveParam works", {
         expect_equal(x@roiList, list())
         expect_equal(x@firstBaselineCheck, TRUE)
         expect_equal(x@roiScales, numeric())
+        expect_equal(x@extendLengthMSW, FALSE)
+        expect_equal(x@verboseBetaColumns, FALSE)
     }
     checkDefaultValues(p)
     p <- new("CentWaveParam", fitgauss = TRUE)
@@ -70,6 +72,9 @@ test_that("CentWaveParam works", {
     firstBaselineCheck(p) <- TRUE
     expect_equal(firstBaselineCheck(p), TRUE)
     expect_error(firstBaselineCheck(p) <- c(TRUE, TRUE))
+    p <- CentWaveParam(extendLengthMSW = TRUE, verboseBetaColumns=TRUE)
+    expect_equal(p@extendLengthMSW, TRUE)
+    expect_equal(p@verboseBetaColumns, TRUE)
 })
 
 test_that("MatchedFilterParam works", {
