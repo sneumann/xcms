@@ -52,7 +52,7 @@ pre-processing results are removed by the splitting, except adjusted
 retention times, if the optional argument keepAdjustedRtime = TRUE is
 provided.
 
-"><title>XCMSnExp filtering and subsetting — [,XCMSnExp,ANY,ANY,ANY-method • xcms</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="XCMSnExp filtering and subsetting — [,XCMSnExp,ANY,ANY,ANY-method"><meta property="og:description" content="The methods listed on this page allow to filter and subset XCMSnExp
+"><title>XCMSnExp filtering and subsetting — [,XCMSnExp,ANY,ANY,ANY-method • xcms</title><!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png"><link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png"><link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png"><link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png"><link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png"><link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png"><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="XCMSnExp filtering and subsetting — [,XCMSnExp,ANY,ANY,ANY-method"><meta property="og:description" content="The methods listed on this page allow to filter and subset XCMSnExp
 objects. Most of them are inherited from the OnDiskMSnExp object defined
 in the MSnbase package and have been adapted for XCMSnExp to enable
 correct subsetting of preprocessing results.
@@ -484,7 +484,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Retention time: 41:46 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn level: 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Total ion count: 427 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Polarity: NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Polarity: -1 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Subsetting using [ removes all preprocessing results - using</span></span></span>
 <span class="r-in"><span><span class="co">## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.</span></span></span>
@@ -498,11 +498,12 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 1278 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko15.CDF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -510,7 +511,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> protocolData: none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   featureNames: F1.S0001 F1.S0002 ... F1.S1278 (1278 total)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (33 total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (35 total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
@@ -528,11 +529,12 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 1278 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko15.CDF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -540,7 +542,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> protocolData: none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   featureNames: F1.S0001 F1.S0002 ... F1.S1278 (1278 total)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (33 total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (35 total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
@@ -553,11 +555,12 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 1278 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko16.CDF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -565,7 +568,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> protocolData: none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   featureNames: F2.S0001 F2.S0002 ... F2.S1278 (1278 total)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (33 total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (35 total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
@@ -578,11 +581,12 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 1278 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Mon Jun 15 06:30:44 2020] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.15.2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko18.CDF</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -590,7 +594,7 @@ the raw retention times with the adjusted ones.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> protocolData: none</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> featureData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   featureNames: F3.S0001 F3.S0002 ... F3.S1278 (1278 total)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (33 total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   fvarLabels: fileIdx spIdx ... spectrum (35 total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   fvarMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> experimentData: use 'experimentData(object)'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - xcms preprocessing - - -</span>
