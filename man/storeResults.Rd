@@ -36,7 +36,7 @@ listed above.
 ## Load a test data set with detected peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 
-## Set up parameter to save as .RData file 
+## Set up parameter to save as .RData file
 param <- RDataParam(fileName = "example_xcms_results")
 
 ## save as .RData

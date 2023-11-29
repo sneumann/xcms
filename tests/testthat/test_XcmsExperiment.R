@@ -457,6 +457,17 @@ test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     expect_false(hasFeatures(res))
     expect_equal(unname(rtime(xod_xgr)), unname(rtime(res)))
     expect_true(length(res@processHistory) == 3L)
+    expect_true(sum(rtime(res) != rtime(a)) > 1000)
+
+    ## Subset-based
+    p <- PeakGroupsParam(span = 0.4, subset = c(1, 3))
+    res_2 <- adjustRtime(a, p)
+    expect_true(hasAdjustedRtime(res_2))
+    expect_false(hasFeatures(res_2))
+    expect_true(length(res@processHistory) == 3L)
+    expect_true(sum(rtime(res_2) != rtime(a)) > 1000)
+    expect_true(sum(rtime(res_2) != rtime(res)) > 1000)
+
 })
 
 test_that("findChromPeaks,XcmsExperiment,MatchedFilterParam works", {
