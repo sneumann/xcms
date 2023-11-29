@@ -86,14 +86,15 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
                           noise = 0, verboseColumns = FALSE, roiList = list(),
                           firstBaselineCheck = TRUE, roiScales = numeric(),
-                          extendLengthMSW = FALSE) {
+                          extendLengthMSW = FALSE, verboseBetaColumns = FALSE) {
     return(new("CentWaveParam", ppm = ppm, peakwidth = peakwidth,
                snthresh = snthresh, prefilter = prefilter,
                mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
-               extendLengthMSW = extendLengthMSW))
+               extendLengthMSW = extendLengthMSW, 
+               verboseBetaColumns=verboseBetaColumns))
 }
 
 #' @return The \code{MatchedFilterParam} function returns a
@@ -213,6 +214,7 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
                           noise = 0, verboseColumns = FALSE, roiList = list(),
                           firstBaselineCheck = TRUE, roiScales = numeric(),
+                          extendLengthMSW = FALSE, verboseBetaColumns = FALSE,
                           snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
                           mzIntervalExtension = TRUE, polarity = "unknown") {
     return(new("CentWavePredIsoParam", ppm = ppm, peakwidth = peakwidth,
@@ -221,6 +223,8 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
+               extendLengthMSW = extendLengthMSW, 
+               verboseBetaColumns = verboseBetaColumns,
                snthreshIsoROIs = snthreshIsoROIs, maxIso = as.integer(maxIso),
                maxCharge = as.integer(maxCharge),
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))

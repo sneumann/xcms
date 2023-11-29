@@ -51,7 +51,7 @@ importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
            "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun",
-	   "rnorm", "runif")
+           "rnorm", "runif", "dbeta")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")
@@ -588,6 +588,9 @@ exportMethods("uniqueMsLevels")
 exportMethods("filterMzRange")
 
 ## saving xcms objects things
+importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
+           "read_json")
 export("RDataParam")
+export("PlainTextParam")
 exportMethods("storeResults")
 

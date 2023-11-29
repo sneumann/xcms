@@ -441,6 +441,14 @@ setClass("XProcessHistory",
 #' method to extend the EIC to a integer base-2 length prior to being passed to
 #' \code{convolve} rather than the default "reflect" method. See
 #' https://github.com/sneumann/xcms/issues/445 for more information.
+#' 
+#' @param verboseBetaColumns Option to calculate two additional metrics of peak
+#' quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
+#' \code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
+#' correlation coefficient to a bell curve with several degrees of skew as well
+#' as an estimate of signal-to-noise using the residuals from the best-fitting
+#' bell curve. See https://github.com/sneumann/xcms/pull/685 and 
+#' https://doi.org/10.1186/s12859-023-05533-4 for more information.
 #'
 #' @details
 #'
@@ -491,7 +499,7 @@ NULL
 #'     for a chromatographic peak detection using the centWave method. Instances
 #'     should be created with the \code{CentWaveParam} constructor.
 #'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. Slots values should exclusively be accessed
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns See corresponding parameter above. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
 #' @rdname findChromPeaks-centWave
@@ -533,7 +541,8 @@ setClass("CentWaveParam",
              roiList = "list",
              firstBaselineCheck = "logical",
              roiScales = "numeric",
-             extendLengthMSW = "logical"
+             extendLengthMSW = "logical",
+             verboseBetaColumns = "logical"
          ),
          contains = c("Param"),
          prototype = prototype(
@@ -550,7 +559,8 @@ setClass("CentWaveParam",
              roiList = list(),
              firstBaselineCheck = TRUE,
              roiScales = numeric(),
-             extendLengthMSW = FALSE
+             extendLengthMSW = FALSE,
+             verboseBetaColumns = FALSE
          ),
          validity = function(object) {
              msg <- character()
@@ -1242,7 +1252,7 @@ NULL
 #'     \code{\link{CentWaveParam}} for all methods and arguments this class
 #'     inherits.
 #'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
+#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
 #'      See corresponding parameter above.
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs

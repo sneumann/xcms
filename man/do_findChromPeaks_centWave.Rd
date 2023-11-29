@@ -23,7 +23,8 @@ do_findChromPeaks_centWave(
   firstBaselineCheck = TRUE,
   roiScales = NULL,
   sleep = 0,
-  extendLengthMSW = FALSE
+  extendLengthMSW = FALSE,
+  verboseBetaColumns = FALSE
 )
 }
 \arguments{
@@ -117,6 +118,14 @@ running centWave rather than truncating with the EIC length. Uses the "open"
 method to extend the EIC to a integer base-2 length prior to being passed to
 \code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
+
+\item{verboseBetaColumns}{Option to calculate two additional metrics of peak
+quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
+\code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
+correlation coefficient to a bell curve with several degrees of skew as well
+as an estimate of signal-to-noise using the residuals from the best-fitting
+bell curve. See https://github.com/sneumann/xcms/pull/685 and 
+https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
@@ -149,6 +158,12 @@ A matrix, each row representing an identified chromatographic peak,
     \item{scpos}{Peak position found by wavelet analysis (scan number).}
     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+    }
+    Additional columns for \code{verboseBetaColumns = TRUE}:
+    \describe{
+
+    \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
+    \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
     }
 }
 \description{
