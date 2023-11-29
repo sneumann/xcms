@@ -1,6 +1,8 @@
 Changes in version 4.1.x
 ----------------------
 
+- Fix definition of anchor peaks for peakGroups alignment with subset
+  (issue #702).
 - Add `filterMsLevel` method for `MsExperiment` and `XcmsExperiment`.
 - Ensure chunk-wise processing of Spectra (introduced with version 1.13.2) is
   disabled when xcms is using its own chunk-wise processing.

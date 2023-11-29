@@ -73,11 +73,11 @@ do_adjustRtime_peakGroups <-
              subset = integer(), subsetAdjust = c("average", "previous"))
 {
     subsetAdjust <- match.arg(subsetAdjust)
+    smooth <- match.arg(smooth)
+    family <- match.arg(family)
     ## Check input.
     if (missing(peaks) | missing(peakIndex) | missing(rtime))
         stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")
-    smooth <- match.arg(smooth)
-    family <- match.arg(family)
     ## minFraction
     if (any(minFraction > 1) | any(minFraction < 0))
         stop("'minFraction' has to be between 0 and 1!")
@@ -131,6 +131,8 @@ do_adjustRtime_peakGroups <-
     } else
         rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, subset,
                                      missingSample, extraPeaks)
+    message("nSamples: ", nSamples, " missingSample ", missingSample,
+            " nrow pgm ", nrow(rt))
     ## Fix for issue #175
     if (length(rt) == 0)
         stop("No peak groups found in the data for the provided settings")
@@ -262,19 +264,80 @@ do_adjustRtime_peakGroups <-
     rtime_adj
 }
 
+## do_adjustRtime_peakGroups2 <-
+##     function(peaks, peakIndex, rtime = list(), minFraction = 0.9,
+##              extraPeaks = 1,
+##              smooth = c("loess", "linear"), span = 0.2,
+##              family = c("gaussian", "symmetric"),
+##              peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
+##              subset = integer(), subsetAdjust = c("average", "previous"))
+## {
+##     subsetAdjust <- match.arg(subsetAdjust)
+##     smooth <- match.arg(smooth)
+##     family <- match.arg(family)
+##     if (!nrow(peakGroupsMatrix))
+##         peakGroupsMatrix <- .define_peak_groups(
+##             peaks = peaks, peakIndex = peakIndex, subset = subset,
+##             minFraction = minFraction, extraPeaks = extraPeaks,
+##             total_samples = length(rtime))
+##     .adjustRtime_peakGroupsMatrix(rtime, peakGroupsMatrix, smooth = smooth,
+##                                   family = family, subset = subset,
+##                                   subsetAdjust = subsetAdjust)
+## }
+
+#' Performs all input parameter checks and then gets the peak group matrix
+#'
+#' @noRd
+.define_peak_groups <- function(peaks, peakIndex, subset = integer(),
+                                minFraction = 0.9, extraPeaks = 1,
+                                total_samples = integer()) {
+    ## Check input.
+    if (missing(peaks) | missing(peakIndex))
+        stop("Arguments 'peaks' and 'peakIndex' are required if ",
+             "'peakGroupsMatrix' is not provided!")
+    ## minFraction
+    if (any(minFraction > 1) | any(minFraction < 0))
+        stop("'minFraction' has to be between 0 and 1!")
+    ## Check peaks:
+    OK <- xcms:::.validChromPeaksMatrix(peaks)
+    if (is.character(OK))
+        stop(OK)
+    ## Check peakIndex:
+    if (any(!(unique(unlist(peakIndex)) %in% seq_len(nrow(peaks)))))
+        stop("Some indices listed in 'peakIndex' are outside of ",
+             "1:nrow(peaks)!")
+    if (length(subset)) {
+        if (!is.numeric(subset))
+            stop("If provided, 'subset' is expected to be an integer")
+        if (!all(subset %in% seq_len(total_samples)))
+            stop("One or more indices in 'subset' are out of range.")
+        if (length(subset) < 2)
+            stop("Length of 'subset' too small: minimum required samples for ",
+                 "alignment is 2.")
+    } else subset <- seq_len(total_samples)
+    ## Translate minFraction to number of allowed missing samples.
+    nSamples <- length(subset)
+    missingSample <- nSamples - (nSamples * minFraction)
+    ## Remove peaks not present in "subset" from the peakIndex
+    peaks_in_subset <- which(peaks[, "sample"] %in% subset)
+    peakIndex <- lapply(peakIndex, function(z) z[z %in% peaks_in_subset])
+    rt <- xcms:::.getPeakGroupsRtMatrix(peaks, peakIndex, subset,
+                                        missingSample, extraPeaks)
+    message("nSamples: ", nSamples, " missingSample ", missingSample,
+            " nrow pgm ", nrow(rt))
+    rt
+}
+
 #' @param peakGroupsMatrix needs to be a matrix with retention times with
 #'     number of columns being equal to the length of `subset` or number of
 #'     samples (if `subset` is not defined).
 #'
 #' @noRd
-do_adjustRtime_peakGroupsMatrix <-
+.adjustRtime_peakGroupsMatrix <-
     function(rtime, peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
              smooth = c("loess", "linear"), span = 0.2,
              family = c("gaussian", "symmetric"),
              subset = integer(), subsetAdjust = c("average", "previous")) {
-        subsetAdjust <- match.arg(subsetAdjust)
-        smooth <- match.arg(smooth)
-        family <- match.arg(family)
         if (!nrow(peakGroupsMatrix))
             stop("Parameter 'peakGroupsMatrix' is empty")
         if (missing(rtime))
@@ -357,7 +420,7 @@ do_adjustRtime_peakGroupsMatrix <-
                 lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                              degree = 1, family = family))
 
-                rtdevsmo[[i]] <- na.flatfill(
+                rtdevsmo[[i]] <- xcms:::na.flatfill(
                     predict(lo, data.frame(rt = rtime[[i_all]])))
                 ## Remove singularities from the loess function
                 rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
@@ -417,7 +480,7 @@ do_adjustRtime_peakGroupsMatrix <-
             pb$tick()
         }
         ## Adjust the remaining samples.
-        rtime_adj <- adjustRtimeSubset(rtime, rtime_adj, subset = subset,
+        rtime_adj <- xcms:::adjustRtimeSubset(rtime, rtime_adj, subset = subset,
                                        method = subsetAdjust)
         if (warn.overcorrect) {
             warning("Fitted retention time deviation curves exceed points ",
@@ -438,8 +501,6 @@ do_adjustRtime_peakGroupsMatrix <-
         }
         rtime_adj
     }
-
-
 
 #' This function adjusts retentin times in the vector/matrix `x` given the
 #' provided `numeric` vectors `rtraw` and `rtadj`.
@@ -535,6 +596,10 @@ do_adjustRtime_peakGroupsMatrix <-
 #' @details This function is called internally by the
 #'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
 #'
+#' Update for version 4.1.2: correctly consider the `sampleIndex` and
+#'     `missingSample` to select only peaks present in samples of an eventual
+#'     sample subset (for subset-based alignment): fixes issue #702
+#'
 #' @noRd
 .getPeakGroupsRtMatrix <- function(peaks, peakIndex, sampleIndex,
                                    missingSample, extraPeaks) {
@@ -543,19 +608,19 @@ do_adjustRtime_peakGroupsMatrix <-
     ## o skip peak groups if they are not assigned a peak in at least a
     ##   minimum number of samples OR if have too many peaks from the same
     ##   sample assigned to it.
-    nSamples <- length(sampleIndex)
+    req_samples <- length(sampleIndex) - missingSample
     rt <- lapply(peakIndex, function(z) {
         cur_fts <- peaks[z, c("rt", "into", "sample"), drop = FALSE]
-        ## Return NULL if we've got less samples that required or is the total
+        ## Return NULL if we've got less samples that required or the total
         ## number of peaks is larger than a certain threshold.
-        ## Note that the original implementation is not completely correct!
-        ## nsamp > nsamp + extraPeaks might be correct.
-        nsamp <- length(unique(cur_fts[, "sample"]))
-        if (nsamp < (nSamples - missingSample) |
-            nrow(cur_fts) > (nsamp + extraPeaks))
+        smps <- cur_fts[, 3L]
+        smps <- smps[smps %in% sampleIndex]
+        nsamp <- length(unique(smps))
+        if ((nsamp < req_samples) | (length(smps) > (nsamp + extraPeaks)))
             return(NULL)
-        cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), , drop = FALSE]
-        cur_fts[match(sampleIndex, cur_fts[, 3]), 1]
+        cur_fts[] <- cur_fts[order(cur_fts[, 2L], decreasing = TRUE), ,
+                             drop = FALSE]
+        cur_fts[match(sampleIndex, cur_fts[, 3L]), 1L]
     })
     rt <- do.call(rbind, rt)
     ## Order them by median retention time. NOTE: this is different from the
