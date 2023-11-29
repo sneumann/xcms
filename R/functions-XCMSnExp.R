@@ -592,18 +592,16 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
         subs <- seq_along(fileNames(object))
     nSamples <- length(subs)
     missingSample <- nSamples - (nSamples * minFraction(param))
-    pkGrp <- xcms:::.getPeakGroupsRtMatrix(
+    pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object, msLevel = msLevel),
-        peakIndex = xcms:::.peakIndex(
-            xcms:::.update_feature_definitions(
+        peakIndex = .peakIndex(
+            .update_feature_definitions(
                 featureDefinitions(object), rownames(chromPeaks(object)),
                 rownames(chromPeaks(object, msLevel = msLevel)))),
         sampleIndex = subs,
         missingSample = missingSample,
         extraPeaks = extraPeaks(param)
     )
-    message("nSamples: ", nSamples, " missingSample ", missingSample,
-            " nrow pgm ", nrow(pkGrp))
     colnames(pkGrp) <- basename(fileNames(object))[subs]
     pkGrp
 }

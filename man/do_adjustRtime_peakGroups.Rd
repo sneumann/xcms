@@ -8,7 +8,7 @@ found in most samples}
 do_adjustRtime_peakGroups(
   peaks,
   peakIndex,
-  rtime,
+  rtime = list(),
   minFraction = 0.9,
   extraPeaks = 1,
   smooth = c("loess", "linear"),
