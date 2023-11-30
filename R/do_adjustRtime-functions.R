@@ -80,9 +80,9 @@ do_adjustRtime_peakGroups <-
                 peaks = peaks, peakIndex = peakIndex, subset = subset,
                 minFraction = minFraction, extraPeaks = extraPeaks,
                 total_samples = length(rtime))
-        .adjustRtime_peakGroupsMatrix(rtime, peakGroupsMatrix, smooth = smooth,
-                                      family = family, subset = subset,
-                                      subsetAdjust = subsetAdjust)
+        .adjustRtime_peakGroupsMatrix(
+            rtime, peakGroupsMatrix, smooth = smooth, span = span,
+            family = family, subset = subset, subsetAdjust = subsetAdjust)
     }
 
 #' Performs all input parameter checks and then gets the peak group matrix
@@ -122,7 +122,7 @@ do_adjustRtime_peakGroups <-
     peaks_in_subset <- which(peaks[, "sample"] %in% subset)
     peakIndex <- lapply(peakIndex, function(z) z[z %in% peaks_in_subset])
     .getPeakGroupsRtMatrix(peaks, peakIndex, subset,
-                                        missingSample, extraPeaks)
+                           missingSample, extraPeaks)
 }
 
 #' @param peakGroupsMatrix needs to be a matrix with retention times with
