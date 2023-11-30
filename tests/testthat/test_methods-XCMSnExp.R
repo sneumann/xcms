@@ -1622,8 +1622,8 @@ test_that("adjustRtime,peakGroups works", {
     skip_on_os(os = "windows", arch = "i386")
 
     xod <- faahko_xod
-    xodg <- groupChromPeaks(xod,
-                            param = PeakDensityParam(sampleGroups = rep(1, 3)))
+    xodg <- groupChromPeaks(
+        xod, param = PeakDensityParam(sampleGroups = rep(1, 3)))
     pks <- chromPeaks(xodg)
     expect_true(length(processHistory(xodg,
                                       type = .PROCSTEP.PEAK.DETECTION)) == 1)

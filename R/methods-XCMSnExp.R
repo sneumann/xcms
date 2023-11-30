@@ -1680,38 +1680,27 @@ setMethod("adjustRtime",
               }
               if (any(msLevel != 1))
                   stop("Alignment is currently only supported for MS level 1")
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'!",
-                       " Please perform first a peak detection using the ",
-                       "'findChromPeaks' method.")
-              if (!hasFeatures(object))
-                  stop("No feature definitions found in 'object'! Please ",
-                       "perform first a peak grouping using the ",
-                       "'groupChromPeak' method.")
+              if (nrow(peakGroupsMatrix(param)))
+                  pkGrpMat <- peakGroupsMatrix(param)
+              else {
+                  if (!hasChromPeaks(object))
+                      stop("No chromatographic peak detection results in ",
+                           "'object'! Please perform first a peak detection ",
+                           "using the 'findChromPeaks' method.")
+                  if (!hasFeatures(object))
+                      stop("No feature definitions found in 'object'! Please ",
+                           "perform first a peak grouping using the ",
+                           "'groupChromPeak' method.")
+                  pkGrpMat <- adjustRtimePeakGroups(object, param = param)
+              }
               if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
                   object <- updateObject(object)
               startDate <- date()
-              ## If param does contain a peakGroupsMatrix extract that one,
-              ## otherwise generate it.
-              if (nrow(peakGroupsMatrix(param)))
-                  pkGrpMat <- peakGroupsMatrix(param)
-              else
-                  pkGrpMat <- adjustRtimePeakGroups(object, param = param)
-              res <- do_adjustRtime_peakGroups(
-                  chromPeaks(object, msLevel = msLevel),
-                  peakIndex = .update_feature_definitions(
-                      featureDefinitions(object), rownames(chromPeaks(object)),
-                      rownames(chromPeaks(object, msLevel = msLevel)))$peakidx,
-                  rtime = rtime(object, bySample = TRUE),
-                  minFraction = minFraction(param),
-                  extraPeaks = extraPeaks(param),
-                  smooth = smooth(param),
-                  span = span(param),
-                  family = family(param),
-                  peakGroupsMatrix = pkGrpMat,
-                  subset = subset(param),
-                  subsetAdjust = subsetAdjust(param)
-              )
+              res <- .adjustRtime_peakGroupsMatrix(
+                  rtime(object, bySample = TRUE), pkGrpMat,
+                  smooth = smooth(param), span = span(param),
+                  family = family(param), subset = subset(param),
+                  subsetAdjust = subsetAdjust(param))
               ## Add the pkGrpMat that's being used to the param object.
               peakGroupsMatrix(param) <- pkGrpMat
               ## Dropping the peak groups but don't remove its process history

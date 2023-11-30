@@ -1351,35 +1351,28 @@ setMethod(
     "adjustRtime", signature(object = "MsExperiment",
                              param = "PeakGroupsParam"),
     function(object, param, msLevel = 1L, ...) {
+        if (!inherits(object, "XcmsExperiment"))
+            object <- as(object, "XcmsExperiment")
         if (hasAdjustedRtime(object)) {
             message("Removing previous alignment results")
             object <- dropAdjustedRtime(object)
         }
         if (any(msLevel != 1L))
             stop("Alignment is currently only supported for MS level 1")
-        if (!hasFeatures(object))
-            stop("No feature definitions present in 'object'. Please perform ",
-                 "first a correspondence analysis using 'groupChromPeaks'")
-        if (!nrow(peakGroupsMatrix(param)))
+        if (!nrow(peakGroupsMatrix(param))) {
+            if (!hasFeatures(object))
+                stop("No feature definitions present in 'object'. Please ",
+                     "perform first a correspondence analysis using ",
+                     "'groupChromPeaks'")
             peakGroupsMatrix(param) <- adjustRtimePeakGroups(
                 object, param = param)
+        }
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
-        rt_adj <- do_adjustRtime_peakGroups(
-            chromPeaks(object, msLevel = msLevel),
-            peakIndex = .update_feature_definitions(
-                featureDefinitions(object), rownames(chromPeaks(object)),
-                rownames(chromPeaks(object, msLevel = msLevel)))$peakidx,
-            rtime = rt_raw,
-            minFraction = minFraction(param),
-            extraPeaks = extraPeaks(param),
-            smooth = smooth(param),
-            span = span(param),
-            family = family(param),
-            peakGroupsMatrix = peakGroupsMatrix(param),
-            subset = subset(param),
-            subsetAdjust = subsetAdjust(param)
-        )
+        rt_adj <- .adjustRtime_peakGroupsMatrix(
+            rt_raw, peakGroupsMatrix(param), smooth = smooth(param),
+            span = span(param), family = family(param),
+            subset = subset(param), subsetAdjust = subsetAdjust(param))
         pt <- vapply(object@processHistory, processType, character(1))
         idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt, nomatch = -1L)
         if (idx_pg > 0)
