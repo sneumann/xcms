@@ -816,6 +816,7 @@ groupOverlaps <- function(xmin, xmax) {
                                      pks_tmz = rep(1L, nrow(pks)),
                                      aggregationFun = "sum") {
     nr <- nrow(pks)
+    pks_msl <- as.integer(pks_msl)
     FUN <- switch(aggregationFun,
                   "sum" = getFunction("sumi"),
                   "max" = getFunction("maxi"),

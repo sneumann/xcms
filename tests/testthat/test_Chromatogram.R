@@ -1,5 +1,5 @@
 ## test_that("extractChromatograms is deprecated", {
-    skip_on_os(os = "windows", arch = "i386")
+## skip_on_os(os = "windows", arch = "i386")
 
 ##     expect_warning(chrs <- extractChromatograms(
 ##                        filterRt(filterFile(od_x, file = 2), c(2500, 2600))))

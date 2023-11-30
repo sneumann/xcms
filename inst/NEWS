@@ -1,6 +1,8 @@
 Changes in version 4.1.4
 ----------------------
 
+- Fix errors related to invalid `Chromatogram` objects extracted from xcms
+  results: ensure MS level in `chromPeaksMatrix` is `integer`.
 - Fix definition of anchor peaks for peakGroups alignment with subset
   (issue #702).
 - Add `filterMsLevel` method for `MsExperiment` and `XcmsExperiment`.
