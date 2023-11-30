@@ -1,6 +1,9 @@
 Changes in version 4.1.4
 ----------------------
 
+- Add support to perform peakGroups alignment using pre-defined anchor peak
+  matrix (i.e., the numeric matrix with retention times of anchor peaks in
+  the samples that can be used to align these samples).
 - Fix errors related to invalid `Chromatogram` objects extracted from xcms
   results: ensure MS level in `chromPeaksMatrix` is `integer`.
 - Fix definition of anchor peaks for peakGroups alignment with subset
