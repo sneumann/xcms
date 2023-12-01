@@ -765,7 +765,10 @@ groupOverlaps <- function(xmin, xmax) {
 }
 
 .match_last <- function(x, table, nomatch = NA_integer_) {
-    length(table) - match(x, rev(table), nomatch = nomatch) + 1
+    mtch <- match(x, rev(table), nomatch = NA_integer_)
+    mtch <- length(table) - mtch + 1
+    mtch[is.na(mtch)] <- nomatch
+    mtch
 }
 
 #' @description

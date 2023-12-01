@@ -493,3 +493,15 @@ test_that(".rawMat, .getEIC etc", {
     expect_true(ncol(res3) == 2)
     expect_true(any(res3[, "intensity"] == 0))
 })
+
+test_that(".match_last works", {
+    a <- c("a", "b", "c", "a", "b")
+    res <- .match_last("a", a)
+    expect_equal(res, 4)
+
+    res <- .match_last("d", a)
+    expect_equal(res, NA_integer_)
+
+    res <- .match_last(c("c", "a", "d"), a)
+    expect_equal(res, c(3L, 4L, NA_integer_))
+})

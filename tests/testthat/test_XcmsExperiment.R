@@ -30,16 +30,17 @@ test_that("XcmsExperiment validation works", {
 ## - chromPeaks
 ## - chromPeakData
 test_that("findChromPeaks,MsExperiment et al works", {
-    expect_error(findChromPeaks(MsExperiment(), param = p), "No spectra")
+    expect_error(findChromPeaks(MsExperiment(), param = cwp), "No spectra")
 
     a <- MsExperiment()
     spectra(a) <- spectra(mse)
-    expect_error(findChromPeaks(a, param = p), "No link")
+    expect_error(findChromPeaks(a, param = cwp), "No link")
 
     res <- xmse
     expect_equal(res@chromPeaks, chromPeaks(faahko_xod))
     expect_equal(res@chromPeakData, as.data.frame(chromPeakData(faahko_xod)))
     expect_true(hasChromPeaks(res))
+    expect_true(length(processHistory(res)) == 1L)
 
     ## chromPeaks
     expect_equal(chromPeaks(res), res@chromPeaks)
@@ -66,22 +67,22 @@ test_that("findChromPeaks,MsExperiment et al works", {
     expect_true(nrow(rres@chromPeaks) == 0)
     expect_false(hasChromPeaks(rres))
 
-    res2 <- findChromPeaks(mse, param = p, msLevel = 2L)
+    res2 <- findChromPeaks(mse, param = cwp, msLevel = 2L)
     expect_true(nrow(res2@chromPeaks) == 0)
     expect_false(hasChromPeaks(res2))
 
-    res2 <- findChromPeaks(res, param = p, msLevel = 2L, add = TRUE)
+    res2 <- findChromPeaks(res, param = cwp, msLevel = 2L, add = TRUE)
     expect_equal(res@chromPeaks, res2@chromPeaks)
     expect_equal(res@chromPeakData, res2@chromPeakData)
     expect_true(length(res2@processHistory) == 2)
     expect_true(is.integer(chromPeakData(res2)$ms_level))
 
-    res2 <- findChromPeaks(res, param = p, msLevel = 2L, add = FALSE)
+    res2 <- findChromPeaks(res, param = cwp, msLevel = 2L, add = FALSE)
     expect_equal(nrow(res2@chromPeaks), 0)
     expect_true(length(res2@processHistory) == 1)
     expect_true(is.integer(chromPeakData(res2)$ms_level))
 
-    res2 <- findChromPeaks(mse, param = p, chunkSize = -1)
+    res2 <- findChromPeaks(mse, param = cwp, chunkSize = -1)
     expect_equal(res@chromPeaks, res2@chromPeaks)
     expect_true(is.integer(chromPeakData(res2)$ms_level))
 
@@ -299,7 +300,7 @@ test_that("adjustRtime,MsExperiment,XcmsExperiment,ObiwarpParam works", {
     expect_equal(rtime(res3, adjusted = TRUE), rtime(res2, adjusted = TRUE))
 
     ## Order: alignment, peak detection.
-    res3 <- findChromPeaks(res, param = p)
+    res3 <- findChromPeaks(res, param = cwp)
     expect_true(hasChromPeaks(res3))
     expect_true(hasAdjustedRtime(res3))
     expect_true(length(res3@processHistory) == 2L)
@@ -347,9 +348,9 @@ test_that(".empty_feature_definitions works", {
 
 ## That's from XcmsExperiment-functions.R
 test_that(".xmse_group_cpeaks works", {
-    expect_error(.xmse_group_cpeaks(chromPeaks(xmse), p), "No correspondence")
-    ## Just for PeakDensityParam.
     pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    expect_error(.xmse_group_cpeaks(chromPeaks(xmse), cwp), "No correspondence")
+    ## Just for PeakDensityParam.
     cp <- chromPeaks(xmse, msLevel = 1L)
     res <- .xmse_group_cpeaks(cp, pdp)
     expect_true(is.data.frame(res))
@@ -451,6 +452,7 @@ test_that("groupChromPeaks,XcmsExperiment and related things work", {
 test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     a <- groupChromPeaks(xmse, param = PeakDensityParam(
                                    sampleGroups = c(1, 1, 1)))
+    expect_true(length(processHistory(a)) == 2L)
 
     pgp <- PeakGroupsParam(span = 0.4)
     expect_false(hasAdjustedRtime(a))
@@ -466,11 +468,14 @@ test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     ## Run with pre-defined anchor peak data
     p <- res@processHistory[[3]]@param
     res_2 <- adjustRtime(xmse, param = p)
+    expect_true(length(processHistory(res_2)) ==
+                (length(processHistory(xmse)) + 1))
     expect_true(hasAdjustedRtime(res_2))
     expect_equal(rtime(res), rtime(res_2))
     res_2 <- adjustRtime(mse, param = p)
     expect_true(hasAdjustedRtime(res_2))
     expect_equal(rtime(res), rtime(res_2))
+    expect_true(length(processHistory(res_2)) == 1L)
 
     ## Subset-based
     p <- PeakGroupsParam(span = 0.4, subset = c(1, 3))
@@ -486,9 +491,12 @@ test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     res_3 <- adjustRtime(xmse, param = p)
     expect_true(hasAdjustedRtime(res_3))
     expect_equal(rtime(res_2), rtime(res_3))
+    expect_true(length(processHistory(res_3)) ==
+                (length(processHistory(xmse)) + 1L))
     res_3 <- adjustRtime(mse, param = p)
     expect_true(hasAdjustedRtime(res_3))
     expect_equal(rtime(res_2), rtime(res_3))
+    expect_true(length(processHistory(res_3)) == 1L)
 })
 
 test_that("findChromPeaks,XcmsExperiment,MatchedFilterParam works", {

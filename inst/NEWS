@@ -1,6 +1,7 @@
 Changes in version 4.1.4
 ----------------------
 
+- Fix issue in adjustRtime resulting in corrupt processHistory.
 - Add support to perform peakGroups alignment using pre-defined anchor peak
   matrix (i.e., the numeric matrix with retention times of anchor peaks in
   the samples that can be used to align these samples).
