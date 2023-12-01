@@ -839,7 +839,7 @@ setMethod(
                 chunkSize = chunkSize, BPPARAM = BPPARAM)
         }
         ## Assign/define peak IDs.
-        pkd <- data.frame(ms_level = rep(msLevel, nrow(res)),
+        pkd <- data.frame(ms_level = rep(as.integer(msLevel), nrow(res)),
                           is_filled = rep(FALSE, nrow(res)))
         ph <- XProcessHistory(param = param,
                               type. = .PROCSTEP.PEAK.DETECTION,
@@ -1535,7 +1535,7 @@ setMethod(
             stop("No chromatographic peaks present. ",
                  "Please run 'findChromPeaks' first.")
         res <- .manual_feature_definitions(chromPeaks(object), peakIdx)
-        res$ms_level <- msLevel
+        res$ms_level <- as.integer(msLevel)
         if (hasFeatures(object)) {
             maxi <- max(as.integer(
                 sub("FT", "", rownames(featureDefinitions(object)))))
@@ -1821,7 +1821,7 @@ setMethod(
         nr <- nrow(res)
         maxi <- max(as.integer(sub("CP", "", rownames(chromPeaks(object)))))
         rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
-        cpd <- data.frame(ms_level = rep(msLevel, nr),
+        cpd <- data.frame(ms_level = rep(as.integer(msLevel), nr),
                           is_filled = rep(TRUE, nr))
         rownames(cpd) <- rownames(res)
         object@chromPeaks <- rbind(object@chromPeaks, res)

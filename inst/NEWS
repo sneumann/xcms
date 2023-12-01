@@ -1,3 +1,10 @@
+Changes in version 4.0.1
+----------------------
+
+- Ensure MS levels are always provided as integer to `Chromatogram` objects when
+  extracted from `XcmsExperiment` or `MsExperiment`.
+
+
 Changes in version 3.99.6
 ----------------------
 
