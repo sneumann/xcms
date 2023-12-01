@@ -464,6 +464,7 @@ test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     expect_equal(unname(rtime(xod_xgr)), unname(rtime(res)))
     expect_true(length(res@processHistory) == 3L)
     expect_true(sum(rtime(res) != rtime(a)) > 1000)
+    expect_error(adjustRtime(res, param = pgp), "applyAdjustedRtime")
 
     ## Run with pre-defined anchor peak data
     p <- res@processHistory[[3]]@param

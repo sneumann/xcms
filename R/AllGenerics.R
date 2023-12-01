@@ -24,7 +24,9 @@ setGeneric("addProcessHistory", function(object, ...)
 #' present, are subsequently adjusted based on the adjusted retention times
 #' of the MS1 spectra. Note that calling `adjustRtime` on a *xcms* result object
 #' will remove any eventually present previous alignment results as well as
-#' any correspondence analysis results.
+#' any correspondence analysis results. To run a second round of alignment,
+#' raw retention times need to be replaced with adjusted ones using the
+#' [applyAdjustedRtime()] function.
 #'
 #' The alignment method can be specified (and configured) using a dedicated
 #' `param` argument.

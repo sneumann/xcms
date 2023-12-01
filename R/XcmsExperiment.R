@@ -1353,10 +1353,12 @@ setMethod(
     function(object, param, msLevel = 1L, ...) {
         if (!inherits(object, "XcmsExperiment"))
             object <- as(object, "XcmsExperiment")
-        if (hasAdjustedRtime(object)) {
-            message("Removing previous alignment results")
-            object <- dropAdjustedRtime(object)
-        }
+        if (hasAdjustedRtime(object))
+            stop("Alignment results already present. Please either remove ",
+                 "them with 'dropAdjustedRtime' in order to perform an ",
+                 "alternative, new, alignment, or use 'applyAdjustedRtime'",
+                 " prior 'adjustRtime' to perform a second round of ",
+                 "alignment.")
         if (any(msLevel != 1L))
             stop("Alignment is currently only supported for MS level 1")
         if (!nrow(peakGroupsMatrix(param))) {
@@ -1410,8 +1412,11 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
         object@spectra, svs[svs != "rtime_adjusted"])
     object@processHistory <- dropProcessHistoriesList(
         object@processHistory, type = .PROCSTEP.RTIME.CORRECTION, num = 1L)
-    if (hasFeatures(object) && idx_co > idx_al)
+    if (hasFeatures(object) && idx_co > idx_al) {
+        warning("Had to remove feature definitions along with the adjusted ",
+                "retention times because of the dependency between them.")
         object <- dropFeatureDefinitions(object)
+    }
     object
 })
 
