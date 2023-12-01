@@ -1,6 +1,7 @@
 Changes in version 4.0.1
 ----------------------
 
+- Rename variable `data` in the vignette to `faahko`.
 - Ensure MS levels are always provided as integer to `Chromatogram` objects when
   extracted from `XcmsExperiment` or `MsExperiment`.
 
