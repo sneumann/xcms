@@ -113,12 +113,12 @@ We next load our data using the `readMsExperiment` function from the
 `r Biocpkg("MsExperiment")` package.
 
 ```{r}
-data <- readMsExperiment(spectraFiles = cdfs, sampleData = pd)
-data
+faahko <- readMsExperiment(spectraFiles = cdfs, sampleData = pd)
+faahko
 ```
 
 The MS spectra data from our experiment is now available as a `Spectra` object
-within `data`. Note that this `MsExperiment` container could in addition to
+within `faahko`. Note that this `MsExperiment` container could in addition to
 spectra data also contain other types of data or also references to other
 files. See the vignette from the `r Biocpkg("MsExperiment")` for more
 details. Also, when loading data from mzML, mzXML or CDF files, by default only
@@ -129,7 +129,7 @@ files when needed (this is similar to the *MSnbase* *on-disk* mode described in
 hence allowing to analyze also large experiments without the need of high
 performance computing environments. Note that also different alternative
 *backends* (and hence data representations) could be used for the `Spectra`
-object within `data` with eventually even lower memory footprint, or higher
+object within `faahko` with eventually even lower memory footprint, or higher
 performance. See the package vignette from the `r Biocpkg("Spectra")` package or
 the [SpectraTutorials](https://jorainer.github.io/SpectraTutorials) tutorial for
 more details on `Spectra` backends and how to change between them.
@@ -142,7 +142,7 @@ experiments. The *raw* MS data is stored as a `Spectra` object that can be
 accessed through the `spectra` function.
 
 ```{r}
-spectra(data)
+spectra(faahko)
 ```
 
 All spectra are organized *sequentially* (i.e., not by file) but the `fromFile`
@@ -150,23 +150,23 @@ function can be used to get for each spectrum the information to which of the
 data files it belongs. Below we simply count the number of spectra per file.
 
 ```{r}
-table(fromFile(data))
+table(fromFile(faahko))
 ```
 
 Information on samples can be retrieved through the `sampleData` function.
 
 ```{r}
-sampleData(data)
+sampleData(faahko)
 ```
 
 Each row in this `DataFrame` represents one sample (input file). Using `[` it is
 possible to subset a `MsExperiment` object **by sample**. Below we subset the
-`data` to the 3rd sample (file) and access its spectra and sample data.
+`faahko` to the 3rd sample (file) and access its spectra and sample data.
 
 ```{r}
-data_3 <- data[3]
-spectra(data_3)
-sampleData(data_3)
+faahko_3 <- faahko[3]
+spectra(faahko_3)
+sampleData(faahko_3)
 ```
 
 As a first evaluation of the data we below plot the base peak chromatogram (BPC)
@@ -177,13 +177,13 @@ we could set `aggregationFun` to `"sum"`.
 
 ```{r data-inspection-bpc, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6, fig.cap = "Base peak chromatogram."}
 ## Get the base peak chromatograms. This reads data from the files.
-bpis <- chromatogram(data, aggregationFun = "max")
+bpis <- chromatogram(faahko, aggregationFun = "max")
 ## Define colors for the two groups
 group_colors <- paste0(brewer.pal(3, "Set1")[1:2], "60")
 names(group_colors) <- c("KO", "WT")
 
 ## Plot all chromatograms.
-plot(bpis, col = group_colors[sampleData(data)$sample_group])
+plot(bpis, col = group_colors[sampleData(faahko)$sample_group])
 ```
 
 The `chromatogram` method returned a `MChromatograms` object that organizes
@@ -205,22 +205,22 @@ will only subset the spectra within the `MsExperiment`. Subsequently we
 re-create also the BPC.
 
 ```{r}
-data <- filterRt(data, rt = c(2550, 4250))
+faahko <- filterRt(faahko, rt = c(2550, 4250))
 ## creating the BPC on the subsetted data
-bpis <- chromatogram(data, aggregationFun = "max")
+bpis <- chromatogram(faahko, aggregationFun = "max")
 ```
 
 We next create boxplots representing the distribution of the total ion currents
 per data file. Such plots can be very useful to spot potentially problematic MS
 runs. To extract this information, we use the `tic` function on the `Spectra`
-object within `data` and split the values by file using `fromFile`.
+object within `faahko` and split the values by file using `fromFile`.
 
 ```{r data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
 ## Get the total ion current by file
-tc <- spectra(data) |>
+tc <- spectra(faahko) |>
     tic() |>
-    split(f = fromFile(data))
-boxplot(tc, col = group_colors[sampleData(data)$sample_group],
+    split(f = fromFile(faahko))
+boxplot(tc, col = group_colors[sampleData(faahko)$sample_group],
         ylab = "intensity", main = "Total ion current")
 ```
 
@@ -275,7 +275,7 @@ the signal for that compound.
 rtr <- c(2700, 2900)
 mzr <- c(334.9, 335.1)
 ## extract the chromatogram
-chr_raw <- chromatogram(data, mz = mzr, rt = rtr)
+chr_raw <- chromatogram(faahko, mz = mzr, rt = rtr)
 plot(chr_raw, col = group_colors[chr_raw$sample_group])
 ```
 
@@ -302,7 +302,7 @@ raw object by retention time, then by m/z and finally plot the object with `type
 illustrate the corresponding workflow.
 
 ```{r peak-detection-plot-ms-data, message = FALSE, warning = FALSE, fig.aligh = "center", fig.width = 14, fig.height = 14, fig.cap = "Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." }
-data |>
+faahko |>
 filterRt(rt = rtr) |>
 filterMz(mz = mzr) |>
 plot(type = "XIC")
@@ -390,7 +390,7 @@ for the *centWave* chromatographic peak detection.
 ```{r peak-detection-centwave, message = FALSE, results = "hide" }
 cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
                      prefilter = c(6, 5000))
-xdata <- findChromPeaks(data, param = cwp)
+faahko <- findChromPeaks(faahko, param = cwp)
 ```
 
 The results of `findChromPeaks` on a `MsExperiment` object are returned as an
@@ -406,7 +406,7 @@ chromatographic peak detection. Below we show the first 6 identified
 chromatographic peaks.
 
 ```{r peak-detection-chromPeaks, message = FALSE }
-chromPeaks(xdata) |> head()
+chromPeaks(faahko) |> head()
 ```
 
 Columns of this `chromPeaks` matrix might differ depending on the used peak
@@ -425,7 +425,7 @@ arbitrary annotations for each detected peak (that don't necessarily need to be
 numeric).
 
 ```{r peak-detection-chromPeakData}
-chromPeakData(xdata)
+chromPeakData(faahko)
 ```
 
 Peak detection will not always work perfectly for all types of peak shapes
@@ -451,15 +451,15 @@ help page for a detailed description of the settings and the approach.
 
 ```{r peak-postprocessing, message = FALSE}
 mpp <- MergeNeighboringPeaksParam(expandRt = 4)
-xdata_pp <- refineChromPeaks(xdata, mpp)
+faahko_pp <- refineChromPeaks(faahko, mpp)
 ```
 
 An example for a merged peak is given below.
 
 ```{r peak-postprocessing-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
 mzr_1 <- 305.1 + c(-0.01, 0.01)
-chr_1 <- chromatogram(xdata[1], mz = mzr_1)
-chr_2 <- chromatogram(xdata_pp[1], mz = mzr_1)
+chr_1 <- chromatogram(faahko[1], mz = mzr_1)
+chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
 par(mfrow = c(1, 2))
 plot(chr_1)
 plot(chr_2)
@@ -473,8 +473,8 @@ with a lower intensity between them, were however not merged (see below).
 
 ```{r peak-postprocessing-not-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
 mzr_1 <- 496.2 + c(-0.01, 0.01)
-chr_1 <- chromatogram(xdata[1], mz = mzr_1)
-chr_2 <- chromatogram(xdata_pp[1], mz = mzr_1)
+chr_1 <- chromatogram(faahko[1], mz = mzr_1)
+chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
 par(mfrow = c(1, 2))
 plot(chr_1)
 plot(chr_2)
@@ -492,11 +492,11 @@ chromPeaks(res)
 plot(res)
 ```
 
-Before proceeding we next replace the `xdata` object with the results from the
+Before proceeding we next replace the `faahko` object with the results from the
 peak refinement step.
 
 ```{r}
-xdata <- xdata_pp
+faahko <- faahko_pp
 ```
 
 Below we use the data from the `chromPeaks` matrix to calculate per-file
@@ -507,11 +507,11 @@ well as the distribution of the retention time widths.
 summary_fun <- function(z)
     c(peak_count = nrow(z), rt = quantile(z[, "rtmax"] - z[, "rtmin"]))
 
-T <- chromPeaks(xdata) |>
-    split.data.frame(f = chromPeaks(xdata)[, "sample"]) |>
+T <- chromPeaks(faahko) |>
+    split.data.frame(f = chromPeaks(faahko)[, "sample"]) |>
     lapply(FUN = summary_fun) |>
     do.call(what = rbind)
-rownames(T) <- basename(fileNames(xdata))
+rownames(T) <- basename(fileNames(faahko))
 pandoc.table(
     T,
     caption = paste0("Summary statistics on identified chromatographic",
@@ -525,7 +525,7 @@ in a result object it is also possible to extract only chromatographic peaks for
 a specified m/z and/or rt range:
 
 ```{r peak-detection-chrom-peak-table-selected, message = FALSE}
-chromPeaks(xdata, mz = c(334.9, 335.1), rt = c(2700, 2900))
+chromPeaks(faahko, mz = c(334.9, 335.1), rt = c(2700, 2900))
 ```
 
 We can also plot the location of the identified chromatographic peaks in the
@@ -533,7 +533,7 @@ m/z - retention time space for one file using the `plotChromPeaks`
 function. Below we plot this information for the third sample.
 
 ```{r peak-detection-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample." }
-plotChromPeaks(xdata, file = 3)
+plotChromPeaks(faahko, file = 3)
 ```
 
 As a general overview of the peak detection results we can in addition visualize
@@ -543,7 +543,7 @@ in which peaks should be counted. This number of chromatographic peaks within
 each bin is then shown color-coded in the resulting plot.
 
 ```{r peak-detection-chrom-peak-image, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." }
-plotChromPeakImage(xdata, binSize = 10)
+plotChromPeakImage(faahko, binSize = 10)
 ```
 
 Note that extracting ion chromatorams from an *xcms* result object will in
@@ -555,7 +555,7 @@ rt region above and access the detected peaks in that region using the
 `chromPeaks` function.
 
 ```{r peak-detection-eic-example-peak, message = FALSE}
-chr_ex <- chromatogram(xdata, mz = mzr, rt = rtr)
+chr_ex <- chromatogram(faahko, mz = mzr, rt = rtr)
 chromPeaks(chr_ex)
 ```
 
@@ -587,8 +587,8 @@ are present.
 
 ```{r peak-detection-chrom-peak-intensity-boxplot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak intensity distribution per sample." }
 ## Extract a list of per-sample peak intensities (in log2 scale)
-ints <- split(log2(chromPeaks(xdata)[, "into"]),
-              f = chromPeaks(xdata)[, "sample"])
+ints <- split(log2(chromPeaks(faahko)[, "into"]),
+              f = chromPeaks(faahko)[, "sample"])
 boxplot(ints, varwidth = TRUE, col = sample_colors,
         ylab = expression(log[2]~intensity), main = "Peak intensities")
 grid(nx = NA, ny = NULL)
@@ -625,7 +625,7 @@ samples. We use a `binSize = 0.6` which creates warping functions in m/z bins of
 experiment.
 
 ```{r alignment-obiwarp, message = FALSE, results = "hide" }
-xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
+faahko <- adjustRtime(faahko, param = ObiwarpParam(binSize = 0.6))
 ```
 
 Note that `adjustRtime`, besides calculating adjusted retention times for each
@@ -636,13 +636,13 @@ function or using `rtime` with parameter `adjusted = TRUE` (the default):
 
 ```{r alignment-rtime, message = FALSE }
 ## Extract adjusted retention times
-adjustedRtime(xdata) |> head()
+adjustedRtime(faahko) |> head()
 
 ## Or simply use the rtime method
-rtime(xdata) |> head()
+rtime(faahko) |> head()
 
 ## Get raw (unadjusted) retention times
-rtime(xdata, adjusted = FALSE) |> head()
+rtime(faahko, adjusted = FALSE) |> head()
 ```
 
 To evaluate the impact of the alignment we plot the BPC on the adjusted data. In
@@ -654,14 +654,14 @@ automatic extraction of all identified chromatographic peaks by the
 
 ```{r alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 8, fig.cap = "Obiwarp aligned data. Base peak chromatogram before (top) and after alignment (middle) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
 ## Get the base peak chromatograms.
-bpis_adj <- chromatogram(xdata, aggregationFun = "max", chromPeaks = "none")
+bpis_adj <- chromatogram(faahko, aggregationFun = "max", chromPeaks = "none")
 par(mfrow = c(3, 1), mar = c(4.5, 4.2, 1, 0.5))
 plot(bpis, col = sample_colors)
 grid()
 plot(bpis_adj, col = sample_colors)
 grid()
 ## Plot also the difference of adjusted to raw retention time.
-plotAdjustedRtime(xdata, col = sample_colors)
+plotAdjustedRtime(faahko, col = sample_colors)
 grid()
 ```
 
@@ -676,7 +676,7 @@ par(mfrow = c(2, 1))
 plot(chr_raw, col = sample_colors)
 grid()
 ## Extract the chromatogram from the adjusted object
-chr_adj <- chromatogram(xdata, rt = rtr, mz = mzr)
+chr_adj <- chromatogram(faahko, rt = rtr, mz = mzr)
 plot(chr_adj, col = sample_colors, peakType = "none")
 grid()
 ```
@@ -749,11 +749,11 @@ spectra, this function will also *restore* the original retention times for
 identified chromatographic peaks.
 
 ```{r subset-define, message = FALSE, warning = FALSE}
-xdata <- dropAdjustedRtime(xdata)
+faahko <- dropAdjustedRtime(faahko)
 
 ## Define the experimental layout
-sampleData(xdata)$sample_type <- "study"
-sampleData(xdata)$sample_type[c(1, 4, 7)] <- "QC"
+sampleData(faahko)$sample_type <- "study"
+sampleData(faahko)$sample_type[c(1, 4, 7)] <- "QC"
 ```
 
 For an alignment with the *peak groups* method an initial peak grouping
@@ -766,20 +766,20 @@ section). The definition of the sample groups (i.e. assignment of individual
 samples to the sample groups in the experiment) is mandatory for the
 `PeakDensityParam`. If there are no sample groups in the experiment,
 `sampleGroups` should be set to a single value for each file (e.g. `rep(1,
-length(fileNames(xdata))`).
+length(fileNames(faahko))`).
 
 ```{r alignment-subset, message = FALSE, warning = FALSE}
 ## Initial peak grouping. Use sample_type as grouping variable
-pdp_subs <- PeakDensityParam(sampleGroups = sampleData(xdata)$sample_type,
+pdp_subs <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_type,
                              minFraction = 0.9)
-xdata <- groupChromPeaks(xdata, param = pdp_subs)
+faahko <- groupChromPeaks(faahko, param = pdp_subs)
 
 ## Define subset-alignment options and perform the alignment
 pgp_subs <- PeakGroupsParam(
     minFraction = 0.85,
-    subset = which(sampleData(xdata)$sample_type == "QC"),
+    subset = which(sampleData(faahko)$sample_type == "QC"),
     subsetAdjust = "average", span = 0.4)
-xdata <- adjustRtime(xdata, param = pgp_subs)
+faahko <- adjustRtime(faahko, param = pgp_subs)
 ```
 
 Below we plot the results of the alignment highlighting the subset samples in
@@ -792,12 +792,12 @@ second subset sample (4).
 
 ```{r alignment-subset-plot-2, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are shown in green, study samples in grey." }
 clrs <- rep("#00000040", 8)
-clrs[sampleData(xdata)$sample_type == "QC"] <- c("#00ce0080")
+clrs[sampleData(faahko)$sample_type == "QC"] <- c("#00ce0080")
 par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
-plot(chromatogram(xdata, aggregationFun = "max", chromPeaks = "none"),
+plot(chromatogram(faahko, aggregationFun = "max", chromPeaks = "none"),
      col = clrs)
 grid()
-plotAdjustedRtime(xdata, col = clrs, peakGroupsPch = 1,
+plotAdjustedRtime(faahko, col = clrs, peakGroupsPch = 1,
                   peakGroupsCol = "#00ce0040")
 grid()
 ```
@@ -832,9 +832,9 @@ each sample belongs.
 mzr <- c(305.05, 305.15)
 
 ## Extract and plot the chromatograms
-chr_mzr <- chromatogram(xdata, mz = mzr)
+chr_mzr <- chromatogram(faahko, mz = mzr)
 ## Define the parameters for the peak density method
-pdp <- PeakDensityParam(sampleGroups = sampleData(xdata)$sample_group,
+pdp <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
                         minFraction = 0.4, bw = 30)
 plotChromPeakDensity(chr_mzr, col = sample_colors, param = pdp,
                      peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]],
@@ -862,9 +862,9 @@ more details.
 
 ```{r correspondence, message = FALSE }
 ## Perform the correspondence
-pdp <- PeakDensityParam(sampleGroups = sampleData(xdata)$sample_group,
+pdp <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
                         minFraction = 0.4, bw = 30)
-xdata <- groupChromPeaks(xdata, param = pdp)
+faahko <- groupChromPeaks(faahko, param = pdp)
 ```
 
 Results from the correspondence analysis can be accessed with the
@@ -876,7 +876,7 @@ the feature in column `"peakidx"`. Below we show the information on the first 6
 features.
 
 ```{r}
-featureDefinitions(xdata) |> head()
+featureDefinitions(faahko) |> head()
 ```
 
 The `featureValues` function returns a `matrix` with rows being features and
@@ -888,7 +888,7 @@ as the intensity matrix for downstream analysis. Below we extract the
 intensities for the first 6 features.
 
 ```{r correspondence-feature-values, message = FALSE }
-featureValues(xdata, value = "into") |> head()
+featureValues(faahko, value = "into") |> head()
 ```
 
 As we can see we have several missing values in this feature matrix. Missing
@@ -915,7 +915,7 @@ considerable amount of time. Below we extract the chromatograms for the first 4
 features.
 
 ```{r featureChromatograms, message = FALSE }
-feature_chroms <- featureChromatograms(xdata, features = 1:4)
+feature_chroms <- featureChromatograms(faahko, features = 1:4)
 
 feature_chroms
 ```
@@ -962,13 +962,13 @@ extract the feature values for the first 6 features after gap filling. An `NA`
 is reported if no signal is measured at all for a specific sample.
 
 ```{r fill-chrom-peaks, message = FALSE }
-xdata <- fillChromPeaks(xdata, param = ChromPeakAreaParam())
+faahko <- fillChromPeaks(faahko, param = ChromPeakAreaParam())
 
-featureValues(xdata, value = "into") |> head()
+featureValues(faahko, value = "into") |> head()
 ```
 
 ```{r export-result, eval = FALSE, echo = FALSE}
-save(xdata, file = "xdata.RData")
+save(faahko, file = "faahko.RData")
 ```
 
 ## Final result
@@ -991,7 +991,7 @@ peaks in each sample).
 
 ```{r}
 library(SummarizedExperiment)
-res <- quantify(xdata, value = "into", method = "sum")
+res <- quantify(faahko, value = "into", method = "sum")
 res
 ```
 
@@ -1033,7 +1033,7 @@ the feature value matrix **without** filled-in values (i.e. feature intensities
 that were added by the gap filling step).
 
 ```{r}
-assays(res)$raw_nofill <- featureValues(xdata, filled = FALSE, method = "sum")
+assays(res)$raw_nofill <- featureValues(faahko, filled = FALSE, method = "sum")
 ```
 
 With that we have now two assays in our result object.
@@ -1060,14 +1060,14 @@ the `processHistory` function. Below we extract the information for the first
 processing step.
 
 ```{r}
-processHistory(xdata)[[1]]
+processHistory(faahko)[[1]]
 ```
 
 These processing steps contain also the individual parameter objects used for
 the analysis, hence allowing to exactly reproduce the analysis.
 
 ```{r}
-processHistory(xdata)[[1]] |> processParam()
+processHistory(faahko)[[1]] |> processParam()
 ```
 
 At last we perform also a principal component analysis to evaluate the grouping
