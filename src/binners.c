@@ -204,7 +204,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     SET_VECTOR_ELT(ans_list, current_idx, index);
   }
   setAttrib(ans_list, R_NamesSymbol, names);
-  
+
   UNPROTECT(count_protect);
   return ans_list;
 }
@@ -880,7 +880,7 @@ SEXP test_integer(SEXP x) {
 
 SEXP test_real(SEXP x) {
   int x_val = asReal(x);
-  Rprintf("input asReal(x): %f\n", x_val);
+  Rprintf("input asReal(x): %d\n", x_val);
 
   //
   double *p_ans;
@@ -892,5 +892,3 @@ SEXP test_real(SEXP x) {
   p_ans[0] = x_val;
   return ans;
 }
-
-
