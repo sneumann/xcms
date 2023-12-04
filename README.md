@@ -65,3 +65,24 @@ version >= 3 aims at:
 
 Discussions and suggestions are welcome:
 https://github.com/sneumann/xcms/issues
+
+
+## Contribution
+
+Contributions to the *xcms* package are more than welcome, whether under the
+form of ideas, documentation, code, packages, ... For a contribution guideline
+please see the [guideline for the RforMassSpectrometry
+initiative](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#contributions). For
+a seamless integration, contributors are expected to adhere to the
+[RforMassSpectrometry coding
+syle](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style).
+
+
+## Code of Conduct
+
+As contributors and maintainers of the package, we pledge to respect all people
+who contribute through reporting issues, posting feature requests, updating
+documentation, submitting pull requests or patches, and other activities. See
+the [RforMassSpectrometry Code of
+Conduct](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#code-of-conduct)
+for more information.
