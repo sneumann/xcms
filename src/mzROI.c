@@ -379,7 +379,7 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
         scanbuf->thisScan= (struct scanStruct  *) calloc(N, sizeof(struct scanStruct));
         // scanbuf->thisScan= (struct scanStruct  *) malloc(N * sizeof(struct scanStruct));
         if (scanbuf->thisScan == NULL)
-            error("findmzROI/getThisScan: Memory could not be allocated (%i * %i) !\n",N , sizeof(struct scanStruct));
+	    error("findmzROI/getThisScan: Memory could not be allocated!\n");
 
         scanbuf->thisScanLength=N;
 
@@ -411,7 +411,7 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
         if (N > 0) {
             scanbuf->nextScan= (double *) calloc(N, sizeof(double));
             if (scanbuf->nextScan == NULL)
-                error("findmzROI/getNextScan: Memory could not be allocated (%i * %i) !\n",N , sizeof(struct scanStruct));
+                error("findmzROI/getNextScan: Memory could not be allocated!\n");
             scanbuf->nextScanLength=N;
 
             for (idx=idx1;idx <= idx2; idx++)
