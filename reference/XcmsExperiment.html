@@ -56,7 +56,7 @@ be reported. This can be performed using the fillChromPeaks() function.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,6 +137,9 @@ filterMzRange(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
 filterMz(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
 
 # S4 method for MsExperiment
+filterMsLevel(object, msLevel. = uniqueMsLevels(object))
+
+# S4 method for MsExperiment
 uniqueMsLevels(object)
 
 # S4 method for MsExperiment
@@ -194,6 +197,9 @@ filterRt(object, rt, msLevel.)
 
 # S4 method for XcmsExperiment
 filterMzRange(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
+
+# S4 method for XcmsExperiment
+filterMsLevel(object, msLevel. = uniqueMsLevels(object))
 
 # S4 method for XcmsExperiment
 hasChromPeaks(object, msLevel = integer())
@@ -354,7 +360,9 @@ For <code>chromatogram</code>: <code>integer</code> with the MS level from which
 chromatogram(s) should be extracted. Has to be either of length 1 or
 length equal to the numer of rows of the parameters <code>mz</code> and <code>rt</code>
 defining the m/z and rt regions from which the chromatograms should
-be created. Defaults to <code>msLevel = 1L</code>.</p></dd>
+be created. Defaults to <code>msLevel = 1L</code>.
+for <code>filterMsLevel</code>: <code>integer</code> defining the MS level(s) to which the
+data should be subset.</p></dd>
 
 
 <dt>file</dt>
@@ -624,6 +632,8 @@ all chromatographic peaks (and subsequently also features) are removed for
 which the range of their <code>"isolationWindowLowerMz"</code> and
 <code>"isolationWindowUpperMz"</code> (columns in <code>chromPeakData</code>) do not contain
 the user provided <code>mz</code>.</p></li>
+<li><p><code>filterMsLevel</code>: filter the data of the <code>XcmsExperiment</code> or <code>MsExperiment</code>
+to keep only data of the MS level(s) specified with parameter <code>msLevel.</code>.</p></li>
 <li><p><code>filterMz</code>, <code>filterMzRange</code>: filter the spectra within an
 <code>XcmsExperiment</code> or <code>MsExperiment</code> to the specified m/z range (parameter
 <code>mz</code>). For <code>XcmsExperiment</code> also identified chromatographic peaks and
