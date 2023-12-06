@@ -16,10 +16,9 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
+cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
-faahko_xod <- findChromPeaks(
-    faahko_od, param = CentWaveParam(noise = 10000, snthresh = 40,
-                                     prefilter = c(3, 10000)))
+faahko_xod <- findChromPeaks(faahko_od, param = cwp)
 od_x <- faahko_od
 mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 od_chrs <- chromatogram(od_x, mz = mzr)
@@ -50,14 +49,14 @@ fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
 ## Pesticide data
 fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
 pest_swth <- readMSData(fl, mode = "onDisk")
-cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                     peakwidth = c(3, 20), prefilter = c(3, 1000))
-pest_swth <- findChromPeaks(pest_swth, param = cwp)
-pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp)
+cwp2 <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                      peakwidth = c(3, 20), prefilter = c(3, 1000))
+pest_swth <- findChromPeaks(pest_swth, param = cwp2)
+pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp2)
 
 fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
 pest_dda <- readMSData(fl, mode = "onDisk")
-pest_dda <- findChromPeaks(pest_dda, param = cwp)
+pest_dda <- findChromPeaks(pest_dda, param = cwp2)
 
 ## Sciex test data.
 ## fl <- dir(system.file("sciex", package = "msdata"), full.names = TRUE)
@@ -70,11 +69,11 @@ df <- data.frame(mzML_file = basename(fls),
                  dataOrigin = fls,
                  sample = c("ko15", "ko16", "ko18"))
 mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
-p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
-xmse <- findChromPeaks(mse, param = p)
+xmse <- findChromPeaks(mse, param = cwp)
+expect_true(length(processHistory(xmse)) == 1L)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
-
+expect_true(length(processHistory(xmseg)) == 2L)
 test_check("xcms")
 
 bpstop(prm)

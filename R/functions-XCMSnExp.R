@@ -591,6 +591,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
     if (!length(subs))
         subs <- seq_along(fileNames(object))
     nSamples <- length(subs)
+    missingSample <- nSamples - (nSamples * minFraction(param))
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object, msLevel = msLevel),
         peakIndex = .peakIndex(
@@ -598,7 +599,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
                 featureDefinitions(object), rownames(chromPeaks(object)),
                 rownames(chromPeaks(object, msLevel = msLevel)))),
         sampleIndex = subs,
-        missingSample = nSamples - (nSamples * minFraction(param)),
+        missingSample = missingSample,
         extraPeaks = extraPeaks(param)
     )
     colnames(pkGrp) <- basename(fileNames(object))[subs]

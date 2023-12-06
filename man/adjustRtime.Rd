@@ -237,14 +237,14 @@ See \code{\link[=bpparam]{bpparam()}} for details.}
 which the alignment should be performed.}
 
 \item{minFraction}{For \code{PeakGroupsParam}: \code{numeric(1)} between 0 and 1
-defining the minimum required fraction of samples in which peaks for
+defining the minimum required proportion of samples in which peaks for
 the peak group were identified. Peak groups passing this criteria will
 be aligned across samples and retention times of individual spectra will
 be adjusted based on this alignment. For \code{minFraction = 1} the peak
 group has to contain peaks in all samples of the experiment. Note that if
 \code{subset} is provided, the specified fraction is relative to the
 defined subset of samples and not to the total number of samples within
-the experiment (i.e. a peak has to be present in the specified
+the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).}
 
 \item{extraPeaks}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the maximal
@@ -353,7 +353,9 @@ on MS level 1 data. Retention times of spectra from other MS levels, if
 present, are subsequently adjusted based on the adjusted retention times
 of the MS1 spectra. Note that calling \code{adjustRtime} on a \emph{xcms} result object
 will remove any eventually present previous alignment results as well as
-any correspondence analysis results.
+any correspondence analysis results. To run a second round of alignment,
+raw retention times need to be replaced with adjusted ones using the
+\code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} function.
 
 The alignment method can be specified (and configured) using a dedicated
 \code{param} argument.

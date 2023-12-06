@@ -83,6 +83,9 @@
 #'   `"isolationWindowUpperMz"` (columns in `chromPeakData`) do not contain
 #'   the user provided `mz`.
 #'
+#' - `filterMsLevel`: filter the data of the `XcmsExperiment` or `MsExperiment`
+#'   to keep only data of the MS level(s) specified with parameter `msLevel.`.
+#'
 #' - `filterMz`, `filterMzRange`: filter the spectra within an
 #'   `XcmsExperiment` or `MsExperiment` to the specified m/z range (parameter
 #'   `mz`). For `XcmsExperiment` also identified chromatographic peaks and
@@ -482,6 +485,8 @@
 #'     length equal to the numer of rows of the parameters `mz` and `rt`
 #'     defining the m/z and rt regions from which the chromatograms should
 #'     be created. Defaults to `msLevel = 1L`.
+#'     for `filterMsLevel`: `integer` defining the MS level(s) to which the
+#'     data should be subset.
 #'
 #' @param mz For `chromPeaks` and `featureDefinitions`: `numeric(2)` optionally
 #'     defining the m/z range for which chromatographic peaks or feature
@@ -816,6 +821,20 @@ setMethod(
         callNextMethod(object = object, mz = mz, msLevel. = msLevel.)
     })
 
+#' @rdname XcmsExperiment
+setMethod(
+    "filterMsLevel", "XcmsExperiment",
+    function(object, msLevel. = uniqueMsLevels(object)) {
+        if (!length(msLevel.))
+            return(object)
+        if (hasChromPeaks(object)) {
+            keep <- chromPeakData(object)$ms_level %in% msLevel.
+            object <- .filter_chrom_peaks(object, idx = base::which(keep))
+        }
+        callNextMethod(object = object, msLevel. = msLevel.)
+    })
+
+
 ################################################################################
 ## chromatographic peaks
 ################################################################################
@@ -839,7 +858,7 @@ setMethod(
                 chunkSize = chunkSize, BPPARAM = BPPARAM)
         }
         ## Assign/define peak IDs.
-        pkd <- data.frame(ms_level = rep(msLevel, nrow(res)),
+        pkd <- data.frame(ms_level = rep(as.integer(msLevel), nrow(res)),
                           is_filled = rep(FALSE, nrow(res)))
         ph <- XProcessHistory(param = param,
                               type. = .PROCSTEP.PEAK.DETECTION,
@@ -1205,7 +1224,7 @@ setMethod(
         maxi <- max(
             0, as.integer(sub("CP", "", rownames(chromPeaks(object)))))
         rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
-        pkd <- data.frame(ms_level = rep(msLevel, nr),
+        pkd <- data.frame(ms_level = rep(as.integer(msLevel), nr),
                           is_filled = rep(FALSE, nr))
         rownames(pkd) <- rownames(res)
         pb$tick()
@@ -1332,35 +1351,30 @@ setMethod(
     "adjustRtime", signature(object = "MsExperiment",
                              param = "PeakGroupsParam"),
     function(object, param, msLevel = 1L, ...) {
-        if (hasAdjustedRtime(object)) {
-            message("Removing previous alignment results")
-            object <- dropAdjustedRtime(object)
-        }
+        if (!inherits(object, "XcmsExperiment"))
+            object <- as(object, "XcmsExperiment")
+        if (hasAdjustedRtime(object))
+            stop("Alignment results already present. Please either remove ",
+                 "them with 'dropAdjustedRtime' in order to perform an ",
+                 "alternative, new, alignment, or use 'applyAdjustedRtime'",
+                 " prior 'adjustRtime' to perform a second round of ",
+                 "alignment.")
         if (any(msLevel != 1L))
             stop("Alignment is currently only supported for MS level 1")
-        if (!hasFeatures(object))
-            stop("No feature definitions present in 'object'. Please perform ",
-                 "first a correspondence analysis using 'groupChromPeaks'")
-        if (!nrow(peakGroupsMatrix(param)))
+        if (!nrow(peakGroupsMatrix(param))) {
+            if (!hasFeatures(object))
+                stop("No feature definitions present in 'object'. Please ",
+                     "perform first a correspondence analysis using ",
+                     "'groupChromPeaks'")
             peakGroupsMatrix(param) <- adjustRtimePeakGroups(
                 object, param = param)
+        }
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
-        rt_adj <- do_adjustRtime_peakGroups(
-            chromPeaks(object, msLevel = msLevel),
-            peakIndex = .update_feature_definitions(
-                featureDefinitions(object), rownames(chromPeaks(object)),
-                rownames(chromPeaks(object, msLevel = msLevel)))$peakidx,
-            rtime = rt_raw,
-            minFraction = minFraction(param),
-            extraPeaks = extraPeaks(param),
-            smooth = smooth(param),
-            span = span(param),
-            family = family(param),
-            peakGroupsMatrix = peakGroupsMatrix(param),
-            subset = subset(param),
-            subsetAdjust = subsetAdjust(param)
-        )
+        rt_adj <- .adjustRtime_peakGroupsMatrix(
+            rt_raw, peakGroupsMatrix(param), smooth = smooth(param),
+            span = span(param), family = family(param),
+            subset = subset(param), subsetAdjust = subsetAdjust(param))
         pt <- vapply(object@processHistory, processType, character(1))
         idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt, nomatch = -1L)
         if (idx_pg > 0)
@@ -1398,8 +1412,11 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
         object@spectra, svs[svs != "rtime_adjusted"])
     object@processHistory <- dropProcessHistoriesList(
         object@processHistory, type = .PROCSTEP.RTIME.CORRECTION, num = 1L)
-    if (hasFeatures(object) && idx_co > idx_al)
+    if (hasFeatures(object) && idx_co > idx_al) {
+        warning("Had to remove feature definitions along with the adjusted ",
+                "retention times because of the dependency between them.")
         object <- dropFeatureDefinitions(object)
+    }
     object
 })
 
@@ -1535,7 +1552,7 @@ setMethod(
             stop("No chromatographic peaks present. ",
                  "Please run 'findChromPeaks' first.")
         res <- .manual_feature_definitions(chromPeaks(object), peakIdx)
-        res$ms_level <- msLevel
+        res$ms_level <- as.integer(msLevel)
         if (hasFeatures(object)) {
             maxi <- max(as.integer(
                 sub("FT", "", rownames(featureDefinitions(object)))))
@@ -1821,7 +1838,7 @@ setMethod(
         nr <- nrow(res)
         maxi <- max(as.integer(sub("CP", "", rownames(chromPeaks(object)))))
         rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
-        cpd <- data.frame(ms_level = rep(msLevel, nr),
+        cpd <- data.frame(ms_level = rep(as.integer(msLevel), nr),
                           is_filled = rep(TRUE, nr))
         rownames(cpd) <- rownames(res)
         object@chromPeaks <- rbind(object@chromPeaks, res)
@@ -1957,6 +1974,3 @@ setMethod(
         object[i = sort(unique(file)), keepAdjustedRtime = keepAdjustedRtime,
                keepFeatures = keepFeatures, ...]
     })
-
-## TODO filterMsLevel? Function not yet needed. In case, needs also an
-## implementation for MsExperiment: update the spectra-sample-mapping.

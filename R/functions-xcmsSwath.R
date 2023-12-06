@@ -96,7 +96,8 @@
             object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")])))
         if (inherits(object, "MsExperiment"))
             chrs <- .chromatograms_for_peaks(
-                peaksData(object@spectra), rt = rtime(object@spectra),
+                peaksData(object@spectra, f = factor()),
+                rt = rtime(object@spectra),
                 msl = msLevel(object@spectra), file_idx = fromFile,
                 tmz = isolationWindowTargetMz(object@spectra), pks = pks,
                 pks_msl = object@chromPeakData$ms_level[ord],

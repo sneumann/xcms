@@ -21,6 +21,14 @@ setMethod("filterMz", "MsExperiment",
           })
 
 #' @rdname XcmsExperiment
+setMethod("filterMsLevel", "MsExperiment",
+          function(object, msLevel. = uniqueMsLevels(object)) {
+              message("Filter spectra")
+              .mse_filter_spectra(object, filterMsLevel,
+                                  msLevel. = msLevel.)
+          })
+
+#' @rdname XcmsExperiment
 setMethod("uniqueMsLevels", "MsExperiment", function(object) {
     uniqueMsLevels(spectra(object))
 })

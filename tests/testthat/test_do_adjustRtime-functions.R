@@ -37,16 +37,6 @@ test_that("do_adjustRtime_peakGroups works", {
         rtime = rtime(xsg, bySample = TRUE), minFraction = minFr,
         subset = c(1, 2, 5, 14)), "out of range")
 
-    res <- do_adjustRtime_peakGroups(
-        peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
-        rtime = rtime(xsg, bySample = TRUE), minFraction = minFr)
-    res_orig <- do_adjustRtime_peakGroups_orig(
-                           peaks = chromPeaks(xsg),
-                           peakIndex = featureDefinitions(xsg)$peakidx,
-                           rtime = rtime(xsg, bySample = TRUE),
-                           minFraction = minFr)
-    expect_equal(res, res_orig)
-    expect_true(sum(unlist(res) != rtime(xsg)) > 3000)
     ## Use only a subset.
     res_sub <- do_adjustRtime_peakGroups(
         peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
@@ -182,4 +172,96 @@ test_that("adjustRtimeSubset works", {
          ylim = range(a, b, c))
     points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
     points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+})
+
+test_that(".adjustRtime_peakGroupsMatrix works", {
+    ## Expect the same results by running just this function with a pre-defined
+    ## peakGroupsMatrix.
+    ph <- processHistory(xod_xgr)
+    pgm <- peakGroupsMatrix(ph[[length(ph)]]@param)
+    rts <- split(rtime(xod_xg), fromFile(xod_xg))
+
+    ## Errors
+    expect_error(.adjustRtime_peakGroupsMatrix(rts), "peakGroupsMatrix")
+    expect_error(.adjustRtime_peakGroupsMatrix(peakGroupsMatrix = pgm), "rtime")
+    expect_error(.adjustRtime_peakGroupsMatrix(rts[[1L]], pgm), "list of")
+    expect_error(.adjustRtime_peakGroupsMatrix(list(1:3, "a"), pgm), "numeric")
+    expect_error(.adjustRtime_peakGroupsMatrix(rts, pgm, subset = "a"),
+                 "integer")
+    expect_error(.adjustRtime_peakGroupsMatrix(rts, pgm, subset = 1), "is 2")
+    expect_error(.adjustRtime_peakGroupsMatrix(rts, pgm, subset = c(1, 10)),
+                 "out of range")
+    expect_error(.adjustRtime_peakGroupsMatrix(rts[1:2], pgm), "columns of")
+
+    ## Results are identical
+    res <- .adjustRtime_peakGroupsMatrix(rts, pgm, span = 0.4, smooth = "loess")
+    expect_equal(res, split(rtime(xod_xgr), fromFile(xod_xgr)))
+
+    ## Works with subset.
+    tmp <- adjustRtime(xod_xg, PeakGroupsParam(subset = c(1, 3), span = 0.4))
+    ph <- processHistory(tmp)
+    pgm <- peakGroupsMatrix(ph[[length(ph)]]@param)
+
+    res <- .adjustRtime_peakGroupsMatrix(rts, pgm, span = 0.4,
+                                         smooth = "loess", subset = c(1, 3))
+    expect_equal(res, split(rtime(tmp), fromFile(tmp)))
+
+})
+
+test_that(".define_peak_groups works", {
+    expect_error(.define_peak_groups(), "peaks")
+    expect_error(.define_peak_groups(
+        chromPeaks(xod_xgrg)[1:10, ], featureDefinitions(xod_xgrg)$peakidx),
+        "outside")
+    expect_error(.define_peak_groups(
+        chromPeaks(xod_xgrg), featureDefinitions(xod_xgrg)$peakidx,
+        subset = "a"), "integer")
+    expect_error(.define_peak_groups(
+        chromPeaks(xod_xgrg), featureDefinitions(xod_xgrg)$peakidx,
+        subset = c(1, 10), total_samples = 3), "out of range")
+    expect_error(.define_peak_groups(
+        chromPeaks(xod_xgrg), featureDefinitions(xod_xgrg)$peakidx,
+        subset = c(1), total_samples = 3), "is 2")
+    res <- .define_peak_groups(chromPeaks(
+        xod_xg), featureDefinitions(xod_xg)$peakidx, subset = integer(),
+        total_samples = 3)
+    expect_true(is.matrix(res))
+    expect_true(ncol(res) == 3)
+    expect_true(is.numeric(res))
+
+    ## Compare with results from full run.
+    ph <- processHistory(xod_xgr)
+    pgm <- peakGroupsMatrix(ph[[length(ph)]]@param)
+    expect_equal(unname(res), unname(pgm))
+
+    ## Run with subset.
+    res <- .define_peak_groups(chromPeaks(
+        xod_xg), featureDefinitions(xod_xg)$peakidx, subset = c(1, 3),
+        total_samples = 3, minFraction = 0.9, extraPeaks = 1)
+    expect_true(is.matrix(res))
+    expect_true(ncol(res) == 2)
+    expect_true(is.numeric(res))
+    expect_true(!any(is.na(res)))
+
+    pgm <- adjustRtimePeakGroups(
+        xod_xg, param = PeakGroupsParam(span = 0.4, subset = c(1, 3),
+                                        minFraction = 0.9, extraPeaks = 1))
+    expect_equal(unname(res), unname(pgm))
+
+    res <- xcms:::.define_peak_groups(chromPeaks(
+        xod_xg), featureDefinitions(xod_xg)$peakidx, subset = c(1, 3),
+        total_samples = 3, minFraction = 0.5, extraPeaks = 1)
+    expect_true(is.matrix(res))
+    expect_true(ncol(res) == 2)
+    expect_true(is.numeric(res))
+    expect_true(any(is.na(res)))
+})
+
+test_that(".getPeakGroupsRtMatrix works with subsets", {
+    res <- .getPeakGroupsRtMatrix(chromPeaks(xod_xg),
+                                  featureDefinitions(xod_xg)$peakidx,
+                                  sampleIndex = c(1, 3),
+                                  missingSample = 0,
+                                  extraPeaks = 1L)
+    expect_true(!any(is.na(res)))
 })

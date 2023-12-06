@@ -1,3 +1,19 @@
+Changes in version 4.1.4
+----------------------
+
+- Rename variable `data` in the vignette to `faahko`.
+- Fix issue in adjustRtime resulting in corrupt processHistory.
+- Add support to perform peakGroups alignment using pre-defined anchor peak
+  matrix (i.e., the numeric matrix with retention times of anchor peaks in
+  the samples that can be used to align these samples).
+- Fix errors related to invalid `Chromatogram` objects extracted from xcms
+  results: ensure MS level in `chromPeaksMatrix` is `integer`.
+- Fix definition of anchor peaks for peakGroups alignment with subset
+  (issue #702).
+- Add `filterMsLevel` method for `MsExperiment` and `XcmsExperiment`.
+- Ensure chunk-wise processing of Spectra (introduced with version 1.13.2) is
+  disabled when xcms is using its own chunk-wise processing.
+
 Changes in version 4.1.3
 ----------------------
 
