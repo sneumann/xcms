@@ -393,7 +393,7 @@ do_adjustRtime_peakGroups <-
 #' @details This function is called internally by the
 #'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
 #'
-#' Update for version 4.1.2: correctly consider the `sampleIndex` and
+#' Update for version 4.1.4: correctly consider the `sampleIndex` and
 #'     `missingSample` to select only peaks present in samples of an eventual
 #'     sample subset (for subset-based alignment): fixes issue #702
 #'
