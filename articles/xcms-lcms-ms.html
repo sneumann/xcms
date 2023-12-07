@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2023-12-06 16:40:03.37459<br><strong>Compiled</strong>: Wed Dec 6 17:53:18 2023</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2023-12-07 07:39:24.923344<br><strong>Compiled</strong>: Thu Dec 7 08:45:39 2023</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -264,9 +264,9 @@ chromatographic peak are returned.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Wed Dec  6 17:53:30 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Wed Dec  6 17:53:37 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Wed Dec  6 17:53:37 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Thu Dec  7 08:45:51 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Thu Dec  7 08:45:58 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Thu Dec  7 08:45:58 2023]</span></span></code></pre>
 <p>By default <code>chromPeakSpectra</code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -340,9 +340,9 @@ peak in the present data set.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Wed Dec  6 17:53:30 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Wed Dec  6 17:53:37 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Wed Dec  6 17:53:37 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Thu Dec  7 08:45:51 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Thu Dec  7 08:45:58 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Thu Dec  7 08:45:58 2023]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
 single MS2 spectrum using the <code>combineSpectra</code> method
@@ -368,9 +368,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 34 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Wed Dec  6 17:53:30 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Wed Dec  6 17:53:37 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Wed Dec  6 17:53:37 2023]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Thu Dec  7 08:45:51 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Thu Dec  7 08:45:58 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Thu Dec  7 08:45:58 2023]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -827,7 +827,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Wed Dec  6 17:53:45 2023]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Thu Dec  7 08:46:06 2023]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -988,9 +988,9 @@ peak.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Wed Dec  6 17:53:30 2023]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Wed Dec  6 17:53:37 2023]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Wed Dec  6 17:53:37 2023]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Thu Dec  7 08:45:51 2023]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Thu Dec  7 08:45:58 2023]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Thu Dec  7 08:45:58 2023]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
