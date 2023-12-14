@@ -76,6 +76,11 @@
                                     ignoreHistory = FALSE,
                                     keepSampleIndex = FALSE, ...) {
     i <- i2index(i, length(x))
+    if (any(i < 0)) {
+        if (all(i < 0))
+            i <- seq_along(x)[i]
+        else stop("Mixing positive and negative indices is not supported.")
+    }
     ## This is a special case that would make life (=performance) miserable
     if (length(i) != length(unique(i)))
         stop("Duplicated indices are not (yet) supported for ",

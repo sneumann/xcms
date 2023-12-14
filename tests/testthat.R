@@ -74,6 +74,7 @@ expect_true(length(processHistory(xmse)) == 1L)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 expect_true(length(processHistory(xmseg)) == 2L)
+
 test_check("xcms")
 
 bpstop(prm)

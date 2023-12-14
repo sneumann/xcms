@@ -165,6 +165,12 @@ test_that("subsetting,XcmsExperiment works", {
     expect_equal(sampleData(res), sampleData(xmseg))
     expect_equal(chromPeaks(res), chromPeaks(xmseg))
     expect_equal(featureDefinitions(res), featureDefinitions(xmseg))
+
+    ## subsetting with negative indices
+    res <- xmse[-1]
+    expect_true(length(res) == (length(xmse) - 1))
+    ref <- xmse[c(2, 3)]
+    expect_equal(chromPeaks(res), chromPeaks(ref))
 })
 
 test_that("filterRt,XcmsExperiment works", {
