@@ -1,6 +1,8 @@
 Changes in version 4.1.5
 ----------------------
 
+- Remove internal (not exported) normalization functions. These have been
+  transferred to the MetaboCoreUtils package.
 - Support subsetting of `XcmsExperiment` with negative indices.
 
 Changes in version 4.1.4
