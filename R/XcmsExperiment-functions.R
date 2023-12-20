@@ -363,8 +363,7 @@
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
                         f = factor()), f),
         split.data.frame(chromPeaks(x, msLevel = msLevel), f = f_peaks),
-        split.data.frame(chromPeakData(
-            x, msLevel = msLevel, return.type = "data.frame"), f = f_peaks),
+        split.data.frame(.chromPeakData(x, msLevel = msLevel), f = f_peaks),
         split(rt, f),
         MoreArgs = list(expandRt = expandRt, expandMz = expandMz,
                         ppm = ppm, minProp = minProp),
@@ -385,7 +384,7 @@
     f <- as.factor(fromFile(x)[keep])
     if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
     else rt <- rtime(spectra(x))[keep]
-    f_peaks <- factor(chromPeaks(x)[, "sample"], levels = levels(f))
+    f_peaks <- factor(.chromPeaks(x)[, "sample"], levels = levels(f))
     res <- bpmapply(
         function(x, rt, pks, msLevels, nValues, threshold, msLevel) {
             if (!length(pks)) return(logical())
@@ -406,8 +405,8 @@
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
                         f = factor()), f),
         split(rt, f),
-        split.data.frame(chromPeaks(x), f = f_peaks),
-        split(chromPeakData(x)$ms_level, f = f_peaks),
+        split.data.frame(.chromPeaks(x), f = f_peaks),
+        split(.chromPeakData(x)$ms_level, f = f_peaks),
         MoreArgs = list(nValues = nValues, threshold = threshold,
                         msLevel = msLevel),
         USE.NAMES = FALSE, BPPARAM = BPPARAM)
@@ -473,7 +472,7 @@
     f <- as.factor(fromFile(x)[keep])
     if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
     else rt <- rtime(spectra(x))[keep]
-    cn <- colnames(chromPeaks(x))
+    cn <- colnames(.chromPeaks(x))
     res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel),
                                     f = factor()), f),
                     split(rt, f),
@@ -661,7 +660,7 @@
     x@chromPeakData <- x@chromPeakData[idx, ]
     if (hasFeatures(x) && (nrow(x@chromPeaks) != length(cpn)))
         x@featureDefinitions <- .update_feature_definitions(
-            x@featureDefinitions, cpn, rownames(chromPeaks(x)))
+            x@featureDefinitions, cpn, rownames(.chromPeaks(x)))
     x
 }
 
@@ -795,8 +794,8 @@
                                    ppm = 0, skipFilled = FALSE,
                                    peaks = integer(), BPPARAM = bpparam()) {
     method <- match.arg(method)
-    pks <- chromPeaks(x)[, c("mz", "mzmin", "mzmax", "rt",
-                             "rtmin", "rtmax", "maxo", "sample")]
+    pks <- .chromPeaks(x)[, c("mz", "mzmin", "mzmax", "rt",
+                              "rtmin", "rtmax", "maxo", "sample")]
     if (ppm != 0)
         expandMz <- expandMz + pks[, "mz"] * ppm / 1e6
     if (expandMz[1L] != 0) {
@@ -810,8 +809,8 @@
     if (length(peaks)) keep <- peaks
     else {
         keep <- rep(TRUE, nrow(pks))
-        if (skipFilled && any(chromPeakData(x)$is_filled))
-            keep <- !chromPeakData(x)$is_filled
+        if (skipFilled && any(.chromPeakData(x)$is_filled))
+            keep <- !.chromPeakData(x)$is_filled
     }
     pks <- pks[keep, , drop = FALSE]
     f <- as.factor(as.integer(pks[, "sample"]))
@@ -864,8 +863,9 @@
 }
 
 #' Function to help extracting the *old* MChromatograms and XChromatograms
-#' from an XcmsExperiment. This is based on the code for XCMSnExp objects,
-#' but there could be room for improvement.
+#' from an XcmsExperiment.
+#'
+#' @param object `XcmsExperiment` or `XCMSnExp` object.
 #'
 #' @noRd
 .xmse_extract_chromatograms_old <- function(object, rt, mz, aggregationFun,
@@ -883,40 +883,49 @@
     fd <- fData(chrs)
     rtc <- c("rtmin", "rtmax")
     mzc <- c("mzmin", "mzmax")
-    cpd <- chromPeakData(object)
-    pks_empty <- chromPeaks(object)[integer(), ]
-    pkd_empty <- cpd[integer(), ]
+    if (inherits(object, "XcmsExperiment"))
+        cpd <- .chromPeakData(object)
+    else cpd <- as.data.frame(chromPeakData(object))
+    message("Processing chromatographic peaks")
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = nrow(chrs) + 1L, clear = FALSE)
     for (i in seq_len(nrow(chrs))) {
-        pks <- chromPeaks(object, rt = fd[i, rtc], mz = fd[i, mzc],
-                          msLevel = chrs[i, 1]@msLevel, type = chromPeaks)
+        idx <- .index_chrom_peaks(
+            object, rt = fd[i, rtc], mz = fd[i, mzc],
+            msLevel = chrs[i, 1]@msLevel, type = chromPeaks)
+        f_s <- factor(.chromPeaks(object)[idx, "sample"], levels = js)
+        pkl <- split.data.frame(.chromPeaks(object)[idx, , drop = FALSE], f_s)
+        cpl <- split.data.frame(cpd[idx, , drop = FALSE], f_s)
+        pb$tick()
         for (j in js) {
-            sel <- which(pks[, "sample"] == j)
-            if (length(sel)) {
-                slot(chrs@.Data[i, j][[1L]],
-                     "chromPeaks", check = FALSE) <- pks[sel, , drop = FALSE]
-                slot(chrs@.Data[i, j][[1L]],
-                     "chromPeakData", check = FALSE) <-
-                    extractROWS(cpd, rownames(pks)[sel])
-            } else {
-                slot(chrs@.Data[i, j][[1L]],
-                     "chromPeaks", check = FALSE) <- pks_empty
-                slot(chrs@.Data[i, j][[1L]],
-                     "chromPeakData", check = FALSE) <- pkd_empty
-            }
+            tmp <- chrs@.Data[i, j][[1L]]
+            slot(tmp, "chromPeaks", check = FALSE) <- pkl[[j]]
+            slot(tmp, "chromPeakData", check = FALSE) <- as(cpl[[j]], "DataFrame")
+            chrs@.Data[i, j][[1L]] <- tmp
         }
     }
+    pb$tick()
     ## Process features - that is not perfect.
     if (hasFeatures(object)) {
+        message("Processing features")
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = nrow(chrs) + 1L, clear = FALSE)
         pks_sub <- chromPeaks(chrs)
         fts <- lapply(seq_len(nrow(chrs)), function(r) {
             fdev <- featureDefinitions(object, mz = fd[r, mzc], rt = fd[r, rtc])
+            pb$tick()
             if (nrow(fdev)) {
                 fdev$row <- r
                 .subset_features_on_chrom_peaks(
-                    fdev, chromPeaks(object), pks_sub)
+                    fdev, .chromPeaks(object), pks_sub)
             } else data.frame()
         })
         chrs@featureDefinitions <- DataFrame(do.call(rbind, fts))
+        pb$tick()
     }
     chrs@.processHistory <- object@processHistory
     chrs
@@ -958,14 +967,14 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
             object@spectra$rtime <- spectra(object)$rtime_adjusted
         message("Reconstructing MS2 spectra for ", length(peakId),
                 " chrom peaks ...", appendLF = FALSE)
-        pks <- chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
-                                      "rtmax", column)]
+        pks <- .chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                       "rtmax", column)]
         pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
         pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
         ord <- order(pks[, "mz"])       # m/z need to be ordered in a Spectra
         pks <- pks[ord, ]
-        ilmz <- chromPeakData(object)$isolationWindowLowerMz[ord]
-        iumz <- chromPeakData(object)$isolationWindowUpperMz[ord]
+        ilmz <- .chromPeakData(object)$isolationWindowLowerMz[ord]
+        iumz <- .chromPeakData(object)$isolationWindowUpperMz[ord]
         ## Get EICs for all chrom peaks (all MS levels)
         object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
         chrs <- .chromatograms_for_peaks(
@@ -973,8 +982,8 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
             rt = rtime(object@spectra),
             msl = msLevel(object@spectra), file_idx = fromFile,
             tmz = isolationWindowTargetMz(object@spectra), pks = pks,
-            pks_msl = chromPeakData(object)$ms_level[ord],
-            pks_tmz = chromPeakData(object)$isolationWindow[ord])
+            pks_msl = .chromPeakData(object)$ms_level[ord],
+            pks_tmz = .chromPeakData(object)$isolationWindow[ord])
         idx <- match(peakId, rownames(pks)) # MS1 peaks to loop over
         res <- data.frame(
             peak_id = peakId, precursorMz = pks[idx, "mz"],
@@ -1021,3 +1030,71 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         .require_spectra()
         Spectra::Spectra(res)
     }
+
+#' helper function to get indices of chromatographic peaks for eventual
+#' subsetting with `rt`, `mz`, `msLevel` and `type`.
+#'
+#' @param object `XcmsExperiment` or `XCMSnExp` object with `chromPeaks`.
+#'
+#' @return `integer` vector with the indices of the `chromPeaks` matching the
+#'     requested filtering.
+#'
+#' @noRd
+.index_chrom_peaks <- function(object, rt = numeric(),
+                               mz = numeric(), ppm = 0,
+                               msLevel = integer(),
+                               type = c("any", "within",
+                                        "apex_within")) {
+    type <- match.arg(type)
+    pks <- .chromPeaks(object)
+    keep <- rep(TRUE, nrow(pks))
+    if (length(msLevel))
+        keep <- keep &
+            chromPeakData(
+                object, return.type = "data.frame")$ms_level %in% msLevel
+    ## Select peaks within rt range.
+    if (length(rt)) {
+        rt <- range(as.numeric(rt))
+        if (type == "any")
+            keep <- keep & pks[, "rtmin"] <= rt[2L] & pks[, "rtmax"] >= rt[1L]
+        if (type == "within")
+            keep <- keep & pks[, "rtmin"] >= rt[1L] & pks[, "rtmax"] <= rt[2L]
+        if (type == "apex_within")
+            keep <- keep & pks[, "rt"] >= rt[1L] & pks[, "rt"] <= rt[2L]
+    }
+    ## Select peaks within mz range, considering also ppm
+    if (length(mz)) {
+        mz <- range(as.numeric(mz))
+        if (is.finite(mz[1L]))
+            mz[1L] <- mz[1L] - mz[1L] * ppm / 1e6
+        if (is.finite(mz[2L]))
+            mz[2L] <- mz[2L] + mz[2L] * ppm / 1e6
+        if (type == "any")
+            keep <- keep & pks[, "mzmin"] <= mz[2L] & pks[, "mzmax"] >= mz[1L]
+        if (type == "within")
+            keep <- keep & pks[, "mzmin"] >= mz[1L] & pks[, "mzmax"] <= mz[2L]
+        if (type == "apex_within")
+            keep <- keep & pks[, "mz"] >= mz[1L] & pks[, "mz"] <= mz[2L]
+    }
+    which(keep)
+}
+
+#' Helper function to return the chromPeakData as-is (as a data.frame) from
+#' a `XcmsExperiment` object.
+#'
+#' @noRd
+.chromPeakData <- function(object, msLevel = integer()) {
+    if (length(msLevel))
+        object@chromPeakData[object@chromPeakData$ms_level %in% msLevel, ]
+    else object@chromPeakData
+}
+
+#' Helper function to return the **full**  chromPeaks matrix without any
+#' filtering from either a `XcmsExperiment` or `XCMSnExp` object
+#'
+#' @noRd
+.chromPeaks <- function(object) {
+    if (inherits(object, "XcmsExperiment"))
+        object@chromPeaks
+    else chromPeaks(object@msFeatureData)
+}

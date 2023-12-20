@@ -171,7 +171,7 @@ processHistoryTypes()
 
 \method{c}{XCMSnExp}(...)
 
-\S4method{chromPeakData}{XCMSnExp}(object)
+\S4method{chromPeakData}{XCMSnExp}(object, ...)
 
 \S4method{chromPeakData}{XCMSnExp}(object) <- value
 

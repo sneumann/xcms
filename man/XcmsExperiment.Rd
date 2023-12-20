@@ -136,7 +136,7 @@ featureArea(
 
 \S4method{filterChromPeaks}{XcmsExperiment}(
   object,
-  keep = rep(TRUE, nrow(chromPeaks(object))),
+  keep = rep(TRUE, nrow(.chromPeaks(object))),
   method = "keep",
   ...
 )

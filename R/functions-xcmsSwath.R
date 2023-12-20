@@ -83,14 +83,16 @@
              peakId = rownames(chromPeaks(object, msLevel = 1L))) {
         message("Reconstructing MS2 spectra for ", length(peakId),
                 " chrom peaks ...", appendLF = FALSE)
-        pks <- chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
-                                      "rtmax", column)]
+        pks <- .chromPeaks(object)[, c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                       "rtmax", column)]
         pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
         pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
         ord <- order(pks[, "mz"])       # m/z need to be ordered in a Spectra
         pks <- pks[ord, ]
-        ilmz <- chromPeakData(object)$isolationWindowLowerMz[ord]
-        iumz <- chromPeakData(object)$isolationWindowUpperMz[ord]
+        ilmz <- chromPeakData(
+            object, return.type = "data.frame")$isolationWindowLowerMz[ord]
+        iumz <- chromPeakData(
+            object, return.type = "data.frame")$isolationWindowUpperMz[ord]
         ## Get EICs for all chrom peaks (all MS levels)
         suppressMessages(
             object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")])))

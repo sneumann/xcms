@@ -1282,7 +1282,7 @@ test_that("quantify,XcmsExperiment works", {
 test_that("addProcessHistory,XcmsExperiment works", {
     tmp <- xmse
     expect_error(addProcessHistory(tmp, "A"), "ProcessHistory")
-    ph <- xcms:::ProcessHistory()
+    ph <- ProcessHistory()
     tmp <- addProcessHistory(tmp, ph)
     expect_true(length(processHistory(tmp)) == 2L)
     expect_equal(processHistory(tmp)[[2L]], ph)

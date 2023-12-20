@@ -123,3 +123,65 @@ test_that(".chrom_peak_intensity_msw  works", {
     ## ref <- fillChromPeaks(ref, cpp)
     ## expect_equal(chromPeaks(ref), chromPeaks(res))
 })
+
+test_that(".index_chrom_peaks works", {
+    ## xod_xg
+    ## xmse
+    res <- .index_chrom_peaks(xmse)
+    expect_equal(res, seq_len(nrow(chromPeaks(xmse))))
+    res2 <- .index_chrom_peaks(xod_x)
+    expect_equal(res, res2)
+
+    ## MS level
+    res <- .index_chrom_peaks(xmse, msLevel = c(3, 4))
+    expect_equal(res, integer())
+    res2 <- .index_chrom_peaks(xod_x, msLevel = c(3, 4))
+    expect_equal(res, res2)
+
+    ## rt
+    res <- .index_chrom_peaks(xmse, rt = c(2500, 2700),
+                              type = "apex_within")
+    rts <- chromPeaks(xmse)[res, "rt"]
+    expect_true(all(rts >= 2500 & rts <= 2700))
+    expect_equal(res, .index_chrom_peaks(xod_x, rt = c(2500, 2700),
+                                         type = "apex_within"))
+
+    ## mz
+    res <- .index_chrom_peaks(xmse, mz = c(400, 600), type = "apex_within")
+    mzs <- chromPeaks(xmse)[res, "mz"]
+    expect_true(all(mzs >= 400 & mzs <= 600))
+    expect_equal(res, .index_chrom_peaks(xod_x, mz = c(400, 600),
+                                         type = "apex_within"))
+
+    ## rt and mz
+    res <- .index_chrom_peaks(xmse, mz = c(400, 600), type = "apex_within",
+                              rt = c(2500, 2700))
+    pks <- chromPeaks(xmse)[res, c("mz", "rt")]
+    expect_true(all(pks[, "mz"] >= 400 & pks[, "mz"] <= 600 &
+                    pks[, "rt"] >= 2500 & pks[, "rt"] <= 2700))
+    expect_equal(res, .index_chrom_peaks(xod_x, mz = c(400, 600),
+                                         type = "apex_within",
+                                         rt = c(2500, 2700)))
+})
+
+test_that(".chromPeaks works", {
+    x <- new("XcmsExperiment")
+    res <- .chromPeaks(x)
+    expect_equal(res, x@chromPeaks)
+
+    res <- .chromPeaks(xmse)
+    expect_equal(res, xmse@chromPeaks)
+    res <- .chromPeaks(xod_x)
+    expect_equal(res, chromPeaks(xod_x@msFeatureData))
+})
+
+test_that(".chromPeakData works", {
+    x <- new("XcmsExperiment")
+    res <- .chromPeakData(x)
+    expect_equal(res, x@chromPeakData)
+
+    res <- .chromPeakData(xmse)
+    expect_equal(res, xmse@chromPeakData)
+    res <- .chromPeakData(xmse, msLevel = 2L)
+    expect_equal(res, xmse@chromPeakData[integer(), ])
+})

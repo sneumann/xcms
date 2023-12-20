@@ -1629,7 +1629,7 @@ setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
 #' @noRd
 .swath_collect_chrom_peaks <- function(x, msf, fileNames) {
     pks <- do.call(rbind, lapply(x, function(z) {
-        suppressWarnings(cpks <- chromPeaks(z))
+        suppressWarnings(cpks <- .chromPeaks(z))
         if (!is.null(cpks) && nrow(cpks))
             cpks[, "sample"] <- match(fileNames(z)[cpks[, "sample"]], fileNames)
         cpks

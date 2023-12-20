@@ -328,39 +328,13 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                                                       "apex_within"),
                                              isFilledColumn = FALSE) {
     type <- match.arg(type)
-    pks <- chromPeaks(object@msFeatureData)
+    pks <- .chromPeaks(object)
     if (isFilledColumn)
-        pks <- cbind(pks, is_filled = as.numeric(chromPeakData(object)$is_filled))
-    if (length(msLevel))
-        pks <- pks[which(chromPeakData(object)$ms_level %in% msLevel), ,
-                   drop = FALSE]
-    ## Select peaks within rt range.
-    if (length(rt)) {
-        rt <- range(as.numeric(rt))
-        if (type == "any")
-            keep <- which(pks[, "rtmin"] <= rt[2] & pks[, "rtmax"] >= rt[1])
-        if (type == "within")
-            keep <- which(pks[, "rtmin"] >= rt[1] & pks[, "rtmax"] <= rt[2])
-        if (type == "apex_within")
-            keep <- which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2])
-        pks <- pks[keep, , drop = FALSE]
-    }
-    ## Select peaks within mz range, considering also ppm
-    if (length(mz) && length(pks)) {
-        mz <- range(as.numeric(mz))
-        ## Increase mz by ppm.
-        if (is.finite(mz[1]))
-            mz[1] <- mz[1] - mz[1] * ppm / 1e6
-        if (is.finite(mz[2]))
-            mz[2] <- mz[2] + mz[2] * ppm / 1e6
-        if (type == "any")
-            keep <- which(pks[, "mzmin"] <= mz[2] & pks[, "mzmax"] >= mz[1])
-        if (type == "within")
-            keep <- which(pks[, "mzmin"] >= mz[1] & pks[, "mzmax"] <= mz[2])
-        if (type == "apex_within")
-            keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
-        pks <- pks[keep, , drop = FALSE]
-    }
+        pks <- cbind(
+            pks, is_filled = as.numeric(chromPeakData(object)$is_filled))
+    pks <- pks[.index_chrom_peaks(
+        object, rt = rt, mz = mz, ppm = ppm, msLevel = msLevel,
+        type = type), , drop = FALSE]
     if (bySample) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected peaks.
@@ -3236,7 +3210,7 @@ setMethod("updateObject", "XCMSnExp", function(object) {
 })
 
 #' @rdname XCMSnExp-class
-setMethod("chromPeakData", "XCMSnExp", function(object) {
+setMethod("chromPeakData", "XCMSnExp", function(object, ...) {
     chromPeakData(object@msFeatureData)
 })
 #' @rdname XCMSnExp-class
