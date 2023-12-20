@@ -1330,3 +1330,31 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
     expect_s4_class(res, "xcmsSet")
     expect_equal(peaks(res), chromPeaks(xmseg))
 })
+
+test_that(".index_chrom_peaks works", {
+    ## xmse
+    res <- .index_chrom_peaks(xmse)
+    expect_equal(res, seq_len(nrow(chromPeaks(xmse))))
+
+    ## MS level
+    res <- .index_chrom_peaks(xmse, msLevel = c(3, 4))
+    expect_equal(res, integer())
+
+    ## rt
+    res <- .index_chrom_peaks(xmse, rt = c(2500, 2700),
+                              type = "apex_within")
+    rts <- chromPeaks(xmse)[res, "rt"]
+    expect_true(all(rts >= 2500 & rts <= 2700))
+
+    ## mz
+    res <- .index_chrom_peaks(xmse, mz = c(400, 600), type = "apex_within")
+    mzs <- chromPeaks(xmse)[res, "mz"]
+    expect_true(all(mzs >= 400 & mzs <= 600))
+
+    ## rt and mz
+    res <- .index_chrom_peaks(xmse, mz = c(400, 600), type = "apex_within",
+                              rt = c(2500, 2700))
+    pks <- chromPeaks(xmse)[res, c("mz", "rt")]
+    expect_true(all(pks[, "mz"] >= 400 & pks[, "mz"] <= 600 &
+                    pks[, "rt"] >= 2500 & pks[, "rt"] <= 2700))
+})
