@@ -76,7 +76,7 @@ struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned
 
     mzROI = (struct mzROIStruct *) realloc(mzROI, newLength * sizeof(struct mzROIStruct));
     if (mzROI == NULL)
-        error("findmzROI/realloc: buffer memory could not be allocated ! (%llu bytes)\n", newLength * sizeof(struct mzROIStruct) );
+        error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct) );
 
     mzLength->mzROITotal = newLength;
   }
@@ -99,7 +99,7 @@ struct mzROIStruct * checkmzvalBufSize(struct mzROIStruct *mzval, const unsigned
 
     mzval = (struct mzROIStruct *) realloc(mzval, newLength * sizeof(struct mzROIStruct));
     if (mzval == NULL)
-      error("findmzROI/realloc: buffer memory could not be allocated ! (%llu bytes)\n", newLength * sizeof(struct mzROIStruct));
+      error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct));
 
     mzLength->mzvalTotal = newLength;
   }
@@ -328,7 +328,7 @@ int i,p,del=0;
     p=0;
     struct mzROIStruct * tmp = (struct mzROIStruct *) calloc(mzLength->mzval - del,  sizeof(struct mzROIStruct));
     if (tmp == NULL)
-      error("findmzROI/cleanup: buffer memory could not be allocated ! (%llu bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
+      error("findmzROI/cleanup: buffer memory could not be allocated ! (%lu bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
     for (i=0; i < mzLength->mzval; i++) {
         if (mzval[i].deleteMe == FALSE) {
             tmp[p].mz = mzval[i].mz;
@@ -626,11 +626,11 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
 
   struct mzROIStruct * mzROI = (struct mzROIStruct *) calloc(ROI_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzROI == NULL)
-      error("findmzROI/calloc: buffer memory could not be allocated ! (%llu bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
+      error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
   struct mzROIStruct * mzval = (struct mzROIStruct *) calloc(MZVAL_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzval == NULL)
-      error("findmzROI/calloc: buffer memory could not be allocated ! (%llu bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
+      error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
   mzLength.mzvalTotal = MZVAL_INIT_LENGTH;
   mzLength.mzROITotal = ROI_INIT_LENGTH;
