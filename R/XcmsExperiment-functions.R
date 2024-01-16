@@ -133,7 +133,8 @@
                 cp, sampleGroups = sampleGroups(param), bw = bw(param),
                 minFraction = minFraction(param),
                 minSamples = minSamples(param), binSize = binSize(param),
-                maxFeatures = maxFeatures(param), index = index)
+                maxFeatures = maxFeatures(param), ppm = ppm(param),
+                index = index)
         },
         MzClustParam = {
             tmp <- do_groupPeaks_mzClust(

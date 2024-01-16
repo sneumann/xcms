@@ -15,8 +15,8 @@ do_groupPeaks_mzClust(
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
-retention times of the identified chromatographic peaks in all samples of an
-experiment. Required columns are \code{"mz"}, \code{"rt"} and
+retention times of the identified chromatographic peaks in all samples
+of an experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 
@@ -29,7 +29,13 @@ experiment (in which case all samples should be assigned to the
 same group).}
 
 \item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
-error for the clustering/grouping (in parts per million).}
+error for the clustering/grouping (in parts per million).
+For \code{PeakDensityParam}: \code{numeric(1)} to define m/z-dependent, increasing
+m/z bin sizes. If \code{ppm = 0} (the default) m/z bins are defined by the
+sequence of values from the smallest to the larges m/z value with a
+constant bin size of \code{binSize}. For \code{ppm} > 0 the size of each bin is
+increased in addition by the \code{ppm} of the (upper) m/z boundary of the
+bin.}
 
 \item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
 maximum tolerated distance for m/z values.}

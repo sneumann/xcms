@@ -1235,10 +1235,16 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' - `PeakDensityParam`: correspondence using the *peak density* method
 #'   (Smith 2006) that groups chromatographic peaks along the retention time
-#'   axis within slices of (partially overlapping) m/z ranges. All peaks (from
-#'   the same or from different samples) with their apex position being close
-#'   on the retention time axis are grouped into a LC-MS feature. See in
-#'   addition [do_groupChromPeaks_density()] for the core API function.
+#'   axis within slices of (partially overlapping) m/z ranges. By default,
+#'   these m/z ranges (bins) have a constant size. By setting `ppm` to a value
+#'   larger than 0, m/z dependent bin sizes can be used instead (better
+#'   representing the m/z dependent measurement error of some MS instruments).
+#'   Setting `ppm` to a value different than 0 results thus in m/z dependent
+#'   bin sizes.
+#'   All peaks (from the same or from different samples) with their apex
+#'   position being close on the retention time axis are grouped into a LC-MS
+#'   feature. See in addition [do_groupChromPeaks_density()] for the core API
+#'   function.
 #'
 #' - `NearestPeaksParam`: performs peak grouping based on the proximity of
 #'   chromatographic peaks from different samples in the m/z - rt space similar
@@ -1304,6 +1310,12 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param ppm For `MzClustParam`: `numeric(1)` representing the relative m/z
 #'     error for the clustering/grouping (in parts per million).
+#'     For `PeakDensityParam`: `numeric(1)` to define m/z-dependent, increasing
+#'     m/z bin sizes. If `ppm = 0` (the default) m/z bins are defined by the
+#'     sequence of values from the smallest to the larges m/z value with a
+#'     constant bin size of `binSize`. For `ppm` > 0 the size of each bin is
+#'     increased in addition by the `ppm` of the (upper) m/z boundary of the
+#'     bin.
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'

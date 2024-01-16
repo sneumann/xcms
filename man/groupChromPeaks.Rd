@@ -32,6 +32,7 @@
 \alias{maxFeatures}
 \alias{maxFeatures<-,PeakDensityParam-method}
 \alias{maxFeatures<-}
+\alias{ppm,PeakDensityParam-method}
 \alias{sampleGroups,MzClustParam-method}
 \alias{sampleGroups<-,MzClustParam-method}
 \alias{ppm,MzClustParam-method}
@@ -75,6 +76,7 @@ PeakDensityParam(
   minFraction = 0.5,
   minSamples = 1,
   binSize = 0.25,
+  ppm = 0,
   maxFeatures = 50
 )
 
@@ -117,6 +119,8 @@ NearestPeaksParam(
 \S4method{maxFeatures}{PeakDensityParam}(object)
 
 \S4method{maxFeatures}{PeakDensityParam}(object) <- value
+
+\S4method{ppm}{PeakDensityParam}(object)
 
 \S4method{sampleGroups}{MzClustParam}(object)
 
@@ -204,11 +208,17 @@ to be detected to be considered a peak group (feature).}
 \item{binSize}{For \code{PeakDensityParam}: \code{numeric(1)} defining the size of the
 overlapping slices in m/z dimension.}
 
+\item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
+error for the clustering/grouping (in parts per million).
+For \code{PeakDensityParam}: \code{numeric(1)} to define m/z-dependent, increasing
+m/z bin sizes. If \code{ppm = 0} (the default) m/z bins are defined by the
+sequence of values from the smallest to the larges m/z value with a
+constant bin size of \code{binSize}. For \code{ppm} > 0 the size of each bin is
+increased in addition by the \code{ppm} of the (upper) m/z boundary of the
+bin.}
+
 \item{maxFeatures}{For \code{PeakDensityParam}: \code{numeric(1)} with the maximum
 number of peak groups to be identified in a single mz slice.}
-
-\item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
-error for the clustering/grouping (in parts per million).}
 
 \item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
 maximum tolerated distance for m/z values.}
@@ -248,10 +258,16 @@ Supported \code{param} objects are:
 \itemize{
 \item \code{PeakDensityParam}: correspondence using the \emph{peak density} method
 (Smith 2006) that groups chromatographic peaks along the retention time
-axis within slices of (partially overlapping) m/z ranges. All peaks (from
-the same or from different samples) with their apex position being close
-on the retention time axis are grouped into a LC-MS feature. See in
-addition \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} for the core API function.
+axis within slices of (partially overlapping) m/z ranges. By default,
+these m/z ranges (bins) have a constant size. By setting \code{ppm} to a value
+larger than 0, m/z dependent bin sizes can be used instead (better
+representing the m/z dependent measurement error of some MS instruments).
+Setting \code{ppm} to a value different than 0 results thus in m/z dependent
+bin sizes.
+All peaks (from the same or from different samples) with their apex
+position being close on the retention time axis are grouped into a LC-MS
+feature. See in addition \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} for the core API
+function.
 \item \code{NearestPeaksParam}: performs peak grouping based on the proximity of
 chromatographic peaks from different samples in the m/z - rt space similar
 to the correspondence method of \emph{mzMine} (Katajamaa 2006). The method

@@ -1482,6 +1482,7 @@ setMethod("groupChromPeaks",
                   minFraction = minFraction(param),
                   minSamples = minSamples(param),
                   binSize = binSize(param),
+                  ppm = ppm(param),
                   maxFeatures = maxFeatures(param))
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,

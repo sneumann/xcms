@@ -219,7 +219,7 @@ quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
 \code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
 correlation coefficient to a bell curve with several degrees of skew as well
 as an estimate of signal-to-noise using the residuals from the best-fitting
-bell curve. See https://github.com/sneumann/xcms/pull/685 and 
+bell curve. See https://github.com/sneumann/xcms/pull/685 and
 https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 
 \item{object}{For \code{findChromPeaks}: an
