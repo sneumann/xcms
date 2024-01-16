@@ -867,7 +867,10 @@ assumed to represent signal from the same (type of ion of a) compound and hence
 evaluated for grouping. By default, a constant m/z bin size is used, but by
 changing parameter `ppm` to a value larger than 0, m/z-relative bin sizes would
 be used instead (i.e., the bin size will increase with the m/z value hence
-better representing the measurement error/precision of some MS instruments).
+better representing the measurement error/precision of some MS instruments). The
+bin sizes (and subsequently the m/z width of the defined features) would then
+reach a maximal value of `binSize` plus `ppm` parts-per-million of the largest
+m/z value of any chromatographic peak in the data set.
 
 See also the [xcms
 tutorial](https://jorainer.github.io/xcmsTutorials) for more examples and

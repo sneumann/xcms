@@ -133,7 +133,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     ## value >= mass[i]. If ppm != 0 the size of the individual bins will
     ## be dependend on the m/z value.
     mass <- .breaks_ppm(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
-                       by = binSize / 2, ppm = ppm)
+                       by = binSize / 2, ppm = ppm / 2)
     masspos <- findEqualGreaterM(peaks[, "mz"], mass)
 
     densFrom <- rtRange[1] - 3 * bw

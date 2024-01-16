@@ -1315,7 +1315,9 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     sequence of values from the smallest to the larges m/z value with a
 #'     constant bin size of `binSize`. For `ppm` > 0 the size of each bin is
 #'     increased in addition by the `ppm` of the (upper) m/z boundary of the
-#'     bin.
+#'     bin. The maximal bin size (used for the largest m/z values) would then
+#'     be `binSize` plus `ppm` parts-per-million of the largest m/z value of
+#'     all peaks in the data set.
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'

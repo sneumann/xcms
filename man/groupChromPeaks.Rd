@@ -215,7 +215,9 @@ m/z bin sizes. If \code{ppm = 0} (the default) m/z bins are defined by the
 sequence of values from the smallest to the larges m/z value with a
 constant bin size of \code{binSize}. For \code{ppm} > 0 the size of each bin is
 increased in addition by the \code{ppm} of the (upper) m/z boundary of the
-bin.}
+bin. The maximal bin size (used for the largest m/z values) would then
+be \code{binSize} plus \code{ppm} parts-per-million of the largest m/z value of
+all peaks in the data set.}
 
 \item{maxFeatures}{For \code{PeakDensityParam}: \code{numeric(1)} with the maximum
 number of peak groups to be identified in a single mz slice.}
