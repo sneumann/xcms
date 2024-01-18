@@ -569,32 +569,29 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' [XCMSnExp-class] object. The function returns for each feature the
 #' extracted ion chromatograms (along with all associated chromatographic
 #' peaks) in each sample. The chromatogram is extracted from the m/z - rt
-#' region including all chromatographic peaks of that features. This region is
-#' by default, with `mzmin = min`, `mzmax = max`, `rtmin = min` and
-#' `rtmax = max` defined using the **ranges** of `"mzmin"`, `"mzmax"`,
-#' `"rtmin"`, `"rtmax"` of all chromatographic peaks of the feature. For some
-#' features, and depending on the data, the m/z and rt range can thus be
-#' relatively large. The ranges could be restricted by using a different
-#' function to define them, e.g. by setting `mzmin = median` and
-#' `mzmax = median` in which case the median `"mzmin"` and `"mzmax"` values
-#' of all chromatographic peaks would be used.
+#' region that includes **all** chromatographic peaks of a feature. By default,
+#' this region is defined using the range of the chromatographic peaks' m/z
+#' and retention times (with `mzmin = min`, `mzmax = max`, `rtmin = min` and
+#' `rtmax = max`). For some features, and depending on the data, the m/z and
+#' rt range can thus be relatively large. The boundaries of the m/z - rt
+#' region can also be restricted by changing parameters `mzmin`, `mzmax`,
+#' `rtmin` and `rtmax` to a different functions, such as `median`.
 #'
 #' By default only chromatographic peaks associated with a feature are
-#' included. For `object` being a `XCMSnExp` object parameter `include`
-#' allows also to return all chromatographic peaks with their apex
-#' position within the selected region (`include = "apex_within"`) or any
-#' chromatographic peak overlapping the m/z and retention time range
-#' (`include = "any"`).
+#' included in the returned [XChromatograms] object. For `object` being an
+#' `XCMSnExp` object parameter `include` allows also to return all
+#' chromatographic peaks with their apex position within the selected
+#' region (`include = "apex_within"`) or any chromatographic peak overlapping
+#' the m/z and retention time range (`include = "any"`).
 #'
 #' @note
 #'
-#' The **same** m/z and rt boundaries are used on every sample to extract
-#' the ion chromatogram. The EIC might thus not exactly represent the actual
-#' EIC of each individual chromatographic peak (i.e. signal for the ion in one
-#' specific sample), since the m/z and rt boundaries might be slightly
-#' different across samples. The [chromPeakChromatograms()] function could be
-#' used to extract the actual EIC of the chromatographic peak in a specific
-#' sample. See also examples below.
+#' The EIC data of a feature is extracted from every sample using the same
+#' m/z - rt area. The EIC in a sample does thus not exactly represent the
+#' signal of the actually identified chromatographi peak in that sample.
+#' The [chromPeakChromatograms()] function would allow to extract the actual
+#' EIC of the chromatographic peak in a specific sample. See also examples
+#' below.
 #'
 #' Parameters `include`, `filled`, `n` and `value` are only supported
 #' for `object` being an `XCMSnExp`.

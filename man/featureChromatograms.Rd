@@ -129,31 +129,28 @@ Extract ion chromatograms for features in an \link{XcmsExperiment} or
 \linkS4class{XCMSnExp} object. The function returns for each feature the
 extracted ion chromatograms (along with all associated chromatographic
 peaks) in each sample. The chromatogram is extracted from the m/z - rt
-region including all chromatographic peaks of that features. This region is
-by default, with \code{mzmin = min}, \code{mzmax = max}, \code{rtmin = min} and
-\code{rtmax = max} defined using the \strong{ranges} of \code{"mzmin"}, \code{"mzmax"},
-\code{"rtmin"}, \code{"rtmax"} of all chromatographic peaks of the feature. For some
-features, and depending on the data, the m/z and rt range can thus be
-relatively large. The ranges could be restricted by using a different
-function to define them, e.g. by setting \code{mzmin = median} and
-\code{mzmax = median} in which case the median \code{"mzmin"} and \code{"mzmax"} values
-of all chromatographic peaks would be used.
+region that includes \strong{all} chromatographic peaks of a feature. By default,
+this region is defined using the range of the chromatographic peaks' m/z
+and retention times (with \code{mzmin = min}, \code{mzmax = max}, \code{rtmin = min} and
+\code{rtmax = max}). For some features, and depending on the data, the m/z and
+rt range can thus be relatively large. The boundaries of the m/z - rt
+region can also be restricted by changing parameters \code{mzmin}, \code{mzmax},
+\code{rtmin} and \code{rtmax} to a different functions, such as \code{median}.
 
 By default only chromatographic peaks associated with a feature are
-included. For \code{object} being a \code{XCMSnExp} object parameter \code{include}
-allows also to return all chromatographic peaks with their apex
-position within the selected region (\code{include = "apex_within"}) or any
-chromatographic peak overlapping the m/z and retention time range
-(\code{include = "any"}).
+included in the returned \link{XChromatograms} object. For \code{object} being an
+\code{XCMSnExp} object parameter \code{include} allows also to return all
+chromatographic peaks with their apex position within the selected
+region (\code{include = "apex_within"}) or any chromatographic peak overlapping
+the m/z and retention time range (\code{include = "any"}).
 }
 \note{
-The \strong{same} m/z and rt boundaries are used on every sample to extract
-the ion chromatogram. The EIC might thus not exactly represent the actual
-EIC of each individual chromatographic peak (i.e. signal for the ion in one
-specific sample), since the m/z and rt boundaries might be slightly
-different across samples. The \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} function could be
-used to extract the actual EIC of the chromatographic peak in a specific
-sample. See also examples below.
+The EIC data of a feature is extracted from every sample using the same
+m/z - rt area. The EIC in a sample does thus not exactly represent the
+signal of the actually identified chromatographi peak in that sample.
+The \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} function would allow to extract the actual
+EIC of the chromatographic peak in a specific sample. See also examples
+below.
 
 Parameters \code{include}, \code{filled}, \code{n} and \code{value} are only supported
 for \code{object} being an \code{XCMSnExp}.
