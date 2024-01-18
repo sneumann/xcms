@@ -2542,9 +2542,12 @@ setMethod("fillChromPeaks",
               startDate <- date()
               message("Defining peak areas for filling-in .",
                       appendLF = FALSE)
+              feature_ids <- rownames(featureDefinitions(object,
+                                                         msLevel = msLevel))
               fts_region <- .features_ms_region(
                   object, mzmin = param@mzmin, mzmax = param@mzmax,
-                  rtmin = param@rtmin, rtmax = param@rtmax, msLevel = msLevel)
+                  rtmin = param@rtmin, rtmax = param@rtmax,
+                  features = feature_ids)
               fts_region <- cbind(group_idx = seq_len(nrow(fts_region)),
                                   fts_region,
                                   mzmed = featureDefinitions(object)$mzmed)

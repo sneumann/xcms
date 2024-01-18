@@ -17,6 +17,10 @@ featureChromatograms(object, ...)
   features = character(),
   return.type = "XChromatograms",
   chunkSize = 2L,
+  mzmin = min,
+  mzmax = max,
+  rtmin = min,
+  rtmax = max,
   ...,
   progressbar = TRUE,
   BPPARAM = bpparam()
@@ -71,6 +75,26 @@ object.}
 defining the number of files from which the data should be loaded at
 a time into memory. Defaults to \code{chunkSize = 2L}.}
 
+\item{mzmin}{\code{function} defining how the lower boundary of the m/z region
+from which the EIC is integrated should be defined. Defaults to
+\code{mzmin = min} thus the smallest \code{"mzmin"} value for all chromatographic
+peaks of a feature will be used.}
+
+\item{mzmax}{\code{function} defining how the upper boundary of the m/z region
+from which the EIC is integrated should be defined. Defaults to
+\code{mzmax = max} thus the largest \code{"mzmax"} value for all chromatographic
+peaks of a feature will be used.}
+
+\item{rtmin}{\code{function} defining how the lower boundary of the rt region
+from which the EIC is integrated should be defined. Defaults to
+\code{rtmin = min} thus the smallest \code{"rtmin"} value for all chromatographic
+peaks of a feature will be used.}
+
+\item{rtmax}{\code{function} defining how the upper boundary of the rt region
+from which the EIC is integrated should be defined. Defaults to
+\code{rtmax = max} thus the largest \code{"rtmax"} value for all chromatographic
+peaks of a feature will be used.}
+
 \item{progressbar}{\code{logical(1)} defining whether a progress bar is shown.}
 
 \item{BPPARAM}{For \code{object} being an \code{XcmsExperiment}: parallel processing
@@ -105,9 +129,15 @@ Extract ion chromatograms for features in an \link{XcmsExperiment} or
 \linkS4class{XCMSnExp} object. The function returns for each feature the
 extracted ion chromatograms (along with all associated chromatographic
 peaks) in each sample. The chromatogram is extracted from the m/z - rt
-region including all chromatographic peaks of that features (i.e. based on
-the ranges of \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}, \code{"rtmax"} of all
-chromatographic peaks of the feature).
+region including all chromatographic peaks of that features. This region is
+by default, with \code{mzmin = min}, \code{mzmax = max}, \code{rtmin = min} and
+\code{rtmax = max} defined using the \strong{ranges} of \code{"mzmin"}, \code{"mzmax"},
+\code{"rtmin"}, \code{"rtmax"} of all chromatographic peaks of the feature. For some
+features, and depending on the data, the m/z and rt range can thus be
+relatively large. The ranges could be restricted by using a different
+function to define them, e.g. by setting \code{mzmin = median} and
+\code{mzmax = median} in which case the median \code{"mzmin"} and \code{"mzmax"} values
+of all chromatographic peaks would be used.
 
 By default only chromatographic peaks associated with a feature are
 included. For \code{object} being a \code{XCMSnExp} object parameter \code{include}
@@ -117,6 +147,14 @@ chromatographic peak overlapping the m/z and retention time range
 (\code{include = "any"}).
 }
 \note{
+The \strong{same} m/z and rt boundaries are used on every sample to extract
+the ion chromatogram. The EIC might thus not exactly represent the actual
+EIC of each individual chromatographic peak (i.e. signal for the ion in one
+specific sample), since the m/z and rt boundaries might be slightly
+different across samples. The \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} function could be
+used to extract the actual EIC of the chromatographic peak in a specific
+sample. See also examples below.
+
 Parameters \code{include}, \code{filled}, \code{n} and \code{value} are only supported
 for \code{object} being an \code{XCMSnExp}.
 
@@ -133,10 +171,8 @@ faahko_sub <- loadXcmsData("faahko_sub2")
 ## Disable parallel processing for this example
 register(SerialParam())
 
-## Subset the object to a smaller retention time range
-xdata <- filterRt(faahko_sub, c(2500, 3500))
-
-xdata <- groupChromPeaks(xdata,
+## Perform correspondence analysis
+xdata <- groupChromPeaks(faahko_sub,
     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 
 ## Get the feature definitions
@@ -147,8 +183,28 @@ featureDefinitions(xdata)
 chrs <- featureChromatograms(xdata,
     features = rownames(featureDefinitions)[1:3])
 
-## Plot the XIC for the first feature using different colors for each file
+## Plot the EIC for the first feature using different colors for each file.
 plot(chrs[1, ], col = c("red", "green", "blue"))
+
+## The EICs for all 3 samples use the same m/z and retention time range,
+## which was defined using the `featureArea` function:
+featureArea(xdata, features = rownames(featureDefinitions(xdata))[1:3],
+    mzmin = min, mzmax = max, rtmin = min, rtmax = max)
+
+## To extract the actual (exact) EICs for each chromatographic peak of
+## a feature in each sample, the `chromPeakChromatograms` function would
+## need to be used instead. Below we extract the EICs for all
+## chromatographic peaks of the first feature. We need to first get the
+## IDs of all chromatographic peaks assigned to the first feature:
+peak_ids <- rownames(chromPeaks(xdata))[featureDefinitions(xdata)$peakidx[[1L]]]
+
+## We can now pass these to the `chromPeakChromatograms` function with
+## parameter `peaks`:
+eic_1 <- chromPeakChromatograms(xdata, peaks = peak_ids)
+
+## To plot these into a single plot we need to use the
+## `plotChromatogramsOverlay` function:
+plotChromatogramsOverlay(eic_1)
 }
 \seealso{
 \code{\link[=filterColumnsKeepTop]{filterColumnsKeepTop()}} to filter the extracted EICs keeping only

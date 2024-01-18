@@ -934,15 +934,77 @@
 
 #' @rdname XcmsExperiment
 featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
-                        rtmax = max, msLevel = integer(),
-                        features = character()) {
+                        rtmax = max, features = character()) {
     if (!hasFeatures(object))
         stop("No correspondence results available. Please run ",
              "'groupChromPeaks' first.")
-    if (!length(msLevel))
-        msLevel <- seq_len(10)
+    if (!length(features))
+        features <- rownames(featureDefinitions(object))
     .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                        rtmax = rtmax, msLevel = msLevel, features = features)
+                        rtmax = rtmax, features = features)
+}
+
+#' @title Define MS regions for features
+#'
+#' @param x `XcmsExperiment` or `XCMSnExp`.
+#'
+#' @param mzmin, mzmax, rtmin, rtmax `function` to be applied to the values
+#'     (rtmin, ...) of the chrom peaks. Defaults to `median` but would also
+#'     work with `mean` etc.
+#'
+#' @param features `character` with the IDs of the features. Mandatory!
+#'
+#' @return `matrix` with columns `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"`
+#'     defining the range of
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.features_ms_region <- function(x, mzmin = median, mzmax = median,
+                                rtmin = median, rtmax = median,
+                                features = character()) {
+    features <- .i2index(features, ids = rownames(featureDefinitions(x)),
+                         "features")
+    pks <- .chromPeaks(x)[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+    res <- do.call(
+        rbind, lapply(featureDefinitions(x)$peakidx[features],
+                      function(i) {
+                          ## maybe consider/drop gap-filled peaks?
+                          c(mzmin(pks[i, "mzmin"]),
+                            mzmax(pks[i, "mzmax"]),
+                            rtmin(pks[i, "rtmin"]),
+                            rtmax(pks[i, "rtmax"]))
+                      }))
+    rownames(res) <- rownames(featureDefinitions(x))[features]
+    colnames(res) <- c("mzmin", "mzmax", "rtmin", "rtmax")
+    res
+}
+
+.features_ms_region_old <- function(x, mzmin = median, mzmax = median,
+                                    rtmin = median, rtmax = median,
+                                    msLevel = 1L,
+                                    features = character()) {
+    pk_idx <- featureValues(x, value = "index", method = "maxint",
+                            msLevel = msLevel)
+    if (length(features)) {
+        ## here's a silent bug: should consider msLevel also below.
+        features <- .i2index(
+            features, ids = rownames(featureDefinitions(x)), "features")
+        pk_idx <- pk_idx[features, , drop = FALSE]
+    }
+    n_ft <- nrow(pk_idx)
+    rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
+    for (i in seq_len(n_ft)) {
+        idx <- pk_idx[i, ]
+        tmp_pks <- .chromPeaks(x)[idx[!is.na(idx)], , drop = FALSE]
+        rt_min[i] <- rtmin(tmp_pks[, "rtmin"])
+        rt_max[i] <- rtmax(tmp_pks[, "rtmax"])
+        mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
+        mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
+    }
+    res <- cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+    rownames(res) <- rownames(pk_idx)
+    res
 }
 
 #' *Reconstruct* MS2 spectra for DIA data:
