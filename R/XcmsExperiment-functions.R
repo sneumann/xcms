@@ -980,33 +980,6 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
     res
 }
 
-.features_ms_region_old <- function(x, mzmin = median, mzmax = median,
-                                    rtmin = median, rtmax = median,
-                                    msLevel = 1L,
-                                    features = character()) {
-    pk_idx <- featureValues(x, value = "index", method = "maxint",
-                            msLevel = msLevel)
-    if (length(features)) {
-        ## here's a silent bug: should consider msLevel also below.
-        features <- .i2index(
-            features, ids = rownames(featureDefinitions(x)), "features")
-        pk_idx <- pk_idx[features, , drop = FALSE]
-    }
-    n_ft <- nrow(pk_idx)
-    rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
-    for (i in seq_len(n_ft)) {
-        idx <- pk_idx[i, ]
-        tmp_pks <- .chromPeaks(x)[idx[!is.na(idx)], , drop = FALSE]
-        rt_min[i] <- rtmin(tmp_pks[, "rtmin"])
-        rt_max[i] <- rtmax(tmp_pks[, "rtmax"])
-        mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
-        mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
-    }
-    res <- cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
-    rownames(res) <- rownames(pk_idx)
-    res
-}
-
 #' *Reconstruct* MS2 spectra for DIA data:
 #' For each MS1 chromatographic peak:
 #'
