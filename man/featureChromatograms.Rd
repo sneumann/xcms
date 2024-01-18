@@ -147,7 +147,7 @@ the m/z and retention time range (\code{include = "any"}).
 \note{
 The EIC data of a feature is extracted from every sample using the same
 m/z - rt area. The EIC in a sample does thus not exactly represent the
-signal of the actually identified chromatographi peak in that sample.
+signal of the actually identified chromatographic peak in that sample.
 The \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} function would allow to extract the actual
 EIC of the chromatographic peak in a specific sample. See also examples
 below.
