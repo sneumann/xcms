@@ -264,8 +264,6 @@ axis within slices of (partially overlapping) m/z ranges. By default,
 these m/z ranges (bins) have a constant size. By setting \code{ppm} to a value
 larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
-Setting \code{ppm} to a value different than 0 results thus in m/z dependent
-bin sizes.
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
 feature. See in addition \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} for the core API
