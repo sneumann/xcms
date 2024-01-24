@@ -4,7 +4,7 @@ importFrom("utils", "capture.output", "data")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
-    "isolationWindowTargetMz", "quantify", "bin", "spectrapply")
+    "isolationWindowTargetMz", "quantify", "bin", "spectrapply", "filterFeatures")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
@@ -594,3 +594,8 @@ export("RDataParam")
 export("PlainTextParam")
 exportMethods("storeResults")
 
+## filtering features things
+export("RsdFilter")
+export("DratioFilter")
+export("PercentMissingFilter")
+export("BlankFlag")

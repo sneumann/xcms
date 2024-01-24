@@ -164,8 +164,8 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     \code{\link{matchedFilter}} for the standard user interface method.
 
 Other core peak detection functions: 
-\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_massifquant}()},
 \code{\link{do_findPeaks_MSW}()}
 }
