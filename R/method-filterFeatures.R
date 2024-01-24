@@ -388,19 +388,6 @@ setMethod("filterFeatures",
 #'
 #' @examples
 #'
-#' ## load test dataset
-#' xmse_full <- loadXcmsData("xmse")
-#'
-#' ## prepare input for filter
-#' f <- sampleData(xmse_full)$sample_type
-#'
-#' ## Create filter object
-#' filter <- PercentMissingFilter(f = f)
-#'
-#' ## filter the experiment
-#' xmse_filtered <- filterFeatures(object = xmse_full, filter = filter)
-#'
-#'
 NULL
 
 #' @noRd
