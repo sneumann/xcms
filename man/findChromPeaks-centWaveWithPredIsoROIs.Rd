@@ -302,10 +302,10 @@ The \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} core
     the peak detection.
 
 Other peak detection methods: 
+\code{\link{findChromPeaks}()},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},
-\code{\link{findChromPeaks}()},
 \code{\link{findPeaks-MSW}}
 }
 \author{

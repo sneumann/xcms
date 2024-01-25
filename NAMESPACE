@@ -36,7 +36,7 @@ importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
                   "extractROWS", "findMatches")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi")
+           "maxi", "breaks_ppm")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -593,4 +593,3 @@ importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
 export("RDataParam")
 export("PlainTextParam")
 exportMethods("storeResults")
-

@@ -132,7 +132,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     ## Define the mass slices and the index in the peaks matrix with an mz
     ## value >= mass[i]. If ppm != 0 the size of the individual bins will
     ## be dependend on the m/z value.
-    mass <- .breaks_ppm(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
+    mass <- breaks_ppm(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
                        by = binSize / 2, ppm = ppm / 2)
     masspos <- findEqualGreaterM(peaks[, "mz"], mass)
 
@@ -561,24 +561,4 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
         }
     }
     x
-}
-
-#' Generate a sequence of values with increasing difference between consecutive
-#' values. The difference is increased using the `ppm`.
-#'
-#' Add that also to MsCoreUtils and eventually replace
-#'
-#' @noRd
-.breaks_ppm <- function(from = 1, to = 1, by = 1, ppm = 0) {
-    l <- ceiling((to - from + 1) / by)
-    res <- rep(NA_real_, l)
-    res[1L] <- a <- from
-    i <- 2L
-    while(a < to) {
-        a <- a + by
-        a <- a + (a * ppm * 1e-6)
-        res[i] <- a
-        i <- i + 1L
-    }
-    res[!is.na(res)]
 }

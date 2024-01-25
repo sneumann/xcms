@@ -1,6 +1,8 @@
 Changes in version 4.1.6
 ----------------------
 
+- Import `filterSpectra` from `MsExperiment`.
+- Import `breaks_ppm` from `MsCoreUtils`.
 - Update `featureArea` function to consider all chromatographic peaks per
   feature, not only the one with the highest intensity. As a consequence,
   returned m/z and rt ranges might be higher which has an influence in
