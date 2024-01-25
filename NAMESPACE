@@ -572,6 +572,7 @@ importFrom("Spectra", "MsBackendMemory")
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")
 importMethodsFrom("MsExperiment", "spectra")
+importMethodsFrom("MsExperiment", "filterSpectra")
 importMethodsFrom("BiocGenerics", "do.call")
 importMethodsFrom("BiocGenerics", "rbind")
 importFrom("MsExperiment", "MsExperiment")

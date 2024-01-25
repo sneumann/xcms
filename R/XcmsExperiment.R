@@ -777,7 +777,7 @@ setMethod(
     function(object, mz = numeric()) {
         if (length(mz) > 1L)
             mz <- mz[1L]
-        object <- .mse_filter_spectra(object, filterIsolationWindow, mz = mz)
+        object <- filterSpectra(object, filterIsolationWindow, mz = mz)
         if (hasChromPeaks(object) && length(mz) &&
             all(c("isolationWindowLowerMz", "isolationWindowUpperMz") %in%
                 colnames(object@chromPeakData))) {
