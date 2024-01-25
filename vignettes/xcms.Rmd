@@ -1106,7 +1106,7 @@ properties of the mice analyzed (sex, age, litter mates etc).
 
 # Further data processing and analysis
 
-## Quality assessment and filtering of features
+## Quality-based filtering of features
 
 When dealing with metabolomics results, it is often necessary to filter
 features based on certain criteria.
@@ -1167,12 +1167,25 @@ filtered_res <- filterFeatures(object = filtered_res,
 ```
 
 The `PercentMissingFilter` allows to filter features based on the percentage of
-missing values for each feature.
+missing values for each feature. This function takes as an input the parameter
+`f` which is supposed to be a vector of the length of the object with the
+sample type for each samples. The function then compute the percentage of
+missing values per sample groups and filters features based on this. Another
+option, it so base this quality assessment and filtering only on QC sample.
+
+Both examples are shown below: 
 
 ```{r}
-# Set up parameters for PercentMissingFilter
+# Set up parameter `f` to filter per sample type 
+f <- sampleData(filtered_faakho)$sample_type
+f[f == "QC"] <- NA 
+
+# Set up parameter `f` to filter only based on QC samples
+f <- sampleData(filtered_faakho)$sample_type
+f[f != "QC"] <- NA 
+
 missing_filter <- PercentMissingFilter(threshold = 30,
-                                       f = sampleData(filtered_faakho)$sample_type)
+                                       f = f)
 
 # Apply the filter to faakho object
 filtered_faakho <- filterFeatures(object = filtered_faakho,
@@ -1180,7 +1193,7 @@ filtered_faakho <- filterFeatures(object = filtered_faakho,
 
 # Apply the filter to res object
 missing_filter <- PercentMissingFilter(threshold = 30,
-                                       f = filtered_res$sample_type)
+                                       f = f)
 filtered_res <- filterFeatures(object = filtered_res,
                                filter = missing_filter)
 ```

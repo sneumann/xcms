@@ -595,6 +595,8 @@ export("PlainTextParam")
 exportMethods("storeResults")
 
 ## filtering features things
+importFrom("MetaboCoreUtils", "rowRsd", "rowDratio", "rowPercentMissing",
+           "rowBlank")
 export("RsdFilter")
 export("DratioFilter")
 export("PercentMissingFilter")

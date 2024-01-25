@@ -62,7 +62,8 @@ Imports:
     Spectra (>= 1.13.2),
     progress,
     multtest,
-    jsonlite
+    jsonlite,
+    MetaboCoreUtils
 Suggests:
     BiocStyle,
     caTools,
@@ -76,7 +77,6 @@ Suggests:
     MALDIquant,
     pheatmap,
     MsBackendMgf,
-    MetaboCoreUtils,
     signal
 Enhances:
     Rgraphviz,

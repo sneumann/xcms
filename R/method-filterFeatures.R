@@ -386,8 +386,6 @@ setMethod("filterFeatures",
 #'
 #' @importFrom MetaboCoreUtils rowPercentMissing
 #'
-#' @examples
-#'
 NULL
 
 #' @noRd

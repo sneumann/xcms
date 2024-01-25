@@ -51,22 +51,6 @@ This `filter` is part of the possible dispatch of the generic function
 `filterFeatures`. The features *above* the user input threshold will be
 removed by calling the `filterFeatures` function.
 }
-\examples{
-
-## load test dataset
-xmse_full <- loadXcmsData("xmse")
-
-## prepare input for filter
-f <- sampleData(xmse_full)$sample_type
-
-## Create filter object
-filter <- PercentMissingFilter(f = f)
-
-## filter the experiment
-xmse_filtered <- filterFeatures(object = xmse_full, filter = filter)
-
-
-}
 \seealso{
 Other Filter features in xcms: 
 \code{\link{BlankFlag}},
