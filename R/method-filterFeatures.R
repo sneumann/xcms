@@ -70,6 +70,7 @@
 #'
 #' @examples
 #' ## See the vignettes for more detailed examples
+#' library(MsExperiment)
 #'
 #' ## Load a test data set with features
 #' test_xcms <- loadXcmsData()
