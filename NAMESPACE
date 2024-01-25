@@ -37,6 +37,7 @@ importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
+importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
            "maxi")
 
