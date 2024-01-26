@@ -83,7 +83,7 @@
 #' ## superior to 0.3 in QC samples will be removed from the object `test_xcms`
 #' ## when calling the `filterFeatures` function.
 #'
-#' rsd_filter <- RsdFilter(threshold = 0.3
+#' rsd_filter <- RsdFilter(threshold = 0.3,
 #'                         qcIndex = sampleData(test_xcms)$sample_type == "QC")
 #'
 #' filtered_data_rsd <- filterFeatures(object = test_xcms, filter = rsd_filter)
@@ -235,7 +235,7 @@ setMethod("filterFeatures",
               vals <- assay(object, assay)[, filter@qcIndex]
               vals <- rowRsd(vals, na.rm = filter@na.rm, mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(length(vals) - length(fts_idx), "features were removed")
+              message(length(vals) - length(fts_idx), " features were removed")
               object[fts_idx]
           }
 )
@@ -350,7 +350,7 @@ setMethod("filterFeatures",
                                 na.rm = filter@na.rm,
                                 mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(length(vals) - length(fts_idx), "features were removed")
+              message(length(vals) - length(fts_idx), " features were removed")
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
                                     type. = .PROCSTEP.FEATURE.FILTERING,
@@ -374,7 +374,7 @@ setMethod("filterFeatures",
                                 na.rm = filter@na.rm,
                                 mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(length(vals) - length(fts_idx), "features were removed")
+              message(length(vals) - length(fts_idx), " features were removed")
               object[fts_idx]
           }
 )
@@ -458,7 +458,7 @@ setMethod("filterFeatures",
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
               fts_idx <- order(unique(fts_idx))
-              message(length(vals) - length(fts_idx), "features were removed")
+              message(length(vals) - length(fts_idx), " features were removed")
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
                                     type. = .PROCSTEP.FEATURE.FILTERING,
@@ -482,7 +482,7 @@ setMethod("filterFeatures",
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
               fts_idx <- order(unique(fts_idx))
-              message(length(vals) - length(fts_idx), "features were removed")
+              message(length(vals) - length(fts_idx), " features were removed")
               object[fts_idx]
           }
 )
