@@ -78,7 +78,7 @@ will be skipped/not considered for feature grouping."><meta property="og:image" 
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -262,7 +262,12 @@ should be grouped.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>While being possible to be performed on the full data set without prior
+    <p>At present the <code><a href="featureChromatograms.html">featureChromatograms()</a></code> function is used to extract the
+EICs for each feature, which does however use one m/z and rt range for
+each feature and the EICs do thus not exactly represent the identified
+chromatographic peaks of each sample (i.e. their specific m/z and
+retention time ranges).</p>
+<p>While being possible to be performed on the full data set without prior
 feature grouping, this is not suggested for the following reasons: I) the
 selection of the top <code>n</code> samples with the highest signal for the
 <em>feature group</em> will be biased by very abundant compounds as this is
@@ -312,7 +317,7 @@ is excluded from the correlation.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xodg_grp</span><span class="op">)</span><span class="op">$</span><span class="va">feature_group</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      2      4      3      2      3      2      1      1      1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      2      2      2      3      4      2      3      2      1      1      1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      1      1      1      1      1      1      1      1      1      1      1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span>

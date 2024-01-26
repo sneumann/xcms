@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2023-12-07 07:39:24.923344<br><strong>Compiled</strong>: Thu Dec 7 08:46:13 2023</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-01-26 18:14:18.95093<br><strong>Compiled</strong>: Fri Jan 26 20:09:48 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -125,7 +125,8 @@ of a simple test LC-MS data set with the <em>xcms</em> package version
 &gt;= 4. The same functions can be applied to the older
 <em>MSnbase</em>-based workflows (xcms version 3). Additional documents
 and tutorials covering also other topics of untargeted metabolomics
-analysis are listed at the end of this document.</p>
+analysis are listed at the end of this document. There is also a <a href="https://jorainer.github.io/xcmsTutorials" class="external-link">xcms tutorial</a>
+available with more examples and details.</p>
 </div>
 <div class="section level2">
 <h2 id="pre-processing-of-lc-ms-data">Pre-processing of LC-MS data<a class="anchor" aria-label="anchor" href="#pre-processing-of-lc-ms-data"></a>
@@ -470,7 +471,7 @@ for an internal standard of known compound. It is suggested to inspect
 the ranges of m/z values for several compounds (either internal
 standards or compounds known to be present in the sample) and define the
 <code>ppm</code> parameter for <em>centWave</em> according to these. See
-also this <a href="https://jorainer.github.io/metabolomics2018" class="external-link">tutorial</a> for
+also this <a href="https://jorainer.github.io/xcmsTutorials" class="external-link">tutorial</a> for
 additional information and examples on choosing and testing peak
 detection settings.</p>
 <p>Chromatographic peak detection can also be performed on extracted ion
@@ -651,9 +652,13 @@ description of the settings and the approach.</p>
 <p>An example for a merged peak is given below.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mzr_1</span> <span class="op">&lt;-</span> <span class="fl">305.1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.01</span>, <span class="fl">0.01</span><span class="op">)</span></span>
-<span><span class="va">chr_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span>
-<span><span class="va">chr_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_pp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">chr_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">chr_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_pp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -668,11 +673,15 @@ the m/z slice (left panel in the plot above) and peak refinement with
 merged the first two peaks into a single one (right panel in the figure
 above). Other close peaks, with a lower intensity between them, were
 however not merged (see below).</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mzr_1</span> <span class="op">&lt;-</span> <span class="fl">496.2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.01</span>, <span class="fl">0.01</span><span class="op">)</span></span>
-<span><span class="va">chr_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span>
-<span><span class="va">chr_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_pp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">chr_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">chr_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko_pp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mz <span class="op">=</span> <span class="va">mzr_1</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Processing chromatographic peaks</span></span></code></pre>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -686,25 +695,25 @@ chromatograms. This could again be used to test and fine-tune the
 settings for the parameter. To illustrate this we perform below a peak
 refinement on the extracted ion chromatogram <code>chr_1</code> reducing
 the <code>minProp</code> parameter to force joining the two peaks.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/refineChromPeaks.html">refineChromPeaks</a></span><span class="op">(</span><span class="va">chr_1</span>, <span class="fu"><a href="../reference/refineChromPeaks.html">MergeNeighboringPeaksParam</a></span><span class="op">(</span>minProp <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         mz  mzmin  mzmax       rt    rtmin    rtmax     into intb    maxo  sn</span></span>
 <span><span class="co">## CPM1 496.2 496.19 496.21 3384.012 3294.809 3412.181 45940118   NA 1128960 177</span></span>
 <span><span class="co">##      sample row column</span></span>
 <span><span class="co">## CPM1      1   1      1</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" width="700"></p>
 <p>Before proceeding we next replace the <code>faahko</code> object with
 the results from the peak refinement step.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="va">faahko_pp</span></span></code></pre></div>
 <p>Below we use the data from the <code>chromPeaks</code> matrix to
 calculate per-file summaries of the peak detection results, such as the
 number of peaks per file as well as the distribution of the retention
 time widths.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">summary_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>peak_count <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span><span class="op">[</span>, <span class="st">"rtmax"</span><span class="op">]</span> <span class="op">-</span> <span class="va">z</span><span class="op">[</span>, <span class="st">"rtmin"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -819,7 +828,7 @@ chromatographic peaks.</caption>
 <p>While by default <code>chromPeaks</code> will return all identified
 chromatographic peaks in a result object it is also possible to extract
 only chromatographic peaks for a specified m/z and/or rt range:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">334.9</span>, <span class="fl">335.1</span><span class="op">)</span>, rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2700</span>, <span class="fl">2900</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn</span></span>
 <span><span class="co">## CP0038 335   335   335 2781.505 2761.160 2809.674  412134.3  383167.4 16856 23</span></span>
@@ -837,7 +846,7 @@ only chromatographic peaks for a specified m/z and/or rt range:</p>
 in the m/z - retention time space for one file using the
 <code>plotChromPeaks</code> function. Below we plot this information for
 the third sample.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotChromPeaks.html">plotChromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, file <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="xcms_files/figure-html/peak-detection-chrom-peaks-plot-1.png" alt="Identified chromatographic peaks in the m/z by retention time space for one sample." width="768"><p class="caption">
@@ -851,7 +860,7 @@ file along the retention time axis. Parameter <code>binSize</code>
 allows to define the width of the bins in rt dimension in which peaks
 should be counted. This number of chromatographic peaks within each bin
 is then shown color-coded in the resulting plot.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotChromPeaks.html">plotChromPeakImage</a></span><span class="op">(</span><span class="va">faahko</span>, binSize <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="xcms_files/figure-html/peak-detection-chrom-peak-image-1.png" alt="Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." width="960"><p class="caption">
@@ -869,7 +878,7 @@ identified e.g. peaks for known compounds or internal standards
 properly. Below we extract the ion chromatogram for the m/z - rt region
 above and access the detected peaks in that region using the
 <code>chromPeaks</code> function.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chr_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span>, mz <span class="op">=</span> <span class="va">mzr</span>, rt <span class="op">=</span> <span class="va">rtr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax      into      intb  maxo sn</span></span>
@@ -886,7 +895,7 @@ above and access the detected peaks in that region using the
 <span><span class="co">## CP2349      7   1      7</span></span></code></pre>
 <p>We can also plot this extracted ion chromatogram which will also
 visualize all identified chromatographic peaks in that region.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_colors</span> <span class="op">&lt;-</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">chr_ex</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_ex</span>, col <span class="op">=</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">chr_raw</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
@@ -905,7 +914,7 @@ it would also possible to just indicate the apex position for each
 identified chromatographic peak with a single point
 (<code>peakType = "point"</code>). Below we plot the data again using
 <code>peakType = "rectangle"</code>.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_ex</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakType <span class="op">=</span> <span class="st">"rectangle"</span>,</span>
 <span>     peakCol <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
@@ -919,7 +928,7 @@ chromatographic peaks per sample.
 <p>Finally we plot also the distribution of peak intensity per sample.
 This allows to investigate whether systematic differences in peak
 signals between samples are present.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Extract a list of per-sample peak intensities (in log2 scale)</span></span>
 <span><span class="va">ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">split</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[</span>, <span class="st">"into"</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>              f <span class="op">=</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">)</span></span>
@@ -961,7 +970,7 @@ overview of available methods in <em>xcms</em>).</p>
 <code>binSize = 0.6</code> which creates warping functions in m/z bins
 of 0.6. Also here it is advisable to modify and adapt the settings for
 each experiment.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">faahko</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/adjustRtime.html">ObiwarpParam</a></span><span class="op">(</span>binSize <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Note that <code>adjustRtime</code>, besides calculating adjusted
 retention times for each spectrum, adjusts also the retention times of
@@ -970,15 +979,15 @@ Adjusted retention times of individual spectra can be extracted from the
 result object using either the <code>adjustedRtime</code> function or
 using <code>rtime</code> with parameter <code>adjusted = TRUE</code>
 (the default):</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Extract adjusted retention times</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">adjustedRtime</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2551.457 2553.089 2554.720 2556.352 2557.983 2559.615</span></span></code></pre>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Or simply use the rtime method</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2551.457 2553.089 2554.720 2556.352 2557.983 2559.615</span></span></code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get raw (unadjusted) retention times</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">faahko</span>, adjusted <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2551.457 2553.022 2554.586 2556.151 2557.716 2559.281</span></span></code></pre>
@@ -989,7 +998,7 @@ adjusted and the raw retention times per sample using the
 extraction of all identified chromatographic peaks by the
 <code>chromatogram</code> function (which would not make much sense for
 a BPC) we use <code>chromPeaks = "none"</code> below.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get the base peak chromatograms.</span></span>
 <span><span class="va">bpis_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span>, aggregationFun <span class="op">=</span> <span class="st">"max"</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.5</span>, <span class="fl">4.2</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
@@ -1011,7 +1020,7 @@ times along the retention time axis (bottom).
 indicate poorly performing samples or alignment.</p>
 <p>At last we evaluate also the impact of the alignment on the test
 peak.</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## Plot the raw data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_raw</span>, col <span class="op">=</span> <span class="va">sample_colors</span><span class="op">)</span></span>
@@ -1101,7 +1110,7 @@ the subset-based option outlined above. In addition to removing adjusted
 retention times for all spectra, this function will also
 <em>restore</em> the original retention times for identified
 chromatographic peaks.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">dropAdjustedRtime</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Define the experimental layout</span></span>
@@ -1119,7 +1128,7 @@ samples to the sample groups in the experiment) is mandatory for the
 <code>PeakDensityParam</code>. If there are no sample groups in the
 experiment, <code>sampleGroups</code> should be set to a single value
 for each file (e.g. <code>rep(1, length(fileNames(faahko))</code>).</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Initial peak grouping. Use sample_type as grouping variable</span></span>
 <span><span class="va">pdp_subs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span>,</span>
 <span>                             minFraction <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
@@ -1139,7 +1148,7 @@ more weight to the closer subset sample 1 which results in the adjusted
 retention times of 2 being more similar to those of sample 1. Sample 3
 on the other hand gets adjusted giving more weight to the second subset
 sample (4).</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">clrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"#00000040"</span>, <span class="fl">8</span><span class="op">)</span></span>
 <span><span class="va">clrs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00ce0080"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4.5</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
@@ -1187,7 +1196,7 @@ multiple chromatoghaphic peaks within each sample using the
 40% of samples a chromatographic peak was present) - parameter
 <code>sampleGroups</code> is used to define to which sample group each
 sample belongs.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Define the mz slice.</span></span>
 <span><span class="va">mzr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">305.05</span>, <span class="fl">305.15</span><span class="op">)</span></span>
 <span></span>
@@ -1226,14 +1235,60 @@ them to the full data set. For the tested m/z slice the settings seemed
 to be OK and we are thus applying them to the full data set below.
 Especially the parameter <code>bw</code> will be very data set dependent
 (or more specifically LC-dependent) and should be adapted to each data
-set. See the <a href="https://jorainer.github.io/metabolomics2018" class="external-link">Metabolomics
-pre-processing with <code>xcms</code></a> tutorial for examples and more
-details.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Perform the correspondence</span></span>
+set.</p>
+<p>Another important parameter is <code>binSize</code> that defines the
+size of the m/z slices (bins) within which peaks are being grouped. This
+parameter thus defines the required similarity in m/z values for the
+chromatographic peaks that are then assumed to represent signal from the
+same (type of ion of a) compound and hence evaluated for grouping. By
+default, a constant m/z bin size is used, but by changing parameter
+<code>ppm</code> to a value larger than 0, m/z-relative bin sizes would
+be used instead (i.e., the bin size will increase with the m/z value
+hence better representing the measurement error/precision of some MS
+instruments). The bin sizes (and subsequently the m/z width of the
+defined features) would then reach a maximal value of
+<code>binSize</code> plus <code>ppm</code> parts-per-million of the
+largest m/z value of any chromatographic peak in the data set.</p>
+<p>See also the <a href="https://jorainer.github.io/xcmsTutorials" class="external-link">xcms
+tutorial</a> for more examples and details.</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Perform the correspondence using fixed m/z bin sizes.</span></span>
 <span><span class="va">pdp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_group</span>,</span>
 <span>                        minFraction <span class="op">=</span> <span class="fl">0.4</span>, bw <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, param <span class="op">=</span> <span class="va">pdp</span><span class="op">)</span></span></code></pre></div>
+<p>As an alternative we perform the correspondence using m/z relative
+bin sizes.</p>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Drop feature definitions and re-perform the correspondence</span></span>
+<span><span class="co">## using m/z-relative bin sizes.</span></span>
+<span><span class="va">faahko_ppm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/groupChromPeaks.html">groupChromPeaks</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/XCMSnExp-class.html">dropFeatureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="../reference/groupChromPeaks.html">PeakDensityParam</a></span><span class="op">(</span>sampleGroups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_group</span>,</span>
+<span>                     minFraction <span class="op">=</span> <span class="fl">0.4</span>, bw <span class="op">=</span> <span class="fl">30</span>, ppm <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The results will be <em>mostly</em> similar, except for the higher
+m/z range (in which larger m/z bins will be used). Below we plot the m/z
+range for features against their median m/z. For the present data set
+(acquired with a triple quad instrument) no clear difference can be seen
+for the two approaches hence we proceed the analysis with the fixed bin
+size setting. A stronger relationship would be expected for example for
+data measured on TOF instruments.</p>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Calculate m/z width of features</span></span>
+<span><span class="va">mzw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">mzmax</span> <span class="op">-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">mzmin</span></span>
+<span><span class="va">mzw_ppm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko_ppm</span><span class="op">)</span><span class="op">$</span><span class="va">mzmax</span> <span class="op">-</span></span>
+<span>                                        <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko_ppm</span><span class="op">)</span><span class="op">$</span><span class="va">mzmin</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko_ppm</span><span class="op">)</span><span class="op">$</span><span class="va">mzmed</span>, <span class="va">mzw_ppm</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"m/z"</span>, ylab <span class="op">=</span> <span class="st">"m/z width"</span>, pch <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>     col <span class="op">=</span> <span class="st">"#0000ff20"</span>, bg <span class="op">=</span> <span class="st">"#0000ff10"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">mzmed</span>, <span class="va">mzw</span>, pch <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>     col <span class="op">=</span> <span class="st">"#ff000020"</span>, bg <span class="op">=</span> <span class="st">"#ff000010"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="xcms_files/figure-html/unnamed-chunk-9-1.png" alt="Relationship between a feature's m/z and the m/z width (max - min m/z) of the feature. Red points represent the results with the fixed m/z bin size, blue with the m/z-relative bin size." width="700"><p class="caption">
+Relationship between a feature’s m/z and the m/z width (max - min m/z)
+of the feature. Red points represent the results with the fixed m/z bin
+size, blue with the m/z-relative bin size.
+</p>
+</div>
 <p>Results from the correspondence analysis can be accessed with the
 <code>featureDefinitions</code> and <code>featureValues</code> function.
 The former returns a data frame with general information on each of the
@@ -1242,7 +1297,7 @@ information on the median m/z and retention time as well as the indices
 of the chromatographic peaks assigned to the feature in column
 <code>"peakidx"</code>. Below we show the information on the first 6
 features.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks KO WT      peakidx</span></span>
 <span><span class="co">## FT001 200.1 200.1 200.1 2902.634 2882.603 2922.664      2  2  0    458, 1161</span></span>
@@ -1266,7 +1321,7 @@ column name in the <code>chromPeaks</code> matrix. With the default
 peaks corresponding to a feature in a sample are returned. This is then
 generally used as the intensity matrix for downstream analysis. Below we
 extract the intensities for the first 6 features.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">faahko</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span></span>
@@ -1306,7 +1361,7 @@ frame. If <code>features</code> is not defined, EICs are returned for
 <strong>all</strong> features in a data set, which can take also a
 considerable amount of time. Below we extract the chromatograms for the
 first 4 features.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feature_chroms</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">faahko</span>, features <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">feature_chroms</span></span></code></pre></div>
@@ -1333,7 +1388,7 @@ first 4 features.</p>
 <span><span class="co">##  4 feature(s) identified.</span></span></code></pre>
 <p>And plot the extracted ion chromatograms. We again use the group
 color for each identified peak to fill the area.</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feature_chroms</span>, col <span class="op">=</span> <span class="va">sample_colors</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">feature_chroms</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
@@ -1343,7 +1398,7 @@ Extracted ion chromatograms for features 1 to 4.
 </div>
 <p>To access the EICs of the second feature we can simply subset the
 <code>feature_chroms</code> object.</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">eic_2</span> <span class="op">&lt;-</span> <span class="va">feature_chroms</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">eic_2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         mz mzmin mzmax       rt    rtmin    rtmax    into    intb  maxo sn</span></span>
@@ -1390,7 +1445,7 @@ upper quartile (75% quantile) of the <code>"rtmax"</code> values. Below
 we perform this gap filling on our test data and extract the feature
 values for the first 6 features after gap filling. An <code>NA</code> is
 reported if no signal is measured at all for a specific sample.</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">ChromPeakAreaParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">faahko</span>, value <span class="op">=</span> <span class="st">"into"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -1400,7 +1455,7 @@ reported if no signal is measured at all for a specific sample.</p>
 <span><span class="co">## FT003  213659.3  289500.7  164380.7  178285.7  253825.6  241844.4  240606.0</span></span>
 <span><span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9  226234.4</span></span>
 <span><span class="co">## FT005  286221.4  285857.6  164009.0  149097.6  255697.7  311296.8  366441.5</span></span>
-<span><span class="co">## FT006 1160580.5 1129426.4  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
+<span><span class="co">## FT006 1160580.5 1102832.6  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
 <span><span class="co">##        wt22.CDF</span></span>
 <span><span class="co">## FT001  138341.2</span></span>
 <span><span class="co">## FT002 1354004.9</span></span>
@@ -1430,7 +1485,7 @@ intensity and to sum these values in samples in which more than one
 chromatographic peak was assigned to a feature (for that option it is
 important to run <code>refineChromPeaks</code> like described above to
 merge overlapping peaks in each sample).</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/SummarizedExperiment" class="external-link">SummarizedExperiment</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: MatrixGenerics</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: matrixStats</span></span></code></pre>
@@ -1469,7 +1524,7 @@ merge overlapping peaks in each sample).</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##     distance</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: GenomeInfoDb</span></span></code></pre>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify</a></span><span class="op">(</span><span class="va">faahko</span>, value <span class="op">=</span> <span class="st">"into"</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SummarizedExperiment </span></span>
@@ -1485,7 +1540,7 @@ the <code>rowData</code> of this object. The <code>rowData</code>
 provides annotations and information for each <strong>row</strong> in
 the <code>SummarizedExperiment</code> (which in our case are the
 <strong>features</strong>).</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 351 rows and 10 columns</span></span>
 <span><span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span></span>
@@ -1518,7 +1573,7 @@ the <code>SummarizedExperiment</code> (which in our case are the
 <strong>samples</strong>) are stored as <code>colData</code>. In this
 data frame each row contains annotations for one sample (and hence one
 column in the feature values matrix).</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 8 rows and 4 columns</span></span>
 <span><span class="co">##          sample_name sample_group spectraOrigin sample_type</span></span>
@@ -1536,13 +1591,13 @@ the object. Note that a <code>SummarizedExperiment</code> can have
 multiple assays which have to be numeric matrices with the number of
 rows and columns matching the number of features and samples,
 respectively. Below we list the names of the available assays.</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"</span></span></code></pre>
 <p>And we can access the actual data using the <code>assay</code>
 function, optionally also providing the name of the assay we want to
 access. Below we show the first 6 lines of that matrix.</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7</span></span>
@@ -1550,7 +1605,7 @@ access. Below we show the first 6 lines of that matrix.</p>
 <span><span class="co">## FT003  213659.3  289500.7  164380.7  178285.7  253825.6  241844.4  240606.0</span></span>
 <span><span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9  226234.4</span></span>
 <span><span class="co">## FT005  286221.4  285857.6  164009.0  149097.6  255697.7  311296.8  366441.5</span></span>
-<span><span class="co">## FT006 1923307.8 1129426.4  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
+<span><span class="co">## FT006 1923307.8 1102832.6  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
 <span><span class="co">##        wt22.CDF</span></span>
 <span><span class="co">## FT001  138341.2</span></span>
 <span><span class="co">## FT002 1354004.9</span></span>
@@ -1562,14 +1617,14 @@ access. Below we show the first 6 lines of that matrix.</p>
 we in addition add also the feature value matrix
 <strong>without</strong> filled-in values (i.e. feature intensities that
 were added by the gap filling step).</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">$</span><span class="va">raw_nofill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">faahko</span>, filled <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></code></pre></div>
 <p>With that we have now two assays in our result object.</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"        "raw_nofill"</span></span></code></pre>
 <p>And we can extract the feature values without gap-filling:</p>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw_nofill"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span></span>
@@ -1588,12 +1643,12 @@ were added by the gap filling step).</p>
 <p>Finally, a history of the full processing with <em>xcms</em> is
 available as <code>metadata</code> in the
 <code>SummarizedExperiment</code>.</p>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:46:45 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:29 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1602,7 +1657,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:46:48 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:32 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1611,7 +1666,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:46:59 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:46 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1620,7 +1675,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:47:00 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:46 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1629,7 +1684,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:47:04 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:51 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1638,7 +1693,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:47:08 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:58 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1646,11 +1701,11 @@ available as <code>metadata</code> in the
 <p>This same information can also be extracted from the <em>xcms</em>
 result object using the <code>processHistory</code> function. Below we
 extract the information for the first processing step.</p>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Thu Dec  7 08:46:45 2023 </span></span>
+<span><span class="co">##  date: Fri Jan 26 20:10:29 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1658,7 +1713,7 @@ extract the information for the first processing step.</p>
 <p>These processing steps contain also the individual parameter objects
 used for the analysis, hence allowing to exactly reproduce the
 analysis.</p>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class:  CentWaveParam </span></span>
 <span><span class="co">##  Parameters:</span></span>
@@ -1681,7 +1736,7 @@ analysis.</p>
 the grouping of the samples in this experiment. Note that we did not
 perform any data normalization hence the grouping might (and will) also
 be influenced by technical biases.</p>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Extract the features and log2 transform them</span></span>
 <span><span class="va">ft_ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1759,10 +1814,10 @@ parallel processes is defined.</p>
 globally we <code>register</code> the parameter class. Note also that
 <code>bpstart</code> is used below to initialize the parallel
 processes.</p>
-<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Windows supports only socket-based parallel processing:</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb125"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1803,9 +1858,9 @@ package and its functionality.</li>
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>R packages used for this document are listed below.</p>
-<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R Under development (unstable) (2023-11-22 r85609)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-01-17 r85813)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 22.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -1829,71 +1884,71 @@ package and its functionality.</li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SummarizedExperiment_1.33.1 GenomicRanges_1.55.1       </span></span>
-<span><span class="co">##  [3] GenomeInfoDb_1.39.1         IRanges_2.37.0             </span></span>
-<span><span class="co">##  [5] MatrixGenerics_1.15.0       matrixStats_1.1.0          </span></span>
-<span><span class="co">##  [7] MsExperiment_1.5.1          pheatmap_1.0.12            </span></span>
+<span><span class="co">##  [1] SummarizedExperiment_1.33.3 GenomicRanges_1.55.2       </span></span>
+<span><span class="co">##  [3] GenomeInfoDb_1.39.5         IRanges_2.37.1             </span></span>
+<span><span class="co">##  [5] MatrixGenerics_1.15.0       matrixStats_1.2.0          </span></span>
+<span><span class="co">##  [7] MsExperiment_1.5.4          pheatmap_1.0.12            </span></span>
 <span><span class="co">##  [9] RColorBrewer_1.1-3          pander_0.6.5               </span></span>
-<span><span class="co">## [11] faahKO_1.43.0               xcms_4.1.4                 </span></span>
-<span><span class="co">## [13] MSnbase_2.29.1              ProtGenerics_1.35.0        </span></span>
-<span><span class="co">## [15] S4Vectors_0.41.2            mzR_2.37.0                 </span></span>
-<span><span class="co">## [17] Rcpp_1.0.11                 Biobase_2.63.0             </span></span>
+<span><span class="co">## [11] faahKO_1.43.0               xcms_4.1.6                 </span></span>
+<span><span class="co">## [13] MSnbase_2.29.3              ProtGenerics_1.35.2        </span></span>
+<span><span class="co">## [15] S4Vectors_0.41.3            mzR_2.37.0                 </span></span>
+<span><span class="co">## [17] Rcpp_1.0.12                 Biobase_2.63.0             </span></span>
 <span><span class="co">## [19] BiocGenerics_0.49.1         BiocParallel_1.37.0        </span></span>
 <span><span class="co">## [21] BiocStyle_2.31.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] bitops_1.0-7                rlang_1.1.2                </span></span>
-<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
-<span><span class="co">##   [5] MassSpecWavelet_1.69.0      compiler_4.4.0             </span></span>
-<span><span class="co">##   [7] systemfonts_1.0.5           vctrs_0.6.5                </span></span>
-<span><span class="co">##   [9] stringr_1.5.1               MetaboCoreUtils_1.11.0     </span></span>
-<span><span class="co">##  [11] pkgconfig_2.0.3             crayon_1.5.2               </span></span>
-<span><span class="co">##  [13] fastmap_1.1.1               XVector_0.43.0             </span></span>
-<span><span class="co">##  [15] utf8_1.2.4                  rmarkdown_2.25             </span></span>
-<span><span class="co">##  [17] preprocessCore_1.65.0       ragg_1.2.6                 </span></span>
-<span><span class="co">##  [19] purrr_1.0.2                 MultiAssayExperiment_1.29.0</span></span>
-<span><span class="co">##  [21] xfun_0.41                   zlibbioc_1.49.0            </span></span>
-<span><span class="co">##  [23] cachem_1.0.8                jsonlite_1.8.8             </span></span>
-<span><span class="co">##  [25] progress_1.2.3              highr_0.10                 </span></span>
-<span><span class="co">##  [27] DelayedArray_0.29.0         prettyunits_1.2.0          </span></span>
-<span><span class="co">##  [29] parallel_4.4.0              cluster_2.1.6              </span></span>
-<span><span class="co">##  [31] R6_2.5.1                    bslib_0.6.1                </span></span>
-<span><span class="co">##  [33] stringi_1.8.2               limma_3.59.1               </span></span>
-<span><span class="co">##  [35] jquerylib_0.1.4             bookdown_0.37              </span></span>
-<span><span class="co">##  [37] iterators_1.0.14            knitr_1.45                 </span></span>
-<span><span class="co">##  [39] igraph_1.5.1                splines_4.4.0              </span></span>
-<span><span class="co">##  [41] Matrix_1.6-4                tidyselect_1.2.0           </span></span>
-<span><span class="co">##  [43] abind_1.4-5                 yaml_2.3.7                 </span></span>
-<span><span class="co">##  [45] doParallel_1.0.17           codetools_0.2-19           </span></span>
-<span><span class="co">##  [47] affy_1.81.0                 lattice_0.22-5             </span></span>
-<span><span class="co">##  [49] tibble_3.2.1                plyr_1.8.9                 </span></span>
-<span><span class="co">##  [51] evaluate_0.23               survival_3.5-7             </span></span>
-<span><span class="co">##  [53] desc_1.4.2                  Spectra_1.13.2             </span></span>
-<span><span class="co">##  [55] pillar_1.9.0                affyio_1.73.0              </span></span>
-<span><span class="co">##  [57] BiocManager_1.30.22         foreach_1.5.2              </span></span>
-<span><span class="co">##  [59] MALDIquant_1.22.1           ncdf4_1.22                 </span></span>
-<span><span class="co">##  [61] generics_0.1.3              rprojroot_2.0.4            </span></span>
-<span><span class="co">##  [63] RCurl_1.98-1.13             hms_1.1.3                  </span></span>
+<span><span class="co">##   [1] DBI_1.2.1                   bitops_1.0-7               </span></span>
+<span><span class="co">##   [3] rlang_1.1.3                 magrittr_2.0.3             </span></span>
+<span><span class="co">##   [5] clue_0.3-65                 MassSpecWavelet_1.69.0     </span></span>
+<span><span class="co">##   [7] compiler_4.4.0              systemfonts_1.0.5          </span></span>
+<span><span class="co">##   [9] vctrs_0.6.5                 stringr_1.5.1              </span></span>
+<span><span class="co">##  [11] MetaboCoreUtils_1.11.2      pkgconfig_2.0.3            </span></span>
+<span><span class="co">##  [13] crayon_1.5.2                fastmap_1.1.1              </span></span>
+<span><span class="co">##  [15] XVector_0.43.1              utf8_1.2.4                 </span></span>
+<span><span class="co">##  [17] rmarkdown_2.25              preprocessCore_1.65.0      </span></span>
+<span><span class="co">##  [19] ragg_1.2.7                  purrr_1.0.2                </span></span>
+<span><span class="co">##  [21] xfun_0.41                   MultiAssayExperiment_1.29.0</span></span>
+<span><span class="co">##  [23] zlibbioc_1.49.0             cachem_1.0.8               </span></span>
+<span><span class="co">##  [25] jsonlite_1.8.8              progress_1.2.3             </span></span>
+<span><span class="co">##  [27] highr_0.10                  DelayedArray_0.29.0        </span></span>
+<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.4.0             </span></span>
+<span><span class="co">##  [31] cluster_2.1.6               R6_2.5.1                   </span></span>
+<span><span class="co">##  [33] bslib_0.6.1                 stringi_1.8.3              </span></span>
+<span><span class="co">##  [35] limma_3.59.1                jquerylib_0.1.4            </span></span>
+<span><span class="co">##  [37] bookdown_0.37               iterators_1.0.14           </span></span>
+<span><span class="co">##  [39] knitr_1.45                  splines_4.4.0              </span></span>
+<span><span class="co">##  [41] Matrix_1.6-5                igraph_1.6.0               </span></span>
+<span><span class="co">##  [43] tidyselect_1.2.0            abind_1.4-5                </span></span>
+<span><span class="co">##  [45] yaml_2.3.8                  doParallel_1.0.17          </span></span>
+<span><span class="co">##  [47] codetools_0.2-19            affy_1.81.0                </span></span>
+<span><span class="co">##  [49] lattice_0.22-5              tibble_3.2.1               </span></span>
+<span><span class="co">##  [51] plyr_1.8.9                  evaluate_0.23              </span></span>
+<span><span class="co">##  [53] survival_3.5-7              desc_1.4.3                 </span></span>
+<span><span class="co">##  [55] Spectra_1.13.3              pillar_1.9.0               </span></span>
+<span><span class="co">##  [57] affyio_1.73.0               BiocManager_1.30.22        </span></span>
+<span><span class="co">##  [59] foreach_1.5.2               MALDIquant_1.22.2          </span></span>
+<span><span class="co">##  [61] ncdf4_1.22                  generics_0.1.3             </span></span>
+<span><span class="co">##  [63] RCurl_1.98-1.14             hms_1.1.3                  </span></span>
 <span><span class="co">##  [65] ggplot2_3.4.4               munsell_0.5.0              </span></span>
-<span><span class="co">##  [67] scales_1.3.0                glue_1.6.2                 </span></span>
-<span><span class="co">##  [69] lazyeval_0.2.2              MsFeatures_1.11.0          </span></span>
-<span><span class="co">##  [71] tools_4.4.0                 mzID_1.41.0                </span></span>
-<span><span class="co">##  [73] robustbase_0.99-1           QFeatures_1.13.1           </span></span>
+<span><span class="co">##  [67] scales_1.3.0                glue_1.7.0                 </span></span>
+<span><span class="co">##  [69] MsFeatures_1.11.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">##  [71] tools_4.4.0                 robustbase_0.99-1          </span></span>
+<span><span class="co">##  [73] mzID_1.41.0                 QFeatures_1.13.2           </span></span>
 <span><span class="co">##  [75] vsn_3.71.0                  RANN_2.6.1                 </span></span>
-<span><span class="co">##  [77] fs_1.6.3                    XML_3.99-0.16              </span></span>
+<span><span class="co">##  [77] fs_1.6.3                    XML_3.99-0.16.1            </span></span>
 <span><span class="co">##  [79] grid_4.4.0                  impute_1.77.0              </span></span>
-<span><span class="co">##  [81] MsCoreUtils_1.15.1          colorspace_2.1-0           </span></span>
-<span><span class="co">##  [83] GenomeInfoDbData_1.2.11     cli_3.6.1                  </span></span>
-<span><span class="co">##  [85] textshaping_0.3.7           fansi_1.0.5                </span></span>
-<span><span class="co">##  [87] S4Arrays_1.3.1              dplyr_1.1.4                </span></span>
-<span><span class="co">##  [89] AnnotationFilter_1.27.0     pcaMethods_1.95.0          </span></span>
-<span><span class="co">##  [91] gtable_0.3.4                DEoptimR_1.1-3             </span></span>
-<span><span class="co">##  [93] sass_0.4.8                  digest_0.6.33              </span></span>
-<span><span class="co">##  [95] SparseArray_1.3.1           farver_2.1.1               </span></span>
-<span><span class="co">##  [97] multtest_2.59.0             memoise_2.0.1              </span></span>
-<span><span class="co">##  [99] htmltools_0.5.7             pkgdown_2.0.7.9000         </span></span>
-<span><span class="co">## [101] lifecycle_1.0.4             statmod_1.5.0              </span></span>
-<span><span class="co">## [103] MASS_7.3-60.1</span></span></code></pre>
+<span><span class="co">##  [81] MsCoreUtils_1.15.3          colorspace_2.1-0           </span></span>
+<span><span class="co">##  [83] GenomeInfoDbData_1.2.11     PSMatch_1.7.1              </span></span>
+<span><span class="co">##  [85] cli_3.6.2                   textshaping_0.3.7          </span></span>
+<span><span class="co">##  [87] fansi_1.0.6                 S4Arrays_1.3.2             </span></span>
+<span><span class="co">##  [89] dplyr_1.1.4                 AnnotationFilter_1.27.0    </span></span>
+<span><span class="co">##  [91] DEoptimR_1.1-3              pcaMethods_1.95.0          </span></span>
+<span><span class="co">##  [93] gtable_0.3.4                sass_0.4.8                 </span></span>
+<span><span class="co">##  [95] digest_0.6.34               SparseArray_1.3.3          </span></span>
+<span><span class="co">##  [97] farver_2.1.1                multtest_2.59.0            </span></span>
+<span><span class="co">##  [99] memoise_2.0.1               htmltools_0.5.7            </span></span>
+<span><span class="co">## [101] pkgdown_2.0.7.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [103] statmod_1.5.0               MASS_7.3-60.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

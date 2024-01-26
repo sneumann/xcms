@@ -56,7 +56,7 @@ be reported. This can be performed using the fillChromPeaks() function.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -179,7 +179,6 @@ featureArea(
   mzmax = max,
   rtmin = min,
   rtmax = max,
-  msLevel = integer(),
   features = character()
 )
 
@@ -234,7 +233,7 @@ chromPeakData(
 # S4 method for XcmsExperiment
 filterChromPeaks(
   object,
-  keep = rep(TRUE, nrow(chromPeaks(object))),
+  keep = rep(TRUE, nrow(.chromPeaks(object))),
   method = "keep",
   ...
 )
@@ -444,7 +443,7 @@ chromatographic peaks assigned to that feature. Defaults to
 <dt>features</dt>
 <dd><p>For <code>filterFeatureDefinitions</code> and <code>featureArea</code>: <code>logical</code>,
 <code>integer</code> or <code>character</code> defining the features to keep or from which
-to extract the feature are, respectively. See function description
+to extract the feature area, respectively. See function description
 for more information.</p></dd>
 
 
@@ -779,9 +778,7 @@ analysis. This can be overruled with <code>keepAdjustedRtime = TRUE</code>.</p><
 <code>"rtmin"</code> and <code>"rtmax"</code> with the m/z and retention time range for each
 feature (row) in <code>object</code>. By default these represent the minimal m/z
 and retention times as well as maximal m/z and retention times for
-the chromatographi peaks assigned to that feature. Note that if in
-one sample more than one chromatographic peak is assigned to a feature
-only the one with the higher intensity is considered. Parameter
+all chromatographic peaks assigned to that feature. Parameter
 <code>features</code> allows to extract these values for selected features only.
 Parameters <code>mzmin</code>, <code>mzmax</code>, <code>rtmin</code> and <code>rtmax</code> allow to define
 the function to calculate the reported <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"rtmin"</code>
@@ -1036,6 +1033,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">xmse</span>,</span></span>
 <span class="r-in"><span>    mz <span class="op">=</span> <span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mzmin"</span>, <span class="st">"mzmax"</span><span class="op">)</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>    rt <span class="op">=</span> <span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rtmin"</span>, <span class="st">"rtmax"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing chromatographic peaks</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## An EIC for each sample and each of the two regions was extracted.</span></span></span>
 <span class="r-in"><span><span class="co">## Identified chromatographic peaks in the defined regions are extracted</span></span></span>
