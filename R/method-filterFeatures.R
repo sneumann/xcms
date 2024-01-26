@@ -77,7 +77,6 @@
 #'
 #' ## Load a test data set with features defined.
 #' test_xcms <- loadXcmsData()
-#'
 #' ## Set up parameter to filter based on coefficient of variation. By setting
 #' ## the filter such as below, features that have a coefficient of variation
 #' ## superior to 0.3 in QC samples will be removed from the object `test_xcms`
@@ -87,7 +86,6 @@
 #'                         qcIndex = sampleData(test_xcms)$sample_type == "QC")
 #'
 #' filtered_data_rsd <- filterFeatures(object = test_xcms, filter = rsd_filter)
-#'
 #'
 #' ## Set up parameter to filter based on D-ratio. By setting the filter such
 #' ## as below, features that have a D-ratio computed based on their abundance

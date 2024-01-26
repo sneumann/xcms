@@ -1124,12 +1124,12 @@ The `filter` argument can accommodate various types of input, each determining t
 specific type of quality assessment and filtering to be performed.
 
 The `RsdFilter` enable users to filter features based on their relative
-standard deviation (coefficient of vairation) for a specified `threshold`. It
+standard deviation (coefficient of variation) for a specified `threshold`. It
 is recommended to base the computation on quality control (QC) samples,
 as demonstrated below:
 
 ```{r}
-# Set up parameters for RsdFilter
+# Set up parameters for RsdFilter 
 rsd_filter <- RsdFilter(threshold = 0.3,
                         qcIndex = sampleData(faahko)$sample_type == "QC")
 
