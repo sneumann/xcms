@@ -359,8 +359,6 @@ test_that("EicSimilarityParam works", {
 })
 
 test_that("groupFeatures,XCMSnExp,EicSimilarityParam works", {
-    skip_on_os(os = "windows", arch = "i386")
-
     ## n outside number of samples
     expect_error(groupFeatures(xodg, param = EicSimilarityParam(n = 10)),
                  "smaller than or")
@@ -375,6 +373,7 @@ test_that("groupFeatures,XCMSnExp,EicSimilarityParam works", {
     res_all <- groupFeatures(tmp, param = EicSimilarityParam())
     expect_true(is.character(featureGroups(res_all)))
 
+    #' FG.009, FG.001, FG.001, FG.002, FG.003, FG.003
     idx <- c(3, 12, 13, 34, 39, 40)
     tmp <- xodg
     featureDefinitions(tmp)$feature_group <- NA
@@ -416,7 +415,8 @@ test_that("groupFeatures,XcmsExperiment,EicSimilarityParam works", {
     res_all <- groupFeatures(tmp, param = EicSimilarityParam())
     expect_true(is.character(featureGroups(res_all)))
 
-    idx <- c(1, 2, 3, 9, 10, 14)
+    #' FG.014, FG.007, FG.007, FG.006, FG.006, FG.006
+    idx <- c(1, 2, 3, 10, 13, 14)
     featureDefinitions(tmp)$feature_group <- NA
     featureDefinitions(tmp)$feature_group[idx] <- "FG"
     res <- groupFeatures(tmp, param = EicSimilarityParam())

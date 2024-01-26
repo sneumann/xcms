@@ -39,7 +39,7 @@ importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
 importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi")
+           "maxi", "breaks_ppm")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -575,6 +575,7 @@ importFrom("Spectra", "MsBackendMemory")
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")
 importMethodsFrom("MsExperiment", "spectra")
+importMethodsFrom("MsExperiment", "filterSpectra")
 importMethodsFrom("BiocGenerics", "do.call")
 importMethodsFrom("BiocGenerics", "rbind")
 importFrom("MsExperiment", "MsExperiment")

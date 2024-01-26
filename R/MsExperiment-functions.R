@@ -247,37 +247,6 @@
         USE.NAMES = FALSE, BPPARAM = BPPARAM)
 }
 
-#' generic method to apply a filtering to the spectra data. The function will
-#' apply the filtering and (most importantly) keep/update the link between
-#' spectra and samples.
-#'
-#' @importMethodsFrom Spectra selectSpectraVariables
-#'
-#' @param x `MsExperiment`.
-#'
-#' @param FUN filter function.
-#'
-#' @param ... parameters for `FUN`.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-.mse_filter_spectra <- function(x, FUN, ...) {
-    ls <- length(spectra(x))
-    have_links <- length(x@sampleDataLinks[["spectra"]]) > 0
-    if (have_links)
-        x@spectra$._SPECTRA_IDX <- seq_len(ls)
-    x@spectra <- FUN(x@spectra, ...)
-    if (have_links) {
-        if (ls != length(spectra(x)))
-            x <- .update_sample_data_links_spectra(x)
-        svs <- unique(c(spectraVariables(spectra(x)), "mz", "intensity"))
-        x@spectra <- selectSpectraVariables(
-            x@spectra, svs[svs != "._SPECTRA_IDX"])
-    }
-    x
-}
-
 #' Ensure that each spectrum is assigned to a sample and that we only have 1:1
 #' mappings. That is important for most code involving splitting of samples
 #' etc.

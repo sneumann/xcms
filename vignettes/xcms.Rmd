@@ -60,7 +60,9 @@ This document describes data import, exploration and pre-processing of a simple
 test LC-MS data set with the *xcms* package version >= 4. The same functions can
 be applied to the older *MSnbase*-based workflows (xcms version 3). Additional
 documents and tutorials covering also other topics of untargeted metabolomics
-analysis are listed at the end of this document.
+analysis are listed at the end of this document. There is also a [xcms
+tutorial](https://jorainer.github.io/xcmsTutorials) available with more examples
+and details.
 
 
 # Pre-processing of LC-MS data
@@ -325,7 +327,7 @@ internal standard of known compound. It is suggested to inspect the ranges of
 m/z values for several compounds (either internal standards or compounds known
 to be present in the sample) and define the `ppm` parameter for *centWave*
 according to these. See also this
-[tutorial](https://jorainer.github.io/metabolomics2018) for additional
+[tutorial](https://jorainer.github.io/xcmsTutorials) for additional
 information and examples on choosing and testing peak detection settings.
 
 Chromatographic peak detection can also be performed on extracted ion
@@ -856,15 +858,60 @@ correspondence settings on manually defined m/z slices before applying them to
 the full data set. For the tested m/z slice the settings seemed to be OK and we
 are thus applying them to the full data set below. Especially the parameter `bw`
 will be very data set dependent (or more specifically LC-dependent) and should
-be adapted to each data set. See the [Metabolomics pre-processing with
-`xcms`](https://jorainer.github.io/metabolomics2018) tutorial for examples and
-more details.
+be adapted to each data set.
+
+Another important parameter is `binSize` that defines the size of the m/z slices
+(bins) within which peaks are being grouped. This parameter thus defines the
+required similarity in m/z values for the chromatographic peaks that are then
+assumed to represent signal from the same (type of ion of a) compound and hence
+evaluated for grouping. By default, a constant m/z bin size is used, but by
+changing parameter `ppm` to a value larger than 0, m/z-relative bin sizes would
+be used instead (i.e., the bin size will increase with the m/z value hence
+better representing the measurement error/precision of some MS instruments). The
+bin sizes (and subsequently the m/z width of the defined features) would then
+reach a maximal value of `binSize` plus `ppm` parts-per-million of the largest
+m/z value of any chromatographic peak in the data set.
+
+See also the [xcms
+tutorial](https://jorainer.github.io/xcmsTutorials) for more examples and
+details.
 
 ```{r correspondence, message = FALSE }
-## Perform the correspondence
+## Perform the correspondence using fixed m/z bin sizes.
 pdp <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
                         minFraction = 0.4, bw = 30)
 faahko <- groupChromPeaks(faahko, param = pdp)
+```
+
+As an alternative we perform the correspondence using m/z relative bin sizes.
+
+```{r}
+## Drop feature definitions and re-perform the correspondence
+## using m/z-relative bin sizes.
+faahko_ppm <- groupChromPeaks(
+    dropFeatureDefinitions(faahko),
+    PeakDensityParam(sampleGroups = sampleData(faahko)$sample_group,
+                     minFraction = 0.4, bw = 30, ppm = 10))
+```
+
+The results will be *mostly* similar, except for the higher m/z range (in which
+larger m/z bins will be used). Below we plot the m/z range for features against
+their median m/z. For the present data set (acquired with a triple quad
+instrument) no clear difference can be seen for the two approaches hence we
+proceed the analysis with the fixed bin size setting. A stronger relationship
+would be expected for example for data measured on TOF instruments.
+
+```{r, fig.cap = "Relationship between a feature's m/z and the m/z width (max - min m/z) of the feature. Red points represent the results with the fixed m/z bin size, blue with the m/z-relative bin size."}
+## Calculate m/z width of features
+mzw <- featureDefinitions(faahko)$mzmax - featureDefinitions(faahko)$mzmin
+mzw_ppm <- featureDefinitions(faahko_ppm)$mzmax -
+                                        featureDefinitions(faahko_ppm)$mzmin
+plot(featureDefinitions(faahko_ppm)$mzmed, mzw_ppm,
+     xlab = "m/z", ylab = "m/z width", pch = 21,
+     col = "#0000ff20", bg = "#0000ff10")
+points(featureDefinitions(faahko)$mzmed, mzw, pch = 21,
+     col = "#ff000020", bg = "#ff000010")
+
 ```
 
 Results from the correspondence analysis can be accessed with the

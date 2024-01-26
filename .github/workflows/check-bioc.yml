@@ -203,6 +203,7 @@ jobs:
           BiocManager::install("MsBackendMgf")
           BiocManager::install("MetaboCoreUtils")
           BiocManager::install("magick")
+          BiocManager::install("RforMassSpectrometry/MsExperiment")
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))

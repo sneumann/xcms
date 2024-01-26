@@ -565,19 +565,6 @@ test_that(".XCMSnExp2SummarizedExperiment works", {
                  featureValues(xod_xgrg, value = "intb"))
 })
 
-test_that(".features_ms_region works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    res <- .features_ms_region(xod_xgrg, msLevel = 1L)
-    expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
-    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
-    expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
-    expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
-
-    expect_error(.features_ms_region(xod_xgrg, msLevel = 1L,
-                                     features = c("a", "b")), "out of")
-})
-
 test_that(".which_peaks_above_threshold works", {
     skip_on_os(os = "windows", arch = "i386")
 
