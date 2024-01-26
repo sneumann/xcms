@@ -5,31 +5,33 @@
 #' When dealing with metabolomics results, it is often necessary to filter
 #' features based on certain criteria. These criteria are typically derived
 #' from statistical formulas applied to full rows of data, where each row
-#' represents a feature.
+#' represents a feature and its abundance of signal in each samples.
 #' The `filterFeatures` function filters features based on these conventional
-#' quality assessment criteria. Multiple type of filtering are implemented and\
+#' quality assessment criteria. Multiple types of filtering are implemented and
 #' can be defined by the `filter` argument.
 #'
 #' Supported `filter` arguments are:
 #'
 #' - [`RsdFilter`]: Calculates the relative standard deviation
-#'  (i.e. coefficient of variation) of each features in QC (Quality Control)
-#'  samples and filter them in the input object according to a provided
-#'  threshold.
+#'  (i.e. coefficient of variation) in abundance for each feature in QC
+#'  (Quality Control) samples and filters them in the input object according to
+#'  a provided threshold.
 #'
 #' - [`DratioFilter`]: Computes the D-ratio or *dispersion ratio*, defined as
-#'  the standard deviation for QC samples divided by the standard deviation for
-#'  biological test samples, for each features and filter them according to a
-#'  provided threshold
+#'  the standard deviation in abundance for QC samples divided by the standard
+#'  deviation for biological test samples, for each feature and filters them
+#'  according to a provided threshold
 #'
-#' - [`PercentMissingFilter`]: Determine the percentage of missing values for
-#'  each features in  and filters them according to a provided threshold.
+#' - [`PercentMissingFilter`]: Determines the percentage of missing values for
+#'  each feature in the various sample groups and filters them according to a
+#'  provided threshold.
 #'
-#' - [`BlankFlag`]: Identifies features where the mean of test samples
-#'  is lower than a specified multiple of the mean of blank samples. This can
-#'  be used to flag features that result from contamination in the solvent of
-#'  the samples. A new column `possible_contaminant` is added to the
-#'  `featureDefinitions` reflecting this.
+#' - [`BlankFlag`]: Identifies features where the mean abundance in test samples
+#'  is lower than a specified multiple of the mean abundance of blank samples.
+#'  This can be used to flag features that result from contamination in the
+#'  solvent of the samples. A new column `possible_contaminants` is added to the
+#'  `featureDefinitions` (`XcmsExperiment` object) or `rowData`
+#'  (`SummarizedExperiment` object) reflecting this.
 #'
 #' For specific examples, see the help pages of the individual parameter classes
 #' listed above.
@@ -46,10 +48,11 @@
 #' @param assay For filtering of `SummarizedExperiment` objects only. Indicates
 #' which assay the filtering will be based on. Note that the features for the
 #' entire object will be removed, but the computations are performed on a single
-#' assay. Default is 1, which mean the first assay of the `object` will
+#' assay. Default is 1, which means the first assay of the `object` will
 #' be evaluated.
 #'
-#' @param ... Optional parameters.
+#' @param ... Optional parameters. For `object` being an `XcmsExperiment`:
+#' parameters for the [featureValues()] call.
 #'
 #' @name filterFeatures
 #'
@@ -72,31 +75,54 @@
 #' ## See the vignettes for more detailed examples
 #' library(MsExperiment)
 #'
-#' ## Load a test data set with features
+#' ## Load a test data set with features defined.
 #' test_xcms <- loadXcmsData()
 #'
-#' ## Set up parameter to filter based on coefficient of variation
-#' rsd_filter <- RsdFilter(qcIndex = sampleData(test_xcms)$sample_type == "QC")
+#' ## Set up parameter to filter based on coefficient of variation. By setting
+#' ## the filter such as below, features that have a coefficient of variation
+#' ## superior to 0.3 in QC samples will be removed from the object `test_xcms`
+#' ## when calling the `filterFeatures` function.
+#'
+#' rsd_filter <- RsdFilter(threshold = 0.3
+#'                         qcIndex = sampleData(test_xcms)$sample_type == "QC")
 #'
 #' filtered_data_rsd <- filterFeatures(object = test_xcms, filter = rsd_filter)
 #'
-#' ## Set up parameter to filter based on D-ratio and filter
-#' dratio_filter <- DratioFilter(qcIndex = sampleData(test_xcms)$sample_type == "QC",
-#'                               studyIndex = sampleData(test_xcms)$sample_type == "study")
+#'
+#' ## Set up parameter to filter based on D-ratio. By setting the filter such
+#' ## as below, features that have a D-ratio computed based on their abundance
+#' ## between QC and study samples superior to 0.5 will be removed from the
+#' ## object `test_xcms`.
+#'
+#' dratio_filter <- DratioFilter(htreshold = 0.5,
+#'                  qcIndex = sampleData(test_xcms)$sample_type == "QC",
+#'                  studyIndex = sampleData(test_xcms)$sample_type == "study")
 #'
 #' filtered_data_dratio <- filterFeatures(object = test_xcms,
-#' filter = dratio_filter)
+#'                                        filter = dratio_filter)
 #'
-#' ## Set up parameter to filter based on the percent of missing data
-#' missing_data_filter <- PercentMissingFilter(f = sampleData(test_xcms)$sample_type)
+#' ## Set up parameter to filter based on the percent of missing data.
+#' ## Parameter f should represent the sample group of samples, for which the
+#' ## percentage of missing values will be evaluated. As the setting is defined
+#' ## bellow, if a feature as less (or equal) to 30% missing values in one
+#' ## sample group, it will be kept in the `test_xcms` object.
+#'
+#' missing_data_filter <- PercentMissingFilter(threshold = 30,
+#'                                        f = sampleData(test_xcms)$sample_type)
 #'
 #' filtered_data_missing <- filterFeatures(object = test_xcms,
-#' filter = missing_data_filter)
+#'                                         filter = missing_data_filter)
 #'
-#' ## Set up parameter to flag possible contaminant based on blank samples
-#' filter <- BlankFlag(
-#'     qcIndex = sampleData(test_xcms)$sample_type == "QC",
-#'     blankIndex = sampleData(test_xcms)$sample_type == "study")
+#' ## Set up parameter to flag possible contaminants based on blank samples'
+#' ## abundance. By setting the filter such as below, features that have mean
+#' ## abundance ratio between blank(here use study as an example) and QC
+#' ## samples less than 2 will be marked as `TRUE` in an extra column named
+#' ## `possible_contaminants` in the `featureDefinitions` table of the object
+#' ## `test_xcms`.
+#'
+#' filter <- BlankFlag(threshold = 2,
+#'                     qcIndex = sampleData(test_xcms)$sample_type == "QC",
+#'                     blankIndex = sampleData(test_xcms)$sample_type == "study")
 #' filtered_xmse <- filterFeatures(test_xcms, filter)
 #'
 #' @md
@@ -112,31 +138,36 @@ NULL
 #'
 #' @description
 #' The `RsdFilter` class and methods enable users to filter features from an
-#' `XcmsExperiment` or `SummarizedExperiment` object based on their coefficent
-#' of variation for a specified threshold.
+#' `XcmsExperiment` or `SummarizedExperiment` object based on their relative
+#' standard deviation (coefficient of variation) for a specified threshold.
 #'
 #' This `filter` is part of the possible dispatch of the generic function
-#' `filterFeatures`. Features *above* the user-input threshold will be
+#' `filterFeatures`. Features *above* (`>`) the user-input threshold will be
 #' removed from the entire dataset.
 #'
 #' @param threshold `numeric` value representing the threshold. Features with a
-#' coefficient of variation higher than this will be removed from the entire
-#' dataset.
+#' coefficient of variation *strictly higher* (`>`) than this will be removed
+#' from the entire dataset.
 #'
-#' @param qcIndex `integer` (or logical) vector corresponding to the indexes of
-#' QC samples.
+#' @param qcIndex `integer` (or `logical`) vector corresponding to the indices
+#' of QC samples.
 #'
 #' @param na.rm `logical` indicates whether missing values (`NA`) should be
 #' removed prior to the calculations.
 #'
-#' @param mad `logical` indicates whether the *Median Absolute Deviation*
-#' (MAD) should be used instead of the standard deviation. This is suggested
-#' for non-gaussian distributed data.
+#' @param mad `logical` indicates whether the *Median Absolute Deviation* (MAD)
+#' should be used instead of the standard deviation. This is suggested for
+#' non-gaussian distributed data.
 #'
 #' @inheritParams filterFeatures
 #'
 #' @return For `RsdFilter`: a `RsdFilter` class. `filterFeatures` return the
 #' input object minus the features that did not met the user input threshold.
+#'
+#' @note
+#' It is assumed that the abundance values are in natural scale. Abundances in
+#' log scale should be first transformed to natural scale before calculating
+#' the RSD.
 #'
 #' @author Philippine Louail
 #'
@@ -180,21 +211,18 @@ RsdFilter <- function(threshold = 0.3, qcIndex = integer(),
 setMethod("filterFeatures",
           signature(object = "XcmsResult",
                     filter = "RsdFilter"),
-          function(object, filter){
-              if (length(filter@qcIndex) < 1 |
-                  length(filter@qcIndex) > length(object))
-                  stop("'qcIndex' must be within object length range")
-            vals <- featureValues(object)[, filter@qcIndex]
+          function(object, filter, ...){
+            .check_index_range(filter@qcIndex, length(object), name = "qcIndex")
+            vals <- featureValues(object, ...)[, filter@qcIndex]
             vals <- rowRsd(x = vals,  na.rm = filter@na.rm, mad = filter@mad)
             fts_idx <- which(vals <= filter@threshold)
-            message(paste(length(vals) - length(fts_idx),
-                          "features were removed"))
+            message(length(vals) - length(fts_idx), " features were removed")
             ph <- XProcessHistory(param = filter,
                                   date. = date(),
                                   type. = .PROCSTEP.FEATURE.FILTERING,
                                   fileIndex = seq_along(object))
             object <- addProcessHistory(object, ph)
-            object <- filterFeatureDefinitions(object, features = fts_idx)
+            filterFeatureDefinitions(object, features = fts_idx)
           }
 )
 
@@ -203,12 +231,11 @@ setMethod("filterFeatures",
           signature(object = "SummarizedExperiment",
                     filter = "RsdFilter"),
           function(object, filter, assay = 1){
-              if (length(filter@qcIndex) < 1 | length(filter@qcIndex) > ncol(object))
-                  stop("'qcIndex' must be within object length range")
+              .check_index_range(filter@qcIndex, ncol(object), name = "qcIndex")
               vals <- assay(object, assay)[, filter@qcIndex]
-              vals <- rowRsd(vals,  na.rm = filter@na.rm, mad = filter@mad)
+              vals <- rowRsd(vals, na.rm = filter@na.rm, mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(paste(length(vals) - length(fts_idx), "features were removed"))
+              message(length(vals) - length(fts_idx), "features were removed")
               object[fts_idx]
           }
 )
@@ -226,21 +253,21 @@ setMethod("filterFeatures",
 #' `XcmsExperiment` or `SummarizedExperiment` object based on the D-ratio or
 #' *dispersion ratio*. This is defined as the standard deviation for QC
 #' samples divided by the standard deviation for biological test samples, for
-#' each feature of the object.
+#' each feature of the object (Broadhurst et al.).
 #'
-#' This `filter` is part of the possible dispatch of the
-#' generic function `filterFeatures`.  Features *above* the user-input
-#' threshold will be removed from the entire dataset.
+#' This `filter` is part of the possible dispatch of the generic function
+#' `filterFeatures`.  Features *above* (`>`) the user-input threshold will be
+#' removed from the entire dataset.
 #'
 #' @param threshold `numeric` value representing the threshold. Features with a
-#' coefficient of variation higher than this will be removed from the entire
+#' D-ratio *strictly higher* (`>`) than this will be removed from the entire
 #' dataset.
 #'
-#' @param qcIndex `integer` (or `logical`) Vector corresponding to the indexes of
-#' QC samples.
+#' @param qcIndex `integer` (or `logical`) vector corresponding to the indices
+#' of QC samples.
 #'
-#' @param studyIndex `integer` (or `logical`) Vector corresponding of the
-#' indexes of study samples.
+#' @param studyIndex `integer` (or `logical`) vector corresponding of the
+#' indices of study samples.
 #'
 #' @param na.rm `logical` Indicates whether missing values (`NA`) should be
 #' removed prior to the calculations.
@@ -257,6 +284,15 @@ setMethod("filterFeatures",
 #' @author Philippine Louail
 #'
 #' @importFrom MetaboCoreUtils rowDratio
+#'
+#' @references
+#'
+#' Broadhurst D, Goodacre R, Reinke SN, Kuligowski J, Wilson ID, Lewis MR,
+#' Dunn WB. Guidelines and considerations for the use of system suitability
+#' and quality control samples in mass spectrometry assays applied in
+#' untargeted clinical metabolomic studies. Metabolomics. 2018;14(6):72.
+#' doi: 10.1007/s11306-018-1367-3. Epub 2018 May 18. PMID: 29805336;
+#' PMCID: PMC5960010.
 #'
 NULL
 
@@ -304,27 +340,23 @@ DratioFilter <- function(threshold = 0.5,
 setMethod("filterFeatures",
           signature(object = "XcmsResult",
                     filter = "DratioFilter"),
-          function(object, filter){
-              if (length(filter@studyIndex) < 1 |
-                  length(filter@studyIndex) > length(object))
-                  stop("'studyIndex' must be within object length range")
-              if (length(filter@qcIndex) < 1 |
-                  length(filter@qcIndex) > length(object))
-                  stop("'qcIndex' must be within object length range")
-              x <- featureValues(object)[, filter@studyIndex]
-              y <- featureValues(object)[, filter@qcIndex]
+          function(object, filter, ...){
+              .check_index_range(filter@studyIndex, length(object),
+                                 name = "studyIndex")
+              .check_index_range(filter@qcIndex, length(object), name = "qcIndex")
+              x <- featureValues(object, ...)[, filter@studyIndex]
+              y <- featureValues(object, ...)[, filter@qcIndex]
               vals <- rowDratio(x = x, y = y,
                                 na.rm = filter@na.rm,
                                 mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(paste(length(vals) - length(fts_idx),
-                            "features were removed"))
+              message(length(vals) - length(fts_idx), "features were removed")
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
                                     type. = .PROCSTEP.FEATURE.FILTERING,
                                     fileIndex = seq_along(object))
               object <- addProcessHistory(object, ph)
-              object <- filterFeatureDefinitions(object, features = fts_idx)
+              filterFeatureDefinitions(object, features = fts_idx)
           }
 )
 
@@ -333,20 +365,16 @@ setMethod("filterFeatures",
           signature(object = "SummarizedExperiment",
                     filter = "DratioFilter"),
           function(object, filter, assay = 1){
-              if (length(filter@studyIndex) < 1 |
-                  length(filter@studyIndex) > ncol(object))
-                  stop("'studyIndex' must be within object length range")
-              if (length(filter@qcIndex) < 1 |
-                  length(filter@qcIndex) > ncol(object))
-                  stop("'qcIndex' must be within object length range")
-              x <-  assay(object, assay)[, filter@studyIndex]
+              .check_index_range(filter@studyIndex, ncol(object),
+                                 name = "studyIndex")
+              .check_index_range(filter@qcIndex, ncol(object), name = "qcIndex")
+              x <- assay(object, assay)[, filter@studyIndex]
               y <- assay(object, assay)[, filter@qcIndex]
               vals <- rowDratio(x = x, y = y,
                                 na.rm = filter@na.rm,
                                 mad = filter@mad)
               fts_idx <- which(vals <= filter@threshold)
-              message(paste(length(vals) - length(fts_idx),
-                            "features were removed"))
+              message(length(vals) - length(fts_idx), "features were removed")
               object[fts_idx]
           }
 )
@@ -362,20 +390,23 @@ setMethod("filterFeatures",
 #' @description
 #' The `PercentMissingFilter` class and method enable users to filter features
 #' from an `XcmsExperiment` or `SummarizedExperiment` object based on the
-#' percentage of missing values for each features and filters them according to
-#' a provided threshold.
+#' percentage (values from 1 to 100) of missing values for each features in
+#' different sample groups and filters them according to a provided threshold.
 #'
 #' This `filter` is part of the possible dispatch of the generic function
-#' `filterFeatures`. The features *above* the user input threshold will be
-#' removed by calling the `filterFeatures` function.
+#' `filterFeatures`. Features with a percentage of missing values *higher* (`>`)
+#' than the user input threshold in all sample groups will be removed (i.e.
+#' features for which the proportion of missing values is below (`<=`) the
+#' threshold in at least one sample group will be retained).
 #'
 #' @param f `vector` of the same length as the `object`, specifying the sample
-#' type for each sample in the dataset. The percentage of missing values will
-#' be computed for each of the sample types.
+#' type for each sample in the dataset. The percentage of missing values per
+#' feature will be computed within each of these sample groups. Parameter `f`,
+#' if not already a `factor`, will be converted to one using the factor function.
+#' Samples with an `NA` as their value in `f` will be excluded from calculation.
 #'
-#' @param threshold `numeric`  percent of accepted missing data for one feature.
-#' If a feature has a percentage of missing data *above* the threshold, it
-#' will be removed.
+#' @param threshold `numeric` percentage (between 0 and 100) of accepted missing
+#' values for a feature in one sample group.
 #'
 #' @inheritParams filterFeatures
 #'
@@ -392,11 +423,11 @@ NULL
 #' @noRd
 setClass("PercentMissingFilter",
          slots = c(threshold = "numeric",
-                   f = "character"),
+                   f = "factor"),
          contains = "Param",
          prototype = prototype(
              threshold = numeric(),
-             f = character()),
+             f = factor()),
          validity = function(object) {
              msg <- NULL
              if (length(object@threshold) != 1)
@@ -407,7 +438,9 @@ setClass("PercentMissingFilter",
 #' @rdname PercentMissingFilter
 #'
 #' @export
-PercentMissingFilter <- function(threshold = 30, f = character()) {
+PercentMissingFilter <- function(threshold = 30, f = factor()) {
+    if (!is.factor(f))
+        f <- factor(f)
     new("PercentMissingFilter", threshold = threshold, f = f)
 }
 
@@ -415,25 +448,23 @@ PercentMissingFilter <- function(threshold = 30, f = character()) {
 setMethod("filterFeatures",
           signature(object = "XcmsResult",
                     filter = "PercentMissingFilter"),
-          function(object, filter){
+          function(object, filter, ...){
               if (length(filter@f) != length(object))
                   stop("'f' must be same lenght as object")
-              f <- factor(filter@f)
               fts_idx <- c()
               for (i in levels(f)){
                   spl_idx <- which(f == i)
-                  vals <- rowPercentMissing(featureValues(object)[, spl_idx])
+                  vals <- rowPercentMissing(featureValues(object, ...)[, spl_idx])
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
               fts_idx <- order(unique(fts_idx))
-              message(paste(length(vals) - length(fts_idx),
-                            "features were removed"))
+              message(length(vals) - length(fts_idx), "features were removed")
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
                                     type. = .PROCSTEP.FEATURE.FILTERING,
                                     fileIndex = seq_along(object))
               object <- addProcessHistory(object, ph)
-              object <- filterFeatureDefinitions(object, features = fts_idx)
+              filterFeatureDefinitions(object, features = fts_idx)
           }
 )
 
@@ -442,8 +473,7 @@ setMethod("filterFeatures",
           signature(object = "SummarizedExperiment",
                     filter = "PercentMissingFilter"),
           function(object, filter, assay = 1){
-              if (length(filter@f) != ncol(object))
-                  stop("'f' must be same lenght as object")
+              .check_index_range(filter@f, ncol(object), name = "f")
               f <- factor(filter@f)
               fts_idx <- c()
               for (i in levels(f)){
@@ -452,8 +482,7 @@ setMethod("filterFeatures",
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
               fts_idx <- order(unique(fts_idx))
-              message(paste(length(vals) - length(fts_idx),
-                            "features were removed"))
+              message(length(vals) - length(fts_idx), "features were removed")
               object[fts_idx]
           }
 )
@@ -473,24 +502,24 @@ setMethod("filterFeatures",
 #' samples.
 #'
 #' This class and method are part of the possible dispatch of the
-#' generic function `filterFeatures`. Features *above* the user-input
+#' generic function `filterFeatures`. Features *below* (`<`) the user-input
 #' threshold will be flagged by calling the `filterFeatures` function. This
 #' means that an extra column will be created in `featureDefinitions` or
 #' `rowData` called `possible_contaminants` with a logical value for each
 #' feature.
 #'
 #' @param threshold `numeric` indicates the minimum difference
-#' required between the mean of a feature in samples compared to the mean of
-#' the same feature in blanks for it to not be considered a possible
-#' contaminant. For example, the default threshold of 2 signifies that the mean
-#' of the features in samples has to be at least twice the mean in blanks for
-#' it not to be flagged as a possible contaminant.
+#' required between the mean abundance of a feature in samples compared to the
+#' mean abundance of the same feature in blanks for it to not be considered a
+#' possible contaminant. For example, the default threshold of 2 signifies that
+#' the mean abundance of the features in samples has to be at least twice the
+#' mean abundance in blanks for it to not be flagged as a possible contaminant.
 #'
 #' @param blankIndex `integer` (or `logical`) vector corresponding to the
-#' indexes of blank samples.
+#' indices of blank samples.
 #'
 #' @param qcIndex `integer` (or `logical`) vector corresponding to the
-#' indexes of quality control (QC) samples.
+#' indices of quality control (QC) samples.
 #'
 #' @param na.rm `logical` indicates whether missing values (`NA`) should be
 #' removed prior to the calculations.
@@ -547,20 +576,16 @@ BlankFlag <- function(threshold = 2, blankIndex = integer(),
 setMethod("filterFeatures",
           signature(object = "XcmsResult",
                     filter = "BlankFlag"),
-          function(object, filter){
-              if (length(filter@blankIndex) < 1 |
-                  length(filter@blankIndex) > length(object))
-                  stop("'blankIndex' must be within object length range")
-              if (length(filter@qcIndex) < 1 |
-                  length(filter@qcIndex) > length(object))
-                  stop("'qcIndex' must be within object length range")
-              x <- featureValues(object)[, filter@qcIndex]
-              y <- featureValues(object)[, filter@blankIndex]
+          function(object, filter, ...){
+              .check_index_range(filter@blankIndex, length(object), name = "blankIndex")
+              .check_index_range(filter@qcIndex, length(object), name = "qcIndex")
+              x <- featureValues(object, ...)[, filter@qcIndex]
+              y <- featureValues(object, ...)[, filter@blankIndex]
               vals <- rowBlank(x = x, y = y,
                                na.rm = filter@na.rm,
                                threshold = filter@threshold)
-              message(paste(length(featureValues(object)) - sum(vals),
-                            "features were flagged"))
+              message(length(featureValues(object)) - sum(vals),
+                            "features were flagged")
               featureDefinitions(object)$possible_contaminants <- vals
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
@@ -577,21 +602,23 @@ setMethod("filterFeatures",
           signature(object = "SummarizedExperiment",
                     filter = "BlankFlag"),
           function(object, filter, assay = 1){
-              if (length(filter@blankIndex) < 1 |
-                  length(filter@blankIndex) > ncol(object))
-                  stop("'blankIndex' must be within object length range")
-              if (length(filter@qcIndex) < 1 |
-                  length(filter@qcIndex) > ncol(object))
-                  stop("'qcIndex' must be within object length range")
+              .check_index_range(filter@blankIndex, ncol(object),
+                                 name = "blankIndex")
+              .check_index_range(filter@qcIndex, ncol(object), name = "qcIndex")
               x <- assay(object, assay)[, filter@qcIndex]
               y <- assay(object, assay)[, filter@blankIndex]
               vals <- rowBlank(x = x, y = y,
                                na.rm = filter@na.rm,
                                threshold = filter@threshold)
-              message(paste(length(object) - sum(vals, na.rm = TRUE),
-                            "features were flagged"))
+              message(length(object) - sum(vals, na.rm = TRUE),
+                      "features were flagged")
               rowData(object)$possible_contaminants <- vals
               object
           }
 )
 
+#' @noRd
+.check_index_range <- function(x, l, name = "") {
+    if (!all(x %in% seq_len(l)))
+        stop(name, " should be between 1 and ", l)
+}

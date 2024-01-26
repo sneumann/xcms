@@ -1108,25 +1108,25 @@ properties of the mice analyzed (sex, age, litter mates etc).
 
 ## Quality-based filtering of features
 
-When dealing with metabolomics results, it is often necessary to filter
-features based on certain criteria.
-These criteria are typically derived from statistical formulas applied to full
-rows of data, where each row represents a feature. The `filterFeatures`
-function provides a robust solution for filtering features based on these
-conventional quality assessment criteria. It supports multiple types of
-filtering, allowing users to tailor the filtering process to their specific
-needs, all controlled by the `filter` argument. This function and its
-implementations are applicable to both `XcmsExperiment` results objects and
-`SummarizedExperiment` objects.
+When dealing with metabolomics results, it is often necessary to filter 
+features based on certain criteria. These criteria are typically derived from
+statistical formulas applied to full rows of data, where each row represents a
+feature. The `filterFeatures` function provides a robust solution for filtering
+features based on these conventional quality assessment criteria. It supports
+multiple types of filtering, allowing users to tailor the filtering process to
+their specific needs, all controlled by the `filter` argument. This function
+and its implementations are applicable to both `XcmsExperiment` results objects
+and `SummarizedExperiment` objects.
 
 We will demonstrate how to use the `filterFeatures` function to perform quality
-assessment and filtering on both the faahko and res objects. The `filter`
-argument can accommodate various types of input, each determining the
+assessment and filtering on both the `faahko` and `res` variables defined above.
+The `filter` argument can accommodate various types of input, each determining the
 specific type of quality assessment and filtering to be performed.
 
-The `RsdFilter` enable users to filter features based on their coefficient of
-variation for a specified `threshold`. It is recommended to base the
-computation on quality control (QC) samples, as demonstrated below:
+The `RsdFilter` enable users to filter features based on their relative
+standard deviation (coefficient of vairation) for a specified `threshold`. It
+is recommended to base the computation on quality control (QC) samples,
+as demonstrated below:
 
 ```{r}
 # Set up parameters for RsdFilter
@@ -1141,9 +1141,12 @@ rsd_filter <- RsdFilter(threshold = 0.3, qcIndex = res$sample_type == "QC")
 filtered_res <- filterFeatures(object = res, filter = rsd_filter, assay = "raw")
 ```
 
+All features with an RSD (CV) strictly larger than 0.3 in QC samples were thus
+removed from the data set.
+
 The `DratioFilter`  can be used to filter features based on the D-ratio or
 *dispersion ratio*, which compares the standard deviation in QC samples to that
-in QC samples.
+in study samples.
 
 ```{r}
 # Set up parameters for DratioFilter
@@ -1166,23 +1169,28 @@ filtered_res <- filterFeatures(object = filtered_res,
                                filter = dratio_filter)
 ```
 
+All features with an D-ratio strictly larger than 0.5 were thus removed from
+the data set.
+
 The `PercentMissingFilter` allows to filter features based on the percentage of
 missing values for each feature. This function takes as an input the parameter
 `f` which is supposed to be a vector of the length of the object with the
 sample type for each samples. The function then compute the percentage of
-missing values per sample groups and filters features based on this. Another
-option, it so base this quality assessment and filtering only on QC sample.
+missing values per sample groups and filters features based on this. Features
+with a percent of missing values larger than threshold in all sample groups
+will be removed. Another option, it so base this quality assessment and
+filtering only on QC samples.
 
 Both examples are shown below: 
 
 ```{r}
-# Set up parameter `f` to filter per sample type 
-f <- sampleData(filtered_faakho)$sample_type
-f[f == "QC"] <- NA 
-
-# Set up parameter `f` to filter only based on QC samples
+# To set up parameter `f` to filter only based on QC samples
 f <- sampleData(filtered_faakho)$sample_type
 f[f != "QC"] <- NA 
+
+# To set up parameter `f` to filter per sample type excluding QC samples
+f <- sampleData(filtered_faakho)$sample_type
+f[f == "QC"] <- NA 
 
 missing_filter <- PercentMissingFilter(threshold = 30,
                                        f = f)
@@ -1197,6 +1205,9 @@ missing_filter <- PercentMissingFilter(threshold = 30,
 filtered_res <- filterFeatures(object = filtered_res,
                                filter = missing_filter)
 ```
+
+Here, no feature was removed, meaning that all the features had less than 30% 
+of `NA` values in at least one of the sample type.
 
 Although not directly relevant to this experiment, the `BlankFlag` filter can be
 used to flag features based on the intensity relationship between blank and QC

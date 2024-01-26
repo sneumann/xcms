@@ -63,7 +63,7 @@ Imports:
     progress,
     multtest,
     jsonlite,
-    MetaboCoreUtils
+    MetaboCoreUtils (>= 1.11.2)
 Suggests:
     BiocStyle,
     caTools,

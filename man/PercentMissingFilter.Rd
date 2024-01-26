@@ -6,20 +6,21 @@
 \alias{filterFeatures,SummarizedExperiment,PercentMissingFilter-method}
 \title{Filter features based on the percentage of missing data}
 \usage{
-PercentMissingFilter(threshold = 30, f = character())
+PercentMissingFilter(threshold = 30, f = factor())
 
-\S4method{filterFeatures}{XcmsResult,PercentMissingFilter}(object, filter)
+\S4method{filterFeatures}{XcmsResult,PercentMissingFilter}(object, filter, ...)
 
 \S4method{filterFeatures}{SummarizedExperiment,PercentMissingFilter}(object, filter, assay = 1)
 }
 \arguments{
-\item{threshold}{`numeric`  percent of accepted missing data for one feature.
-If a feature has a percentage of missing data *above* the threshold, it
-will be removed.}
+\item{threshold}{`numeric` percentage (between 0 and 100) of accepted missing
+values for a feature in one sample group.}
 
 \item{f}{`vector` of the same length as the `object`, specifying the sample
-type for each sample in the dataset. The percentage of missing values will
-be computed for each of the sample types.}
+type for each sample in the dataset. The percentage of missing values per
+feature will be computed within each of these sample groups. Parameter `f`,
+if not already a `factor`, will be converted to one using the factor function.
+Samples with an `NA` as their value in `f` will be excluded from calculation.}
 
 \item{object}{\code{XcmsExperiment} or \code{SummarizedExperiment}. For an
 \code{XcmsExperiment} object, the \code{featureValues(object)} will be evaluated, and
@@ -30,10 +31,13 @@ filtered.}
 filtering. It can be one of the following classes: \code{\link{RsdFilter}},
 \code{\link{DratioFilter}}, \code{\link{PercentMissingFilter}} or \code{\link{BlankFlag}}.}
 
+\item{...}{Optional parameters. For \code{object} being an \code{XcmsExperiment}:
+parameters for the \code{\link[=featureValues]{featureValues()}} call.}
+
 \item{assay}{For filtering of \code{SummarizedExperiment} objects only. Indicates
 which assay the filtering will be based on. Note that the features for the
 entire object will be removed, but the computations are performed on a single
-assay. Default is 1, which mean the first assay of the \code{object} will
+assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
@@ -44,12 +48,14 @@ the user input threshold
 \description{
 The `PercentMissingFilter` class and method enable users to filter features
 from an `XcmsExperiment` or `SummarizedExperiment` object based on the
-percentage of missing values for each features and filters them according to
-a provided threshold.
+percentage (values from 1 to 100) of missing values for each features in
+different sample groups and filters them according to a provided threshold.
 
 This `filter` is part of the possible dispatch of the generic function
-`filterFeatures`. The features *above* the user input threshold will be
-removed by calling the `filterFeatures` function.
+`filterFeatures`. Features with a percentage of missing values *higher* (`>`)
+than the user input threshold in all sample groups will be removed (i.e.
+features for which the proportion of missing values is below (`<=`) the
+threshold in at least one sample group will be retained).
 }
 \seealso{
 Other Filter features in xcms: 

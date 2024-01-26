@@ -17,9 +17,12 @@ test_that("RsdFilter", {
 
     #test error message when index too small of too large
     filter_1 <- RsdFilter(qcIndex = integer())
-    filter_2 <- RsdFilter(qcIndex = c(sampleData(xmse_full)$sample_type == "QC", TRUE))
+    filter_2 <- RsdFilter(qcIndex = c(sampleData(xmse_full)$sample_type == "QC",
+                                      TRUE))
+    filter_3 <- RsdFilter(qcIndex = c(2, 15))
     expect_error(filterFeatures(xmse_full, filter_1))
     expect_error(filterFeatures(xmse_full, filter_2))
+    expect_error(filterFeatures(xmse_full, filter_3))
 
     #test in SummarizedExperiment object
     res <- quantify(xmse_full)
@@ -27,9 +30,9 @@ test_that("RsdFilter", {
     filtered_res <- filterFeatures(res, filter)
     expect_lte(nrow(filtered_res), nrow(res))
 
-    #test same amount of features in sumexp and xcmsobjectg
+    #test same amount of features in in both object type
     expect_equal(nrow(featureDefinitions(filtered_xmse)),
-               nrow(filtered_res)) # this is not equal, normal ??
+               nrow(filtered_res))
 })
 
 test_that("DratioFilter", {
@@ -43,8 +46,9 @@ test_that("DratioFilter", {
     expect_equal(filter@mad, FALSE)
 
     #test with XcmsExperiment object
-    filter <- DratioFilter(qcIndex = sampleData(xmse_full)$sample_type == "QC",
-                           studyIndex = sampleData(xmse_full)$sample_type == "study")
+    filter <- DratioFilter(
+        qcIndex = sampleData(xmse_full)$sample_type == "QC",
+        studyIndex = sampleData(xmse_full)$sample_type == "study")
     filtered_xmse <- filterFeatures(xmse_full, filter)
     expect_lte(nrow(featureDefinitions(filtered_xmse)),
                nrow(featureDefinitions(xmse_full)))
@@ -56,11 +60,9 @@ test_that("DratioFilter", {
     filtered_res <- filterFeatures(res, filter)
     expect_lte(nrow(filtered_res), nrow(res))
 
-    #test same amount of features in sumexp and xcmsobject
+    #test same amount of features in in both object type
     expect_equal(nrow(featureDefinitions(filtered_xmse)),
-                 nrow(filtered_res)) # this is not equal, normal ??
-
-
+                 nrow(filtered_res))
 })
 
 test_that("PercentMissingFilter", {
@@ -82,7 +84,7 @@ test_that("PercentMissingFilter", {
     filtered_res <- filterFeatures(res, filter)
     expect_lte(nrow(filtered_res), nrow(res))
 
-    #test same amount of features in sumexp and xcmsobject
+    #test same amount of features in in both object type
     expect_equal(nrow(featureDefinitions(filtered_xmse)),
                  nrow(filtered_res))
 })
@@ -101,12 +103,16 @@ test_that("BlankFlag", {
         qcIndex = sampleData(xmse_full)$sample_type == "QC",
         blankIndex = sampleData(xmse_full)$sample_type == "study")
     filtered_xmse <- filterFeatures(xmse_full, filter)
-    expect_true("possible_contaminants" %in% colnames(featureDefinitions(filtered_xmse)))
+    expect_true("possible_contaminants" %in%
+                    colnames(featureDefinitions(filtered_xmse)))
 
-    #test in SummarizedExperiment object - - using study sample as blanks
+    #test in SummarizedExperiment object - using study sample as blanks
     res <- quantify(xmse_full)
     filter <- BlankFlag(qcIndex = res$sample_type == "QC",
                         blankIndex = res$sample_type == "study")
     filtered_res <- filterFeatures(res, filter)
     expect_true("possible_contaminants" %in% colnames(rowData(filtered_res)))
+
+    expect_equal(featureDefinitions(filtered_xmse)$possible_contaminants,
+                 rowData(filtered_res)$possible_contaminants)
 })

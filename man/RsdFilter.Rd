@@ -8,24 +8,24 @@
 \usage{
 RsdFilter(threshold = 0.3, qcIndex = integer(), na.rm = TRUE, mad = FALSE)
 
-\S4method{filterFeatures}{XcmsResult,RsdFilter}(object, filter)
+\S4method{filterFeatures}{XcmsResult,RsdFilter}(object, filter, ...)
 
 \S4method{filterFeatures}{SummarizedExperiment,RsdFilter}(object, filter, assay = 1)
 }
 \arguments{
 \item{threshold}{`numeric` value representing the threshold. Features with a
-coefficient of variation higher than this will be removed from the entire
-dataset.}
+coefficient of variation *strictly higher* (`>`) than this will be removed
+from the entire dataset.}
 
-\item{qcIndex}{`integer` (or logical) vector corresponding to the indexes of
-QC samples.}
+\item{qcIndex}{`integer` (or `logical`) vector corresponding to the indices
+of QC samples.}
 
 \item{na.rm}{`logical` indicates whether missing values (`NA`) should be
 removed prior to the calculations.}
 
-\item{mad}{`logical` indicates whether the *Median Absolute Deviation*
-(MAD) should be used instead of the standard deviation. This is suggested
-for non-gaussian distributed data.}
+\item{mad}{`logical` indicates whether the *Median Absolute Deviation* (MAD)
+should be used instead of the standard deviation. This is suggested for
+non-gaussian distributed data.}
 
 \item{object}{\code{XcmsExperiment} or \code{SummarizedExperiment}. For an
 \code{XcmsExperiment} object, the \code{featureValues(object)} will be evaluated, and
@@ -36,10 +36,13 @@ filtered.}
 filtering. It can be one of the following classes: \code{\link{RsdFilter}},
 \code{\link{DratioFilter}}, \code{\link{PercentMissingFilter}} or \code{\link{BlankFlag}}.}
 
+\item{...}{Optional parameters. For \code{object} being an \code{XcmsExperiment}:
+parameters for the \code{\link[=featureValues]{featureValues()}} call.}
+
 \item{assay}{For filtering of \code{SummarizedExperiment} objects only. Indicates
 which assay the filtering will be based on. Note that the features for the
 entire object will be removed, but the computations are performed on a single
-assay. Default is 1, which mean the first assay of the \code{object} will
+assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
@@ -48,12 +51,17 @@ input object minus the features that did not met the user input threshold.
 }
 \description{
 The `RsdFilter` class and methods enable users to filter features from an
-`XcmsExperiment` or `SummarizedExperiment` object based on their coefficent
-of variation for a specified threshold.
+`XcmsExperiment` or `SummarizedExperiment` object based on their relative
+standard deviation (coefficient of variation) for a specified threshold.
 
 This `filter` is part of the possible dispatch of the generic function
-`filterFeatures`. Features *above* the user-input threshold will be
+`filterFeatures`. Features *above* (`>`) the user-input threshold will be
 removed from the entire dataset.
+}
+\note{
+It is assumed that the abundance values are in natural scale. Abundances in
+log scale should be first transformed to natural scale before calculating
+the RSD.
 }
 \seealso{
 Other Filter features in xcms: 

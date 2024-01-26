@@ -13,23 +13,23 @@ BlankFlag(
   na.rm = TRUE
 )
 
-\S4method{filterFeatures}{XcmsResult,BlankFlag}(object, filter)
+\S4method{filterFeatures}{XcmsResult,BlankFlag}(object, filter, ...)
 
 \S4method{filterFeatures}{SummarizedExperiment,BlankFlag}(object, filter, assay = 1)
 }
 \arguments{
 \item{threshold}{`numeric` indicates the minimum difference
-required between the mean of a feature in samples compared to the mean of
-the same feature in blanks for it to not be considered a possible
-contaminant. For example, the default threshold of 2 signifies that the mean
-of the features in samples has to be at least twice the mean in blanks for
-it not to be flagged as a possible contaminant.}
+required between the mean abundance of a feature in samples compared to the
+mean abundance of the same feature in blanks for it to not be considered a
+possible contaminant. For example, the default threshold of 2 signifies that
+the mean abundance of the features in samples has to be at least twice the
+mean abundance in blanks for it to not be flagged as a possible contaminant.}
 
 \item{blankIndex}{`integer` (or `logical`) vector corresponding to the
-indexes of blank samples.}
+indices of blank samples.}
 
 \item{qcIndex}{`integer` (or `logical`) vector corresponding to the
-indexes of quality control (QC) samples.}
+indices of quality control (QC) samples.}
 
 \item{na.rm}{`logical` indicates whether missing values (`NA`) should be
 removed prior to the calculations.}
@@ -43,10 +43,13 @@ filtered.}
 filtering. It can be one of the following classes: \code{\link{RsdFilter}},
 \code{\link{DratioFilter}}, \code{\link{PercentMissingFilter}} or \code{\link{BlankFlag}}.}
 
+\item{...}{Optional parameters. For \code{object} being an \code{XcmsExperiment}:
+parameters for the \code{\link[=featureValues]{featureValues()}} call.}
+
 \item{assay}{For filtering of \code{SummarizedExperiment} objects only. Indicates
 which assay the filtering will be based on. Note that the features for the
 entire object will be removed, but the computations are performed on a single
-assay. Default is 1, which mean the first assay of the \code{object} will
+assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
@@ -63,7 +66,7 @@ between the intensity of a feature in blanks compared to the intensity in the
 samples.
 
 This class and method are part of the possible dispatch of the
-generic function `filterFeatures`. Features *above* the user-input
+generic function `filterFeatures`. Features *below* (`<`) the user-input
 threshold will be flagged by calling the `filterFeatures` function. This
 means that an extra column will be created in `featureDefinitions` or
 `rowData` called `possible_contaminants` with a logical value for each
