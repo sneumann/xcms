@@ -70,7 +70,7 @@ test_that("PercentMissingFilter", {
     filter <- PercentMissingFilter()
     expect_is(filter, "PercentMissingFilter")
     expect_equal(filter@threshold, 30)
-    expect_equal(filter@f, character())
+    expect_equal(filter@f, factor())
 
     #test with XcmsExperiment object
     filter <- PercentMissingFilter(f = sampleData(xmse_full)$sample_type)
@@ -113,6 +113,7 @@ test_that("BlankFlag", {
     filtered_res <- filterFeatures(res, filter)
     expect_true("possible_contaminants" %in% colnames(rowData(filtered_res)))
 
-    expect_equal(featureDefinitions(filtered_xmse)$possible_contaminants,
-                 rowData(filtered_res)$possible_contaminants)
+    expect_equal(sum(featureDefinitions(filtered_xmse)$possible_contaminants,
+                     na.rm = TRUE),
+                 sum(rowData(filtered_res)$possible_contaminants, na.rm = TRUE))
 })

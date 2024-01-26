@@ -452,8 +452,8 @@ setMethod("filterFeatures",
               if (length(filter@f) != length(object))
                   stop("'f' must be same lenght as object")
               fts_idx <- c()
-              for (i in levels(f)){
-                  spl_idx <- which(f == i)
+              for (i in levels(filter@f)){
+                  spl_idx <- which(filter@f == i)
                   vals <- rowPercentMissing(featureValues(object, ...)[, spl_idx])
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
@@ -473,11 +473,11 @@ setMethod("filterFeatures",
           signature(object = "SummarizedExperiment",
                     filter = "PercentMissingFilter"),
           function(object, filter, assay = 1){
-              .check_index_range(filter@f, ncol(object), name = "f")
-              f <- factor(filter@f)
+              if (length(filter@f) != ncol(object))
+                  stop("'f' must be same lenght as object")
               fts_idx <- c()
-              for (i in levels(f)){
-                  spl_idx <- which(f == i)
+              for (i in levels(filter@f)){
+                  spl_idx <- which(filter@f == i)
                   vals <- rowPercentMissing(assay(object, assay)[, spl_idx])
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
@@ -584,8 +584,8 @@ setMethod("filterFeatures",
               vals <- rowBlank(x = x, y = y,
                                na.rm = filter@na.rm,
                                threshold = filter@threshold)
-              message(length(featureValues(object)) - sum(vals),
-                            "features were flagged")
+              message(sum(vals, na.rm = TRUE) - nrow(featureValues(object)),
+                            " features were flagged")
               featureDefinitions(object)$possible_contaminants <- vals
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
@@ -610,8 +610,8 @@ setMethod("filterFeatures",
               vals <- rowBlank(x = x, y = y,
                                na.rm = filter@na.rm,
                                threshold = filter@threshold)
-              message(length(object) - sum(vals, na.rm = TRUE),
-                      "features were flagged")
+              message(sum(vals, na.rm = TRUE) - length(object),
+                      " features were flagged")
               rowData(object)$possible_contaminants <- vals
               object
           }
@@ -619,6 +619,6 @@ setMethod("filterFeatures",
 
 #' @noRd
 .check_index_range <- function(x, l, name = "") {
-    if (!all(x %in% seq_len(l)))
+    if (!all(x %in% seq_len(l)) | length(x) == 0)
         stop(name, " should be between 1 and ", l)
 }
