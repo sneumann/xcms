@@ -2575,3 +2575,16 @@ test_that("reconstructChromPeakSpectra works", {
     expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
                  "None of the provided")
 })
+
+test_that("fillChromPeaks,XcmsExperiment works with verboseBetaColumns", {
+    p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000),
+                       verboseBetaColumns = TRUE)
+    res <- findChromPeaks(od_x, param = p)
+    expect_true(all(c("beta_cor", "beta_snr") %in% colnames(chromPeaks(res))))
+    p <- PeakDensityParam(sampleGroups = rep(1, 3))
+    res <- groupChromPeaks(res, param = p)
+    res <- fillChromPeaks(res, ChromPeakAreaParam())
+    pks_det <- chromPeaks(res)[!chromPeakData(res)$is_filled, ]
+    pks_fil <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
+    expect_true(sum(is.na(pks_fil[, "beta_cor"])) < 4)
+})

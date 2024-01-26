@@ -50,10 +50,10 @@ fixedRt(object)
 fixedMz(object)
 
 ChromPeakAreaParam(
-  mzmin = function(z) quantile(z, probs = 0.25),
-  mzmax = function(z) quantile(z, probs = 0.75),
-  rtmin = function(z) quantile(z, probs = 0.25),
-  rtmax = function(z) quantile(z, probs = 0.75)
+  mzmin = function(z) quantile(z, probs = 0.25, names = FALSE),
+  mzmax = function(z) quantile(z, probs = 0.75, names = FALSE),
+  rtmin = function(z) quantile(z, probs = 0.25, names = FALSE),
+  rtmax = function(z) quantile(z, probs = 0.75, names = FALSE)
 )
 
 \S4method{expandMz}{FillChromPeaksParam}(object)
@@ -196,8 +196,8 @@ area is defined analogously. Alternatively, by setting \code{mzmin = median},
 \code{ChromPeakAreaParam}, the median \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
 \code{"rtmax"} values from all detected chromatographic peaks of a feature
 would be used instead.
-In contrast to the  \code{FillChromPeaksParam} approach this method uses the
-actual identified chromatographic peaks of a feature to define the area
+In contrast to the  \code{FillChromPeaksParam} approach this method uses (all)
+identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.
 }
 

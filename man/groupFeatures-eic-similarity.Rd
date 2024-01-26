@@ -115,6 +115,12 @@ Features with a value of \code{NA} in \code{featureDefinitions(object)$feature_g
 will be skipped/not considered for feature grouping.
 }
 \note{
+At present the \code{\link[=featureChromatograms]{featureChromatograms()}} function is used to extract the
+EICs for each feature, which does however use one m/z and rt range for
+each feature and the EICs do thus not exactly represent the identified
+chromatographic peaks of each sample (i.e. their specific m/z and
+retention time ranges).
+
 While being possible to be performed on the full data set without prior
 feature grouping, this is not suggested for the following reasons: I) the
 selection of the top \code{n} samples with the highest signal for the

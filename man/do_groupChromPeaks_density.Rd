@@ -14,13 +14,14 @@ do_groupChromPeaks_density(
   binSize = 0.25,
   maxFeatures = 50,
   sleep = 0,
-  index = seq_len(nrow(peaks))
+  index = seq_len(nrow(peaks)),
+  ppm = 0
 )
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
-retention times of the identified chromatographic peaks in all samples of an
-experiment. Required columns are \code{"mz"}, \code{"rt"} and
+retention times of the identified chromatographic peaks in all samples
+of an experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 
@@ -55,6 +56,17 @@ iterations and plot the result from the current iteration.}
 
 \item{index}{An optional \code{integer} providing the indices of the peaks in the
 original peak matrix.}
+
+\item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
+error for the clustering/grouping (in parts per million).
+For \code{PeakDensityParam}: \code{numeric(1)} to define m/z-dependent, increasing
+m/z bin sizes. If \code{ppm = 0} (the default) m/z bins are defined by the
+sequence of values from the smallest to the larges m/z value with a
+constant bin size of \code{binSize}. For \code{ppm} > 0 the size of each bin is
+increased in addition by the \code{ppm} of the (upper) m/z boundary of the
+bin. The maximal bin size (used for the largest m/z values) would then
+be \code{binSize} plus \code{ppm} parts-per-million of the largest m/z value of
+all peaks in the data set.}
 }
 \value{
 A \code{data.frame}, each row representing a (mz-rt) feature (i.e. a peak group)
@@ -77,7 +89,12 @@ multiple peaks from the same sample could be assigned to a feature.
 \description{
 The \code{do_groupChromPeaks_density} function performs chromatographic peak
 grouping based on the density (distribution) of peaks, found in different
-samples, along the retention time axis in slices of overlapping mz ranges.
+samples, along the retention time axis in slices of overlapping m/z ranges.
+By default (with parameter \code{ppm = 0}) these m/z ranges have all the same
+(constant) size (depending on parameter \code{binSize}). For values of \code{ppm}
+larger than 0 the m/z bins (ranges or slices) will have increasing sizes
+depending on the m/z value. This better models the m/z-dependent
+measurement error/precision seen on some MS instruments.
 }
 \details{
 For overlapping slices along the mz dimension, the function

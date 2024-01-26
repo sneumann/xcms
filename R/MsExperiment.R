@@ -2,8 +2,7 @@
 setMethod("filterRt", "MsExperiment",
           function(object, rt = numeric(), ...) {
               message("Filter spectra")
-              object <- .mse_filter_spectra(object, filterRt, rt = rt, ...)
-              object
+              filterSpectra(object, filterRt, rt = rt, ...)
           })
 
 #' @rdname XcmsExperiment
@@ -24,8 +23,7 @@ setMethod("filterMz", "MsExperiment",
 setMethod("filterMsLevel", "MsExperiment",
           function(object, msLevel. = uniqueMsLevels(object)) {
               message("Filter spectra")
-              .mse_filter_spectra(object, filterMsLevel,
-                                  msLevel. = msLevel.)
+              filterSpectra(object, filterMsLevel, msLevel. = msLevel.)
           })
 
 #' @rdname XcmsExperiment
@@ -93,7 +91,7 @@ setMethod("polarity", "MsExperiment", function(object) {
 #' @rdname XcmsExperiment
 setMethod(
     "filterIsolationWindow", "MsExperiment", function(object, mz = numeric()) {
-        .mse_filter_spectra(object, filterIsolationWindow, mz = mz)
+        filterSpectra(object, filterIsolationWindow, mz = mz)
     })
 
 #' @rdname XcmsExperiment

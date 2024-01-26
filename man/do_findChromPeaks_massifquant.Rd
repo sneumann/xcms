@@ -202,8 +202,8 @@ detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 \code{\link{massifquant}} for the standard user interface method.
 
 Other core peak detection functions: 
-\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_matchedFilter}()},
 \code{\link{do_findPeaks_MSW}()}
 }

@@ -245,9 +245,7 @@
 #'   `"rtmin"` and `"rtmax"` with the m/z and retention time range for each
 #'   feature (row) in `object`. By default these represent the minimal m/z
 #'   and retention times as well as maximal m/z and retention times for
-#'   the chromatographi peaks assigned to that feature. Note that if in
-#'   one sample more than one chromatographic peak is assigned to a feature
-#'   only the one with the higher intensity is considered. Parameter
+#'   all chromatographic peaks assigned to that feature. Parameter
 #'   `features` allows to extract these values for selected features only.
 #'   Parameters `mzmin`, `mzmax`, `rtmin` and `rtmax` allow to define
 #'   the function to calculate the reported `"mzmin"`, `"mzmax"`, `"rtmin"`
@@ -408,7 +406,7 @@
 #'
 #' @param features For `filterFeatureDefinitions` and `featureArea`: `logical`,
 #'     `integer` or `character` defining the features to keep or from which
-#'     to extract the feature are, respectively. See function description
+#'     to extract the feature area, respectively. See function description
 #'     for more information.
 #'
 #' @param file For `filterFile`: `integer` with the indices of the samples
@@ -779,7 +777,7 @@ setMethod(
     function(object, mz = numeric()) {
         if (length(mz) > 1L)
             mz <- mz[1L]
-        object <- .mse_filter_spectra(object, filterIsolationWindow, mz = mz)
+        object <- filterSpectra(object, filterIsolationWindow, mz = mz)
         if (hasChromPeaks(object) && length(mz) &&
             all(c("isolationWindowLowerMz", "isolationWindowUpperMz") %in%
                 colnames(object@chromPeakData))) {
@@ -1623,12 +1621,13 @@ setMethod(
     "featureChromatograms", "XcmsExperiment",
     function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
              features = character(), return.type = "XChromatograms",
-             chunkSize = 2L, ..., progressbar = TRUE, BPPARAM = bpparam()) {
+             chunkSize = 2L, mzmin = min, mzmax = max, rtmin = min,
+             rtmax = max, ..., progressbar = TRUE, BPPARAM = bpparam()) {
         return.type <- match.arg(return.type)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        area <- featureArea(object, mzmin = min, mzmax = max, rtmin = min,
-                            rtmax = max, features = features, msLevel = 1:10)
+        area <- featureArea(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                            rtmax = rtmax, features = features)
         if (expandRt != 0) {
             area[, "rtmin"] <- area[, "rtmin"] - expandRt
             area[, "rtmax"] <- area[, "rtmax"] + expandRt
@@ -1760,11 +1759,14 @@ setMethod(
         if (!hasFeatures(object, msLevel = msLevel))
             stop("No feature definitions for MS level ", msLevel, " present.")
         ## Define region to integrate from for each file
+        feature_ids <- rownames(featureDefinitions(object, msLevel = msLevel))
         fr <- .features_ms_region(object, mzmin = param@mzmin,
                                   mzmax = param@mzmax, rtmin = param@rtmin,
-                                  rtmax = param@rtmax, msLevel = msLevel)
-        fr <- cbind(fr, mzmed = featureDefinitions(object)$mzmed)
+                                  rtmax = param@rtmax, features = feature_ids)
+        fr <- cbind(
+            fr, mzmed = featureDefinitions(object, msLevel = msLevel)$mzmed)
         fvals <- featureValues(object, value = "index", msLevel = msLevel)
+        ## For each sample, keep features with some missing values.
         pal <- lapply(seq_len(ncol(fvals)), function(i) {
             fr[is.na(fvals[, i]), , drop = FALSE]
         })

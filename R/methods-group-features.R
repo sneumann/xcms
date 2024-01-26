@@ -697,6 +697,12 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'
 #' @note
 #'
+#' At present the [featureChromatograms()] function is used to extract the
+#' EICs for each feature, which does however use one m/z and rt range for
+#' each feature and the EICs do thus not exactly represent the identified
+#' chromatographic peaks of each sample (i.e. their specific m/z and
+#' retention time ranges).
+#'
 #' While being possible to be performed on the full data set without prior
 #' feature grouping, this is not suggested for the following reasons: I) the
 #' selection of the top `n` samples with the highest signal for the
@@ -932,6 +938,12 @@ setMethod(
                 }
                 if (length(idx) > 1) {
                     eics <- do.call(
+                        ## NOTE: chromPeakChromatograms should be used here
+                        ## instead, since featureChromatograms uses the same
+                        ## m/z - rt boundary for all EICs and does thus not
+                        ## exactly represent the chromatographic peaks.
+                        ## TODO: check if we can't use chromPeakChromatograms
+                        ## instead (slower performance?).
                         featureChromatograms,
                         args = c(list(obj_sub, features = rownames(fvals)[idx],
                                       filled = TRUE, progressbar = FALSE),

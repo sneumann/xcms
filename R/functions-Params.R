@@ -93,7 +93,7 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
-               extendLengthMSW = extendLengthMSW, 
+               extendLengthMSW = extendLengthMSW,
                verboseBetaColumns=verboseBetaColumns))
 }
 
@@ -223,7 +223,7 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
-               extendLengthMSW = extendLengthMSW, 
+               extendLengthMSW = extendLengthMSW,
                verboseBetaColumns = verboseBetaColumns,
                snthreshIsoROIs = snthreshIsoROIs, maxIso = as.integer(maxIso),
                maxCharge = as.integer(maxCharge),
@@ -232,14 +232,14 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 #' @rdname groupChromPeaks
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
-                                minFraction = 0.5, minSamples = 1,
-                             binSize = 0.25, maxFeatures = 50) {
+                             minFraction = 0.5, minSamples = 1,
+                             binSize = 0.25, ppm = 0, maxFeatures = 50) {
     if (length(sampleGroups) == 0 | any(is.na(sampleGroups)))
         stop("Argument 'sampleGroups' has to be defined. It should not ",
              "contain 'NA's")
     new("PeakDensityParam", sampleGroups = sampleGroups, bw = bw,
         minFraction = minFraction, minSamples = minSamples,
-        binSize = binSize, maxFeatures = maxFeatures)
+        binSize = binSize, ppm = ppm, maxFeatures = maxFeatures)
 }
 
 #' @rdname groupChromPeaks
@@ -349,12 +349,13 @@ MergeNeighboringPeaksParam <- function(expandRt = 2, expandMz = 0, ppm = 10,
 }
 
 #' @rdname fillChromPeaks
-ChromPeakAreaParam <- function(mzmin = function(z) quantile(z, probs = 0.25),
-                               mzmax = function(z) quantile(z, probs = 0.75),
-                               rtmin = function(z) quantile(z, probs = 0.25),
-                               rtmax = function(z) quantile(z, probs = 0.75)) {
-    new("ChromPeakAreaParam", mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-        rtmax = rtmax)
+ChromPeakAreaParam <-
+    function(mzmin = function(z) quantile(z, probs = 0.25, names = FALSE),
+             mzmax = function(z) quantile(z, probs = 0.75, names = FALSE),
+             rtmin = function(z) quantile(z, probs = 0.25, names = FALSE),
+             rtmax = function(z) quantile(z, probs = 0.75, names = FALSE)) {
+        new("ChromPeakAreaParam", mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+            rtmax = rtmax)
 }
 
 #' @rdname refineChromPeaks

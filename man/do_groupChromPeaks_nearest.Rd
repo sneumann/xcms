@@ -16,8 +16,8 @@ do_groupChromPeaks_nearest(
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
-retention times of the identified chromatographic peaks in all samples of an
-experiment. Required columns are \code{"mz"}, \code{"rt"} and
+retention times of the identified chromatographic peaks in all samples
+of an experiment. Required columns are \code{"mz"}, \code{"rt"} and
 \code{"sample"}. The latter should contain \code{numeric} values representing
 the index of the sample in which the peak was found.}
 

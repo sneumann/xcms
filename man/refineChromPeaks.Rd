@@ -108,7 +108,8 @@ value by which the m/z range of each chromatographic peak is expanded
 
 \item{ppm}{For \code{MergeNeighboringPeaksParam}: \code{numeric(1)} defining a m/z
 relative value (in parts per million) by which the m/z range of each
-chromatographic peak is expanded to check for overlapping peaks.}
+chromatographic peak is expanded (on each side) to check for overlapping
+peaks.}
 
 \item{minProp}{For \code{MergeNeighboringPeaksParam}: \code{numeric(1)} between \code{0}
 and \code{1} representing the proporion of intensity required for peaks to be

@@ -185,3 +185,19 @@ test_that(".chromPeakData works", {
     res <- .chromPeakData(xmse, msLevel = 2L)
     expect_equal(res, xmse@chromPeakData[integer(), ])
 })
+
+test_that(".features_ms_region works", {
+    res <- .features_ms_region(
+        xod_xgrg, features = rownames(featureDefinitions(xod_xgrg)))
+    expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
+    expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
+
+    expect_error(.features_ms_region(xod_xgrg,
+                                     features = c("a", "b")), "out of")
+
+    res <- .features_ms_region(
+        xmseg, features = rownames(featureDefinitions(xmseg)))
+    expect_equal(rownames(res), rownames(featureDefinitions(xmseg)))
+})

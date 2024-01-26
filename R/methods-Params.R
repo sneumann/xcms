@@ -1002,6 +1002,13 @@ setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
         return(object)
 })
 
+#' @rdname groupChromPeaks
+setMethod("ppm", "PeakDensityParam", function(object) {
+    if (.hasSlot(object, "ppm"))
+        object@ppm
+    else 0.0
+})
+
 
 ############################################################
 ## MzClustParam

@@ -94,7 +94,6 @@ featureArea(
   mzmax = max,
   rtmin = min,
   rtmax = max,
-  msLevel = integer(),
   features = character()
 )
 
@@ -295,7 +294,7 @@ chromatographic peaks assigned to that feature. Defaults to
 
 \item{features}{For \code{filterFeatureDefinitions} and \code{featureArea}: \code{logical},
 \code{integer} or \code{character} defining the features to keep or from which
-to extract the feature are, respectively. See function description
+to extract the feature area, respectively. See function description
 for more information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
@@ -620,9 +619,7 @@ analysis. This can be overruled with \code{keepAdjustedRtime = TRUE}.
 \code{"rtmin"} and \code{"rtmax"} with the m/z and retention time range for each
 feature (row) in \code{object}. By default these represent the minimal m/z
 and retention times as well as maximal m/z and retention times for
-the chromatographi peaks assigned to that feature. Note that if in
-one sample more than one chromatographic peak is assigned to a feature
-only the one with the higher intensity is considered. Parameter
+all chromatographic peaks assigned to that feature. Parameter
 \code{features} allows to extract these values for selected features only.
 Parameters \code{mzmin}, \code{mzmax}, \code{rtmin} and \code{rtmax} allow to define
 the function to calculate the reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}

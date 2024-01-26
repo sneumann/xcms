@@ -7,6 +7,9 @@ test_that("do_groupChromPeaks_density works", {
     res_2 <- do_groupChromPeaks_density(fts, sampleGroups = grps,
                                       minFraction = 0.9)
     expect_true(nrow(res) > nrow(res_2))
+
+    res_3 <- do_groupChromPeaks_density(fts, sampleGroups = grps, ppm = 20)
+    expect_equal(nrow(res), nrow(res_3))
 })
 
 test_that("do_groupPeaks_mzClust works", {

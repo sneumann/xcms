@@ -8,22 +8,31 @@
 #'
 #' The `do_groupChromPeaks_density` function performs chromatographic peak
 #' grouping based on the density (distribution) of peaks, found in different
-#' samples, along the retention time axis in slices of overlapping mz ranges.
+#' samples, along the retention time axis in slices of overlapping m/z ranges.
+#' By default (with parameter `ppm = 0`) these m/z ranges have all the same
+#' (constant) size (depending on parameter `binSize`). For values of `ppm`
+#' larger than 0 the m/z bins (ranges or slices) will have increasing sizes
+#' depending on the m/z value. This better models the m/z-dependent
+#' measurement error/precision seen on some MS instruments.
 #'
-#' @details For overlapping slices along the mz dimension, the function
+#' @details
+#'
+#' For overlapping slices along the mz dimension, the function
 #' calculates the density distribution of identified peaks along the
 #' retention time axis and groups peaks from the same or different samples
 #' that are close to each other. See (Smith 2006) for more details.
 #'
-#' @note The default settings might not be appropriate for all LC/GC-MS setups,
+#' @note
+#'
+#' The default settings might not be appropriate for all LC/GC-MS setups,
 #' especially the `bw` and `binSize` parameter should be adjusted
 #' accordingly.
 #'
 #' @param peaks A `matrix` or `data.frame` with the mz values and
-#' retention times of the identified chromatographic peaks in all samples of an
-#' experiment. Required columns are `"mz"`, `"rt"` and
-#' `"sample"`. The latter should contain `numeric` values representing
-#' the index of the sample in which the peak was found.
+#'     retention times of the identified chromatographic peaks in all samples
+#'     of an experiment. Required columns are `"mz"`, `"rt"` and
+#'     `"sample"`. The latter should contain `numeric` values representing
+#'     the index of the sample in which the peak was found.
 #'
 #' @param index An optional `integer` providing the indices of the peaks in the
 #'     original peak matrix.
@@ -83,7 +92,8 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                        bw = 30, minFraction = 0.5,
                                        minSamples = 1, binSize = 0.25,
                                        maxFeatures = 50, sleep = 0,
-                                       index = seq_len(nrow(peaks))) {
+                                       index = seq_len(nrow(peaks)),
+                                       ppm = 0) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
@@ -120,9 +130,10 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     rtRange <- range(peaks[, "rt"])
 
     ## Define the mass slices and the index in the peaks matrix with an mz
-    ## value >= mass[i].
-    mass <- seq(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
-                by = binSize / 2)
+    ## value >= mass[i]. If ppm != 0 the size of the individual bins will
+    ## be dependend on the m/z value.
+    mass <- breaks_ppm(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
+                       by = binSize / 2, ppm = ppm / 2)
     masspos <- findEqualGreaterM(peaks[, "mz"], mass)
 
     densFrom <- rtRange[1] - 3 * bw

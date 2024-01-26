@@ -1,3 +1,18 @@
+Changes in version 4.1.6
+----------------------
+
+- Import `filterSpectra` from `MsExperiment`.
+- Import `breaks_ppm` from `MsCoreUtils`.
+- Update `featureArea` function to consider all chromatographic peaks per
+  feature, not only the one with the highest intensity. As a consequence,
+  returned m/z and rt ranges might be higher which has an influence in
+  `featureChromatograms`, EIC-based feature grouping and, to a lesser extent
+  also in gap-filling. Related documentation was updated.
+- Improve performance of the `featureArea` function (and related of the
+  `PeakAreaParam`-based gap filling).
+- Add parameter `ppm` to `PeakDensityParam` to enable peak-density-based
+  correspondence throgh m/z-dependent bins along the m/z.
+
 Changes in version 4.1.5
 ----------------------
 

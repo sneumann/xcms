@@ -133,7 +133,8 @@
                 cp, sampleGroups = sampleGroups(param), bw = bw(param),
                 minFraction = minFraction(param),
                 minSamples = minSamples(param), binSize = binSize(param),
-                maxFeatures = maxFeatures(param), index = index)
+                maxFeatures = maxFeatures(param), ppm = ppm(param),
+                index = index)
         },
         MzClustParam = {
             tmp <- do_groupPeaks_mzClust(
@@ -933,15 +934,50 @@
 
 #' @rdname XcmsExperiment
 featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
-                        rtmax = max, msLevel = integer(),
-                        features = character()) {
+                        rtmax = max, features = character()) {
     if (!hasFeatures(object))
         stop("No correspondence results available. Please run ",
              "'groupChromPeaks' first.")
-    if (!length(msLevel))
-        msLevel <- seq_len(10)
+    if (!length(features))
+        features <- rownames(featureDefinitions(object))
     .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                        rtmax = rtmax, msLevel = msLevel, features = features)
+                        rtmax = rtmax, features = features)
+}
+
+#' @title Define MS regions for features
+#'
+#' @param x `XcmsExperiment` or `XCMSnExp`.
+#'
+#' @param mzmin, mzmax, rtmin, rtmax `function` to be applied to the values
+#'     (rtmin, ...) of the chrom peaks. Defaults to `median` but would also
+#'     work with `mean` etc.
+#'
+#' @param features `character` with the IDs of the features. Mandatory!
+#'
+#' @return `matrix` with columns `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"`
+#'     defining the range of
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.features_ms_region <- function(x, mzmin = median, mzmax = median,
+                                rtmin = median, rtmax = median,
+                                features = character()) {
+    features <- .i2index(features, ids = rownames(featureDefinitions(x)),
+                         "features")
+    pks <- .chromPeaks(x)[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+    res <- do.call(
+        rbind, lapply(featureDefinitions(x)$peakidx[features],
+                      function(i) {
+                          ## maybe consider/drop gap-filled peaks?
+                          c(mzmin(pks[i, "mzmin"]),
+                            mzmax(pks[i, "mzmax"]),
+                            rtmin(pks[i, "rtmin"]),
+                            rtmax(pks[i, "rtmax"]))
+                      }))
+    rownames(res) <- rownames(featureDefinitions(x))[features]
+    colnames(res) <- c("mzmin", "mzmax", "rtmin", "rtmax")
+    res
 }
 
 #' *Reconstruct* MS2 spectra for DIA data:

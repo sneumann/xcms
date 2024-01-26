@@ -91,8 +91,8 @@ chromatographic peaks.
 \code{\link[=manualChromPeaks]{manualChromPeaks()}} to manually add/define chromatographic peaks.
 
 Other peak detection methods: 
-\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},
 \code{\link{findPeaks-MSW}}

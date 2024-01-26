@@ -569,18 +569,29 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' [XCMSnExp-class] object. The function returns for each feature the
 #' extracted ion chromatograms (along with all associated chromatographic
 #' peaks) in each sample. The chromatogram is extracted from the m/z - rt
-#' region including all chromatographic peaks of that features (i.e. based on
-#' the ranges of `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"` of all
-#' chromatographic peaks of the feature).
+#' region that includes **all** chromatographic peaks of a feature. By default,
+#' this region is defined using the range of the chromatographic peaks' m/z
+#' and retention times (with `mzmin = min`, `mzmax = max`, `rtmin = min` and
+#' `rtmax = max`). For some features, and depending on the data, the m/z and
+#' rt range can thus be relatively large. The boundaries of the m/z - rt
+#' region can also be restricted by changing parameters `mzmin`, `mzmax`,
+#' `rtmin` and `rtmax` to a different functions, such as `median`.
 #'
 #' By default only chromatographic peaks associated with a feature are
-#' included. For `object` being a `XCMSnExp` object parameter `include`
-#' allows also to return all chromatographic peaks with their apex
-#' position within the selected region (`include = "apex_within"`) or any
-#' chromatographic peak overlapping the m/z and retention time range
-#' (`include = "any"`).
+#' included in the returned [XChromatograms] object. For `object` being an
+#' `XCMSnExp` object parameter `include` allows also to return all
+#' chromatographic peaks with their apex position within the selected
+#' region (`include = "apex_within"`) or any chromatographic peak overlapping
+#' the m/z and retention time range (`include = "any"`).
 #'
 #' @note
+#'
+#' The EIC data of a feature is extracted from every sample using the same
+#' m/z - rt area. The EIC in a sample does thus not exactly represent the
+#' signal of the actually identified chromatographic peak in that sample.
+#' The [chromPeakChromatograms()] function would allow to extract the actual
+#' EIC of the chromatographic peak in a specific sample. See also examples
+#' below.
 #'
 #' Parameters `include`, `filled`, `n` and `value` are only supported
 #' for `object` being an `XCMSnExp`.
@@ -628,6 +639,16 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #'     Defaults to `"feature_only"`; See description above for options and
 #'     details.
 #'
+#' @param mzmax `function` defining how the upper boundary of the m/z region
+#'     from which the EIC is integrated should be defined. Defaults to
+#'     `mzmax = max` thus the largest `"mzmax"` value for all chromatographic
+#'     peaks of a feature will be used.
+#'
+#' @param mzmin `function` defining how the lower boundary of the m/z region
+#'     from which the EIC is integrated should be defined. Defaults to
+#'     `mzmin = min` thus the smallest `"mzmin"` value for all chromatographic
+#'     peaks of a feature will be used.
+#'
 #' @param n Only for `object` being an `XCMSnExp`: `integer(1)` to optionally
 #'     specify the number of *top n* samples from which the EIC should be
 #'     extracted.
@@ -641,6 +662,16 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #'     returned. At present only `return.type = "XChromatograms"` is
 #'     supported and the results are thus returned as an [XChromatograms()]
 #'     object.
+#'
+#' @param rtmax `function` defining how the upper boundary of the rt region
+#'     from which the EIC is integrated should be defined. Defaults to
+#'     `rtmax = max` thus the largest `"rtmax"` value for all chromatographic
+#'     peaks of a feature will be used.
+#'
+#' @param rtmin `function` defining how the lower boundary of the rt region
+#'     from which the EIC is integrated should be defined. Defaults to
+#'     `rtmin = min` thus the smallest `"rtmin"` value for all chromatographic
+#'     peaks of a feature will be used.
 #'
 #' @param value Only for `object` being an `XCMSnExp`: `character(1)`
 #'     specifying the column to be used to sort the samples. Can be either
@@ -672,10 +703,8 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' ## Disable parallel processing for this example
 #' register(SerialParam())
 #'
-#' ## Subset the object to a smaller retention time range
-#' xdata <- filterRt(faahko_sub, c(2500, 3500))
-#'
-#' xdata <- groupChromPeaks(xdata,
+#' ## Perform correspondence analysis
+#' xdata <- groupChromPeaks(faahko_sub,
 #'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 #'
 #' ## Get the feature definitions
@@ -686,8 +715,28 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' chrs <- featureChromatograms(xdata,
 #'     features = rownames(featureDefinitions)[1:3])
 #'
-#' ## Plot the XIC for the first feature using different colors for each file
+#' ## Plot the EIC for the first feature using different colors for each file.
 #' plot(chrs[1, ], col = c("red", "green", "blue"))
+#'
+#' ## The EICs for all 3 samples use the same m/z and retention time range,
+#' ## which was defined using the `featureArea` function:
+#' featureArea(xdata, features = rownames(featureDefinitions(xdata))[1:3],
+#'     mzmin = min, mzmax = max, rtmin = min, rtmax = max)
+#'
+#' ## To extract the actual (exact) EICs for each chromatographic peak of
+#' ## a feature in each sample, the `chromPeakChromatograms` function would
+#' ## need to be used instead. Below we extract the EICs for all
+#' ## chromatographic peaks of the first feature. We need to first get the
+#' ## IDs of all chromatographic peaks assigned to the first feature:
+#' peak_ids <- rownames(chromPeaks(xdata))[featureDefinitions(xdata)$peakidx[[1L]]]
+#'
+#' ## We can now pass these to the `chromPeakChromatograms` function with
+#' ## parameter `peaks`:
+#' eic_1 <- chromPeakChromatograms(xdata, peaks = peak_ids)
+#'
+#' ## To plot these into a single plot we need to use the
+#' ## `plotChromatogramsOverlay` function:
+#' plotChromatogramsOverlay(eic_1)
 setGeneric("featureChromatograms", function(object, ...)
     standardGeneric("featureChromatograms"))
 
@@ -800,8 +849,8 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #'   `ChromPeakAreaParam`, the median `"mzmin"`, `"mzmax"`, `"rtmin"` and
 #'   `"rtmax"` values from all detected chromatographic peaks of a feature
 #'   would be used instead.
-#'   In contrast to the  `FillChromPeaksParam` approach this method uses the
-#'   actual identified chromatographic peaks of a feature to define the area
+#'   In contrast to the  `FillChromPeaksParam` approach this method uses (all)
+#'   identified chromatographic peaks of a feature to define the area
 #'   from which the signal should be integrated.
 #'
 #' @details
@@ -1235,10 +1284,14 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' - `PeakDensityParam`: correspondence using the *peak density* method
 #'   (Smith 2006) that groups chromatographic peaks along the retention time
-#'   axis within slices of (partially overlapping) m/z ranges. All peaks (from
-#'   the same or from different samples) with their apex position being close
-#'   on the retention time axis are grouped into a LC-MS feature. See in
-#'   addition [do_groupChromPeaks_density()] for the core API function.
+#'   axis within slices of (partially overlapping) m/z ranges. By default,
+#'   these m/z ranges (bins) have a constant size. By setting `ppm` to a value
+#'   larger than 0, m/z dependent bin sizes can be used instead (better
+#'   representing the m/z dependent measurement error of some MS instruments).
+#'   All peaks (from the same or from different samples) with their apex
+#'   position being close on the retention time axis are grouped into a LC-MS
+#'   feature. See in addition [do_groupChromPeaks_density()] for the core API
+#'   function.
 #'
 #' - `NearestPeaksParam`: performs peak grouping based on the proximity of
 #'   chromatographic peaks from different samples in the m/z - rt space similar
@@ -1304,6 +1357,14 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param ppm For `MzClustParam`: `numeric(1)` representing the relative m/z
 #'     error for the clustering/grouping (in parts per million).
+#'     For `PeakDensityParam`: `numeric(1)` to define m/z-dependent, increasing
+#'     m/z bin sizes. If `ppm = 0` (the default) m/z bins are defined by the
+#'     sequence of values from the smallest to the larges m/z value with a
+#'     constant bin size of `binSize`. For `ppm` > 0 the size of each bin is
+#'     increased in addition by the `ppm` of the (upper) m/z boundary of the
+#'     bin. The maximal bin size (used for the largest m/z values) would then
+#'     be `binSize` plus `ppm` parts-per-million of the largest m/z value of
+#'     all peaks in the data set.
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'
@@ -1808,7 +1869,8 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
 #'
 #' @param ppm For `MergeNeighboringPeaksParam`: `numeric(1)` defining a m/z
 #'     relative value (in parts per million) by which the m/z range of each
-#'     chromatographic peak is expanded to check for overlapping peaks.
+#'     chromatographic peak is expanded (on each side) to check for overlapping
+#'     peaks.
 #'
 #' @param threshold For `FilterIntensityParam`: `numeric(1)` defining the
 #'     threshold below which peaks are removed.
