@@ -92,7 +92,7 @@
 #' ## between QC and study samples superior to 0.5 will be removed from the
 #' ## object `test_xcms`.
 #'
-#' dratio_filter <- DratioFilter(htreshold = 0.5,
+#' dratio_filter <- DratioFilter(threshold = 0.5,
 #'                  qcIndex = sampleData(test_xcms)$sample_type == "QC",
 #'                  studyIndex = sampleData(test_xcms)$sample_type == "study")
 #'
