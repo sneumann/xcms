@@ -617,6 +617,6 @@ setMethod("filterFeatures",
 
 #' @noRd
 .check_index_range <- function(x, l, name = "") {
-    if (length(x) == 0 || !all(x %in% seq_len(l))
+    if (length(x) == 0 || !all(x %in% seq_len(l)))
         stop(name, " should be between 1 and ", l)
 }
