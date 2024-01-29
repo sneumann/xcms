@@ -20,7 +20,7 @@
 #' - [`DratioFilter`]: Computes the D-ratio or *dispersion ratio*, defined as
 #'  the standard deviation in abundance for QC samples divided by the standard
 #'  deviation for biological test samples, for each feature and filters them
-#'  according to a provided threshold
+#'  according to a provided threshold.
 #'
 #' - [`PercentMissingFilter`]: Determines the percentage of missing values for
 #'  each feature in the various sample groups and filters them according to a

@@ -1221,12 +1221,12 @@ the data set.
 
 The `PercentMissingFilter` allows to filter features based on the percentage of
 missing values for each feature. This function takes as an input the parameter
-`f` which is supposed to be a vector of the length of the object with the
-sample type for each samples. The function then compute the percentage of
-missing values per sample groups and filters features based on this. Features
-with a percent of missing values larger than threshold in all sample groups
-will be removed. Another option, it so base this quality assessment and
-filtering only on QC samples.
+`f` which is supposed to be a vector of length equal to the length of the object
+(i.e. number of samples) with the sample type for each. The function then
+computes the percentage of missing values per sample groups and filters
+features based on this. Features with a percent of missing values larger than
+the threshold in all sample groups will be removed. Another option is to base
+this quality assessment and filtering only on QC samples.
 
 Both examples are shown below: 
 
