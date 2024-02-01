@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,9 +69,24 @@
         <dd>Automatic parameter for Lock mass fixing <code>AutoLockMass</code> ~~</dd>
       </dl><dl><dt>
           
+          <code><a href="BlankFlag.html">BlankFlag()</a></code> <code><a href="BlankFlag.html">filterFeatures(<i>&lt;XcmsResult&gt;</i>,<i>&lt;BlankFlag&gt;</i>)</a></code> <code><a href="BlankFlag.html">filterFeatures(<i>&lt;SummarizedExperiment&gt;</i>,<i>&lt;BlankFlag&gt;</i>)</a></code> 
+        </dt>
+        <dd>Flag features based on the intensity in blank samples</dd>
+      </dl><dl><dt>
+          
+          <code><a href="DratioFilter.html">DratioFilter()</a></code> <code><a href="DratioFilter.html">filterFeatures(<i>&lt;XcmsResult&gt;</i>,<i>&lt;DratioFilter&gt;</i>)</a></code> <code><a href="DratioFilter.html">filterFeatures(<i>&lt;SummarizedExperiment&gt;</i>,<i>&lt;DratioFilter&gt;</i>)</a></code> 
+        </dt>
+        <dd>Filter features based on the dispersion ratio</dd>
+      </dl><dl><dt>
+          
           <code><a href="GenericParam.html">GenericParam()</a></code> 
         </dt>
         <dd>Generic parameter class</dd>
+      </dl><dl><dt>
+          
+          <code><a href="PercentMissingFilter.html">PercentMissingFilter()</a></code> <code><a href="PercentMissingFilter.html">filterFeatures(<i>&lt;XcmsResult&gt;</i>,<i>&lt;PercentMissingFilter&gt;</i>)</a></code> <code><a href="PercentMissingFilter.html">filterFeatures(<i>&lt;SummarizedExperiment&gt;</i>,<i>&lt;PercentMissingFilter&gt;</i>)</a></code> 
+        </dt>
+        <dd>Filter features based on the percentage of missing data</dd>
       </dl><dl><dt>
           
           <code><a href="PlainTextParam.html">PlainTextParam()</a></code> <code><a href="PlainTextParam.html">storeResults(<i>&lt;MsExperiment&gt;</i>,<i>&lt;PlainTextParam&gt;</i>)</a></code> <code><a href="PlainTextParam.html">storeResults(<i>&lt;XcmsExperiment&gt;</i>,<i>&lt;PlainTextParam&gt;</i>)</a></code> 
@@ -87,6 +102,11 @@
           <code><a href="RDataParam.html">RDataParam()</a></code> <code><a href="RDataParam.html">storeResults(<i>&lt;XcmsExperiment&gt;</i>,<i>&lt;RDataParam&gt;</i>)</a></code> 
         </dt>
         <dd>Store `XcmsExperiment` object as .RData file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="RsdFilter.html">RsdFilter()</a></code> <code><a href="RsdFilter.html">filterFeatures(<i>&lt;XcmsResult&gt;</i>,<i>&lt;RsdFilter&gt;</i>)</a></code> <code><a href="RsdFilter.html">filterFeatures(<i>&lt;SummarizedExperiment&gt;</i>,<i>&lt;RsdFilter&gt;</i>)</a></code> 
+        </dt>
+        <dd>Filter features based on their coefficient of variation</dd>
       </dl><dl><dt>
           
           <code><a href="SSgauss.html">SSgauss()</a></code> 
@@ -312,6 +332,11 @@
           <code><a href="filter-MChromatograms.html">filterColumnsIntensityAbove(<i>&lt;MChromatograms&gt;</i>)</a></code> <code><a href="filter-MChromatograms.html">filterColumnsKeepTop(<i>&lt;MChromatograms&gt;</i>)</a></code> <code><a href="filter-MChromatograms.html">filterColumnsIntensityAbove(<i>&lt;XChromatograms&gt;</i>)</a></code> <code><a href="filter-MChromatograms.html">filterColumnsKeepTop(<i>&lt;XChromatograms&gt;</i>)</a></code> 
         </dt>
         <dd>Filtering sets of chromatographic data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="filterFeatures.html">filterFeatures</a></code> 
+        </dt>
+        <dd>Filtering of features based on conventional quality assessment</dd>
       </dl><dl><dt>
           
           <code><a href="findChromPeaks-Chromatogram-CentWaveParam.html">findChromPeaks(<i>&lt;Chromatogram&gt;</i>,<i>&lt;CentWaveParam&gt;</i>)</a></code> <code><a href="findChromPeaks-Chromatogram-CentWaveParam.html">findChromPeaks(<i>&lt;MChromatograms&gt;</i>,<i>&lt;CentWaveParam&gt;</i>)</a></code> <code><a href="findChromPeaks-Chromatogram-CentWaveParam.html">findChromPeaks(<i>&lt;MChromatograms&gt;</i>,<i>&lt;MatchedFilterParam&gt;</i>)</a></code> 

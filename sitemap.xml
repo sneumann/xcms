@@ -31,7 +31,16 @@
     <loc>https://sneumann.github.io/xcms/reference/AutoLockMass-methods.html</loc>
   </url>
   <url>
+    <loc>https://sneumann.github.io/xcms/reference/BlankFlag.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/DratioFilter.html</loc>
+  </url>
+  <url>
     <loc>https://sneumann.github.io/xcms/reference/GenericParam.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/PercentMissingFilter.html</loc>
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/PlainTextParam.html</loc>
@@ -41,6 +50,9 @@
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/RDataParam.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/RsdFilter.html</loc>
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/SSgauss.html</loc>
@@ -185,6 +197,9 @@
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/filter-MChromatograms.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/filterFeatures.html</loc>
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/filtfft.html</loc>
