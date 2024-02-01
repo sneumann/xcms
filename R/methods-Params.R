@@ -1478,3 +1478,15 @@ setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+#' @rdname findChromPeaks-centWave
+setMethod("as.list", "CentWaveParam", function(x, ...) {
+    x <- updateObject(x)
+    callNextMethod(x)
+})
+
+#' @rdname groupChromPeaks
+setMethod("as.list", "PeakDensityParam", function(x, ...) {
+    x <- updateObject(x)
+    callNextMethod(x)
+})

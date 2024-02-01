@@ -450,6 +450,8 @@ setClass("XProcessHistory",
 #' bell curve. See https://github.com/sneumann/xcms/pull/685 and
 #' https://doi.org/10.1186/s12859-023-05533-4 for more information.
 #'
+#' @param x The parameter object.
+#'
 #' @details
 #'
 #' The centWave algorithm is most suitable for high resolution

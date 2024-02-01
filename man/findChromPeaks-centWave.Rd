@@ -59,6 +59,7 @@
 \alias{roiScales}
 \alias{roiScales<-,CentWaveParam-method}
 \alias{roiScales<-}
+\alias{as.list,CentWaveParam-method}
 \title{Chromatographic peak detection using the centWave method}
 \usage{
 CentWaveParam(
@@ -139,6 +140,8 @@ CentWaveParam(
 \S4method{roiScales}{CentWaveParam}(object)
 
 \S4method{roiScales}{CentWaveParam}(object) <- value
+
+\S4method{as.list}{CentWaveParam}(x, ...)
 }
 \arguments{
 \item{ppm}{\code{numeric(1)} defining the maximal tolerated m/z deviation in
@@ -249,6 +252,8 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 \item{value}{The value for the slot.}
 
 \item{f}{For \code{integrate}: a \code{CentWaveParam} object.}
+
+\item{x}{The parameter object.}
 }
 \value{
 The \code{CentWaveParam} function returns a \code{CentWaveParam}

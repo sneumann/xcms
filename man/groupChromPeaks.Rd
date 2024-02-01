@@ -61,6 +61,7 @@
 \alias{kNN}
 \alias{kNN<-,NearestPeaksParam-method}
 \alias{kNN<-}
+\alias{as.list,PeakDensityParam-method}
 \alias{groupChromPeaks,XCMSnExp,PeakDensityParam-method}
 \alias{groupChromPeaks,XCMSnExp,MzClustParam-method}
 \alias{groupChromPeaks,XCMSnExp,NearestPeaksParam-method}
@@ -162,6 +163,8 @@ NearestPeaksParam(
 
 \S4method{kNN}{NearestPeaksParam}(object) <- value
 
+\S4method{as.list}{PeakDensityParam}(x, ...)
+
 \S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param, msLevel = 1L, add = FALSE)
 
 \S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param, msLevel = 1L)
@@ -236,6 +239,8 @@ distance for retention times.}
 nearest neighbors to check.}
 
 \item{value}{The value for the slot.}
+
+\item{x}{The parameter object.}
 }
 \value{
 For \code{groupChromPeaks}: either an \code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}}

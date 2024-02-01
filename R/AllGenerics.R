@@ -1378,6 +1378,8 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param value Replacement value for `<-` methods.
 #'
+#' @param x The parameter object.
+#'
 #' @param ... Optional parameters.
 #'
 #' @return For `groupChromPeaks`: either an [XcmsExperiment()] or [XCMSnExp()]
