@@ -18,7 +18,7 @@ to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
 saving. It can be one of the following classes: \code{\link{RDataParam}},
-\code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
+\code{\link{PlainTextParam}}, or \code{\link{MzTabMParam}}.}
 }
 \value{
 for `RDataParam`: a `RDataParam` class. `storeResults` does not
@@ -44,6 +44,7 @@ storeResults(object = faahko_sub, param = param)
 }
 \seealso{
 Other xcms result export formats.: 
+\code{\link{MzTabParam}},
 \code{\link{PlainTextParam}}
 }
 \author{

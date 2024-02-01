@@ -12,7 +12,7 @@ to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
 saving. It can be one of the following classes: \code{\link{RDataParam}},
-\code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
+\code{\link{PlainTextParam}}, or \code{\link{MzTabMParam}}.}
 
 \item{...}{Optional parameters.}
 }
@@ -27,7 +27,8 @@ Supported \code{param} objects are:
 specified in the \code{fileName} argument.
 \item \code{\link{PlainTextParam}}: Store \code{MsExperiment} and \code{XcmsExperiment} objects as a
 folder of plain text files, folder path defined in the \code{path} argument.
-\item \code{MzTabMParam}: Save in MzTab format (to be defined).
+\item \code{\link{MzTabMParam}}: Save an \code{XcmsExperiment} object as a .mztabm format. file
+path defined in the \code{path} argument.
 }
 
 For specific examples, see the help pages of the individual parameter classes
@@ -48,6 +49,15 @@ storeResults(object = faahko_sub, param = param)
 param <- PlainTextParam(path = "test/path/")
 
 ## Save as a collection of plain text files
+storeResults(object = faahko_sub, param = param)
+
+## Define param
+param <- MzTabParam(studyId = "test",
+                    polarity = "positive",
+                    sampleDataColumn = "sample_type"
+                    path = "test/path/")
+
+## Save as a .mzTabm file
 storeResults(object = faahko_sub, param = param)
 
 }

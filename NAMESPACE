@@ -596,6 +596,7 @@ importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
            "read_json")
 export("RDataParam")
 export("PlainTextParam")
+export("MzTabParam")
 exportMethods("storeResults")
 
 ## filtering features things

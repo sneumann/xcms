@@ -1,3 +1,9 @@
+Changes in version 4.1.8
+----------------------
+
+- Add a `param =` to generic function `storeResults`: `MzTabParam` to save
+  an `XcmsExperiment` object as .mztabm file type.
+
 Changes in version 4.1.7
 ----------------------
 
@@ -56,7 +62,7 @@ Changes in version 4.1.2
 ----------------------
 
 - Add a `param =` to generic function `storeResults`: `PlainTextParam` to save
-  an `XcmsExperiment` or `MsExperiment` object as colleciton of plain text
+  an `XcmsExperiment` or `MsExperiment` object as collection of plain text
   files.
 
 Changes in version 4.1.1
