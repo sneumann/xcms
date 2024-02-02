@@ -22,7 +22,7 @@ to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
 saving. It can be one of the following classes: \code{\link{RDataParam}},
-\code{\link{PlainTextParam}}, or \code{\link{MzTabMParam}}.}
+\code{\link{PlainTextParam}}, or \code{\link{MzTabParam}}.}
 }
 \value{
 for `PlainTextParam`: a `PlainTextParam` class. `storeResults` does

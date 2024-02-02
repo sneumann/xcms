@@ -42,10 +42,7 @@ to be saved.}
 
 \item{param}{The parameter object selecting and configuring the format for
 saving. It can be one of the following classes: \code{\link{RDataParam}},
-\code{\link{PlainTextParam}}, or \code{\link{MzTabMParam}}.}
-
-\item{dots}{`list` Correspond to any optional parameters to be passed
-to the `featureValues` function. (e.g. parameters `method` or `value`).}
+\code{\link{PlainTextParam}}, or \code{\link{MzTabParam}}.}
 }
 \value{
 for `MzTabParam`: a `MzTabParam` class. `storeResults` does
@@ -62,10 +59,17 @@ This `param` class and method are part of the possible dispatch of the
 generic function `storeResults`. The file will be created by calling
 `storeResults`. If the file already exists, it will get overwritten.
 }
+\section{Slots}{
+
+\describe{
+\item{\code{dots}}{`list` Correspond to any optional parameters to be passed
+to the `featureValues` function. (e.g. parameters `method` or `value`).}
+}}
+
 \note{
 This function was build so that the output fit the recommendation of mztab-m
 file format. These can be found here:
-http://hupo-psi.github.io/mzTab/2_0-metabolomics-release/mzTab_format_specification_2_0-M_release.html
+(http://hupo-psi.github.io/mzTab/2_0-metabolomics-release/mzTab_format_specification_2_0-M_release.html)
 }
 \examples{
 ## Load a test data set with detected peaks, of class `XcmsExperiment`
@@ -83,7 +87,7 @@ storeResults(test_xcms, param)
 \references{
 Hoffmann N, Rein J, Sachsenberg T, Hartler J, Haug K, Mayer G, Alka O,
 Dayalan S, Pearce JTM, Rocca-Serra P, Qi D, Eisenacher M, Perez-Riverol Y,
-Vizcaíno JA, Salek RM, Neumann S, Jones AR. mzTab-M: A Data Standard for
+Vizcaino JA, Salek RM, Neumann S, Jones AR. mzTab-M: A Data Standard for
 Sharing Quantitative Results in Mass Spectrometry Metabolomics. Anal Chem.
 2019 Mar 5;91(5):3302-3310. doi: 10.1021/acs.analchem.8b04310. Epub 2019 Feb
 13. PMID: 30688441; PMCID: PMC6660005.

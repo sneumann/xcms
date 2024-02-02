@@ -2024,7 +2024,7 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' - [`PlainTextParam`]: Store `MsExperiment` and `XcmsExperiment` objects as a
 #' folder of plain text files, folder path defined in the `path` argument.
 #'
-#' - [`MzTabMParam`]: Save an `XcmsExperiment` object as a .mztabm format. file
+#' - [`MzTabParam`]: Save an `XcmsExperiment` object as a .mztabm format. file
 #' path defined in the `path` argument.
 #'
 #' For specific examples, see the help pages of the individual parameter classes
@@ -2035,7 +2035,7 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #'
 #' @param param The parameter object selecting and configuring the format for
 #' saving. It can be one of the following classes: [`RDataParam`],
-#' [`PlainTextParam`], or [`MzTabMParam`].
+#' [`PlainTextParam`], or [`MzTabParam`].
 #'
 #' @param ... Optional parameters.
 #'
@@ -2060,14 +2060,17 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' ## Save as a collection of plain text files
 #' storeResults(object = faahko_sub, param = param)
 #'
+#' ## Get XcmsExperiment object with defined metadata
+#' test_xcms <- loadXcmsData()
+#'
 #' ## Define param
 #' param <- MzTabParam(studyId = "test",
 #'                     polarity = "positive",
-#'                     sampleDataColumn = "sample_type"
+#'                     sampleDataColumn = "sample_type",
 #'                     path = "test/path/")
 #'
 #' ## Save as a .mzTabm file
-#' storeResults(object = faahko_sub, param = param)
+#' storeResults(object = test_xcms, param = param)
 #'
 #' @md
 setGeneric("storeResults", function(object, param, ...) standardGeneric("storeResults"))
