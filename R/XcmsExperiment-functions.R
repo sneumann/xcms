@@ -503,7 +503,6 @@
                                            mzCenterFun = "weighted.mean",
                                            sampleIndex = integer(),
                                            cn = character(), ...) {
-    cn = c(cn,"sn") 
     res <- matrix(NA_real_, ncol = length(cn), nrow = nrow(peakArea))
     rownames(res) <- rownames(peakArea)
     colnames(res) <- cn
@@ -526,11 +525,10 @@
                 maxi <- which.max(mat[, 2L])[1L]
                 mmz <- do.call(mzCenterFun, list(mat[, 1L], mat[, 2L]))
                 if (is.na(mmz)) mmz <- mat[maxi, 1L]
-                res[i, c("rt", "mz", "maxo", "into","sn")] <- c(
+                res[i, c("rt", "mz", "maxo", "into")] <- c(
                     rts[maxi], mmz, mat[maxi, 2L],
                     sum(mat[, 2L], na.rm = TRUE) *
-                    ((rtr[2L] - rtr[1L]) / max(1L, (length(keep) - 1L))),
-                    mat[maxi, 2L]/ estimateChromNoise(mat[, 2L])
+                    ((rtr[2L] - rtr[1L]) / max(1L, (length(keep) - 1L)))
                 )
                 if ("beta_cor" %in% cn)
                     res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
