@@ -702,7 +702,7 @@
 NULL
 
 .empty_chrom_peaks <- function(sample = TRUE) {
-    cols <- c(.REQ_PEAKS_COLS, "maxo")
+    cols <- c(.REQ_PEAKS_COLS, "maxo","sn")
     if (!sample)
         cols <- cols[cols != "sample"]
     matrix(numeric(), ncol = length(cols), nrow = 0,
