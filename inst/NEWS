@@ -1,3 +1,8 @@
+Changes in version 4.1.8
+----------------------
+- Fixing issue #716: edit of `.empty_chrom_peaks` function so an `sn` column is
+  returned. Fixes extracting and plotting of peaks after using `manualChromPeaks`
+
 Changes in version 4.1.7
 ----------------------
 
