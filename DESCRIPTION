@@ -37,6 +37,11 @@ Authors@R: c(
 	   role = "aut",
 	   comment = c(ORCID = "0009-0007-5429-6846"))
 	   )
+	   person(given = "Pablo", family = "Vangeenderhuysen",
+	   email = "pablo.vangeenderhuysen@ugent.be",
+	   role = "ctb",
+	   comment = c(ORCID = "0000-0002-5492-6904"))
+	   )
 Depends:
     R (>= 4.0.0),
     BiocParallel (>= 1.8.0),
