@@ -36,7 +36,6 @@ Authors@R: c(
 	   email = "philippine.louail@eurac.edu",
 	   role = "aut",
 	   comment = c(ORCID = "0009-0007-5429-6846"))
-	   )
 	   person(given = "Pablo", family = "Vangeenderhuysen",
 	   email = "pablo.vangeenderhuysen@ugent.be",
 	   role = "ctb",
