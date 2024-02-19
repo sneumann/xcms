@@ -4,7 +4,7 @@ mse_dia <- readMsExperiment(fl)
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
     expect_true(nrow(res) == 0)
-    expect_equal(colnames(res), c(.REQ_PEAKS_COLS, "maxo"))
+    expect_equal(colnames(res), c(.REQ_PEAKS_COLS, "maxo","sn"))
 
     res <- .empty_chrom_peaks(sample = FALSE)
     expect_true(nrow(res) == 0)
@@ -995,8 +995,13 @@ test_that("manualChromPeaks,XcmsExperiment works", {
     expect_equal(unname(pks[, c("mz", "into", "maxo")]),
                  unname(pks_2[, c("mz", "into", "maxo")]))
 
+    chr_pks <- chromPeaks(res)
+    expect_true("sn" %in% colnames(chr_pks)
+
     res2 <- manualChromPeaks(tmp, pks, samples = 2)
     expect_equal(unname(chromPeaks(res2)), unname(pks_2))
+
+    
 })
 
 test_that("filterChromPeaks,XcmsExperiment works", {
