@@ -996,7 +996,7 @@ test_that("manualChromPeaks,XcmsExperiment works", {
                  unname(pks_2[, c("mz", "into", "maxo")]))
 
     chr_pks <- chromPeaks(res)
-    expect_true("sn" %in% colnames(chr_pks)
+    expect_true("sn" %in% colnames(chr_pks))
 
     res2 <- manualChromPeaks(tmp, pks, samples = 2)
     expect_equal(unname(chromPeaks(res2)), unname(pks_2))
