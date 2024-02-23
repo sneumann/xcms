@@ -1,3 +1,8 @@
+Changes in version 4.1.8
+----------------------
+
+- Fix bug in `filterFeatures,PercentMissingFilter`.
+
 Changes in version 4.1.7
 ----------------------
 
