@@ -455,7 +455,7 @@ setMethod("filterFeatures",
                   vals <- rowPercentMissing(featureValues(object, ...)[, spl_idx])
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
-              fts_idx <- order(unique(fts_idx))
+              fts_idx <- sort(unique(fts_idx))
               message(length(vals) - length(fts_idx), " features were removed")
               ph <- XProcessHistory(param = filter,
                                     date. = date(),
@@ -479,7 +479,7 @@ setMethod("filterFeatures",
                   vals <- rowPercentMissing(assay(object, assay)[, spl_idx])
                   fts_idx <- c(fts_idx, which(vals <= filter@threshold))
               }
-              fts_idx <- order(unique(fts_idx))
+              fts_idx <- sort(unique(fts_idx))
               message(length(vals) - length(fts_idx), " features were removed")
               object[fts_idx]
           }
