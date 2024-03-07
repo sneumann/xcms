@@ -446,11 +446,12 @@ groups (features) for alignment in \code{object} based on the parameters defined
 in \code{param}. See also \code{\link[=do_adjustRtime_peakGroups]{do_adjustRtime_peakGroups()}} for the core API
 function.
 \item \code{LamaParama}: This function performs retention time correction by aligning
-chromatographic data to an external reference dataset. The process
-involves identifying and aligning peaks within the experimental
-chromatographic data, represented as an \code{XcmsExperiment} object, to a
-predefined set of landmark features called "lamas". These landmark features
-are characterized by their mass-to-charge ratio (m/z) and retention time.
+chromatographic data to an external reference dataset (method by Carl
+Brunius).The process involves identifying and aligning peaks within the
+experimental chromatographic data, represented as an \code{XcmsExperiment}
+object, to a predefined set of landmark features called "lamas". These
+landmark features are characterized by their mass-to-charge ratio (m/z)
+and retention time.
 
 The alignment algorithm matches chromatographic peaks from the experimental
 data to the lamas, fitting a model based on this match to adjust their
@@ -459,10 +460,10 @@ file by file. Adjustable parameters such as \code{ppm}, \code{tolerance}, and
 \code{toleranceRt} define acceptable deviations during the matching process.
 It's crucial to note that only lamas and chromatographic peaks exhibiting a
 one-to-one mapping are considered when estimating retention time shifts. If
-a file has no ChromPeaks matching with lamas, no adjustment will be
-performed, and the file will be returned as-is. Users can evaluate this
-matching, for example, by checking the number of matches and ranges of the
-matching ChromPeaks, by first running \verb{[matchLamasChromPeaks()]}.
+a file has no peaks matching with lamas, no adjustment will be performed,
+and the file will be returned as-is. Users can evaluate this matching, for
+example, by checking the number of matches and ranges of the matching
+peaks, by first running \verb{[matchLamasChromPeaks()]}.
 
 Different warping methods are available; users can choose to fit a loess
 (\code{method = "loess"}, the default) or a gam (\code{method = "gam"}) between the
@@ -522,6 +523,8 @@ Nonlinear Peak Alignment, Matching, and Identification" \emph{Anal. Chem.}
 \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for visualization of alignment results.
 }
 \author{
-Colin Smith, Johannes Rainer
+Colin Smith, Johannes Rainer, Philippine Louail, Carl Brunius
+
+Philippine Louail
 }
 \concept{retention time correction methods}

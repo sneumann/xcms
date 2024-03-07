@@ -608,6 +608,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'     times of the pairs of matched peaks. This `data.frame` can be used
 #'     in `.adjust_rt_model`'s parameter `rt_raw`.
 #'
+#' @author Johannes Rainer, Philippine Louail
+#'
 #' @noRd
 #'
 #' @importFrom MetaboCoreUtils mclosest
@@ -632,6 +634,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @param rt_map `data.frame` with *reference* retention times of LaMas and
 #'     *observed* retention times of matching peaks in the same sample from
 #'     which the retention times in `rt_raw` are.
+#'
+#' @author Carl Brunius
 #'
 #' @noRd
 .adjust_rt_model <- function(rt_raw,
@@ -671,6 +675,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'     (columnn `"ref"`) retention time pairs.
 #'
 #' @importFrom stats loess predict resid
+#'
+#' @author Carl Brunius, Philippine Louail
 #'
 #' @noRd
 .rt_model <- function(method = c("loess", "gam"),
@@ -736,6 +742,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @note If there are no matches, the file retention will not be adjusted when
 #' calling [adjustRtime()] with the same `LamaParama` and `XcmsExperiment`
 #' object.
+#'
+#' @author Philippine Louail
 #'
 #' @rdname adjustRtime
 matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){

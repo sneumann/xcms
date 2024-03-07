@@ -61,11 +61,12 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   function.
 #'
 #' - `LamaParama`: This function performs retention time correction by aligning
-#'   chromatographic data to an external reference dataset. The process
-#'   involves identifying and aligning peaks within the experimental
-#'   chromatographic data, represented as an `XcmsExperiment` object, to a
-#'   predefined set of landmark features called "lamas". These landmark features
-#'   are characterized by their mass-to-charge ratio (m/z) and retention time.
+#'   chromatographic data to an external reference dataset (method by Carl
+#'   Brunius).The process involves identifying and aligning peaks within the
+#'   experimental chromatographic data, represented as an `XcmsExperiment`
+#'   object, to a predefined set of landmark features called "lamas". These
+#'   landmark features are characterized by their mass-to-charge ratio (m/z)
+#'   and retention time.
 #'
 #'   The alignment algorithm matches chromatographic peaks from the experimental
 #'   data to the lamas, fitting a model based on this match to adjust their
@@ -74,10 +75,10 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   `toleranceRt` define acceptable deviations during the matching process.
 #'   It's crucial to note that only lamas and chromatographic peaks exhibiting a
 #'   one-to-one mapping are considered when estimating retention time shifts. If
-#'   a file has no ChromPeaks matching with lamas, no adjustment will be
-#'   performed, and the file will be returned as-is. Users can evaluate this
-#'   matching, for example, by checking the number of matches and ranges of the
-#'   matching ChromPeaks, by first running `[matchLamasChromPeaks()]`.
+#'   a file has no peaks matching with lamas, no adjustment will be performed,
+#'   and the file will be returned as-is. Users can evaluate this matching, for
+#'   example, by checking the number of matches and ranges of the matching
+#'   peaks, by first running `[matchLamasChromPeaks()]`.
 #'
 #'   Different warping methods are available; users can choose to fit a loess
 #'   (`method = "loess"`, the default) or a gam (`method = "gam"`) between the
@@ -294,7 +295,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @seealso [plotAdjustedRtime()] for visualization of alignment results.
 #'
-#' @author Colin Smith, Johannes Rainer
+#' @author Colin Smith, Johannes Rainer, Philippine Louail, Carl Brunius
 #'
 #' @references
 #'

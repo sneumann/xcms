@@ -1,9 +1,12 @@
 Changes in version 4.1.10
 ----------------------
 
-- Implementation of the `LamaParama` class and method for the `AdjustRtime()`
+- Implementation of the `LamaParama` class and method for the `adjustRtime()`
  function. Allowing alignment of a dataset based on landmarks (lamas) from an
- external reference dataset
+ external reference dataset.
+- Implementation of related user-level function `matchLamasChromPeaks()` which
+  allows  for pre evaluation of matching between lamas and chromPeaks before
+  alignment.
 
 Changes in version 4.1.9
 ----------------------
