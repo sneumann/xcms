@@ -12,14 +12,14 @@ setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-")
 setGeneric("addProcessHistory", function(object, ...)
     standardGeneric("addProcessHistory"))
 
-#' @aliases adjustRtime ObiwarpParam-class PeakGroupsParam-class
+#' @aliases adjustRtime ObiwarpParam-class PeakGroupsParam-class LamaParama-class
 #'
 #' @title Alignment: Retention time correction methods.
 #'
 #' @description
 #'
 #' The `adjustRtime` method(s) perform retention time correction (alignment)
-#' between chromatograms of different samples. Alignment is performed by defaul
+#' between chromatograms of different samples/dataset. Alignment is performed by default
 #' on MS level 1 data. Retention times of spectra from other MS levels, if
 #' present, are subsequently adjusted based on the adjusted retention times
 #' of the MS1 spectra. Note that calling `adjustRtime` on a *xcms* result object
@@ -40,7 +40,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   The alignment is performed directly on the [profile-matrix] and can hence
 #'   be performed independently of the peak detection or peak grouping.
 #'
-#' - `PeakGroupsParam`: performs retention time correctoin based on the
+#' - `PeakGroupsParam`: performs retention time correction based on the
 #'   alignment of features defined in all/most samples (corresponding to
 #'   *house keeping compounds* or marker compounds) (Smith 2006). First the
 #'   retention time deviation of these features is described by fitting either a
@@ -59,6 +59,34 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   groups (features) for alignment in `object` based on the parameters defined
 #'   in `param`. See also [do_adjustRtime_peakGroups()] for the core API
 #'   function.
+#'
+#' - `LamaParama`: This function performs retention time correction by aligning
+#'   chromatographic data to an external reference dataset. The process
+#'   involves identifying and aligning peaks within the experimental
+#'   chromatographic data, represented as an `XcmsExperiment` object, to a
+#'   predefined set of landmark features called "lamas". These landmark features
+#'   are characterized by their mass-to-charge ratio (m/z) and retention time.
+#'
+#'   The alignment algorithm matches chromatographic peaks from the experimental
+#'   data to the lamas, fitting a model based on this match to adjust their
+#'   retention times and minimize discrepancies. This adjustment is performed
+#'   file by file. Adjustable parameters such as `ppm`, `tolerance`, and
+#'   `toleranceRt` define acceptable deviations during the matching process.
+#'   It's crucial to note that only lamas and chromatographic peaks exhibiting a
+#'   one-to-one mapping are considered when estimating retention time shifts. If
+#'   a file has no ChromPeaks matching with lamas, no adjustment will be
+#'   performed, and the file will be returned as-is. Users can evaluate this
+#'   matching, for example, by checking the number of matches and ranges of the
+#'   matching ChromPeaks, by first running `[matchLamasChromPeaks()]`.
+#'
+#'   Different warping methods are available; users can choose to fit a loess
+#'   (`method = "loess"`, the default) or a gam (`method = "gam"`) between the
+#'   reference data points and observed matching ChromPeaks. Additional
+#'   parameters such as `span`, `weight`, `outlier_tolerance`, `zeroWeight`,
+#'   and `bs` are specific to these models. These parameters offer flexibility
+#'   in fine-tuning how the matching chromatographic peaks are fitted to the
+#'   lamas, thereby generating a model to align the overall retention time for
+#'   a single file.
 #'
 #' @section Subset-based alignment:
 #'
@@ -90,6 +118,10 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @param BPPARAM parallel processing setup. Defaults to `BPPARAM = bpparam()`.
 #'     See [bpparam()] for details.
+#'
+#' @param bs For `LamaParama`: `character(1)` defining the GAM moothing method.
+#'     (defaults to thin plate; NB: B- and P-splines have been shown to produce
+#'     artefacts).
 #'
 #' @param centerSample \code{integer(1)} defining the index of the center sample
 #'     in the experiment. It defaults to
@@ -151,8 +183,15 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param initPenalty For `ObiwarpParam`: `numeric(1)` defining the penalty for
 #'     initiating an alignment (for local alignment only).
 #'
+#' @param lamas For `LamaParama`: `matrix` or `data.frame` with the m/z and
+#'     retention times values of features (as first and second column) from the
+#'     external dataset on which the alignment will be based on.
+#'
 #' @param localAlignment For `ObiwarpParam`: `logical(1)` whether a local
 #'     alignment should be performed instead of the default global alignment.
+#'
+#' @param method For `LamaParama`:`character(1)` with the type of warping.
+#'     Either `method = "gam"` or `method = "loess"` (default).
 #'
 #' @param minFraction For `PeakGroupsParam`: `numeric(1)` between 0 and 1
 #'     defining the minimum required proportion of samples in which peaks for
@@ -171,6 +210,12 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param object For `adjustRtime`: an [OnDiskMSnExp()], [XCMSnExp()],
 #'     [MsExperiment()] or [XcmsExperiment()] object.
 #'
+#' @param outlierTolerance For `LamaParama`: `numeric(1)` defining the settings
+#'     for outlier removal during the fitting. By default
+#'     (with `outlierTolerance = 3`), all data points with absolute residuals
+#'     larger than 3 times the mean absolute residual of all data points from
+#'     the first, initial fit, are removed from the final model fit.
+#'
 #' @param param The parameter object defining the alignment method (and its
 #'     setting).
 #'
@@ -179,6 +224,10 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     should be performed. Each column represents a sample, each row a
 #'     feature/peak group. The `adjustRtimePeakGroups` method is used by
 #'     default to determine this matrix on the provided `object`.
+#'
+#' @param ppm For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
+#'     allowed difference in m/z between `lamas` and chromatographic peaks. Used
+#'     for the mapping of identified chromatographic peaks and lamas.
 #'
 #' @param response For `ObiwarpParam`: `numeric(1)` defining the
 #'     *responsiveness* of warping with `response = 0` giving linear warping on
@@ -189,9 +238,9 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     be used to interpolate corrected retention times for all peak groups.
 #'     Can be either `"loess"` or `"linear"`.
 #'
-#' @param span For `PeakGroupsParam`: `numeric(1)` defining the degree of
-#'     smoothing (if `smooth = "loess"`). This parameter is passed to the
-#'     internal call to [loess()].
+#' @param span For `PeakGroupsParam` and `LamaParama`: `numeric(1)` defining
+#'     the degree of smoothing (if `smooth = "loess"` or `method = "loess"`).
+#'     This parameter is passed to the internal call to [loess()].
 #'
 #' @param subset For `ObiwarpParam` and `PeakGroupsParam`: `integer` with the
 #'     indices of samples within the experiment on which the alignment models
@@ -204,9 +253,23 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     Supported options are `"previous"` and `"average"` (default).
 #'     See *Subset-based alignment* section for details.
 #'
+#' @param tolerance For `LamaParama`: `numeric(1)` defining the absolute
+#'     acceptable difference in m/z between lamas and chromatographic peaks.
+#'     Used for the mapping of identified chromatographic peaks and `lamas`.
+#'
+#' @param toleranceRt For `LamaParama`: `numeric(1)` defining the absolute
+#'     acceptable difference in retention time between lamas and
+#'     chromatographic peaks. Used for the mapping of identified chromatographic
+#'     peaks and `lamas`.
+#'
 #' @param value For all assignment methods: the value to set/replace.
 #'
-#' @param x An `ObiwarpParam` or `PeakGroupsParam` object.
+#' @param x An `ObiwarpParam`, `PeakGroupsParam` or `LamaParama` object.
+#'
+#' @param zeroWeight For `LamaParama`: `numeric(1)`: defines the weight of the
+#'     first data point (i.e. retention times of the first lama-chromatographic
+#'     peak pair). Values larger than 1 reduce warping problems in the early RT
+#'     range.
 #'
 #' @param ... ignored.
 #'
@@ -219,7 +282,8 @@ setGeneric("addProcessHistory", function(object, ...)
 #' `XcmsExperiment` with the adjusted retention times stored in an new
 #' *spectra variable* `rtime_adjusted` in the object's `spectra`.
 #'
-#' `ObiwarpParam` and `PeakGroupsParam` return the respective parameter object.
+#' `ObiwarpParam`, `PeakGroupsParam` and `LamaParama` return the respective
+#' parameter object.
 #'
 #' `adjustRtimeGroups` returns a `matrix` with the retention times of *marker*
 #' features in each sample (each row one feature, each row one sample).

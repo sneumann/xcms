@@ -57,6 +57,8 @@
         return("nearest peaks")
     if (is(x, "PeakGroupsParam"))
         return("peak groups")
+    if (is(x, "LamaParama"))
+        return("lama")
     if (is(x, "ObiwarpParam"))
         return("obiwarp")
     return("unknown")
@@ -270,6 +272,37 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
         extraPeaks = extraPeaks, smooth = smooth, span = span,
         family = family, peakGroupsMatrix = peakGroupsMatrix,
         subset = as.integer(subset), subsetAdjust = subsetAdjust)
+}
+
+#' @rdname adjustRtime
+LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
+                                      dimnames = list(NULL, c("mz", "rt"))),
+                       method = c("loess", "gam"),
+                       span = 0.5,
+                       outlierTolerance = 3,
+                       zeroWeight = 10,
+                       ppm = 20,
+                       tolerance = 0,
+                       toleranceRt = 5,
+                       bs = "tp") {
+    method <- match.arg(method)
+    if (method == "gam")
+        .check_gam_library()
+    if (is.data.frame(lamas))
+        lamas <- as.matrix(lamas)
+    if (ncol(lamas) != 2)
+        stop("the 'lamas' matrix needs to have two columns, composed of m/z, ",
+        "and retention time of the peaks from the reference dataset, in this ",
+        "order")
+    new("LamaParama", lamas = lamas,
+        method = method,
+        span = span,
+        outlierTolerance = outlierTolerance,
+        zeroWeight = zeroWeight,
+        ppm = ppm,
+        tolerance = tolerance,
+        toleranceRt = toleranceRt,
+        bs = bs)
 }
 
 #' @rdname adjustRtime

@@ -1467,6 +1467,41 @@ setClass("PeakGroupsParam",
              else TRUE
          })
 
+setClass("LamaParama",
+         slots = c(lamas = "matrix",
+                   method = "character",
+                   span = "numeric",
+                   outlierTolerance = "numeric",
+                   zeroWeight = "numeric",
+                   ppm = "numeric",
+                   tolerance = "numeric",
+                   toleranceRt = "numeric",
+                   bs = "character"),
+         contains = "Param",
+         prototype = prototype(
+             lamas = matrix(ncol = 2, nrow = 0),
+             method = "loess",
+             span = 0.5,
+             outlierTolerance = 3,
+             zeroWeight = 10,
+             ppm = 20,
+             tolerance = 0,
+             toleranceRt = 20,
+             bs = "tp"),
+         validity = function(object) {
+             msg <- NULL
+             if (!nrow(object@lamas))
+                 msg <- c(msg, paste0("'lamas' cannot be empty"))
+             else {## check columns of lamas
+             }
+             if (length(object@method) > 1 |
+                 !all(object@method %in% c("gam", "loess")))
+                 msg <- c(msg, paste0("'method' has to be either \"",
+                                      "gam\" or \"loess\"!"))
+             msg
+         })
+
+
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",

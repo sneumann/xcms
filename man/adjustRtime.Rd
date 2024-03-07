@@ -6,9 +6,12 @@
 \alias{adjustRtime}
 \alias{ObiwarpParam-class}
 \alias{PeakGroupsParam-class}
+\alias{LamaParama-class}
 \alias{adjustRtime,MsExperiment,ObiwarpParam-method}
 \alias{adjustRtime,MsExperiment,PeakGroupsParam-method}
+\alias{adjustRtime,XcmsExperiment,LamaParama-method}
 \alias{PeakGroupsParam}
+\alias{LamaParama}
 \alias{ObiwarpParam}
 \alias{adjustRtimePeakGroups}
 \alias{adjustRtime,OnDiskMSnExp,ObiwarpParam-method}
@@ -94,6 +97,8 @@ adjustRtime(object, param, ...)
 
 \S4method{adjustRtime}{MsExperiment,PeakGroupsParam}(object, param, msLevel = 1L, ...)
 
+\S4method{adjustRtime}{XcmsExperiment,LamaParama}(object, param, BPPARAM = bpparam(), ...)
+
 PeakGroupsParam(
   minFraction = 0.9,
   extraPeaks = 1,
@@ -103,6 +108,18 @@ PeakGroupsParam(
   peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
   subset = integer(),
   subsetAdjust = c("average", "previous")
+)
+
+LamaParama(
+  lamas = matrix(ncol = 2, nrow = 0, dimnames = list(NULL, c("mz", "rt"))),
+  method = c("loess", "gam"),
+  span = 0.5,
+  outlierTolerance = 3,
+  zeroWeight = 10,
+  ppm = 20,
+  tolerance = 0,
+  toleranceRt = 5,
+  bs = "tp"
 )
 
 ObiwarpParam(
@@ -259,9 +276,9 @@ sample that are assigned to the group.}
 be used to interpolate corrected retention times for all peak groups.
 Can be either \code{"loess"} or \code{"linear"}.}
 
-\item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the degree of
-smoothing (if \code{smooth = "loess"}). This parameter is passed to the
-internal call to \code{\link[=loess]{loess()}}.}
+\item{span}{For \code{PeakGroupsParam} and \code{LamaParama}: \code{numeric(1)} defining
+the degree of smoothing (if \code{smooth = "loess"} or \code{method = "loess"}).
+This parameter is passed to the internal call to \code{\link[=loess]{loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
@@ -283,6 +300,41 @@ sample. See \emph{Subset-based alignment} section for details.}
 specifying the method with which non-subset samples should be adjusted.
 Supported options are \code{"previous"} and \code{"average"} (default).
 See \emph{Subset-based alignment} section for details.}
+
+\item{lamas}{For \code{LamaParama}: \code{matrix} or \code{data.frame} with the m/z and
+retention times values of features (as first and second column) from the
+external dataset on which the alignment will be based on.}
+
+\item{method}{For \code{LamaParama}:\code{character(1)} with the type of warping.
+Either \code{method = "gam"} or \code{method = "loess"} (default).}
+
+\item{outlierTolerance}{For \code{LamaParama}: \code{numeric(1)} defining the settings
+for outlier removal during the fitting. By default
+(with \code{outlierTolerance = 3}), all data points with absolute residuals
+larger than 3 times the mean absolute residual of all data points from
+the first, initial fit, are removed from the final model fit.}
+
+\item{zeroWeight}{For \code{LamaParama}: \code{numeric(1)}: defines the weight of the
+first data point (i.e. retention times of the first lama-chromatographic
+peak pair). Values larger than 1 reduce warping problems in the early RT
+range.}
+
+\item{ppm}{For \code{LamaParama}: \code{numeric(1)} defining the m/z-relative maximal
+allowed difference in m/z between \code{lamas} and chromatographic peaks. Used
+for the mapping of identified chromatographic peaks and lamas.}
+
+\item{tolerance}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
+acceptable difference in m/z between lamas and chromatographic peaks.
+Used for the mapping of identified chromatographic peaks and \code{lamas}.}
+
+\item{toleranceRt}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
+acceptable difference in retention time between lamas and
+chromatographic peaks. Used for the mapping of identified chromatographic
+peaks and \code{lamas}.}
+
+\item{bs}{For \code{LamaParama}: \code{character(1)} defining the GAM moothing method.
+(defaults to thin plate; NB: B- and P-splines have been shown to produce
+artefacts).}
 
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
 to be used for the \emph{profile matrix} generation. See \code{step}
@@ -331,7 +383,7 @@ initiating an alignment (for local alignment only).}
 
 \item{value}{The value for the slot.}
 
-\item{x}{An \code{ObiwarpParam} or \code{PeakGroupsParam} object.}
+\item{x}{An \code{ObiwarpParam}, \code{PeakGroupsParam} or \code{LamaParama} object.}
 }
 \value{
 \code{adjustRtime} on an \code{OnDiskMSnExp} or \code{XCMSnExp} object will return an
@@ -341,14 +393,15 @@ initiating an alignment (for local alignment only).}
 \code{XcmsExperiment} with the adjusted retention times stored in an new
 \emph{spectra variable} \code{rtime_adjusted} in the object's \code{spectra}.
 
-\code{ObiwarpParam} and \code{PeakGroupsParam} return the respective parameter object.
+\code{ObiwarpParam}, \code{PeakGroupsParam} and \code{LamaParama} return the respective
+parameter object.
 
 \code{adjustRtimeGroups} returns a \code{matrix} with the retention times of \emph{marker}
 features in each sample (each row one feature, each row one sample).
 }
 \description{
 The \code{adjustRtime} method(s) perform retention time correction (alignment)
-between chromatograms of different samples. Alignment is performed by defaul
+between chromatograms of different samples/dataset. Alignment is performed by default
 on MS level 1 data. Retention times of spectra from other MS levels, if
 present, are subsequently adjusted based on the adjusted retention times
 of the MS1 spectra. Note that calling \code{adjustRtime} on a \emph{xcms} result object
@@ -368,7 +421,7 @@ rt data using the \emph{obiwarp} method (Prince (2006)). It is based on the
 alignment of multiple samples by aligning each against a \emph{center} sample.
 The alignment is performed directly on the \link{profile-matrix} and can hence
 be performed independently of the peak detection or peak grouping.
-\item \code{PeakGroupsParam}: performs retention time correctoin based on the
+\item \code{PeakGroupsParam}: performs retention time correction based on the
 alignment of features defined in all/most samples (corresponding to
 \emph{house keeping compounds} or marker compounds) (Smith 2006). First the
 retention time deviation of these features is described by fitting either a
@@ -387,6 +440,33 @@ function is used to define this \code{matrix}. This function identifies peak
 groups (features) for alignment in \code{object} based on the parameters defined
 in \code{param}. See also \code{\link[=do_adjustRtime_peakGroups]{do_adjustRtime_peakGroups()}} for the core API
 function.
+\item \code{LamaParama}: This function performs retention time correction by aligning
+chromatographic data to an external reference dataset. The process
+involves identifying and aligning peaks within the experimental
+chromatographic data, represented as an \code{XcmsExperiment} object, to a
+predefined set of landmark features called "lamas". These landmark features
+are characterized by their mass-to-charge ratio (m/z) and retention time.
+
+The alignment algorithm matches chromatographic peaks from the experimental
+data to the lamas, fitting a model based on this match to adjust their
+retention times and minimize discrepancies. This adjustment is performed
+file by file. Adjustable parameters such as \code{ppm}, \code{tolerance}, and
+\code{toleranceRt} define acceptable deviations during the matching process.
+It's crucial to note that only lamas and chromatographic peaks exhibiting a
+one-to-one mapping are considered when estimating retention time shifts. If
+a file has no ChromPeaks matching with lamas, no adjustment will be
+performed, and the file will be returned as-is. Users can evaluate this
+matching, for example, by checking the number of matches and ranges of the
+matching ChromPeaks, by first running \verb{[matchLamasChromPeaks()]}.
+
+Different warping methods are available; users can choose to fit a loess
+(\code{method = "loess"}, the default) or a gam (\code{method = "gam"}) between the
+reference data points and observed matching ChromPeaks. Additional
+parameters such as \code{span}, \code{weight}, \code{outlier_tolerance}, \code{zeroWeight},
+and \code{bs} are specific to these models. These parameters offer flexibility
+in fine-tuning how the matching chromatographic peaks are fitted to the
+lamas, thereby generating a model to align the overall retention time for
+a single file.
 }
 }
 \section{Subset-based alignment}{

@@ -1,3 +1,10 @@
+Changes in version 4.1.10
+----------------------
+
+- Implementation of the `LamaParama` class and method for the `AdjustRtime()`
+ function. Allowing alignment of a dataset based on landmarks (lamas) from an
+ external reference dataset
+
 Changes in version 4.1.9
 ----------------------
 
