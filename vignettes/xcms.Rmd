@@ -1277,6 +1277,84 @@ identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
 packages, such as Bioconductor's excellent `limma` package.
 
+## Alignment to an external reference dataset
+
+In some experiment, there is a need to align two different dataset. it can be to compare run of the same samples ran across different laboraties or run with MS2 recorded after the initial MS1 run. across laboratories and time same samples can results in variation in runs. especially because the LC system can be quite unstable. 
+in these case an alignment step using the preivously described `adjustRtime()` function with the `LamaParam` parameter can allow the user to do this type of alignment. We will go through this stpe by step below. 
+
+Let's load an already analysed dataset `ref` and our previous before analysis which will be `tst`. And restrict their retention time range to be the same as our dataset.
+
+```{r}
+ref <- loadXcmsData("xmse") 
+tst <- loadXcmsData("faahko_sub2")
+
+range(rtime(tst))
+range(rtime(ref))
+```
+
+So we will try to align these 2 samples to the previous dataset. The first step is to extract landmarks features (called lamas). For this we well determine the features that are present in every samples using the `PercentMissingFilter()` param in the `filterFeature()` function.
+
+```{r}
+f <- sampleData(ref)$sample_type
+f[f == "QC"] <- NA
+ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
+ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
+ref_mz_rt
+```
+This should be what the `lamas` input looks like for alignment. In term of how this method work, the alignment algorithm matches chromatographic peaks from the experimental data to the lamas, fitting a model based on this match to adjust their retention times and minimize discrepancies between the 2 dataset.
+Now we can define our `param` object `LamaParama` to prepare the alignment. `tolerance`, `toelracneRt` and `ppm` relate to the matching between chromatogreaphic peaks and lamas. the other parameter are related to the type of fitting that is generated between these data point. More details on each parameter and the overall method can be found by searching `?adjustRtime`. Below is an example using defualt parameters.
+
+```{r}
+param <- LamaParama(lamas = ref_mz_rt, method = "gam", span = 1, 
+                    outlierTolerance = 3, zeroWeight = 10, ppm = 20,
+                    tolerance = 0, toleranceRt = 5, bs = "tp")
+
+#' input into adjustRtime
+tst_adjusted <- adjustRtime(tst, param = param)
+tst_adjusted <- applyAdjustedRtime(tst_adjusted)
+```
+
+
+```{r fig.height=12, fig.width=5}
+#' evaluate the results with BPC
+bpc <- chromatogram(faahko, chromPeaks = "none")
+bpc_tst_raw <- chromatogram(tst, chromPeaks = "none")
+bpc_tst_adj <- chromatogram(tst_adjusted, chromPeaks = "none")
+```
+
+
+```{r}
+#' BPC of the first sample
+par(mfrow = c(1, 1))
+plot(bpc[1, 1], col = "#00000080")
+#' raw, red
+points(rtime(bpc_tst_raw[1, 1]), intensity(bpc_tst_raw[1, 1]), type = "l",
+       col = "#ff000080")
+```
+
+
+this can be expalin because of the peak matched distribution 
+the matchLamaChromPeaks() functions allows us to determine how well the lams match with chromatographic peaks of each files. Can be run berofre adjusting  also. 
+
+```{r}
+rtMap <- matchLamasChromPeaks(tst, lamas = ref_mz_rt, ppm = 20,
+                    tolerance = 0, toleranceRt = 5)
+
+#' BPC of the first sample
+par(mfrow = c(1, 1))
+plot(bpc[1, 1], col = "#00000080")
+
+#' raw, red
+points(rtime(bpc_tst_raw[1, 1]), intensity(bpc_tst_raw[1, 1]), type = "l",
+       col = "#ff000080")
+
+#' adjusted, blue
+points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
+       col = "#0000ff80")
+grid()
+abline(v = rtMap[[1]]$obs)
+```
+
 
 # Additional details and notes
 

@@ -685,8 +685,10 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
                       zero_weight = 10,
                       bs = "tp"){
     rt_map <- rt_map[order(rt_map$obs), ]
+    # add first row of c(0,0) to set a fix timepoint.
+    rt_map <- rbind(c(0,0), rt_map)
     weights <- rep(1, nrow(rt_map))
-    weights[1] <- zero_weight # need to ask Carl about this, maybe drop?
+    weights[1L] <- zero_weight
 
     if (method == "gam") {
         .check_gam_library()
@@ -700,7 +702,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
     meanSSq <- mean(SSq)
     not_outlier <- (SSq / meanSSq) < resid_ratio
 
-    ## re-run only if there is outliers
+    ## re-run only if there is outliers and keep the zero.
     if (sum(not_outlier)){
         not_outlier[1] <- TRUE
         rt_map <- rt_map[not_outlier, , drop = FALSE]
@@ -746,15 +748,16 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @author Philippine Louail
 #'
 #' @rdname adjustRtime
-matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
+matchLamasChromPeaks <- function(object, lamas, ppm = 20, tolerance = 0,
+                                 toleranceRt = 5, BPPARAM = bpparam()){
     if(!hasChromPeaks(object))
         stop("'object' needs to have detected ChromPeaks. ",
              "Run 'findChromPeaks()' first.")
     cp_raw <- split.data.frame(chromPeaks(object)[, c("mz", "rt")],
                                chromPeaks(object)[, "sample"])
-    rt_map <- bplapply(cp_raw, FUN = function(x, param) {
-        .match_reference_anchors(obs_peaks = x, ref_anchors = param@lamas,
-                                 ppm = param@ppm, tolerance = param@tolerance,
-                                 toleranceRt = param@toleranceRt)},
+    rt_map <- bplapply(cp_raw, FUN = function(x) {
+        .match_reference_anchors(obs_peaks = x, ref_anchors = lamas,
+                                 ppm = ppm, tolerance = tolerance,
+                                 toleranceRt = toleranceRt)},
         BPPARAM = BPPARAM, MoreArgs = list(param = param))
 }

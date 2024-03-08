@@ -100,7 +100,14 @@ adjustRtime(object, param, ...)
 
 \S4method{adjustRtime}{XcmsExperiment,LamaParama}(object, param, BPPARAM = bpparam(), ...)
 
-matchLamasChromPeaks(object, param, BPPARAM = bpparam())
+matchLamasChromPeaks(
+  object,
+  lamas,
+  ppm = 20,
+  tolerance = 0,
+  toleranceRt = 5,
+  BPPARAM = bpparam()
+)
 
 PeakGroupsParam(
   minFraction = 0.9,
@@ -255,6 +262,23 @@ See \code{\link[=bpparam]{bpparam()}} for details.}
 \item{msLevel}{For \code{adjustRtime}: \code{integer(1)} defining the MS level on
 which the alignment should be performed.}
 
+\item{lamas}{For \code{LamaParama}: \code{matrix} or \code{data.frame} with the m/z and
+retention times values of features (as first and second column) from the
+external dataset on which the alignment will be based on.}
+
+\item{ppm}{For \code{LamaParama}: \code{numeric(1)} defining the m/z-relative maximal
+allowed difference in m/z between \code{lamas} and chromatographic peaks. Used
+for the mapping of identified chromatographic peaks and lamas.}
+
+\item{tolerance}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
+acceptable difference in m/z between lamas and chromatographic peaks.
+Used for the mapping of identified chromatographic peaks and \code{lamas}.}
+
+\item{toleranceRt}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
+acceptable difference in retention time between lamas and
+chromatographic peaks. Used for the mapping of identified chromatographic
+peaks and \code{lamas}.}
+
 \item{minFraction}{For \code{PeakGroupsParam}: \code{numeric(1)} between 0 and 1
 defining the minimum required proportion of samples in which peaks for
 the peak group were identified. Peak groups passing this criteria will
@@ -303,10 +327,6 @@ specifying the method with which non-subset samples should be adjusted.
 Supported options are \code{"previous"} and \code{"average"} (default).
 See \emph{Subset-based alignment} section for details.}
 
-\item{lamas}{For \code{LamaParama}: \code{matrix} or \code{data.frame} with the m/z and
-retention times values of features (as first and second column) from the
-external dataset on which the alignment will be based on.}
-
 \item{method}{For \code{LamaParama}:\code{character(1)} with the type of warping.
 Either \code{method = "gam"} or \code{method = "loess"} (default).}
 
@@ -320,19 +340,6 @@ the first, initial fit, are removed from the final model fit.}
 first data point (i.e. retention times of the first lama-chromatographic
 peak pair). Values larger than 1 reduce warping problems in the early RT
 range.}
-
-\item{ppm}{For \code{LamaParama}: \code{numeric(1)} defining the m/z-relative maximal
-allowed difference in m/z between \code{lamas} and chromatographic peaks. Used
-for the mapping of identified chromatographic peaks and lamas.}
-
-\item{tolerance}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
-acceptable difference in m/z between lamas and chromatographic peaks.
-Used for the mapping of identified chromatographic peaks and \code{lamas}.}
-
-\item{toleranceRt}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
-acceptable difference in retention time between lamas and
-chromatographic peaks. Used for the mapping of identified chromatographic
-peaks and \code{lamas}.}
 
 \item{bs}{For \code{LamaParama}: \code{character(1)} defining the GAM moothing method.
 (defaults to thin plate; NB: B- and P-splines have been shown to produce
