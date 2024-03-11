@@ -651,10 +651,11 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
                        zero_weight = zero_weight,
                        bs = bs)
     adj <- predict(model, newdata = data.frame(obs = rt_raw))
-    if (is.unsorted(adj, na.rm = TRUE))
-        stop("Adjusted retention times are not sorted") # think of a solution
-    # in case this happens (hopefully not)
-    ## adjust values before and after adjusted values
+    if (is.unsorted(adj, na.rm = TRUE)){
+        warning("Adjusted retention times are not sorted, linear ",
+        "interpolation will be performed for the unsorted data points")
+        adj <- .sort_rtime(adj)
+        }
     idx <- which(rt_raw < min(rt_map$obs))
     lidx <- length(idx)
     if (lidx)
@@ -668,11 +669,11 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @description
 #'
 #' Get a model representing the differences between observed and reference
-#' retention times (parameter `rt_map`). After an intial fit, the model is
+#' retention times (parameter `rt_map`). After an initial fit, the model is
 #' re-fitted excluding potential outliers.
 #'
 #' @param rt_map `data.frame` with the observed (column `"obs"`) and reference
-#'     (columnn `"ref"`) retention time pairs.
+#'     (column `"ref"`) retention time pairs.
 #'
 #' @importFrom stats loess predict resid
 #'
@@ -683,7 +684,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
                       rt_map, span = 0.5,
                       resid_ratio = 3,
                       zero_weight = 10,
-                      bs = "tp"){
+                      bs = "tp", warnings = FALSE){
     rt_map <- rt_map[order(rt_map$obs), ]
     # add first row of c(0,0) to set a fix timepoint.
     rt_map <- rbind(c(0,0), rt_map)
@@ -695,7 +696,17 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
         model <- mgcv::gam(ref ~ s(obs, bs = bs), weights = weights,
                            data = rt_map)
     } else {
-        model <- loess(ref ~ obs, data = rt_map, span = span, weights = weights)
+        cw <- tryCatch(
+        model <- loess(ref ~ obs, data = rt_map, span = span,
+                       weights = weights) , warning=function(w) w)
+        if(!inherits(cw, "loess")){
+            warning("Warnings arose when fitting the loess model, this file ",
+                    "might have too few datapoints we advise to relax the ",
+                    "matching parameters, to see the warnings run ",
+                    "'warnings = TRUE'")
+            if (warnings == TRUE)
+                message("The Loess Warnings are: ", cw)
+            }
     }
     ## compute outliers
     SSq <- resid(model)^2
@@ -703,7 +714,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
     not_outlier <- (SSq / meanSSq) < resid_ratio
 
     ## re-run only if there is outliers and keep the zero.
-    if (sum(not_outlier)){
+    if (sum(!not_outlier)){
         not_outlier[1] <- TRUE
         rt_map <- rt_map[not_outlier, , drop = FALSE]
         weights <- weights[not_outlier]
@@ -711,8 +722,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
             model <- mgcv::gam(ref ~ s(obs, bs = "tp"), weights = weights,
                                data = rt_map)
         } else {
-            model <- loess(ref ~ obs, data = rt_map, span = 0.5,
-                           weights = weights)
+            suppressWarnings(model <- loess(ref ~ obs, data = rt_map, span = span,
+                           weights = weights)) # should also check warnings here ?
         }
     }
     model
@@ -759,5 +770,69 @@ matchLamasChromPeaks <- function(object, lamas, ppm = 20, tolerance = 0,
         .match_reference_anchors(obs_peaks = x, ref_anchors = lamas,
                                  ppm = ppm, tolerance = tolerance,
                                  toleranceRt = toleranceRt)},
-        BPPARAM = BPPARAM, MoreArgs = list(param = param))
+        BPPARAM = BPPARAM)
 }
+
+#' @title Perform linear interpolation for unsorted retention time.
+#'
+#' @description
+#' This function performs linear interpolation on the non-sorted parts of an
+#' input vector of retention time. TO see more details on the interpolation,
+#' see [approx()]
+#'
+#' @param rtime `numeric` vector with the retention times for one file/sample.
+#'
+#' @return vector with sorted retention time.
+#'
+#' @examples
+#' vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
+#' sorted_rtime <- .sort_rtime(vec)
+#' is.unsorted(vec, na.rm = TRUE)
+#'
+#' @noRd
+.sort_rtime <- function(rtime){
+    # Select only the non-NA values
+    nna_idx <- which(!is.na(rtime))
+    vec_temp <- rtime[nna_idx]
+    unsorted_idx <- which(vec_temp != sort(vec_temp))
+
+    while (is.unsorted(vec_temp)) {
+        ## phili: i'm thinking of adding a `& length(unsorted_idx) != 0`
+        ## check in the while loop.
+        idx <- unsorted_idx[1]
+
+        # Find the adjacent values
+        idx <- max(1, idx - 1)
+        next_idx <- which(vec_temp > vec_temp[idx])
+        if (length(next_idx) == 0) {
+            next_idx <- length(vec_temp)
+        } else {
+            next_idx <- min(next_idx)
+        }
+
+        # Create data for linear interpolation
+        idx_range <- c(1:idx, next_idx:length(vec_temp))
+        idx_interpolate <- setdiff(seq_len(length(vec_temp)), (idx_range))
+
+        # Perform linear interpolation
+        interpolated_value <- approx(x = idx_range, vec_temp[idx_range],
+                                     xout = idx_interpolate)$y
+
+        # Update the vector with the interpolated value
+        vec_temp[idx_interpolate] <- round(interpolated_value, 2)
+
+        # Remove the indices that have been sorted out.
+        sorted <- idx:next_idx
+        unsorted_idx <- unsorted_idx[!unsorted_idx %in% sorted]
+
+        ## phili: also can it still be unsorted and the unsorted_idx empty
+        ## - linked to the comment above
+        # if (length(unsorted_idx) == 0 )
+        #     unsorted_idx <- which(vec_temp != sort(vec_temp))
+    }
+    rtime[nna_idx] <- vec_temp
+    ## phili: here should we check for over-correction ?
+    ## checking median before and after ?
+    rtime
+}
+

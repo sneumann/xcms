@@ -276,7 +276,7 @@ test_that(".rt_model works", {
     ## skip outlier removal
     res <- .rt_model(rt_map = rt_m, method = "loess", resid_ratio = 100)
     expect_true(is(res, "loess"))
-    expect_equal(length(res$residuals), nrow(obs))
+    expect_equal(length(res$residuals), nrow(obs) + 1) # for the c(0,0) extra row
 
     ## gam
     res <- .rt_model(rt_map = rt_m, method = "gam")
@@ -285,7 +285,7 @@ test_that(".rt_model works", {
     ## skip outlier removal
     res <- .rt_model(rt_map = rt_m, method = "gam", resid_ratio = 100)
     expect_true(is(res, "gam"))
-    expect_equal(length(res$residuals), nrow(obs))
+    expect_equal(length(res$residuals), nrow(obs) + 1)
 })
 
 test_that(".match_reference_anchors works", {
@@ -351,4 +351,13 @@ test_that(".adjust_rt_model works", {
     ## data set
     rt_ref <- rtime(ref[2, keepAdjustedRtime = TRUE])
     expect_true(mean(abs(rt_adj - rt_ref)) < mean(abs(rt_raw - rt_ref)))
+})
+
+test_that("linear_interpolate_vec interpolates correctly", {
+    vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
+    # Expected result after interpolation
+    sorted <- c(NA, NA, NA, 1.2, 1.23, 1.25, 1.28, 1.3, 1.33, 1.37,
+                1.4, 1.6, NA, NA)
+    result <- .sort_rtime(vec)
+    expect_equal(result, sorted)
 })
