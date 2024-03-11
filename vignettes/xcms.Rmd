@@ -408,7 +408,8 @@ chromatographic peak detection. Below we show the first 6 identified
 chromatographic peaks.
 
 ```{r peak-detection-chromPeaks, message = FALSE }
-chromPeaks(faahko) |> head()
+chromPeaks(faahko) |>
+    head()
 ```
 
 Columns of this `chromPeaks` matrix might differ depending on the used peak
@@ -484,15 +485,22 @@ plot(chr_2)
 
 It is also possible to perform the peak refinement on extracted ion
 chromatograms. This could again be used to test and fine-tune the settings for
-the parameter. To illustrate this we perform below a peak refinement on the
-extracted ion chromatogram `chr_1` reducing the `minProp` parameter to force
-joining the two peaks.
+the parameter and to avoid potential problematic behavior. The `minProp`
+parameter for example has to be carefully chosen to avoid merging of isomer
+peaks (like in the example above). With the default `minProp = 0.75` only peaks
+are merged if the signal between the two peaks is **higher** than 75% of the
+smaller peak's maximal intensity. Setting this value too low could eventually
+result in merging of isomers as shown below.
 
-```{r peak-postprocessing-chr, fig..width = 5, fig.height = 5}
+```{r peak-postprocessing-chr, fig.width = 5, fig.height = 5}
+#' Too low minProp could cause merging of isomers!
 res <- refineChromPeaks(chr_1, MergeNeighboringPeaksParam(minProp = 0.05))
 chromPeaks(res)
 plot(res)
 ```
+
+Thus, before running such a peak refinement evaluate that isomers present in the
+data set were not wrongly merged based on the chosen settings.
 
 Before proceeding we next replace the `faahko` object with the results from the
 peak refinement step.
@@ -1155,7 +1163,7 @@ properties of the mice analyzed (sex, age, litter mates etc).
 
 ## Quality-based filtering of features
 
-When dealing with metabolomics results, it is often necessary to filter 
+When dealing with metabolomics results, it is often necessary to filter
 features based on certain criteria. These criteria are typically derived from
 statistical formulas applied to full rows of data, where each row represents a
 feature. The `filterFeatures` function provides a robust solution for filtering
@@ -1176,7 +1184,7 @@ is recommended to base the computation on quality control (QC) samples,
 as demonstrated below:
 
 ```{r}
-# Set up parameters for RsdFilter 
+# Set up parameters for RsdFilter
 rsd_filter <- RsdFilter(threshold = 0.3,
                         qcIndex = sampleData(faahko)$sample_type == "QC")
 
@@ -1228,16 +1236,16 @@ features based on this. Features with a percent of missing values larger than
 the threshold in all sample groups will be removed. Another option is to base
 this quality assessment and filtering only on QC samples.
 
-Both examples are shown below: 
+Both examples are shown below:
 
 ```{r}
 # To set up parameter `f` to filter only based on QC samples
 f <- sampleData(filtered_faakho)$sample_type
-f[f != "QC"] <- NA 
+f[f != "QC"] <- NA
 
 # To set up parameter `f` to filter per sample type excluding QC samples
 f <- sampleData(filtered_faakho)$sample_type
-f[f == "QC"] <- NA 
+f[f == "QC"] <- NA
 
 missing_filter <- PercentMissingFilter(threshold = 30,
                                        f = f)
@@ -1253,7 +1261,7 @@ filtered_res <- filterFeatures(object = filtered_res,
                                filter = missing_filter)
 ```
 
-Here, no feature was removed, meaning that all the features had less than 30% 
+Here, no feature was removed, meaning that all the features had less than 30%
 of `NA` values in at least one of the sample type.
 
 Although not directly relevant to this experiment, the `BlankFlag` filter can be
