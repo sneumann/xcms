@@ -4,7 +4,8 @@ importFrom("utils", "capture.output", "data")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
-    "isolationWindowTargetMz", "quantify", "bin", "spectrapply", "filterFeatures")
+    "isolationWindowTargetMz", "quantify", "bin", "spectrapply",
+    "filterFeatures", "filterMzRange")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
@@ -568,7 +569,6 @@ importMethodsFrom("Spectra", "ionCount")
 importMethodsFrom("Spectra", "precursorMz")
 importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
-importMethodsFrom("Spectra", "filterMzRange")
 importMethodsFrom("Spectra", "backendBpparam")
 importFrom("Spectra", "MsBackendMemory")
 
