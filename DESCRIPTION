@@ -43,21 +43,17 @@ Authors@R: c(
 	   )
 Depends:
     R (>= 4.0.0),
-    BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.23.1)
+    BiocParallel (>= 1.8.0)
 Imports:
+    MSnbase (>= 2.23.1),
     mzR (>= 2.25.3),
     methods,
     Biobase,
     BiocGenerics,
     ProtGenerics (>= 1.35.2),
     lattice,
-    RColorBrewer,
-    plyr,
-    RANN,
     MassSpecWavelet (>= 1.66.0),
     S4Vectors,
-    robustbase,
     IRanges,
     SummarizedExperiment,
     MsCoreUtils (>= 1.15.3),
@@ -65,8 +61,8 @@ Imports:
     MsExperiment (>= 1.5.4),
     Spectra (>= 1.13.2),
     progress,
-    multtest,
     jsonlite,
+    RColorBrewer,
     MetaboCoreUtils (>= 1.11.2)
 Suggests:
     BiocStyle,
@@ -80,6 +76,8 @@ Suggests:
     rmarkdown,
     MALDIquant,
     pheatmap,
+    RANN,
+    multtest,
     MsBackendMgf,
     signal
 Enhances:

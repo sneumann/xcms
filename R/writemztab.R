@@ -10,15 +10,15 @@
 ## utility function, combining different length objects into a dataframe
 ## padding short columns with NA
 rbind.ragged <- function(x, y) {
-    x <- as.data.frame(x) 
-    y <- as.data.frame(y) 
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
     colnames(x) <- seq(1:ncol(x))
     colnames(y) <- seq(1:ncol(y))
-    rbind.fill(x,y)
+    suppressWarnings(rbindFill(x,y))
 }
 
 cvTerm <- function(CV, accession, name, value) {
-    paste("[", paste(CV, accession, name, value, sep=", "), "]", sep="")    
+    paste("[", paste(CV, accession, name, value, sep=", "), "]", sep="")
 }
 #cvTerm("MS", "MS:1000443", "Mass Analyzer Type", "Orbitrap")
 
@@ -52,9 +52,9 @@ mzTabHeader <- function(mztab, version, mode, type, description, xset) {
 
     samples <- paste("sample[", 1:length(runs), "]", sep="")
     names(samples) <- paste("assay[", 1:length(runs), "]-sample_ref", sep="")
-    
+
     sampleDesc <- sampnames(xset)
-    names(sampleDesc) <- paste("sample[", 1:length(runs), "]-description", sep="")    
+    names(sampleDesc) <- paste("sample[", 1:length(runs), "]-description", sep="")
     filetypes <- mzFileType(runs)
     names(runs) <- paste("ms_run[", 1:length(filetypes), "]-format", sep="")
 
@@ -64,10 +64,10 @@ mzTabHeader <- function(mztab, version, mode, type, description, xset) {
     variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
                                     paste(paste("assay[",x,"]", sep=""), collapse=",")))
     names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
-    
+
     variableDescriptions <- unique(as.character(sampclass(xset)))
     names(variableDescriptions) <- paste("study_variable[", seq(along=variableDescriptions), "]-description", sep="")
-    
+
     mztab <- rbind.ragged(mztab, mzTabAddComment("Meta data section"))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD",
                                                   c("mzTab-version"=version,
@@ -78,7 +78,7 @@ mzTabHeader <- function(mztab, version, mode, type, description, xset) {
 
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", samples))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", sampleDesc))
-    
+
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", assays))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
@@ -95,7 +95,7 @@ mzTabAddTagValue <- function(section, values) {
 mzTabAddValues <- function(mztab, headers, section, values) {
     h <- cbind.data.frame(headers, t(names(values)), stringsAsFactors=FALSE)
     v <- cbind.data.frame(section, values, stringsAsFactors=FALSE)
-    
+
     mztab <- rbind.ragged(mztab, h)
     mztab <- rbind.ragged(mztab, v)
 }
@@ -103,14 +103,14 @@ mzTabAddValues <- function(mztab, headers, section, values) {
 mzTabAddSME <- function(mztab, xset) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
-    
+
     idHeaders <- c("identifier", "description", "chemical_formula",
                    "smiles", "inchi_key", "database", "database_version")
 
     searchHeaders1 <- c("search_engine", "best_search_engine_score")
-   
+
     searchHeaders2 <- paste("search_engine_score_ms_run[", runs, "]", sep="")
-    
+
     searchHeaders3 <- c("reliability", "modifications")
 
     featureHeaders <- c("charge", "adduct_ion", "exp_mass_to_charge",
@@ -118,8 +118,8 @@ mzTabAddSME <- function(mztab, xset) {
                         "retention_time_window", "uri", "spectra_ref")
 
     abundanceAssayHeaders <- paste("smallmolecule_abundance_assay[", runs, "]", sep="")
-    
-    
+
+
     abundanceVariableHeaders <- unlist(lapply(variables, FUN=function(v) c(paste("smallmolecule_abundance_study_variable[", v,"]", sep=""),
                                   paste("smallmolecule_abundance_stddev_study_variable[", v,"]", sep=""),
                                   paste("smallmolecule_abundance_std_error_study_variable[", v,"]", sep=""))))
@@ -132,7 +132,7 @@ mzTabAddSME <- function(mztab, xset) {
 
     g <- groups(xset)
     v <- groupval(xset, value="into")
-    
+
     result <-  as.data.frame(matrix(character(0), ncol=length(headers), nrow=nrow(g)))
     colnames(result) <- headers
 
@@ -140,14 +140,14 @@ mzTabAddSME <- function(mztab, xset) {
     #variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
     #                         paste(paste("assay[",x,"]", sep=""), collapse=",")))
     #names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
-    
-    
+
+
     result[,"retention_time"] <- g[,"rtmed"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"]
     result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
-    
+
     mztab <- mzTabAddValues(mztab, "SEH", "SME", result)
-    
+
 }
 
 writeMzTab <- function(object, filename) {
@@ -177,7 +177,7 @@ if (FALSE) {
                        xset=xs)
     mzt <- xcms:::mzTabAddSME(mzt, xs)
     ##mzt
-    
+
     xcms:::writeMzTab(mzt, "faahKO.mzTab")
 }
 
@@ -186,7 +186,3 @@ if (FALSE) {
     library(MSnbase)
     m <- readMzTabData("faahKO.mzTab")
 }
-
-
-
-       
