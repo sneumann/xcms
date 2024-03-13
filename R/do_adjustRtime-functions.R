@@ -654,7 +654,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
     if (is.unsorted(adj, na.rm = TRUE)){
         warning("Adjusted retention times are not sorted, linear ",
         "interpolation will be performed for the unsorted data points")
-        adj <- .sort_rtime(adj)
+        adj <- .force_sorted(adj)
         }
     idx <- which(rt_raw < min(rt_map$obs))
     lidx <- length(idx)
@@ -749,8 +749,9 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @param param An object of class `LamaParama` that will later be used for
 #' adjustment using the [adjustRtime()] function.
 #'
-#' @return A list of matrices representing the 1:1 matches between Lamas
-#' (ref) and ChromPeaks (obs).
+#' @return A `LamaParama` object with new slot rtMap composed of a list of
+#' matrices representing the 1:1 matches between Lamas (ref) and ChromPeaks
+#' (obs).
 #'
 #' @note If there are no matches, the file retention will not be adjusted when
 #' calling [adjustRtime()] with the same `LamaParama` and `XcmsExperiment`
@@ -759,18 +760,65 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @author Philippine Louail
 #'
 #' @rdname adjustRtime
-matchLamasChromPeaks <- function(object, lamas, ppm = 20, tolerance = 0,
-                                 toleranceRt = 5, BPPARAM = bpparam()){
-    if(!hasChromPeaks(object))
+matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
+    if (!hasChromPeaks(object))
         stop("'object' needs to have detected ChromPeaks. ",
              "Run 'findChromPeaks()' first.")
     cp_raw <- split.data.frame(chromPeaks(object)[, c("mz", "rt")],
                                chromPeaks(object)[, "sample"])
-    rt_map <- bplapply(cp_raw, FUN = function(x) {
-        .match_reference_anchors(obs_peaks = x, ref_anchors = lamas,
-                                 ppm = ppm, tolerance = tolerance,
-                                 toleranceRt = toleranceRt)},
-        BPPARAM = BPPARAM)
+    param@nChromPeaks <- vapply(cp_raw, nrow, numeric(1))
+    param@rtMap <- bplapply(cp_raw, FUN = function(x) {
+        .match_reference_anchors(obs_peaks = x, ref_anchors = param@lamas,
+                                 ppm = param@ppm, tolerance = param@tolerance,
+                                 toleranceRt = param@toleranceRt)},
+    BPPARAM = BPPARAM)
+    param
+}
+
+#' @title Summary of LamaParama retention time alignment
+#'
+#' @description
+#' Generates a summary of the LamaParama method. Composed of coverage % of the
+#' chrompeaks match over the total chrompeaks of the object. as well as a
+#' summary of the model that will be applied to the file to adjust the
+#' retention times
+#'
+#' @param `LamaParama` same object that will be passed to the `adjustRtime()`
+#' function. To run this function the `matchLamasChromPeaks()` need to be run
+#' on this first.
+#'
+#' @return a data.frame
+#'
+#' @author Philippine Louail
+#'
+#' @rdname summarizeLamaMatch
+summarizeLamaMatch <- function(param){
+    if (!inherits(param, "LamaParama"))
+        stop("The input needs to be of class 'LamaParama'")
+    if (length(param@nChromPeaks) == 0 || length(param@rtMap) == 0)
+        stop("Summary inputs are missing. Please run `matchLamasChromPeaks` ",
+        "first.")
+    m <- lapply(param@rtMap, function(x){
+         s <- summary(.rt_model(method = param@method,
+                      rt_map= x, span = param@span,
+                      resid_ratio = param@outlierTolerance,
+                      zero_weight = param@zeroWeight,
+                      bs = param@bs))
+         if (param@method == "loess")
+             row <- c(Number_observation = s$n, Resid_sd = s$s,
+                      Equivalent_numb_param = s$enp) # not super sure what are the best info to share
+         else
+             row <- c(Number_observation = s$n, Resid_sd = s$residual.df,
+                      r2 = s$r.sq)
+         row
+        })
+    df <- rbind(
+        Sample_number = seq_len(length(param@rtMap)),
+        Total_peaks = param@nChromPeaks,
+        Matched_peaks = vapply(param@rtMap, nrow, numeric(1)),
+        Total_lamas = nrow(param@lamas),
+        data.frame(m))
+    t(df)
 }
 
 #' @title Perform linear interpolation for unsorted retention time.
@@ -785,54 +833,67 @@ matchLamasChromPeaks <- function(object, lamas, ppm = 20, tolerance = 0,
 #' @return vector with sorted retention time.
 #'
 #' @examples
-#' vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
-#' sorted_rtime <- .sort_rtime(vec)
-#' is.unsorted(vec, na.rm = TRUE)
+#' x <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
+#' sorted_rtime <-  .force_sorted(x)
+#' is.unsorted(x, na.rm = TRUE)
 #'
 #' @noRd
-.sort_rtime <- function(rtime){
+.force_sorted <- function(x){
     # Select only the non-NA values
-    nna_idx <- which(!is.na(rtime))
-    vec_temp <- rtime[nna_idx]
-    unsorted_idx <- which(vec_temp != sort(vec_temp))
+    nna_idx <- which(!is.na(x))
+    vec_temp <- x[nna_idx]
 
-    while (is.unsorted(vec_temp)) {
-        ## phili: i'm thinking of adding a `& length(unsorted_idx) != 0`
-        ## check in the while loop.
-        idx <- unsorted_idx[1]
+    while (any(diff(vec_temp) < 0)) {
+        # had to change because which.max gives 1 if the vector is all FALSE..
+        idx <- which.max(diff(vec_temp) < 0)
+        # Find next biggest value
+        next_idx <- suppressWarnings(min(which(vec_temp > vec_temp[idx])))
 
-        # Find the adjacent values
-        idx <- max(1, idx - 1)
-        next_idx <- which(vec_temp > vec_temp[idx])
-        if (length(next_idx) == 0) {
-            next_idx <- length(vec_temp)
-        } else {
-            next_idx <- min(next_idx)
+        if(next_idx == Inf){ # no very happy about that..
+            l <- idx:length(vec_temp)
+            vec_temp[l] <- seq(vec_temp[idx], by = 0.000001,
+                               length.out = length(l))
+            warning("Found decreasing values at the end of vector, ",
+            "interpolation not possible. Replacing values. See help for more ",
+            "details")
+            break
         }
-
-        # Create data for linear interpolation
-        idx_range <- c(1:idx, next_idx:length(vec_temp))
-        idx_interpolate <- setdiff(seq_len(length(vec_temp)), (idx_range))
-
-        # Perform linear interpolation
-        interpolated_value <- approx(x = idx_range, vec_temp[idx_range],
-                                     xout = idx_interpolate)$y
-
-        # Update the vector with the interpolated value
-        vec_temp[idx_interpolate] <- round(interpolated_value, 2)
-
-        # Remove the indices that have been sorted out.
-        sorted <- idx:next_idx
-        unsorted_idx <- unsorted_idx[!unsorted_idx %in% sorted]
-
-        ## phili: also can it still be unsorted and the unsorted_idx empty
-        ## - linked to the comment above
-        # if (length(unsorted_idx) == 0 )
-        #     unsorted_idx <- which(vec_temp != sort(vec_temp))
+        # Interpolation
+        idx_range <- idx:next_idx
+        vec_temp[idx_range] <- seq(vec_temp[idx], vec_temp[next_idx],
+                                         length.out = length(idx_range))
     }
-    rtime[nna_idx] <- vec_temp
-    ## phili: here should we check for over-correction ?
-    ## checking median before and after ?
-    rtime
+    x[nna_idx] <- vec_temp
+    x
 }
 
+## phili: need to move that to a better file because its a method
+#' @title Plot summary of information of matching lamas to chromPeaks
+#'
+#' @description
+#' the `plot()` function for `LamaParama` object allows to plot the obs
+#' chromatographic peaks versus the reference lamas as well as the fitting
+#' line for the chosen model type. The user can decide what file to inspect by
+#' specifying the assay number with the parameter `assay`
+#'
+#' @param assay `numeric(1)`, assay that should be plotted.
+#'
+#' @return A plot
+#'
+#' @rdname summarizeLamaMatch
+setMethod("plot", "LamaParama", function(x, index = 1L, colPoints = "#00000060",
+                                         colFit = "#00000080",
+                                         xlab = "Matched Chromatographic peaks",
+                                         ylab = "Lamas",
+                                         main = NULL,...){
+    model <- .rt_model(method = param@method,
+                       rt_map= x@rtMap[[index]], span = param@span,
+                       resid_ratio = param@outlierTolerance,
+                       zero_weight = param@zeroWeight,
+                       bs = param@bs)
+    x <- x@rtMap[[index]]
+    callNextMethod(x = x, col = colPoints, xlab = xlab,
+                   ylab = ylab, main = main, ...) #not working and not sure why
+    #plot(obs, ref, type = type, xlab = xlab, ylab = ylab, col = "blue", main = main)
+    points(model, type = "l", col = "black")
+})

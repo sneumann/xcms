@@ -1340,7 +1340,7 @@ More details on each parameter and the overall method can be found by
 searching `?adjustRtime`. Below is an example using default parameters.
 
 ```{r}
-param <- LamaParama(lamas = ref_mz_rt, method = "gam", span = 0.5,
+param <- LamaParama(lamas = ref_mz_rt, method = "loess", span = 0.5,
                     outlierTolerance = 3, zeroWeight = 10, ppm = 20,
                     tolerance = 0, toleranceRt = 20, bs = "tp")
 
@@ -1383,9 +1383,11 @@ determine how well the `lamas` match with chromatographic peaks of each file.
 It can be run before adjusting as well.
 
 ```{r}
-rtMap <- matchLamasChromPeaks(tst, lamas = ref_mz_rt, ppm = 20,
-                    tolerance = 0, toleranceRt = 20)
+param <- matchLamasChromPeaks(tst, param = param)
 
+summary <- summaryLama(param)
+
+plot(param)
 #' BPC of the first sample with matches to lamas overlay
 par(mfrow = c(1, 1))
 plot(bpc[1, 1], col = "#00000080", main = "Distribution CP matched to Lamas")

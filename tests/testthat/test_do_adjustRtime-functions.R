@@ -356,8 +356,38 @@ test_that(".adjust_rt_model works", {
 test_that("linear_interpolate_vec interpolates correctly", {
     vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
     # Expected result after interpolation
-    sorted <- c(NA, NA, NA, 1.2, 1.23, 1.25, 1.28, 1.3, 1.33, 1.37,
+    sorted <- c(NA, NA, NA, 1.2, 1.225, 1.25, 1.275, 1.3, 1.333, 1.367,
                 1.4, 1.6, NA, NA)
-    result <- .sort_rtime(vec)
+    result <- .force_sorted(vec)
+    expect_equal(result, sorted, tolerance = 0.001)
+
+    # Test with decreasing values at the end
+    vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.4, 1.04, 1.2, 1.04, NA)
+    expect_warning(result <- .force_sorted(vec), "Replacing")
+    sorted <- c(NA, NA, NA, 1.2, 1.225, 1.25, 1.275, 1.3, 1.4, 1.400001,
+                1.400002, 1.400003, NA)
     expect_equal(result, sorted)
+
+    # Test with sorted values
+    vec <- c(NA, NA, NA, 1.2, 1.3, 1.42, 1.46, 1.49, 1.498, 1.5, 1.6, 1.66, NA)
+    result <- .force_sorted(vec)
+    expect_equal(vec, result)
+})
+
+test_that("matchLamasChromPeaks works", {
+    param <- LamaParama(lamas = ref_mz_rt)
+    expect_equal(param@rtMap, list())
+    param <- matchLamasChromPeaks(tst, param)
+    expect_true(inherits(param, "LamaParama"))
+    expect_equal(length(param@rtMap), length(object))
+    expect_equal(length(param@nChromPeaks), length(object))
+})
+
+test_that("summarizeLamaMatch works", {
+    param <- LamaParama(lamas = ref_mz_rt, toleranceRt = 10)
+    expect_error(summarizeLamaMatch(param), "missing")
+    param <- matchLamasChromPeaks(tst, param)
+    res <- summarizeLamaMatch(param)
+    expect_equal(nrow(res), length(tst))
+    expect_equal(ncol(res), 7)
 })

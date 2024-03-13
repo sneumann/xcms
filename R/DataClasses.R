@@ -1476,7 +1476,9 @@ setClass("LamaParama",
                    ppm = "numeric",
                    tolerance = "numeric",
                    toleranceRt = "numeric",
-                   bs = "character"),
+                   bs = "character",
+                   rtMap = "list",
+                   nChromPeaks = "numeric"),
          contains = "Param",
          prototype = prototype(
              lamas = matrix(ncol = 2, nrow = 0),
@@ -1487,12 +1489,14 @@ setClass("LamaParama",
              ppm = 20,
              tolerance = 0,
              toleranceRt = 20,
-             bs = "tp"),
+             bs = "tp",
+             rtMap = list(),
+             nChromPeaks = numeric()),
          validity = function(object) {
              msg <- NULL
              if (!nrow(object@lamas))
                  msg <- c(msg, paste0("'lamas' cannot be empty"))
-             else {## check columns of lamas
+             else {
              }
              if (length(object@method) > 1 |
                  !all(object@method %in% c("gam", "loess")))

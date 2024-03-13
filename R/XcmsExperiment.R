@@ -1375,13 +1375,21 @@ setMethod(
         cp_raw  <- split.data.frame(chromPeaks(object)[, c("mz", "rt")],
                                     chromPeaks(object)[, "sample"])
         idx <- seq_along(object)
-        rt_adj <- bpmapply(cp_raw, rt_raw, idx, FUN = function(x, y, i, param) {
-            rt_map <- .match_reference_anchors(
-                obs_peaks = x, ref_anchors = param@lamas, ppm = param@ppm,
-                tolerance = param@tolerance, toleranceRt = param@toleranceRt)
-            if (nrow(rt_map) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
+
+        # Check if user as ran matching lama vs chrompeaks beforehand
+        if(length(param@rtMap) == 0)
+            rtMap <- matchLamasChromPeaks(object, param)
+        else
+            rtMap <- param@rtMap
+        if(length(rtMap) != lenght(object))
+            stop("The mismatch betweent the number of files matched to lamas ",
+            "and files in the object.")
+
+        # Make model and adjust retention for each file
+        rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
+            if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
                 .adjust_rt_model(y, method = param@method,
-                                 rt_map = rt_map, span = param@span,
+                                 rt_map = x, span = param@span,
                                  resid_ratio = param@outlierTolerance,
                                  zero_weight = param@zeroWeight,
                                  bs = param@bs)
@@ -1393,6 +1401,7 @@ setMethod(
             }
         }, SIMPLIFY = FALSE, BPPARAM = BPPARAM, MoreArgs = list(param = param))
 
+        # post processing housekeeping steps
         pt <- vapply(object@processHistory, processType, character(1))
         idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt,
                                      nomatch = -1L)

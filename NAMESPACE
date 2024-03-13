@@ -261,7 +261,8 @@ export(
     "estimatePrecursorIntensity",
     "featureArea",
     "loadXcmsData",
-    "matchLamasChromPeaks"
+    "matchLamasChromPeaks",
+    "summarizeLamaMatch"
 )
 
 ## New analysis methods
