@@ -759,7 +759,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'
 #' @author Philippine Louail
 #'
-#' @rdname adjustRtime
+#' @rdname matchLamaChromPeaks
 matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
     if (!hasChromPeaks(object))
         stop("'object' needs to have detected ChromPeaks. ",
@@ -791,41 +791,32 @@ matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
 #'
 #' @author Philippine Louail
 #'
-#' @rdname summarizeLamaMatch
+#' @rdname matchLamaChromPeaks
 summarizeLamaMatch <- function(param){
     if (!inherits(param, "LamaParama"))
         stop("The input needs to be of class 'LamaParama'")
     if (length(param@nChromPeaks) == 0 || length(param@rtMap) == 0)
         stop("Summary inputs are missing. Please run `matchLamasChromPeaks` ",
-        "first.")
-    m <- lapply(param@rtMap, function(x){
+             "first.")
+    res <- data.frame(Total_peaks = param@nChromPeaks,
+                      Matched_peaks = vapply(param@rtMap, nrow, numeric(1)),
+                      Total_lamas = nrow(param@lamas))
+    res_model <- lapply(param@rtMap, function(x){
          s <- summary(.rt_model(method = param@method,
                       rt_map= x, span = param@span,
                       resid_ratio = param@outlierTolerance,
                       zero_weight = param@zeroWeight,
                       bs = param@bs))
-         if (param@method == "loess")
-             row <- c(Number_observation = s$n, Resid_sd = s$s,
-                      Equivalent_numb_param = s$enp) # not super sure what are the best info to share
-         else
-             row <- c(Number_observation = s$n, Resid_sd = s$residual.df,
-                      r2 = s$r.sq)
-         row
         })
-    df <- rbind(
-        Sample_number = seq_len(length(param@rtMap)),
-        Total_peaks = param@nChromPeaks,
-        Matched_peaks = vapply(param@rtMap, nrow, numeric(1)),
-        Total_lamas = nrow(param@lamas),
-        data.frame(m))
-    t(df)
+    res$model_summary <- res_model
+    res
 }
 
 #' @title Perform linear interpolation for unsorted retention time.
 #'
 #' @description
 #' This function performs linear interpolation on the non-sorted parts of an
-#' input vector of retention time. TO see more details on the interpolation,
+#' input vector of retention time. To see more details on the interpolation,
 #' see [approx()]
 #'
 #' @param rtime `numeric` vector with the retention times for one file/sample.
@@ -866,42 +857,3 @@ summarizeLamaMatch <- function(param){
     x[nna_idx] <- vec_temp
     x
 }
-
-#' Function to access rtMap from `LamaParama` object
-rtMap <- function(x){
-    if(!inherits(x, "LamaParama"))
-        stop("The inputs need to be of class LamaParama")
-    rtMap <- param@rtMap
-    rtMap
-}
-
-
-## phili: need to move that to a better file because its a method
-#' @title Plot summary of information of matching lamas to chromPeaks
-#'
-#' @description
-#' the `plot()` function for `LamaParama` object allows to plot the obs
-#' chromatographic peaks versus the reference lamas as well as the fitting
-#' line for the chosen model type. The user can decide what file to inspect by
-#' specifying the assay number with the parameter `assay`
-#'
-#' @param assay `numeric(1)`, assay that should be plotted.
-#'
-#' @return A plot
-#'
-#' @rdname summarizeLamaMatch
-setMethod("plot", "LamaParama", function(x, index = 1L, colPoints = "#00000060",
-                                         colFit = "#00000080",
-                                         xlab = "Matched Chromatographic peaks",
-                                         ylab = "Lamas",
-                                         main = NULL,...){
-    model <- xcms:::.rt_model(method = param@method,
-                       rt_map= x@rtMap[[index]], span = param@span,
-                       resid_ratio = param@outlierTolerance,
-                       zero_weight = param@zeroWeight,
-                       bs = param@bs)
-    x <- x@rtMap[[index]]
-    plot(x, type = "p", xlab = xlab, ylab = ylab, col = "blue",
-         main = main)
-    points(model, type = "l", col = "black")
-})

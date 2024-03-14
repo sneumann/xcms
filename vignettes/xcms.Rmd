@@ -1375,11 +1375,12 @@ points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
 grid()
 ```
 
-It seems that some areas aligned better (2500 to 3000 and 3500 to 4500
-seconds) than others. This can be explained by the distribution of matched
-peaks (As seen below). The `matchLamaChromPeaks()` function allows us to 
-determine how well the `lamas` match with chromatographic peaks of each file.
-It can be run before adjusting as well.
+It appears that certain time intervals (2500 to 3000 and 3500 to 4500 seconds)
+exhibit better alignment than others. This variance can be elucidated by
+examining the distribution of matched peaks, as illustrated below. The
+`matchLamaChromPeaks()` function facilitates the assessment of how well the
+`lamas` correspond with the chromatographic peaks in each file. This analysis
+can be conducted prior to any adjustments.
 
 ```{r}
 param <- matchLamasChromPeaks(tst, param = param)
@@ -1392,13 +1393,28 @@ points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
        col = "#0000ff80")
 grid()
 abline(v = rtMap[[1]]$obs)
+```
 
+The overlay of BPC above provides insight into the correlation between accurate
+alignment and the presence of peaks matching with `lamas.` Furthermore, a more
+detailed examination of the matching and the model used for fitting each file
+is possible. Numerical information can be obtained using the
+`summarizeLamaMatch()` function. From this, the percentage of chromatographic
+peaks utilized for alignment can be computed relative to the total number of
+peaks in the file. Additionally, it is feasible to directly `plot()` the
+`param` object for the file of interest, showcasing the distribution of these
+chromatographic peaks along with the fitted model line.
+
+```{r}
 #access summary of matches and model information
 summary <- summarizeLamaMatch(param)
-summary[1]
+summary 
+
+#access the information on the model of for the first file 
+summary$model_summary[[1]]
 
 # Plot obs vs. ref with fitting line 
-plot(param)
+plot(param, index = 1L, main = "ChromPeaks versur lamas for the first file")
 ```
 
 # Additional details and notes

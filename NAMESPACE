@@ -262,7 +262,8 @@ export(
     "featureArea",
     "loadXcmsData",
     "matchLamasChromPeaks",
-    "summarizeLamaMatch"
+    "summarizeLamaMatch",
+    "rtMap"
 )
 
 ## New analysis methods
