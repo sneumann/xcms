@@ -12,7 +12,7 @@ matchLamasChromPeaks(object, param, BPPARAM = bpparam())
 
 summarizeLamaMatch(param)
 
-rtMap(x)
+rtMap(param)
 
 \S4method{plot}{LamaParama,ANY}(
   x,
@@ -29,7 +29,7 @@ rtMap(x)
 \item{object}{An object of class `XcmsExperiment` with defined ChromPeaks.}
 
 \item{param}{An object of class `LamaParama` that will later be used for
-adjustment using the [adjustRtime()] function.}
+adjustment using the `[adjustRtime()]` function.}
 
 \item{`LamaParama`}{same object that will be passed to the `adjustRtime()`
 function. To run this function the `matchLamasChromPeaks()` need to be run
@@ -42,18 +42,23 @@ A `LamaParama` object with new slot rtMap composed of a list of
 matrices representing the 1:1 matches between Lamas (ref) and ChromPeaks
 (obs).
 
-a data.frame
+A `data.frame` with:
+
+- Total_peaks: total number of chromatographic peaks in the file
+- Matched_peak: The number of matched peaks to Lamas
+- Total_Lamas: Total number of Lamas
+- Model_summary: `summary.loess` or `summary.gam` object for each file.
 
 A plot
 }
 \description{
-This function quickly matches each file's ChromPeaks to Lamas, allowing the
-user to evaluate the matches for each file.
+The `matchLamasChromPeaks()` function quickly matches each file's ChromPeaks
+to Lamas, allowing the user to evaluate the matches for each file.
 
-Generates a summary of the LamaParama method. Composed of coverage % of the
-chrompeaks match over the total chrompeaks of the object. as well as a
-summary of the model that will be applied to the file to adjust the
-retention times
+The `summarizeLamaMatch()` generates a summary of the LamaParama method.
+Composed of coverage % of the chrompeaks match over the total chrompeaks of
+the object. as well as a summary of the model that will be applied to the
+file to adjust the retention times
 
 the `plot()` function for `LamaParama` object allows to plot the obs
 chromatographic peaks versus the reference lamas as well as the fitting
@@ -66,5 +71,5 @@ calling [adjustRtime()] with the same `LamaParama` and `XcmsExperiment`
 object.
 }
 \author{
-Philippine Louail
+Philippine Louail, Carl Brunius
 }

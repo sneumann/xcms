@@ -741,13 +741,13 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @title Match reference Lamas to ChromPeaks for evaluation prior to alignment
 #'
 #' @description
-#' This function quickly matches each file's ChromPeaks to Lamas, allowing the
-#' user to evaluate the matches for each file.
+#' The `matchLamasChromPeaks()` function quickly matches each file's ChromPeaks
+#' to Lamas, allowing the user to evaluate the matches for each file.
 #'
 #' @param object An object of class `XcmsExperiment` with defined ChromPeaks.
 #'
 #' @param param An object of class `LamaParama` that will later be used for
-#' adjustment using the [adjustRtime()] function.
+#' adjustment using the `[adjustRtime()]` function.
 #'
 #' @return A `LamaParama` object with new slot rtMap composed of a list of
 #' matrices representing the 1:1 matches between Lamas (ref) and ChromPeaks
@@ -757,7 +757,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' calling [adjustRtime()] with the same `LamaParama` and `XcmsExperiment`
 #' object.
 #'
-#' @author Philippine Louail
+#' @author Philippine Louail, Carl Brunius
 #'
 #' @rdname matchLamaChromPeaks
 matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
@@ -778,18 +778,23 @@ matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
 #' @title Summary of LamaParama retention time alignment
 #'
 #' @description
-#' Generates a summary of the LamaParama method. Composed of coverage % of the
-#' chrompeaks match over the total chrompeaks of the object. as well as a
-#' summary of the model that will be applied to the file to adjust the
-#' retention times
+#' The `summarizeLamaMatch()` generates a summary of the LamaParama method.
+#' Composed of coverage % of the chrompeaks match over the total chrompeaks of
+#' the object. as well as a summary of the model that will be applied to the
+#' file to adjust the retention times
 #'
 #' @param `LamaParama` same object that will be passed to the `adjustRtime()`
 #' function. To run this function the `matchLamasChromPeaks()` need to be run
 #' on this first.
 #'
-#' @return a data.frame
+#' @return A `data.frame` with:
 #'
-#' @author Philippine Louail
+#' - Total_peaks: total number of chromatographic peaks in the file
+#' - Matched_peak: The number of matched peaks to Lamas
+#' - Total_Lamas: Total number of Lamas
+#' - Model_summary: `summary.loess` or `summary.gam` object for each file.
+#'
+#' @author Philippine Louail, Carl Brunius
 #'
 #' @rdname matchLamaChromPeaks
 summarizeLamaMatch <- function(param){
@@ -808,7 +813,7 @@ summarizeLamaMatch <- function(param){
                       zero_weight = param@zeroWeight,
                       bs = param@bs))
         })
-    res$model_summary <- res_model
+    res$Model_summary <- res_model
     res
 }
 

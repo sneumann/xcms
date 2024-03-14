@@ -462,10 +462,10 @@ and the file will be returned as-is. Users can evaluate this matching, for
 example, by checking the number of matches and ranges of the matching
 peaks, by first running \verb{[matchLamasChromPeaks()]}.
 
-Different warping methods are available; users can choose to fit a loess
-(\code{method = "loess"}, the default) or a gam (\code{method = "gam"}) between the
+Different warping methods are available; users can choose to fit a \emph{loess}
+(\code{method = "loess"}, the default) or a \emph{gam} (\code{method = "gam"}) between the
 reference data points and observed matching ChromPeaks. Additional
-parameters such as \code{span}, \code{weight}, \code{outlier_tolerance}, \code{zeroWeight},
+parameters such as \code{span}, \code{weight}, \code{outlierTolerance}, \code{zeroWeight},
 and \code{bs} are specific to these models. These parameters offer flexibility
 in fine-tuning how the matching chromatographic peaks are fitted to the
 lamas, thereby generating a model to align the overall retention time for

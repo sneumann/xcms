@@ -80,10 +80,10 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   example, by checking the number of matches and ranges of the matching
 #'   peaks, by first running `[matchLamasChromPeaks()]`.
 #'
-#'   Different warping methods are available; users can choose to fit a loess
-#'   (`method = "loess"`, the default) or a gam (`method = "gam"`) between the
+#'   Different warping methods are available; users can choose to fit a *loess*
+#'   (`method = "loess"`, the default) or a *gam* (`method = "gam"`) between the
 #'   reference data points and observed matching ChromPeaks. Additional
-#'   parameters such as `span`, `weight`, `outlier_tolerance`, `zeroWeight`,
+#'   parameters such as `span`, `weight`, `outlierTolerance`, `zeroWeight`,
 #'   and `bs` are specific to these models. These parameters offer flexibility
 #'   in fine-tuning how the matching chromatographic peaks are fitted to the
 #'   lamas, thereby generating a model to align the overall retention time for

@@ -390,7 +390,7 @@ test_that("summarizeLamaMatch works", {
     res <- summarizeLamaMatch(param)
     expect_equal(nrow(res), length(tst))
     expect_equal(ncol(res), 4)
-    expect_true(inherits(res$model_summary[[1]], "summary.loess"))
+    expect_true(inherits(res$Model_summary[[1]], "summary.loess"))
 })
 
 test_that("Accessing rtMap from LamaParama object works", {

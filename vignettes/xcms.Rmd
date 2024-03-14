@@ -1410,6 +1410,9 @@ chromatographic peaks along with the fitted model line.
 summary <- summarizeLamaMatch(param)
 summary 
 
+# coverage for each file
+summary$Matched_peaks / summary$Total_peaks * 100
+
 #access the information on the model of for the first file 
 summary$model_summary[[1]]
 
