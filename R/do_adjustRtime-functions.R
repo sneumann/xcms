@@ -867,6 +867,15 @@ summarizeLamaMatch <- function(param){
     x
 }
 
+#' Function to access rtMap from `LamaParama` object
+rtMap <- function(x){
+    if(!inherits(x, "LamaParama"))
+        stop("The inputs need to be of class LamaParama")
+    rtMap <- param@rtMap
+    rtMap
+}
+
+
 ## phili: need to move that to a better file because its a method
 #' @title Plot summary of information of matching lamas to chromPeaks
 #'
@@ -886,14 +895,13 @@ setMethod("plot", "LamaParama", function(x, index = 1L, colPoints = "#00000060",
                                          xlab = "Matched Chromatographic peaks",
                                          ylab = "Lamas",
                                          main = NULL,...){
-    model <- .rt_model(method = param@method,
+    model <- xcms:::.rt_model(method = param@method,
                        rt_map= x@rtMap[[index]], span = param@span,
                        resid_ratio = param@outlierTolerance,
                        zero_weight = param@zeroWeight,
                        bs = param@bs)
     x <- x@rtMap[[index]]
-    callNextMethod(x = x, col = colPoints, xlab = xlab,
-                   ylab = ylab, main = main, ...) #not working and not sure why
-    #plot(obs, ref, type = type, xlab = xlab, ylab = ylab, col = "blue", main = main)
+    plot(x, type = "p", xlab = xlab, ylab = ylab, col = "blue",
+         main = main)
     points(model, type = "l", col = "black")
 })

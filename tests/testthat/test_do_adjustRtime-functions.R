@@ -391,3 +391,11 @@ test_that("summarizeLamaMatch works", {
     expect_equal(nrow(res), length(tst))
     expect_equal(ncol(res), 7)
 })
+
+test_that("Accessing rtMap from LamaParama object works", {
+    param <- LamaParama(lamas = ref_mz_rt, toleranceRt = 10)
+    param <- matchLamasChromPeaks(tst, param)
+    expect_error(rtMap(ObiwarpParam()), "class")
+    rtMap <- rtMap(param)
+    expect_equal(length(rtMap), length(param@rtMap))
+})

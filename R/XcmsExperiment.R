@@ -1378,17 +1378,16 @@ setMethod(
 
         # Check if user as ran matching lama vs chrompeaks beforehand
         if(length(param@rtMap) == 0)
-            rtMap <- matchLamasChromPeaks(object, param)
-        else
-            rtMap <- param@rtMap
+            param <- matchLamasChromPeaks(object, param)
+        rtMap <- param@rtMap
         if(length(rtMap) != length(object))
-            stop("The mismatch betweent the number of files matched to lamas ",
-            "and files in the object.")
+            stop("Mismatch between the number of files matched to lamas: ",
+                 length(rtMap), "and files in the object: ", length(object))
 
         # Make model and adjust retention for each file
         rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
             if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
-                .adjust_rt_model(y, method = param@method,
+                xcms:::.adjust_rt_model(y, method = param@method,
                                  rt_map = x, span = param@span,
                                  resid_ratio = param@outlierTolerance,
                                  zero_weight = param@zeroWeight,
