@@ -1381,7 +1381,7 @@ setMethod(
             rtMap <- matchLamasChromPeaks(object, param)
         else
             rtMap <- param@rtMap
-        if(length(rtMap) != lenght(object))
+        if(length(rtMap) != length(object))
             stop("The mismatch betweent the number of files matched to lamas ",
             "and files in the object.")
 
