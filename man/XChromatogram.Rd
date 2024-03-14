@@ -600,6 +600,7 @@ being samples and rows features.
 ## ---- Creation of XChromatograms ----
 ##
 ## Create a XChromatograms from Chromatogram objects
+library(MSnbase)
 dta <- list(Chromatogram(rtime = 1:7, c(3, 4, 6, 12, 8, 3, 2)),
     Chromatogram(1:10, c(4, 6, 3, 4, 7, 13, 43, 34, 23, 9)))
 
@@ -689,6 +690,7 @@ plotChromPeakDensity(res, param = prm)
 res <- dropFeatureDefinitions(res)
 hasFeatures(res)
 
+library(MSnbase)
 ## Create a XChromatogram object
 pks <- matrix(nrow = 1, ncol = 6)
 colnames(pks) <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")

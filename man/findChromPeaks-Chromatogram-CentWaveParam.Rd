@@ -47,6 +47,7 @@ detection artifacts.
 }
 \examples{
 
+library(MSnbase)
 ## Loading a test data set with identified chromatographic peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 faahko_sub <- filterRt(faahko_sub, c(2500, 3700))
@@ -64,11 +65,14 @@ xchr
 ## Plot data and identified peaks.
 plot(xchr)
 
+library(MsExperiment)
+library(xcms)
 ## Perform peak detection on an MChromatograms object
-od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+
+fls <- c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
-    system.file("cdf/KO/ko18.CDF", package = "faahKO")),
-    mode = "onDisk")
+    system.file("cdf/KO/ko18.CDF", package = "faahKO"))
+od3 <- readMsExperiment(fls)
 
 ## Disable parallel processing for this example
 register(SerialParam())

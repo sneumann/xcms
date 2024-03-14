@@ -219,7 +219,7 @@ res <- do_findChromPeaks_centWave(mz = unlist(mzs), int = unlist(ints),
 head(res)
 }
 \references{
-Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
     sensitive feature detection for high resolution LC/MS"
     \emph{BMC Bioinformatics} 2008, 9:504
 }

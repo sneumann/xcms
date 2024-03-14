@@ -1,6 +1,7 @@
 library(testthat)
 library(xcms)
 library(faahKO)
+library(MSnbase)
 library(msdata)
 
 if (.Platform$OS.type == "unix") {

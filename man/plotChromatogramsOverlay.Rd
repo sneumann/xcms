@@ -116,6 +116,7 @@ the \code{plot} function for \code{XChromatogram()} object for details).
 
 ## Load preprocessed data and extract EICs for some features.
 library(xcms)
+library(MSnbase)
 xdata <- loadXcmsData()
 data(xdata)
 ## Update the path to the files for the local system

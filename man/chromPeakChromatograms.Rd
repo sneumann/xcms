@@ -59,6 +59,9 @@ of length equal to the number of chromatographic peaks (and one column).
 \examples{
 
 ## Load a test data set with detected peaks
+library(MSnbase)
+library(xcms)
+library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Get EICs for every detected chromatographic peak

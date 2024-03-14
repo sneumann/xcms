@@ -98,6 +98,7 @@ algorithm and its supported settings.
 \examples{
 
 ## Load a test data set with detected peaks
+library(MSnbase)
 data(faahko_sub)
 ## Update the path to the files for the local system
 dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")

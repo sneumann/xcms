@@ -581,6 +581,8 @@ importFrom("progress", "progress_bar")
 exportClasses("XcmsExperiment")
 exportMethods("uniqueMsLevels")
 exportMethods("filterMzRange")
+exportMethods("fromFile")
+exportMethods("fileNames")
 
 ## saving xcms objects things
 importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",

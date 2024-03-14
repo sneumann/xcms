@@ -163,6 +163,8 @@ is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}
 \examples{
 
 ## Load a test data set with detected peaks
+library(xcms)
+library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example

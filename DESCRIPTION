@@ -1,5 +1,5 @@
 Package: xcms
-Version: 4.1.10
+Version: 4.1.11
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -82,14 +82,14 @@ Suggests:
     signal
 Enhances:
     Rgraphviz,
-    rgl,
-    XML
+    rgl
 License: GPL (>= 2) + file LICENSE
 URL: https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new
 VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 RoxygenNote: 7.3.1
+Encoding: UTF-8
 Collate:
     'AllGenerics.R'
     'functions-XChromatograms.R'

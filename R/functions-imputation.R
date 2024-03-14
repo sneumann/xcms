@@ -22,6 +22,7 @@
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' library(faahKO)
 #' data("faahko")
 #'
@@ -111,6 +112,7 @@ imputeRowMin <- function(x, min_fraction = 1/2) {
 #' @examples
 #'
 #' library(faahKO)
+#' library(MSnbase)
 #' data("faahko")
 #'
 #' xset <- group(faahko)
