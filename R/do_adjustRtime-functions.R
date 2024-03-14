@@ -759,7 +759,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'
 #' @author Philippine Louail, Carl Brunius
 #'
-#' @rdname matchLamaChromPeaks
+#' @rdname adjustRtime
 matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
     if (!hasChromPeaks(object))
         stop("'object' needs to have detected ChromPeaks. ",
@@ -796,7 +796,7 @@ matchLamasChromPeaks <- function(object, param, BPPARAM = bpparam()){
 #'
 #' @author Philippine Louail, Carl Brunius
 #'
-#' @rdname matchLamaChromPeaks
+#' @rdname adjustRtime
 summarizeLamaMatch <- function(param){
     if (!inherits(param, "LamaParama"))
         stop("The input needs to be of class 'LamaParama'")

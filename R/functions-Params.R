@@ -312,7 +312,7 @@ LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
 #' Function to access rtMap from `LamaParama` object
 #' @export
 #'
-#' @rdname matchLamaChromPeaks
+#' @rdname adjustRtime
 rtMap <- function(param){
     if(!inherits(param, "LamaParama"))
         stop("The inputs need to be of class LamaParama")

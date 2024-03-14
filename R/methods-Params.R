@@ -1266,7 +1266,7 @@ setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
 #'
 #' @export
 #'
-#' @rdname matchLamaChromPeaks
+#' @noRd
 setMethod("plot", "LamaParama", function(x, index = 1L, colPoints = "#00000060",
                                          colFit = "#00000080",
                                          xlab = "Matched Chromatographic peaks",
