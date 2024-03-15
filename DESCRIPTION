@@ -50,7 +50,7 @@ Imports:
     methods,
     Biobase,
     BiocGenerics,
-    ProtGenerics (>= 1.35.2),
+    ProtGenerics (>= 1.35.4),
     lattice,
     MassSpecWavelet (>= 1.66.0),
     S4Vectors,
