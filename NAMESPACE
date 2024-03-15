@@ -263,7 +263,7 @@ export(
     "loadXcmsData",
     "matchLamasChromPeaks",
     "summarizeLamaMatch",
-    "rtMap"
+    "matchedRtimes"
 )
 
 ## New analysis methods

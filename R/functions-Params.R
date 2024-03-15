@@ -309,17 +309,6 @@ LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
         nChromPeaks = nChromPeaks)
 }
 
-#' Function to access rtMap from `LamaParama` object
-#' @export
-#'
-#' @rdname adjustRtime
-rtMap <- function(param){
-    if(!inherits(param, "LamaParama"))
-        stop("The inputs need to be of class LamaParama")
-    rtMap <- param@rtMap
-    rtMap
-}
-
 #' @rdname adjustRtime
 ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),

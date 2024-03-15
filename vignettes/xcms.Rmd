@@ -1302,19 +1302,11 @@ range to be the same for both dataset.
 ```{r}
 ref <- loadXcmsData("xmse")
 tst <- loadXcmsData("faahko_sub2")
-
-# Check each dataset ranges.
-range(rtime(tst))
-range(rtime(ref))
-
-# Adjust so that they have the same.
-tst <- filterRt(tst, rt = c(2547, 4265))
-ref <- filterRt(ref, c(2547, 4265))
 ```
 
 Now, we will try to align these two samples to the previous dataset. The first
 step is to extract landmark features (called `lamas`). For this, we will
-determine the features that are present in every sample fthe `ref` dataset
+determine the features that are present in every sample of the `ref` dataset
 using the `PercentMissingFilter()` parameter in the `filterFeatures()` function.
 
 ```{r}
@@ -1328,7 +1320,7 @@ ref_mz_rt
 This is what the `lamas` input should look like for alignment. In terms of
 how this method works, the alignment algorithm matches chromatographic peaks
 from the experimental data to the lamas, fitting a model based on this
-match to adjust their retention times and minimize discrepancies between
+match to adjust their retention times and minimize differences between
 the two datasets.
 
 Now we can define our `param` object `LamaParama` to prepare for the
@@ -1384,7 +1376,7 @@ can be conducted prior to any adjustments.
 
 ```{r}
 param <- matchLamasChromPeaks(tst, param = param)
-rtMap <- rtMap(param)
+mtch <- matchedRtimes(param)
 
 #' BPC of the first sample with matches to lamas overlay
 par(mfrow = c(1, 1))
@@ -1392,7 +1384,7 @@ plot(bpc[1, 1], col = "#00000080", main = "Distribution CP matched to Lamas")
 points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
        col = "#0000ff80")
 grid()
-abline(v = rtMap[[1]]$obs)
+abline(v = mtch[[1]]$obs)
 ```
 
 The overlay of BPC above provides insight into the correlation between accurate

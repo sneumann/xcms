@@ -1361,7 +1361,7 @@ setMethod(
 setMethod(
     "adjustRtime", signature(object = "XcmsExperiment", param = "LamaParama"),
     function(object, param, BPPARAM = bpparam(), ...) {
-        if(!hasChromPeaks(object))
+        if (!hasChromPeaks(object))
             stop("'object' needs to have detected chromPeaks. ",
                  "Run 'findChromPeaks()' first")
         if (hasAdjustedRtime(object))
@@ -1372,15 +1372,13 @@ setMethod(
                  "alignment.")
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
-        cp_raw  <- split.data.frame(chromPeaks(object)[, c("mz", "rt")],
-                                    chromPeaks(object)[, "sample"])
         idx <- seq_along(object)
 
         # Check if user as ran matching lama vs chrompeaks beforehand
-        if(length(param@rtMap) == 0)
+        if (length(param@rtMap) == 0)
             param <- matchLamasChromPeaks(object, param)
         rtMap <- param@rtMap
-        if(length(rtMap) != length(object))
+        if (length(rtMap) != length(object))
             stop("Mismatch between the number of files matched to lamas: ",
                  length(rtMap), "and files in the object: ", length(object))
 

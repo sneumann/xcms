@@ -1467,8 +1467,6 @@ setClass("PeakGroupsParam",
              else TRUE
          })
 
-#' @slot rtMap,nChrompeaks slots that should not be accessed by the user.
-#' @rdname adjustRtime
 setClass("LamaParama",
          slots = c(lamas = "matrix",
                    method = "character",
