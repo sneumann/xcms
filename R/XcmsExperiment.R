@@ -1357,7 +1357,7 @@ setMethod(
         object
 })
 
-#'@rdname adjustRtime
+#'@rdname LamaParama
 setMethod(
     "adjustRtime", signature(object = "XcmsExperiment", param = "LamaParama"),
     function(object, param, BPPARAM = bpparam(), ...) {

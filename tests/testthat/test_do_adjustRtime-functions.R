@@ -353,7 +353,7 @@ test_that(".adjust_rt_model works", {
     expect_true(mean(abs(rt_adj - rt_ref)) < mean(abs(rt_raw - rt_ref)))
 })
 
-test_that("linear_interpolate_vec interpolates correctly", {
+test_that("force_sorted interpolates correctly", {
     vec <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
     # Expected result after interpolation
     sorted <- c(NA, NA, NA, 1.2, 1.225, 1.25, 1.275, 1.3, 1.333, 1.367,
@@ -379,8 +379,8 @@ test_that("matchLamasChromPeaks works", {
     expect_equal(param@rtMap, list())
     param <- matchLamasChromPeaks(tst, param)
     expect_true(inherits(param, "LamaParama"))
-    expect_equal(length(param@rtMap), length(object))
-    expect_equal(length(param@nChromPeaks), length(object))
+    expect_equal(length(param@rtMap), length(tst))
+    expect_equal(length(param@nChromPeaks), length(tst))
 })
 
 test_that("summarizeLamaMatch works", {
@@ -396,7 +396,7 @@ test_that("summarizeLamaMatch works", {
 test_that("Accessing rtMap from LamaParama object works", {
     param <- LamaParama(lamas = ref_mz_rt, toleranceRt = 10)
     param <- matchLamasChromPeaks(tst, param)
-    expect_error(rtMap(ObiwarpParam()), "class")
-    rtMap <- rtMap(param)
-    expect_equal(length(rtMap), length(param@rtMap))
+    expect_error(matchedRtimes(ObiwarpParam()), "class")
+    mtch <- matchedRtimes(param)
+    expect_equal(length(mtch), length(param@rtMap))
 })

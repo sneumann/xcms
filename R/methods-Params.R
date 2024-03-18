@@ -1252,35 +1252,21 @@ setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
 ############################################################
 ## LamaParama
 
-#' @title Plot summary of information of matching lamas to chromPeaks
-#'
-#' @description
-#' the `plot()` function for `LamaParama` object allows to plot the obs
-#' chromatographic peaks versus the reference lamas as well as the fitting
-#' line for the chosen model type. The user can decide what file to inspect by
-#' specifying the assay number with the parameter `assay`
-#'
-#' @param assay `numeric(1)`, assay that should be plotted.
-#'
-#' @return A plot
-#'
-#' @export
-#'
-#' @noRd
-setMethod("plot", "LamaParama", function(x, index = 1L, colPoints = "#00000060",
-                                         colFit = "#00000080",
-                                         xlab = "Matched Chromatographic peaks",
-                                         ylab = "Lamas",
-                                         main = NULL,...){
-    model <- xcms:::.rt_model(method = param@method,
-                              rt_map= x@rtMap[[index]], span = param@span,
-                              resid_ratio = param@outlierTolerance,
-                              zero_weight = param@zeroWeight,
-                              bs = param@bs)
-    x <- x@rtMap[[index]]
-    plot(x, type = "p", xlab = xlab, ylab = ylab, col = "blue",
-         main = main)
-    points(model, type = "l", col = "black")
+#' @rdname LamaParama
+setMethod("plot", signature(x = "LamaParama"),
+          function(x, index = 1L,
+                   colPoints = "#00000060",
+                   colFit = "#00000080",
+                   xlab = "Matched Chromatographic peaks",
+                   ylab = "Lamas",...){
+    model <- .rt_model(method = x@method,
+                              rt_map= x@rtMap[[index]], span = x@span,
+                              resid_ratio = x@outlierTolerance,
+                              zero_weight = x@zeroWeight,
+                              bs = x@bs)
+    datap <- x@rtMap[[index]]
+    plot(datap, type = "p", xlab = xlab, ylab = ylab, col = colPoints, ...)
+    points(model, type = "l", col = colFit)
 })
 
 

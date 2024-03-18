@@ -1409,7 +1409,7 @@ summary$Matched_peaks / summary$Total_peaks * 100
 summary$model_summary[[1]]
 
 # Plot obs vs. ref with fitting line 
-plot(param, index = 1L, main = "ChromPeaks versur lamas for the first file")
+plot(param, index = 1L, main = "ChromPeaks versur Lamas for the first file")
 ```
 
 # Additional details and notes

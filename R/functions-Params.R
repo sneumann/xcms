@@ -274,7 +274,7 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
         subset = as.integer(subset), subsetAdjust = subsetAdjust)
 }
 
-#' @rdname adjustRtime
+#' @rdname LamaParama
 LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
                                       dimnames = list(NULL, c("mz", "rt"))),
                        method = c("loess", "gam"),
@@ -284,9 +284,7 @@ LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
                        ppm = 20,
                        tolerance = 0,
                        toleranceRt = 5,
-                       bs = "tp",
-                       rtMap = list(),
-                       nChromPeaks = numeric()) {
+                       bs = "tp") {
     method <- match.arg(method)
     if (method == "gam")
         .check_gam_library()
@@ -304,9 +302,7 @@ LamaParama <- function(lamas = matrix(ncol = 2, nrow = 0,
         ppm = ppm,
         tolerance = tolerance,
         toleranceRt = toleranceRt,
-        bs = bs,
-        rtMap = rtMap,
-        nChromPeaks = nChromPeaks)
+        bs = bs)
 }
 
 #' @rdname adjustRtime
