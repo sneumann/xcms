@@ -45,7 +45,7 @@ Depends:
     R (>= 4.0.0),
     BiocParallel (>= 1.8.0)
 Imports:
-    MSnbase (>= 2.23.1),
+    MSnbase (>= 2.29.3),
     mzR (>= 2.25.3),
     methods,
     Biobase,
@@ -59,7 +59,7 @@ Imports:
     MsCoreUtils (>= 1.15.3),
     MsFeatures,
     MsExperiment (>= 1.5.4),
-    Spectra (>= 1.13.2),
+    Spectra (>= 1.13.7),
     progress,
     jsonlite,
     RColorBrewer,
