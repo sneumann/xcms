@@ -7,7 +7,7 @@ Changes in version 4.1.12
 - Implementation of related user-level function `matchLamasChromPeaks()`,
   `summarizeMatchLama()` and `plot(LamaParama)` which allows for evaluation of
   matching between lamas and chromPeaks.
-
+  
 Changes in version 4.1.11
 ----------------------
 
