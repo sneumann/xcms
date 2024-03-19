@@ -331,6 +331,9 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Get EICs for every detected chromatographic peak
@@ -708,6 +711,8 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -1009,6 +1014,8 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #' @examples
 #'
 #' ## Load a test data set with identified chromatographic peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' res <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -1016,7 +1023,7 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #'
 #' ## Perform the correspondence. We assign all samples to the same group.
 #' res <- groupChromPeaks(res,
-#'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
+#'     param = PeakDensityParam(sampleGroups = rep(1, length(res))))
 #'
 #' ## For how many features do we lack an integrated peak signal?
 #' sum(is.na(featureValues(res)))
@@ -1387,6 +1394,8 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     same group).
 #'
 #' @param value Replacement value for `<-` methods.
+#'
+#' @param x The parameter object.
 #'
 #' @param ... Optional parameters.
 #'
@@ -1905,6 +1914,8 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -2055,6 +2066,8 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Set up parameter to save as .RData file

@@ -4,11 +4,14 @@
 #'
 #' @examples
 #'
+#' library(MsExperiment)
+#' library(xcms)
 #' ## Perform peak detection on an MChromatograms object
-#' od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'
+#' fls <- c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
-#'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
-#'     mode = "onDisk")
+#'     system.file("cdf/KO/ko18.CDF", package = "faahKO"))
+#' od3 <- readMsExperiment(fls)
 #'
 #' ## Disable parallel processing for this example
 #' register(SerialParam())
@@ -190,6 +193,7 @@ setMethod("removeIntensity", "MChromatograms",
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
 #'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
 #' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -365,6 +369,7 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 #'
 #' ## Load preprocessed data and extract EICs for some features.
 #' library(xcms)
+#' library(MSnbase)
 #' xdata <- loadXcmsData()
 #' data(xdata)
 #' ## Update the path to the files for the local system

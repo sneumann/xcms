@@ -1556,6 +1556,9 @@ setMethod("diffreport", "xcmsSet", function(object,
                                             h = 480, w = 640, mzdec=2,
                                             missing = numeric(), ...) {
 
+    if (!requireNamespace("multtest", quietly = TRUE))
+        stop("The use of 'diffreport' requires package 'multtest'. Please ",
+             "install with 'BiocInstaller::install(\"multtest\")'")
     if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
         stop("No group information. Use group().")
     }

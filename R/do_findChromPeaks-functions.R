@@ -68,7 +68,8 @@
 #' @family core peak detection functions
 #'
 #' @references
-#' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+#'
+#' Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
 #'     sensitive feature detection for high resolution LC/MS"
 #'     \emph{BMC Bioinformatics} 2008, 9:504
 #'
@@ -163,7 +164,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
                        roiScales = roiScales, sleep = sleep,
-                       extendLengthMSW = extendLengthMSW, 
+                       extendLengthMSW = extendLengthMSW,
                        verboseBetaColumns = verboseBetaColumns)
     } else {
         ## message("DEBUG: using modified centWave.")
@@ -579,7 +580,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm <- .narrow_rt_boundaries(lm, d)
                 lm_seq <- lm[1]:lm[2]
                 pd <- d[lm_seq]
-                
+
                 # Implement a fit of a skewed gaussian (beta distribution)
                 # for peak shape and within-peak signal-to-noise ratio
                 # See https://doi.org/10.1186/s12859-023-05533-4 and
@@ -1265,7 +1266,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 #'     by specifying \code{withWave = TRUE}.
 #'
 #' @details This algorithm's performance has been tested rigorously
-#'     on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+#'     on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
 #'     Simultaneous kalman filters identify peaks and calculate their
 #'     area under the curve. The default parameters are set to operate on
 #'     a complex LC-MS Orbitrap sample. Users will find it useful to do some
@@ -2673,7 +2674,7 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
              verboseColumns = FALSE, roiList = list(),
              firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-             polarity = "unknown", extendLengthMSW = FALSE, 
+             polarity = "unknown", extendLengthMSW = FALSE,
              verboseBetaColumns = FALSE) {
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
@@ -3271,9 +3272,9 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' @examples
 #'
 #' ## Reading a file
+#' library(MsExperiment)
 #' library(xcms)
-#' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'     mode = "onDisk")
+#' od <- readMsExperiment(system.file("cdf/KO/ko15.CDF", package = "faahKO"))
 #'
 #' ## Extract chromatographic data for a small m/z range
 #' mzr <- c(272.1, 272.2)
@@ -3633,9 +3634,9 @@ peaksWithCentWave <- function(int, rt,
 #'
 #' @examples
 #'
+#' library(MsExperiment)
 #' library(xcms)
-#' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'     mode = "onDisk")
+#' od <- readMsExperiment(system.file("cdf/KO/ko15.CDF", package = "faahKO"))
 #'
 #' ## Extract chromatographic data for a small m/z range
 #' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
@@ -3731,7 +3732,7 @@ peaksWithCentWave <- function(int, rt,
 #' @author William Kumler
 #'
 #' @noRd
-.get_beta_values <- function(intensity, rtime = seq_along(intensity), 
+.get_beta_values <- function(intensity, rtime = seq_along(intensity),
                              skews=c(3, 3.5, 4, 4.5, 5), zero.rm = TRUE){
   if (zero.rm) {
     ## remove 0 or NA intensities
@@ -3744,7 +3745,7 @@ peaksWithCentWave <- function(int, rt,
     beta_snr <- NA
   } else {
     beta_sequence <- rep(.scale_zero_one(rtime), each=length(skews))
-    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5), 
+    beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5),
                           nrow = length(skews)))
     # matplot(beta_vals)
     beta_cors <- cor(intensity, beta_vals)

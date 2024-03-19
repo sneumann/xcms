@@ -796,6 +796,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -964,6 +965,7 @@ isCalibrated <- function(object) {
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -1202,6 +1204,7 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -1854,6 +1857,7 @@ setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'     mode = "onDisk")
 #' xd <- findChromPeaks(xd, param = CentWaveParam())

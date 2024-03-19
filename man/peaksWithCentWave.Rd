@@ -107,9 +107,9 @@ resulting in different signal to noise ratios.
 \examples{
 
 ## Reading a file
+library(MsExperiment)
 library(xcms)
-od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-    mode = "onDisk")
+od <- readMsExperiment(system.file("cdf/KO/ko15.CDF", package = "faahKO"))
 
 ## Extract chromatographic data for a small m/z range
 mzr <- c(272.1, 272.2)

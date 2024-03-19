@@ -45,6 +45,7 @@
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' ## Loading a test data set with identified chromatographic peaks
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #' faahko_sub <- filterRt(faahko_sub, c(2500, 3700))
@@ -192,6 +193,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
 #'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
 #' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -261,6 +263,7 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' chr <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
 #'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
 #'

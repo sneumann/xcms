@@ -203,6 +203,8 @@ calculation of the peak signal (\code{"into"}).
 \examples{
 
 ## Load a test data set with detected peaks
+library(xcms)
+library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example

@@ -109,6 +109,8 @@ accordingly.
 }
 \examples{
 ## Load the test file
+library(xcms)
+library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example

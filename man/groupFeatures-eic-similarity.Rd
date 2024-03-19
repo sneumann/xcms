@@ -144,6 +144,7 @@ is excluded from the correlation.
 \examples{
 
 library(MsFeatures)
+library(MsExperiment)
 ## Load a test data set with detected peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 

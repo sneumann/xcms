@@ -36,6 +36,7 @@ See \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtime
 \examples{
 
 library(MsFeatures)
+library(MsExperiment)
 ## Load a test data set with detected peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 

@@ -108,7 +108,7 @@
 \author{Ralf Tautenhahn}
 \encoding{UTF-8}
 \references{
-  Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann
+  Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
   BMC Bioinformatics 2008, 9:504\\
   Hendrik Treutler and Steffen Neumann.

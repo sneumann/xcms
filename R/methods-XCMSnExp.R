@@ -947,6 +947,7 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 #' @examples
 #'
 #' ## Loading a test data set with identified chromatographic peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -2085,6 +2086,7 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #' @examples
 #'
 #' ## Load a test data set with identified chromatographic peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -2799,6 +2801,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
@@ -3169,6 +3172,7 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")

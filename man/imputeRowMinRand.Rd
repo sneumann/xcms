@@ -66,6 +66,7 @@ fractions of the row minimum.
 \examples{
 
 library(faahKO)
+library(MSnbase)
 data("faahko")
 
 xset <- group(faahko)

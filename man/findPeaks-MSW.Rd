@@ -273,6 +273,7 @@ These methods and classes are part of the updated and modernized
 }
 \examples{
 
+library(MSnbase)
 ## Create a MSWParam object
 mp <- MSWParam()
 ## Change snthresh parameter

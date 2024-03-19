@@ -307,8 +307,9 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' @description
 #'
-#' **UPDATE**: please use `plot(x, type = "XIC")` from the `MSnbase` package
-#' instead. See examples below.
+#' **UPDATE**: please use `plot()` from the `MsExperiment` or
+#' `plot(x, type = "XIC")` from the `MSnbase` package instead. See examples
+#' in the vignette for more information.
 #'
 #' The `plotMsData` creates a plot that combines an (base peak )
 #' extracted ion chromatogram on top (rt against intensity) and a plot of
@@ -338,19 +339,6 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' @md
 #'
-#' @examples
-#'
-#' ## Read two files from the faahKO package
-#' library(faahKO)
-#' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
-#'     recursive = TRUE)[1:2]
-#' raw_data <- readMSData(cdfs, mode = "onDisk")
-#'
-#' ## Subset the object to a rt and mz range and plot the data.
-#' raw_data |>
-#'     filterRt(rt = c(2700, 2900)) |>
-#'     filterMz(mz = c(334.9, 335.1)) |>
-#'     plot(type = "XIC")
 plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
                        grid.color = "lightgrey",
                        colramp = colorRampPalette(
