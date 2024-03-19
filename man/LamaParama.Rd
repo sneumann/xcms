@@ -122,23 +122,23 @@ For `summarizeLamaMatch()`:A `data.frame` with:
 }
 \description{
 Alignment is achieved using the ['adjustRtime()'] method with a `param` of
-class `LamaParama`. This method #' corrects retention time by aligning
-chromatographic data with an external reference dataset. Peaks in the
-experimental chromatographic data are aligned to predefined landmark
-features called "lamas" based on their mass-to-charge ratio (m/z) and
-retention time.
+class `LamaParama`. This method corrects retention time by aligning
+chromatographic data with an external reference dataset.
 
-This alignment algorithm matches chromatographic peaks from the experimental
-data to the lamas, fitting a model based on this match to adjust their
-retention times and minimize discrepancies. This adjustment is performed
-file by file. Adjustable parameters such as `ppm`, `tolerance`, and
-`toleranceRt` define acceptable deviations during the matching process.
-It's crucial to note that only lamas and chromatographic peaks exhibiting a
-one-to-one mapping are considered when estimating retention time shifts. If
-a file has no peaks matching with lamas, no adjustment will be performed,
-and the file will be returned as-is. Users can evaluate this matching, for
-example, by checking the number of matches and ranges of the matching
-peaks, by first running `[matchLamasChromPeaks()]`.
+Chromatographic peaks in the experimental data are first matched to
+predefined (external) landmark features based on their mass-to-charge ratio
+and retention time and subsequently the data is aligned by minimizing the
+differences in retention times between the matched chromatographic peaks and
+lamas. This adjustment is performed file by file.
+
+Adjustable parameters such as `ppm`, `tolerance`, and `toleranceRt` define
+acceptable deviations during the matching process. It's crucial to note that
+only lamas and chromatographic peaks exhibiting a one-to-one mapping are
+considered when estimating retention time shifts. If a file has no peaks
+matching with lamas, no adjustment will be performed, and the the retention
+times will be returned as-is. Users can evaluate this matching, for example,
+by checking the number of matches and ranges of the matching peaks, by first
+running `[matchLamasChromPeaks()]`.
 
 Different warping methods are available; users can choose to fit a *loess*
 (`method = "loess"`, the default) or a *gam* (`method = "gam"`) between the
@@ -151,9 +151,9 @@ a single file.
 
 Other functions related to this method:
 
- - `LamaParama()`: return the respective the parameter object for alignment
-   using `adjustRtime()` function. Is also the input for functions listed
-   below.
+ - `LamaParama()`: return the respective parameter object for alignment
+   using `adjustRtime()` function. It is also the input for the functions
+   listed below.
 
  - `matchLamasChromPeaks()`: quickly matches each file's ChromPeaks
    to Lamas, allowing the user to evaluate the matches for each file.

@@ -1380,7 +1380,7 @@ setMethod(
         rtMap <- param@rtMap
         if (length(rtMap) != length(object))
             stop("Mismatch between the number of files matched to lamas: ",
-                 length(rtMap), "and files in the object: ", length(object))
+                 length(rtMap), " and files in the object: ", length(object))
 
         # Make model and adjust retention for each file
         rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
