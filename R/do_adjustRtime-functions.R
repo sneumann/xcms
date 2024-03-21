@@ -792,9 +792,9 @@ NULL
 #'
 #' @author Johannes Rainer, Philippine Louail
 #'
-#' @noRd
-#'
 #' @importFrom MetaboCoreUtils mclosest
+#'
+#' @noRd
 .match_reference_anchors <- function(obs_peaks, ref_anchors, ppm = 20,
                                      tolerance = 0, toleranceRt = 5) {
     idx <- mclosest(obs_peaks, ref_anchors,
@@ -819,6 +819,10 @@ NULL
 #'
 #' @author Carl Brunius, Philippine Louail
 #'
+#' @importFrom stats predict
+#'
+#' @importFrom MsCoreUtils force_sorted
+#'
 #' @noRd
 .adjust_rt_model <- function(rt_raw,
                              method = c("loess", "gam"),
@@ -836,7 +840,7 @@ NULL
     if (is.unsorted(adj, na.rm = TRUE)){
         warning("Adjusted retention times are not sorted, linear ",
         "interpolation will be performed for the unsorted data points")
-        adj <- .force_sorted(adj)
+        adj <- force_sorted(adj)
         }
     idx <- which(rt_raw < min(rt_map$obs))
     lidx <- length(idx)
@@ -857,7 +861,7 @@ NULL
 #' @param rt_map `data.frame` with the observed (column `"obs"`) and reference
 #'     (column `"ref"`) retention time pairs.
 #'
-#' @importFrom stats loess predict resid
+#' @importFrom stats loess resid
 #'
 #' @author Carl Brunius, Philippine Louail
 #'
@@ -947,46 +951,6 @@ summarizeLamaMatch <- function(param){
         })
     res$Model_summary <- res_model
     res
-}
-
-
-#' @param rtime `numeric` vector with the retention times for one file/sample.
-#'
-#' @return vector with sorted retention time.
-#'
-#' @examples
-#' x <- c(NA, NA, NA, 1.2, 1.1, 1.14, 1.2, 1.3, 1.1, 1.04, 1.4, 1.6, NA, NA)
-#' sorted_rtime <-  .force_sorted(x)
-#' is.unsorted(x, na.rm = TRUE)
-#'
-#' @noRd
-.force_sorted <- function(x){
-    # Select only the non-NA values
-    nna_idx <- which(!is.na(x))
-    vec_temp <- x[nna_idx]
-
-    while (any(diff(vec_temp) < 0)) {
-        # had to change because which.max gives 1 if the vector is all FALSE..
-        idx <- which.max(diff(vec_temp) < 0)
-        # Find next biggest value
-        next_idx <- which(vec_temp > vec_temp[idx])[1L]
-
-        if (is.na(next_idx)){
-            l <- idx:length(vec_temp)
-            vec_temp[l] <- seq(vec_temp[idx], by = 0.000001,
-                               length.out = length(l))
-            warning("Found decreasing values at the end of vector, ",
-            "interpolation not possible. Replacing values. See help for more ",
-            "details")
-            break
-        }
-        # Interpolation
-        idx_range <- idx:next_idx
-        vec_temp[idx_range] <- seq(vec_temp[idx], vec_temp[next_idx],
-                                         length.out = length(idx_range))
-    }
-    x[nna_idx] <- vec_temp
-    x
 }
 
 #' @export

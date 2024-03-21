@@ -1385,7 +1385,7 @@ setMethod(
         # Make model and adjust retention for each file
         rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
             if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
-                xcms:::.adjust_rt_model(y, method = param@method,
+                .adjust_rt_model(y, method = param@method,
                                  rt_map = x, span = param@span,
                                  resid_ratio = param@outlierTolerance,
                                  zero_weight = param@zeroWeight,

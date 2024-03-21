@@ -1304,14 +1304,18 @@ ref <- loadXcmsData("xmse")
 tst <- loadXcmsData("faahko_sub2")
 ```
 
-Now, we will try to align these two samples to the previous dataset. The first
-step is to extract landmark features (called `lamas`). For this, we will
-determine the features that are present in every sample of the `ref` dataset
-using the `PercentMissingFilter()` parameter in the `filterFeatures()` function.
+Now, we will attempt to align these two samples with the previous dataset. The
+first step is to extract landmark features (referred to as `lamas`). To achieve
+this, we will identify the features present in every QC sample of the `ref`
+dataset. To do so, we will categorize (using `factor()`) our data by 
+`sample_type` and only retain the QC samples. This variable will be utilized to
+filter the features using the `PercentMissingFilter()` parameter within the 
+`filterFeatures()` function (see section above for more information on this 
+method)
 
 ```{r}
 f <- sampleData(ref)$sample_type
-f[f == "QC"] <- NA
+f[f != "QC"] <- NA
 ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
 ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
 ref_mz_rt

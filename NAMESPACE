@@ -33,7 +33,7 @@ importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
 importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi", "breaks_ppm")
+           "maxi", "breaks_ppm", "force_sorted")
 importFrom("RColorBrewer", "brewer.pal")
 
 importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
