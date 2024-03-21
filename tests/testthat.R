@@ -77,8 +77,6 @@ xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 expect_true(length(processHistory(xmseg)) == 2L)
 
 ## Data for LamaParama checks
-library(mgcv)
-library(MetaboCoreUtils)
 ref <- loadXcmsData("xmse")
 f <- sampleData(ref)$sample_type
 f[f == "QC"] <- NA
