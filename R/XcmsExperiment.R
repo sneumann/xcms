@@ -1357,6 +1357,66 @@ setMethod(
         object
 })
 
+#'@rdname LamaParama
+setMethod(
+    "adjustRtime", signature(object = "XcmsExperiment", param = "LamaParama"),
+    function(object, param, BPPARAM = bpparam(), ...) {
+        if (!hasChromPeaks(object))
+            stop("'object' needs to have detected chromPeaks. ",
+                 "Run 'findChromPeaks()' first")
+        if (hasAdjustedRtime(object))
+            stop("Alignment results already present. Please either remove ",
+                 "them with 'dropAdjustedRtime' in order to perform an ",
+                 "alternative, new, alignment, or use 'applyAdjustedRtime'",
+                 " prior 'adjustRtime' to perform a second round of ",
+                 "alignment.")
+        fidx <- as.factor(fromFile(object))
+        rt_raw <- split(rtime(object), fidx)
+        idx <- seq_along(object)
+
+        # Check if user as ran matching lama vs chrompeaks beforehand
+        if (length(param@rtMap) == 0)
+            param <- matchLamasChromPeaks(object, param)
+        rtMap <- param@rtMap
+        if (length(rtMap) != length(object))
+            stop("Mismatch between the number of files matched to lamas: ",
+                 length(rtMap), " and files in the object: ", length(object))
+
+        # Make model and adjust retention for each file
+        rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
+            if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
+                .adjust_rt_model(y, method = param@method,
+                                 rt_map = x, span = param@span,
+                                 resid_ratio = param@outlierTolerance,
+                                 zero_weight = param@zeroWeight,
+                                 bs = param@bs)
+            } else {
+                warning("Too few chrompeaks could be assigned to external",
+                        " reference peaks (lamas) for sample ", i,
+                        ". Skipping alignment for this sample.")
+                y
+            }
+        }, SIMPLIFY = FALSE, BPPARAM = BPPARAM, MoreArgs = list(param = param))
+
+        # post processing housekeeping steps
+        pt <- vapply(object@processHistory, processType, character(1))
+        idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt,
+                                     nomatch = -1L)
+        if (idx_pg > 0)
+            ph <- object@processHistory[idx_pg]
+        else ph <- list()
+        object <- dropFeatureDefinitions(object)
+        object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
+        object@chromPeaks <-.applyRtAdjToChromPeaks(
+            .chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        xph <- XProcessHistory(
+            param = param, type. = .PROCSTEP.RTIME.CORRECTION,
+            fileIndex = seq_along(object))
+        object@processHistory <- c(object@processHistory, ph, list(xph))
+        validObject(object)
+        object
+    })
+
 #' @rdname XcmsExperiment
 setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
     if (!hasAdjustedRtime(object))

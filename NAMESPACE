@@ -33,7 +33,7 @@ importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
 importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi", "breaks_ppm")
+           "maxi", "breaks_ppm", "force_sorted")
 importFrom("RColorBrewer", "brewer.pal")
 
 importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
@@ -49,7 +49,7 @@ importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
            "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun",
-           "rnorm", "runif", "dbeta")
+           "rnorm", "runif", "dbeta", "resid")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table", "capture.output", "data")
@@ -251,7 +251,10 @@ export(
     "groupOverlaps",
     "estimatePrecursorIntensity",
     "featureArea",
-    "loadXcmsData"
+    "loadXcmsData",
+    "matchLamasChromPeaks",
+    "summarizeLamaMatch",
+    "matchedRtimes"
 )
 
 ## New analysis methods
@@ -275,6 +278,7 @@ exportClasses(
     "MzClustParam",
     "NearestPeaksParam",
     "PeakGroupsParam",
+    "LamaParama",
     "ObiwarpParam",
     "GenericParam",
     "FillChromPeaksParam",
@@ -444,6 +448,7 @@ export("CentWaveParam",
        "MzClustParam",
        "NearestPeaksParam",
        "PeakGroupsParam",
+       "LamaParama",
        "ObiwarpParam",
        "GenericParam",
        "FillChromPeaksParam",
@@ -593,7 +598,7 @@ exportMethods("storeResults")
 
 ## filtering features things
 importFrom("MetaboCoreUtils", "rowRsd", "rowDratio", "rowPercentMissing",
-           "rowBlank")
+           "rowBlank", "mclosest")
 export("RsdFilter")
 export("DratioFilter")
 export("PercentMissingFilter")

@@ -136,7 +136,6 @@ performance. See the package vignette from the `r Biocpkg("Spectra")` package or
 the [SpectraTutorials](https://jorainer.github.io/SpectraTutorials) tutorial for
 more details on `Spectra` backends and how to change between them.
 
-
 ## Initial data inspection
 
 The `MsExperiment` object is a simple and flexible container for MS
@@ -1285,6 +1284,138 @@ identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
 packages, such as Bioconductor's excellent `limma` package.
 
+## Alignment to an external reference dataset
+
+In certain experiments, aligning two different datasets is necessary. This
+can involve comparing runs of the same samples conducted across different
+laboratories or runs with MS2 recorded after the initial MS1 run. Across
+laboratories and over time, the same samples may result in variation in
+retention time, especially because the LC system can be quite unstable. In these
+cases, an alignment step using the `adjustRtime()` function with the
+`LamaParam` parameter can allow the user to perform this type of alignment.
+We will go through this step by step below. 
+
+Let's load an already analyzed dataset `ref` and our previous dataset before
+alignment, which will be `tst`. We will first restrict their retention time
+range to be the same for both dataset.
+
+```{r}
+ref <- loadXcmsData("xmse")
+tst <- loadXcmsData("faahko_sub2")
+```
+
+Now, we will attempt to align these two samples with the previous dataset. The
+first step is to extract landmark features (referred to as `lamas`). To achieve
+this, we will identify the features present in every QC sample of the `ref`
+dataset. To do so, we will categorize (using `factor()`) our data by 
+`sample_type` and only retain the QC samples. This variable will be utilized to
+filter the features using the `PercentMissingFilter()` parameter within the 
+`filterFeatures()` function (see section above for more information on this 
+method)
+
+```{r}
+f <- sampleData(ref)$sample_type
+f[f != "QC"] <- NA
+ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
+ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
+ref_mz_rt
+```
+
+This is what the `lamas` input should look like for alignment. In terms of
+how this method works, the alignment algorithm matches chromatographic peaks
+from the experimental data to the lamas, fitting a model based on this
+match to adjust their retention times and minimize differences between
+the two datasets.
+
+Now we can define our `param` object `LamaParama` to prepare for the
+alignment. Parameters such as `tolerance`, `toleranceRt`, and `ppm` relate
+to the matching between chromatographic peaks and lamas. Other parameters
+are related to the type of fitting generated between these data points.
+More details on each parameter and the overall method can be found by
+searching `?adjustRtime`. Below is an example using default parameters.
+
+```{r}
+param <- LamaParama(lamas = ref_mz_rt, method = "loess", span = 0.5,
+                    outlierTolerance = 3, zeroWeight = 10, ppm = 20,
+                    tolerance = 0, toleranceRt = 20, bs = "tp")
+
+#' input into `adjustRtime()`
+tst_adjusted <- adjustRtime(tst, param = param)
+tst_adjusted <- applyAdjustedRtime(tst_adjusted)
+```
+
+We extract the base peak chromatogram (BPC) to visualize and evaluate the
+alignment:
+
+```{r fig.height=12, fig.width=5}
+#' evaluate the results with BPC
+bpc <- chromatogram(ref, chromPeaks = "none")
+bpc_tst_raw <- chromatogram(tst, chromPeaks = "none")
+bpc_tst_adj <- chromatogram(tst_adjusted, chromPeaks = "none")
+```
+
+We generate plots to visually compare the alignment to the reference
+dataset (black) both before (red) and after (blue) adjustment:
+
+```{r fig.height=4, fig.width=10}
+#' BPC of a sample
+par(mfrow = c(1, 2),  mar = c(4, 2.5, 1, 0.5))
+plot(bpc[1, 1], col = "#00000080", main = "Before Alignment")
+points(rtime(bpc_tst_raw[1, 1]), intensity(bpc_tst_raw[1, 1]), type = "l",
+       col = "#ff000080")
+grid()
+
+plot(bpc[1, 1], col = "#00000080", main = "After Alignment")
+points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
+       col = "#0000ff80")
+grid()
+```
+
+It appears that certain time intervals (2500 to 3000 and 3500 to 4500 seconds)
+exhibit better alignment than others. This variance can be elucidated by
+examining the distribution of matched peaks, as illustrated below. The
+`matchLamaChromPeaks()` function facilitates the assessment of how well the
+`lamas` correspond with the chromatographic peaks in each file. This analysis
+can be conducted prior to any adjustments.
+
+```{r}
+param <- matchLamasChromPeaks(tst, param = param)
+mtch <- matchedRtimes(param)
+
+#' BPC of the first sample with matches to lamas overlay
+par(mfrow = c(1, 1))
+plot(bpc[1, 1], col = "#00000080", main = "Distribution CP matched to Lamas")
+points(rtime(bpc_tst_adj[1, 1]), intensity(bpc_tst_adj[1, 1]), type = "l",
+       col = "#0000ff80")
+grid()
+abline(v = mtch[[1]]$obs)
+```
+
+The overlay of BPC above provides insight into the correlation between accurate
+alignment and the presence of peaks matching with `lamas.` Furthermore, a more
+detailed examination of the matching and the model used for fitting each file
+is possible. Numerical information can be obtained using the
+`summarizeLamaMatch()` function. From this, the percentage of chromatographic
+peaks utilized for alignment can be computed relative to the total number of
+peaks in the file. Additionally, it is feasible to directly `plot()` the
+`param` object for the file of interest, showcasing the distribution of these
+chromatographic peaks along with the fitted model line.
+
+```{r}
+#access summary of matches and model information
+summary <- summarizeLamaMatch(param)
+summary 
+
+# coverage for each file
+summary$Matched_peaks / summary$Total_peaks * 100
+
+#access the information on the model of for the first file 
+summary$model_summary[[1]]
+
+# Plot obs vs. ref with fitting line 
+plot(param, index = 1L, main = "ChromPeaks versus Lamas for the first file", 
+     colPoint = "red")
+```
 
 # Additional details and notes
 

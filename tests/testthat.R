@@ -76,6 +76,14 @@ pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xmseg <- groupChromPeaks(xmse, param = pdp, add = FALSE)
 expect_true(length(processHistory(xmseg)) == 2L)
 
+## Data for LamaParama checks
+ref <- loadXcmsData("xmse")
+f <- sampleData(ref)$sample_type
+f[f == "QC"] <- NA
+ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
+ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
+tst <- loadXcmsData("faahko_sub2")
+
 test_check("xcms")
 
 bpstop(prm)

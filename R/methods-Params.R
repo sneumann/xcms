@@ -1249,6 +1249,26 @@ setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
         return(object)
 })
 
+############################################################
+## LamaParama
+
+#' @rdname LamaParama
+setMethod("plot", signature(x = "LamaParama"),
+          function(x, index = 1L,
+                   colPoints = "#00000060",
+                   colFit = "#00000080",
+                   xlab = "Matched Chromatographic peaks",
+                   ylab = "Lamas",...){
+    model <- .rt_model(method = x@method,
+                              rt_map= x@rtMap[[index]], span = x@span,
+                              resid_ratio = x@outlierTolerance,
+                              zero_weight = x@zeroWeight,
+                              bs = x@bs)
+    datap <- x@rtMap[[index]]
+    plot(datap, type = "p", xlab = xlab, ylab = ylab, col = colPoints, ...)
+    points(model, type = "l", col = colFit)
+})
+
 
 ############################################################
 ## ObiwarpParam

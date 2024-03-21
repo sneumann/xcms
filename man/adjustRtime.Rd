@@ -259,9 +259,9 @@ sample that are assigned to the group.}
 be used to interpolate corrected retention times for all peak groups.
 Can be either \code{"loess"} or \code{"linear"}.}
 
-\item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the degree of
-smoothing (if \code{smooth = "loess"}). This parameter is passed to the
-internal call to \code{\link[=loess]{loess()}}.}
+\item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining
+the degree of smoothing (if \code{smooth = "loess"}). This parameter is
+passed to the internal call to \code{\link[=loess]{loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
@@ -331,7 +331,7 @@ initiating an alignment (for local alignment only).}
 
 \item{value}{The value for the slot.}
 
-\item{x}{An \code{ObiwarpParam} or \code{PeakGroupsParam} object.}
+\item{x}{An \code{ObiwarpParam}, \code{PeakGroupsParam} or \code{LamaParama} object.}
 }
 \value{
 \code{adjustRtime} on an \code{OnDiskMSnExp} or \code{XCMSnExp} object will return an
@@ -341,21 +341,22 @@ initiating an alignment (for local alignment only).}
 \code{XcmsExperiment} with the adjusted retention times stored in an new
 \emph{spectra variable} \code{rtime_adjusted} in the object's \code{spectra}.
 
-\code{ObiwarpParam} and \code{PeakGroupsParam} return the respective parameter object.
+\code{ObiwarpParam}, \code{PeakGroupsParam} and \code{LamaParama} return the respective
+parameter object.
 
 \code{adjustRtimeGroups} returns a \code{matrix} with the retention times of \emph{marker}
 features in each sample (each row one feature, each row one sample).
 }
 \description{
 The \code{adjustRtime} method(s) perform retention time correction (alignment)
-between chromatograms of different samples. Alignment is performed by defaul
-on MS level 1 data. Retention times of spectra from other MS levels, if
-present, are subsequently adjusted based on the adjusted retention times
-of the MS1 spectra. Note that calling \code{adjustRtime} on a \emph{xcms} result object
-will remove any eventually present previous alignment results as well as
-any correspondence analysis results. To run a second round of alignment,
-raw retention times need to be replaced with adjusted ones using the
-\code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} function.
+between chromatograms of different samples/dataset. Alignment is performed
+by default on MS level 1 data. Retention times of spectra from other MS
+levels, if present, are subsequently adjusted based on the adjusted
+retention times of the MS1 spectra. Note that calling \code{adjustRtime} on a
+\emph{xcms} result object will remove any eventually present previous alignment
+results as well as any correspondence analysis results. To run a second
+round of alignment, raw retention times need to be replaced with adjusted
+ones using the \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} function.
 
 The alignment method can be specified (and configured) using a dedicated
 \code{param} argument.
@@ -368,7 +369,7 @@ rt data using the \emph{obiwarp} method (Prince (2006)). It is based on the
 alignment of multiple samples by aligning each against a \emph{center} sample.
 The alignment is performed directly on the \link{profile-matrix} and can hence
 be performed independently of the peak detection or peak grouping.
-\item \code{PeakGroupsParam}: performs retention time correctoin based on the
+\item \code{PeakGroupsParam}: performs retention time correction based on the
 alignment of features defined in all/most samples (corresponding to
 \emph{house keeping compounds} or marker compounds) (Smith 2006). First the
 retention time deviation of these features is described by fitting either a
@@ -387,6 +388,14 @@ function is used to define this \code{matrix}. This function identifies peak
 groups (features) for alignment in \code{object} based on the parameters defined
 in \code{param}. See also \code{\link[=do_adjustRtime_peakGroups]{do_adjustRtime_peakGroups()}} for the core API
 function.
+\item \code{LamaParama}: This function performs retention time correction by aligning
+chromatographic data to an external reference dataset (concept and initial
+implementation by Carl Brunius). The process involves identifying and
+aligning peaks within the experimental chromatographic data, represented
+as an \code{XcmsExperiment} object, to a predefined set of landmark features
+called "lamas". These landmark features are characterized by their
+mass-to-charge ratio (m/z) and retention time. see \code{\link[=LamaParama]{LamaParama()}} for more
+information on the method.
 }
 }
 \section{Subset-based alignment}{
@@ -429,6 +438,6 @@ Nonlinear Peak Alignment, Matching, and Identification" \emph{Anal. Chem.}
 \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for visualization of alignment results.
 }
 \author{
-Colin Smith, Johannes Rainer
+Colin Smith, Johannes Rainer, Philippine Louail, Carl Brunius
 }
 \concept{retention time correction methods}
