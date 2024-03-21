@@ -43,7 +43,7 @@ Authors@R: c(
 	   person(given = "Carl", family = "Brunius",
 	   email = "carl.brunius@chalmers.se", 
 	   role = "ctb", 
-	   comment = c(ORCID = 0000-0003-3957-870X))
+	   comment = c(ORCID = "0000-0003-3957-870X"))
 	   )
 Depends:
     R (>= 4.0.0),
