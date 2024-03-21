@@ -589,12 +589,12 @@ exportMethods("filterMzRange")
 exportMethods("fromFile")
 exportMethods("fileNames")
 
-## saving xcms objects things
+## saving/loading xcms objects things
 importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
            "read_json")
 export("RDataParam")
 export("PlainTextParam")
-exportMethods("storeResults")
+exportMethods("storeResults", "loadResults")
 
 ## filtering features things
 importFrom("MetaboCoreUtils", "rowRsd", "rowDratio", "rowPercentMissing",

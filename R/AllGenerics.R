@@ -1464,6 +1464,64 @@ setGeneric("kNN<-", function(object, value) standardGeneric("kNN<-"))
 
 ## L
 setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
+#' @title Import various file format as XcmsExperiment object
+#'
+#' @description
+#'
+#' The `loadResults` function allows to import and create an `XcmsExperiment`
+#' object from a file. Multiple formats for importing are available and can be
+#' defined by the `param` argument.
+#'
+#' Supported `param` objects are:
+#'
+#' - [`RDataParam`]: Import an .RData format file.TBD
+#'
+#' - [`PlainTextParam`]: Import/create an `XcmsExperiment` object from a folder
+#'  of text files.
+#'
+#' - `MzTabParam`: Load a MzTab-m file (to be defined).
+#'
+#' For specific examples, see the help pages of the individual parameter classes
+#' listed above.
+#'
+#' @param file `MsExperiment` or `XcmsExperiment` The data object that needs
+#' to be saved.
+#'
+#' @param param The parameter object selecting and configuring the format for
+#' saving. It can be one of the following classes: [`RDataParam`],
+#' [`PlainTextParam`], or `MzTabParam`.
+#'
+#' @param ... Optional parameters.
+#'
+#' @note
+#' The same `param` object can be used to import as it was used for export with
+#' the `storeResults()` function.
+#'
+#' @name loadResults
+#'
+#' @author Philippine Louail
+#'
+#' @examples
+#' ## Load a test data set with detected peaks
+#' faahko_sub <- loadXcmsData("faahko_sub2")
+#'
+#' ## Save as RData
+#' param <- RDataParam(fileName = "example_xcms_object")
+#' storeResults(object = faahko_sub, param = param)
+#'
+#' ## Load this saved dataset
+#' xcmse <- loadResults(param = param)
+#'
+#' ## Save as a collection of plain text files
+#' pth = file.path(tempdir(), "test")
+#' param <- PlainTextParam(path = pth)
+#' storeResults(object = faahko_sub, param = param)
+#'
+#' ## Load this saved dataset
+#' faahko_load <- loadResults(param = param)
+#'
+#' @md
+setGeneric("loadResults", function(param, ...) standardGeneric("loadResults"))
 setGeneric("localAlignment", function(object) standardGeneric("localAlignment"))
 setGeneric("localAlignment<-", function(object, value) standardGeneric("localAlignment<-"))
 setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))

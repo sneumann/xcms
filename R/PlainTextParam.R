@@ -1,20 +1,21 @@
-#' @title Store contents of `MsExperiment` and `XcmsExperiment` objects as
-#' plain text files
+#' @title Store/load contents of `MsExperiment` and `XcmsExperiment` objects
+#' as/from plain text files
 #'
 #' @name PlainTextParam
 #'
 #' @export
 #'
-#' @family xcms result export formats.
+#' @family xcms result export and import formats.
 #'
 #' @description
-#' The `PlainTextParam` class and method enable users to save `MsExperiment` or
-#' `XcmsExperiment` objects as collections of plain text files in a specified
-#' folder. Note that, while for all xcms results within the `XcmsExperiment` can
+#' The `PlainTextParam` class and method enable users to save/load an
+#' `MsExperiment` or `XcmsExperiment` object as a collections of plain text
+#' files in/from a specified folder.
+#' Note that, while for all xcms results within the `XcmsExperiment` can
 #' and will be exported, the full raw MS data (of the object's `Spectra` object)
 #' will currently not be exported in plain text format. For `Spectra` using the
 #' [MsBackendMzR()] backend, the names of the raw data files will however be
-#' exported (which enables to *restore* the full `Spectra` respectively
+#' exported (which enables to *load* the full `Spectra` respectively
 #' `MsExperiment` objects).
 #'
 #' For an `MsExperiment` object, the exported files include:
@@ -49,12 +50,14 @@
 #' with their names.
 #'
 #' This `param` class and method are part of the possible dispatch of the
-#' generic function `storeResults`. The folder will be created by calling
+#' generic functions `storeResults()` and `loadResults()`.
+#' The folder defined in the `path` parameter will be created by calling
 #' `storeResults`. If the folder already exists, previous exports in that
 #' folder might get overwritten.
 #'
-#' @param path for `PlainTextParam` `character(1)`, defining where the files are
-#' going to be stored. The default will be `tempdir()`.
+#' @param path for `PlainTextParam` `character(1)`, defining where the files
+#' are going to be stored/ should be loaded from. The default will be
+#' `tempdir()`.
 #'
 #' @inheritParams storeResults
 #'
@@ -94,6 +97,9 @@
 #' ## Save as a collection of plain text files
 #' storeResults(object = faahko_sub, param = param)
 #'
+#' ## Load this saved dataset
+#' faahko_load <- loadResults(param = param)
+#'
 NULL
 
 #' @noRd
@@ -116,17 +122,41 @@ PlainTextParam <- function(path = tempdir()) {
     new("PlainTextParam", path = path)
 }
 
-
+### methods
 #' @rdname PlainTextParam
 setMethod("storeResults",
           signature(object = "MsExperiment",
                     param = "PlainTextParam"),
           function(object, param){
-              dir.create(path = param@path, recursive = TRUE, showWarnings = TRUE)
+              dir.create(path = param@path,
+                         recursive = TRUE,
+                         showWarnings = TRUE)
               .store_msexperiment(x = object, path = param@path)
           }
 )
 
+#' @rdname PlainTextParam
+setMethod("storeResults",
+          signature(object = "XcmsExperiment",
+                    param = "PlainTextParam"),
+          function(object, param){
+              callNextMethod()
+              .store_xcmsexperiment(x = object, path = param@path)
+          }
+)
+
+#' @rdname PlainTextParam
+setMethod("loadResults",
+          signature(param = "PlainTextParam"),
+          function(param){
+              res <- .load_msexperiment(path = param@path)
+              fl <- file.path(path, "chrom_peaks.txt")
+              if (file.exists(fl))
+                  res <- .load_xcmsexperiment(res, path = param@path)
+              validObject(res)
+              res
+              }
+)
 
 #' @noRd
 .store_msexperiment <- function(x, path = tempdir()) {
@@ -136,10 +166,32 @@ setMethod("storeResults",
     .export_spectra_processing_queue(spectra(x), path = path)
 }
 
+#' @noRd
+.load_msexperiment <- function(path = character()) {
+    fl <- file.path(path, "sample_data.txt")
+    if (file.exists(fl))
+        sd <- .import_sample_data(fl)
+    else stop("No \"sample_data.txt\" file found in ", path)
+    fl <- file.path(path, "spectra_files.txt")
+    if (file.exists(fl)){
+        sf <- .import_spectra_files(fl)
+        res <- readMsExperiment(spectraFiles = sf, sampleData = sd)
+        fl <- file.path(path, "spectra_processing_queue.json")
+        if (file.exists(fl))
+            res <- .import_processing_queue(res, fl)
+    } else stop("No \"spectra_files.txt\" file found in ", path, "Spectra ",
+                "data will not be restored")
+}
+
 #' Sample data
 #' @noRd
 .export_sample_data <- function(x, file = tempfile()) {
     write.table(x, file = file)
+}
+
+#' @noRd
+.import_sample_data <- function(file = character()) {
+    read.table(file)
 }
 
 #' Spectra file
@@ -156,8 +208,13 @@ setMethod("storeResults",
     }
 }
 
+#' @noRd
+.import_spectra_files <- function(file = character()) {
+    as.character(read.table(file)[, 1L])
+}
+
 #' Processing queue
-#' @param x `Spectra`
+#' @param x  `Spectra` (for export) `MsExperiment` (for import)
 #'
 #' @noRd
 .export_spectra_processing_queue <- function(x, path = character()) {
@@ -167,16 +224,11 @@ setMethod("storeResults",
                    file.path(path, "spectra_processing_queue.json"))
 }
 
-
-#' @rdname PlainTextParam
-setMethod("storeResults",
-          signature(object = "XcmsExperiment",
-                    param = "PlainTextParam"),
-          function(object, param){
-              callNextMethod()
-              .store_xcmsexperiment(x = object, path = param@path)
-          }
-)
+#' @noRd
+.import_spectra_processing_queue <- function(x, file = character()) {
+    x@spectra@processingQueue <- unserializeJSON(read_json(file)[[1L]])
+    x
+}
 
 #' @noRd
 .store_xcmsexperiment <- function(x, path = tempdir()) {
@@ -189,11 +241,34 @@ setMethod("storeResults",
         .export_features(x, path)
 }
 
+#' @noRd
+.load_xcmsexperiment <- function(x, path = character()){
+    res <- as(res, "XcmsExperiment")
+    res <- .import_chrom_peaks(res, path)
+    fl <- file.path(path, "process_history.json")
+    if (file.exists(fl))
+        res <- .import_process_history(res, fl)
+    else stop("No \"process_history.json\" file found in ", path)
+    fl <- file.path(path, "rtime_adjusted.txt")
+    if (file.exists(fl))
+        res <- .import_adjusted_rtime(res, fl)
+    fl <- file.path(path, "feature_definitions.txt")
+    if (file.exists(fl))
+        res <- .import_features(res, path)
+}
+
 #' Processing history
 #' @noRd
 .export_process_history <- function(x, path = character()) {
     ph <- processHistory(x)
     write_json(serializeJSON(ph), file.path(path, "process_history.json"))
+}
+
+#' @noRd
+.import_process_history <- function(x, file = character()) {
+    ph <- unserializeJSON(read_json(file)[[1L]])
+    x@processHistory <- ph
+    x
 }
 
 #' Chromatographic peaks
@@ -204,11 +279,31 @@ setMethod("storeResults",
                 file = file.path(path, "chrom_peak_data.txt"))
 }
 
+#' @noRd
+.import_chrom_peaks <- function(x, path = character()) {
+    f <- file.path(path, "chrom_peaks.txt")
+    pk <- as.matrix(read.table(f))
+    f <- file.path(path, "chrom_peak_data.txt")
+    if (!file.exists(f))
+        stop("No \"chrom_peak_data.txt\" file found in ", path)
+    pkd <- read.table(f)
+    x@chromPeaks <- pk
+    x@chromPeakData <- pkd
+    x
+}
+
 #' Retention times
 #' @noRd
 .export_adjusted_rtime <- function(x, path = character()) {
     write.table(adjustedRtime(x), file = file.path(path, "rtime_adjusted.txt"),
                 row.names = FALSE, col.names = FALSE)
+}
+
+#' @noRd
+.import_adjusted_rtime <- function(x, file = character()) {
+    rts <- read.table(file)[, 1L]
+    x@spectra$rtime_adjusted <- as.numeric(rts)
+    x
 }
 
 #' Features
@@ -221,4 +316,17 @@ setMethod("storeResults",
     fts$peakidx <- NA
     write.table(fts, file = file.path(path, "feature_definitions.txt"))
     write.table(pkidx, file = file.path(path, "feature_peak_index.txt"))
+}
+
+#' @noRd
+.import_features <- function(x, path = character()) {
+    f <- file.path(path, "feature_definitions.txt")
+    fts <- read.table(f)
+    f <- file.path(path, "feature_peak_index.txt")
+    if (!file.exists(f))
+        stop("No \"feature_peak_index.txt\" file found in ", path)
+    pkidx <- read.table(f)
+    fts$peakidx <- unname(split(pkidx$peak_index, pkidx$feature_index))
+    x@featureDefinitions <- fts
+    x
 }

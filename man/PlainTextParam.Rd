@@ -4,18 +4,22 @@
 \alias{PlainTextParam}
 \alias{storeResults,MsExperiment,PlainTextParam-method}
 \alias{storeResults,XcmsExperiment,PlainTextParam-method}
-\title{Store contents of `MsExperiment` and `XcmsExperiment` objects as
-plain text files}
+\alias{loadResults,PlainTextParam-method}
+\title{Store/load contents of `MsExperiment` and `XcmsExperiment` objects
+as/from plain text files}
 \usage{
 PlainTextParam(path = tempdir())
 
 \S4method{storeResults}{MsExperiment,PlainTextParam}(object, param)
 
 \S4method{storeResults}{XcmsExperiment,PlainTextParam}(object, param)
+
+\S4method{loadResults}{PlainTextParam}(param)
 }
 \arguments{
-\item{path}{for `PlainTextParam` `character(1)`, defining where the files are
-going to be stored. The default will be `tempdir()`.}
+\item{path}{for `PlainTextParam` `character(1)`, defining where the files
+are going to be stored/ should be loaded from. The default will be
+`tempdir()`.}
 
 \item{object}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
 to be saved.}
@@ -30,13 +34,14 @@ not return anything but saves the object to collections of different plain
 text files to a folder.
 }
 \description{
-The `PlainTextParam` class and method enable users to save `MsExperiment` or
-`XcmsExperiment` objects as collections of plain text files in a specified
-folder. Note that, while for all xcms results within the `XcmsExperiment` can
+The `PlainTextParam` class and method enable users to save/load an
+`MsExperiment` or `XcmsExperiment` object as a collections of plain text
+files in/from a specified folder.
+Note that, while for all xcms results within the `XcmsExperiment` can
 and will be exported, the full raw MS data (of the object's `Spectra` object)
 will currently not be exported in plain text format. For `Spectra` using the
 [MsBackendMzR()] backend, the names of the raw data files will however be
-exported (which enables to *restore* the full `Spectra` respectively
+exported (which enables to *load* the full `Spectra` respectively
 `MsExperiment` objects).
 
 For an `MsExperiment` object, the exported files include:
@@ -71,7 +76,8 @@ in the text file named *rtime_adjusted.txt*.
 with their names.
 
 This `param` class and method are part of the possible dispatch of the
-generic function `storeResults`. The folder will be created by calling
+generic functions `storeResults()` and `loadResults()`.
+The folder defined in the `path` parameter will be created by calling
 `storeResults`. If the folder already exists, previous exports in that
 folder might get overwritten.
 }
@@ -103,12 +109,15 @@ param <- PlainTextParam(path = pth)
 ## Save as a collection of plain text files
 storeResults(object = faahko_sub, param = param)
 
+## Load this saved dataset
+faahko_load <- loadResults(param = param)
+
 }
 \seealso{
-Other xcms result export formats.: 
+Other xcms result export and import formats.: 
 \code{\link{RDataParam}}
 }
 \author{
 Philippine Louail, Johannes Rainer.
 }
-\concept{xcms result export formats.}
+\concept{xcms result export and import formats.}

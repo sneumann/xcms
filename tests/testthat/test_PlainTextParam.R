@@ -32,3 +32,16 @@ test_that("storeResults,PlainTextParam,XcmsExperiment works", {
     expect_true(file.exists(file.path(param@path, "feature_definitions.txt")))
     expect_true(file.exists(file.path(param@path, "feature_peak_index.txt")))
 })
+
+test_that("loadResults, PlainTextParam works", {
+          pth = file.path(tempdir(), "test")
+          param <- PlainTextParam(path = pth)
+          storeResults(xmse_full, param = param)
+          load_xmse <- loadResults(param)
+          expect_true(inherits(load_xmse, "XcmsExperiment"))
+          expect_equal(xmse_full, load_xmse)
+          expect_equal(processHistory(xmse_full), processHistory(load_xmse))
+          expect_equal(xmse_full@featureDefinitions,
+                       load_xmse@featureDefinitions)
+          expect_equal(adjustedRtime(xmse_full), adjustedRtime(load_xmse))
+          })

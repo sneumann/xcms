@@ -3,11 +3,14 @@
 \name{RDataParam}
 \alias{RDataParam}
 \alias{storeResults,XcmsExperiment,RDataParam-method}
-\title{Store `XcmsExperiment` object as .RData file}
+\alias{loadResults,RDataParam-method}
+\title{Store/Load an `XcmsExperiment` object as/from .RData file}
 \usage{
 RDataParam(fileName = tempfile())
 
 \S4method{storeResults}{XcmsExperiment,RDataParam}(object, param)
+
+\S4method{loadResults}{RDataParam}(param)
 }
 \arguments{
 \item{fileName}{for `RDataParam` `character(1)`, defining the file name. The
@@ -22,31 +25,37 @@ saving. It can be one of the following classes: \code{\link{RDataParam}},
 }
 \value{
 for `RDataParam`: a `RDataParam` class. `storeResults` does not
-return anything but saves the object to a RData file.
+return anything but saves the object to a RData file. `loadResults` returns
+an object of class `XcmsExperiment`
 }
 \description{
-The `RDataParam` class and method allow users to save an `XcmsExperiment`
-object as an .RData file with a chosen filename. The object gets exported
-using [`save()`] function.  This `param` class and method are part of the
-possible dispatch of the generic function `storeResults`.
+The `RDataParam` class and method allow users to save or load an
+`XcmsExperiment` object as/from an .RData file with a defined filename. The
+object gets exported using [`save()`] function and imported using the
+[`load()`] function. This `param` class and method are part of the
+possible dispatch of the generic functions `storeResults()` and
+`loadResults()`.
 }
 \examples{
 
 ## Load a test data set with detected peaks
 faahko_sub <- loadXcmsData("faahko_sub2")
 
-## Define param 
+## Define param
 param <- RDataParam(fileName = "example_xcms_object")
 
 ## Save as RData
 storeResults(object = faahko_sub, param = param)
 
+## Load this saved dataset
+xcmse <- loadResults(param = param)
+
 }
 \seealso{
-Other xcms result export formats.: 
+Other xcms result export and import formats.: 
 \code{\link{PlainTextParam}}
 }
 \author{
 Philippine Louail
 }
-\concept{xcms result export formats.}
+\concept{xcms result export and import formats.}
