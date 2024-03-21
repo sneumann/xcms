@@ -67,6 +67,7 @@ result from this pre-processing updating also the location of the respective raw
 data files on the current machine.
 
 ```{r load-data}
+library(MSnbase)
 library(xcms)
 library(faahKO)
 library(MsFeatures)

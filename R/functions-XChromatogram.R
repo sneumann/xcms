@@ -141,6 +141,7 @@
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' ## Create a XChromatogram object
 #' pks <- matrix(nrow = 1, ncol = 6)
 #' colnames(pks) <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")

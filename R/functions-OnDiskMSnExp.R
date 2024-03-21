@@ -703,6 +703,7 @@ setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
 #' pest_dda <- readMSData(fl, mode = "onDisk")
 #' res <- .estimate_prec_intensity(pest_dda)

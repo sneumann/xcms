@@ -1,11 +1,10 @@
-useDynLib(xcms)
+useDynLib(xcms, .registration = TRUE)
 
-importFrom("utils", "capture.output", "data")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "polarity<-", "centroided", "isCentroided", "peaks<-",
     "isolationWindowTargetMz", "quantify", "bin", "spectrapply",
-    "filterFeatures", "filterMzRange")
+    "filterFeatures", "filterMzRange", "filterRt", "filterMz", "filterMsLevel")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
@@ -18,18 +17,12 @@ importMethodsFrom("Biobase", "phenoData",
 importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
-importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
-           "grid", "mtext", "polygon", "box", "plot.xy")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
            "level.colors", "do.breaks")
-importFrom("plyr", "rbind.fill")
-importFrom("robustbase", "lmrob", "lmrob.control")
-import("RColorBrewer")
-import("BiocParallel")
-## importMethodsFrom("stats4", "plot")
+importFrom("BiocParallel", "bpparam", "SerialParam")
+importMethodsFrom("BiocParallel", "bplapply", "bpmapply")
 
-## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame", "Hits")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List",
            "as.matrix")
@@ -40,13 +33,14 @@ importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
 importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi", "breaks_ppm")
+           "maxi", "breaks_ppm", "force_sorted")
+importFrom("RColorBrewer", "brewer.pal")
 
-## Additional imports proposed by R CMD check:
-importFrom("graphics", "abline", "barplot", "close.screen", "hist",
-           "identify", "layout", "legend", "lines", "par", "plot.new",
-           "plot.window", "points", "screen", "split.screen",
-           "strwidth", "text", "title")
+importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
+           "grid", "mtext", "polygon", "box", "plot.xy", "abline",
+           "barplot", "close.screen", "hist", "identify", "layout",
+           "legend", "lines", "par", "plot.new", "plot.window", "points",
+           "screen", "split.screen", "strwidth", "text", "title")
 importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
            "dev.list", "dev.off", "dev.set", "palette", "pdf", "png",
            "rainbow", "rgb", "terrain.colors", "n2mfrow", "dev.flush",
@@ -55,14 +49,11 @@ importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
            "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun",
-           "rnorm", "runif", "dbeta")
+           "rnorm", "runif", "dbeta", "resid")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
-           "write.table")
+           "write.table", "capture.output", "data")
 
-## New imports from packages moved from Suggests to Imports:
-importFrom("multtest", "mt.teststat")
-importFrom("RANN", "nn2")
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 ## MSnbase:
@@ -260,7 +251,10 @@ export(
     "groupOverlaps",
     "estimatePrecursorIntensity",
     "featureArea",
-    "loadXcmsData"
+    "loadXcmsData",
+    "matchLamasChromPeaks",
+    "summarizeLamaMatch",
+    "matchedRtimes"
 )
 
 ## New analysis methods
@@ -284,6 +278,7 @@ exportClasses(
     "MzClustParam",
     "NearestPeaksParam",
     "PeakGroupsParam",
+    "LamaParama",
     "ObiwarpParam",
     "GenericParam",
     "FillChromPeaksParam",
@@ -453,6 +448,7 @@ export("CentWaveParam",
        "MzClustParam",
        "NearestPeaksParam",
        "PeakGroupsParam",
+       "LamaParama",
        "ObiwarpParam",
        "GenericParam",
        "FillChromPeaksParam",
@@ -590,6 +586,8 @@ importFrom("progress", "progress_bar")
 exportClasses("XcmsExperiment")
 exportMethods("uniqueMsLevels")
 exportMethods("filterMzRange")
+exportMethods("fromFile")
+exportMethods("fileNames")
 
 ## saving xcms objects things
 importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
@@ -601,7 +599,7 @@ exportMethods("storeResults")
 
 ## filtering features things
 importFrom("MetaboCoreUtils", "rowRsd", "rowDratio", "rowPercentMissing",
-           "rowBlank")
+           "rowBlank", "mclosest")
 export("RsdFilter")
 export("DratioFilter")
 export("PercentMissingFilter")

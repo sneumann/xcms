@@ -418,12 +418,15 @@ phenoDataFromPaths <- function(paths) {
 ## patternVsRowScore
 patternVsRowScore <- function(currPeak, parameters, mplenv)
 {
+    if (!requireNamespace("RANN", quietly = TRUE))
+        stop("The use of 'patternVsRowScore' requires package 'RANN'. Please ",
+             "install with 'BiocInstaller::install(\"RANN\")'")
     mplistmeanCurr <- mplenv$mplistmean[, c("mz", "rt")]
     mplistmeanCurr[, "mz"] <- mplistmeanCurr[, "mz"] * parameters$mzVsRTBalance
     peakmatCurr <- mplenv$peakmat[currPeak, c("mz", "rt"), drop = FALSE]
     peakmatCurr[, "mz"] <- peakmatCurr[, "mz"] * parameters$mzVsRTBalance
 
-    nnDist <- nn2(mplistmeanCurr, peakmatCurr[, c("mz", "rt"), drop = FALSE],
+    nnDist <- RANN::nn2(mplistmeanCurr, peakmatCurr[, c("mz", "rt"), drop = FALSE],
                   k = min(length(mplistmeanCurr[, 1]), parameters$knn))
 
     scoreListcurr <- data.frame(score = numeric(0),

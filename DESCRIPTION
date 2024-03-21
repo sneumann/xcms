@@ -1,5 +1,5 @@
 Package: xcms
-Version: 4.1.10
+Version: 4.1.12
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -39,34 +39,34 @@ Authors@R: c(
 	   person(given = "Pablo", family = "Vangeenderhuysen",
 	   email = "pablo.vangeenderhuysen@ugent.be",
 	   role = "ctb",
-	   comment = c(ORCID = "0000-0002-5492-6904"))
+	   comment = c(ORCID = "0000-0002-5492-6904")),
+	   person(given = "Carl", family = "Brunius",
+	   email = "carl.brunius@chalmers.se", 
+	   role = "ctb", 
+	   comment = c(ORCID = "0000-0003-3957-870X"))
 	   )
 Depends:
     R (>= 4.0.0),
-    BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.23.1)
+    BiocParallel (>= 1.8.0)
 Imports:
+    MSnbase (>= 2.29.3),
     mzR (>= 2.25.3),
     methods,
     Biobase,
     BiocGenerics,
-    ProtGenerics (>= 1.35.2),
+    ProtGenerics (>= 1.35.4),
     lattice,
-    RColorBrewer,
-    plyr,
-    RANN,
     MassSpecWavelet (>= 1.66.0),
     S4Vectors,
-    robustbase,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils (>= 1.15.3),
+    MsCoreUtils (>= 1.15.5),
     MsFeatures,
     MsExperiment (>= 1.5.4),
-    Spectra (>= 1.13.2),
+    Spectra (>= 1.13.7),
     progress,
-    multtest,
     jsonlite,
+    RColorBrewer,
     MetaboCoreUtils (>= 1.11.2)
 Suggests:
     BiocStyle,
@@ -80,18 +80,21 @@ Suggests:
     rmarkdown,
     MALDIquant,
     pheatmap,
+    RANN,
+    multtest,
     MsBackendMgf,
-    signal
+    signal,
+    mgcv
 Enhances:
     Rgraphviz,
-    rgl,
-    XML
+    rgl
 License: GPL (>= 2) + file LICENSE
 URL: https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new
 VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 RoxygenNote: 7.3.1
+Encoding: UTF-8
 Collate:
     'AllGenerics.R'
     'functions-XChromatograms.R'

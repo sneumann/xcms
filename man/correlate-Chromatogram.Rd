@@ -81,6 +81,7 @@ correlation matrix might thus be different.
 }
 \examples{
 
+library(MSnbase)
 chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
 chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),

@@ -20,6 +20,7 @@ with a proportion of the minimal value for that row (i.e.
 }
 \examples{
 
+library(MSnbase)
 library(faahKO)
 data("faahko")
 

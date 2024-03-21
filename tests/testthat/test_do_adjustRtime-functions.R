@@ -265,3 +265,117 @@ test_that(".getPeakGroupsRtMatrix works with subsets", {
                                   extraPeaks = 1L)
     expect_true(!any(is.na(res)))
 })
+
+test_that(".rt_model works", {
+    obs <- ref_mz_rt
+    rt_m <- data.frame(ref = obs[, "rtmed"],
+                       obs = obs[, "rtmed"] + 2 + rnorm(nrow(obs), 0, 0.03))
+    res <- .rt_model(rt_map = rt_m, method = "loess")
+    expect_true(is(res, "loess"))
+    expect_true(length(res$residuals) < nrow(obs))
+    ## skip outlier removal
+    res <- .rt_model(rt_map = rt_m, method = "loess", resid_ratio = 100)
+    expect_true(is(res, "loess"))
+    expect_equal(length(res$residuals), nrow(obs) + 1) # for the c(0,0) extra row
+
+    ## gam
+    res <- .rt_model(rt_map = rt_m, method = "gam")
+    expect_true(is(res, "gam"))
+    expect_true(length(res$residuals) < nrow(obs))
+    ## skip outlier removal
+    res <- .rt_model(rt_map = rt_m, method = "gam", resid_ratio = 100)
+    expect_true(is(res, "gam"))
+    expect_equal(length(res$residuals), nrow(obs) + 1)
+})
+
+test_that(".match_reference_anchors works", {
+    a <- cbind(mz = c(200.1, 200.1, 200.1, 232.1, 233.1, 233.2),
+               rt = c(100, 150.1, 190, 190, 190, 192))
+    b <- cbind(mz = c(200.2, 232, 233.1, 234),
+               rt = c(150, 190.4, 193, 240))
+
+    res <- .match_reference_anchors(a, b)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("ref", "obs"))
+    expect_true(nrow(res) == 1L)
+    expect_equal(res$ref, 193.0)
+    expect_equal(res$obs, 190.0)
+
+    ## no matches:
+    res <- .match_reference_anchors(a, b, tolerance = 0, toleranceRt = 0)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("ref", "obs"))
+    expect_true(nrow(res) == 0L)
+
+    ## skip multiple matches: rows 1 and 2 from `a` match row 1 from `b` and
+    ## rows 5 and 6 from `a` match row 3 from `b`
+    res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 52)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(res$ref, 190.4)
+    expect_equal(res$obs, 190.0)
+
+    ## little relaxed matching: should match row 2 in `a` with row 1 in `b` and
+    ## row 4 in `a` with row 2 in `b`. rows 5 and 6 in `a` match both row 3 in
+    ## `b` and should thus not be reported.
+    res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 5)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(res$ref, c(150, 190.4))
+    expect_equal(res$obs, c(150.1, 190.0))
+
+    ## Same but reducing toleranceRt to have also a match between row 6 in `a`
+    ## with row 3 in `b`.
+    res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 2)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(res$ref, c(150, 190.4, 193.0))
+    expect_equal(res$obs, c(150.1, 190.0, 192.0))
+})
+
+test_that(".adjust_rt_model works", {
+    ref_anchors <- ref_mz_rt
+    ## Filter the test data to the same rt range than the reference data
+    tst <- filterRt(tst, rt = c(2550, 4250))
+    obs <- chromPeaks(tst[2])
+
+    rt_map <- .match_reference_anchors(obs[, c("mz", "rt")], ref_anchors,
+                                       tolerance = 0.01,
+                                       toleranceRt = 5)
+
+    rt_raw <- rtime(tst[2])
+    rt_adj <- .adjust_rt_model(rt_raw, method = "loess", rt_map = rt_map)
+    expect_equal(length(rt_raw), length(rt_adj))
+    expect_true(!any(is.na(rt_adj)))
+    ## Adjusted retention times should be closer to the ones in the preprocessed
+    ## data set
+    rt_ref <- rtime(ref[2, keepAdjustedRtime = TRUE])
+    expect_true(mean(abs(rt_adj - rt_ref)) < mean(abs(rt_raw - rt_ref)))
+})
+
+test_that("matchLamasChromPeaks works", {
+    param <- LamaParama(lamas = ref_mz_rt)
+    expect_equal(param@rtMap, list())
+    param <- matchLamasChromPeaks(tst, param)
+    expect_true(inherits(param, "LamaParama"))
+    expect_equal(length(param@rtMap), length(tst))
+    expect_equal(length(param@nChromPeaks), length(tst))
+})
+
+test_that("summarizeLamaMatch works", {
+    param <- LamaParama(lamas = ref_mz_rt, toleranceRt = 10)
+    expect_error(summarizeLamaMatch(param), "missing")
+    param <- matchLamasChromPeaks(tst, param)
+    res <- summarizeLamaMatch(param)
+    expect_equal(nrow(res), length(tst))
+    expect_equal(ncol(res), 4)
+    expect_true(inherits(res$Model_summary[[1]], "summary.loess"))
+})
+
+test_that("Accessing rtMap from LamaParama object works", {
+    param <- LamaParama(lamas = ref_mz_rt, toleranceRt = 10)
+    param <- matchLamasChromPeaks(tst, param)
+    expect_error(matchedRtimes(ObiwarpParam()), "class")
+    mtch <- matchedRtimes(param)
+    expect_equal(length(mtch), length(param@rtMap))
+})

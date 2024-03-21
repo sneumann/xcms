@@ -506,6 +506,16 @@ test_that("adjustRtime,MsExperiment,PeakGroupsParam works", {
     expect_true(length(processHistory(res_3)) == 1L)
 })
 
+
+test_that("LamaParama works", {
+    expect_no_error(LamaParama(lamas = ref_mz_rt))
+    expect_error(LamaParama(), "cannot be empty")
+    param <- LamaParama(lamas = ref_mz_rt)
+    expect_equal(ncol(param@lamas), 2)
+    expect_true(inherits(param@lamas, "matrix"))
+    expect_equal(length(param@method), 1)
+})
+
 test_that("findChromPeaks,XcmsExperiment,MatchedFilterParam works", {
     mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
     ref <- findChromPeaks(faahko_od, param = mfp)
@@ -1001,7 +1011,7 @@ test_that("manualChromPeaks,XcmsExperiment works", {
     res2 <- manualChromPeaks(tmp, pks, samples = 2)
     expect_equal(unname(chromPeaks(res2)), unname(pks_2))
 
-    
+
 })
 
 test_that("filterChromPeaks,XcmsExperiment works", {

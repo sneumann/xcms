@@ -62,8 +62,8 @@
 #'
 #' @examples
 #'
-#' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'     mode = "onDisk")
+#' library(MsExperiment)
+#' xd <- readMsExperiment(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
 #' chr <- chromatogram(xd, mz = c(-0.5, 0.5) + 453.2)
 #' xchr <- findChromPeaks(chr, param = CentWaveParam(snthresh = 0))
 #' plot(xchr)

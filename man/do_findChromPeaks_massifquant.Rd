@@ -155,7 +155,7 @@ Massifquant is a Kalman filter (KF)-based chromatographic peak
 }
 \details{
 This algorithm's performance has been tested rigorously
-    on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+    on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
     Simultaneous kalman filters identify peaks and calculate their
     area under the curve. The default parameters are set to operate on
     a complex LC-MS Orbitrap sample. Users will find it useful to do some

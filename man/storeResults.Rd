@@ -37,6 +37,8 @@ listed above.
 \examples{
 
 ## Load a test data set with detected peaks
+library(xcms)
+library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Set up parameter to save as .RData file

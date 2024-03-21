@@ -452,6 +452,8 @@ setClass("XProcessHistory",
 #' bell curve. See https://github.com/sneumann/xcms/pull/685 and
 #' https://doi.org/10.1186/s12859-023-05533-4 for more information.
 #'
+#' @param x The parameter object.
+#'
 #' @details
 #'
 #' The centWave algorithm is most suitable for high resolution
@@ -487,7 +489,7 @@ setClass("XProcessHistory",
 #' detection in purely chromatographic data.
 #'
 #' @references
-#' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+#' Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
 #' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 #' 2008, 9:504
 #'
@@ -517,13 +519,14 @@ NULL
 #' cwp
 #'
 #' ## Perform the peak detection using centWave on some of the files from the
-#' ## faahKO package. Files are read using the readMSData from the MSnbase
-#' ## package
+#' ## faahKO package. Files are read using the `readMsExperiment` function
+#' ## from the MsExperiment package
 #' library(faahKO)
 #' library(xcms)
+#' library(MsExperiment)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData(fls[1], mode = "onDisk")
+#' raw_data <- readMsExperiment(fls[1])
 #'
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
@@ -892,7 +895,7 @@ setClass("MatchedFilterParam",
 #'     centWave algorithm, which includes wavelet estimation.
 #'
 #' @details This algorithm's performance has been tested rigorously
-#'     on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+#'     on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
 #'     Simultaneous kalman filters identify chromatographic peaks and calculate
 #'     their area under the curve. The default parameters are set to operate on
 #'     a complex LC-MS Orbitrap sample. Users will find it useful to do some
@@ -1108,6 +1111,7 @@ NULL
 #'
 #' @examples
 #'
+#' library(MSnbase)
 #' ## Create a MSWParam object
 #' mp <- MSWParam()
 #' ## Change snthresh parameter
@@ -1467,6 +1471,45 @@ setClass("PeakGroupsParam",
              else TRUE
          })
 
+setClass("LamaParama",
+         slots = c(lamas = "matrix",
+                   method = "character",
+                   span = "numeric",
+                   outlierTolerance = "numeric",
+                   zeroWeight = "numeric",
+                   ppm = "numeric",
+                   tolerance = "numeric",
+                   toleranceRt = "numeric",
+                   bs = "character",
+                   rtMap = "list",
+                   nChromPeaks = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             lamas = matrix(ncol = 2, nrow = 0),
+             method = "loess",
+             span = 0.5,
+             outlierTolerance = 3,
+             zeroWeight = 10,
+             ppm = 20,
+             tolerance = 0,
+             toleranceRt = 20,
+             bs = "tp",
+             rtMap = list(),
+             nChromPeaks = numeric()),
+         validity = function(object) {
+             msg <- NULL
+             if (!nrow(object@lamas))
+                 msg <- c(msg, paste0("'lamas' cannot be empty"))
+             else {
+             }
+             if (length(object@method) > 1 |
+                 !all(object@method %in% c("gam", "loess")))
+                 msg <- c(msg, paste0("'method' has to be either \"",
+                                      "gam\" or \"loess\"!"))
+             msg
+         })
+
+
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",
@@ -1797,6 +1840,7 @@ setClass("MsFeatureData", contains = c("environment"),
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
 #' data(faahko_sub)
 #' ## Update the path to the files for the local system
 #' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")

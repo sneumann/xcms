@@ -126,6 +126,7 @@ setReplaceMethod("featureGroups", "XcmsResult", function(object, value) {
 #' @examples
 #'
 #' library(MsFeatures)
+#' library(MsExperiment)
 #' ## Load a test data set with detected peaks
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
@@ -253,6 +254,7 @@ setMethod(
 #' @examples
 #'
 #' library(MsFeatures)
+#' library(MsExperiment)
 #' ## Load a test data set with detected peaks
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
@@ -788,6 +790,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #' @examples
 #'
 #' library(MsFeatures)
+#' library(MsExperiment)
 #' ## Load a test data set with detected peaks
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'

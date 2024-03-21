@@ -59,6 +59,7 @@
 \alias{roiScales}
 \alias{roiScales<-,CentWaveParam-method}
 \alias{roiScales<-}
+\alias{as.list,CentWaveParam-method}
 \title{Chromatographic peak detection using the centWave method}
 \usage{
 CentWaveParam(
@@ -139,6 +140,8 @@ CentWaveParam(
 \S4method{roiScales}{CentWaveParam}(object)
 
 \S4method{roiScales}{CentWaveParam}(object) <- value
+
+\S4method{as.list}{CentWaveParam}(x, ...)
 }
 \arguments{
 \item{ppm}{\code{numeric(1)} defining the maximal tolerated m/z deviation in
@@ -249,6 +252,8 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 \item{value}{The value for the slot.}
 
 \item{f}{For \code{integrate}: a \code{CentWaveParam} object.}
+
+\item{x}{The parameter object.}
 }
 \value{
 The \code{CentWaveParam} function returns a \code{CentWaveParam}
@@ -366,20 +371,21 @@ snthresh(cwp) <- 25
 cwp
 
 ## Perform the peak detection using centWave on some of the files from the
-## faahKO package. Files are read using the readMSData from the MSnbase
-## package
+## faahKO package. Files are read using the `readMsExperiment` function
+## from the MsExperiment package
 library(faahKO)
 library(xcms)
+library(MsExperiment)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData(fls[1], mode = "onDisk")
+raw_data <- readMsExperiment(fls[1])
 
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = cwp)
 head(chromPeaks(res))
 }
 \references{
-Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
 sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 2008, 9:504
 }

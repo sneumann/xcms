@@ -19,14 +19,14 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @description
 #'
 #' The `adjustRtime` method(s) perform retention time correction (alignment)
-#' between chromatograms of different samples. Alignment is performed by defaul
-#' on MS level 1 data. Retention times of spectra from other MS levels, if
-#' present, are subsequently adjusted based on the adjusted retention times
-#' of the MS1 spectra. Note that calling `adjustRtime` on a *xcms* result object
-#' will remove any eventually present previous alignment results as well as
-#' any correspondence analysis results. To run a second round of alignment,
-#' raw retention times need to be replaced with adjusted ones using the
-#' [applyAdjustedRtime()] function.
+#' between chromatograms of different samples/dataset. Alignment is performed
+#' by default on MS level 1 data. Retention times of spectra from other MS
+#' levels, if present, are subsequently adjusted based on the adjusted
+#' retention times of the MS1 spectra. Note that calling `adjustRtime` on a
+#' *xcms* result object will remove any eventually present previous alignment
+#' results as well as any correspondence analysis results. To run a second
+#' round of alignment, raw retention times need to be replaced with adjusted
+#' ones using the [applyAdjustedRtime()] function.
 #'
 #' The alignment method can be specified (and configured) using a dedicated
 #' `param` argument.
@@ -40,7 +40,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   The alignment is performed directly on the [profile-matrix] and can hence
 #'   be performed independently of the peak detection or peak grouping.
 #'
-#' - `PeakGroupsParam`: performs retention time correctoin based on the
+#' - `PeakGroupsParam`: performs retention time correction based on the
 #'   alignment of features defined in all/most samples (corresponding to
 #'   *house keeping compounds* or marker compounds) (Smith 2006). First the
 #'   retention time deviation of these features is described by fitting either a
@@ -59,6 +59,15 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   groups (features) for alignment in `object` based on the parameters defined
 #'   in `param`. See also [do_adjustRtime_peakGroups()] for the core API
 #'   function.
+#'
+#' - `LamaParama`: This function performs retention time correction by aligning
+#'   chromatographic data to an external reference dataset (concept and initial
+#'   implementation by Carl Brunius). The process involves identifying and
+#'   aligning peaks within the experimental chromatographic data, represented
+#'   as an `XcmsExperiment` object, to a predefined set of landmark features
+#'   called "lamas". These landmark features are characterized by their
+#'   mass-to-charge ratio (m/z) and retention time. see [LamaParama()] for more
+#'   information on the method.
 #'
 #' @section Subset-based alignment:
 #'
@@ -189,9 +198,9 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     be used to interpolate corrected retention times for all peak groups.
 #'     Can be either `"loess"` or `"linear"`.
 #'
-#' @param span For `PeakGroupsParam`: `numeric(1)` defining the degree of
-#'     smoothing (if `smooth = "loess"`). This parameter is passed to the
-#'     internal call to [loess()].
+#' @param span For `PeakGroupsParam`: `numeric(1)` defining
+#'     the degree of smoothing (if `smooth = "loess"`). This parameter is
+#'     passed to the internal call to [loess()].
 #'
 #' @param subset For `ObiwarpParam` and `PeakGroupsParam`: `integer` with the
 #'     indices of samples within the experiment on which the alignment models
@@ -206,7 +215,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @param value For all assignment methods: the value to set/replace.
 #'
-#' @param x An `ObiwarpParam` or `PeakGroupsParam` object.
+#' @param x An `ObiwarpParam`, `PeakGroupsParam` or `LamaParama` object.
 #'
 #' @param ... ignored.
 #'
@@ -219,7 +228,8 @@ setGeneric("addProcessHistory", function(object, ...)
 #' `XcmsExperiment` with the adjusted retention times stored in an new
 #' *spectra variable* `rtime_adjusted` in the object's `spectra`.
 #'
-#' `ObiwarpParam` and `PeakGroupsParam` return the respective parameter object.
+#' `ObiwarpParam`, `PeakGroupsParam` and `LamaParama` return the respective
+#' parameter object.
 #'
 #' `adjustRtimeGroups` returns a `matrix` with the retention times of *marker*
 #' features in each sample (each row one feature, each row one sample).
@@ -230,7 +240,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @seealso [plotAdjustedRtime()] for visualization of alignment results.
 #'
-#' @author Colin Smith, Johannes Rainer
+#' @author Colin Smith, Johannes Rainer, Philippine Louail, Carl Brunius
 #'
 #' @references
 #'
@@ -321,6 +331,9 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(MSnbase)
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Get EICs for every detected chromatographic peak
@@ -698,6 +711,8 @@ setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -999,6 +1014,8 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #' @examples
 #'
 #' ## Load a test data set with identified chromatographic peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' res <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -1006,7 +1023,7 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #'
 #' ## Perform the correspondence. We assign all samples to the same group.
 #' res <- groupChromPeaks(res,
-#'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
+#'     param = PeakDensityParam(sampleGroups = rep(1, length(res))))
 #'
 #' ## For how many features do we lack an integrated peak signal?
 #' sum(is.na(featureValues(res)))
@@ -1377,6 +1394,8 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     same group).
 #'
 #' @param value Replacement value for `<-` methods.
+#'
+#' @param x The parameter object.
 #'
 #' @param ... Optional parameters.
 #'
@@ -1895,6 +1914,8 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Disable parallel processing for this example
@@ -2046,6 +2067,8 @@ setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stit
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
+#' library(xcms)
+#' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
 #' ## Set up parameter to save as .RData file

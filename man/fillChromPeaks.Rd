@@ -260,6 +260,8 @@ in the matrix returned by the \code{\link[=featureValues]{featureValues()}} meth
 \examples{
 
 ## Load a test data set with identified chromatographic peaks
+library(xcms)
+library(MsExperiment)
 res <- loadXcmsData("faahko_sub2")
 
 ## Disable parallel processing for this example
@@ -267,7 +269,7 @@ register(SerialParam())
 
 ## Perform the correspondence. We assign all samples to the same group.
 res <- groupChromPeaks(res,
-    param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
+    param = PeakDensityParam(sampleGroups = rep(1, length(res))))
 
 ## For how many features do we lack an integrated peak signal?
 sum(is.na(featureValues(res)))
