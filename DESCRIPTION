@@ -104,6 +104,7 @@ Collate:
     'MPI.R'
     'MsExperiment-functions.R'
     'MsExperiment.R'
+    'MzTabParam.R'
     'PlainTextParam.R'
     'RDataParam.R'
     'XcmsExperiment-functions.R'
