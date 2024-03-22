@@ -1,5 +1,14 @@
 # xcms 4.1
 
+## Changes in version 4.1.12
+
+- Implementation of the `LamaParama` class and method for the `adjustRtime()`
+ function. Allowing alignment of a dataset based on landmarks (lamas) from an
+ external reference dataset.
+- Implementation of related user-level function `matchLamasChromPeaks()`,
+  `summarizeMatchLama()` and `plot(LamaParama)` which allows for evaluation of
+  matching between lamas and chromPeaks.
+
 ## Changes in version 4.1.11
 
 - Clean up of required and suggested packages and namespace imports.
