@@ -342,7 +342,7 @@ as rectangles with border color peakCol."><meta property="og:image" content="htt
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -363,6 +363,9 @@ as rectangles with border color peakCol."><meta property="og:image" content="htt
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -395,7 +398,7 @@ Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
 can be extracted with the <code>processHistory</code> method.
 <code>XCMSnExp</code> objects, by directly extending the
-<code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object from the <code>MSnbase</code> package, inherit
+<code>OnDiskMSnExp</code> object from the <code>MSnbase</code> package, inherit
 all of its functionality and allows thus an easy access to the full raw
 data at any stage of an analysis.
 To support interaction with packages requiring the <em>old</em> objects,
@@ -490,7 +493,7 @@ applied <em>on the fly</em>. Using the <code>bySample</code> parameter it is
 possible to switch from the default grouping of intensity values by
 spectrum/scan to a grouping by sample/file.</p>
 <p><code>spectra</code>: extracts the
-<code><a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">Spectrum</a></code> objects containing all data from
+<code>Spectrum</code> objects containing all data from
 <code>object</code>. The values are extracted from the original data files and
 eventual processing steps are applied <em>on the fly</em>. By setting
 <code>bySample = TRUE</code>, the spectra are returned grouped by sample/file.
@@ -549,8 +552,8 @@ results. If no function is specified the function simply returns the
 <p><code>XCMSnExp</code> objects can be combined with the <code>c</code> function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.</p>
-<p><code>plot</code> plots the spectrum data (see <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></code> for
-<code><a href="https://lgatto.github.io/MSnbase/reference/MSnExp-class.html" class="external-link">MSnExp</a></code> objects in the <code>MSnbase</code> package for more details.
+<p><code>plot</code> plots the spectrum data (see <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></code> for
+<code>MSnExp</code> objects in the <code>MSnbase</code> package for more details.
 For <code>type = "XIC"</code>, identified chromatographic peaks will be indicated
 as rectangles with border color <code>peakCol</code>.</p>
     </div>
@@ -690,7 +693,7 @@ as rectangles with border color <code>peakCol</code>.</p>
 <span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for XCMSnExp,missing</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spectra"</span>, <span class="st">"XIC"</span><span class="op">)</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -1089,6 +1092,49 @@ with feature definitions and phenodata information, into a
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocGenerics</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘BiocGenerics’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     IQR, mad, sd, var, xtabs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     as.data.frame, basename, cbind, colnames, dirname, do.call,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     pmin.int, rank, rbind, rownames, sapply, setdiff, table, tapply,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     union, unique, unsplit, which.max, which.min</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Welcome to Bioconductor</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     Vignettes contain introductory material; view with</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     'browseVignettes()'. To cite Bioconductor, see</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: mzR</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Rcpp</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: S4Vectors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: stats4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘S4Vectors’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:utils’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     findMatches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.29.4 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Visit https://lgatto.github.io/MSnbase/ to get started.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  Consider switching to the 'R for Mass Spectrometry'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  packages - see https://RforMassSpectrometry.org for details.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘MSnbase’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:base’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     trimws</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="dirname.html">dirname</a></span><span class="op">(</span><span class="va">faahko_sub</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"cdf/KO"</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span></span></span>
@@ -1106,12 +1152,11 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 3834 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Thu Mar 14 11:42:34 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.29.3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 1 2 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko15.CDF ko16.CDF ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -1152,7 +1197,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Tue Aug  1 15:54:19 2023 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Thu Mar 14 11:42:34 2024 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -1224,13 +1269,12 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of spectra: 1278 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Tue Aug  1 15:54:19 2023] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select MS level(s) 1. [Tue Aug  1 15:54:19 2023] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Fri Feb 23 22:04:58 2024] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.26.0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Thu Mar 14 11:42:34 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Wed Apr  3 09:06:53 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.29.3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rowNames: ko16.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varLabels: sampleNames</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   varMetadata: labelDescription</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Loaded from:</span>
@@ -1268,7 +1312,7 @@ with feature definitions and phenodata information, into a
 <span class="r-in"><span><span class="co">## Coercing to an xcmsSet object</span></span></span>
 <span class="r-in"><span><span class="co">##</span></span></span>
 <span class="r-in"><span><span class="co">## We can also coerce the XCMSnExp object into an xcmsSet object:</span></span></span>
-<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu">as</span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="st">"xcmsSet"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">xs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">faahko_sub</span>, <span class="st">"xcmsSet"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Note: you might want to set/adjust the 'sampclass' of the returned xcmSet object before proceeding with the analysis.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="xcmsSet-class.html">peaks</a></span><span class="op">(</span><span class="va">xs</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo</span>

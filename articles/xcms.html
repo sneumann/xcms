@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,9 @@
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -100,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-02-23 21:01:00.648919<br><strong>Compiled</strong>: Fri Feb 23 22:08:50 2024</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-04-03 07:43:16.800331<br><strong>Compiled</strong>: Wed Apr 3 09:10:36 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -577,7 +580,8 @@ the result object and using parameter <code>add = TRUE</code>.</p>
 the results from the chromatographic peak detection. Below we show the
 first 6 identified chromatographic peaks.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##           mz mzmin mzmax       rt    rtmin    rtmax     into     intb  maxo sn</span></span>
 <span><span class="co">## CP0001 594.0 594.0 594.0 2601.535 2581.191 2637.529 161042.2 146073.3  7850 11</span></span>
 <span><span class="co">## CP0002 577.0 577.0 577.0 2604.665 2581.191 2626.574 136105.2 128067.9  6215 11</span></span>
@@ -692,11 +696,16 @@ right: after refinement. The peaks were not merged.
 </div>
 <p>It is also possible to perform the peak refinement on extracted ion
 chromatograms. This could again be used to test and fine-tune the
-settings for the parameter. To illustrate this we perform below a peak
-refinement on the extracted ion chromatogram <code>chr_1</code> reducing
-the <code>minProp</code> parameter to force joining the two peaks.</p>
+settings for the parameter and to avoid potential problematic behavior.
+The <code>minProp</code> parameter for example has to be carefully
+chosen to avoid merging of isomer peaks (like in the example above).
+With the default <code>minProp = 0.75</code> only peaks are merged if
+the signal between the two peaks is <strong>higher</strong> than 75% of
+the smaller peak’s maximal intensity. Setting this value too low could
+eventually result in merging of isomers as shown below.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/refineChromPeaks.html">refineChromPeaks</a></span><span class="op">(</span><span class="va">chr_1</span>, <span class="fu"><a href="../reference/refineChromPeaks.html">MergeNeighboringPeaksParam</a></span><span class="op">(</span>minProp <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co">#' Too low minProp could cause merging of isomers!</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/refineChromPeaks.html">refineChromPeaks</a></span><span class="op">(</span><span class="va">chr_1</span>, <span class="fu"><a href="../reference/refineChromPeaks.html">MergeNeighboringPeaksParam</a></span><span class="op">(</span>minProp <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         mz  mzmin  mzmax       rt    rtmin    rtmax     into intb    maxo  sn</span></span>
 <span><span class="co">## CPM1 496.2 496.19 496.21 3384.012 3294.809 3412.181 45940118   NA 1128960 177</span></span>
@@ -704,7 +713,10 @@ the <code>minProp</code> parameter to force joining the two peaks.</p>
 <span><span class="co">## CPM1      1   1      1</span></span></code></pre>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" width="700"></p>
+<p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" width="480"></p>
+<p>Thus, before running such a peak refinement evaluate that isomers
+present in the data set were not wrongly merged based on the chosen
+settings.</p>
 <p>Before proceeding we next replace the <code>faahko</code> object with
 the results from the peak refinement step.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
@@ -1490,11 +1502,6 @@ merge overlapping peaks in each sample).</p>
 <pre><code><span><span class="co">## Loading required package: MatrixGenerics</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: matrixStats</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'matrixStats'</span></span></code></pre>
-<pre><code><span><span class="co">## The following objects are masked from 'package:Biobase':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     anyMissing, rowMedians</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'MatrixGenerics'</span></span></code></pre>
 <pre><code><span><span class="co">## The following objects are masked from 'package:matrixStats':</span></span>
 <span><span class="co">## </span></span>
@@ -1513,10 +1520,31 @@ merge overlapping peaks in each sample).</p>
 <span><span class="co">##     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,</span></span>
 <span><span class="co">##     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,</span></span>
 <span><span class="co">##     rowWeightedSds, rowWeightedVars</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:Biobase':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     rowMedians</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: GenomicRanges</span></span></code></pre>
+<pre><code><span><span class="co">## Loading required package: stats4</span></span></code></pre>
+<pre><code><span><span class="co">## Loading required package: BiocGenerics</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Attaching package: 'BiocGenerics'</span></span></code></pre>
+<pre><code><span><span class="co">## The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     IQR, mad, sd, var, xtabs</span></span></code></pre>
+<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     anyDuplicated, aperm, append, as.data.frame, basename, cbind,</span></span>
+<span><span class="co">##     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
+<span><span class="co">##     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,</span></span>
+<span><span class="co">##     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span></span>
+<span><span class="co">##     Position, rank, rbind, Reduce, rownames, sapply, setdiff, table,</span></span>
+<span><span class="co">##     tapply, union, unique, unsplit, which.max, which.min</span></span></code></pre>
+<pre><code><span><span class="co">## Loading required package: S4Vectors</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Attaching package: 'S4Vectors'</span></span></code></pre>
+<pre><code><span><span class="co">## The following object is masked from 'package:utils':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     findMatches</span></span></code></pre>
+<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     expand.grid, I, unname</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: IRanges</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'IRanges'</span></span></code></pre>
@@ -1524,7 +1552,21 @@ merge overlapping peaks in each sample).</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##     distance</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: GenomeInfoDb</span></span></code></pre>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## Loading required package: Biobase</span></span></code></pre>
+<pre><code><span><span class="co">## Welcome to Bioconductor</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     Vignettes contain introductory material; view with</span></span>
+<span><span class="co">##     'browseVignettes()'. To cite Bioconductor, see</span></span>
+<span><span class="co">##     'citation("Biobase")', and for packages 'citation("pkgname")'.</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Attaching package: 'Biobase'</span></span></code></pre>
+<pre><code><span><span class="co">## The following object is masked from 'package:MatrixGenerics':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     rowMedians</span></span></code></pre>
+<pre><code><span><span class="co">## The following objects are masked from 'package:matrixStats':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     anyMissing, rowMedians</span></span></code></pre>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify</a></span><span class="op">(</span><span class="va">faahko</span>, value <span class="op">=</span> <span class="st">"into"</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SummarizedExperiment </span></span>
@@ -1540,7 +1582,7 @@ the <code>rowData</code> of this object. The <code>rowData</code>
 provides annotations and information for each <strong>row</strong> in
 the <code>SummarizedExperiment</code> (which in our case are the
 <strong>features</strong>).</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 351 rows and 10 columns</span></span>
 <span><span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span></span>
@@ -1573,7 +1615,7 @@ the <code>SummarizedExperiment</code> (which in our case are the
 <strong>samples</strong>) are stored as <code>colData</code>. In this
 data frame each row contains annotations for one sample (and hence one
 column in the feature values matrix).</p>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 8 rows and 4 columns</span></span>
 <span><span class="co">##          sample_name sample_group spectraOrigin sample_type</span></span>
@@ -1591,13 +1633,13 @@ the object. Note that a <code>SummarizedExperiment</code> can have
 multiple assays which have to be numeric matrices with the number of
 rows and columns matching the number of features and samples,
 respectively. Below we list the names of the available assays.</p>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"</span></span></code></pre>
 <p>And we can access the actual data using the <code>assay</code>
 function, optionally also providing the name of the assay we want to
 access. Below we show the first 6 lines of that matrix.</p>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7</span></span>
@@ -1617,14 +1659,14 @@ access. Below we show the first 6 lines of that matrix.</p>
 we in addition add also the feature value matrix
 <strong>without</strong> filled-in values (i.e. feature intensities that
 were added by the gap filling step).</p>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">$</span><span class="va">raw_nofill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">faahko</span>, filled <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></code></pre></div>
 <p>With that we have now two assays in our result object.</p>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"        "raw_nofill"</span></span></code></pre>
 <p>And we can extract the feature values without gap-filling:</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw_nofill"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span></span>
@@ -1643,12 +1685,12 @@ were added by the gap filling step).</p>
 <p>Finally, a history of the full processing with <em>xcms</em> is
 available as <code>metadata</code> in the
 <code>SummarizedExperiment</code>.</p>
-<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:24 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:11 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1657,7 +1699,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:26 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:13 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1666,7 +1708,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:39 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:25 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1675,7 +1717,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:39 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:25 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1684,7 +1726,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:43 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:30 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1693,7 +1735,7 @@ available as <code>metadata</code> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:49 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:36 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1701,11 +1743,11 @@ available as <code>metadata</code> in the
 <p>This same information can also be extracted from the <em>xcms</em>
 result object using the <code>processHistory</code> function. Below we
 extract the information for the first processing step.</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Fri Feb 23 22:09:24 2024 </span></span>
+<span><span class="co">##  date: Wed Apr  3 09:11:11 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1713,7 +1755,7 @@ extract the information for the first processing step.</p>
 <p>These processing steps contain also the individual parameter objects
 used for the analysis, hence allowing to exactly reproduce the
 analysis.</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class:  CentWaveParam </span></span>
 <span><span class="co">##  Parameters:</span></span>
@@ -1736,7 +1778,7 @@ analysis.</p>
 the grouping of the samples in this experiment. Note that we did not
 perform any data normalization hence the grouping might (and will) also
 be influenced by technical biases.</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Extract the features and log2 transform them</span></span>
 <span><span class="va">ft_ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1795,15 +1837,15 @@ to be performed.</p>
 their relative standard deviation (coefficient of variation) for a
 specified <code>threshold</code>. It is recommended to base the
 computation on quality control (QC) samples, as demonstrated below:</p>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set up parameters for RsdFilter </span></span>
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Set up parameters for RsdFilter</span></span>
 <span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>                        qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Apply the filter to faakho object</span></span>
 <span><span class="va">filtered_faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">faahko</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 255 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Now apply the same strategy to the res object</span></span>
 <span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>, qcIndex <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
 <span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">res</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span>, assay <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span></span></code></pre></div>
@@ -1813,7 +1855,7 @@ were thus removed from the data set.</p>
 <p>The <code>DratioFilter</code> can be used to filter features based on
 the D-ratio or <em>dispersion ratio</em>, which compares the standard
 deviation in QC samples to that in study samples.</p>
-<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set up parameters for DratioFilter</span></span>
 <span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
 <span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -1824,7 +1866,7 @@ deviation in QC samples to that in study samples.</p>
 <span><span class="va">filtered_faakho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faahko</span>,</span>
 <span>                                  filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 38 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Now same but for the res object</span></span>
 <span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
 <span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -1846,14 +1888,14 @@ based on this. Features with a percent of missing values larger than the
 threshold in all sample groups will be removed. Another option is to
 base this quality assessment and filtering only on QC samples.</p>
 <p>Both examples are shown below:</p>
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To set up parameter `f` to filter only based on QC samples</span></span>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faakho</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
-<span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">!=</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span> </span>
+<span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">!=</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
 <span><span class="co"># To set up parameter `f` to filter per sample type excluding QC samples</span></span>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faakho</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
-<span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span> </span>
+<span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
 <span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>                                       f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
@@ -1862,7 +1904,7 @@ base this quality assessment and filtering only on QC samples.</p>
 <span><span class="va">filtered_faakho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faakho</span>,</span>
 <span>                                  filter <span class="op">=</span> <span class="va">missing_filter</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 0 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Apply the filter to res object</span></span>
 <span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>                                       f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
@@ -1876,7 +1918,7 @@ type.</p>
 <code>BlankFlag</code> filter can be used to flag features based on the
 intensity relationship between blank and QC samples. More information
 can be found in the documentation of the filter:</p>
-<div class="sourceCode" id="cb136"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve documentation for the main function and the specific filter.</span></span>
 <span><span class="op">?</span><span class="va">filterFeatures</span></span></code></pre></div>
 <pre><code><span><span class="co">## Help on topic 'filterFeatures' was found in the following packages:</span></span>
@@ -1888,7 +1930,7 @@ can be found in the documentation of the filter:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Using the first match ...</span></span></code></pre>
-<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">BlankFlag</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1904,6 +1946,486 @@ identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in
 other R packages, such as Bioconductor’s excellent <code>limma</code>
 package.</p>
+</div>
+<div class="section level3">
+<h3 id="alignment-to-an-external-reference-dataset">Alignment to an external reference dataset<a class="anchor" aria-label="anchor" href="#alignment-to-an-external-reference-dataset"></a>
+</h3>
+<p>In certain experiments, aligning two different datasets is necessary.
+This can involve comparing runs of the same samples conducted across
+different laboratories or runs with MS2 recorded after the initial MS1
+run. Across laboratories and over time, the same samples may result in
+variation in retention time, especially because the LC system can be
+quite unstable. In these cases, an alignment step using the
+<code><a href="../reference/adjustRtime.html">adjustRtime()</a></code> function with the <code>LamaParam</code>
+parameter can allow the user to perform this type of alignment. We will
+go through this step by step below.</p>
+<p>Let’s load an already analyzed dataset <code>ref</code> and our
+previous dataset before alignment, which will be <code>tst</code>. We
+will first restrict their retention time range to be the same for both
+dataset.</p>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="st">"xmse"</span><span class="op">)</span></span>
+<span><span class="va">tst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="st">"faahko_sub2"</span><span class="op">)</span></span></code></pre></div>
+<p>Now, we will attempt to align these two samples with the previous
+dataset. The first step is to extract landmark features (referred to as
+<code>lamas</code>). To achieve this, we will identify the features
+present in every QC sample of the <code>ref</code> dataset. To do so, we
+will categorize (using <code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor()</a></code>) our data by
+<code>sample_type</code> and only retain the QC samples. This variable
+will be utilized to filter the features using the
+<code><a href="../reference/PercentMissingFilter.html">PercentMissingFilter()</a></code> parameter within the
+<code><a href="../reference/filterFeatures.html">filterFeatures()</a></code> function (see section above for more
+information on this method)</p>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">ref</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
+<span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">!=</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span><span class="va">ref</span>, <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 4 features were removed</span></span></code></pre>
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ref_mz_rt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">ref</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mzmed"</span>,<span class="st">"rtmed"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">ref_mz_rt</span></span></code></pre></div>
+<pre><code><span><span class="co">##        mzmed    rtmed</span></span>
+<span><span class="co">## FT001 200.10 2902.634</span></span>
+<span><span class="co">## FT002 205.00 2789.901</span></span>
+<span><span class="co">## FT003 206.00 2789.405</span></span>
+<span><span class="co">## FT004 207.10 2718.560</span></span>
+<span><span class="co">## FT005 233.00 3023.579</span></span>
+<span><span class="co">## FT006 241.10 3683.299</span></span>
+<span><span class="co">## FT007 242.10 3663.791</span></span>
+<span><span class="co">## FT008 244.10 2833.307</span></span>
+<span><span class="co">## FT009 249.10 3676.265</span></span>
+<span><span class="co">## FT010 250.10 3674.656</span></span>
+<span><span class="co">## FT011 255.15 3682.395</span></span>
+<span><span class="co">## FT012 256.15 3677.129</span></span>
+<span><span class="co">## FT013 266.20 3668.967</span></span>
+<span><span class="co">## FT014 267.20 3668.040</span></span>
+<span><span class="co">## FT015 268.20 3660.653</span></span>
+<span><span class="co">## FT016 269.20 3891.155</span></span>
+<span><span class="co">## FT017 272.10 3125.878</span></span>
+<span><span class="co">## FT018 272.10 2733.522</span></span>
+<span><span class="co">## FT019 279.00 2788.435</span></span>
+<span><span class="co">## FT020 280.00 2792.156</span></span>
+<span><span class="co">## FT021 281.20 3668.777</span></span>
+<span><span class="co">## FT022 281.10 2787.464</span></span>
+<span><span class="co">## FT023 282.20 3667.853</span></span>
+<span><span class="co">## FT024 282.20 3475.313</span></span>
+<span><span class="co">## FT025 283.20 3888.408</span></span>
+<span><span class="co">## FT026 283.20 3665.355</span></span>
+<span><span class="co">## FT027 284.10 2719.668</span></span>
+<span><span class="co">## FT028 284.20 3695.535</span></span>
+<span><span class="co">## FT029 286.20 3263.973</span></span>
+<span><span class="co">## FT030 288.10 2799.792</span></span>
+<span><span class="co">## FT031 289.10 2795.482</span></span>
+<span><span class="co">## FT032 296.10 2730.256</span></span>
+<span><span class="co">## FT033 300.20 3404.692</span></span>
+<span><span class="co">## FT034 301.00 2789.217</span></span>
+<span><span class="co">## FT035 301.20 3404.692</span></span>
+<span><span class="co">## FT036 302.00 2623.296</span></span>
+<span><span class="co">## FT037 302.00 2790.972</span></span>
+<span><span class="co">## FT038 304.10 2923.870</span></span>
+<span><span class="co">## FT039 305.10 2927.597</span></span>
+<span><span class="co">## FT040 305.10 3504.720</span></span>
+<span><span class="co">## FT041 306.10 3509.791</span></span>
+<span><span class="co">## FT042 306.10 2936.499</span></span>
+<span><span class="co">## FT043 307.00 2625.024</span></span>
+<span><span class="co">## FT044 308.10 3259.275</span></span>
+<span><span class="co">## FT045 309.10 2923.324</span></span>
+<span><span class="co">## FT046 309.20 3669.158</span></span>
+<span><span class="co">## FT047 309.10 3477.216</span></span>
+<span><span class="co">## FT048 310.20 3653.792</span></span>
+<span><span class="co">## FT049 311.10 3078.746</span></span>
+<span><span class="co">## FT050 312.10 2998.566</span></span>
+<span><span class="co">## FT051 312.20 3870.436</span></span>
+<span><span class="co">## FT052 313.00 2788.781</span></span>
+<span><span class="co">## FT053 313.20 3298.254</span></span>
+<span><span class="co">## FT054 314.00 2788.704</span></span>
+<span><span class="co">## FT055 314.15 3294.617</span></span>
+<span><span class="co">## FT056 316.20 3079.072</span></span>
+<span><span class="co">## FT057 317.00 2789.028</span></span>
+<span><span class="co">## FT058 317.20 3083.760</span></span>
+<span><span class="co">## FT059 321.20 3670.730</span></span>
+<span><span class="co">## FT060 322.15 3507.645</span></span>
+<span><span class="co">## FT061 322.10 3405.784</span></span>
+<span><span class="co">## FT062 323.10 3504.998</span></span>
+<span><span class="co">## FT063 324.10 2791.233</span></span>
+<span><span class="co">## FT064 324.20 3290.215</span></span>
+<span><span class="co">## FT065 326.20 3421.241</span></span>
+<span><span class="co">## FT066 327.10 3498.317</span></span>
+<span><span class="co">## FT067 328.20 3636.850</span></span>
+<span><span class="co">## FT068 329.10 3501.392</span></span>
+<span><span class="co">## FT069 329.20 3642.045</span></span>
+<span><span class="co">## FT070 330.20 3643.682</span></span>
+<span><span class="co">## FT071 331.20 3501.392</span></span>
+<span><span class="co">## FT072 335.00 2788.704</span></span>
+<span><span class="co">## FT073 336.00 2788.834</span></span>
+<span><span class="co">## FT074 337.00 2554.317</span></span>
+<span><span class="co">## FT075 338.10 3026.218</span></span>
+<span><span class="co">## FT076 338.20 3668.967</span></span>
+<span><span class="co">## FT077 338.20 3837.743</span></span>
+<span><span class="co">## FT078 338.10 2789.028</span></span>
+<span><span class="co">## FT079 339.20 3325.293</span></span>
+<span><span class="co">## FT080 339.10 3129.855</span></span>
+<span><span class="co">## FT081 340.10 3324.565</span></span>
+<span><span class="co">## FT082 343.00 2684.205</span></span>
+<span><span class="co">## FT083 343.10 2748.230</span></span>
+<span><span class="co">## FT084 344.00 2685.831</span></span>
+<span><span class="co">## FT085 344.20 3347.607</span></span>
+<span><span class="co">## FT087 345.00 2685.895</span></span>
+<span><span class="co">## FT088 346.10 3500.358</span></span>
+<span><span class="co">## FT089 347.10 3504.998</span></span>
+<span><span class="co">## FT090 348.20 3488.902</span></span>
+<span><span class="co">## FT091 348.20 3306.792</span></span>
+<span><span class="co">## FT092 350.20 3659.019</span></span>
+<span><span class="co">## FT093 351.10 3503.953</span></span>
+<span><span class="co">## FT094 352.10 3506.280</span></span>
+<span><span class="co">## FT095 353.10 3504.855</span></span>
+<span><span class="co">## FT096 354.20 3625.272</span></span>
+<span><span class="co">## FT097 354.15 2793.799</span></span>
+<span><span class="co">## FT098 355.20 3630.614</span></span>
+<span><span class="co">## FT099 356.20 3840.640</span></span>
+<span><span class="co">## FT100 357.20 3840.896</span></span>
+<span><span class="co">## FT101 357.20 3478.920</span></span>
+<span><span class="co">## FT102 359.00 3507.002</span></span>
+<span><span class="co">## FT103 359.20 3724.544</span></span>
+<span><span class="co">## FT104 360.00 2688.960</span></span>
+<span><span class="co">## FT105 361.10 3168.466</span></span>
+<span><span class="co">## FT106 361.10 2692.876</span></span>
+<span><span class="co">## FT107 362.10 3169.834</span></span>
+<span><span class="co">## FT108 362.10 2688.842</span></span>
+<span><span class="co">## FT109 363.20 3267.053</span></span>
+<span><span class="co">## FT110 363.10 3475.879</span></span>
+<span><span class="co">## FT111 363.10 2880.969</span></span>
+<span><span class="co">## FT112 364.20 3724.889</span></span>
+<span><span class="co">## FT113 365.00 2686.765</span></span>
+<span><span class="co">## FT114 365.00 2596.692</span></span>
+<span><span class="co">## FT115 365.10 3406.876</span></span>
+<span><span class="co">## FT116 366.00 2686.697</span></span>
+<span><span class="co">## FT117 366.10 2790.396</span></span>
+<span><span class="co">## FT118 366.20 3848.377</span></span>
+<span><span class="co">## FT119 367.20 3531.475</span></span>
+<span><span class="co">## FT120 367.20 4133.723</span></span>
+<span><span class="co">## FT121 368.20 3533.547</span></span>
+<span><span class="co">## FT122 370.20 3070.980</span></span>
+<span><span class="co">## FT123 371.20 3638.709</span></span>
+<span><span class="co">## FT124 371.20 3078.794</span></span>
+<span><span class="co">## FT125 372.20 3259.275</span></span>
+<span><span class="co">## FT126 372.20 3588.662</span></span>
+<span><span class="co">## FT127 373.20 3262.143</span></span>
+<span><span class="co">## FT128 376.20 3721.949</span></span>
+<span><span class="co">## FT129 376.20 3473.786</span></span>
+<span><span class="co">## FT130 379.10 3336.024</span></span>
+<span><span class="co">## FT131 380.10 3160.644</span></span>
+<span><span class="co">## FT132 380.20 3337.932</span></span>
+<span><span class="co">## FT133 381.00 2684.371</span></span>
+<span><span class="co">## FT134 381.10 3162.297</span></span>
+<span><span class="co">## FT135 382.10 3260.500</span></span>
+<span><span class="co">## FT136 382.20 3804.470</span></span>
+<span><span class="co">## FT137 384.20 3998.978</span></span>
+<span><span class="co">## FT138 385.10 3174.725</span></span>
+<span><span class="co">## FT139 385.20 3454.142</span></span>
+<span><span class="co">## FT140 386.20 3459.187</span></span>
+<span><span class="co">## FT141 386.10 3170.726</span></span>
+<span><span class="co">## FT142 389.20 3356.946</span></span>
+<span><span class="co">## FT143 390.20 3356.872</span></span>
+<span><span class="co">## FT144 391.10 3628.830</span></span>
+<span><span class="co">## FT145 392.10 3629.508</span></span>
+<span><span class="co">## FT146 392.20 2924.703</span></span>
+<span><span class="co">## FT147 395.20 3724.144</span></span>
+<span><span class="co">## FT148 396.20 3331.732</span></span>
+<span><span class="co">## FT149 398.20 3311.895</span></span>
+<span><span class="co">## FT150 398.20 3411.698</span></span>
+<span><span class="co">## FT152 399.10 2798.412</span></span>
+<span><span class="co">## FT153 400.10 2788.834</span></span>
+<span><span class="co">## FT154 400.20 3599.478</span></span>
+<span><span class="co">## FT155 401.20 3750.015</span></span>
+<span><span class="co">## FT156 401.20 3598.683</span></span>
+<span><span class="co">## FT157 404.10 2694.947</span></span>
+<span><span class="co">## FT158 408.20 3458.669</span></span>
+<span><span class="co">## FT159 408.10 2898.149</span></span>
+<span><span class="co">## FT160 410.30 3942.862</span></span>
+<span><span class="co">## FT161 411.20 3949.346</span></span>
+<span><span class="co">## FT162 412.30 4122.768</span></span>
+<span><span class="co">## FT163 413.10 3629.316</span></span>
+<span><span class="co">## FT164 413.30 4126.558</span></span>
+<span><span class="co">## FT165 414.20 3057.467</span></span>
+<span><span class="co">## FT166 414.20 3640.275</span></span>
+<span><span class="co">## FT167 416.10 2687.495</span></span>
+<span><span class="co">## FT168 419.20 3774.261</span></span>
+<span><span class="co">## FT169 423.10 3265.400</span></span>
+<span><span class="co">## FT170 424.20 2954.912</span></span>
+<span><span class="co">## FT171 424.20 3411.500</span></span>
+<span><span class="co">## FT172 426.10 3018.408</span></span>
+<span><span class="co">## FT173 426.20 3612.085</span></span>
+<span><span class="co">## FT174 426.95 2689.693</span></span>
+<span><span class="co">## FT175 427.10 3015.764</span></span>
+<span><span class="co">## FT176 427.20 3612.085</span></span>
+<span><span class="co">## FT177 429.20 3886.382</span></span>
+<span><span class="co">## FT178 429.20 4046.373</span></span>
+<span><span class="co">## FT179 430.10 2688.338</span></span>
+<span><span class="co">## FT180 430.20 3885.895</span></span>
+<span><span class="co">## FT181 431.10 2688.179</span></span>
+<span><span class="co">## FT182 433.20 3817.913</span></span>
+<span><span class="co">## FT183 436.20 3634.969</span></span>
+<span><span class="co">## FT184 437.10 3234.009</span></span>
+<span><span class="co">## FT185 438.20 3464.381</span></span>
+<span><span class="co">## FT186 438.30 4065.152</span></span>
+<span><span class="co">## FT187 439.20 3455.346</span></span>
+<span><span class="co">## FT188 439.30 4068.469</span></span>
+<span><span class="co">## FT189 440.20 3473.260</span></span>
+<span><span class="co">## FT190 444.10 2687.328</span></span>
+<span><span class="co">## FT191 444.20 2899.671</span></span>
+<span><span class="co">## FT192 445.20 4056.466</span></span>
+<span><span class="co">## FT193 447.20 3873.089</span></span>
+<span><span class="co">## FT194 448.20 3873.680</span></span>
+<span><span class="co">## FT195 448.20 3406.055</span></span>
+<span><span class="co">## FT196 448.20 3563.688</span></span>
+<span><span class="co">## FT197 449.20 3309.212</span></span>
+<span><span class="co">## FT198 449.20 3404.502</span></span>
+<span><span class="co">## FT199 452.10 3077.721</span></span>
+<span><span class="co">## FT200 454.10 3298.016</span></span>
+<span><span class="co">## FT201 455.10 3301.799</span></span>
+<span><span class="co">## FT202 456.10 3291.767</span></span>
+<span><span class="co">## FT203 458.20 3044.896</span></span>
+<span><span class="co">## FT204 459.20 3036.864</span></span>
+<span><span class="co">## FT205 462.20 3267.764</span></span>
+<span><span class="co">## FT206 463.20 3039.707</span></span>
+<span><span class="co">## FT207 464.20 3469.956</span></span>
+<span><span class="co">## FT208 465.20 3469.475</span></span>
+<span><span class="co">## FT209 466.20 3474.891</span></span>
+<span><span class="co">## FT210 466.20 3706.509</span></span>
+<span><span class="co">## FT211 467.20 3706.499</span></span>
+<span><span class="co">## FT212 468.20 3139.599</span></span>
+<span><span class="co">## FT213 468.30 2941.095</span></span>
+<span><span class="co">## FT214 469.20 3146.568</span></span>
+<span><span class="co">## FT215 474.10 3077.306</span></span>
+<span><span class="co">## FT216 476.10 3284.737</span></span>
+<span><span class="co">## FT217 478.20 3627.751</span></span>
+<span><span class="co">## FT218 479.20 3623.061</span></span>
+<span><span class="co">## FT219 480.20 3322.559</span></span>
+<span><span class="co">## FT220 481.20 3324.503</span></span>
+<span><span class="co">## FT221 482.20 3614.155</span></span>
+<span><span class="co">## FT222 482.20 3323.935</span></span>
+<span><span class="co">## FT223 483.20 3609.223</span></span>
+<span><span class="co">## FT224 484.20 3613.406</span></span>
+<span><span class="co">## FT225 485.20 3025.916</span></span>
+<span><span class="co">## FT226 486.20 3474.656</span></span>
+<span><span class="co">## FT227 486.20 2801.329</span></span>
+<span><span class="co">## FT228 488.20 2882.531</span></span>
+<span><span class="co">## FT229 491.20 3415.016</span></span>
+<span><span class="co">## FT230 492.20 3670.340</span></span>
+<span><span class="co">## FT231 493.20 3672.549</span></span>
+<span><span class="co">## FT232 494.20 3428.262</span></span>
+<span><span class="co">## FT233 494.20 3129.368</span></span>
+<span><span class="co">## FT234 495.20 3427.712</span></span>
+<span><span class="co">## FT235 496.20 3381.885</span></span>
+<span><span class="co">## FT236 497.20 3392.735</span></span>
+<span><span class="co">## FT237 498.20 3432.457</span></span>
+<span><span class="co">## FT238 498.30 3917.185</span></span>
+<span><span class="co">## FT239 500.10 3044.974</span></span>
+<span><span class="co">## FT240 502.10 3171.596</span></span>
+<span><span class="co">## FT241 502.20 3026.218</span></span>
+<span><span class="co">## FT242 503.10 3171.421</span></span>
+<span><span class="co">## FT243 503.20 3022.011</span></span>
+<span><span class="co">## FT244 504.10 3265.566</span></span>
+<span><span class="co">## FT245 505.15 3265.121</span></span>
+<span><span class="co">## FT246 505.35 3747.909</span></span>
+<span><span class="co">## FT247 506.20 3404.771</span></span>
+<span><span class="co">## FT248 507.20 3402.436</span></span>
+<span><span class="co">## FT249 507.20 3030.857</span></span>
+<span><span class="co">## FT250 508.20 3532.072</span></span>
+<span><span class="co">## FT251 508.10 3384.643</span></span>
+<span><span class="co">## FT252 509.20 3530.981</span></span>
+<span><span class="co">## FT253 510.20 3538.906</span></span>
+<span><span class="co">## FT254 510.20 3786.659</span></span>
+<span><span class="co">## FT255 511.20 3785.879</span></span>
+<span><span class="co">## FT256 518.20 3432.440</span></span>
+<span><span class="co">## FT257 519.20 3444.152</span></span>
+<span><span class="co">## FT258 520.20 3241.104</span></span>
+<span><span class="co">## FT259 521.20 3218.546</span></span>
+<span><span class="co">## FT260 522.20 3405.966</span></span>
+<span><span class="co">## FT261 523.20 3405.185</span></span>
+<span><span class="co">## FT262 524.20 3679.669</span></span>
+<span><span class="co">## FT263 524.20 3762.872</span></span>
+<span><span class="co">## FT264 524.20 3420.753</span></span>
+<span><span class="co">## FT265 525.20 3762.091</span></span>
+<span><span class="co">## FT266 525.20 3685.573</span></span>
+<span><span class="co">## FT267 526.10 3182.548</span></span>
+<span><span class="co">## FT268 526.20 3764.267</span></span>
+<span><span class="co">## FT269 526.20 3687.235</span></span>
+<span><span class="co">## FT270 527.10 3188.114</span></span>
+<span><span class="co">## FT271 528.10 3242.467</span></span>
+<span><span class="co">## FT272 529.10 3248.059</span></span>
+<span><span class="co">## FT273 530.20 3357.110</span></span>
+<span><span class="co">## FT274 531.20 3357.891</span></span>
+<span><span class="co">## FT275 532.20 3359.466</span></span>
+<span><span class="co">## FT276 532.20 3492.017</span></span>
+<span><span class="co">## FT277 532.20 2872.610</span></span>
+<span><span class="co">## FT278 533.20 3490.591</span></span>
+<span><span class="co">## FT280 534.20 3594.882</span></span>
+<span><span class="co">## FT281 534.30 3867.615</span></span>
+<span><span class="co">## FT282 535.20 3595.483</span></span>
+<span><span class="co">## FT283 535.30 3862.145</span></span>
+<span><span class="co">## FT284 536.20 3722.982</span></span>
+<span><span class="co">## FT285 536.20 3574.110</span></span>
+<span><span class="co">## FT286 537.20 3722.982</span></span>
+<span><span class="co">## FT287 538.20 3720.958</span></span>
+<span><span class="co">## FT288 538.30 4135.639</span></span>
+<span><span class="co">## FT289 544.20 3220.128</span></span>
+<span><span class="co">## FT290 544.20 3431.196</span></span>
+<span><span class="co">## FT291 545.20 3215.566</span></span>
+<span><span class="co">## FT292 546.20 3203.776</span></span>
+<span><span class="co">## FT293 546.20 3678.966</span></span>
+<span><span class="co">## FT294 546.20 3017.572</span></span>
+<span><span class="co">## FT295 547.20 3011.595</span></span>
+<span><span class="co">## FT296 547.20 3679.483</span></span>
+<span><span class="co">## FT297 547.30 3011.072</span></span>
+<span><span class="co">## FT298 548.10 3185.679</span></span>
+<span><span class="co">## FT299 548.40 3519.761</span></span>
+<span><span class="co">## FT300 549.30 4127.176</span></span>
+<span><span class="co">## FT301 549.40 3740.574</span></span>
+<span><span class="co">## FT302 550.20 3665.428</span></span>
+<span><span class="co">## FT303 550.30 3626.778</span></span>
+<span><span class="co">## FT304 551.20 3700.215</span></span>
+<span><span class="co">## FT305 551.20 3013.723</span></span>
+<span><span class="co">## FT306 551.20 3594.914</span></span>
+<span><span class="co">## FT307 552.20 3665.603</span></span>
+<span><span class="co">## FT308 552.20 3009.501</span></span>
+<span><span class="co">## FT309 552.30 3841.421</span></span>
+<span><span class="co">## FT310 554.15 3225.460</span></span>
+<span><span class="co">## FT311 556.20 3456.269</span></span>
+<span><span class="co">## FT312 556.30 2914.125</span></span>
+<span><span class="co">## FT313 556.30 3115.298</span></span>
+<span><span class="co">## FT314 557.20 2918.720</span></span>
+<span><span class="co">## FT315 558.20 3397.529</span></span>
+<span><span class="co">## FT316 558.20 3726.352</span></span>
+<span><span class="co">## FT317 558.20 3535.474</span></span>
+<span><span class="co">## FT318 560.20 3655.543</span></span>
+<span><span class="co">## FT319 560.20 3090.011</span></span>
+<span><span class="co">## FT321 564.20 3465.857</span></span>
+<span><span class="co">## FT322 564.40 4149.660</span></span>
+<span><span class="co">## FT323 566.20 3582.974</span></span>
+<span><span class="co">## FT324 568.20 3226.395</span></span>
+<span><span class="co">## FT325 568.30 3624.023</span></span>
+<span><span class="co">## FT326 569.20 3226.395</span></span>
+<span><span class="co">## FT327 570.10 3087.875</span></span>
+<span><span class="co">## FT328 571.10 3087.916</span></span>
+<span><span class="co">## FT329 571.40 3727.935</span></span>
+<span><span class="co">## FT330 572.20 3415.383</span></span>
+<span><span class="co">## FT331 572.20 3673.422</span></span>
+<span><span class="co">## FT332 575.40 4060.457</span></span>
+<span><span class="co">## FT333 576.25 2862.581</span></span>
+<span><span class="co">## FT334 578.30 3819.405</span></span>
+<span><span class="co">## FT335 579.10 2790.495</span></span>
+<span><span class="co">## FT336 579.30 3820.827</span></span>
+<span><span class="co">## FT337 579.40 3518.231</span></span>
+<span><span class="co">## FT338 580.10 2790.972</span></span>
+<span><span class="co">## FT339 580.20 3585.251</span></span>
+<span><span class="co">## FT340 580.20 3408.398</span></span>
+<span><span class="co">## FT341 590.30 3005.915</span></span>
+<span><span class="co">## FT342 591.30 3005.743</span></span>
+<span><span class="co">## FT343 592.15 3022.033</span></span>
+<span><span class="co">## FT344 593.40 3720.198</span></span>
+<span><span class="co">## FT345 594.20 3416.152</span></span>
+<span><span class="co">## FT346 594.30 3620.732</span></span>
+<span><span class="co">## FT347 595.25 3010.600</span></span>
+<span><span class="co">## FT348 596.20 2997.776</span></span>
+<span><span class="co">## FT349 596.30 3819.829</span></span>
+<span><span class="co">## FT350 597.40 3820.880</span></span>
+<span><span class="co">## FT351 599.30 4071.412</span></span></code></pre>
+<p>This is what the <code>lamas</code> input should look like for
+alignment. In terms of how this method works, the alignment algorithm
+matches chromatographic peaks from the experimental data to the lamas,
+fitting a model based on this match to adjust their retention times and
+minimize differences between the two datasets.</p>
+<p>Now we can define our <code>param</code> object
+<code>LamaParama</code> to prepare for the alignment. Parameters such as
+<code>tolerance</code>, <code>toleranceRt</code>, and <code>ppm</code>
+relate to the matching between chromatographic peaks and lamas. Other
+parameters are related to the type of fitting generated between these
+data points. More details on each parameter and the overall method can
+be found by searching <code><a href="../reference/adjustRtime.html">?adjustRtime</a></code>. Below is an example
+using default parameters.</p>
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">LamaParama</a></span><span class="op">(</span>lamas <span class="op">=</span> <span class="va">ref_mz_rt</span>, method <span class="op">=</span> <span class="st">"loess"</span>, span <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>                    outlierTolerance <span class="op">=</span> <span class="fl">3</span>, zeroWeight <span class="op">=</span> <span class="fl">10</span>, ppm <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>                    tolerance <span class="op">=</span> <span class="fl">0</span>, toleranceRt <span class="op">=</span> <span class="fl">20</span>, bs <span class="op">=</span> <span class="st">"tp"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#' input into `adjustRtime()`</span></span>
+<span><span class="va">tst_adjusted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/adjustRtime.html">adjustRtime</a></span><span class="op">(</span><span class="va">tst</span>, param <span class="op">=</span> <span class="va">param</span><span class="op">)</span></span>
+<span><span class="va">tst_adjusted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/applyAdjustedRtime.html">applyAdjustedRtime</a></span><span class="op">(</span><span class="va">tst_adjusted</span><span class="op">)</span></span></code></pre></div>
+<p>We extract the base peak chromatogram (BPC) to visualize and evaluate
+the alignment:</p>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' evaluate the results with BPC</span></span>
+<span><span class="va">bpc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">ref</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="va">bpc_tst_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">tst</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="va">bpc_tst_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">tst_adjusted</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p>We generate plots to visually compare the alignment to the reference
+dataset (black) both before (red) and after (blue) adjustment:</p>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' BPC of a sample</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2.5</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpc</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"#00000080"</span>, main <span class="op">=</span> <span class="st">"Before Alignment"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpc_tst_raw</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpc_tst_raw</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>       col <span class="op">=</span> <span class="st">"#ff000080"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpc</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"#00000080"</span>, main <span class="op">=</span> <span class="st">"After Alignment"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>       col <span class="op">=</span> <span class="st">"#0000ff80"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="xcms_files/figure-html/unnamed-chunk-31-1.png" width="960"></p>
+<p>It appears that certain time intervals (2500 to 3000 and 3500 to 4500
+seconds) exhibit better alignment than others. This variance can be
+elucidated by examining the distribution of matched peaks, as
+illustrated below. The <code>matchLamaChromPeaks()</code> function
+facilitates the assessment of how well the <code>lamas</code> correspond
+with the chromatographic peaks in each file. This analysis can be
+conducted prior to any adjustments.</p>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">matchLamasChromPeaks</a></span><span class="op">(</span><span class="va">tst</span>, param <span class="op">=</span> <span class="va">param</span><span class="op">)</span></span>
+<span><span class="va">mtch</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">matchedRtimes</a></span><span class="op">(</span><span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#' BPC of the first sample with matches to lamas overlay</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpc</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"#00000080"</span>, main <span class="op">=</span> <span class="st">"Distribution CP matched to Lamas"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>       col <span class="op">=</span> <span class="st">"#0000ff80"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">mtch</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span></span></code></pre></div>
+<p><img src="xcms_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
+<p>The overlay of BPC above provides insight into the correlation
+between accurate alignment and the presence of peaks matching with
+<code>lamas.</code> Furthermore, a more detailed examination of the
+matching and the model used for fitting each file is possible. Numerical
+information can be obtained using the <code><a href="../reference/LamaParama.html">summarizeLamaMatch()</a></code>
+function. From this, the percentage of chromatographic peaks utilized
+for alignment can be computed relative to the total number of peaks in
+the file. Additionally, it is feasible to directly <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot()</a></code>
+the <code>param</code> object for the file of interest, showcasing the
+distribution of these chromatographic peaks along with the fitted model
+line.</p>
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#access summary of matches and model information</span></span>
+<span><span class="va">summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">summarizeLamaMatch</a></span><span class="op">(</span><span class="va">param</span><span class="op">)</span></span>
+<span><span class="va">summary</span> </span></code></pre></div>
+<pre><code><span><span class="co">##   Total_peaks Matched_peaks Total_lamas Model_summary</span></span>
+<span><span class="co">## 1          87            34         347  30, c(0.....</span></span>
+<span><span class="co">## 2         100            51         347  48, c(0.....</span></span>
+<span><span class="co">## 3          61            34         347  33, c(0.....</span></span></code></pre>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># coverage for each file</span></span>
+<span><span class="va">summary</span><span class="op">$</span><span class="va">Matched_peaks</span> <span class="op">/</span> <span class="va">summary</span><span class="op">$</span><span class="va">Total_peaks</span> <span class="op">*</span> <span class="fl">100</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 39.08046 51.00000 55.73770</span></span></code></pre>
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#access the information on the model of for the first file </span></span>
+<span><span class="va">summary</span><span class="op">$</span><span class="va">model_summary</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">## NULL</span></span></code></pre>
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot obs vs. ref with fitting line </span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">param</span>, index <span class="op">=</span> <span class="fl">1L</span>, main <span class="op">=</span> <span class="st">"ChromPeaks versus Lamas for the first file"</span>, </span>
+<span>     colPoint <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="xcms_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -1938,10 +2460,10 @@ parallel processes is defined.</p>
 globally we <code>register</code> the parameter class. Note also that
 <code>bpstart</code> is used below to initialize the parallel
 processes.</p>
-<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Windows supports only socket-based parallel processing:</p>
-<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1982,11 +2504,11 @@ package and its functionality.</li>
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>R packages used for this document are listed below.</p>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R Under development (unstable) (2024-02-21 r85967)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-03-28 r86224)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.3 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -2008,71 +2530,66 @@ package and its functionality.</li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SummarizedExperiment_1.33.3 GenomicRanges_1.55.3       </span></span>
-<span><span class="co">##  [3] GenomeInfoDb_1.39.6         IRanges_2.37.1             </span></span>
-<span><span class="co">##  [5] MatrixGenerics_1.15.0       matrixStats_1.2.0          </span></span>
-<span><span class="co">##  [7] MsExperiment_1.5.4          pheatmap_1.0.12            </span></span>
-<span><span class="co">##  [9] RColorBrewer_1.1-3          pander_0.6.5               </span></span>
-<span><span class="co">## [11] faahKO_1.43.0               xcms_4.1.9                 </span></span>
-<span><span class="co">## [13] MSnbase_2.29.3              ProtGenerics_1.35.2        </span></span>
-<span><span class="co">## [15] S4Vectors_0.41.3            mzR_2.37.0                 </span></span>
-<span><span class="co">## [17] Rcpp_1.0.12                 Biobase_2.63.0             </span></span>
-<span><span class="co">## [19] BiocGenerics_0.49.1         BiocParallel_1.37.0        </span></span>
-<span><span class="co">## [21] BiocStyle_2.31.0           </span></span>
+<span><span class="co">##  [1] SummarizedExperiment_1.33.3 Biobase_2.63.1             </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.55.4        GenomeInfoDb_1.39.10       </span></span>
+<span><span class="co">##  [5] IRanges_2.37.1              S4Vectors_0.41.5           </span></span>
+<span><span class="co">##  [7] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      </span></span>
+<span><span class="co">##  [9] matrixStats_1.2.0           MsExperiment_1.5.4         </span></span>
+<span><span class="co">## [11] ProtGenerics_1.35.4         pheatmap_1.0.12            </span></span>
+<span><span class="co">## [13] RColorBrewer_1.1-3          pander_0.6.5               </span></span>
+<span><span class="co">## [15] faahKO_1.43.0               xcms_4.1.12                </span></span>
+<span><span class="co">## [17] BiocParallel_1.37.1         BiocStyle_2.31.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] DBI_1.2.2                   bitops_1.0-7               </span></span>
-<span><span class="co">##   [3] rlang_1.1.3                 magrittr_2.0.3             </span></span>
-<span><span class="co">##   [5] clue_0.3-65                 MassSpecWavelet_1.69.0     </span></span>
-<span><span class="co">##   [7] compiler_4.4.0              systemfonts_1.0.5          </span></span>
-<span><span class="co">##   [9] vctrs_0.6.5                 stringr_1.5.1              </span></span>
-<span><span class="co">##  [11] MetaboCoreUtils_1.11.2      pkgconfig_2.0.3            </span></span>
-<span><span class="co">##  [13] crayon_1.5.2                fastmap_1.1.1              </span></span>
-<span><span class="co">##  [15] XVector_0.43.1              utf8_1.2.4                 </span></span>
-<span><span class="co">##  [17] rmarkdown_2.25              preprocessCore_1.65.0      </span></span>
-<span><span class="co">##  [19] ragg_1.2.7                  purrr_1.0.2                </span></span>
-<span><span class="co">##  [21] xfun_0.42                   MultiAssayExperiment_1.29.1</span></span>
-<span><span class="co">##  [23] zlibbioc_1.49.0             cachem_1.0.8               </span></span>
-<span><span class="co">##  [25] jsonlite_1.8.8              progress_1.2.3             </span></span>
-<span><span class="co">##  [27] highr_0.10                  DelayedArray_0.29.4        </span></span>
-<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.4.0             </span></span>
-<span><span class="co">##  [31] cluster_2.1.6               R6_2.5.1                   </span></span>
-<span><span class="co">##  [33] bslib_0.6.1                 stringi_1.8.3              </span></span>
-<span><span class="co">##  [35] limma_3.59.3                jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [37] bookdown_0.37               iterators_1.0.14           </span></span>
-<span><span class="co">##  [39] knitr_1.45                  splines_4.4.0              </span></span>
-<span><span class="co">##  [41] Matrix_1.6-5                igraph_2.0.2               </span></span>
-<span><span class="co">##  [43] tidyselect_1.2.0            abind_1.4-5                </span></span>
-<span><span class="co">##  [45] yaml_2.3.8                  doParallel_1.0.17          </span></span>
-<span><span class="co">##  [47] codetools_0.2-19            affy_1.81.0                </span></span>
-<span><span class="co">##  [49] lattice_0.22-5              tibble_3.2.1               </span></span>
-<span><span class="co">##  [51] plyr_1.8.9                  evaluate_0.23              </span></span>
-<span><span class="co">##  [53] survival_3.5-8              desc_1.4.3                 </span></span>
-<span><span class="co">##  [55] Spectra_1.13.4              pillar_1.9.0               </span></span>
-<span><span class="co">##  [57] affyio_1.73.0               BiocManager_1.30.22        </span></span>
-<span><span class="co">##  [59] foreach_1.5.2               MALDIquant_1.22.2          </span></span>
-<span><span class="co">##  [61] ncdf4_1.22                  generics_0.1.3             </span></span>
-<span><span class="co">##  [63] RCurl_1.98-1.14             hms_1.1.3                  </span></span>
-<span><span class="co">##  [65] ggplot2_3.5.0               munsell_0.5.0              </span></span>
-<span><span class="co">##  [67] scales_1.3.0                glue_1.7.0                 </span></span>
-<span><span class="co">##  [69] MsFeatures_1.11.0           lazyeval_0.2.2             </span></span>
-<span><span class="co">##  [71] tools_4.4.0                 robustbase_0.99-2          </span></span>
-<span><span class="co">##  [73] mzID_1.41.0                 QFeatures_1.13.2           </span></span>
-<span><span class="co">##  [75] vsn_3.71.0                  RANN_2.6.1                 </span></span>
-<span><span class="co">##  [77] fs_1.6.3                    XML_3.99-0.16.1            </span></span>
-<span><span class="co">##  [79] grid_4.4.0                  impute_1.77.0              </span></span>
-<span><span class="co">##  [81] MsCoreUtils_1.15.3          colorspace_2.1-0           </span></span>
-<span><span class="co">##  [83] GenomeInfoDbData_1.2.11     PSMatch_1.7.1              </span></span>
-<span><span class="co">##  [85] cli_3.6.2                   textshaping_0.3.7          </span></span>
-<span><span class="co">##  [87] fansi_1.0.6                 S4Arrays_1.3.3             </span></span>
-<span><span class="co">##  [89] dplyr_1.1.4                 AnnotationFilter_1.27.0    </span></span>
-<span><span class="co">##  [91] DEoptimR_1.1-3              pcaMethods_1.95.0          </span></span>
-<span><span class="co">##  [93] gtable_0.3.4                sass_0.4.8                 </span></span>
-<span><span class="co">##  [95] digest_0.6.34               SparseArray_1.3.4          </span></span>
-<span><span class="co">##  [97] farver_2.1.1                multtest_2.59.0            </span></span>
-<span><span class="co">##  [99] memoise_2.0.1               htmltools_0.5.7            </span></span>
-<span><span class="co">## [101] pkgdown_2.0.7.9000          lifecycle_1.0.4            </span></span>
-<span><span class="co">## [103] statmod_1.5.0               MASS_7.3-60.2</span></span></code></pre>
+<span><span class="co">##  [1] DBI_1.2.2                   rlang_1.1.3                </span></span>
+<span><span class="co">##  [3] magrittr_2.0.3              clue_0.3-65                </span></span>
+<span><span class="co">##  [5] MassSpecWavelet_1.69.0      compiler_4.5.0             </span></span>
+<span><span class="co">##  [7] systemfonts_1.0.6           vctrs_0.6.5                </span></span>
+<span><span class="co">##  [9] MetaboCoreUtils_1.11.2      pkgconfig_2.0.3            </span></span>
+<span><span class="co">## [11] crayon_1.5.2                fastmap_1.1.1              </span></span>
+<span><span class="co">## [13] XVector_0.43.1              utf8_1.2.4                 </span></span>
+<span><span class="co">## [15] rmarkdown_2.26              preprocessCore_1.65.0      </span></span>
+<span><span class="co">## [17] ragg_1.3.0                  purrr_1.0.2                </span></span>
+<span><span class="co">## [19] xfun_0.43                   MultiAssayExperiment_1.29.1</span></span>
+<span><span class="co">## [21] zlibbioc_1.49.3             cachem_1.0.8               </span></span>
+<span><span class="co">## [23] jsonlite_1.8.8              progress_1.2.3             </span></span>
+<span><span class="co">## [25] highr_0.10                  DelayedArray_0.29.9        </span></span>
+<span><span class="co">## [27] prettyunits_1.2.0           parallel_4.5.0             </span></span>
+<span><span class="co">## [29] cluster_2.1.6               R6_2.5.1                   </span></span>
+<span><span class="co">## [31] bslib_0.7.0                 limma_3.59.6               </span></span>
+<span><span class="co">## [33] jquerylib_0.1.4             Rcpp_1.0.12                </span></span>
+<span><span class="co">## [35] bookdown_0.38               iterators_1.0.14           </span></span>
+<span><span class="co">## [37] knitr_1.45                  Matrix_1.7-0               </span></span>
+<span><span class="co">## [39] igraph_2.0.3                tidyselect_1.2.1           </span></span>
+<span><span class="co">## [41] abind_1.4-5                 yaml_2.3.8                 </span></span>
+<span><span class="co">## [43] doParallel_1.0.17           codetools_0.2-20           </span></span>
+<span><span class="co">## [45] affy_1.81.0                 lattice_0.22-6             </span></span>
+<span><span class="co">## [47] tibble_3.2.1                plyr_1.8.9                 </span></span>
+<span><span class="co">## [49] evaluate_0.23               desc_1.4.3                 </span></span>
+<span><span class="co">## [51] Spectra_1.13.8              pillar_1.9.0               </span></span>
+<span><span class="co">## [53] affyio_1.73.0               BiocManager_1.30.22        </span></span>
+<span><span class="co">## [55] foreach_1.5.2               MSnbase_2.29.4             </span></span>
+<span><span class="co">## [57] MALDIquant_1.22.2           ncdf4_1.22                 </span></span>
+<span><span class="co">## [59] generics_0.1.3              hms_1.1.3                  </span></span>
+<span><span class="co">## [61] ggplot2_3.5.0               munsell_0.5.1              </span></span>
+<span><span class="co">## [63] scales_1.3.0                glue_1.7.0                 </span></span>
+<span><span class="co">## [65] MsFeatures_1.11.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">## [67] tools_4.5.0                 mzID_1.41.0                </span></span>
+<span><span class="co">## [69] QFeatures_1.13.3            vsn_3.71.1                 </span></span>
+<span><span class="co">## [71] mzR_2.37.3                  fs_1.6.3                   </span></span>
+<span><span class="co">## [73] XML_3.99-0.16.1             grid_4.5.0                 </span></span>
+<span><span class="co">## [75] impute_1.77.0               MsCoreUtils_1.15.6         </span></span>
+<span><span class="co">## [77] colorspace_2.1-0            GenomeInfoDbData_1.2.12    </span></span>
+<span><span class="co">## [79] PSMatch_1.7.2               cli_3.6.2                  </span></span>
+<span><span class="co">## [81] textshaping_0.3.7           fansi_1.0.6                </span></span>
+<span><span class="co">## [83] S4Arrays_1.3.6              dplyr_1.1.4                </span></span>
+<span><span class="co">## [85] AnnotationFilter_1.27.0     pcaMethods_1.95.0          </span></span>
+<span><span class="co">## [87] gtable_0.3.4                sass_0.4.9                 </span></span>
+<span><span class="co">## [89] digest_0.6.35               SparseArray_1.3.4          </span></span>
+<span><span class="co">## [91] farver_2.1.1                htmlwidgets_1.6.4          </span></span>
+<span><span class="co">## [93] memoise_2.0.1               htmltools_0.5.8            </span></span>
+<span><span class="co">## [95] pkgdown_2.0.7.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [97] statmod_1.5.0               MASS_7.3-60.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

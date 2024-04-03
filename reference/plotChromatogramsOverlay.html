@@ -28,7 +28,7 @@ the plot function for XChromatogram() object for details)."><meta property="og:i
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,9 @@ the plot function for XChromatogram() object for details)."><meta property="og:i
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -226,6 +229,7 @@ each EIC.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load preprocessed data and extract EICs for some features.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">xdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## Update the path to the files for the local system</span></span></span>
@@ -254,11 +258,11 @@ each EIC.</p>
 <span class="r-in"><span><span class="co">## peak and provide this with the `peakBg` and `peakCol` parameters.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              mz mzmin mzmax       rt    rtmin    rtmax     into     intb  maxo</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CP2973 354.1357 354.1 354.2 2789.781 2755.258 2826.270 299005.1       NA  9700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CP0312 413.1000 413.1 413.1 3637.671 3614.978 3665.850 879851.5 852195.3 30920</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CP0089 414.2000 414.2 414.2 3066.457 3038.628 3089.311 234308.5 218923.4  9669</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CP2975 354.1357 354.1 354.2 2790.288 2755.843 2826.772 298657.9       NA  9700</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CP0312 413.1000 413.1 413.1 3643.850 3620.732 3672.298 879851.5 852195.3 30920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CP0089 414.2000 414.2 414.2 3066.209 3038.494 3089.233 234308.5 218923.4  9669</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        sn sample row column</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CP2973 NA      1   1      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> CP2975 NA      1   1      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0312 34      1   2      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CP0089 15      1   3      1</span>
 <span class="r-in"><span></span></span>

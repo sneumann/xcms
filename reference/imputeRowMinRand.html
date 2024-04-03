@@ -26,7 +26,7 @@ will be generated.'><meta property="og:image" content="https://sneumann.github.i
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,9 @@ will be generated.'><meta property="og:image" content="https://sneumann.github.i
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -159,6 +162,7 @@ fractions of the row minimum.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"faahko"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">xset</span> <span class="op">&lt;-</span> <span class="fu"><a href="group-methods.html">group</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span></span>
@@ -192,34 +196,34 @@ fractions of the row minimum.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517          NA         NA         NA  240261.21  201316.2  179437.72</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_meansd</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 ko15       ko16       ko18       ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   49246.37   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.5  451600.71   65290.38   25418.38   91635.45  162012.44</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.9 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.6  269713.98  201393.42  150107.31  176989.65  156797.04</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.0  460629.74  351750.14  219287.97  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   19850.45   46023.31  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    149786.4   79591.63  222609.07  286232.15  435094.49   59448.34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.9  173623.38   24880.01   32149.76  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    101238.9   76327.08  222609.07  286232.15  435094.49   85929.56</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 wt15       wt16       wt18       wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.1   82619.48   16968.88   69198.22  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.1   82619.48   22707.20   69198.22  153273.5   98144.28</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.5 1466780.60 1572679.16 1275312.76 1356014.3 1231442.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.8  222366.15  211717.71  186850.88  188285.9  172348.76</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.6  324892.46  277990.70  220972.35  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38   43139.31  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    120349.2  123319.72   95360.60  240261.21  201316.2  179437.72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38   49169.00  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517    124602.4   99186.90   79848.59  240261.21  201316.2  179437.72</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_imp_fromto</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15       ko16       ko18       ko19       ko21       ko22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.71   65290.38   19617.55   91635.45  162012.44</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.14 1482796.38 1039129.82 1223132.35 1072037.70</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269713.98  201393.42  150107.31  176989.65  156797.04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.74  351750.14  219287.97  286848.56  235022.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.38   14992.43   21335.01  185792.43  174458.77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     42550.31   45065.53  222609.07  286232.15  435094.49   80160.63</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 wt15       wt16       wt18         wt19      wt21       wt22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.1   82619.48   12629.94   69198.2221  153273.5   98144.28</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.5 1466780.60 1572679.16 1275312.7582 1356014.3 1231442.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.8  222366.15  211717.71  186850.8779  188285.9  172348.76</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.6  324892.46  277990.70  220972.3520  252874.0  236728.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.5  161184.05   72029.38     391.5481  238194.4  173829.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     67198.8   34599.03   52982.49  240261.2115  201316.2  179437.72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  ko15      ko16       ko18        ko19       ko21       ko22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  147887.53  451600.7   65290.38    7359.863   91635.45  162012.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1778568.94 1567038.1 1482796.38 1039129.818 1223132.35 1072037.70</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    237993.62  269714.0  201393.42  150107.310  176989.65  156797.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  380873.05  460629.7  351750.14  219287.968  286848.56  235022.63</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  235544.92  173623.4   11044.23   27016.589  185792.43  174458.77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     44911.84   49671.3  222609.07  286232.146  435094.49   11386.76</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  wt15       wt16        wt18       wt19      wt21       wt22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200.1/2926  175177.08   82619.48    4396.818   69198.22  153273.5   98144.28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 205/2791   1950287.49 1466780.60 1572679.161 1275312.76 1356014.3 1231442.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 206/2790    276541.85  222366.15  211717.713  186850.88  188285.9  172348.76</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 207.1/2719  417169.58  324892.46  277990.701  220972.35  252874.0  236728.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 219.1/2525  244584.47  161184.05   72029.378   15814.95  238194.4  173829.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 231/2517     14954.11   74724.08    9623.735  240261.21  201316.2  179437.72</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

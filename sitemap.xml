@@ -28,6 +28,9 @@
     <loc>https://sneumann.github.io/xcms/index.html</loc>
   </url>
   <url>
+    <loc>https://sneumann.github.io/xcms/news/index.html</loc>
+  </url>
+  <url>
     <loc>https://sneumann.github.io/xcms/reference/AutoLockMass-methods.html</loc>
   </url>
   <url>
@@ -38,6 +41,9 @@
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/GenericParam.html</loc>
+  </url>
+  <url>
+    <loc>https://sneumann.github.io/xcms/reference/LamaParama.html</loc>
   </url>
   <url>
     <loc>https://sneumann.github.io/xcms/reference/PercentMissingFilter.html</loc>

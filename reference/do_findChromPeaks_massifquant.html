@@ -18,7 +18,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,9 @@
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -274,7 +277,7 @@ centWave algorithm, which includes wavelet estimation.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This algorithm's performance has been tested rigorously
-    on high resolution LC/OrbiTrap, TOF-MS data in centroid mode.
+    on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
     Simultaneous kalman filters identify peaks and calculate their
     area under the curve. The default parameters are set to operate on
     a complex LC-MS Orbitrap sample. Users will find it useful to do some
@@ -328,7 +331,7 @@ detection" <em>Bioinformatics</em> 2014, 30(18):2636-43.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Perform the peak detection using massifquant - setting prefilter to</span></span></span>
 <span class="r-in"><span><span class="co">## a high value to speed up the call for the example</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_massifquant</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">do_findChromPeaks_massifquant</span><span class="op">(</span>mz <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">mzs</span><span class="op">)</span>, int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">ints</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    scantime <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>, valsPerSpect <span class="op">=</span> <span class="va">valsPerSpect</span>,</span></span>
 <span class="r-in"><span>    prefilter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>

@@ -56,7 +56,7 @@ be reported. This can be performed using the fillChromPeaks() function.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,6 +77,9 @@ be reported. This can be performed using the fillChromPeaks() function.
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -912,7 +915,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span>         <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko18.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Defining a data frame with the sample characterization</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>mzML_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fls</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>mzML_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">fls</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ko15"</span>, <span class="st">"ko16"</span>, <span class="st">"ko18"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## Importing the data. This will initialize a `Spectra` object representing</span></span></span>
 <span class="r-in"><span><span class="co">## the raw data and assign these to the individual samples.</span></span></span>
@@ -944,7 +947,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> numeric(0)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## First we list available isolation windows</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">mse_dia</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="isolationWindowTargetMz-OnDiskMSnExp-method.html">isolationWindowTargetMz</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectra</a></span><span class="op">(</span><span class="va">mse_dia</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 163.75 208.95 244.05 270.85  299.1  329.8 367.35 601.85 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1000   1000   1000   1000   1000   1000   1000   1000 </span>
@@ -1056,9 +1059,9 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Subsetting the data to the results (and data) for the second sample</span></span></span>
 <span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="va">xmse</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 248</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Filtering the result by retention time: keeping all spectra and</span></span></span>
@@ -1073,7 +1076,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - spectra: 3 sample(s) to 960 element(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  xcms results:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - chromatographic peaks: 79 in MS level(s): 1 </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse_sub</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xmse_sub</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 79</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Perform an initial feature grouping to allow alignment using the</span></span></span>
@@ -1131,7 +1134,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="co">## all features might take some time. Below we extract EICs for the</span></span></span>
 <span class="r-in"><span><span class="co">## first 10 features by providing the feature IDs.</span></span></span>
 <span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="featureChromatograms.html">featureChromatograms</a></span><span class="op">(</span><span class="va">xmse</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 10 rows and 3 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              ko15.CDF        ko16.CDF        ko18.CDF</span>

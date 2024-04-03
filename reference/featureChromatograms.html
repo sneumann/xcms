@@ -42,7 +42,7 @@ the m/z and retention time range (include = &quot;any&quot;)."><meta property="o
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,6 +63,9 @@ the m/z and retention time range (include = &quot;any&quot;)."><meta property="o
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -298,6 +301,8 @@ chromatographic peak.</p></div>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsExperiment" class="external-link">MsExperiment</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">faahko_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="st">"faahko_sub2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Disable parallel processing for this example</span></span></span>
@@ -357,7 +362,7 @@ chromatographic peak.</p></div>
 <span class="r-in"><span><span class="co">## Extract ion chromatograms for the first 3 features. Parameter</span></span></span>
 <span class="r-in"><span><span class="co">## `features` can be either the feature IDs or feature indices.</span></span></span>
 <span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">featureChromatograms</span><span class="op">(</span><span class="va">xdata</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">featureDefinitions</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">featureDefinitions</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the EIC for the first feature using different colors for each file.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -365,7 +370,7 @@ chromatographic peak.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## The EICs for all 3 samples use the same m/z and retention time range,</span></span></span>
 <span class="r-in"><span><span class="co">## which was defined using the `featureArea` function:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="XcmsExperiment.html">featureArea</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span><span class="fu"><a href="XcmsExperiment.html">featureArea</a></span><span class="op">(</span><span class="va">xdata</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>    mzmin <span class="op">=</span> <span class="va">min</span>, mzmax <span class="op">=</span> <span class="va">max</span>, rtmin <span class="op">=</span> <span class="va">min</span>, rtmax <span class="op">=</span> <span class="va">max</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      mzmin mzmax    rtmin    rtmax</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FT01 300.2 300.2 3362.104 3413.746</span>
@@ -377,7 +382,7 @@ chromatographic peak.</p></div>
 <span class="r-in"><span><span class="co">## need to be used instead. Below we extract the EICs for all</span></span></span>
 <span class="r-in"><span><span class="co">## chromatographic peaks of the first feature. We need to first get the</span></span></span>
 <span class="r-in"><span><span class="co">## IDs of all chromatographic peaks assigned to the first feature:</span></span></span>
-<span class="r-in"><span><span class="va">peak_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">peakidx</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">peak_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xdata</span><span class="op">)</span><span class="op">$</span><span class="va">peakidx</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## We can now pass these to the `chromPeakChromatograms` function with</span></span></span>
 <span class="r-in"><span><span class="co">## parameter `peaks`:</span></span></span>

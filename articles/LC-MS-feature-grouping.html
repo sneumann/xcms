@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,9 @@
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -100,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-02-23 21:01:00.644918<br><strong>Compiled</strong>: Fri Feb 23 22:07:12 2024</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-04-03 07:43:16.800331<br><strong>Compiled</strong>: Wed Apr 3 09:09:01 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -137,7 +140,8 @@ package. Below we load all required packages and the result from this
 pre-processing updating also the location of the respective raw data
 files on the current machine.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sneumann/xcms" class="external-link">xcms</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsFeatures" class="external-link">MsFeatures</a></span><span class="op">)</span></span>
 <span></span>
@@ -148,12 +152,12 @@ correspondence analysis.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       mzmed mzmin mzmax    rtmed    rtmin    rtmax npeaks KO WT      peakidx</span></span>
-<span><span class="co">## FT001 200.1 200.1 200.1 2902.177 2882.133 2922.222      2  2  0 458, 116....</span></span>
-<span><span class="co">## FT002 205.0 205.0 205.0 2789.457 2782.376 2795.823      8  4  4 44, 443,....</span></span>
-<span><span class="co">## FT003 206.0 206.0 206.0 2788.770 2780.807 2793.606      7  3  4 29, 430,....</span></span>
-<span><span class="co">## FT004 207.1 207.1 207.1 2718.476 2713.314 2726.487      7  4  3 16, 420,....</span></span>
-<span><span class="co">## FT005 233.0 233.0 233.1 3023.353 3014.971 3043.942      7  3  4 69, 959,....</span></span>
-<span><span class="co">## FT006 241.1 241.1 241.2 3680.200 3661.067 3695.533      8  3  4 276, 284....</span></span>
+<span><span class="co">## FT001 200.1 200.1 200.1 2902.634 2882.603 2922.664      2  2  0 458, 116....</span></span>
+<span><span class="co">## FT002 205.0 205.0 205.0 2789.901 2782.955 2796.531      8  4  4 44, 443,....</span></span>
+<span><span class="co">## FT003 206.0 206.0 206.0 2789.405 2781.389 2794.219      7  3  4 29, 430,....</span></span>
+<span><span class="co">## FT004 207.1 207.1 207.1 2718.560 2714.047 2727.347      7  4  3 16, 420,....</span></span>
+<span><span class="co">## FT005 233.0 233.0 233.1 3023.579 3015.145 3043.959      7  3  4 69, 959,....</span></span>
+<span><span class="co">## FT006 241.1 241.1 241.2 3683.299 3661.586 3695.886      8  3  4 276, 284....</span></span>
 <span><span class="co">##       ms_level</span></span>
 <span><span class="co">## FT001        1</span></span>
 <span><span class="co">## FT002        1</span></span>
@@ -195,14 +199,14 @@ peaks was integrated.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">xmse</span>, filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
-<span><span class="co">## FT001  135422.4  506848.9  111872.0  169955.6  210333.1  141880.3  233271.3</span></span>
+<span><span class="co">## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7</span></span>
 <span><span class="co">## FT002 1924712.0 1757151.0 1383416.7 1180288.2 2129885.1 1634342.0 1623589.2</span></span>
-<span><span class="co">## FT003  213659.3  289500.7  167516.7  178285.7  253825.6  241844.4  240606.0</span></span>
-<span><span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9  219142.3</span></span>
-<span><span class="co">## FT005  286221.4  286594.4  164009.0  149097.6  255697.7  311296.8  366441.5</span></span>
-<span><span class="co">## FT006 1160580.5 1145753.0  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
+<span><span class="co">## FT003  213659.3  289500.7  164380.7  178285.7  253825.6  241844.4  240606.0</span></span>
+<span><span class="co">## FT004  349011.5  451863.7  343897.8  208002.8  364609.8  360908.9  226234.4</span></span>
+<span><span class="co">## FT005  286221.4  285857.6  164009.0  149097.6  255697.7  311296.8  366441.5</span></span>
+<span><span class="co">## FT006 1160580.5 1102832.6  380970.3  588986.4 1286883.0 1739516.6  639755.3</span></span>
 <span><span class="co">##        wt22.CDF</span></span>
-<span><span class="co">## FT001  142254.8</span></span>
+<span><span class="co">## FT001  138341.2</span></span>
 <span><span class="co">## FT002 1354004.9</span></span>
 <span><span class="co">## FT003  185399.5</span></span>
 <span><span class="co">## FT004  221937.5</span></span>
@@ -287,29 +291,31 @@ together).</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span></span>
-<span><span class="co">##      4      5      3      4      2      4      4      4      4      3      3 </span></span>
+<span><span class="co">##      4      6      2      4      6      5      2      4      3      4      3 </span></span>
 <span><span class="co">## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span></span>
-<span><span class="co">##      5      6      2      4      3      2      2      3      2      3      4 </span></span>
+<span><span class="co">##      6      4      2      3      3      3      4      3      2      5      2 </span></span>
 <span><span class="co">## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span></span>
-<span><span class="co">##      3      8      6      3      3      3      3      2      3      3      4 </span></span>
+<span><span class="co">##      2      4      5      2      5      2      3      4      2      2      4 </span></span>
 <span><span class="co">## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 </span></span>
-<span><span class="co">##      2      3      5      3      3      4      5      2      4      2      4 </span></span>
+<span><span class="co">##      2      2      6      3      2      2      4      2      2      4      4 </span></span>
 <span><span class="co">## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 </span></span>
-<span><span class="co">##      6      3      3      3      2      2      2      4      3      3      3 </span></span>
+<span><span class="co">##      2      3      2      3      3      5      2      3      4      2      6 </span></span>
 <span><span class="co">## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 </span></span>
-<span><span class="co">##      2      3      5      4      2      4      2      3      2      3      3 </span></span>
+<span><span class="co">##      2      6      4      2      4      3      3      2      2      2      2 </span></span>
 <span><span class="co">## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 </span></span>
-<span><span class="co">##      3      3      3      3      3      2      4      2      2      2      2 </span></span>
+<span><span class="co">##      3      2      2      3      2      3      2      3      3      3      3 </span></span>
 <span><span class="co">## FG.078 FG.079 FG.080 FG.081 FG.082 FG.083 FG.084 FG.085 FG.086 FG.087 FG.088 </span></span>
-<span><span class="co">##      2      3      3      3      3      3      2      3      4      2      3 </span></span>
+<span><span class="co">##      2      3      3      3      2      3      3      3      3      3      2 </span></span>
 <span><span class="co">## FG.089 FG.090 FG.091 FG.092 FG.093 FG.094 FG.095 FG.096 FG.097 FG.098 FG.099 </span></span>
-<span><span class="co">##      2      3      2      2      2      3      2      3      3      2      2 </span></span>
+<span><span class="co">##      3      2      2      2      2      3      2      4      2      3      3 </span></span>
 <span><span class="co">## FG.100 FG.101 FG.102 FG.103 FG.104 FG.105 FG.106 FG.107 FG.108 FG.109 FG.110 </span></span>
-<span><span class="co">##      2      2      2      2      2      2      2      2      2      2      2 </span></span>
+<span><span class="co">##      3      3      2      2      2      2      2      2      2      2      2 </span></span>
 <span><span class="co">## FG.111 FG.112 FG.113 FG.114 FG.115 FG.116 FG.117 FG.118 FG.119 FG.120 FG.121 </span></span>
-<span><span class="co">##      1      1      1      1      1      1      1      1      1      1      1 </span></span>
+<span><span class="co">##      2      2      1      1      1      1      1      1      1      1      1 </span></span>
 <span><span class="co">## FG.122 FG.123 FG.124 FG.125 FG.126 FG.127 FG.128 FG.129 FG.130 FG.131 FG.132 </span></span>
-<span><span class="co">##      1      1      1      1      1      1      1      1      1      1      1</span></span></code></pre>
+<span><span class="co">##      1      1      1      1      1      1      1      1      1      1      1 </span></span>
+<span><span class="co">## FG.133 </span></span>
+<span><span class="co">##      1</span></span></code></pre>
 <p>In addition we visualize these feature groups with the
 <code>plotFeatureGroups</code> function which shows all features in the
 m/z - retention time space with grouped features being connected with a
@@ -338,27 +344,27 @@ larger rt window.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FG.001 FG.002 FG.003 FG.004 FG.005 FG.006 FG.007 FG.008 FG.009 FG.010 FG.011 </span></span>
-<span><span class="co">##      4      5      3      4      2      4      4      4      4      3      3 </span></span>
+<span><span class="co">##      4      6      2      4      6      5      2      4      3      4      3 </span></span>
 <span><span class="co">## FG.012 FG.013 FG.014 FG.015 FG.016 FG.017 FG.018 FG.019 FG.020 FG.021 FG.022 </span></span>
-<span><span class="co">##      5      6      2      4      3      2      2      3      2      3      4 </span></span>
+<span><span class="co">##      6      4      2      3      3      3      4      3      2      5      2 </span></span>
 <span><span class="co">## FG.023 FG.024 FG.025 FG.026 FG.027 FG.028 FG.029 FG.030 FG.031 FG.032 FG.033 </span></span>
-<span><span class="co">##      3      8      6      3      3      3      3      2      3      3      4 </span></span>
+<span><span class="co">##      2      4      6      3      5      2      3      4      2      2      4 </span></span>
 <span><span class="co">## FG.034 FG.035 FG.036 FG.037 FG.038 FG.039 FG.040 FG.041 FG.042 FG.043 FG.044 </span></span>
-<span><span class="co">##      2      3      5      3      3      4      6      2      4      2      5 </span></span>
+<span><span class="co">##      2      2      6      3      2      2      4      2      2      4      5 </span></span>
 <span><span class="co">## FG.045 FG.046 FG.047 FG.048 FG.049 FG.050 FG.051 FG.052 FG.053 FG.054 FG.055 </span></span>
-<span><span class="co">##      6      3      4      3      2      2      2      4      3      3      3 </span></span>
+<span><span class="co">##      2      3      2      3      4      5      2      4      4      2      6 </span></span>
 <span><span class="co">## FG.056 FG.057 FG.058 FG.059 FG.060 FG.061 FG.062 FG.063 FG.064 FG.065 FG.066 </span></span>
-<span><span class="co">##      3      3      5      4      2      4      2      3      2      3      3 </span></span>
+<span><span class="co">##      2      6      4      2      5      3      3      2      2      2      2 </span></span>
 <span><span class="co">## FG.067 FG.068 FG.069 FG.070 FG.071 FG.072 FG.073 FG.074 FG.075 FG.076 FG.077 </span></span>
-<span><span class="co">##      4      3      3      3      4      2      5      2      2      2      2 </span></span>
+<span><span class="co">##      4      2      2      3      2      3      2      4      3      3      3 </span></span>
 <span><span class="co">## FG.078 FG.079 FG.080 FG.081 FG.082 FG.083 FG.084 FG.085 FG.086 FG.087 FG.088 </span></span>
-<span><span class="co">##      2      3      3      3      3      3      2      3      4      3      4 </span></span>
+<span><span class="co">##      2      3      3      3      2      3      3      4      3      4      2 </span></span>
 <span><span class="co">## FG.089 FG.090 FG.091 FG.092 FG.093 FG.094 FG.095 FG.096 FG.097 FG.098 FG.099 </span></span>
-<span><span class="co">##      3      4      2      2      2      4      2      3      3      2      2 </span></span>
+<span><span class="co">##      3      2      2      2      2      3      3      4      2      3      4 </span></span>
 <span><span class="co">## FG.100 FG.101 FG.102 FG.103 FG.104 FG.105 FG.106 FG.107 FG.108 FG.109 FG.110 </span></span>
-<span><span class="co">##      2      3      2      2      2      3      3      2      2      2      2 </span></span>
-<span><span class="co">## FG.111 FG.112 FG.113 FG.114 FG.115 FG.116 FG.117 </span></span>
-<span><span class="co">##      1      1      1      1      1      1      1</span></span></code></pre>
+<span><span class="co">##      3      3      3      2      2      3      2      3      2      2      2 </span></span>
+<span><span class="co">## FG.111 FG.112 FG.113 FG.114 FG.115 FG.116 FG.117 FG.118 </span></span>
+<span><span class="co">##      2      2      1      1      1      1      1      1</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotFeatureGroups.html">plotFeatureGroups</a></span><span class="op">(</span><span class="va">xmse</span>, pch <span class="op">=</span> <span class="fl">21</span>, lwd <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"#00000040"</span>, bg <span class="op">=</span> <span class="st">"#00000020"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -368,7 +374,7 @@ Feature groups defined with a rt window of 20 seconds
 </p>
 </div>
 <p>Grouping by similar retention time grouped the in total 351 features
-into 117 feature groups.</p>
+into 118 feature groups.</p>
 </div>
 <div class="section level3">
 <h3 id="grouping-of-features-by-abundance-correlation-across-samples">Grouping of features by abundance correlation across samples<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-abundance-correlation-across-samples"></a>
@@ -429,80 +435,78 @@ for details and options.</p>
 <span>    filled <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.003.001 FG.003.002 FG.003.003 </span></span>
-<span><span class="co">##          3          1          3          2          1          1          1 </span></span>
-<span><span class="co">## FG.004.001 FG.004.002 FG.004.003 FG.005.001 FG.005.002 FG.006.001 FG.006.002 </span></span>
-<span><span class="co">##          2          1          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.006.003 FG.007.001 FG.007.002 FG.008.001 FG.008.002 FG.008.003 FG.008.004 </span></span>
-<span><span class="co">##          1          3          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.009.001 FG.009.002 FG.010.001 FG.010.002 FG.011.001 FG.011.002 FG.012.001 </span></span>
-<span><span class="co">##          3          1          2          1          2          1          2 </span></span>
-<span><span class="co">## FG.012.002 FG.012.003 FG.012.004 FG.013.001 FG.013.002 FG.013.003 FG.013.004 </span></span>
-<span><span class="co">##          1          1          1          3          1          1          1 </span></span>
-<span><span class="co">## FG.014.001 FG.015.001 FG.015.002 FG.016.001 FG.017.001 FG.017.002 FG.018.001 </span></span>
-<span><span class="co">##          2          3          1          3          1          1          1 </span></span>
-<span><span class="co">## FG.018.002 FG.019.001 FG.019.002 FG.020.001 FG.020.002 FG.021.001 FG.021.002 </span></span>
+<span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.002.003 FG.002.004 FG.003.001 </span></span>
+<span><span class="co">##          3          1          2          2          1          1          1 </span></span>
+<span><span class="co">## FG.003.002 FG.004.001 FG.004.002 FG.004.003 FG.005.001 FG.005.002 FG.005.003 </span></span>
+<span><span class="co">##          1          2          1          1          3          2          1 </span></span>
+<span><span class="co">## FG.006.001 FG.006.002 FG.007.001 FG.008.001 FG.008.002 FG.008.003 FG.008.004 </span></span>
+<span><span class="co">##          4          1          2          1          1          1          1 </span></span>
+<span><span class="co">## FG.009.001 FG.010.001 FG.010.002 FG.011.001 FG.011.002 FG.012.001 FG.012.002 </span></span>
+<span><span class="co">##          3          3          1          2          1          3          2 </span></span>
+<span><span class="co">## FG.012.003 FG.013.001 FG.013.002 FG.014.001 FG.015.001 FG.015.002 FG.015.003 </span></span>
+<span><span class="co">##          1          3          1          2          1          1          1 </span></span>
+<span><span class="co">## FG.016.001 FG.016.002 FG.016.003 FG.017.001 FG.017.002 FG.018.001 FG.018.002 </span></span>
+<span><span class="co">##          1          1          1          2          1          2          2 </span></span>
+<span><span class="co">## FG.019.001 FG.019.002 FG.019.003 FG.020.001 FG.020.002 FG.021.001 FG.021.002 </span></span>
+<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.021.003 FG.021.004 FG.021.005 FG.022.001 FG.022.002 FG.023.001 FG.024.001 </span></span>
+<span><span class="co">##          1          1          1          1          1          2          2 </span></span>
+<span><span class="co">## FG.024.002 FG.025.001 FG.025.002 FG.025.003 FG.026.001 FG.026.002 FG.027.001 </span></span>
+<span><span class="co">##          2          4          1          1          2          1          2 </span></span>
+<span><span class="co">## FG.027.002 FG.027.003 FG.027.004 FG.028.001 FG.028.002 FG.029.001 FG.029.002 </span></span>
+<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.029.003 FG.030.001 FG.030.002 FG.031.001 FG.032.001 FG.032.002 FG.033.001 </span></span>
+<span><span class="co">##          1          3          1          2          1          1          2 </span></span>
+<span><span class="co">## FG.033.002 FG.033.003 FG.034.001 FG.034.002 FG.035.001 FG.036.001 FG.036.002 </span></span>
+<span><span class="co">##          1          1          1          1          2          3          1 </span></span>
+<span><span class="co">## FG.036.003 FG.036.004 FG.037.001 FG.038.001 FG.038.002 FG.039.001 FG.039.002 </span></span>
+<span><span class="co">##          1          1          3          1          1          1          1 </span></span>
+<span><span class="co">## FG.040.001 FG.040.002 FG.040.003 FG.040.004 FG.041.001 FG.041.002 FG.042.001 </span></span>
+<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.042.002 FG.043.001 FG.043.002 FG.044.001 FG.044.002 FG.045.001 FG.046.001 </span></span>
+<span><span class="co">##          1          3          1          3          2          2          1 </span></span>
+<span><span class="co">## FG.046.002 FG.046.003 FG.047.001 FG.047.002 FG.048.001 FG.048.002 FG.049.001 </span></span>
+<span><span class="co">##          1          1          1          1          2          1          1 </span></span>
+<span><span class="co">## FG.049.002 FG.049.003 FG.049.004 FG.050.001 FG.050.002 FG.051.001 FG.051.002 </span></span>
+<span><span class="co">##          1          1          1          4          1          1          1 </span></span>
+<span><span class="co">## FG.052.001 FG.052.002 FG.052.003 FG.052.004 FG.053.001 FG.053.002 FG.054.001 </span></span>
+<span><span class="co">##          1          1          1          1          2          2          1 </span></span>
+<span><span class="co">## FG.054.002 FG.055.001 FG.056.001 FG.057.001 FG.057.002 FG.057.003 FG.057.004 </span></span>
+<span><span class="co">##          1          6          2          2          1          1          1 </span></span>
+<span><span class="co">## FG.057.005 FG.058.001 FG.058.002 FG.058.003 FG.058.004 FG.059.001 FG.060.001 </span></span>
+<span><span class="co">##          1          1          1          1          1          2          2 </span></span>
+<span><span class="co">## FG.060.002 FG.060.003 FG.061.001 FG.061.002 FG.062.001 FG.062.002 FG.063.001 </span></span>
+<span><span class="co">##          2          1          2          1          2          1          1 </span></span>
+<span><span class="co">## FG.063.002 FG.064.001 FG.065.001 FG.065.002 FG.066.001 FG.067.001 FG.067.002 </span></span>
+<span><span class="co">##          1          2          1          1          2          3          1 </span></span>
+<span><span class="co">## FG.068.001 FG.068.002 FG.069.001 FG.070.001 FG.070.002 FG.071.001 FG.071.002 </span></span>
+<span><span class="co">##          1          1          2          2          1          1          1 </span></span>
+<span><span class="co">## FG.072.001 FG.072.002 FG.072.003 FG.073.001 FG.073.002 FG.074.001 FG.074.002 </span></span>
+<span><span class="co">##          1          1          1          1          1          2          1 </span></span>
+<span><span class="co">## FG.074.003 FG.075.001 FG.075.002 FG.075.003 FG.076.001 FG.076.002 FG.076.003 </span></span>
+<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.077.001 FG.077.002 FG.078.001 FG.079.001 FG.079.002 FG.079.003 FG.080.001 </span></span>
+<span><span class="co">##          2          1          2          1          1          1          2 </span></span>
+<span><span class="co">## FG.080.002 FG.081.001 FG.081.002 FG.082.001 FG.082.002 FG.083.001 FG.083.002 </span></span>
 <span><span class="co">##          1          2          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.021.003 FG.022.001 FG.022.002 FG.022.003 FG.022.004 FG.023.001 FG.023.002 </span></span>
-<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.023.003 FG.024.001 FG.024.002 FG.024.003 FG.024.004 FG.024.005 FG.024.006 </span></span>
-<span><span class="co">##          1          2          2          1          1          1          1 </span></span>
-<span><span class="co">## FG.025.001 FG.026.001 FG.026.002 FG.027.001 FG.027.002 FG.028.001 FG.029.001 </span></span>
-<span><span class="co">##          6          2          1          2          1          3          2 </span></span>
-<span><span class="co">## FG.029.002 FG.030.001 FG.030.002 FG.031.001 FG.031.002 FG.032.001 FG.032.002 </span></span>
-<span><span class="co">##          1          1          1          2          1          1          1 </span></span>
-<span><span class="co">## FG.032.003 FG.033.001 FG.033.002 FG.033.003 FG.034.001 FG.034.002 FG.035.001 </span></span>
-<span><span class="co">##          1          2          1          1          1          1          2 </span></span>
-<span><span class="co">## FG.035.002 FG.036.001 FG.036.002 FG.036.003 FG.037.001 FG.037.002 FG.037.003 </span></span>
-<span><span class="co">##          1          2          2          1          1          1          1 </span></span>
-<span><span class="co">## FG.038.001 FG.038.002 FG.038.003 FG.039.001 FG.039.002 FG.039.003 FG.039.004 </span></span>
-<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.040.001 FG.040.002 FG.040.003 FG.041.001 FG.041.002 FG.042.001 FG.042.002 </span></span>
-<span><span class="co">##          4          1          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.042.003 FG.043.001 FG.044.001 FG.044.002 FG.045.001 FG.045.002 FG.046.001 </span></span>
-<span><span class="co">##          1          2          3          2          4          2          2 </span></span>
-<span><span class="co">## FG.046.002 FG.047.001 FG.047.002 FG.047.003 FG.047.004 FG.048.001 FG.048.002 </span></span>
-<span><span class="co">##          1          1          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.049.001 FG.049.002 FG.050.001 FG.050.002 FG.051.001 FG.051.002 FG.052.001 </span></span>
-<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.052.002 FG.052.003 FG.052.004 FG.053.001 FG.053.002 FG.053.003 FG.054.001 </span></span>
-<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.054.002 FG.054.003 FG.055.001 FG.055.002 FG.056.001 FG.056.002 FG.057.001 </span></span>
-<span><span class="co">##          1          1          2          1          2          1          2 </span></span>
-<span><span class="co">## FG.057.002 FG.058.001 FG.058.002 FG.059.001 FG.059.002 FG.059.003 FG.060.001 </span></span>
-<span><span class="co">##          1          4          1          2          1          1          1 </span></span>
-<span><span class="co">## FG.060.002 FG.061.001 FG.061.002 FG.062.001 FG.062.002 FG.063.001 FG.063.002 </span></span>
-<span><span class="co">##          1          2          2          1          1          1          1 </span></span>
-<span><span class="co">## FG.063.003 FG.064.001 FG.065.001 FG.065.002 FG.065.003 FG.066.001 FG.066.002 </span></span>
-<span><span class="co">##          1          2          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.067.001 FG.067.002 FG.067.003 FG.068.001 FG.068.002 FG.069.001 FG.069.002 </span></span>
-<span><span class="co">##          2          1          1          2          1          2          1 </span></span>
-<span><span class="co">## FG.070.001 FG.070.002 FG.071.001 FG.071.002 FG.072.001 FG.073.001 FG.073.002 </span></span>
-<span><span class="co">##          2          1          3          1          2          2          2 </span></span>
-<span><span class="co">## FG.073.003 FG.074.001 FG.074.002 FG.075.001 FG.076.001 FG.076.002 FG.077.001 </span></span>
+<span><span class="co">## FG.083.003 FG.084.001 FG.084.002 FG.084.003 FG.085.001 FG.085.002 FG.086.001 </span></span>
+<span><span class="co">##          1          1          1          1          3          1          2 </span></span>
+<span><span class="co">## FG.086.002 FG.087.001 FG.087.002 FG.088.001 FG.088.002 FG.089.001 FG.089.002 </span></span>
+<span><span class="co">##          1          2          2          1          1          2          1 </span></span>
+<span><span class="co">## FG.090.001 FG.090.002 FG.091.001 FG.092.001 FG.093.001 FG.094.001 FG.094.002 </span></span>
+<span><span class="co">##          1          1          2          2          2          2          1 </span></span>
+<span><span class="co">## FG.095.001 FG.096.001 FG.096.002 FG.097.001 FG.097.002 FG.098.001 FG.098.002 </span></span>
+<span><span class="co">##          3          3          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.098.003 FG.099.001 FG.099.002 FG.099.003 FG.100.001 FG.100.002 FG.101.001 </span></span>
+<span><span class="co">##          1          2          1          1          2          1          3 </span></span>
+<span><span class="co">## FG.102.001 FG.102.002 FG.102.003 FG.103.001 FG.104.001 FG.104.002 FG.105.001 </span></span>
 <span><span class="co">##          1          1          1          2          1          1          2 </span></span>
-<span><span class="co">## FG.078.001 FG.078.002 FG.079.001 FG.079.002 FG.079.003 FG.080.001 FG.080.002 </span></span>
-<span><span class="co">##          1          1          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.081.001 FG.081.002 FG.082.001 FG.082.002 FG.083.001 FG.083.002 FG.083.003 </span></span>
-<span><span class="co">##          2          1          2          1          1          1          1 </span></span>
-<span><span class="co">## FG.084.001 FG.084.002 FG.085.001 FG.085.002 FG.085.003 FG.086.001 FG.086.002 </span></span>
-<span><span class="co">##          1          1          1          1          1          2          1 </span></span>
-<span><span class="co">## FG.086.003 FG.087.001 FG.088.001 FG.088.002 FG.088.003 FG.089.001 FG.089.002 </span></span>
-<span><span class="co">##          1          3          2          1          1          2          1 </span></span>
-<span><span class="co">## FG.090.001 FG.090.002 FG.091.001 FG.091.002 FG.092.001 FG.092.002 FG.093.001 </span></span>
-<span><span class="co">##          2          2          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.093.002 FG.094.001 FG.094.002 FG.094.003 FG.095.001 FG.096.001 FG.096.002 </span></span>
-<span><span class="co">##          1          2          1          1          2          2          1 </span></span>
-<span><span class="co">## FG.097.001 FG.098.001 FG.098.002 FG.099.001 FG.100.001 FG.100.002 FG.101.001 </span></span>
-<span><span class="co">##          3          1          1          2          1          1          2 </span></span>
-<span><span class="co">## FG.101.002 FG.102.001 FG.102.002 FG.103.001 FG.104.001 FG.105.001 FG.105.002 </span></span>
-<span><span class="co">##          1          1          1          2          2          2          1 </span></span>
-<span><span class="co">## FG.106.001 FG.106.002 FG.107.001 FG.107.002 FG.108.001 FG.109.001 FG.109.002 </span></span>
-<span><span class="co">##          2          1          1          1          2          1          1 </span></span>
-<span><span class="co">## FG.110.001 FG.111.001 FG.112.001 FG.113.001 FG.114.001 FG.115.001 FG.116.001 </span></span>
-<span><span class="co">##          2          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.117.001 </span></span>
-<span><span class="co">##          1</span></span></code></pre>
+<span><span class="co">## FG.105.002 FG.106.001 FG.107.001 FG.107.002 FG.108.001 FG.108.002 FG.109.001 </span></span>
+<span><span class="co">##          1          2          2          1          1          1          1 </span></span>
+<span><span class="co">## FG.109.002 FG.110.001 FG.111.001 FG.112.001 FG.112.002 FG.113.001 FG.114.001 </span></span>
+<span><span class="co">##          1          2          2          1          1          1          1 </span></span>
+<span><span class="co">## FG.115.001 FG.116.001 FG.117.001 FG.118.001 </span></span>
+<span><span class="co">##          1          1          1          1</span></span></code></pre>
 <p>Many of the larger retention time-based feature groups have been
 splitted into two or more sub-groups based on the correlation of their
 feature abundances (e.g. the feature group <em>FG.004</em> has been
@@ -536,7 +540,7 @@ features in this retention time feature group, e.g. clearly between
 from relatively few samples (8 in total), and a relatively small
 variance in abundances across these samples.</p>
 <p>After feature grouping by abundance correlation, the 351 features
-have been grouped into 253 feature groups.</p>
+have been grouped into 249 feature groups.</p>
 </div>
 <div class="section level3">
 <h3 id="grouping-of-features-by-similarity-of-their-eics">Grouping of features by similarity of their EICs<a class="anchor" aria-label="anchor" href="#grouping-of-features-by-similarity-of-their-eics"></a>
@@ -579,115 +583,113 @@ feature. The results of the grouping are shown below.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## FG.001.001.001 FG.001.001.002 FG.001.002.001 FG.002.001.001 FG.002.002.001 </span></span>
-<span><span class="co">##              2              1              1              3              1 </span></span>
-<span><span class="co">## FG.002.002.002 FG.003.001.001 FG.003.002.001 FG.003.003.001 FG.004.001.001 </span></span>
+<span><span class="co">## FG.001.001.001 FG.001.002.001 FG.002.001.001 FG.002.002.001 FG.002.003.001 </span></span>
+<span><span class="co">##              3              1              2              2              1 </span></span>
+<span><span class="co">## FG.002.004.001 FG.003.001.001 FG.003.002.001 FG.004.001.001 FG.004.002.001 </span></span>
+<span><span class="co">##              1              1              1              2              1 </span></span>
+<span><span class="co">## FG.004.003.001 FG.005.001.001 FG.005.002.001 FG.005.003.001 FG.006.001.001 </span></span>
+<span><span class="co">##              1              3              2              1              4 </span></span>
+<span><span class="co">## FG.006.002.001 FG.007.001.001 FG.007.001.002 FG.008.001.001 FG.008.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.008.003.001 FG.008.004.001 FG.009.001.001 FG.010.001.001 FG.010.002.001 </span></span>
+<span><span class="co">##              1              1              3              3              1 </span></span>
+<span><span class="co">## FG.011.001.001 FG.011.002.001 FG.012.001.001 FG.012.002.001 FG.012.003.001 </span></span>
+<span><span class="co">##              2              1              3              2              1 </span></span>
+<span><span class="co">## FG.013.001.001 FG.013.002.001 FG.014.001.001 FG.015.001.001 FG.015.002.001 </span></span>
+<span><span class="co">##              3              1              2              1              1 </span></span>
+<span><span class="co">## FG.015.003.001 FG.016.001.001 FG.016.002.001 FG.016.003.001 FG.017.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              2 </span></span>
-<span><span class="co">## FG.004.002.001 FG.004.003.001 FG.005.001.001 FG.005.002.001 FG.006.001.001 </span></span>
+<span><span class="co">## FG.017.002.001 FG.018.001.001 FG.018.002.001 FG.019.001.001 FG.019.002.001 </span></span>
+<span><span class="co">##              1              2              2              1              1 </span></span>
+<span><span class="co">## FG.019.003.001 FG.020.001.001 FG.020.002.001 FG.021.001.001 FG.021.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.021.003.001 FG.021.004.001 FG.021.005.001 FG.022.001.001 FG.022.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.023.001.001 FG.024.001.001 FG.024.001.002 FG.024.002.001 FG.025.001.001 </span></span>
+<span><span class="co">##              2              1              1              2              4 </span></span>
+<span><span class="co">## FG.025.002.001 FG.025.003.001 FG.026.001.001 FG.026.001.002 FG.026.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.027.001.001 FG.027.002.001 FG.027.003.001 FG.027.004.001 FG.028.001.001 </span></span>
+<span><span class="co">##              2              1              1              1              1 </span></span>
+<span><span class="co">## FG.028.002.001 FG.029.001.001 FG.029.002.001 FG.029.003.001 FG.030.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              2 </span></span>
-<span><span class="co">## FG.006.002.001 FG.006.003.001 FG.007.001.001 FG.007.002.001 FG.008.001.001 </span></span>
-<span><span class="co">##              1              1              3              1              1 </span></span>
-<span><span class="co">## FG.008.002.001 FG.008.003.001 FG.008.004.001 FG.009.001.001 FG.009.002.001 </span></span>
+<span><span class="co">## FG.030.001.002 FG.030.002.001 FG.031.001.001 FG.032.001.001 FG.032.002.001 </span></span>
+<span><span class="co">##              1              1              2              1              1 </span></span>
+<span><span class="co">## FG.033.001.001 FG.033.002.001 FG.033.003.001 FG.034.001.001 FG.034.002.001 </span></span>
+<span><span class="co">##              2              1              1              1              1 </span></span>
+<span><span class="co">## FG.035.001.001 FG.036.001.001 FG.036.001.002 FG.036.002.001 FG.036.003.001 </span></span>
+<span><span class="co">##              2              2              1              1              1 </span></span>
+<span><span class="co">## FG.036.004.001 FG.037.001.001 FG.037.001.002 FG.038.001.001 FG.038.002.001 </span></span>
+<span><span class="co">##              1              2              1              1              1 </span></span>
+<span><span class="co">## FG.039.001.001 FG.039.002.001 FG.040.001.001 FG.040.002.001 FG.040.003.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.040.004.001 FG.041.001.001 FG.041.002.001 FG.042.001.001 FG.042.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.043.001.001 FG.043.002.001 FG.044.001.001 FG.044.001.002 FG.044.002.001 </span></span>
+<span><span class="co">##              3              1              2              1              1 </span></span>
+<span><span class="co">## FG.044.002.002 FG.045.001.001 FG.046.001.001 FG.046.002.001 FG.046.003.001 </span></span>
+<span><span class="co">##              1              2              1              1              1 </span></span>
+<span><span class="co">## FG.047.001.001 FG.047.002.001 FG.048.001.001 FG.048.002.001 FG.049.001.001 </span></span>
+<span><span class="co">##              1              1              2              1              1 </span></span>
+<span><span class="co">## FG.049.002.001 FG.049.003.001 FG.049.004.001 FG.050.001.001 FG.050.001.002 </span></span>
 <span><span class="co">##              1              1              1              3              1 </span></span>
-<span><span class="co">## FG.010.001.001 FG.010.002.001 FG.011.001.001 FG.011.002.001 FG.012.001.001 </span></span>
+<span><span class="co">## FG.050.002.001 FG.051.001.001 FG.051.002.001 FG.052.001.001 FG.052.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.052.003.001 FG.052.004.001 FG.053.001.001 FG.053.002.001 FG.054.001.001 </span></span>
+<span><span class="co">##              1              1              2              2              1 </span></span>
+<span><span class="co">## FG.054.002.001 FG.055.001.001 FG.056.001.001 FG.056.001.002 FG.057.001.001 </span></span>
+<span><span class="co">##              1              6              1              1              2 </span></span>
+<span><span class="co">## FG.057.002.001 FG.057.003.001 FG.057.004.001 FG.057.005.001 FG.058.001.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.058.002.001 FG.058.003.001 FG.058.004.001 FG.059.001.001 FG.060.001.001 </span></span>
+<span><span class="co">##              1              1              1              2              2 </span></span>
+<span><span class="co">## FG.060.002.001 FG.060.003.001 FG.061.001.001 FG.061.002.001 FG.062.001.001 </span></span>
 <span><span class="co">##              2              1              2              1              2 </span></span>
-<span><span class="co">## FG.012.002.001 FG.012.003.001 FG.012.004.001 FG.013.001.001 FG.013.001.002 </span></span>
+<span><span class="co">## FG.062.002.001 FG.063.001.001 FG.063.002.001 FG.064.001.001 FG.065.001.001 </span></span>
 <span><span class="co">##              1              1              1              2              1 </span></span>
-<span><span class="co">## FG.013.002.001 FG.013.003.001 FG.013.004.001 FG.014.001.001 FG.015.001.001 </span></span>
-<span><span class="co">##              1              1              1              2              3 </span></span>
-<span><span class="co">## FG.015.002.001 FG.016.001.001 FG.017.001.001 FG.017.002.001 FG.018.001.001 </span></span>
-<span><span class="co">##              1              3              1              1              1 </span></span>
-<span><span class="co">## FG.018.002.001 FG.019.001.001 FG.019.002.001 FG.020.001.001 FG.020.002.001 </span></span>
-<span><span class="co">##              1              2              1              1              1 </span></span>
-<span><span class="co">## FG.021.001.001 FG.021.002.001 FG.021.003.001 FG.022.001.001 FG.022.002.001 </span></span>
+<span><span class="co">## FG.065.002.001 FG.066.001.001 FG.067.001.001 FG.067.002.001 FG.068.001.001 </span></span>
+<span><span class="co">##              1              2              3              1              1 </span></span>
+<span><span class="co">## FG.068.002.001 FG.069.001.001 FG.070.001.001 FG.070.002.001 FG.071.001.001 </span></span>
+<span><span class="co">##              1              2              2              1              1 </span></span>
+<span><span class="co">## FG.071.002.001 FG.072.001.001 FG.072.002.001 FG.072.003.001 FG.073.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.022.003.001 FG.022.004.001 FG.023.001.001 FG.023.002.001 FG.023.003.001 </span></span>
+<span><span class="co">## FG.073.002.001 FG.074.001.001 FG.074.002.001 FG.074.003.001 FG.075.001.001 </span></span>
+<span><span class="co">##              1              2              1              1              1 </span></span>
+<span><span class="co">## FG.075.002.001 FG.075.003.001 FG.076.001.001 FG.076.002.001 FG.076.003.001 </span></span>
 <span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.024.001.001 FG.024.002.001 FG.024.003.001 FG.024.004.001 FG.024.005.001 </span></span>
-<span><span class="co">##              2              2              1              1              1 </span></span>
-<span><span class="co">## FG.024.006.001 FG.025.001.001 FG.026.001.001 FG.026.002.001 FG.027.001.001 </span></span>
-<span><span class="co">##              1              6              2              1              2 </span></span>
-<span><span class="co">## FG.027.002.001 FG.028.001.001 FG.029.001.001 FG.029.002.001 FG.030.001.001 </span></span>
-<span><span class="co">##              1              3              2              1              1 </span></span>
-<span><span class="co">## FG.030.002.001 FG.031.001.001 FG.031.002.001 FG.032.001.001 FG.032.002.001 </span></span>
-<span><span class="co">##              1              2              1              1              1 </span></span>
-<span><span class="co">## FG.032.003.001 FG.033.001.001 FG.033.002.001 FG.033.003.001 FG.034.001.001 </span></span>
-<span><span class="co">##              1              2              1              1              1 </span></span>
-<span><span class="co">## FG.034.002.001 FG.035.001.001 FG.035.002.001 FG.036.001.001 FG.036.001.002 </span></span>
-<span><span class="co">##              1              2              1              1              1 </span></span>
-<span><span class="co">## FG.036.002.001 FG.036.003.001 FG.037.001.001 FG.037.002.001 FG.037.003.001 </span></span>
+<span><span class="co">## FG.077.001.001 FG.077.002.001 FG.078.001.001 FG.079.001.001 FG.079.002.001 </span></span>
+<span><span class="co">##              2              1              2              1              1 </span></span>
+<span><span class="co">## FG.079.003.001 FG.080.001.001 FG.080.002.001 FG.081.001.001 FG.081.002.001 </span></span>
+<span><span class="co">##              1              2              1              2              1 </span></span>
+<span><span class="co">## FG.082.001.001 FG.082.002.001 FG.083.001.001 FG.083.002.001 FG.083.003.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.084.001.001 FG.084.002.001 FG.084.003.001 FG.085.001.001 FG.085.001.002 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.085.001.003 FG.085.002.001 FG.086.001.001 FG.086.001.002 FG.086.002.001 </span></span>
+<span><span class="co">##              1              1              1              1              1 </span></span>
+<span><span class="co">## FG.087.001.001 FG.087.002.001 FG.087.002.002 FG.088.001.001 FG.088.002.001 </span></span>
 <span><span class="co">##              2              1              1              1              1 </span></span>
-<span><span class="co">## FG.038.001.001 FG.038.002.001 FG.038.003.001 FG.039.001.001 FG.039.002.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.039.003.001 FG.039.004.001 FG.040.001.001 FG.040.002.001 FG.040.003.001 </span></span>
-<span><span class="co">##              1              1              4              1              1 </span></span>
-<span><span class="co">## FG.041.001.001 FG.041.002.001 FG.042.001.001 FG.042.002.001 FG.042.003.001 </span></span>
-<span><span class="co">##              1              1              2              1              1 </span></span>
-<span><span class="co">## FG.043.001.001 FG.044.001.001 FG.044.001.002 FG.044.002.001 FG.044.002.002 </span></span>
-<span><span class="co">##              2              2              1              1              1 </span></span>
-<span><span class="co">## FG.045.001.001 FG.045.001.002 FG.045.002.001 FG.046.001.001 FG.046.002.001 </span></span>
-<span><span class="co">##              2              2              2              2              1 </span></span>
-<span><span class="co">## FG.047.001.001 FG.047.002.001 FG.047.003.001 FG.047.004.001 FG.048.001.001 </span></span>
-<span><span class="co">##              1              1              1              1              2 </span></span>
-<span><span class="co">## FG.048.002.001 FG.049.001.001 FG.049.002.001 FG.050.001.001 FG.050.002.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.051.001.001 FG.051.002.001 FG.052.001.001 FG.052.002.001 FG.052.003.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.052.004.001 FG.053.001.001 FG.053.002.001 FG.053.003.001 FG.054.001.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.054.002.001 FG.054.003.001 FG.055.001.001 FG.055.002.001 FG.056.001.001 </span></span>
-<span><span class="co">##              1              1              2              1              1 </span></span>
-<span><span class="co">## FG.056.001.002 FG.056.002.001 FG.057.001.001 FG.057.001.002 FG.057.002.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.058.001.001 FG.058.001.002 FG.058.002.001 FG.059.001.001 FG.059.002.001 </span></span>
-<span><span class="co">##              3              1              1              2              1 </span></span>
-<span><span class="co">## FG.059.003.001 FG.060.001.001 FG.060.002.001 FG.061.001.001 FG.061.002.001 </span></span>
-<span><span class="co">##              1              1              1              2              2 </span></span>
-<span><span class="co">## FG.062.001.001 FG.062.002.001 FG.063.001.001 FG.063.002.001 FG.063.003.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.064.001.001 FG.065.001.001 FG.065.002.001 FG.065.003.001 FG.066.001.001 </span></span>
+<span><span class="co">## FG.089.001.001 FG.089.002.001 FG.090.001.001 FG.090.002.001 FG.091.001.001 </span></span>
 <span><span class="co">##              2              1              1              1              2 </span></span>
-<span><span class="co">## FG.066.002.001 FG.067.001.001 FG.067.001.002 FG.067.002.001 FG.067.003.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.068.001.001 FG.068.002.001 FG.069.001.001 FG.069.001.002 FG.069.002.001 </span></span>
-<span><span class="co">##              2              1              1              1              1 </span></span>
-<span><span class="co">## FG.070.001.001 FG.070.002.001 FG.071.001.001 FG.071.002.001 FG.072.001.001 </span></span>
-<span><span class="co">##              2              1              3              1              2 </span></span>
-<span><span class="co">## FG.073.001.001 FG.073.002.001 FG.073.003.001 FG.074.001.001 FG.074.002.001 </span></span>
-<span><span class="co">##              2              2              1              1              1 </span></span>
-<span><span class="co">## FG.075.001.001 FG.076.001.001 FG.076.002.001 FG.077.001.001 FG.078.001.001 </span></span>
+<span><span class="co">## FG.092.001.001 FG.093.001.001 FG.093.001.002 FG.094.001.001 FG.094.002.001 </span></span>
 <span><span class="co">##              2              1              1              2              1 </span></span>
-<span><span class="co">## FG.078.002.001 FG.079.001.001 FG.079.002.001 FG.079.003.001 FG.080.001.001 </span></span>
+<span><span class="co">## FG.095.001.001 FG.095.001.002 FG.096.001.001 FG.096.002.001 FG.097.001.001 </span></span>
+<span><span class="co">##              2              1              3              1              1 </span></span>
+<span><span class="co">## FG.097.002.001 FG.098.001.001 FG.098.002.001 FG.098.003.001 FG.099.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              2 </span></span>
-<span><span class="co">## FG.080.002.001 FG.081.001.001 FG.081.002.001 FG.082.001.001 FG.082.002.001 </span></span>
-<span><span class="co">##              1              2              1              2              1 </span></span>
-<span><span class="co">## FG.083.001.001 FG.083.002.001 FG.083.003.001 FG.084.001.001 FG.084.002.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.085.001.001 FG.085.002.001 FG.085.003.001 FG.086.001.001 FG.086.002.001 </span></span>
-<span><span class="co">##              1              1              1              2              1 </span></span>
-<span><span class="co">## FG.086.003.001 FG.087.001.001 FG.087.001.002 FG.088.001.001 FG.088.002.001 </span></span>
-<span><span class="co">##              1              2              1              2              1 </span></span>
-<span><span class="co">## FG.088.003.001 FG.089.001.001 FG.089.001.002 FG.089.002.001 FG.090.001.001 </span></span>
+<span><span class="co">## FG.099.002.001 FG.099.003.001 FG.100.001.001 FG.100.002.001 FG.101.001.001 </span></span>
+<span><span class="co">##              1              1              2              1              2 </span></span>
+<span><span class="co">## FG.101.001.002 FG.102.001.001 FG.102.002.001 FG.102.003.001 FG.103.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              2 </span></span>
-<span><span class="co">## FG.090.002.001 FG.090.002.002 FG.091.001.001 FG.091.002.001 FG.092.001.001 </span></span>
+<span><span class="co">## FG.104.001.001 FG.104.002.001 FG.105.001.001 FG.105.002.001 FG.106.001.001 </span></span>
+<span><span class="co">##              1              1              2              1              2 </span></span>
+<span><span class="co">## FG.107.001.001 FG.107.001.002 FG.107.002.001 FG.108.001.001 FG.108.002.001 </span></span>
 <span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.092.002.001 FG.093.001.001 FG.093.002.001 FG.094.001.001 FG.094.002.001 </span></span>
-<span><span class="co">##              1              1              1              2              1 </span></span>
-<span><span class="co">## FG.094.003.001 FG.095.001.001 FG.096.001.001 FG.096.002.001 FG.097.001.001 </span></span>
-<span><span class="co">##              1              2              2              1              2 </span></span>
-<span><span class="co">## FG.097.001.002 FG.098.001.001 FG.098.002.001 FG.099.001.001 FG.100.001.001 </span></span>
-<span><span class="co">##              1              1              1              2              1 </span></span>
-<span><span class="co">## FG.100.002.001 FG.101.001.001 FG.101.001.002 FG.101.002.001 FG.102.001.001 </span></span>
+<span><span class="co">## FG.109.001.001 FG.109.002.001 FG.110.001.001 FG.111.001.001 FG.112.001.001 </span></span>
+<span><span class="co">##              1              1              2              2              1 </span></span>
+<span><span class="co">## FG.112.002.001 FG.113.001.001 FG.114.001.001 FG.115.001.001 FG.116.001.001 </span></span>
 <span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.102.002.001 FG.103.001.001 FG.103.001.002 FG.104.001.001 FG.105.001.001 </span></span>
-<span><span class="co">##              1              1              1              2              2 </span></span>
-<span><span class="co">## FG.105.002.001 FG.106.001.001 FG.106.001.002 FG.106.002.001 FG.107.001.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.107.002.001 FG.108.001.001 FG.109.001.001 FG.109.002.001 FG.110.001.001 </span></span>
-<span><span class="co">##              1              2              1              1              2 </span></span>
-<span><span class="co">## FG.111.001.001 FG.112.001.001 FG.113.001.001 FG.114.001.001 FG.115.001.001 </span></span>
-<span><span class="co">##              1              1              1              1              1 </span></span>
-<span><span class="co">## FG.116.001.001 FG.117.001.001 </span></span>
+<span><span class="co">## FG.117.001.001 FG.118.001.001 </span></span>
 <span><span class="co">##              1              1</span></span></code></pre>
 <p>In many cases, pre-defined feature groups (by the retention time
 similarity and abundance correlation) were not further subdivided. Below
@@ -770,7 +772,7 @@ are shown in the same color.
 <p>Based on the EIC correlation, the initial feature group
 <em>FG.045.001</em> was grouped into two separate sub-groups.</p>
 <p>The grouping based on EIC correlation on the pre-defined feature
-groups from the previous sections grouped the 351 features into 272
+groups from the previous sections grouped the 351 features into 267
 feature groups.</p>
 </div>
 <div class="section level3">
@@ -801,13 +803,13 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 <span><span class="va">xmse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures.html" class="external-link">groupFeatures</a></span><span class="op">(</span><span class="va">xmse</span>, <span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">AbundanceSimilarityParam</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/MsFeatures/man/featureGroups.html" class="external-link">featureGroups</a></span><span class="op">(</span><span class="va">xmse</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.003.001 FG.004.001 FG.004.002 </span></span>
-<span><span class="co">##          1          1          1          1          2          1          1 </span></span>
-<span><span class="co">## FG.005.001 FG.005.002 FG.005.003 FG.006.001 FG.007.001 FG.007.002 FG.008.001 </span></span>
-<span><span class="co">##          1          1          1          2          1          1          1 </span></span>
-<span><span class="co">## FG.009.001 FG.010.001 FG.011.001 FG.012.001 FG.013.001 FG.014.001 FG.015.001 </span></span>
+<span><span class="co">## FG.001.001 FG.001.002 FG.002.001 FG.002.002 FG.003.001 FG.003.002 FG.004.001 </span></span>
 <span><span class="co">##          1          1          1          1          1          1          1 </span></span>
-<span><span class="co">## FG.016.001 FG.017.001 FG.018.001 FG.019.001 FG.020.001 FG.021.001 FG.022.001 </span></span>
+<span><span class="co">## FG.004.002 FG.005.001 FG.006.001 FG.006.002 FG.006.003 FG.007.001 FG.007.002 </span></span>
+<span><span class="co">##          1          2          1          1          1          2          1 </span></span>
+<span><span class="co">## FG.008.001 FG.009.001 FG.010.001 FG.011.001 FG.012.001 FG.013.001 FG.014.001 </span></span>
+<span><span class="co">##          1          1          1          1          1          1          1 </span></span>
+<span><span class="co">## FG.015.001 FG.016.001 FG.017.001 FG.018.001 FG.019.001 FG.020.001 FG.021.001 </span></span>
 <span><span class="co">##          1          1          1          1          1          1          1</span></span></code></pre>
 </div>
 </div>
@@ -816,9 +818,9 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 </h2>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R Under development (unstable) (2024-02-21 r85967)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-03-28 r86224)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.3 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -840,69 +842,64 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] pheatmap_1.0.12     faahKO_1.43.0       MsFeatures_1.11.0  </span></span>
-<span><span class="co">##  [4] xcms_4.1.9          MSnbase_2.29.3      ProtGenerics_1.35.2</span></span>
-<span><span class="co">##  [7] S4Vectors_0.41.3    mzR_2.37.0          Rcpp_1.0.12        </span></span>
-<span><span class="co">## [10] Biobase_2.63.0      BiocGenerics_0.49.1 BiocParallel_1.37.0</span></span>
+<span><span class="co">##  [1] pheatmap_1.0.12     faahKO_1.43.0       MSnbase_2.29.4     </span></span>
+<span><span class="co">##  [4] ProtGenerics_1.35.4 S4Vectors_0.41.5    mzR_2.37.3         </span></span>
+<span><span class="co">##  [7] Rcpp_1.0.12         Biobase_2.63.1      BiocGenerics_0.49.1</span></span>
+<span><span class="co">## [10] MsFeatures_1.11.0   xcms_4.1.12         BiocParallel_1.37.1</span></span>
 <span><span class="co">## [13] BiocStyle_2.31.0   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] DBI_1.2.2                   bitops_1.0-7               </span></span>
-<span><span class="co">##   [3] rlang_1.1.3                 magrittr_2.0.3             </span></span>
-<span><span class="co">##   [5] clue_0.3-65                 MassSpecWavelet_1.69.0     </span></span>
-<span><span class="co">##   [7] matrixStats_1.2.0           compiler_4.4.0             </span></span>
-<span><span class="co">##   [9] systemfonts_1.0.5           vctrs_0.6.5                </span></span>
-<span><span class="co">##  [11] stringr_1.5.1               MetaboCoreUtils_1.11.2     </span></span>
-<span><span class="co">##  [13] pkgconfig_2.0.3             crayon_1.5.2               </span></span>
-<span><span class="co">##  [15] fastmap_1.1.1               XVector_0.43.1             </span></span>
-<span><span class="co">##  [17] utf8_1.2.4                  rmarkdown_2.25             </span></span>
-<span><span class="co">##  [19] preprocessCore_1.65.0       ragg_1.2.7                 </span></span>
-<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.42                  </span></span>
-<span><span class="co">##  [23] MultiAssayExperiment_1.29.1 zlibbioc_1.49.0            </span></span>
-<span><span class="co">##  [25] cachem_1.0.8                GenomeInfoDb_1.39.6        </span></span>
-<span><span class="co">##  [27] jsonlite_1.8.8              progress_1.2.3             </span></span>
-<span><span class="co">##  [29] highr_0.10                  DelayedArray_0.29.4        </span></span>
-<span><span class="co">##  [31] prettyunits_1.2.0           parallel_4.4.0             </span></span>
-<span><span class="co">##  [33] cluster_2.1.6               R6_2.5.1                   </span></span>
-<span><span class="co">##  [35] RColorBrewer_1.1-3          bslib_0.6.1                </span></span>
-<span><span class="co">##  [37] stringi_1.8.3               limma_3.59.3               </span></span>
-<span><span class="co">##  [39] GenomicRanges_1.55.3        jquerylib_0.1.4            </span></span>
-<span><span class="co">##  [41] bookdown_0.37               SummarizedExperiment_1.33.3</span></span>
-<span><span class="co">##  [43] iterators_1.0.14            knitr_1.45                 </span></span>
-<span><span class="co">##  [45] IRanges_2.37.1              splines_4.4.0              </span></span>
-<span><span class="co">##  [47] Matrix_1.6-5                igraph_2.0.2               </span></span>
-<span><span class="co">##  [49] tidyselect_1.2.0            abind_1.4-5                </span></span>
-<span><span class="co">##  [51] yaml_2.3.8                  doParallel_1.0.17          </span></span>
-<span><span class="co">##  [53] codetools_0.2-19            affy_1.81.0                </span></span>
-<span><span class="co">##  [55] lattice_0.22-5              tibble_3.2.1               </span></span>
-<span><span class="co">##  [57] plyr_1.8.9                  evaluate_0.23              </span></span>
-<span><span class="co">##  [59] survival_3.5-8              desc_1.4.3                 </span></span>
-<span><span class="co">##  [61] Spectra_1.13.4              pillar_1.9.0               </span></span>
-<span><span class="co">##  [63] affyio_1.73.0               BiocManager_1.30.22        </span></span>
-<span><span class="co">##  [65] MatrixGenerics_1.15.0       foreach_1.5.2              </span></span>
-<span><span class="co">##  [67] MALDIquant_1.22.2           ncdf4_1.22                 </span></span>
-<span><span class="co">##  [69] generics_0.1.3              RCurl_1.98-1.14            </span></span>
-<span><span class="co">##  [71] hms_1.1.3                   ggplot2_3.5.0              </span></span>
-<span><span class="co">##  [73] munsell_0.5.0               scales_1.3.0               </span></span>
-<span><span class="co">##  [75] MsExperiment_1.5.4          glue_1.7.0                 </span></span>
-<span><span class="co">##  [77] lazyeval_0.2.2              tools_4.4.0                </span></span>
-<span><span class="co">##  [79] robustbase_0.99-2           mzID_1.41.0                </span></span>
-<span><span class="co">##  [81] QFeatures_1.13.2            vsn_3.71.0                 </span></span>
-<span><span class="co">##  [83] RANN_2.6.1                  fs_1.6.3                   </span></span>
-<span><span class="co">##  [85] XML_3.99-0.16.1             grid_4.4.0                 </span></span>
-<span><span class="co">##  [87] impute_1.77.0               MsCoreUtils_1.15.3         </span></span>
-<span><span class="co">##  [89] colorspace_2.1-0            GenomeInfoDbData_1.2.11    </span></span>
-<span><span class="co">##  [91] PSMatch_1.7.1               cli_3.6.2                  </span></span>
-<span><span class="co">##  [93] textshaping_0.3.7           fansi_1.0.6                </span></span>
-<span><span class="co">##  [95] S4Arrays_1.3.3              dplyr_1.1.4                </span></span>
-<span><span class="co">##  [97] AnnotationFilter_1.27.0     DEoptimR_1.1-3             </span></span>
-<span><span class="co">##  [99] pcaMethods_1.95.0           gtable_0.3.4               </span></span>
-<span><span class="co">## [101] sass_0.4.8                  digest_0.6.34              </span></span>
-<span><span class="co">## [103] SparseArray_1.3.4           farver_2.1.1               </span></span>
-<span><span class="co">## [105] multtest_2.59.0             memoise_2.0.1              </span></span>
-<span><span class="co">## [107] htmltools_0.5.7             pkgdown_2.0.7.9000         </span></span>
-<span><span class="co">## [109] lifecycle_1.0.4             statmod_1.5.0              </span></span>
-<span><span class="co">## [111] MASS_7.3-60.2</span></span></code></pre>
+<span><span class="co">##   [1] DBI_1.2.2                   rlang_1.1.3                </span></span>
+<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
+<span><span class="co">##   [5] MassSpecWavelet_1.69.0      matrixStats_1.2.0          </span></span>
+<span><span class="co">##   [7] compiler_4.5.0              systemfonts_1.0.6          </span></span>
+<span><span class="co">##   [9] vctrs_0.6.5                 MetaboCoreUtils_1.11.2     </span></span>
+<span><span class="co">##  [11] pkgconfig_2.0.3             crayon_1.5.2               </span></span>
+<span><span class="co">##  [13] fastmap_1.1.1               XVector_0.43.1             </span></span>
+<span><span class="co">##  [15] utf8_1.2.4                  rmarkdown_2.26             </span></span>
+<span><span class="co">##  [17] preprocessCore_1.65.0       ragg_1.3.0                 </span></span>
+<span><span class="co">##  [19] purrr_1.0.2                 xfun_0.43                  </span></span>
+<span><span class="co">##  [21] MultiAssayExperiment_1.29.1 zlibbioc_1.49.3            </span></span>
+<span><span class="co">##  [23] cachem_1.0.8                GenomeInfoDb_1.39.10       </span></span>
+<span><span class="co">##  [25] jsonlite_1.8.8              progress_1.2.3             </span></span>
+<span><span class="co">##  [27] highr_0.10                  DelayedArray_0.29.9        </span></span>
+<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.5.0             </span></span>
+<span><span class="co">##  [31] cluster_2.1.6               R6_2.5.1                   </span></span>
+<span><span class="co">##  [33] bslib_0.7.0                 RColorBrewer_1.1-3         </span></span>
+<span><span class="co">##  [35] limma_3.59.6                GenomicRanges_1.55.4       </span></span>
+<span><span class="co">##  [37] jquerylib_0.1.4             bookdown_0.38              </span></span>
+<span><span class="co">##  [39] SummarizedExperiment_1.33.3 iterators_1.0.14           </span></span>
+<span><span class="co">##  [41] knitr_1.45                  IRanges_2.37.1             </span></span>
+<span><span class="co">##  [43] Matrix_1.7-0                igraph_2.0.3               </span></span>
+<span><span class="co">##  [45] tidyselect_1.2.1            abind_1.4-5                </span></span>
+<span><span class="co">##  [47] yaml_2.3.8                  doParallel_1.0.17          </span></span>
+<span><span class="co">##  [49] codetools_0.2-20            affy_1.81.0                </span></span>
+<span><span class="co">##  [51] lattice_0.22-6              tibble_3.2.1               </span></span>
+<span><span class="co">##  [53] plyr_1.8.9                  evaluate_0.23              </span></span>
+<span><span class="co">##  [55] desc_1.4.3                  Spectra_1.13.8             </span></span>
+<span><span class="co">##  [57] pillar_1.9.0                affyio_1.73.0              </span></span>
+<span><span class="co">##  [59] BiocManager_1.30.22         MatrixGenerics_1.15.0      </span></span>
+<span><span class="co">##  [61] foreach_1.5.2               MALDIquant_1.22.2          </span></span>
+<span><span class="co">##  [63] ncdf4_1.22                  generics_0.1.3             </span></span>
+<span><span class="co">##  [65] hms_1.1.3                   ggplot2_3.5.0              </span></span>
+<span><span class="co">##  [67] munsell_0.5.1               scales_1.3.0               </span></span>
+<span><span class="co">##  [69] MsExperiment_1.5.4          glue_1.7.0                 </span></span>
+<span><span class="co">##  [71] lazyeval_0.2.2              tools_4.5.0                </span></span>
+<span><span class="co">##  [73] mzID_1.41.0                 QFeatures_1.13.3           </span></span>
+<span><span class="co">##  [75] vsn_3.71.1                  fs_1.6.3                   </span></span>
+<span><span class="co">##  [77] XML_3.99-0.16.1             grid_4.5.0                 </span></span>
+<span><span class="co">##  [79] impute_1.77.0               MsCoreUtils_1.15.6         </span></span>
+<span><span class="co">##  [81] colorspace_2.1-0            GenomeInfoDbData_1.2.12    </span></span>
+<span><span class="co">##  [83] PSMatch_1.7.2               cli_3.6.2                  </span></span>
+<span><span class="co">##  [85] textshaping_0.3.7           fansi_1.0.6                </span></span>
+<span><span class="co">##  [87] S4Arrays_1.3.6              dplyr_1.1.4                </span></span>
+<span><span class="co">##  [89] AnnotationFilter_1.27.0     pcaMethods_1.95.0          </span></span>
+<span><span class="co">##  [91] gtable_0.3.4                sass_0.4.9                 </span></span>
+<span><span class="co">##  [93] digest_0.6.35               SparseArray_1.3.4          </span></span>
+<span><span class="co">##  [95] farver_2.1.1                htmlwidgets_1.6.4          </span></span>
+<span><span class="co">##  [97] memoise_2.0.1               htmltools_0.5.8            </span></span>
+<span><span class="co">##  [99] pkgdown_2.0.7.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [101] statmod_1.5.0               MASS_7.3-60.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

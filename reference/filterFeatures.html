@@ -66,7 +66,7 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,9 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
     <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -197,7 +200,7 @@ PMCID: PMC5960010.</p>
 <span class="r-in"><span>                        qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">test_xcms</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">filtered_data_rsd</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span>object <span class="op">=</span> <span class="va">test_xcms</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 262 features were removed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 255 features were removed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Set up parameter to filter based on D-ratio. By setting the filter such</span></span></span>
 <span class="r-in"><span><span class="co">## as below, features that have a D-ratio computed based on their abundance</span></span></span>
@@ -210,7 +213,7 @@ PMCID: PMC5960010.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">filtered_data_dratio</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span>object <span class="op">=</span> <span class="va">test_xcms</span>,</span></span>
 <span class="r-in"><span>                                       filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 241 features were removed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 237 features were removed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Set up parameter to filter based on the percent of missing data.</span></span></span>
 <span class="r-in"><span><span class="co">## Parameter f should represent the sample group of samples, for which the</span></span></span>
@@ -223,7 +226,7 @@ PMCID: PMC5960010.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">filtered_data_missing</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span>object <span class="op">=</span> <span class="va">test_xcms</span>,</span></span>
 <span class="r-in"><span>                                        filter <span class="op">=</span> <span class="va">missing_data_filter</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 6 features were removed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 2 features were removed</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Set up parameter to flag possible contaminants based on blank samples'</span></span></span>
 <span class="r-in"><span><span class="co">## abundance. By setting the filter such as below, features that have mean</span></span></span>
@@ -236,7 +239,7 @@ PMCID: PMC5960010.</p>
 <span class="r-in"><span>                    qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">test_xcms</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span>,</span></span>
 <span class="r-in"><span>                    blankIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">test_xcms</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"study"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">filtered_xmse</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span><span class="va">test_xcms</span>, <span class="va">filter</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> -13 features were flagged</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> -10 features were flagged</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
