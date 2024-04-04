@@ -98,7 +98,7 @@ be reported. This can be performed using the fillChromPeaks() function.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Next Generation <code>xcms</code> Result Object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/MsExperiment.R" class="external-link"><code>R/MsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment-functions.R" class="external-link"><code>R/XcmsExperiment-functions.R</code></a>, and 3 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/MsExperiment.R" class="external-link"><code>R/MsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, and 3 more</small>
       <div class="d-none name"><code>XcmsExperiment.Rd</code></div>
     </div>
 
@@ -175,18 +175,6 @@ chromatogram(
   return.type = "MChromatograms",
   BPPARAM = bpparam()
 )
-
-featureArea(
-  object,
-  mzmin = min,
-  mzmax = max,
-  rtmin = min,
-  rtmax = max,
-  features = character()
-)
-
-# S4 method for MsExperiment,missing
-plot(x, y, msLevel = 1L, peakCol = "#ff000060", ...)
 
 # S4 method for XcmsExperiment,ANY,ANY,ANY
 [(x, i, j, ..., drop = TRUE)
@@ -320,7 +308,19 @@ filterFile(
   keepAdjustedRtime = hasAdjustedRtime(object),
   keepFeatures = FALSE,
   ...
-)</code></pre></div>
+)
+
+featureArea(
+  object,
+  mzmin = min,
+  mzmax = max,
+  rtmin = min,
+  rtmax = max,
+  features = character()
+)
+
+# S4 method for MsExperiment,missing
+plot(x, y, msLevel = 1L, peakCol = "#ff000060", ...)</code></pre></div>
     </div>
 
     <div class="section level2">
@@ -415,53 +415,8 @@ type of the returned object. Currently only
 to <code>BPPARAM = bpparam()</code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more information.</p></dd>
 
 
-<dt>mzmin</dt>
-<dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmin"</code> of
-a feature based on the <code>"mzmin"</code> values of the individual
-chromatographic peaks assigned to that feature. Defaults to
-<code>mzmin = min</code>.</p></dd>
-
-
-<dt>mzmax</dt>
-<dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmax"</code> of
-a feature based on the <code>"mzmax"</code> values of the individual
-chromatographic peaks assigned to that feature. Defaults to
-<code>mzmax = max</code>.</p></dd>
-
-
-<dt>rtmin</dt>
-<dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmin"</code> of
-a feature based on the <code>"rtmin"</code> values of the individual
-chromatographic peaks assigned to that feature. Defaults to
-<code>rtmin = min</code>.</p></dd>
-
-
-<dt>rtmax</dt>
-<dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmax"</code> of
-a feature based on the <code>"rtmax"</code> values of the individual
-chromatographic peaks assigned to that feature. Defaults to
-<code>rtmax = max</code>.</p></dd>
-
-
-<dt>features</dt>
-<dd><p>For <code>filterFeatureDefinitions</code> and <code>featureArea</code>: <code>logical</code>,
-<code>integer</code> or <code>character</code> defining the features to keep or from which
-to extract the feature area, respectively. See function description
-for more information.</p></dd>
-
-
 <dt>x</dt>
 <dd><p>An <code>XcmsExperiment</code> object.</p></dd>
-
-
-<dt>y</dt>
-<dd><p>For <code>plot</code>: should not be defined as it is not supported.</p></dd>
-
-
-<dt>peakCol</dt>
-<dd><p>For <code>plot</code>: defines the border color of the rectangles
-indicating the identified chromatographic peaks. Only a single color
-is supported. Defaults to `peakCol = "#ff000060".</p></dd>
 
 
 <dt>i</dt>
@@ -547,6 +502,13 @@ retention times should be returned. The default is to return adjusted
 retention times, if available.</p></dd>
 
 
+<dt>features</dt>
+<dd><p>For <code>filterFeatureDefinitions</code> and <code>featureArea</code>: <code>logical</code>,
+<code>integer</code> or <code>character</code> defining the features to keep or from which
+to extract the feature area, respectively. See function description
+for more information.</p></dd>
+
+
 <dt>intensity</dt>
 <dd><p>For <code>featureValues</code>: <code>character(1)</code> specifying the name
 of the column in the <code>chromPeaks(objects)</code> matrix containing the
@@ -588,6 +550,44 @@ also parameter <code>type</code> below for additional information.</p></dd>
 <dd><p>for most subsetting functions (<code>[</code>, <code>filterFile</code>):
 <code>logical(1)</code>: wheter eventually present feature definitions should
 be retained in the returned (filtered) object.</p></dd>
+
+
+<dt>mzmin</dt>
+<dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmin"</code> of
+a feature based on the <code>"mzmin"</code> values of the individual
+chromatographic peaks assigned to that feature. Defaults to
+<code>mzmin = min</code>.</p></dd>
+
+
+<dt>mzmax</dt>
+<dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmax"</code> of
+a feature based on the <code>"mzmax"</code> values of the individual
+chromatographic peaks assigned to that feature. Defaults to
+<code>mzmax = max</code>.</p></dd>
+
+
+<dt>rtmin</dt>
+<dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmin"</code> of
+a feature based on the <code>"rtmin"</code> values of the individual
+chromatographic peaks assigned to that feature. Defaults to
+<code>rtmin = min</code>.</p></dd>
+
+
+<dt>rtmax</dt>
+<dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmax"</code> of
+a feature based on the <code>"rtmax"</code> values of the individual
+chromatographic peaks assigned to that feature. Defaults to
+<code>rtmax = max</code>.</p></dd>
+
+
+<dt>y</dt>
+<dd><p>For <code>plot</code>: should not be defined as it is not supported.</p></dd>
+
+
+<dt>peakCol</dt>
+<dd><p>For <code>plot</code>: defines the border color of the rectangles
+indicating the identified chromatographic peaks. Only a single color
+is supported. Defaults to `peakCol = "#ff000060".</p></dd>
 
 </dl></div>
     <div class="section level2">
