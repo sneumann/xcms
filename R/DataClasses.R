@@ -1522,7 +1522,8 @@ setClass("ObiwarpParam",
                    localAlignment = "logical",
                    initPenalty = "numeric",
                    subset = "integer",
-                   subsetAdjust = "character"),
+                   subsetAdjust = "character",
+                   rtimeDifferenceThreshold = "numeric"),
          contains = "Param",
          prototype = prototype(
              binSize = 1,
@@ -1536,7 +1537,8 @@ setClass("ObiwarpParam",
              localAlignment = FALSE,
              initPenalty = 0,
              subset = integer(),
-             subsetAdjust = "average"),
+             subsetAdjust = "average",
+             rtimeDifferenceThreshold = 5),
          validity = function(object) {
              msg <- character()
              if (length(object@binSize) > 1 |

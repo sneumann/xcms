@@ -1265,7 +1265,8 @@ setMethod("plot", signature(x = "LamaParama"),
                               zero_weight = x@zeroWeight,
                               bs = x@bs)
     datap <- x@rtMap[[index]]
-    plot(datap, type = "p", xlab = xlab, ylab = ylab, col = colPoints, ...)
+    plot(datap[, 2L], datap[, 1L], type = "p", xlab = xlab, ylab = ylab,
+         col = colPoints, ...)
     points(model, type = "l", col = colFit)
 })
 

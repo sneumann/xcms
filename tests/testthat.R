@@ -3,14 +3,10 @@ library(xcms)
 library(faahKO)
 library(MSnbase)
 library(msdata)
+library(BiocParallel)
+prm <- SerialParam()
 
-if (.Platform$OS.type == "unix") {
-    prm <- MulticoreParam(3)
-} else {
-    # prm <- SnowParam(3)
-    prm <- SerialParam()
-}
-register(bpstart(prm))
+register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -19,7 +15,7 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
-faahko_xod <- findChromPeaks(faahko_od, param = cwp)
+faahko_xod <- findChromPeaks(faahko_od, param = cwp, BPPARAM = SerialParam())
 od_x <- faahko_od
 mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 od_chrs <- chromatogram(od_x, mz = mzr)
@@ -85,5 +81,3 @@ ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
 tst <- loadXcmsData("faahko_sub2")
 
 test_check("xcms")
-
-bpstop(prm)

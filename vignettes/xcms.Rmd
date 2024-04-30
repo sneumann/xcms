@@ -1,5 +1,5 @@
 ---
-title: "LC-MS data pre-processing and analysis with xcms"
+title: "LC-MS data preprocessing and analysis with xcms"
 package: xcms
 output:
   BiocStyle::html_document:
@@ -7,7 +7,7 @@ output:
     includes:
       in_header: xcms.bioschemas.html
 vignette: >
-  %\VignetteIndexEntry{LC-MS data prep-rocessing and analysis with xcms}
+  %\VignetteIndexEntry{LC-MS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,BiocStyle,pheatmap,SummarizedExperiment}
@@ -40,8 +40,8 @@ register(SerialParam())
 # Introduction
 
 The `r Biocpkg("xcms")` package provides the functionality to perform the
-pre-processing of LC-MS, GC-MS or LC-MS/MS data in which raw signals from mzML,
-mzXML or CDF files are processed into *feature* abundances. This pre-processing
+preprocessing of LC-MS, GC-MS or LC-MS/MS data in which raw signals from mzML,
+mzXML or CDF files are processed into *feature* abundances. This preprocessing
 includes chromatographic peak detection, sample alignment and correspondence
 analysis.
 
@@ -50,13 +50,13 @@ and has since been updated and modernized in several rounds to better integrate
 it with other R-based packages for the analysis of untargeted metabolomics
 data. This includes version 3 of *xcms* that used the `r Biocpkg("MSnbase")`
 package for MS data representation [@gattoMSnbaseEfficientElegant2020a]. The
-most recent update (*xcms* version 4) enables in addition pre-processing of MS
+most recent update (*xcms* version 4) enables in addition preprocessing of MS
 data represented by the modern `r Biocpkg("MsExperiment")` and
 `r Biocpkg("Spectra")` packages which provides an even better integration with
 the [RforMassSpectrometry](https://rformassspectrometry.org) R package ecosystem
 simplifying e.g. also compound annotation [@rainer_modular_2022].
 
-This document describes data import, exploration and pre-processing of a simple
+This document describes data import, exploration and preprocessing of a simple
 test LC-MS data set with the *xcms* package version >= 4. The same functions can
 be applied to the older *MSnbase*-based workflows (xcms version 3). Additional
 documents and tutorials covering also other topics of untargeted metabolomics
@@ -65,7 +65,7 @@ tutorial](https://jorainer.github.io/xcmsTutorials) available with more examples
 and details.
 
 
-# Pre-processing of LC-MS data
+# Preprocessing of LC-MS data
 
 ## Data import
 
@@ -89,7 +89,7 @@ Below we load all required packages, locate the raw CDF files within the
 *faahKO* package and build a *phenodata* `data.frame` describing the
 experimental setup. Generally, such data frames should contain all relevant
 experimental variables and sample descriptions (including also the names of the
-raw data files) and will be imported into R using either the `read.table`
+raw data files) and will be imported into R using either the `read.table()`
 function (if the file is in *csv* or tabulator delimited text file format) or
 also using functions from the *readxl* R package if it is in Excel file format.
 
@@ -140,21 +140,22 @@ more details on `Spectra` backends and how to change between them.
 
 The `MsExperiment` object is a simple and flexible container for MS
 experiments. The *raw* MS data is stored as a `Spectra` object that can be
-accessed through the `spectra` function.
+accessed through the `spectra()` function.
 
 ```{r}
 spectra(faahko)
 ```
 
-All spectra are organized *sequentially* (i.e., not by file) but the `fromFile`
-function can be used to get for each spectrum the information to which of the
-data files it belongs. Below we simply count the number of spectra per file.
+All spectra are organized *sequentially* (i.e., not by file) but the
+`fromFile()` function can be used to get for each spectrum the information to
+which of the data files it belongs. Below we simply count the number of spectra
+per file.
 
 ```{r}
 table(fromFile(faahko))
 ```
 
-Information on samples can be retrieved through the `sampleData` function.
+Information on samples can be retrieved through the `sampleData()` function.
 
 ```{r}
 sampleData(faahko)
@@ -171,7 +172,7 @@ sampleData(faahko_3)
 ```
 
 As a first evaluation of the data we below plot the base peak chromatogram (BPC)
-for each file in our experiment. We use the `chromatogram` method and set the
+for each file in our experiment. We use the `chromatogram()` method and set the
 `aggregationFun` to `"max"` to return for each spectrum the maximal intensity
 and hence create the BPC from the raw data. To create a total ion chromatogram
 we could set `aggregationFun` to `"sum"`.
@@ -187,7 +188,7 @@ names(group_colors) <- c("KO", "WT")
 plot(bpis, col = group_colors[sampleData(faahko)$sample_group])
 ```
 
-The `chromatogram` method returned a `MChromatograms` object that organizes
+The `chromatogram()` method returned a `MChromatograms` object that organizes
 individual `Chromatogram` objects (which in fact contain the chromatographic
 data) in a two-dimensional array: columns represent samples and rows
 (optionally) m/z and/or retention time ranges. Below we extract the chromatogram
@@ -201,7 +202,7 @@ intensity(bpi_1) |> head()
 
 From the BPC above it seems that after around 4200 seconds no signal is measured
 anymore. Thus, we filter below the full data set to a retention time range from
-2550 to 4250 seconds using the `filterRt` function. Note that at present this
+2550 to 4250 seconds using the `filterRt()` function. Note that at present this
 will only subset the spectra within the `MsExperiment`. Subsequently we
 re-create also the BPC.
 
@@ -213,8 +214,8 @@ bpis <- chromatogram(faahko, aggregationFun = "max")
 
 We next create boxplots representing the distribution of the total ion currents
 per data file. Such plots can be very useful to spot potentially problematic MS
-runs. To extract this information, we use the `tic` function on the `Spectra`
-object within `faahko` and split the values by file using `fromFile`.
+runs. To extract this information, we use the `tic()` function on the `Spectra`
+object within `faahko` and split the values by file using `fromFile()`.
 
 ```{r data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
 ## Get the total ion current by file
@@ -229,7 +230,7 @@ In addition, we can also cluster the samples based on similarity of their base
 peak chromatograms. Samples would thus be grouped based on similarity of their
 LC runs. For that we need however to *bin* the data along the retention time
 axis, since retention times will generally differ between samples. Below we use
-the `bin` function on the BPC to bin intensities into 2 second wide retention
+the `bin()` function on the BPC to bin intensities into 2 second wide retention
 time bins. The clustering is then performed using complete linkage hierarchical
 clustering on the pairwise correlations of the binned base peak chromatograms.
 
@@ -258,7 +259,7 @@ same sample index having the most similar BPC.
 
 Chromatographic peak detection aims at identifying all signal in each sample
 created from ions of the same originating compound species. Chromatographic peak
-detection can be performed in *xcms* with the `findChromPeaks` function and a
+detection can be performed in *xcms* with the `findChromPeaks()` function and a
 *parameter* object which defines and configures the algorithm that should be
 used (see `?findChromPeaks` for a list of supported algorithms). Before running
 any peak detection it is however strongly suggested to first visually inspect
@@ -267,7 +268,7 @@ be present in the samples in order to evaluate and adapt the settings of the
 peak detection algorithm since the default settings will not be appropriate for
 most LC-MS setups.
 
-Below we extract the EIC for one compound using the `chromatogram` function by
+Below we extract the EIC for one compound using the `chromatogram()` function by
 specifying in addition the m/z and retention time range where we would expect
 the signal for that compound.
 
@@ -280,10 +281,10 @@ chr_raw <- chromatogram(faahko, mz = mzr, rt = rtr)
 plot(chr_raw, col = group_colors[chr_raw$sample_group])
 ```
 
-Note that `Chromatogram` objects extracted by the `chromatogram` method contain
-an `NA` value if in a certain scan (i.e. in a spectrum for a specific retention
-time) no signal was measured in the respective m/z range. This is reflected by
-the lines not being drawn as continuous lines in the plot above.
+Note that `Chromatogram` objects extracted by the `chromatogram()` method
+contain an `NA` value if in a certain scan (i.e. in a spectrum for a specific
+retention time) no signal was measured in the respective m/z range. This is
+reflected by the lines not being drawn as continuous lines in the plot above.
 
 The peak above has thus a width of about 50 seconds. We can use this information
 to define the `peakwidth` parameter of the *centWave* peak detection method
@@ -337,7 +338,7 @@ parameter. Also, since less data is available to the algorithms, background
 signal estimation is performed differently and different settings for `snthresh`
 will need to be used (generally a lower `snthresh` will be used for EICs since
 the estimated background signal tends to be higher for data subsets than for the
-full data). Below we perform the peak detection with the `findChromPeaks`
+full data). Below we perform the peak detection with the `findChromPeaks()`
 function on the EIC generated above. The submitted *parameter* object defines
 which algorithm will be used and allows to define the settings for this
 algorithm. We use a `CentWaveParam` parameter object to use and configure the
@@ -347,27 +348,27 @@ algorithm. We use a `CentWaveParam` parameter object to use and configure the
 xchr <- findChromPeaks(chr_raw, param = CentWaveParam(snthresh = 2))
 ```
 
-We can access the identified chromatographic peaks with the `chromPeaks`
+We can access the identified chromatographic peaks with the `chromPeaks()`
 function.
 
 ```{r peak-detection-eic-chromPeaks}
 chromPeaks(xchr)
 ```
 
-Parallel to the `chromPeaks` matrix there is also a `chromPeakData` data frame
-that allows to add arbitrary annotations to each chromatographic peak, such as
-e.g. the MS level in which the peak was detected:
+Parallel to the `chromPeaks()` matrix there is also a `chromPeakData()` data
+frame that allows to add arbitrary annotations to each chromatographic peak,
+such as e.g. the MS level in which the peak was detected:
 
 ```{r peak-detection-chromatogram-chromPeakData}
 chromPeakData(xchr)
 ```
 
 Below we plot the EIC along with all identified chromatographic peaks using the
-`plot` function on the result object from above. Additional parameters `peakCol`
-and `peakBg` allow to define a foreground and background (fill) color for each
-identified chromatographic peak in the provided result object (i.e., we need to
-define one color for each row of `chromPeaks(xchr)` - column `"column"` (or
-`"sample"` if present) in that peak matrix specifies the sample in which the
+`plot()` function on the result object from above. Additional parameters
+`peakCol` and `peakBg` allow to define a foreground and background (fill) color
+for each identified chromatographic peak in the provided result object (i.e., we
+need to define one color for each row of `chromPeaks(xchr)` - column `"column"`
+(or `"sample"` if present) in that peak matrix specifies the sample in which the
 peak was identified).
 
 ```{r peak-detection-eic-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. Peak area of identified chromatographic peaks are highlighted in the sample group color."}
@@ -394,12 +395,12 @@ cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
 faahko <- findChromPeaks(faahko, param = cwp)
 ```
 
-The results of `findChromPeaks` on a `MsExperiment` object are returned as an
+The results of `findChromPeaks()` on a `MsExperiment` object are returned as an
 `XcmsExperiment` object. This object extends `MsExperiment` directly (hence
 providing the same access to all raw data) and contains all *xcms*
-pre-processing results. Note also that additional rounds of chromatographic peak
+preprocessing results. Note also that additional rounds of chromatographic peak
 detections could be performed and their results being added to existing peak
-detection results by additional calls to `findChromPeaks` on the result object
+detection results by additional calls to `findChromPeaks()` on the result object
 and using parameter `add = TRUE`.
 
 The `chromPeaks` function can also here be used to access the results from the
@@ -411,7 +412,7 @@ chromPeaks(faahko) |>
     head()
 ```
 
-Columns of this `chromPeaks` matrix might differ depending on the used peak
+Columns of this `chromPeaks()` matrix might differ depending on the used peak
 detection algorithm. Columns that all algorithms have to provide are: `"mz"`,
 `"mzmin"`, `"mzmax"`, `"rt"`, `"rtmin"` and `"rtmax"` that define the m/z and
 retention time range of the chromatographic peak (i.e. all mass peaks within
@@ -422,7 +423,7 @@ intensity. Finally, `"sample"` provides the index of the sample in which the
 peak was identified.
 
 Additional annotations for each individual peak can be extracted with the
-`chromPeakData` function. This data frame could also be used to add/store
+`chromPeakData()` function. This data frame could also be used to add/store
 arbitrary annotations for each detected peak (that don't necessarily need to be
 numeric).
 
@@ -433,9 +434,9 @@ chromPeakData(faahko)
 Peak detection will not always work perfectly for all types of peak shapes
 present in the data set leading to peak detection artifacts, such as (partially
 or completely) overlapping peaks or artificially split peaks (common issues
-especially for *centWave*). *xcms* provides the `refineChromPeaks` function that
-can be called on peak detection results in order to *refine* (or clean) peak
-detection results by either removing identified peaks not passing a certain
+especially for *centWave*). *xcms* provides the `refineChromPeaks()` function
+that can be called on peak detection results in order to *refine* (or clean)
+peak detection results by either removing identified peaks not passing a certain
 criteria or by merging artificially split or partially or completely overlapping
 chromatographic peaks. Different algorithms are available that can again be
 configured with their respective parameter objects: `CleanPeaksParam` and
@@ -508,7 +509,7 @@ peak refinement step.
 faahko <- faahko_pp
 ```
 
-Below we use the data from the `chromPeaks` matrix to calculate per-file
+Below we use the data from the `chromPeaks()` matrix to calculate per-file
 summaries of the peak detection results, such as the number of peaks per file as
 well as the distribution of the retention time widths.
 
@@ -529,7 +530,7 @@ pandoc.table(
                      "peaks."))
 ```
 
-While by default `chromPeaks` will return all identified chromatographic peaks
+While by default `chromPeaks()` will return all identified chromatographic peaks
 in a result object it is also possible to extract only chromatographic peaks for
 a specified m/z and/or rt range:
 
@@ -538,7 +539,7 @@ chromPeaks(faahko, mz = c(334.9, 335.1), rt = c(2700, 2900))
 ```
 
 We can also plot the location of the identified chromatographic peaks in the
-m/z - retention time space for one file using the `plotChromPeaks`
+m/z - retention time space for one file using the `plotChromPeaks()`
 function. Below we plot this information for the third sample.
 
 ```{r peak-detection-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample." }
@@ -561,7 +562,7 @@ peaks within that region. This can thus also be used to validate and verify that
 the used peak detection settings identified e.g. peaks for known compounds or
 internal standards properly. Below we extract the ion chromatogram for the m/z -
 rt region above and access the detected peaks in that region using the
-`chromPeaks` function.
+`chromPeaks()` function.
 
 ```{r peak-detection-eic-example-peak, message = FALSE}
 chr_ex <- chromatogram(faahko, mz = mzr, rt = rtr)
@@ -610,8 +611,8 @@ detected peaks (indicated by the smaller width of the boxes).
 
 Note that in addition to the above described identification of chromatographic
 peaks, it is also possible to *manually* define and add chromatographic peaks
-with the `manualChromPeaks` function (see `?manualChromPeaks` help page for more
-information).
+with the `manualChromPeaks()` function (see `?manualChromPeaks` help page for
+more information).
 
 
 ## Alignment
@@ -625,7 +626,7 @@ between different samples within an experiment.
 
 A plethora of alignment algorithms exist (see [@Smith:2013gr]), with some of
 them being also implemented in *xcms*. Alignment of LC-MS data can be performed
-in *xcms* using the `adjustRtime` method and an algorithm-specific parameter
+in *xcms* using the `adjustRtime()` method and an algorithm-specific parameter
 class (see `?adjustRtime` for an overview of available methods in *xcms*).
 
 In the example below we use the *obiwarp* method [@Prince:2006jj] to align the
@@ -637,11 +638,12 @@ experiment.
 faahko <- adjustRtime(faahko, param = ObiwarpParam(binSize = 0.6))
 ```
 
-Note that `adjustRtime`, besides calculating adjusted retention times for each
+Note that `adjustRtime()`, besides calculating adjusted retention times for each
 spectrum, adjusts also the retention times of the identified chromatographic
 peaks in the *xcms* result object. Adjusted retention times of individual
-spectra can be extracted from the result object using either the `adjustedRtime`
-function or using `rtime` with parameter `adjusted = TRUE` (the default):
+spectra can be extracted from the result object using either the
+`adjustedRtime()` function or using `rtime()` with parameter `adjusted = TRUE`
+(the default):
 
 ```{r alignment-rtime, message = FALSE }
 ## Extract adjusted retention times
@@ -656,9 +658,9 @@ rtime(faahko, adjusted = FALSE) |> head()
 
 To evaluate the impact of the alignment we plot the BPC on the adjusted data. In
 addition we plot also the differences between the adjusted and the raw retention
-times per sample using the `plotAdjustedRtime` function. To disable the
+times per sample using the `plotAdjustedRtime()` function. To disable the
 automatic extraction of all identified chromatographic peaks by the
-`chromatogram` function (which would not make much sense for a BPC) we use
+`chromatogram()` function (which would not make much sense for a BPC) we use
 `chromPeaks = "none"` below.
 
 ```{r alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 8, fig.cap = "Obiwarp aligned data. Base peak chromatogram before (top) and after alignment (middle) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
@@ -694,7 +696,7 @@ grid()
 both the raw and the adjusted retention times for all spectra and subset
 operation will in many cases drop adjusted retention times. Thus it might
 sometimes be useful to immediately **replace** the raw retention times in the
-data using the `applyAdjustedRtime` function.
+data using the `applyAdjustedRtime()` function.
 
 
 ### Subset-based alignment
@@ -752,7 +754,7 @@ Note that for any subset-alignment all parameters such as `minFraction` are
 relative to the `subset`, not the full experiment!
 
 Below we first remove any previous alignment results with the
-`dropAdjustedRtime` function to allow a fresh alignment using the subset-based
+`dropAdjustedRtime()` function to allow a fresh alignment using the subset-based
 option outlined above. In addition to removing adjusted retention times for all
 spectra, this function will also *restore* the original retention times for
 identified chromatographic peaks.
@@ -819,18 +821,18 @@ highly similar to those of the subset sample which was used for adjustment.
 
 ## Correspondence
 
-Correspondence is usually the final step in LC-MS data pre-processing in which
+Correspondence is usually the final step in LC-MS data preprocessing in which
 data, presumably representing signal from the same originating ions, is matched
 across samples. As a result, chromatographic peaks from different samples with
 similar m/z and retention times get grouped into LC-MS *features*. The function
-to perform the correspondence in *xcms* is called `groupChromPeaks` that again
+to perform the correspondence in *xcms* is called `groupChromPeaks()` that again
 supports different algorithms which can be selected and configured with a
 specific parameter object (see `?groupChromPeaks` for an overview). For our
 example we will use the *peak density* method [@Smith:2006ic] that, within small
 slices along the m/z dimension, combines chromatographic peaks depending on the
 density of these peaks along the retention time axis. To illustrate this, we
 *simulate* below the peak grouping for an m/z slice containing multiple
-chromatoghaphic peaks within each sample using the `plotChromPeakDensity`
+chromatoghaphic peaks within each sample using the `plotChromPeakDensity()`
 function and a `PeakDensityParam` object with parameter `minFraction = 0.4`
 (features are only defined if in at least 40% of samples a chromatographic peak
 was present) - parameter `sampleGroups` is used to define to which sample group
@@ -922,7 +924,7 @@ points(featureDefinitions(faahko)$mzmed, mzw, pch = 21,
 ```
 
 Results from the correspondence analysis can be accessed with the
-`featureDefinitions` and `featureValues` function. The former returns a data
+`featureDefinitions()` and `featureValues()` function. The former returns a data
 frame with general information on each of the defined features, with each row
 being one feature and columns providing information on the median m/z and
 retention time as well as the indices of the chromatographic peaks assigned to
@@ -933,9 +935,9 @@ features.
 featureDefinitions(faahko) |> head()
 ```
 
-The `featureValues` function returns a `matrix` with rows being features and
+The `featureValues()` function returns a `matrix` with rows being features and
 columns samples. The content of this matrix can be defined using the `value`
-argument which can be any column name in the `chromPeaks` matrix. With the
+argument which can be any column name in the `chromPeaks()` matrix. With the
 default `value = "into"` a matrix with the integrated signal of the peaks
 corresponding to a feature in a sample are returned. This is then generally used
 as the intensity matrix for downstream analysis. Below we extract the
@@ -956,17 +958,17 @@ section).
 
 The performance of peak detection, alignment and correspondence should always be
 evaluated by inspecting extracted ion chromatograms e.g. of known compounds,
-internal standards or identified features in general. The `featureChromatograms`
-function allows to extract chromatograms for each feature present in
-`featureDefinitions`. The returned `MChromatograms` object contains an ion
-chromatogram for each feature (each row containing the data for one feature) and
-sample (each column representing containing data for one sample). Parameter
-`features` allows to define specific features for which the EIC should be
-returned. These can be specified with their index or their ID (i.e. their row
-name in the `featureDefinitions` data frame. If `features` is not defined, EICs
-are returned for **all** features in a data set, which can take also a
-considerable amount of time. Below we extract the chromatograms for the first 4
-features.
+internal standards or identified features in general. The
+`featureChromatograms()` function allows to extract chromatograms for each
+feature present in `featureDefinitions()`. The returned `MChromatograms` object
+contains an ion chromatogram for each feature (each row containing the data for
+one feature) and sample (each column representing containing data for one
+sample). Parameter `features` allows to define specific features for which the
+EIC should be returned. These can be specified with their index or their ID
+(i.e. their row name in the `featureDefinitions()` data frame. If `features` is
+not defined, EICs are returned for **all** features in a data set, which can
+take also a considerable amount of time. Below we extract the chromatograms for
+the first 4 features.
 
 ```{r featureChromatograms, message = FALSE }
 feature_chroms <- featureChromatograms(faahko, features = 1:4)
@@ -1001,7 +1003,7 @@ intensity signal). The aim of the gap filling step is to reduce the number of
 such missing values by integrating signals from the original data files for
 samples in which no chromatographic peak was found from the m/z - rt region
 where signal from the ion is expected. Gap filling can be performed in *xcms*
-with the `fillChromPeaks` function and a parameter object selecting and
+with the `fillChromPeaks()` function and a parameter object selecting and
 configuring the gap filling algorithm. The method of choice is
 `ChromPeakAreaParam` that integrates the signal (in samples in which no
 chromatographic peak was found for a feature) in the m/z - rt region that is
@@ -1033,15 +1035,15 @@ the LC-MS feature grouping vignette for details) we could also extract all
 results as a `SummarizedExperiment` object. This is the *standard* data
 container for Bioconductor defined in the `r Biocpkg("SummarizedExperiment")`
 package and integration with other Bioconductor packages might thus be easier
-using that type of object. Below we use the `quantify` function to extract the
-*xcms* pre-processing results as such a `SummarizedExperiment`
-object. Internally, the `featureValues` function is used to generate the feature
-value matrix. We can pass any parameters from that function to the `quantify`
-call. Below we use `value = "into"` and `method = "sum"` to report the
-integrated peak signal as intensity and to sum these values in samples in which
-more than one chromatographic peak was assigned to a feature (for that option it
-is important to run `refineChromPeaks` like described above to merge overlapping
-peaks in each sample).
+using that type of object. Below we use the `quantify()` function to extract the
+*xcms* preprocessing results as such a `SummarizedExperiment`
+object. Internally, the `featureValues()` function is used to generate the
+feature value matrix. We can pass any parameters from that function to the
+`quantify()` call. Below we use `value = "into"` and `method = "sum"` to report
+the integrated peak signal as intensity and to sum these values in samples in
+which more than one chromatographic peak was assigned to a feature (for that
+option it is important to run `refineChromPeaks()` like described above to merge
+overlapping peaks in each sample).
 
 ```{r}
 library(SummarizedExperiment)
@@ -1049,24 +1051,24 @@ res <- quantify(faahko, value = "into", method = "sum")
 res
 ```
 
-The information from `featureDefinitions` is now stored in the `rowData` of this
-object. The `rowData` provides annotations and information for each **row** in
-the `SummarizedExperiment` (which in our case are the **features**).
+The information from `featureDefinitions()` is now stored in the `rowData()` of
+this object. The `rowData()` provides annotations and information for each
+**row** in the `SummarizedExperiment` (which in our case are the **features**).
 
 ```{r}
 rowData(res)
 ```
 
 Annotations for **columns** (in our case **samples**) are stored as
-`colData`. In this data frame each row contains annotations for one sample (and
-hence one column in the feature values matrix).
+`colData()`. In this data frame each row contains annotations for one sample
+(and hence one column in the feature values matrix).
 
 ```{r}
 colData(res)
 ```
 
-Finally, the feature matrix is stored as an `assay` within the object. Note that
-a `SummarizedExperiment` can have multiple assays which have to be numeric
+Finally, the feature matrix is stored as an *assay* within the object. Note
+that a `SummarizedExperiment` can have multiple assays which have to be numeric
 matrices with the number of rows and columns matching the number of features and
 samples, respectively. Below we list the names of the available assays.
 
@@ -1074,7 +1076,7 @@ samples, respectively. Below we list the names of the available assays.
 assayNames(res)
 ```
 
-And we can access the actual data using the `assay` function, optionally also
+And we can access the actual data using the `assay()` function, optionally also
 providing the name of the assay we want to access. Below we show the first 6
 lines of that matrix.
 
@@ -1102,7 +1104,7 @@ And we can extract the feature values without gap-filling:
 assay(res, "raw_nofill") |> head()
 ```
 
-Finally, a history of the full processing with *xcms* is available as `metadata`
+Finally, a history of the full processing with *xcms* is available as *metadata*
 in the `SummarizedExperiment`.
 
 ```{r}
@@ -1110,7 +1112,7 @@ metadata(res)
 ```
 
 This same information can also be extracted from the *xcms* result object using
-the `processHistory` function. Below we extract the information for the first
+the `processHistory()` function. Below we extract the information for the first
 processing step.
 
 ```{r}
@@ -1162,20 +1164,21 @@ properties of the mice analyzed (sex, age, litter mates etc).
 
 ## Quality-based filtering of features
 
-When dealing with metabolomics results, it is often necessary to filter
-features based on certain criteria. These criteria are typically derived from
-statistical formulas applied to full rows of data, where each row represents a
-feature. The `filterFeatures` function provides a robust solution for filtering
-features based on these conventional quality assessment criteria. It supports
-multiple types of filtering, allowing users to tailor the filtering process to
-their specific needs, all controlled by the `filter` argument. This function
-and its implementations are applicable to both `XcmsExperiment` results objects
-and `SummarizedExperiment` objects.
+When dealing with metabolomics results, it is often necessary to filter features
+based on certain criteria. These criteria are typically derived from statistical
+formulas applied to full rows of data, where each row represents a feature. The
+`filterFeatures()` function provides a robust solution for filtering features
+based on these conventional quality assessment criteria. It supports multiple
+types of filtering, allowing users to tailor the filtering process to their
+specific needs, all controlled by the `filter` argument. This function and its
+implementations are applicable to both `XcmsExperiment` results objects and
+`SummarizedExperiment` objects.
 
-We will demonstrate how to use the `filterFeatures` function to perform quality
-assessment and filtering on both the `faahko` and `res` variables defined above.
-The `filter` argument can accommodate various types of input, each determining the
-specific type of quality assessment and filtering to be performed.
+We will demonstrate how to use the `filterFeatures()` function to perform
+quality assessment and filtering on both the `faahko` and `res` variables
+defined above.  The `filter` argument can accommodate various types of input,
+each determining the specific type of quality assessment and filtering to be
+performed.
 
 The `RsdFilter` enable users to filter features based on their relative
 standard deviation (coefficient of variation) for a specified `threshold`. It
@@ -1277,12 +1280,13 @@ samples. More information can be found in the documentation of the filter:
 
 Normalizing features' signal intensities is required, but at present not (yet)
 supported in `xcms` (some methods might be added in near future). It is advised
-to use the `SummarizedExperiment` returned by the `quantify` method for any
+to use the `SummarizedExperiment` returned by the `quantify()` method for any
 further data processing, as this type of object stores feature definitions,
 sample annotations as well as feature abundances in the same object. For the
 identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
-packages, such as Bioconductor's excellent `limma` package.
+packages, such as Bioconductor's excellent *limma* package.
+
 
 ## Alignment to an external reference dataset
 
@@ -1293,7 +1297,7 @@ laboratories and over time, the same samples may result in variation in
 retention time, especially because the LC system can be quite unstable. In these
 cases, an alignment step using the `adjustRtime()` function with the
 `LamaParam` parameter can allow the user to perform this type of alignment.
-We will go through this step by step below. 
+We will go through this step by step below.
 
 Let's load an already analyzed dataset `ref` and our previous dataset before
 alignment, which will be `tst`. We will first restrict their retention time
@@ -1305,12 +1309,12 @@ tst <- loadXcmsData("faahko_sub2")
 ```
 
 Now, we will attempt to align these two samples with the previous dataset. The
-first step is to extract landmark features (referred to as `lamas`). To achieve
+first step is to extract landmark features (referred to as *lamas*). To achieve
 this, we will identify the features present in every QC sample of the `ref`
-dataset. To do so, we will categorize (using `factor()`) our data by 
+dataset. To do so, we will categorize (using `factor()`) our data by
 `sample_type` and only retain the QC samples. This variable will be utilized to
-filter the features using the `PercentMissingFilter()` parameter within the 
-`filterFeatures()` function (see section above for more information on this 
+filter the features using the `PercentMissingFilter` parameter within the
+`filterFeatures()` function (see section above for more information on this
 method)
 
 ```{r}
@@ -1318,7 +1322,8 @@ f <- sampleData(ref)$sample_type
 f[f != "QC"] <- NA
 ref <- filterFeatures(ref, PercentMissingFilter(threshold = 0, f = f))
 ref_mz_rt <- featureDefinitions(ref)[, c("mzmed","rtmed")]
-ref_mz_rt
+head(ref_mz_rt)
+nrow(ref_mz_rt)
 ```
 
 This is what the `lamas` input should look like for alignment. In terms of
@@ -1392,30 +1397,47 @@ abline(v = mtch[[1]]$obs)
 ```
 
 The overlay of BPC above provides insight into the correlation between accurate
-alignment and the presence of peaks matching with `lamas.` Furthermore, a more
-detailed examination of the matching and the model used for fitting each file
-is possible. Numerical information can be obtained using the
+alignment and the presence of peaks matching with `lamas`. For this particular
+sample no chromatographic peaks were matched to the `lamas`  between 2500 and
+3000 seconds and hence the alignment in that region was not good. For the second
+file, chrom peaks could also be matched in that region resulting in a better
+alignment.
+
+```{r}
+par(mfrow = c(1, 1))
+plot(bpc[1, 2], col = "#00000080", main = "Distribution CP matched to Lamas")
+points(rtime(bpc_tst_adj[1, 2]), intensity(bpc_tst_adj[1, 2]), type = "l",
+       col = "#0000ff80")
+grid()
+abline(v = mtch[[2]]$obs)
+```
+
+Furthermore, a more detailed examination of the matching and the model used for
+fitting each file is possible. Numerical information can be obtained using the
 `summarizeLamaMatch()` function. From this, the percentage of chromatographic
 peaks utilized for alignment can be computed relative to the total number of
-peaks in the file. Additionally, it is feasible to directly `plot()` the
-`param` object for the file of interest, showcasing the distribution of these
+peaks in the file. Additionally, it is feasible to directly `plot()` the `param`
+object for the file of interest, showcasing the distribution of these
 chromatographic peaks along with the fitted model line.
 
 ```{r}
-#access summary of matches and model information
+#' access summary of matches and model information
 summary <- summarizeLamaMatch(param)
-summary 
+summary
 
-# coverage for each file
+#' coverage for each file
 summary$Matched_peaks / summary$Total_peaks * 100
 
-#access the information on the model of for the first file 
-summary$model_summary[[1]]
+#' access the information on the model of for the first file
+summary$Model_summary[[1]]
 
-# Plot obs vs. ref with fitting line 
-plot(param, index = 1L, main = "ChromPeaks versus Lamas for the first file", 
+#' Plot obs vs. ref with fitting line
+plot(param, index = 1L, main = "ChromPeaks versus Lamas for the first file",
      colPoint = "red")
+abline(0, 1, lty = 3, col = "grey")
+grid()
 ```
+
 
 # Additional details and notes
 
@@ -1424,7 +1446,7 @@ plot(param, index = 1L, main = "ChromPeaks versus Lamas for the first file",
 *xcms* result objects can be subset/filtered by sample using the `[`
 method or one of the `filter*` functions (although the `XcmsExperiment` supports
 at present only few selected filter functions). In some cases filtering can
-remove pre-processing results, but most filter functions support parameters
+remove preprocessing results, but most filter functions support parameters
 `keepFeatures` and `keepAdjustedRtime` that can be set to `TRUE` to avoid their
 removal.
 
@@ -1442,8 +1464,8 @@ memory. This needs also to be considered, when the number of parallel processes
 is defined.
 
 Unix-based systems (Linux, macOS) support `multicore`-based parallel
-processing. To configure it globally we `register` the parameter class. Note
-also that `bpstart` is used below to initialize the parallel processes.
+processing. To configure it globally we `register()` the parameter class. Note
+also that `bpstart()` is used below to initialize the parallel processes.
 
 ```{r multicore, message = FALSE, eval = FALSE }
 register(bpstart(MulticoreParam(2)))
@@ -1468,9 +1490,10 @@ register(bpstart(SnowParam(2)))
 Some of the documentations listed here are still based on xcms version 3 but
 will be subsequently updated.
 
-- [Metabolomics pre-processing with
-  `xcms`](https://jorainer.github.io/metabolomics2018): more detailed
-  description of the pre-processing of LC-MS data with *xcms*.
+- [Exploring and analyzing LC-MS data with Spectra and
+  xcms](https://jorainer.github.io/xcmsTutorials/): tutorial explaining general
+  data handling using the *Spectra* package and LC-MS data preprocessing with
+  *xcms*.
 - [MetaboAnnotationTutorials](https://jorainer.github.io/MetaboAnnotationTutorials):
   examples for annotation of metabolomics data from [@rainer_modular_2022].
 - [@gattoMSnbaseEfficientElegant2020a]: describes the concept of the *on-disk*

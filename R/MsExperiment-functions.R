@@ -333,6 +333,7 @@
 
 .mse_obiwarp_chunks <- function(x, param, msLevel = 1L, chunkSize = 1L,
                                 BPPARAM = bpparam()) {
+    message("value ", param@rtimeDifferenceThreshold)
     rt_raw <- split(rtime(x), fromFile(x))
     subset_idx <- subset(param)
     if (length(subset_idx))

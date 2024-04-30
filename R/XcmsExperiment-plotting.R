@@ -380,12 +380,13 @@ setMethod(
     fns <- basename(fileNames(x))
     for (i in seq_along(x)) {
         z <- x[i]
-        lst <- as(filterMsLevel(spectra(z), msLevel = msLevel), "list")
+        flt <- filterMsLevel(spectra(z), msLevel = msLevel)
+        lst <- as(flt, "list")
         lns <- lengths(lst) / 2
         lst <- do.call(rbind, lst)
         if (!length(lst))
             next
-        df <- data.frame(rt = rep(rtime(z), lns), lst)
+        df <- data.frame(rt = rep(rtime(flt), lns), lst)
         colnames(df)[colnames(df) == "intensity"] <- "i"
         do.call(MSnbase:::.plotXIC,
                 c(list(x = df, main = fns[i], layout = NULL), dots))

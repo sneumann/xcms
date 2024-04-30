@@ -311,7 +311,8 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
                          localAlignment = FALSE, initPenalty = 0,
                          subset = integer(),
-                         subsetAdjust = c("average", "previous")) {
+                         subsetAdjust = c("average", "previous"),
+                         rtimeDifferenceThreshold = 5) {
     subsetAdjust <- match.arg(subsetAdjust)
     new("ObiwarpParam", binSize = binSize,
         centerSample = as.integer(centerSample),
@@ -319,7 +320,8 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
         gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
         factorGap = factorGap, localAlignment = localAlignment,
         initPenalty = initPenalty, subset = as.integer(subset),
-        subsetAdjust = subsetAdjust)
+        subsetAdjust = subsetAdjust,
+        rtimeDifferenceThreshold = rtimeDifferenceThreshold[1L])
 }
 
 #' @return The \code{FillChromPeaksParam} function returns a

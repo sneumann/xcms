@@ -1,5 +1,6 @@
-#' @title Store/load contents of `MsExperiment` and `XcmsExperiment` objects
-#' as/from plain text files
+#' @include XcmsExperiment.R
+#' @title Store contents of `MsExperiment` and `XcmsExperiment` objects as
+#' plain text files
 #'
 #' @name PlainTextParam
 #'

@@ -117,7 +117,8 @@ ObiwarpParam(
   localAlignment = FALSE,
   initPenalty = 0,
   subset = integer(),
-  subsetAdjust = c("average", "previous")
+  subsetAdjust = c("average", "previous"),
+  rtimeDifferenceThreshold = 5
 )
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
@@ -328,6 +329,18 @@ alignment should be performed instead of the default global alignment.}
 
 \item{initPenalty}{For \code{ObiwarpParam}: \code{numeric(1)} defining the penalty for
 initiating an alignment (for local alignment only).}
+
+\item{rtimeDifferenceThreshold}{For \code{ObiwarpParam}: \code{numeric(1)} defining
+the threshold to identify a \emph{gap} in the sequence of retention times of
+(MS1) spectra of a sample/file. A gap is defined if the difference in
+retention times between consecutive spectra is
+\verb{> rtimeDifferenceThreshold} of the median observed difference or
+retenion times of that data sample/file. Spectra with an retention time
+after such a \emph{gap} will not be adjusted. The default for this parameter
+is \code{rtimeDifferenceThreshold = 5}. For Waters data with lockmass scans
+or LC-MS/MS data this might however be a too low threshold and it should
+be increased. See also
+\href{https://github.com/sneumann/xcms/issues/739}{issue #739}.}
 
 \item{value}{The value for the slot.}
 

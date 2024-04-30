@@ -194,6 +194,18 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     start and end points and `response = 100` warping using all bijective
 #'     anchors.
 #'
+#' @param rtimeDifferenceThreshold For `ObiwarpParam`: `numeric(1)` defining
+#'     the threshold to identify a *gap* in the sequence of retention times of
+#'     (MS1) spectra of a sample/file. A gap is defined if the difference in
+#'     retention times between consecutive spectra is
+#'     `> rtimeDifferenceThreshold` of the median observed difference or
+#'     retenion times of that data sample/file. Spectra with an retention time
+#'     after such a *gap* will not be adjusted. The default for this parameter
+#'     is `rtimeDifferenceThreshold = 5`. For Waters data with lockmass scans
+#'     or LC-MS/MS data this might however be a too low threshold and it should
+#'     be increased. See also
+#'     [issue #739](https://github.com/sneumann/xcms/issues/739).
+#'
 #' @param smooth For `PeakGroupsParam`: `character(1)` defining the function to
 #'     be used to interpolate corrected retention times for all peak groups.
 #'     Can be either `"loess"` or `"linear"`.

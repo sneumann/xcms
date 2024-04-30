@@ -448,15 +448,15 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     ## median difference between spectras' scan time.
     mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
 
-    mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
+    mst1 <- which(scantime1_diff > param@rtimeDifferenceThreshold * mstdiff)[1]
     if (!is.na(mst1)) {
-        message("Found gaps in scan times of the center sample: cut ",
+        warning("Found gaps in scan times of the center sample: cut ",
                 "scantime-vector at ", scantime1[mst1]," seconds.")
         scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
     }
-    mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
+    mst2 <- which(scantime2_diff > param@rtimeDifferenceThreshold * mstdiff)[1]
     if (!is.na(mst2)) {
-        message("Found gaps in scan time. Cutting scantime-vector at ",
+        warning("Found gaps in scan time. Cutting scantime-vector at ",
                 scantime2[mst2]," seconds.")
         scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
     }

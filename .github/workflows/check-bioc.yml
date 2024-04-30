@@ -54,8 +54,8 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: 'devel', bioc: '3.19'}
-          - { os: windows-latest, r: 'devel', bioc: '3.19'}
+          - { os: macOS-latest, r: 'next', bioc: '3.19'}
+          - { os: windows-latest, r: 'next', bioc: '3.19'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -160,12 +160,12 @@ jobs:
       - name: Install BiocManager
         run: |
           message(paste('****', Sys.time(), 'installing BiocManager ****'))
-          remotes::install_cran("BiocManager")
+          remotes::install_cran("BiocManager", type = "source")
         shell: Rscript {0}
 
       - name: Set BiocVersion
         run: |
-          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE)
+          BiocManager::install(version = "${{ matrix.config.bioc }}", ask = FALSE, type = "source")
         shell: Rscript {0}
 
       - name: Install dependencies pass 1
@@ -177,13 +177,23 @@ jobs:
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
 
-          ## Pass #1 at installing dependencies
-          BiocManager::install(c("ncdf4", "mzR"))
-          message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos =
-          BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)
+          ## Workaround for problems with cached S4objects in binary packages
+          BiocManager::install("GenomeInfoDb", force = TRUE, type = "source")
+          BiocManager::install("BiocParallel", force = TRUE, type = "source")
+          BiocManager::install("S4Vectors", force = TRUE, type = "source")
+          BiocManager::install("SummarizedExperiment", force = TRUE, type = "source")
+          ## install xcms with dependencies - to ensure dependencies are installed from source;
+          ## somehow install_local installs binary packages instead.
+          BiocManager::install("mzR", force = TRUE)
+          BiocManager::install("MSnbase", force = TRUE, type = "source")
+          BiocManager::install("xcms", force = TRUE, type = "source", dependencies = TRUE)
+          BiocManager::install("faahKO", type = "source")
 
-          BiocManager::install(c("rmarkdown", "BiocStyle"))
+          ## Pass #1 at installing dependencies
+          message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, build_manual = FALSE, type = "source")
+
+          BiocManager::install(c("rmarkdown", "BiocStyle"), type = "source")
         continue-on-error: true
         shell: Rscript {0}
 
@@ -191,31 +201,24 @@ jobs:
         run: |
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, type = "source")
 
           ## Manually install packages that seem to be skipped.
           message(paste('****', Sys.time(), 'force installation of selected packages  ****'))
-          BiocManager::install(c("faahKO"))
-          BiocManager::install("ProtGenerics")
-          BiocManager::install("MSnbase")
-          BiocManager::install("mzR", type = "source", force = TRUE)
-          BiocManager::install("Spectra")
-          BiocManager::install("MsBackendMgf")
-          BiocManager::install("MetaboCoreUtils")
-          BiocManager::install("magick")
-          BiocManager::install("RforMassSpectrometry/MsExperiment")
+          BiocManager::install("RforMassSpectrometry/MsCoreUtils", force = TRUE)
+          BiocManager::install("magick", type = "source")
 
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
-          remotes::install_cran("rcmdcheck")
-          BiocManager::install(c("BiocCheck", "DBI"))
+          remotes::install_cran("rcmdcheck", type = "source")
+          BiocManager::install("BiocCheck", type = "source")
         shell: Rscript {0}
 
       - name: Install BiocGenerics
         if:  env.has_RUnit == 'true'
         run: |
           ## Install BiocGenerics
-          BiocManager::install("BiocGenerics")
+          BiocManager::install("BiocGenerics", type = "source")
         shell: Rscript {0}
 
       - name: Install covr
