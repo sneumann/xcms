@@ -70,7 +70,7 @@ examples."><meta property="og:image" content="https://sneumann.github.io/xcms/lo
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -187,50 +187,50 @@ examples.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>
 object.</p></dd>
 
 
-<dt>binSize</dt>
+<dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p><code>numeric(1)</code> defining the size of a bin (in Dalton).</p></dd>
 
 
-<dt>msLevel.</dt>
+<dt id="arg-mslevel-">msLevel.<a class="anchor" aria-label="anchor" href="#arg-mslevel-"></a></dt>
 <dd><p>For <code>bin</code>, <code>clean</code>, <code>filterMsLevel</code>,
 <code>removePeaks</code>: <code>numeric(1)</code> defining the MS level(s)
 to which operations should be applied or to which the object should be
 subsetted.</p></dd>
 
 
-<dt>object</dt>
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>
 object.</p></dd>
 
 
-<dt>all</dt>
+<dt id="arg-all">all<a class="anchor" aria-label="anchor" href="#arg-all"></a></dt>
 <dd><p>For <code>clean</code>: <code>logical(1)</code>, if <code>TRUE</code> all zeros are
 removed.</p></dd>
 
 
-<dt>verbose</dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p><code>logical(1)</code> whether progress information should be
 displayed.</p></dd>
 
 
-<dt>n</dt>
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>For <code>filterAcquisitionNum</code>: <code>integer</code> defining the
 acquisition numbers of the spectra to which the data set should be
 sub-setted.</p></dd>
 
 
-<dt>file</dt>
+<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>For <code>filterAcquisitionNum</code>:
 <code>integer</code> defining the file index within the object to subset the
 object by file.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>For <code>normalize</code>: <code>character(1)</code> specifying the
 normalization method. See <code><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></code> in the <code>MSnbase</code>
 package for details.
@@ -241,24 +241,24 @@ For <code>pickPeaks</code>: <code>character(1)</code> defining the method. See
 details.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional additional arguments.</p></dd>
 
 
-<dt>halfWindowSize</dt>
+<dt id="arg-halfwindowsize">halfWindowSize<a class="anchor" aria-label="anchor" href="#arg-halfwindowsize"></a></dt>
 <dd><p>For <code>pickPeaks</code> and <code>smooth</code>:
 <code>integer(1)</code> defining the window size for the peak picking. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code> and <code><a href="adjustRtime.html">smooth</a></code> in the <code>MSnbase</code>
 package for details and options.</p></dd>
 
 
-<dt>SNR</dt>
+<dt id="arg-snr">SNR<a class="anchor" aria-label="anchor" href="#arg-snr"></a></dt>
 <dd><p>For <code>pickPeaks</code>: <code>numeric(1)</code> defining the signal to
 noise ratio to be considered. See <code><a href="https://lgatto.github.io/MSnbase/reference/pickPeaks-method.html" class="external-link">pickPeaks</a></code>
 documentation for details.</p></dd>
 
 
-<dt>t</dt>
+<dt id="arg-t">t<a class="anchor" aria-label="anchor" href="#arg-t"></a></dt>
 <dd><p>For <code>removePeaks</code>: either a <code>numeric(1)</code> or <code>"min"</code>
 defining the threshold (method) to be used. See
 <code><a href="https://lgatto.github.io/MSnbase/reference/removePeaks-methods.html" class="external-link">removePeaks</a></code> for details.</p></dd>

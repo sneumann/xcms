@@ -78,7 +78,7 @@ will be skipped/not considered for feature grouping."><meta property="og:image" 
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -182,75 +182,75 @@ will be skipped/not considered for feature grouping.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>threshold</dt>
+    <dl><dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p><code>numeric(1)</code> with the minimal required similarity score to
 group featues. This is passed to the <code>groupFun</code> function.</p></dd>
 
 
-<dt>n</dt>
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p><code>numeric(1)</code> defining the total number of samples per feature group
 on which this similarity calculation should be performed. This value is
 rounded up to the next larger integer value.</p></dd>
 
 
-<dt>onlyPeak</dt>
+<dt id="arg-onlypeak">onlyPeak<a class="anchor" aria-label="anchor" href="#arg-onlypeak"></a></dt>
 <dd><p><code>logical(1)</code> whether the correlation should be performed only
 on the signals within the identified chromatographic peaks
 (<code>onlyPeak = TRUE</code>, default) or all the signal from the extracted ion
 chromatogram.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character(1)</code> defining whether samples should be grouped based
 on the sum of the maximal peak intensity (<code>value = "maxo"</code>, the default)
 or the integrated peak area (<code>value = "into"</code>) for a feature.</p></dd>
 
 
-<dt>groupFun</dt>
+<dt id="arg-groupfun">groupFun<a class="anchor" aria-label="anchor" href="#arg-groupfun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to group rows
 based on a pairwise similarity matrix. Defaults to
 <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code>.</p></dd>
 
 
-<dt>ALIGNFUN</dt>
+<dt id="arg-alignfun">ALIGNFUN<a class="anchor" aria-label="anchor" href="#arg-alignfun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to <em>align</em>
 chromatograms prior similarity calculation. Defaults to
 <code>ALIGNFUN = alignRt</code>. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> for
 more information.</p></dd>
 
 
-<dt>ALIGNFUNARGS</dt>
+<dt id="arg-alignfunargs">ALIGNFUNARGS<a class="anchor" aria-label="anchor" href="#arg-alignfunargs"></a></dt>
 <dd><p><strong>named</strong> <code>list</code> with arguments for <code>ALIGNFUN</code>.
 Defaults to <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code>.</p></dd>
 
 
-<dt>FUN</dt>
+<dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to <code>FUN = cor</code>.
 See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> for more information.</p></dd>
 
 
-<dt>FUNARGS</dt>
+<dt id="arg-funargs">FUNARGS<a class="anchor" aria-label="anchor" href="#arg-funargs"></a></dt>
 <dd><p><strong>named</strong> <code>list</code> with arguments for <code>FUN</code>. Defaults to
 <code>FUN = list(use = "pairwise.complete.obs")</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>for <code>EicSimilarityParam</code>: additional arguments to be passed to
 <code>groupFun</code> and <code>featureChromatograms</code> (such as <code>expandRt</code> to expand the
 retention time range of each feature).</p></dd>
 
 
-<dt>object</dt>
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> or <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with LC-MS
 pre-processing results.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p><code>EicSimilarityParam</code> object with the settings for the method.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the features
 should be grouped.</p></dd>
 

@@ -102,7 +102,7 @@ information on the method.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -365,21 +365,21 @@ information on the method.</p></li>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>adjustRtime</code>: an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>,
 <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code> or <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object defining the alignment method (and its
 setting).</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>adjustRtime</code> if <code>object</code> is either an <code>MsExperiment</code> or
 <code>XcmsExperiment</code>: <code>integer(1)</code> defining the number of files (samples)
 that should be loaded into memory and processed at the same time.
@@ -394,17 +394,17 @@ the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parallel processing setup. Defaults to <code>BPPARAM = bpparam()</code>.
 See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>For <code>adjustRtime</code>: <code>integer(1)</code> defining the MS level on
 which the alignment should be performed.</p></dd>
 
 
-<dt>minFraction</dt>
+<dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> between 0 and 1
 defining the minimum required proportion of samples in which peaks for
 the peak group were identified. Peak groups passing this criteria will
@@ -417,7 +417,7 @@ the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).</p></dd>
 
 
-<dt>extraPeaks</dt>
+<dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
 number of additional peaks for all samples to be assigned to a peak
 group (feature) for retention time correction. For a data set with 6
@@ -427,25 +427,25 @@ assigned to a peak group and considers also multiple peaks within a
 sample that are assigned to the group.</p></dd>
 
 
-<dt>smooth</dt>
+<dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the function to
 be used to interpolate corrected retention times for all peak groups.
 Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
 
 
-<dt>span</dt>
+<dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
 passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
 
 
-<dt>family</dt>
+<dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
 
 
-<dt>peakGroupsMatrix</dt>
+<dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: optional <code>matrix</code> of (raw)
 retention times for the (marker) peak groups on which the alignment
 should be performed. Each column represents a sample, each row a
@@ -453,7 +453,7 @@ feature/peak group. The <code>adjustRtimePeakGroups</code> method is used by
 default to determine this matrix on the provided <code>object</code>.</p></dd>
 
 
-<dt>subset</dt>
+<dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>integer</code> with the
 indices of samples within the experiment on which the alignment models
 should be estimated.
@@ -461,20 +461,20 @@ Samples not part of the subset are adjusted based on the closest subset
 sample. See <em>Subset-based alignment</em> section for details.</p></dd>
 
 
-<dt>subsetAdjust</dt>
+<dt id="arg-subsetadjust">subsetAdjust<a class="anchor" aria-label="anchor" href="#arg-subsetadjust"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>character(1)</code>
 specifying the method with which non-subset samples should be adjusted.
 Supported options are <code>"previous"</code> and <code>"average"</code> (default).
 See <em>Subset-based alignment</em> section for details.</p></dd>
 
 
-<dt>binSize</dt>
+<dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
 parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></dd>
 
 
-<dt>centerSample</dt>
+<dt id="arg-centersample">centerSample<a class="anchor" aria-label="anchor" href="#arg-centersample"></a></dt>
 <dd><p><code>integer(1)</code> defining the index of the center sample
 in the experiment. It defaults to
 <code>floor(median(1:length(fileNames(object))))</code>. Note that if
@@ -482,14 +482,14 @@ in the experiment. It defaults to
 within these subset samples.</p></dd>
 
 
-<dt>response</dt>
+<dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the
 <em>responsiveness</em> of warping with <code>response = 0</code> giving linear warping on
 start and end points and <code>response = 100</code> warping using all bijective
 anchors.</p></dd>
 
 
-<dt>distFun</dt>
+<dt id="arg-distfun">distFun<a class="anchor" aria-label="anchor" href="#arg-distfun"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>character(1)</code> defining the distance
 function to be used. Allowed values are <code>"cor"</code> (Pearson's correlation),
 <code>"cor_opt"</code> (calculate only 10% diagonal band of distance matrix;
@@ -497,7 +497,7 @@ better runtime), <code>"cov"</code> (covariance), <code>"prd"</code> (product) a
 (Euclidian distance). The default value is <code>distFun = "cor_opt"</code>.</p></dd>
 
 
-<dt>gapInit</dt>
+<dt id="arg-gapinit">gapInit<a class="anchor" aria-label="anchor" href="#arg-gapinit"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for gap
 opening. The default value for depends on the value of <code>distFun</code>:
 <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is <code>0.3</code>, for
@@ -505,7 +505,7 @@ opening. The default value for depends on the value of <code>distFun</code>:
 <code>0.9</code>.</p></dd>
 
 
-<dt>gapExtend</dt>
+<dt id="arg-gapextend">gapExtend<a class="anchor" aria-label="anchor" href="#arg-gapextend"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for
 gap enlargement. The default value for <code>gapExtend</code> depends on the value
 of <code>distFun</code>: for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
@@ -513,27 +513,27 @@ of <code>distFun</code>: for <code>distFun = "cor"</code> and <code>distFun = "c
 <code>distFun = "prd"</code> <code>7.8</code>.</p></dd>
 
 
-<dt>factorDiag</dt>
+<dt id="arg-factordiag">factorDiag<a class="anchor" aria-label="anchor" href="#arg-factordiag"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the local weight
 applied to diagonal moves in the alignment.</p></dd>
 
 
-<dt>factorGap</dt>
+<dt id="arg-factorgap">factorGap<a class="anchor" aria-label="anchor" href="#arg-factorgap"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the local weight
 for gap moves in the alignment.</p></dd>
 
 
-<dt>localAlignment</dt>
+<dt id="arg-localalignment">localAlignment<a class="anchor" aria-label="anchor" href="#arg-localalignment"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>logical(1)</code> whether a local
 alignment should be performed instead of the default global alignment.</p></dd>
 
 
-<dt>initPenalty</dt>
+<dt id="arg-initpenalty">initPenalty<a class="anchor" aria-label="anchor" href="#arg-initpenalty"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for
 initiating an alignment (for local alignment only).</p></dd>
 
 
-<dt>rtimeDifferenceThreshold</dt>
+<dt id="arg-rtimedifferencethreshold">rtimeDifferenceThreshold<a class="anchor" aria-label="anchor" href="#arg-rtimedifferencethreshold"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining
 the threshold to identify a <em>gap</em> in the sequence of retention times of
 (MS1) spectra of a sample/file. A gap is defined if the difference in
@@ -547,11 +547,11 @@ be increased. See also
 <a href="https://github.com/sneumann/xcms/issues/739" class="external-link">issue #739</a>.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An <code>ObiwarpParam</code>, <code>PeakGroupsParam</code> or <code>LamaParama</code> object.</p></dd>
 
 </dl></div>

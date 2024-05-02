@@ -12,7 +12,7 @@ software (or the MetaboAnalystR R package)."><meta property="og:image" content="
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,34 +77,34 @@ software (or the <code>MetaboAnalystR</code> R package).</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks grouped
 across samples.</p></dd>
 
 
-<dt>file</dt>
+<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p><code>character(1)</code> defining the file name. If not specified, the
 <code>matrix</code> with the content is returned.</p></dd>
 
 
-<dt>label</dt>
+<dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
 <dd><p>either <code>character(1)</code> specifying the phenodata column in <code>x</code>
 defining the sample grouping or a vector with the same length than
 samples in <code>x</code> defining the group assignment of the samples.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character(1)</code> specifying the value to be returned for each
 feature. See <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> for more details.</p></dd>
 
 
-<dt>digits</dt>
+<dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
 <dd><p><code>integer(1)</code> defining the number of significant digits to be
 used for numeric. The default <code>NULL</code> uses <code>getOption("digits")</code>. See
 <code><a href="https://rdrr.io/pkg/BiocGenerics/man/format.html" class="external-link">format()</a></code> for more information.</p></dd>
 
 
-<dt>groupnames</dt>
+<dt id="arg-groupnames">groupnames<a class="anchor" aria-label="anchor" href="#arg-groupnames"></a></dt>
 <dd><p><code>logical(1)</code> whether row names of the resulting matrix
 should be the feature IDs (<code>groupnames = FALSE</code>; default) or IDs that
 are composed of the m/z and retention time of the features (in the
@@ -112,7 +112,7 @@ format <code>M&lt;m/z&gt;T&lt;rt&gt;</code> (<code>groupnames = TRUE</code>). Se
 function for details.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters to be passed to the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code>
 function.</p></dd>
 

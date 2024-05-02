@@ -14,7 +14,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,24 +77,24 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>files</dt>
+    <dl><dt id="arg-files">files<a class="anchor" aria-label="anchor" href="#arg-files"></a></dt>
 <dd><p>path names of the NetCDF/mzXML files to read</p></dd>
 
-  <dt>snames</dt>
+  <dt id="arg-snames">snames<a class="anchor" aria-label="anchor" href="#arg-snames"></a></dt>
 <dd><p>sample names. By default the file name without extension
     is used.</p></dd>
 
-  <dt>sclass</dt>
+  <dt id="arg-sclass">sclass<a class="anchor" aria-label="anchor" href="#arg-sclass"></a></dt>
 <dd><p>sample classes.</p></dd>
 
-  <dt>phenoData</dt>
+  <dt id="arg-phenodata">phenoData<a class="anchor" aria-label="anchor" href="#arg-phenodata"></a></dt>
 <dd><p><code>data.frame</code> or <code>AnnotatedDataFrame</code>
     defining the sample names and classes and other sample related
     properties. If not provided, the argument <code>sclass</code> or the
     subdirectories in which the samples are stored will be
     used to specify sample grouping.</p></dd>
 
-  <dt>profmethod</dt>
+  <dt id="arg-profmethod">profmethod<a class="anchor" aria-label="anchor" href="#arg-profmethod"></a></dt>
 <dd><p>Method to use for profile generation. Supported
     values are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and
     <code>"intlin"</code> (for methods <code><a href="profGenerate.html">profBin</a></code>,
@@ -103,43 +103,43 @@
     <code><a href="profGenerate.html">profBin</a></code> for a complete list of available methods and
     their supported parameters.</p></dd>
 
-  <dt>profparam</dt>
+  <dt id="arg-profparam">profparam<a class="anchor" aria-label="anchor" href="#arg-profparam"></a></dt>
 <dd><p>parameters to use for profile generation.</p></dd>
 
-  <dt>polarity</dt>
+  <dt id="arg-polarity">polarity<a class="anchor" aria-label="anchor" href="#arg-polarity"></a></dt>
 <dd><p>filter raw data for positive/negative scans</p></dd>
 
-	<dt>lockMassFreq</dt>
+	<dt id="arg-lockmassfreq">lockMassFreq<a class="anchor" aria-label="anchor" href="#arg-lockmassfreq"></a></dt>
 <dd><p>Performs correction for Waters LockMass function</p></dd>
 
-    <dt>mslevel</dt>
+    <dt id="arg-mslevel">mslevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>perform peak picking on data of given mslevel</p></dd>
 
-    <dt>nSlaves</dt>
+    <dt id="arg-nslaves">nSlaves<a class="anchor" aria-label="anchor" href="#arg-nslaves"></a></dt>
 <dd><p><em>DEPRECATED</em>, use <code>BPPARAM</code> argument
       instead.</p></dd>
 
-  <dt>progressCallback</dt>
+  <dt id="arg-progresscallback">progressCallback<a class="anchor" aria-label="anchor" href="#arg-progresscallback"></a></dt>
 <dd><p>function to be called, when progressInfo changes (useful for GUIs)</p></dd>
 
-  <dt>scanrange</dt>
+  <dt id="arg-scanrange">scanrange<a class="anchor" aria-label="anchor" href="#arg-scanrange"></a></dt>
 <dd><p>scan range to read</p></dd>
 
-  <dt>BPPARAM</dt>
+  <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>a <code>BiocParallel</code> parameter object to control how
     and if parallel processing should be performed. Such objects can be
     created by the <code><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></code>,
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></code> or
     <code><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></code> functions.</p></dd>
 
-  <dt>stopOnError</dt>
+  <dt id="arg-stoponerror">stopOnError<a class="anchor" aria-label="anchor" href="#arg-stoponerror"></a></dt>
 <dd><p>Logical specifying whether the feature detection
     call should stop on the first encountered error (the default), or
     whether feature detection is performed in all files regardless
     eventual failures for individual files in which case all errors are
     reported as <code>warnings</code>.</p></dd>
 
-  <dt>...</dt>
+  <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>further arguments to the <code>findPeaks</code> method of the
     <code>xcmsRaw</code> class</p></dd>
 

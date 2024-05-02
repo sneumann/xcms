@@ -14,7 +14,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,60 +85,60 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The <code><a href="xcmsRaw-class.html">xcmsRaw</a></code> object on which peak detection
 should be performed.</p></dd>
 
 
-<dt>fwhm</dt>
+<dt id="arg-fwhm">fwhm<a class="anchor" aria-label="anchor" href="#arg-fwhm"></a></dt>
 <dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
 actual sigma, see below.</p></dd>
 
 
-<dt>sigma</dt>
+<dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
 <dd><p><code>numeric(1)</code> specifying the standard deviation (width)
 of the matched filtration model peak.</p></dd>
 
 
-<dt>max</dt>
+<dt id="arg-max">max<a class="anchor" aria-label="anchor" href="#arg-max"></a></dt>
 <dd><p><code>numeric(1)</code> representing the maximum number of peaks
 that are expected/will be identified per slice.</p></dd>
 
 
-<dt>snthresh</dt>
+<dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise cutoff
 to be used in the chromatographic peak detection step.</p></dd>
 
 
-<dt>step</dt>
+<dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
 <dd><p>numeric(1) specifying the width of the bins/slices in m/z
 dimension.</p></dd>
 
 
-<dt>steps</dt>
+<dt id="arg-steps">steps<a class="anchor" aria-label="anchor" href="#arg-steps"></a></dt>
 <dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
 performed).</p></dd>
 
 
-<dt>mzdiff</dt>
+<dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p><code>numeric(1)</code> defining the minimum difference
 in m/z for peaks with overlapping retention times</p></dd>
 
 
-<dt>index</dt>
+<dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
 <dd><p><code>logical(1)</code> specifying whether indicies should be
 returned instead of values for m/z and retention times.</p></dd>
 
 
-<dt>sleep</dt>
+<dt id="arg-sleep">sleep<a class="anchor" aria-label="anchor" href="#arg-sleep"></a></dt>
 <dd><p>(DEPRECATED). The use of this parameter is highly discouraged,
 as it could cause problems in parallel processing mode.</p></dd>
 
 
-<dt>scanrange</dt>
+<dt id="arg-scanrange">scanrange<a class="anchor" aria-label="anchor" href="#arg-scanrange"></a></dt>
 <dd><p>Numeric vector defining the range of scans to which the
 original <code>object</code> should be sub-setted before peak detection.</p></dd>
 

@@ -20,7 +20,7 @@ Note that this method will always return profile, not raw
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,10 +89,10 @@ Note that this method will always return profile, not raw
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsRaw</code> or <code>xcmsSet</code> object</p></dd>
 
-  <dt>mzrange</dt>
+  <dt id="arg-mzrange">mzrange<a class="anchor" aria-label="anchor" href="#arg-mzrange"></a></dt>
 <dd><p>Either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns <code>mzmin</code> and
     <code>mzmax</code>. If not specified, the method for <code>xcmsRaw</code> returns
@@ -101,7 +101,7 @@ Note that this method will always return profile, not raw
 <p>For <code>xcmsSet</code> objects the group data will be used if
     <code>mzrange</code> is not provided.</p></dd>
 
-  <dt>rtrange</dt>
+  <dt id="arg-rtrange">rtrange<a class="anchor" aria-label="anchor" href="#arg-rtrange"></a></dt>
 <dd><p>A two column matrix the same size as <code>mzrange</code> with minimum
     and maximum retention times between which to return EIC data
     points. If not specified, the method returns the chromatogram for
@@ -110,19 +110,19 @@ Note that this method will always return profile, not raw
     specifying the time window around the peak to return EIC data
     points</p></dd>
 
-  <dt>step</dt>
+  <dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
 <dd><p>step (bin) size to use for profile generation. Note that a
     value of <code>step = 0</code> is not supported.</p></dd>
 
-  <dt>groupidx</dt>
+  <dt id="arg-groupidx">groupidx<a class="anchor" aria-label="anchor" href="#arg-groupidx"></a></dt>
 <dd><p>either character vector with names or integer vector with
     indicies of peak groups for which to get EICs</p></dd>
 
-  <dt>sampleidx</dt>
+  <dt id="arg-sampleidx">sampleidx<a class="anchor" aria-label="anchor" href="#arg-sampleidx"></a></dt>
 <dd><p>either character vector with names or integer vector with
     indicies of samples for which to get EICs</p></dd>
 
-  <dt>rt</dt>
+  <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p><code>"corrected"</code> for using corrected retention times, or
     <code>"raw"</code> for using raw retention times</p></dd>
 

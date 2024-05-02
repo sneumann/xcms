@@ -14,7 +14,7 @@ the exported spectra."><meta property="og:image" content="https://sneumann.githu
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,32 +80,32 @@ the exported spectra.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with the mass spectrometry data.</p></dd>
 
 
-<dt>file</dt>
+<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p><code>character</code> with the file name(s). The length of this parameter
 has to match the number of files/samples of <code>object</code>.</p></dd>
 
 
-<dt>outformat</dt>
+<dt id="arg-outformat">outformat<a class="anchor" aria-label="anchor" href="#arg-outformat"></a></dt>
 <dd><p><code>character(1)</code> defining the format of the output files (
 either <code>"mzml"</code> or <code>"mzxml"</code>).</p></dd>
 
 
-<dt>copy</dt>
+<dt id="arg-copy">copy<a class="anchor" aria-label="anchor" href="#arg-copy"></a></dt>
 <dd><p><code>logical(1)</code> if metadata (data processing, software used,
 original file names etc) should be copied from the original files.</p></dd>
 
 
-<dt>software_processing</dt>
+<dt id="arg-software-processing">software_processing<a class="anchor" aria-label="anchor" href="#arg-software-processing"></a></dt>
 <dd><p>optionally provide specific data processing steps.
 See documentation of the <code>software_processing</code> parameter of
 <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">mzR::writeMSData()</a></code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters to pass down to the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">writeMSData()</a></code>
 function in the <code>MSnbase</code> package, such as <code>outformat</code> to specify the
 output format (<code>"mzml"</code> or <code>"mzxml"</code>) or <code>copy</code> to specify whether

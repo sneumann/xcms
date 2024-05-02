@@ -26,7 +26,7 @@ will be generated.'><meta property="og:image" content="https://sneumann.github.i
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,37 +97,37 @@ will be generated.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code>matrix</code> with abundances, rows being features/metabolites and
 columns samples.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>method <code>character(1)</code> defining the imputation method.
 See description for details. Defaults to <code>method = "mean_sd"</code>.</p></dd>
 
 
-<dt>min_fraction</dt>
+<dt id="arg-min-fraction">min_fraction<a class="anchor" aria-label="anchor" href="#arg-min-fraction"></a></dt>
 <dd><p><code>numeric(1)</code> with the fraction of the row minimum that
 should be used to replace <code>NA</code> values in that row in case that <code>mean_sd</code>
 method is specified. When  using <code>from_to</code> method, this value will be the
 one used to calculate the maximum value for replace <code>NA</code> values in that row.</p></dd>
 
 
-<dt>min_fraction_from</dt>
+<dt id="arg-min-fraction-from">min_fraction_from<a class="anchor" aria-label="anchor" href="#arg-min-fraction-from"></a></dt>
 <dd><p><code>numeric(1)</code> with the fraction of the row minimum
 that should be used to calculate the minimum value for replace <code>NA</code> values
 in that row. This parameter is used only in case that <code>from_to</code> method is
 specified.</p></dd>
 
 
-<dt>sd_fraction</dt>
+<dt id="arg-sd-fraction">sd_fraction<a class="anchor" aria-label="anchor" href="#arg-sd-fraction"></a></dt>
 <dd><p><code>numeric(1)</code> factor to reduce the estimated standard
 deviation. This parameter is used only in case that <code>mean_sd</code> method is
 specified.</p></dd>
 
 
-<dt>abs</dt>
+<dt id="arg-abs">abs<a class="anchor" aria-label="anchor" href="#arg-abs"></a></dt>
 <dd><p><code>logical(1)</code> to force imputed values to be strictly positive.</p></dd>
 
 </dl></div>

@@ -68,7 +68,7 @@ which may be part of features."><meta property="og:image" content="https://sneum
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -201,25 +201,25 @@ which may be part of features.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> or <a href="XcmsExperiment.html">XcmsExperiment</a> object with identified
 chromatographic peaks.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>Object defining the refinement method and its settings.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer</code> defining for which MS level(s) the chromatographic
 peaks should be cleaned.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>refineChromPeaks</code> if <code>object</code> is either an
 <code>XcmsExperiment</code>: <code>integer(1)</code> defining the number of files (samples)
 that should be loaded into memory and processed at the same time.
@@ -234,37 +234,37 @@ the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parameter object to set up parallel processing. Uses the
 default parallel processing setup returned by <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>. See
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details and examples.</p></dd>
 
 
-<dt>maxPeakwidth</dt>
+<dt id="arg-maxpeakwidth">maxPeakwidth<a class="anchor" aria-label="anchor" href="#arg-maxpeakwidth"></a></dt>
 <dd><p>For <code>CleanPeaksParam</code>: <code>numeric(1)</code> defining the maximal
 allowed peak width (in retention time).</p></dd>
 
 
-<dt>expandRt</dt>
+<dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> defining by
 how many seconds the retention time window is expanded on both sides to
 check for overlapping peaks.</p></dd>
 
 
-<dt>expandMz</dt>
+<dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> constant
 value by which the m/z range of each chromatographic peak is expanded
 (on both sides!) to check for overlapping peaks.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> defining a m/z
 relative value (in parts per million) by which the m/z range of each
 chromatographic peak is expanded (on each side) to check for overlapping
 peaks.</p></dd>
 
 
-<dt>minProp</dt>
+<dt id="arg-minprop">minProp<a class="anchor" aria-label="anchor" href="#arg-minprop"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> between <code>0</code>
 and <code>1</code> representing the proporion of intensity required for peaks to be
 joined. See description for more details. With default (<code>minProp = 0.75</code>)
@@ -273,18 +273,18 @@ only peaks are joined if the signal half way between them is larger than
 peak apex).</p></dd>
 
 
-<dt>threshold</dt>
+<dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>numeric(1)</code> defining the
 threshold below which peaks are removed.</p></dd>
 
 
-<dt>nValues</dt>
+<dt id="arg-nvalues">nValues<a class="anchor" aria-label="anchor" href="#arg-nvalues"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>integer(1)</code> defining the number
 of data points (for each chromatographic peak) that have to be
 <code>&gt;= threshold</code>. Defaults to <code>nValues = 1</code>.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>character(1)</code> defining the name
 of the column in <code>chromPeaks</code> that contains the values to be used for
 the filtering.</p></dd>

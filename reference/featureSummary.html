@@ -22,7 +22,7 @@ chromatographic peak counts per sample are returned."><meta property="og:image" 
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,28 +90,28 @@ chromatographic peak counts per sample are returned.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>[XcmsExperiment()] or [XCMSnExp()] object with correspondence
 results.</p></dd>
 
 
-<dt>group</dt>
+<dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
 <dd><p>`numeric`, `logical`, `character` or `factor` with the same
 length than `x` has samples to aggregate counts by the groups defined
 in `group`.</p></dd>
 
 
-<dt>perSampleCounts</dt>
+<dt id="arg-persamplecounts">perSampleCounts<a class="anchor" aria-label="anchor" href="#arg-persamplecounts"></a></dt>
 <dd><p>`logical(1)` whether feature wise individual peak
 counts per sample should be returned too.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>`character` passed to the [featureValues()] function. See
 respective help page for more information.</p></dd>
 
 
-<dt>skipFilled</dt>
+<dt id="arg-skipfilled">skipFilled<a class="anchor" aria-label="anchor" href="#arg-skipfilled"></a></dt>
 <dd><p>`logical(1)` whether filled-in peaks should be excluded
 (default) or included in the summary calculation.</p></dd>
 

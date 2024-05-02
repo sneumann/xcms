@@ -56,7 +56,7 @@ be reported. This can be performed using the fillChromPeaks() function.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -324,16 +324,16 @@ plot(x, y, msLevel = 1L, peakCol = "#ff000060", ...)</code></pre></div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An <code>XcmsExperiment</code> object.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional optional parameters. For <code>quantify</code>: any parameter
 for the <code>featureValues</code> call used to extract the feature value matrix.</p></dd>
 
 
-<dt>rt</dt>
+<dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>numeric(2)</code> defining
 the retention time range for which chromatographic peaks or features
 should be returned. The full range is used by default.
@@ -342,7 +342,7 @@ representing the lower and upper retention time window(s) for the
 chromatograms. If not provided the full retention time range is used.</p></dd>
 
 
-<dt>mz</dt>
+<dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>numeric(2)</code> optionally
 defining the m/z range for which chromatographic peaks or feature
 definitions should be returned. The full m/z range is used by default.
@@ -354,7 +354,7 @@ is used). For <code>filterIsolationWindow</code>: <code>numeric(1)</code> defini
 that should be contained within the spectra's isolation window.</p></dd>
 
 
-<dt>msLevel.</dt>
+<dt id="arg-mslevel-">msLevel.<a class="anchor" aria-label="anchor" href="#arg-mslevel-"></a></dt>
 <dd><p>For <code>filterRt</code>: ignored. <code>filterRt</code> will always filter
 by retention times on all MS levels regardless of this parameter.
 For <code>chromatogram</code>: <code>integer</code> with the MS level from which the
@@ -366,12 +366,12 @@ for <code>filterMsLevel</code>: <code>integer</code> defining the MS level(s) to
 data should be subset.</p></dd>
 
 
-<dt>file</dt>
+<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>For <code>filterFile</code>: <code>integer</code> with the indices of the samples
 (files) to which the data should be subsetted.</p></dd>
 
 
-<dt>aggregationFun</dt>
+<dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p>For <code>chromatogram</code>: <code>character(1)</code> defining the
 function that should be used to <em>aggregate</em> intensities for retention
 time (i.e. each spectrum) along the specified m/z range (parameter
@@ -381,12 +381,12 @@ the maximal intensity per m/z range to create a base peak
 chromatogram (BPC).</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer</code> defining the MS level (or multiple MS level if the
 function supports it).</p></dd>
 
 
-<dt>isolationWindowTargetMz</dt>
+<dt id="arg-isolationwindowtargetmz">isolationWindowTargetMz<a class="anchor" aria-label="anchor" href="#arg-isolationwindowtargetmz"></a></dt>
 <dd><p>For <code>chromatogram</code>: <code>numeric</code> (of length
 equal to the number of rows of <code>rt</code> and <code>mz</code>) with the isolation window
 target m/z of the MS2 spectra from which the chromatgrom should be
@@ -395,13 +395,13 @@ is ignored. See examples on <code>chromatogram</code> below for further
 information.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>chromatogram</code>: <code>integer(1)</code> defining the number of
 files from which the data should be loaded at a time into memory.
 Defaults to <code>chunkSize = 2L</code>.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p>For <code>chromPeakData</code>: <code>character(1)</code> defining the
 class of the returned object. Can be either <code>"DataFrame"</code> (the default)
 or <code>"data.frame"</code>. For <code>chromatogram</code>: <code>character(1)</code> defining the
@@ -409,34 +409,34 @@ type of the returned object. Currently only
 <code>return.type = "MChromatograms"</code> is supported.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For <code>chromatogram</code>: parallel processing setup. Defaults
 to <code>BPPARAM = bpparam()</code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more information.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An <code>XcmsExperiment</code> object.</p></dd>
 
 
-<dt>i</dt>
+<dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>For <code>[</code>: <code>integer</code> or <code>logical</code> defining the samples/files to
 subset.</p></dd>
 
 
-<dt>j</dt>
+<dt id="arg-j">j<a class="anchor" aria-label="anchor" href="#arg-j"></a></dt>
 <dd><p>For <code>[</code>: not supported.</p></dd>
 
 
-<dt>drop</dt>
+<dt id="arg-drop">drop<a class="anchor" aria-label="anchor" href="#arg-drop"></a></dt>
 <dd><p>For <code>[</code>: ignored.</p></dd>
 
 
-<dt>keepAdjustedRtime</dt>
+<dt id="arg-keepadjustedrtime">keepAdjustedRtime<a class="anchor" aria-label="anchor" href="#arg-keepadjustedrtime"></a></dt>
 <dd><p><code>logical(1)</code>: whether adjusted retention times (if
 present) should be retained.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>For <code>featureValues</code>: <code>character(1)</code> defining which value should
 be reported for each feature in each sample. Can be any column of the
 <code>chromPeaks</code> matrix or <code>"index"</code> if simply the index of the assigned
@@ -444,14 +444,14 @@ peak should be returned. Defaults to <code>value = "into"</code> thus the
 integrated peak area is reported.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: optional <code>numeric(1)</code>
 specifying the ppm by which the m/z range (defined by <code>mz</code> should be
 extended. For a value of <code>ppm = 10</code>, all peaks within <code>mz[1] - ppm / 1e6</code>
 and <code>mz[2] + ppm / 1e6</code> are returned.</p></dd>
 
 
-<dt>type</dt>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code> and only if either
 <code>mz</code> and <code>rt</code> are defined too: <code>character(1)</code>: defining which peaks
 (or features) should be returned. For <code>type = "any"</code>: returns all
@@ -465,14 +465,14 @@ For <code>processHistory</code>: restrict returned processing steps to specific
 types. Use <code><a href="XCMSnExp-class.html">processHistoryTypes()</a></code> to list all supported values.</p></dd>
 
 
-<dt>isFilledColumn</dt>
+<dt id="arg-isfilledcolumn">isFilledColumn<a class="anchor" aria-label="anchor" href="#arg-isfilledcolumn"></a></dt>
 <dd><p>For <code>chromPeaks</code>: <code>logical(1)</code> whether a column
 <code>"is_filled"</code> should be included in the returned <code>matrix</code> with the
 information whether a peak was detected or <em>only</em> filled-in. Note that
 this information is also provided in the <code>chromPeakData</code> data frame.</p></dd>
 
 
-<dt>keep</dt>
+<dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
 <dd><p>For <code>filterChromPeaks</code>: <code>logical</code>, <code>integer</code> or <code>character</code>
 specifying which chromatographic peaks to keep. If <code>logical</code> the
 length of <code>keep</code> needs to match the number of rows of <code>chromPeaks</code>.
@@ -480,7 +480,7 @@ Alternatively, <code>keep</code> allows to specify the <code>index</code> (row) 
 to keep or their ID (i.e. row name in <code>chromPeaks</code>).</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>For <code>featureValues</code>: <code>character(1)</code> specifying the method to
 resolve multi-peak mappings within the same sample (correspondence
 analysis can assign more than one chromatographic peak within a sample
@@ -495,27 +495,27 @@ sample assigned to the same feature. The default is <code>method = "medret"</cod
 For <code>filterChromPeaks</code>: currently only <code>method = "keep"</code> is supported.</p></dd>
 
 
-<dt>adjusted</dt>
+<dt id="arg-adjusted">adjusted<a class="anchor" aria-label="anchor" href="#arg-adjusted"></a></dt>
 <dd><p>For <code>rtime,XcmsExperiment</code>: whether adjusted or <em>raw</em>
 retention times should be returned. The default is to return adjusted
 retention times, if available.</p></dd>
 
 
-<dt>features</dt>
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
 <dd><p>For <code>filterFeatureDefinitions</code> and <code>featureArea</code>: <code>logical</code>,
 <code>integer</code> or <code>character</code> defining the features to keep or from which
 to extract the feature area, respectively. See function description
 for more information.</p></dd>
 
 
-<dt>intensity</dt>
+<dt id="arg-intensity">intensity<a class="anchor" aria-label="anchor" href="#arg-intensity"></a></dt>
 <dd><p>For <code>featureValues</code>: <code>character(1)</code> specifying the name
 of the column in the <code>chromPeaks(objects)</code> matrix containing the
 intensity value of the peak that should be used for the conflict
 resolution if <code>method = "maxint"</code>.</p></dd>
 
 
-<dt>filled</dt>
+<dt id="arg-filled">filled<a class="anchor" aria-label="anchor" href="#arg-filled"></a></dt>
 <dd><p>For <code>featureValues</code>: <code>logical(1)</code> specifying whether values
 for filled-in peaks should be reported. For <code>filled = TRUE</code> (the
 default) filled peak values are returned, otherwise <code>NA</code> is reported
@@ -523,18 +523,18 @@ for the respective features in the samples in which no peak was
 detected.</p></dd>
 
 
-<dt>missing</dt>
+<dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
 <dd><p>For <code>featureValues</code>: default value for missing values.
 Allows to define the value that should be reported for a missing peak
 intensity. Defaults to <code>missing = NA_real_</code>.</p></dd>
 
 
-<dt>include</dt>
+<dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
 <dd><p>For <code>chromatogram</code>: deprecated; use parameter <code>chromPeaks</code>
 instead.</p></dd>
 
 
-<dt>chromPeaks</dt>
+<dt id="arg-chrompeaks">chromPeaks<a class="anchor" aria-label="anchor" href="#arg-chrompeaks"></a></dt>
 <dd><p>For <code>chromatogram</code>: <code>character(1)</code> defining which
 chromatographic peaks should be returned. Can be either
 <code>chromPeaks = "apex_within"</code> (default) to return all chromatographic
@@ -545,45 +545,45 @@ are overlapping with the m/z - retention time window or
 also parameter <code>type</code> below for additional information.</p></dd>
 
 
-<dt>keepFeatures</dt>
+<dt id="arg-keepfeatures">keepFeatures<a class="anchor" aria-label="anchor" href="#arg-keepfeatures"></a></dt>
 <dd><p>for most subsetting functions (<code>[</code>, <code>filterFile</code>):
 <code>logical(1)</code>: wheter eventually present feature definitions should
 be retained in the returned (filtered) object.</p></dd>
 
 
-<dt>mzmin</dt>
+<dt id="arg-mzmin">mzmin<a class="anchor" aria-label="anchor" href="#arg-mzmin"></a></dt>
 <dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmin"</code> of
 a feature based on the <code>"mzmin"</code> values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 <code>mzmin = min</code>.</p></dd>
 
 
-<dt>mzmax</dt>
+<dt id="arg-mzmax">mzmax<a class="anchor" aria-label="anchor" href="#arg-mzmax"></a></dt>
 <dd><p>For <code>featureArea</code>: function to calculate the <code>"mzmax"</code> of
 a feature based on the <code>"mzmax"</code> values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 <code>mzmax = max</code>.</p></dd>
 
 
-<dt>rtmin</dt>
+<dt id="arg-rtmin">rtmin<a class="anchor" aria-label="anchor" href="#arg-rtmin"></a></dt>
 <dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmin"</code> of
 a feature based on the <code>"rtmin"</code> values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 <code>rtmin = min</code>.</p></dd>
 
 
-<dt>rtmax</dt>
+<dt id="arg-rtmax">rtmax<a class="anchor" aria-label="anchor" href="#arg-rtmax"></a></dt>
 <dd><p>For <code>featureArea</code>: function to calculate the <code>"rtmax"</code> of
 a feature based on the <code>"rtmax"</code> values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 <code>rtmax = max</code>.</p></dd>
 
 
-<dt>y</dt>
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>For <code>plot</code>: should not be defined as it is not supported.</p></dd>
 
 
-<dt>peakCol</dt>
+<dt id="arg-peakcol">peakCol<a class="anchor" aria-label="anchor" href="#arg-peakcol"></a></dt>
 <dd><p>For <code>plot</code>: defines the border color of the rectangles
 indicating the identified chromatographic peaks. Only a single color
 is supported. Defaults to `peakCol = "#ff000060".</p></dd>

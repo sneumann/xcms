@@ -342,7 +342,7 @@ as rectangles with border color peakCol."><meta property="og:image" content="htt
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -697,24 +697,24 @@ as rectangles with border color <code>peakCol</code>.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>adjustedRtime</code>, <code>featureDefinitions</code>,
 <code>chromPeaks</code>, <code>hasAdjustedRtime</code>, <code>hasFeatures</code> and
 <code>hasChromPeaks</code> either a <code>MsFeatureData</code> or a <code>XCMSnExp</code>
 object, for all other methods a <code>XCMSnExp</code> object.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>character(1)</code> defining the profile matrix generation method.
 Allowed are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and <code>"intlin"</code>.
 See details section for more information.</p></dd>
 
 
-<dt>step</dt>
+<dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
 <dd><p><code>numeric(1)</code> representing the m/z bin size.</p></dd>
 
 
-<dt>baselevel</dt>
+<dt id="arg-baselevel">baselevel<a class="anchor" aria-label="anchor" href="#arg-baselevel"></a></dt>
 <dd><p><code>numeric(1)</code> representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if <code>method = "binlinbase"</code>. See
@@ -722,7 +722,7 @@ set. Only considered if <code>method = "binlinbase"</code>. See
 details.</p></dd>
 
 
-<dt>basespace</dt>
+<dt id="arg-basespace">basespace<a class="anchor" aria-label="anchor" href="#arg-basespace"></a></dt>
 <dd><p><code>numeric(1)</code> representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will
 be used between consecutive data points falling within
@@ -735,33 +735,33 @@ function by <code>distance = floor(basespace / step)</code>. See
 details.</p></dd>
 
 
-<dt>mzrange.</dt>
+<dt id="arg-mzrange-">mzrange.<a class="anchor" aria-label="anchor" href="#arg-mzrange-"></a></dt>
 <dd><p>Optional <code>numeric(2)</code> manually specifying the mz value range
 to be used for binnind. If not provided, the whole m/z value range is
 used.</p></dd>
 
 
-<dt>fileIndex</dt>
+<dt id="arg-fileindex">fileIndex<a class="anchor" aria-label="anchor" href="#arg-fileindex"></a></dt>
 <dd><p>For <code>processHistory</code>: optional <code>integer</code>
 specifying the index of the files/samples for which the
 <code><a href="ProcessHistory-class.html">ProcessHistory</a></code> objects should be retrieved.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer</code> specifying the MS level(s) for which identified
 chromatographic peaks should be returned.</p></dd>
 
 
-<dt>bySample</dt>
+<dt id="arg-bysample">bySample<a class="anchor" aria-label="anchor" href="#arg-bysample"></a></dt>
 <dd><p>logical(1) specifying whether results should be grouped by
 sample.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>For <code>adjustedRtime&lt;-</code>: a <code>list</code> (length equal to the
     number of samples) with numeric vectors representing the adjusted
     retention times per scan.</p>
@@ -773,24 +773,24 @@ sample.</p></dd>
     expected format.</p></dd>
 
 
-<dt>mz</dt>
+<dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p>optional <code>numeric(2)</code> defining the mz range for which
 chromatographic peaks should be returned.</p></dd>
 
 
-<dt>rt</dt>
+<dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p>optional <code>numeric(2)</code> defining the retention time range for
 which chromatographic peaks should be returned.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>optional <code>numeric(1)</code> specifying the ppm by which the
 <code>mz</code> range should be extended. For a value of <code>ppm = 10</code>, all
 peaks within <code>mz[1] - ppm / 1e6</code> and <code>mz[2] + ppm / 1e6</code> are
 returned.</p></dd>
 
 
-<dt>type</dt>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>For <code>processHistory</code>: restrict returned
 <code><a href="ProcessHistory-class.html">ProcessHistory</a></code> objects to analysis steps of a certain
 type. Use the <code>processHistoryTypes</code> to list all supported values.
@@ -802,31 +802,31 @@ only peaks completely within the region and <code>type = "apex_within"</code>
 peaks for which the peak's apex is within the region.</p></dd>
 
 
-<dt>isFilledColumn</dt>
+<dt id="arg-isfilledcolumn">isFilledColumn<a class="anchor" aria-label="anchor" href="#arg-isfilledcolumn"></a></dt>
 <dd><p><code>logical(1)</code> whether a column <code>"is_filled"</code>
 is included in the returned <code>"matrix"</code> providing the information
 if a peak was filled in. Alternatively, this information would be
 provided by the <code>chromPeakData</code> data frame.</p></dd>
 
 
-<dt>adjusted</dt>
+<dt id="arg-adjusted">adjusted<a class="anchor" aria-label="anchor" href="#arg-adjusted"></a></dt>
 <dd><p>logical(1) whether adjusted or raw (i.e. the original
 retention times reported in the files) should be returned.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parameter class for parallel processing. See
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.</p></dd>
 
 
-<dt>keepAdjustedRtime</dt>
+<dt id="arg-keepadjustedrtime">keepAdjustedRtime<a class="anchor" aria-label="anchor" href="#arg-keepadjustedrtime"></a></dt>
 <dd><p>For <code>dropFeatureDefinitions,XCMSnExp</code>:
 <code>logical(1)</code> defining whether eventually present retention time
 adjustment should not be dropped. By default dropping feature definitions
 drops retention time adjustment results too.</p></dd>
 
 
-<dt>dropLastN</dt>
+<dt id="arg-droplastn">dropLastN<a class="anchor" aria-label="anchor" href="#arg-droplastn"></a></dt>
 <dd><p>For <code>dropFeatureDefinitions,XCMSnExp</code>:
 <code>numeric(1)</code> defining the number of peak grouping related process
 history steps to remove. By default <code>dropLastN = -1</code>, dropping the
@@ -835,40 +835,40 @@ grouping. Setting e.g. <code>dropLastN = 1</code> will only remove the most
 recent peak grouping related process history step.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>A <code><a href="findChromPeaks-centWave.html">CentWaveParam</a></code>, <code><a href="findChromPeaks-matchedFilter.html">MatchedFilterParam</a></code>,
 <code><a href="findChromPeaks-massifquant.html">MassifquantParam</a></code>, <code><a href="findPeaks-MSW.html">MSWParam</a></code> or
 <code><a href="findChromPeaks-centWaveWithPredIsoROIs.html">CentWavePredIsoParam</a></code> object with the settings for the
 chromatographic peak detection algorithm.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
 
 
-<dt>add</dt>
+<dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p>For <code>findChromPeaks</code>: if newly identified chromatographic
 peaks should be added to the peak matrix with the already identified
 chromatographic peaks. By default (<code>add = FALSE</code>) previous
 peak detection results will be removed.</p></dd>
 
 
-<dt>FUN</dt>
+<dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p>For <code>spectrapply</code>: a function that should be applied to each
 spectrum in the object.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For <code>plot</code>: <code>XCMSnExp</code> object.</p></dd>
 
 
-<dt>y</dt>
+<dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>For <code>plot</code>: not used.</p></dd>
 
 
-<dt>peakCol</dt>
+<dt id="arg-peakcol">peakCol<a class="anchor" aria-label="anchor" href="#arg-peakcol"></a></dt>
 <dd><p>For <code>plot</code>: the color that should be used to indicate
 identified chromatographic peaks (only in combination with
 <code>type = "XIC"</code> and if chromatographic peaks are present).</p></dd>
@@ -1093,7 +1093,6 @@ with feature definitions and phenodata information, into a
 <span class="r-in"><span><span class="co">## Load a test data set with detected peaks</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lgatto.github.io/MSnbase" class="external-link">MSnbase</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: BiocGenerics</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘BiocGenerics’ was built under R version 4.5.0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘BiocGenerics’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following objects are masked from ‘package:stats’:</span>
@@ -1108,7 +1107,6 @@ with feature definitions and phenodata information, into a
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     pmin.int, rank, rbind, rownames, sapply, setdiff, table, tapply,</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     union, unique, unsplit, which.max, which.min</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biobase</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘Biobase’ was built under R version 4.5.0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Welcome to Bioconductor</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     Vignettes contain introductory material; view with</span>
@@ -1127,7 +1125,7 @@ with feature definitions and phenodata information, into a
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.29.4 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.30.1 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Visit https://lgatto.github.io/MSnbase/ to get started.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Consider switching to the 'R for Mass Spectrometry'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  packages - see https://RforMassSpectrometry.org for details.</span>
@@ -1271,7 +1269,7 @@ with feature definitions and phenodata information, into a
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Thu Mar 14 11:42:34 2024] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Mon Apr 22 14:33:40 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Thu May  2 15:22:56 2024] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.29.3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>

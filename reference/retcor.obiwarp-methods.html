@@ -24,7 +24,7 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,51 +93,51 @@ Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsSet</code> object</p></dd>
 
-  <dt>plottype</dt>
+  <dt id="arg-plottype">plottype<a class="anchor" aria-label="anchor" href="#arg-plottype"></a></dt>
 <dd><p>if <code>deviation</code> plot retention time deviation</p></dd>
 
-  <dt>profStep</dt>
+  <dt id="arg-profstep">profStep<a class="anchor" aria-label="anchor" href="#arg-profstep"></a></dt>
 <dd><p>step size (in m/z) to use for profile generation from
     the raw data files</p></dd>
 
-  <dt>center</dt>
+  <dt id="arg-center">center<a class="anchor" aria-label="anchor" href="#arg-center"></a></dt>
 <dd><p>the index of the sample all others will be aligned
   to. If center==NULL, the sample with the most peaks is chosen as default.</p></dd>
 
-  <dt>col</dt>
+  <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>vector of colors for plotting each sample</p></dd>
 
-  <dt>ty</dt>
+  <dt id="arg-ty">ty<a class="anchor" aria-label="anchor" href="#arg-ty"></a></dt>
 <dd><p>vector of line and point types for plotting each sample</p></dd>
 
-  <dt>response</dt>
+  <dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
 <dd><p>Responsiveness of warping.  0 will give a linear warp based
     on start and end points.  100 will use all bijective anchors</p></dd>
 
-  <dt>distFunc</dt>
+  <dt id="arg-distfunc">distFunc<a class="anchor" aria-label="anchor" href="#arg-distfunc"></a></dt>
 <dd><p>DistFunc function: cor (Pearson's R) or cor_opt (default,
     calculate only 10% diagonal band of distance matrix, better
     runtime), cov (covariance), prd (product), euc (Euclidean distance)</p></dd>
 
-  <dt>gapInit</dt>
+  <dt id="arg-gapinit">gapInit<a class="anchor" aria-label="anchor" href="#arg-gapinit"></a></dt>
 <dd><p>Penalty for Gap opening, see below</p></dd>
 
-  <dt>gapExtend</dt>
+  <dt id="arg-gapextend">gapExtend<a class="anchor" aria-label="anchor" href="#arg-gapextend"></a></dt>
 <dd><p>Penalty for Gap enlargement, see below</p></dd>
 
-  <dt>factorDiag</dt>
+  <dt id="arg-factordiag">factorDiag<a class="anchor" aria-label="anchor" href="#arg-factordiag"></a></dt>
 <dd><p>Local weighting applied to diagonal moves in alignment.</p></dd>
 
-  <dt>factorGap</dt>
+  <dt id="arg-factorgap">factorGap<a class="anchor" aria-label="anchor" href="#arg-factorgap"></a></dt>
 <dd><p>Local weighting applied to gap moves in alignment.</p></dd>
 
-  <dt>localAlignment</dt>
+  <dt id="arg-localalignment">localAlignment<a class="anchor" aria-label="anchor" href="#arg-localalignment"></a></dt>
 <dd><p>Local rather than global alignment</p></dd>
 
-  <dt>initPenalty</dt>
+  <dt id="arg-initpenalty">initPenalty<a class="anchor" aria-label="anchor" href="#arg-initpenalty"></a></dt>
 <dd><p>Penalty for initiating alignment (for local
   alignment only) Default: 0</p></dd>
 

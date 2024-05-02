@@ -62,7 +62,7 @@ chromPeaks matrix.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -171,16 +171,16 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
 
 
-<dt>threshold</dt>
+<dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>numeric(1)</code> with the
 threshold value to compare against.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character(1)</code> defining which value should be used in the
 comparison or sorting. Can be <code>value = "bpi"</code> (default) to use the
 maximum intensity per chromatogram or <code>value = "tic"</code> to use the sum
@@ -190,20 +190,20 @@ intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
 
 
-<dt>which</dt>
+<dt id="arg-which">which<a class="anchor" aria-label="anchor" href="#arg-which"></a></dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>character(1)</code> defining
 whether <strong>any</strong> (<code>which = "any"</code>, default) or <strong>all</strong> (<code>which = "all"</code>)
 chromatograms in a column have to fulfill the criteria for the column
 to be kept.</p></dd>
 
 
-<dt>n</dt>
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: <code>integer(1)</code> specifying the number of
 columns that should be returned. <code>n</code> will be rounded to the closest
 (larger) integer value.</p></dd>
 
 
-<dt>sortBy</dt>
+<dt id="arg-sortby">sortBy<a class="anchor" aria-label="anchor" href="#arg-sortby"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: the value by which columns should
 be ordered to determine the top n columns. Can be either <code>sortBy = "bpi"</code>
 (the default), in which case the maximum intensity of each column's
@@ -214,7 +214,7 @@ intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
 
 
-<dt>aggregationFun</dt>
+<dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: function to be used to
 aggregate (combine) the values from all chromatograms in each column.
 Defaults to <code>aggregationFun = sum</code> in which case the sum of the values

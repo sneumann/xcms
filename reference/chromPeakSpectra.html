@@ -82,7 +82,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><me
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -198,47 +198,47 @@ for the respective chromatographic peak).</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><a href="XcmsExperiment.html">XcmsExperiment</a> or <a href="XCMSnExp-class.html">XCMSnExp</a> object with identified
 chromatographic peaks for which spectra should be returned.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>character(1)</code> specifying which spectra to include in the
 result. Defaults to <code>method = "all"</code>. See function description for
 details.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level of the spectra that
 should be returned.</p></dd>
 
 
-<dt>expandRt</dt>
+<dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> to expand the retention time range of each
 peak by a constant value on each side.</p></dd>
 
 
-<dt>expandMz</dt>
+<dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> to expand the m/z range of each peak by a
 constant value on each side.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.</p></dd>
 
 
-<dt>skipFilled</dt>
+<dt id="arg-skipfilled">skipFilled<a class="anchor" aria-label="anchor" href="#arg-skipfilled"></a></dt>
 <dd><p><code>logical(1)</code> whether spectra for filled-in peaks should
 be reported or not.</p></dd>
 
 
-<dt>peaks</dt>
+<dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
 subset of chromatographic peaks in <code>chromPeaks</code> for which spectra should
 be returned (providing either their ID, a logical vector same length
@@ -246,12 +246,12 @@ than <code>nrow(chromPeaks(x))</code> or their index in <code>chromPeaks(x)</cod
 parameter overrides <code>skipFilled</code>.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p><code>character(1)</code> defining the type of result object that
 should be returned.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parallel processing setup. Defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>.</p></dd>
 
 </dl></div>
@@ -315,8 +315,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon Apr 22 14:34:02 2024]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Apr 22 14:34:02 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Thu May  2 15:23:17 2024]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Thu May  2 15:23:17 2024] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## spectra variable *peak_id* contain the row names of the peaks in the</span></span></span>
 <span class="r-in"><span><span class="co">## chromPeak matrix and allow thus to map chromatographic peaks to the</span></span></span>
@@ -415,8 +415,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon Apr 22 14:34:02 2024]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Apr 22 14:34:02 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Thu May  2 15:23:17 2024]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Thu May  2 15:23:18 2024] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter `msLevel` allows to define from which MS level spectra should</span></span></span>
 <span class="r-in"><span><span class="co">## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all</span></span></span>
@@ -449,8 +449,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon Apr 22 14:34:02 2024]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Apr 22 14:34:02 2024] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Thu May  2 15:23:18 2024]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Thu May  2 15:23:18 2024] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter peaks would allow to extract spectra for specific peaks only.</span></span></span>
 <span class="r-in"><span><span class="co">## Peaks can be defined with parameter `peaks` which can be either an</span></span></span>

@@ -84,7 +84,7 @@ Other functions related to this method:
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -207,42 +207,42 @@ a single file.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An object of class `XcmsExperiment` with defined ChromPeaks.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>An object of class `LamaParama` that will later be used for
 adjustment using the `[adjustRtime()]` function.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For `matchLamasChromPeaks()`: parallel processing setup.
 Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more information.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>For `plot()`: extra parameters to be passed to the function.</p></dd>
 
 
-<dt>lamas</dt>
+<dt id="arg-lamas">lamas<a class="anchor" aria-label="anchor" href="#arg-lamas"></a></dt>
 <dd><p>For `LamaParama`: `matrix` or `data.frame` with the m/z and
 retention times values of features (as first and second column) from the
 external dataset on which the alignment will be based on.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>For `LamaParama`:`character(1)` with the type of warping.
 Either `method = "gam"` or `method = "loess"` (default).</p></dd>
 
 
-<dt>span</dt>
+<dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining
 the degree of smoothing (`method = "loess"`). This parameter is passed
 to the internal call to [loess()].</p></dd>
 
 
-<dt>outlierTolerance</dt>
+<dt id="arg-outliertolerance">outlierTolerance<a class="anchor" aria-label="anchor" href="#arg-outliertolerance"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the settings
 for outlier removal during the fitting. By default
 (with `outlierTolerance = 3`), all data points with absolute residuals
@@ -250,55 +250,55 @@ larger than 3 times the mean absolute residual of all data points from
 the first, initial fit, are removed from the final model fit.</p></dd>
 
 
-<dt>zeroWeight</dt>
+<dt id="arg-zeroweight">zeroWeight<a class="anchor" aria-label="anchor" href="#arg-zeroweight"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)`: defines the weight of the
 first data point (i.e. retention times of the first lama-chromatographic
 peak pair). Values larger than 1 reduce warping problems in the early RT
 range.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
 allowed difference in m/z between `lamas` and chromatographic peaks. Used
 for the mapping of identified chromatographic peaks and lamas.</p></dd>
 
 
-<dt>tolerance</dt>
+<dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the absolute
 acceptable difference in m/z between lamas and chromatographic peaks.
 Used for the mapping of identified chromatographic peaks and `lamas`.</p></dd>
 
 
-<dt>toleranceRt</dt>
+<dt id="arg-tolerancert">toleranceRt<a class="anchor" aria-label="anchor" href="#arg-tolerancert"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the absolute
 acceptable difference in retention time between lamas and
 chromatographic peaks. Used for the mapping of identified chromatographic
 peaks and `lamas`.</p></dd>
 
 
-<dt>bs</dt>
+<dt id="arg-bs">bs<a class="anchor" aria-label="anchor" href="#arg-bs"></a></dt>
 <dd><p>For `LamaParama()`: `character(1)` defining the GAM smoothing method.
 (defaults to thin plate, `bs = "tp"`)</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For `plot()`: object of class `LamaParama` to be plotted.</p></dd>
 
 
-<dt>index</dt>
+<dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
 <dd><p>For `plot()`: `numeric(1)` index of the file that should be
 plotted.</p></dd>
 
 
-<dt>colPoints</dt>
+<dt id="arg-colpoints">colPoints<a class="anchor" aria-label="anchor" href="#arg-colpoints"></a></dt>
 <dd><p>For `plot()`: color for the plotting of the datapoint.</p></dd>
 
 
-<dt>colFit</dt>
+<dt id="arg-colfit">colFit<a class="anchor" aria-label="anchor" href="#arg-colfit"></a></dt>
 <dd><p>For `plot()`: color of the fitting line.</p></dd>
 
 
-<dt>xlab, ylab</dt>
+<dt id="arg-xlab-ylab">xlab, ylab<a class="anchor" aria-label="anchor" href="#arg-xlab-ylab"></a></dt>
 <dd><p>For `plot()`: x- and y-axis labels.</p></dd>
 
 </dl></div>
@@ -351,7 +351,6 @@ see the vignette.</p>
 <span class="r-in"><span><span class="co">## create lamas input from the reference dataset</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsExperiment" class="external-link">MsExperiment</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: ProtGenerics</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘ProtGenerics’ was built under R version 4.5.0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘ProtGenerics’</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:stats’:</span>

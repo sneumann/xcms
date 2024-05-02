@@ -86,7 +86,7 @@ addParams,addParams&amp;lt;-: getter and setter for the
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -268,77 +268,77 @@ addParams,addParams&amp;lt;-: getter and setter for the
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>snthresh</dt>
+    <dl><dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
 
 
-<dt>verboseColumns</dt>
+<dt id="arg-verbosecolumns">verboseColumns<a class="anchor" aria-label="anchor" href="#arg-verbosecolumns"></a></dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
 
 
-<dt>scales</dt>
+<dt id="arg-scales">scales<a class="anchor" aria-label="anchor" href="#arg-scales"></a></dt>
 <dd><p>Numeric defining the scales of the continuous wavelet
 transform (CWT).</p></dd>
 
 
-<dt>nearbyPeak</dt>
+<dt id="arg-nearbypeak">nearbyPeak<a class="anchor" aria-label="anchor" href="#arg-nearbypeak"></a></dt>
 <dd><p>logical(1) whether to include nearby peaks of
 major peaks.</p></dd>
 
 
-<dt>peakScaleRange</dt>
+<dt id="arg-peakscalerange">peakScaleRange<a class="anchor" aria-label="anchor" href="#arg-peakscalerange"></a></dt>
 <dd><p>numeric(1) defining the scale range of the
 peak (larger than 5 by default).</p></dd>
 
 
-<dt>ampTh</dt>
+<dt id="arg-ampth">ampTh<a class="anchor" aria-label="anchor" href="#arg-ampth"></a></dt>
 <dd><p>numeric(1) defining the minimum required relative
 amplitude of the peak (ratio of the maximum of CWT coefficients).</p></dd>
 
 
-<dt>minNoiseLevel</dt>
+<dt id="arg-minnoiselevel">minNoiseLevel<a class="anchor" aria-label="anchor" href="#arg-minnoiselevel"></a></dt>
 <dd><p>numeric(1) defining the minimum noise level
 used in computing the SNR.</p></dd>
 
 
-<dt>ridgeLength</dt>
+<dt id="arg-ridgelength">ridgeLength<a class="anchor" aria-label="anchor" href="#arg-ridgelength"></a></dt>
 <dd><p>numeric(1) defining the minimum highest scale
 of the peak in 2-D CWT coefficient matrix.</p></dd>
 
 
-<dt>peakThr</dt>
+<dt id="arg-peakthr">peakThr<a class="anchor" aria-label="anchor" href="#arg-peakthr"></a></dt>
 <dd><p>numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
 Savitzky-Golay filter is used (in the <code>MassSpecWavelet</code>)
 package to estimate the local intensity.</p></dd>
 
 
-<dt>tuneIn</dt>
+<dt id="arg-tunein">tuneIn<a class="anchor" aria-label="anchor" href="#arg-tunein"></a></dt>
 <dd><p>logical(1) whther to tune in the parameter
 estimation of the detected peaks.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters to be passed to the
 <code>peakDetectionCWT</code> and
 <code>identifyMajorPeaks</code> functions from the
 <code>MassSpecWavelet</code> package.</p></dd>
 
 
-<dt>object</dt>
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>findChromPeaks</code>: an
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code> object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>An <code>MSWParam</code> object containing all settings for
 the algorithm.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A parameter class specifying if and how parallel processing
 should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
@@ -346,18 +346,18 @@ parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
 
 </dl></div>
@@ -453,7 +453,6 @@ detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Loading a small subset of direct injection, single spectrum files</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">msdata</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>package ‘msdata’ was built under R version 4.5.0</span>
 <span class="r-in"><span><span class="va">fticrf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"fticr-mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                    recursive <span class="op">=</span> <span class="cn">TRUE</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fticr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/readMSData.html" class="external-link">readMSData</a></span><span class="op">(</span><span class="va">fticrf</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, msLevel. <span class="op">=</span> <span class="fl">1</span>, mode <span class="op">=</span> <span class="st">"onDisk"</span><span class="op">)</span></span></span>

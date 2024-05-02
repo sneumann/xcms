@@ -18,7 +18,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,50 +98,50 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>mz</dt>
+    <dl><dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></dd>
 
 
-<dt>int</dt>
+<dt id="arg-int">int<a class="anchor" aria-label="anchor" href="#arg-int"></a></dt>
 <dd><p>Numeric vector with the individual intensity values from all
 scans/spectra of one file/sample.</p></dd>
 
 
-<dt>scantime</dt>
+<dt id="arg-scantime">scantime<a class="anchor" aria-label="anchor" href="#arg-scantime"></a></dt>
 <dd><p>Numeric vector of length equal to the number of
 spectra/scans of the data representing the retention time of each scan.</p></dd>
 
 
-<dt>valsPerSpect</dt>
+<dt id="arg-valsperspect">valsPerSpect<a class="anchor" aria-label="anchor" href="#arg-valsperspect"></a></dt>
 <dd><p>Numeric vector with the number of values for each
 spectrum.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></dd>
 
 
-<dt>peakwidth</dt>
+<dt id="arg-peakwidth">peakwidth<a class="anchor" aria-label="anchor" href="#arg-peakwidth"></a></dt>
 <dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></dd>
 
 
-<dt>snthresh</dt>
+<dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
 
 
-<dt>prefilter</dt>
+<dt id="arg-prefilter">prefilter<a class="anchor" aria-label="anchor" href="#arg-prefilter"></a></dt>
 <dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></dd>
 
 
-<dt>mzCenterFun</dt>
+<dt id="arg-mzcenterfun">mzCenterFun<a class="anchor" aria-label="anchor" href="#arg-mzcenterfun"></a></dt>
 <dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
 mean of the peak's m/z values, <code>"mean"</code>: mean of the peak's m/z
@@ -152,7 +152,7 @@ mean of the m/z value of the peak apex and the m/z values left and right
 of it.</p></dd>
 
 
-<dt>integrate</dt>
+<dt id="arg-integrate">integrate<a class="anchor" aria-label="anchor" href="#arg-integrate"></a></dt>
 <dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
@@ -160,7 +160,7 @@ method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
 
 
-<dt>mzdiff</dt>
+<dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
@@ -168,24 +168,24 @@ defined to be overlapping are reduced to the one peak with the largest
 signal.</p></dd>
 
 
-<dt>fitgauss</dt>
+<dt id="arg-fitgauss">fitgauss<a class="anchor" aria-label="anchor" href="#arg-fitgauss"></a></dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></dd>
 
 
-<dt>noise</dt>
+<dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>
 <dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
 
 
-<dt>verboseColumns</dt>
+<dt id="arg-verbosecolumns">verboseColumns<a class="anchor" aria-label="anchor" href="#arg-verbosecolumns"></a></dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
 
 
-<dt>criticalValue</dt>
+<dt id="arg-criticalvalue">criticalValue<a class="anchor" aria-label="anchor" href="#arg-criticalvalue"></a></dt>
 <dd><p><code>numeric(1)</code>. Suggested values:
 (<code>0.1-3.0</code>). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
@@ -197,7 +197,7 @@ a small mass deviance in ppm error, a smaller critical value might be
 better and vice versa.</p></dd>
 
 
-<dt>consecMissedLimit</dt>
+<dt id="arg-consecmissedlimit">consecMissedLimit<a class="anchor" aria-label="anchor" href="#arg-consecmissedlimit"></a></dt>
 <dd><p><code>integer(1)</code> Suggested values: (<code>1,2,3</code>).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
@@ -205,7 +205,7 @@ or more consecutive failed predictions, this setting informs Massifquant
 when to stop a Kalman Filter from following a candidate peak.</p></dd>
 
 
-<dt>unions</dt>
+<dt id="arg-unions">unions<a class="anchor" aria-label="anchor" href="#arg-unions"></a></dt>
 <dd><p><code>integer(1)</code> set to <code>1</code> if apply t-test union on
 segmentation; set to <code>0</code> if no t-test to be applied on
 chromatographically continous peaks sharing same m/z range.
@@ -219,7 +219,7 @@ into one with a two sample t-test. The potential danger of this option
 is that some truly distinct peaks may be merged.</p></dd>
 
 
-<dt>checkBack</dt>
+<dt id="arg-checkback">checkBack<a class="anchor" aria-label="anchor" href="#arg-checkback"></a></dt>
 <dd><p><code>integer(1)</code> set to <code>1</code> if turned on; set to
 <code>0</code> if turned off. The convergence of a Kalman Filter to a peak's
 precise m/z mapping is very fast, but sometimes it incorporates erroneous
@@ -231,7 +231,7 @@ it has not shown to be a extremely useful thus far and the default is set
 to being turned off.</p></dd>
 
 
-<dt>withWave</dt>
+<dt id="arg-withwave">withWave<a class="anchor" aria-label="anchor" href="#arg-withwave"></a></dt>
 <dd><p><code>logical(1)</code> if <code>TRUE</code>, the peaks identified first
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.</p></dd>

@@ -44,7 +44,7 @@ for selected samples (files).
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,22 +132,22 @@ the m/z bin.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An <code>xcmsRaw</code>, <code>OnDiskMSnExp</code>, <code>XCMSnExp</code>, <code>MsExperiment</code> or
 <code>XcmsExperiment</code>  object.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>character(1)</code> defining the profile matrix generation method.
 Allowed are <code>"bin"</code>, <code>"binlin"</code>, <code>"binlinbase"</code> and <code>"intlin"</code>.
 See details section for more information.</p></dd>
 
 
-<dt>step</dt>
+<dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
 <dd><p><code>numeric(1)</code> representing the m/z bin size.</p></dd>
 
 
-<dt>baselevel</dt>
+<dt id="arg-baselevel">baselevel<a class="anchor" aria-label="anchor" href="#arg-baselevel"></a></dt>
 <dd><p><code>numeric(1)</code> representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be
 set. Only considered if <code>method = "binlinbase"</code>. See
@@ -155,7 +155,7 @@ set. Only considered if <code>method = "binlinbase"</code>. See
 details.</p></dd>
 
 
-<dt>basespace</dt>
+<dt id="arg-basespace">basespace<a class="anchor" aria-label="anchor" href="#arg-basespace"></a></dt>
 <dd><p><code>numeric(1)</code> representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will
 be used between consecutive data points falling within
@@ -168,19 +168,19 @@ function by <code>distance = floor(basespace / step)</code>. See
 details.</p></dd>
 
 
-<dt>mzrange.</dt>
+<dt id="arg-mzrange-">mzrange.<a class="anchor" aria-label="anchor" href="#arg-mzrange-"></a></dt>
 <dd><p>Optional <code>numeric(2)</code> manually specifying the mz value range
 to be used for binnind. If not provided, the whole m/z value range is
 used.</p></dd>
 
 
-<dt>fileIndex</dt>
+<dt id="arg-fileindex">fileIndex<a class="anchor" aria-label="anchor" href="#arg-fileindex"></a></dt>
 <dd><p>For <code>MsExperiment</code> or <code>XcmsExperiment</code>: <code>integer</code> defining
 the idex (or indices) of the sample(s) from which the profile matrix
 should be created.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>MsExperiment</code> or <code>XcmsExperiment</code>: <code>integer(1)</code>
 defining the number of files from which data should be loaded and
 processed in one iteration. By default one file at a time is processed
@@ -189,18 +189,18 @@ the <code>chunkSize</code> should be <code>&gt;=</code> than the number of paral
 that should be used.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>For <code>MsExperiment</code> or <code>XcmsExperiment</code>: <code>integer(1)</code> defining
 the MS level from which the profile matrix should be generated.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For <code>MsExperiment</code> or <code>XcmsExperiment</code>: parallel processing
 setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more details. Defaults to
 <code>BPPARAM = bpparam()</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
 
 </dl></div>

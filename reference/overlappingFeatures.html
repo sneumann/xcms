@@ -12,7 +12,7 @@ the m/z - rt space."><meta property="og:image" content="https://sneumann.github.
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,25 +69,25 @@ the m/z - rt space.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> or <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with the features.</p></dd>
 
 
-<dt>expandMz</dt>
+<dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in m/z dimension before identifying overlapping features.
 The resulting <code>"mzmin"</code> for the feature is thus <code>mzmin - expandMz</code> and
 the <code>"mzmax"</code> <code>mzmax + expandMz</code>.</p></dd>
 
 
-<dt>expandRt</dt>
+<dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in retention time dimension before identifying overlapping
 features. The resulting <code>"rtmin"</code> for the
 feature is thus <code>rtmin - expandRt</code> and the <code>"rtmax"</code> <code>rtmax + expandRt</code>.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> to grow the m/z width of the feature by a relative
 value: <code>mzmin - mzmin * ppm / 2e6</code>, <code>mzmax + mzmax * ppm / 2e6</code>. Each
 feature is thus expanded in m/z dimension by ppm/2 on each side before

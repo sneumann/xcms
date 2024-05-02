@@ -14,7 +14,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,65 +82,65 @@
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsSet</code> object</p></dd>
 
-  <dt>class1</dt>
+  <dt id="arg-class-">class1<a class="anchor" aria-label="anchor" href="#arg-class-"></a></dt>
 <dd><p>character vector with the first set of sample classes to be
     compared</p></dd>
 
-  <dt>class2</dt>
+  <dt id="arg-class-">class2<a class="anchor" aria-label="anchor" href="#arg-class-"></a></dt>
 <dd><p>character vector with the second set of sample classes to be
     compared</p></dd>
 
-  <dt>filebase</dt>
+  <dt id="arg-filebase">filebase<a class="anchor" aria-label="anchor" href="#arg-filebase"></a></dt>
 <dd><p>base file name to save report, <code>.tsv</code> file and <code>_eic</code>
     will be appended to this name for the tabular report and EIC
     directory, respectively. if blank nothing will be saved</p></dd>
 
-  <dt>eicmax</dt>
+  <dt id="arg-eicmax">eicmax<a class="anchor" aria-label="anchor" href="#arg-eicmax"></a></dt>
 <dd><p>number of the most significantly different analytes to create
     EICs for</p></dd>
 
-  <dt>eicwidth</dt>
+  <dt id="arg-eicwidth">eicwidth<a class="anchor" aria-label="anchor" href="#arg-eicwidth"></a></dt>
 <dd><p>width (in seconds) of EICs produced</p></dd>
 
-  <dt>sortpval</dt>
+  <dt id="arg-sortpval">sortpval<a class="anchor" aria-label="anchor" href="#arg-sortpval"></a></dt>
 <dd><p>logical indicating whether the reports should be sorted by
     p-value</p></dd>
 
-  <dt>classeic</dt>
+  <dt id="arg-classeic">classeic<a class="anchor" aria-label="anchor" href="#arg-classeic"></a></dt>
 <dd><p>character vector with the sample classes to include in the EICs</p></dd>
 
-  <dt>value</dt>
+  <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>intensity values to be used for the diffreport. <br>
     If <code>value="into"</code>, integrated peak intensities are used. <br>
     If <code>value="maxo"</code>, maximum peak intensities are used. <br>
     If <code>value="intb"</code>, baseline corrected integrated peak intensities are used (only available if peak detection was done by <code><a href="findPeaks.centWave-methods.html">findPeaks.centWave</a></code>).</p></dd>
 
-  <dt>metlin</dt>
+  <dt id="arg-metlin">metlin<a class="anchor" aria-label="anchor" href="#arg-metlin"></a></dt>
 <dd><p>mass uncertainty to use for generating link to Metlin metabolite
     database. the sign of the uncertainty indicates negative or
     positive mode data for M+H or M-H calculation. a value of FALSE
     or 0 removes the column</p></dd>
 
-  <dt>h</dt>
+  <dt id="arg-h">h<a class="anchor" aria-label="anchor" href="#arg-h"></a></dt>
 <dd><p>Numeric variable for the height of the eic and boxplots that are printed out.</p></dd>
 
-  <dt>w</dt>
+  <dt id="arg-w">w<a class="anchor" aria-label="anchor" href="#arg-w"></a></dt>
 <dd><p>Numeric variable for the width of the eic and boxplots print out made.</p></dd>
 
-  <dt>mzdec</dt>
+  <dt id="arg-mzdec">mzdec<a class="anchor" aria-label="anchor" href="#arg-mzdec"></a></dt>
 <dd><p>Number of decimal places of title m/z values in the eic plot.</p></dd>
 
-  <dt>missing</dt>
+  <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
 <dd><p><code>numeric(1)</code> defining an optional value for missing
     values. <code>missing = 0</code> would e.g. replace all <code>NA</code> values
     in the feature matrix with <code>0</code>. Note that also a call to
     <code><a href="fillPeaks-methods.html">fillPeaks</a></code> results in a feature matrix in which
     <code>NA</code> values are replaced by <code>0</code>.</p></dd>
 
-  <dt>...</dt>
+  <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments to be passed to <code>mt.teststat</code> from the
     <code>multtest</code> package.</p></dd>
 

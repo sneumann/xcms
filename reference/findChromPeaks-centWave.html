@@ -86,7 +86,7 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -287,30 +287,30 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>ppm</dt>
+    <dl><dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></dd>
 
 
-<dt>peakwidth</dt>
+<dt id="arg-peakwidth">peakwidth<a class="anchor" aria-label="anchor" href="#arg-peakwidth"></a></dt>
 <dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></dd>
 
 
-<dt>snthresh</dt>
+<dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
 
 
-<dt>prefilter</dt>
+<dt id="arg-prefilter">prefilter<a class="anchor" aria-label="anchor" href="#arg-prefilter"></a></dt>
 <dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></dd>
 
 
-<dt>mzCenterFun</dt>
+<dt id="arg-mzcenterfun">mzCenterFun<a class="anchor" aria-label="anchor" href="#arg-mzcenterfun"></a></dt>
 <dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
 mean of the peak's m/z values, <code>"mean"</code>: mean of the peak's m/z
@@ -321,7 +321,7 @@ mean of the m/z value of the peak apex and the m/z values left and right
 of it.</p></dd>
 
 
-<dt>integrate</dt>
+<dt id="arg-integrate">integrate<a class="anchor" aria-label="anchor" href="#arg-integrate"></a></dt>
 <dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
@@ -329,7 +329,7 @@ method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
 
 
-<dt>mzdiff</dt>
+<dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
@@ -337,24 +337,24 @@ defined to be overlapping are reduced to the one peak with the largest
 signal.</p></dd>
 
 
-<dt>fitgauss</dt>
+<dt id="arg-fitgauss">fitgauss<a class="anchor" aria-label="anchor" href="#arg-fitgauss"></a></dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></dd>
 
 
-<dt>noise</dt>
+<dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>
 <dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
 
 
-<dt>verboseColumns</dt>
+<dt id="arg-verbosecolumns">verboseColumns<a class="anchor" aria-label="anchor" href="#arg-verbosecolumns"></a></dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
 
 
-<dt>roiList</dt>
+<dt id="arg-roilist">roiList<a class="anchor" aria-label="anchor" href="#arg-roilist"></a></dt>
 <dd><p>An optional list of regions-of-interest (ROI) representing
 detected mass traces. If ROIs are submitted the first analysis step is
 omitted and chromatographic peak detection is performed on the submitted
@@ -366,7 +366,7 @@ be represented by a <code>list</code> of elements or a single row
 <code>data.frame</code>.</p></dd>
 
 
-<dt>firstBaselineCheck</dt>
+<dt id="arg-firstbaselinecheck">firstBaselineCheck<a class="anchor" aria-label="anchor" href="#arg-firstbaselinecheck"></a></dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
 data within regions of interest is checked to be above the first baseline.
 In detail, a first rough estimate of the noise is calculated and peak
@@ -374,13 +374,13 @@ detection is performed only in regions in which multiple sequential
 signals are higher than this first estimated baseline/noise level.</p></dd>
 
 
-<dt>roiScales</dt>
+<dt id="arg-roiscales">roiScales<a class="anchor" aria-label="anchor" href="#arg-roiscales"></a></dt>
 <dd><p>Optional numeric vector with length equal to <code>roiList</code>
 defining the scale for each region of interest in <code>roiList</code> that
 should be used for the centWave-wavelets.</p></dd>
 
 
-<dt>extendLengthMSW</dt>
+<dt id="arg-extendlengthmsw">extendLengthMSW<a class="anchor" aria-label="anchor" href="#arg-extendlengthmsw"></a></dt>
 <dd><p>Option to force centWave to use all scales when
 running centWave rather than truncating with the EIC length. Uses the "open"
 method to extend the EIC to a integer base-2 length prior to being passed to
@@ -388,7 +388,7 @@ method to extend the EIC to a integer base-2 length prior to being passed to
 https://github.com/sneumann/xcms/issues/445 for more information.</p></dd>
 
 
-<dt>verboseBetaColumns</dt>
+<dt id="arg-verbosebetacolumns">verboseBetaColumns<a class="anchor" aria-label="anchor" href="#arg-verbosebetacolumns"></a></dt>
 <dd><p>Option to calculate two additional metrics of peak
 quality via comparison to an idealized bell curve. Adds <code>beta_cor</code> and
 <code>beta_snr</code> to the <code>chromPeaks</code> output, corresponding to a Pearson
@@ -398,19 +398,19 @@ bell curve. See https://github.com/sneumann/xcms/pull/685 and
 https://doi.org/10.1186/s12859-023-05533-4 for more information.</p></dd>
 
 
-<dt>object</dt>
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>findChromPeaks</code>: an
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>  object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>An <code>CentWaveParam</code> object containing all settings for the
 centWave algorithm.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A parameter class specifying if and how parallel processing
 should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
@@ -418,30 +418,30 @@ parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
 
 
-<dt>f</dt>
+<dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>For <code>integrate</code>: a <code>CentWaveParam</code> object.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The parameter object.</p></dd>
 
 </dl></div>

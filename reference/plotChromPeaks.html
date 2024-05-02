@@ -24,7 +24,7 @@ represented with the color of the respective cell."><meta property="og:image" co
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,81 +112,81 @@ represented with the color of the respective cell.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A [XcmsExperiment()] or [XCMSnExp()] object.</p></dd>
 
 
-<dt>file</dt>
+<dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>For `plotChromPeaks`: `integer(1)` specifying the
 index of the file within `x` for which the plot should be created.
 Defaults to `file = 1`.</p></dd>
 
 
-<dt>xlim</dt>
+<dt id="arg-xlim">xlim<a class="anchor" aria-label="anchor" href="#arg-xlim"></a></dt>
 <dd><p>`numeric(2)` specifying the x-axis limits (retention time
 dimension). Defaults to `xlim = NULL` in which case the full retention
 time range of the file is used.</p></dd>
 
 
-<dt>ylim</dt>
+<dt id="arg-ylim">ylim<a class="anchor" aria-label="anchor" href="#arg-ylim"></a></dt>
 <dd><p>For `plotChromPeaks`: `numeric(2)` specifying the
 y-axis limits (m/z dimension). Defaults to `ylim = NULL` in which
 case the full m/z range of the file is used.</p></dd>
 
 
-<dt>add</dt>
+<dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p>For `plotChromPeaks`: `logical(1)` whether the plot
 should be added to an existing plot or if a new plot should be created.</p></dd>
 
 
-<dt>border</dt>
+<dt id="arg-border">border<a class="anchor" aria-label="anchor" href="#arg-border"></a></dt>
 <dd><p>For `plotChromPeaks`: the color for the rectangles'
 border.</p></dd>
 
 
-<dt>col</dt>
+<dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>For `plotChromPeaks`: the color to be used to fill the
 rectangles.</p></dd>
 
 
-<dt>xlab</dt>
+<dt id="arg-xlab">xlab<a class="anchor" aria-label="anchor" href="#arg-xlab"></a></dt>
 <dd><p>`character(1)` defining the x-axis label.</p></dd>
 
 
-<dt>ylab</dt>
+<dt id="arg-ylab">ylab<a class="anchor" aria-label="anchor" href="#arg-ylab"></a></dt>
 <dd><p>For `plotChromPeaks`: `character(1)` defining the
 y-axis label.</p></dd>
 
 
-<dt>main</dt>
+<dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>`character(1)` defining the plot title. By default (i.e.
 `main = NULL`) the name of the file will be used as title.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>`integer(1)` defining the MS level from which the peaks
 should be visualized.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to the `plot` (for
 `plotChromPeaks`) and `image` (for
 `plotChromPeakImage`) functions. Ignored for `add = TRUE`.</p></dd>
 
 
-<dt>binSize</dt>
+<dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p>For `plotChromPeakImage`: `numeric(1)` defining the
 size of the bins along the x-axis (retention time). Defaults to
 `binSize = 30`, peaks within each 30 seconds will thus counted and
 plotted.</p></dd>
 
 
-<dt>log</dt>
+<dt id="arg-log">log<a class="anchor" aria-label="anchor" href="#arg-log"></a></dt>
 <dd><p>For `plotChromPeakImage`: `logical(1)` whether the peak
 counts should be log2 transformed before plotting.</p></dd>
 
 
-<dt>yaxt</dt>
+<dt id="arg-yaxt">yaxt<a class="anchor" aria-label="anchor" href="#arg-yaxt"></a></dt>
 <dd><p>For `plotChromPeakImage`: `character(1)` defining
 whether y-axis labels should be added. To disable the y-axis use
 `yaxt = "n"`. For any other value of `yaxt` the axis will be

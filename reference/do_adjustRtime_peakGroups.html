@@ -24,7 +24,7 @@ spectrum in each sample.'><meta property="og:image" content="https://sneumann.gi
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,22 +99,22 @@ spectrum in each sample.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>peaks</dt>
+    <dl><dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p>a <code>matrix</code> or <code>data.frame</code> with the identified
 chromatographic peaks in the samples.</p></dd>
 
 
-<dt>peakIndex</dt>
+<dt id="arg-peakindex">peakIndex<a class="anchor" aria-label="anchor" href="#arg-peakindex"></a></dt>
 <dd><p>a <code>list</code> of indices that provides the grouping
 information of the chromatographic peaks (across and within samples).</p></dd>
 
 
-<dt>rtime</dt>
+<dt id="arg-rtime">rtime<a class="anchor" aria-label="anchor" href="#arg-rtime"></a></dt>
 <dd><p>a <code>list</code> of <code>numeric</code> vectors with the retention
 times per file/sample.</p></dd>
 
 
-<dt>minFraction</dt>
+<dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> between 0 and 1
 defining the minimum required proportion of samples in which peaks for
 the peak group were identified. Peak groups passing this criteria will
@@ -127,7 +127,7 @@ the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).</p></dd>
 
 
-<dt>extraPeaks</dt>
+<dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
 number of additional peaks for all samples to be assigned to a peak
 group (feature) for retention time correction. For a data set with 6
@@ -137,25 +137,25 @@ assigned to a peak group and considers also multiple peaks within a
 sample that are assigned to the group.</p></dd>
 
 
-<dt>smooth</dt>
+<dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the function to
 be used to interpolate corrected retention times for all peak groups.
 Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
 
 
-<dt>span</dt>
+<dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
 passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
 
 
-<dt>family</dt>
+<dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
 
 
-<dt>peakGroupsMatrix</dt>
+<dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>
 <dd><p>optional <code>matrix</code> of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
 represents a sample, each row a feature/peak group. If not provided,
@@ -164,7 +164,7 @@ this matrix will be determined depending on parameters
 <code>minFraction</code> and <code>extraPeaks</code> will be ignored.</p></dd>
 
 
-<dt>subset</dt>
+<dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>integer</code> with the
 indices of samples within the experiment on which the alignment models
 should be estimated.
@@ -172,7 +172,7 @@ Samples not part of the subset are adjusted based on the closest subset
 sample. See <em>Subset-based alignment</em> section for details.</p></dd>
 
 
-<dt>subsetAdjust</dt>
+<dt id="arg-subsetadjust">subsetAdjust<a class="anchor" aria-label="anchor" href="#arg-subsetadjust"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>character(1)</code>
 specifying the method with which non-subset samples should be adjusted.
 Supported options are <code>"previous"</code> and <code>"average"</code> (default).

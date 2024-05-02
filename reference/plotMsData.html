@@ -20,7 +20,7 @@ rt against m/z values at the bottom.'><meta property="og:image" content="https:/
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,33 +88,33 @@ rt against m/z values at the bottom.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code>data.frame</code> such as returned by the <code><a href="extractMsData-method.html">extractMsData()</a></code> function.
 Only a single <code>data.frame</code> is supported.</p></dd>
 
 
-<dt>main</dt>
+<dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p><code>character(1)</code> specifying the title.</p></dd>
 
 
-<dt>cex</dt>
+<dt id="arg-cex">cex<a class="anchor" aria-label="anchor" href="#arg-cex"></a></dt>
 <dd><p><code>numeric(1)</code> defining the size of points. Passed directly to the
 <code>plot</code> function.</p></dd>
 
 
-<dt>mfrow</dt>
+<dt id="arg-mfrow">mfrow<a class="anchor" aria-label="anchor" href="#arg-mfrow"></a></dt>
 <dd><p><code>numeric(2)</code> defining the plot layout. This will be passed
 directly to <code>par(mfrow = mfrow)</code>. See <code>par</code> for more information. Setting
 <code>mfrow = NULL</code> avoids calling <code>par(mfrow = mfrow)</code> hence allowing to
 pre-define the plot layout.</p></dd>
 
 
-<dt>grid.color</dt>
+<dt id="arg-grid-color">grid.color<a class="anchor" aria-label="anchor" href="#arg-grid-color"></a></dt>
 <dd><p>a color definition for the grid line (or <code>NA</code> to skip
 creating them).</p></dd>
 
 
-<dt>colramp</dt>
+<dt id="arg-colramp">colramp<a class="anchor" aria-label="anchor" href="#arg-colramp"></a></dt>
 <dd><p>a <em>color ramp palette</em> to be used to color the data points
 based on their intensity. See argument <code>col.regions</code> in
 <a href="https://rdrr.io/pkg/lattice/man/level.colors.html" class="external-link">lattice::level.colors</a> documentation.</p></dd>

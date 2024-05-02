@@ -24,7 +24,7 @@ removed from the entire dataset."><meta property="og:image" content="https://sne
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,52 +99,52 @@ removed from the entire dataset.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>threshold</dt>
+    <dl><dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>`numeric` value representing the threshold. Features with a
 D-ratio *strictly higher* (`&gt;`) than this will be removed from the entire
 dataset.</p></dd>
 
 
-<dt>qcIndex</dt>
+<dt id="arg-qcindex">qcIndex<a class="anchor" aria-label="anchor" href="#arg-qcindex"></a></dt>
 <dd><p>`integer` (or `logical`) vector corresponding to the indices
 of QC samples.</p></dd>
 
 
-<dt>studyIndex</dt>
+<dt id="arg-studyindex">studyIndex<a class="anchor" aria-label="anchor" href="#arg-studyindex"></a></dt>
 <dd><p>`integer` (or `logical`) vector corresponding of the
 indices of study samples.</p></dd>
 
 
-<dt>na.rm</dt>
+<dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>`logical` Indicates whether missing values (`NA`) should be
 removed prior to the calculations.</p></dd>
 
 
-<dt>mad</dt>
+<dt id="arg-mad">mad<a class="anchor" aria-label="anchor" href="#arg-mad"></a></dt>
 <dd><p>`logical` Indicates whether the *Median Absolute Deviation*
 (MAD) should be used instead of the standard deviation. This is suggested
 for non-gaussian distributed data.</p></dd>
 
 
-<dt>object</dt>
+<dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>XcmsExperiment</code> or <code>SummarizedExperiment</code>. For an
 <code>XcmsExperiment</code> object, the <code>featureValues(object)</code> will be evaluated, and
 for <code>Summarizedesxperiment</code> the <code>assay(object, assay)</code>. The object will be
 filtered.</p></dd>
 
 
-<dt>filter</dt>
+<dt id="arg-filter">filter<a class="anchor" aria-label="anchor" href="#arg-filter"></a></dt>
 <dd><p>The parameter object selecting and configuring the type of
 filtering. It can be one of the following classes: <code><a href="RsdFilter.html">RsdFilter</a></code>,
 <code>DratioFilter</code>, <code><a href="PercentMissingFilter.html">PercentMissingFilter</a></code> or <code><a href="BlankFlag.html">BlankFlag</a></code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters. For <code>object</code> being an <code>XcmsExperiment</code>:
 parameters for the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> call.</p></dd>
 
 
-<dt>assay</dt>
+<dt id="arg-assay">assay<a class="anchor" aria-label="anchor" href="#arg-assay"></a></dt>
 <dd><p>For filtering of <code>SummarizedExperiment</code> objects only. Indicates
 which assay the filtering will be based on. Note that the features for the
 entire object will be removed, but the computations are performed on a single

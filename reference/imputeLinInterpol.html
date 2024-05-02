@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,27 +81,27 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A numeric vector with eventual missing (<code>NA</code>) values.</p></dd>
 
 
-<dt>baseValue</dt>
+<dt id="arg-basevalue">baseValue<a class="anchor" aria-label="anchor" href="#arg-basevalue"></a></dt>
 <dd><p>The base value to which empty elements should be set. This
 is only considered for <code>method = "linbase"</code> and corresponds to the
 <code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></dd>
 
 
-<dt>method</dt>
+<dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>One of <code>"none"</code>, <code>"lin"</code> or <code>"linbase"</code>.</p></dd>
 
 
-<dt>distance</dt>
+<dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
 <dd><p>For <code>method = "linbase"</code>: number of non-empty
 neighboring element of an empty element that should be considered for
 linear interpolation. See details section for more information.</p></dd>
 
 
-<dt>noInterpolAtEnds</dt>
+<dt id="arg-nointerpolatends">noInterpolAtEnds<a class="anchor" aria-label="anchor" href="#arg-nointerpolatends"></a></dt>
 <dd><p>For <code>method = "lin"</code>: Logical indicating
 whether linear interpolation should also be performed at the ends of the
 data vector (i.e. if missing values are present at the beginning or the

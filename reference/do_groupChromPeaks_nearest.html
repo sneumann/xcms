@@ -16,7 +16,7 @@ correspondence algorithm of mzMine (Katajamaa 2006)."><meta property="og:image" 
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@ correspondence algorithm of mzMine (Katajamaa 2006).</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>peaks</dt>
+    <dl><dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p>A <code>matrix</code> or <code>data.frame</code> with the mz values and
 retention times of the identified chromatographic peaks in all samples
 of an experiment. Required columns are <code>"mz"</code>, <code>"rt"</code> and
@@ -90,7 +90,7 @@ of an experiment. Required columns are <code>"mz"</code>, <code>"rt"</code> and
 the index of the sample in which the peak was found.</p></dd>
 
 
-<dt>sampleGroups</dt>
+<dt id="arg-samplegroups">sampleGroups<a class="anchor" aria-label="anchor" href="#arg-samplegroups"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: A vector of the same length than
 samples defining the sample group assignments (i.e. which samples
 belong to which sample
@@ -100,23 +100,23 @@ experiment (in which case all samples should be assigned to the
 same group).</p></dd>
 
 
-<dt>mzVsRtBalance</dt>
+<dt id="arg-mzvsrtbalance">mzVsRtBalance<a class="anchor" aria-label="anchor" href="#arg-mzvsrtbalance"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> representing the
 factor by which m/z values are multiplied before calculating the
 (euclician) distance between two peaks.</p></dd>
 
 
-<dt>absMz</dt>
+<dt id="arg-absmz">absMz<a class="anchor" aria-label="anchor" href="#arg-absmz"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code> and <code>MzClustParam</code>: <code>numeric(1)</code>
 maximum tolerated distance for m/z values.</p></dd>
 
 
-<dt>absRt</dt>
+<dt id="arg-absrt">absRt<a class="anchor" aria-label="anchor" href="#arg-absrt"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> maximum tolerated
 distance for retention times.</p></dd>
 
 
-<dt>kNN</dt>
+<dt id="arg-knn">kNN<a class="anchor" aria-label="anchor" href="#arg-knn"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>integer(1)</code> representing the number of
 nearest neighbors to check.</p></dd>
 

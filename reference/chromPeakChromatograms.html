@@ -14,7 +14,7 @@ of length equal to the number of chromatographic peaks (and one column)."><meta 
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,42 +84,42 @@ of length equal to the number of chromatographic peaks (and one column).</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> with identified chromatographic peaks.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>currently ignored.</p></dd>
 
 
-<dt>expandRt</dt>
+<dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> to eventually expand the retention time range
 from which the signal should be integrated. The chromatogram will
 contain signal from <code>chromPeaks[, "rtmin"] - expandRt</code> to
 <code>chromPeaks[, "rtmax"] + expandRt</code>. The default is <code>expandRt = 0</code>.</p></dd>
 
 
-<dt>expandMz</dt>
+<dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> to eventually expand the m/z range
 from which the signal should be integrated. The chromatogram will
 contain signal from <code>chromPeaks[, "mzmin"] - expandMz</code> to
 <code>chromPeaks[, "mzmax"] + expandMz</code>. The default is <code>expandMz = 0</code>.</p></dd>
 
 
-<dt>aggregationFun</dt>
+<dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p><code>character(1)</code> defining the function how signals
 within the m/z range in each spectrum (i.e. for each discrete retention
 time) should be aggregated. The default (<code>aggregationFun = "max"</code>)
 reports the largest signal for each spectrum.</p></dd>
 
 
-<dt>peaks</dt>
+<dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p>optional <code>character</code> providing the IDs of the chromatographic
 peaks (i.e. the row names of the peaks in <code>chromPeaks(object)</code>) for
 which chromatograms should be returned.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p><code>character(1)</code> specifying the type of the returned object.
 Can be either <code>return.type = "XChromatograms"</code> (the default) or
 <code>return.type = "MChromatograms"</code> to return either a chromatographic
@@ -127,7 +127,7 @@ object with or without the identified chromatographic peaks,
 respectively.</p></dd>
 
 
-<dt>progressbar</dt>
+<dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
 <dd><p><code>logical(1)</code> whether the progress of the extraction
 process should be displayed.</p></dd>
 

@@ -44,7 +44,7 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,26 +135,26 @@ listed above.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The data object on which to perform the peak detection. Can be
 an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code>
 object.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object selecting and configuring the algorithm.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the
 chromatographic peak detection should be performed.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p><code>integer(1)</code> for <code>object</code> being an <code>MsExperiment</code> or
 <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code>: defines the number of files (samples) for which the
 full peaks data (m/z and intensity values) should be loaded into memory
@@ -168,12 +168,12 @@ setup. Using a parallel processing setup using 4 CPUs (separate
 processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize<code>to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting</code>chunkSize = -1<code>the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all</code>Spectra` <em>backends</em> (see eventually <code>Spectra()</code> for details).</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parallel processing setup. Uses by default the system-wide
 default setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more details.</p></dd>
 
 
-<dt>add</dt>
+<dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p><code>logical(1)</code> (if <code>object</code> contains already chromatographic peaks,
 i.e. is either an <code>XCMSnExp</code> or <code>XcmsExperiment</code>) whether chromatographic
 peak detection results should be <strong>added</strong> to existing results. By

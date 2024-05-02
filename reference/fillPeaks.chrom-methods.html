@@ -14,7 +14,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,10 +77,10 @@
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsSet</code> object</p></dd>
 
-  <dt>nSlaves</dt>
+  <dt id="arg-nslaves">nSlaves<a class="anchor" aria-label="anchor" href="#arg-nslaves"></a></dt>
 <dd><p>(DEPRECATED): number of slaves/cores to be used for
     parallel peak filling.
     MPI is used if installed, otherwise the snow package is employed for
@@ -89,14 +89,14 @@
     current machine. Users are advised to use the <code>BPPARAM</code>
     parameter instead.</p></dd>
 
-  <dt>expand.mz</dt>
+  <dt id="arg-expand-mz">expand.mz<a class="anchor" aria-label="anchor" href="#arg-expand-mz"></a></dt>
 <dd><p>Expansion factor for the m/z range used for integration.</p></dd>
 
-  <dt>expand.rt</dt>
+  <dt id="arg-expand-rt">expand.rt<a class="anchor" aria-label="anchor" href="#arg-expand-rt"></a></dt>
 <dd><p>Expansion factor for the rentention time range used
     for integration.</p></dd>
 
-  <dt>BPPARAM</dt>
+  <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>allows to define a specific parallel processing setup
   for the current task (see <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code> from the
   <code>BiocParallel</code> package help more information). The default uses

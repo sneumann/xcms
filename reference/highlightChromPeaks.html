@@ -16,7 +16,7 @@ MChromatograms object."><meta property="og:image" content="https://sneumann.gith
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,43 +86,43 @@ peak definitions to an existing plot, such as one created by the
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>x</dt>
+    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>XCMSnExp</code> object with the
 detected peaks.</p></dd>
 
 
-<dt>rt</dt>
+<dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>numeric(2)</code> with the
 retention time range from which peaks should be extracted and plotted.</p></dd>
 
 
-<dt>mz</dt>
+<dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p><code>numeric(2)</code> with the mz range from which the peaks should
 be extracted and plotted.</p></dd>
 
 
-<dt>peakIds</dt>
+<dt id="arg-peakids">peakIds<a class="anchor" aria-label="anchor" href="#arg-peakids"></a></dt>
 <dd><p><code>character</code> defining the IDs (i.e. rownames of the peak
 in the <code>chromPeaks</code> table) of the chromatographic peaks to be
 highlighted in a plot.</p></dd>
 
 
-<dt>border</dt>
+<dt id="arg-border">border<a class="anchor" aria-label="anchor" href="#arg-border"></a></dt>
 <dd><p>colors to be used to color the border of the rectangles/peaks.
 Has to be equal to the number of samples in <code>x</code>.</p></dd>
 
 
-<dt>lwd</dt>
+<dt id="arg-lwd">lwd<a class="anchor" aria-label="anchor" href="#arg-lwd"></a></dt>
 <dd><p><code>numeric(1)</code> defining the width of the line/border.</p></dd>
 
 
-<dt>col</dt>
+<dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: color to be used to fill the
 rectangle (if <code>type = "rect"</code>) or the peak
 (for <code>type = "polygon"</code>).</p></dd>
 
 
-<dt>type</dt>
+<dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>the plotting type. See <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></code> in base grapics for
 more details.
 For <code>highlightChromPeaks</code>: <code>character(1)</code> defining how the peak
@@ -135,7 +135,7 @@ area can be defined with parameters <code>"border"</code> and <code>"col"</code>
 respectively.</p></dd>
 
 
-<dt>whichPeaks</dt>
+<dt id="arg-whichpeaks">whichPeaks<a class="anchor" aria-label="anchor" href="#arg-whichpeaks"></a></dt>
 <dd><p><code>character(1)</code> specifying how peaks are called to be
 located within the region defined by <code>mz</code> and <code>rt</code>. Can be
 one of <code>"any"</code>, <code>"within"</code>, and <code>"apex_within"</code> for all
@@ -146,7 +146,7 @@ the region. This parameter is passed to the <code>type</code> argument of the
 information and examples.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters to the <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></code> or <code>plot</code>
 function.</p></dd>
 

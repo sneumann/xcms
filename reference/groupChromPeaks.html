@@ -90,7 +90,7 @@ help pages of the individual parameter classes listed above."><meta property="og
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -323,25 +323,25 @@ help pages of the individual parameter classes listed above.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The data object on which the correspondence analysis should be
 performed. Can be an <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
 
 
-<dt>param</dt>
+<dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object selecting and configuring the algorithm.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters.</p></dd>
 
 
-<dt>msLevel</dt>
+<dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the
 chromatographic peak detection should be performed.</p></dd>
 
 
-<dt>add</dt>
+<dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p><code>logical(1)</code> (if <code>object</code> contains already chromatographic peaks,
 i.e. is either an <code>XCMSnExp</code> or <code>XcmsExperiment</code>) whether chromatographic
 peak detection results should be <strong>added</strong> to existing results. By
@@ -349,7 +349,7 @@ default (<code>add = FALSE</code>) any additional <code>findChromPeaks</code> ca
 object will remove previous results.</p></dd>
 
 
-<dt>sampleGroups</dt>
+<dt id="arg-samplegroups">sampleGroups<a class="anchor" aria-label="anchor" href="#arg-samplegroups"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: A vector of the same length than
 samples defining the sample group assignments (i.e. which samples
 belong to which sample
@@ -359,30 +359,30 @@ experiment (in which case all samples should be assigned to the
 same group).</p></dd>
 
 
-<dt>bw</dt>
+<dt id="arg-bw">bw<a class="anchor" aria-label="anchor" href="#arg-bw"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the bandwidth
 (standard deviation ot the smoothing kernel) to be used. This argument
 is passed to the [density() method.</p></dd>
 
 
-<dt>minFraction</dt>
+<dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the minimum
 fraction of samples in at least one sample group in which the peaks
 have to be present to be considered as a peak group (feature).</p></dd>
 
 
-<dt>minSamples</dt>
+<dt id="arg-minsamples">minSamples<a class="anchor" aria-label="anchor" href="#arg-minsamples"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> with the minimum
 number of samples in at least one sample group in which the peaks have
 to be detected to be considered a peak group (feature).</p></dd>
 
 
-<dt>binSize</dt>
+<dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the size of the
 overlapping slices in m/z dimension.</p></dd>
 
 
-<dt>ppm</dt>
+<dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>MzClustParam</code>: <code>numeric(1)</code> representing the relative m/z
 error for the clustering/grouping (in parts per million).
 For <code>PeakDensityParam</code>: <code>numeric(1)</code> to define m/z-dependent, increasing
@@ -395,37 +395,37 @@ be <code>binSize</code> plus <code>ppm</code> parts-per-million of the largest m
 all peaks in the data set.</p></dd>
 
 
-<dt>maxFeatures</dt>
+<dt id="arg-maxfeatures">maxFeatures<a class="anchor" aria-label="anchor" href="#arg-maxfeatures"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> with the maximum
 number of peak groups to be identified in a single mz slice.</p></dd>
 
 
-<dt>absMz</dt>
+<dt id="arg-absmz">absMz<a class="anchor" aria-label="anchor" href="#arg-absmz"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code> and <code>MzClustParam</code>: <code>numeric(1)</code>
 maximum tolerated distance for m/z values.</p></dd>
 
 
-<dt>mzVsRtBalance</dt>
+<dt id="arg-mzvsrtbalance">mzVsRtBalance<a class="anchor" aria-label="anchor" href="#arg-mzvsrtbalance"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> representing the
 factor by which m/z values are multiplied before calculating the
 (euclician) distance between two peaks.</p></dd>
 
 
-<dt>absRt</dt>
+<dt id="arg-absrt">absRt<a class="anchor" aria-label="anchor" href="#arg-absrt"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> maximum tolerated
 distance for retention times.</p></dd>
 
 
-<dt>kNN</dt>
+<dt id="arg-knn">kNN<a class="anchor" aria-label="anchor" href="#arg-knn"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>integer(1)</code> representing the number of
 nearest neighbors to check.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
 
 
-<dt>x</dt>
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The parameter object.</p></dd>
 
 </dl></div>

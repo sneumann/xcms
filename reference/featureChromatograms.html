@@ -42,7 +42,7 @@ the m/z and retention time range (include = &quot;any&quot;)."><meta property="o
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,22 +146,22 @@ the m/z and retention time range (<code>include = "any"</code>).</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>XcmsExperiment</code> or <code>XCMSnExp</code> object with grouped
 chromatographic peaks.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments to be passed along to the <code><a href="chromatogram-method.html">chromatogram()</a></code>
 function.</p></dd>
 
 
-<dt>expandRt</dt>
+<dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> to expand the retention time range for each
 chromatographic peak by a constant value on each side.</p></dd>
 
 
-<dt>expandMz</dt>
+<dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> to expand the m/z range for each chromatographic
 peak by a constant value on each side. Be aware that by extending the
 m/z range the extracted EIC might <strong>no longer</strong> represent the actual
@@ -170,72 +170,72 @@ additional mass peaks within each spectra would be aggregated into the
 final reported intensity value per spectrum (retention time).</p></dd>
 
 
-<dt>aggregationFun</dt>
+<dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p><code>character(1)</code> specifying the name that should be
 used to aggregate intensity values across the m/z value range for
 the same retention time. The default <code>"max"</code> returns a base peak
 chromatogram.</p></dd>
 
 
-<dt>features</dt>
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
 <dd><p><code>integer</code>, <code>character</code> or <code>logical</code> defining a subset of
 features for which chromatograms should be returned. Can be the index
 of the features in <code>featureDefinitions</code>, feature IDs (row names of
 <code>featureDefinitions</code>) or a logical vector.</p></dd>
 
 
-<dt>return.type</dt>
+<dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p><code>character(1)</code> defining how the result should be
 returned. At present only <code>return.type = "XChromatograms"</code> is
 supported and the results are thus returned as an <code><a href="XChromatogram.html">XChromatograms()</a></code>
 object.</p></dd>
 
 
-<dt>chunkSize</dt>
+<dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>object</code> being an <code>XcmsExperiment</code>: <code>integer(1)</code>
 defining the number of files from which the data should be loaded at
 a time into memory. Defaults to <code>chunkSize = 2L</code>.</p></dd>
 
 
-<dt>mzmin</dt>
+<dt id="arg-mzmin">mzmin<a class="anchor" aria-label="anchor" href="#arg-mzmin"></a></dt>
 <dd><p><code>function</code> defining how the lower boundary of the m/z region
 from which the EIC is integrated should be defined. Defaults to
 <code>mzmin = min</code> thus the smallest <code>"mzmin"</code> value for all chromatographic
 peaks of a feature will be used.</p></dd>
 
 
-<dt>mzmax</dt>
+<dt id="arg-mzmax">mzmax<a class="anchor" aria-label="anchor" href="#arg-mzmax"></a></dt>
 <dd><p><code>function</code> defining how the upper boundary of the m/z region
 from which the EIC is integrated should be defined. Defaults to
 <code>mzmax = max</code> thus the largest <code>"mzmax"</code> value for all chromatographic
 peaks of a feature will be used.</p></dd>
 
 
-<dt>rtmin</dt>
+<dt id="arg-rtmin">rtmin<a class="anchor" aria-label="anchor" href="#arg-rtmin"></a></dt>
 <dd><p><code>function</code> defining how the lower boundary of the rt region
 from which the EIC is integrated should be defined. Defaults to
 <code>rtmin = min</code> thus the smallest <code>"rtmin"</code> value for all chromatographic
 peaks of a feature will be used.</p></dd>
 
 
-<dt>rtmax</dt>
+<dt id="arg-rtmax">rtmax<a class="anchor" aria-label="anchor" href="#arg-rtmax"></a></dt>
 <dd><p><code>function</code> defining how the upper boundary of the rt region
 from which the EIC is integrated should be defined. Defaults to
 <code>rtmax = max</code> thus the largest <code>"rtmax"</code> value for all chromatographic
 peaks of a feature will be used.</p></dd>
 
 
-<dt>progressbar</dt>
+<dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
 <dd><p><code>logical(1)</code> defining whether a progress bar is shown.</p></dd>
 
 
-<dt>BPPARAM</dt>
+<dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For <code>object</code> being an <code>XcmsExperiment</code>: parallel processing
 setup. Defaults to <code>BPPARAM = bpparam()</code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more
 information.</p></dd>
 
 
-<dt>include</dt>
+<dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
 <dd><p>Only for <code>object</code> being an <code>XCMSnExp</code>: <code>character(1)</code>
 defining which chromatographic peaks (and related feature definitions)
 should be included in the returned <code><a href="XChromatogram.html">XChromatograms()</a></code>.
@@ -243,19 +243,19 @@ Defaults to <code>"feature_only"</code>; See description above for options and
 details.</p></dd>
 
 
-<dt>filled</dt>
+<dt id="arg-filled">filled<a class="anchor" aria-label="anchor" href="#arg-filled"></a></dt>
 <dd><p>Only for <code>object</code> being an <code>XCMSnExp</code>: <code>logical(1)</code> whether
 filled-in peaks should be included in the result object. The default
 is <code>filled = FALSE</code>, i.e. only detected peaks are reported.</p></dd>
 
 
-<dt>n</dt>
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>Only for <code>object</code> being an <code>XCMSnExp</code>: <code>integer(1)</code> to optionally
 specify the number of <em>top n</em> samples from which the EIC should be
 extracted.</p></dd>
 
 
-<dt>value</dt>
+<dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>Only for <code>object</code> being an <code>XCMSnExp</code>: <code>character(1)</code>
 specifying the column to be used to sort the samples. Can be either
 <code>"maxo"</code> (the default) or <code>"into"</code> to use the maximal peak intensity

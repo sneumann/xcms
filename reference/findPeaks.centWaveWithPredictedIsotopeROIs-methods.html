@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.1.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,49 +82,49 @@
     </div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>object</dt>
+    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>xcmsSet</code> object</p></dd>
 
-  <dt>ppm</dt>
+  <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>maxmial tolerated m/z deviation in consecutive scans, in ppm (parts per million)</p></dd>
 
-  <dt>peakwidth</dt>
+  <dt id="arg-peakwidth">peakwidth<a class="anchor" aria-label="anchor" href="#arg-peakwidth"></a></dt>
 <dd><p>Chromatographic peak width, given as range (min,max) in seconds</p></dd>
 
-  <dt>snthresh</dt>
+  <dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p>signal to noise ratio cutoff, definition see below.</p></dd>
 
-  <dt>prefilter</dt>
+  <dt id="arg-prefilter">prefilter<a class="anchor" aria-label="anchor" href="#arg-prefilter"></a></dt>
 <dd><p><code>prefilter=c(k,I)</code>. Prefilter step for the first phase. Mass traces are only retained if they contain at least <code>k</code> peaks with intensity &gt;= <code>I</code>.</p></dd>
 
-  <dt>mzCenterFun</dt>
+  <dt id="arg-mzcenterfun">mzCenterFun<a class="anchor" aria-label="anchor" href="#arg-mzcenterfun"></a></dt>
 <dd><p>Function to calculate the m/z center of the feature: <code>wMean</code> intensity weighted mean of the feature m/z values, <code>mean</code> mean of the feature m/z values, <code>apex</code> use m/z value at peak apex,
         <code>wMeanApex3</code> intensity weighted mean of the m/z value at peak apex and the m/z value left and right of it, <code>meanApex3</code> mean of the m/z value at peak apex and the m/z value left and right of it.</p></dd>
 
-  <dt>integrate</dt>
+  <dt id="arg-integrate">integrate<a class="anchor" aria-label="anchor" href="#arg-integrate"></a></dt>
 <dd><p>Integration method. If <code>=1</code> peak limits are found through descent on the mexican hat filtered data, if <code>=2</code> the descent is done on the real data. Method 2 is very accurate but prone to noise, while method 1 is more robust to noise but less exact.</p></dd>
 
-  <dt>mzdiff</dt>
+  <dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p>minimum difference in m/z for peaks with overlapping retention
     times, can be negative to allow overlap</p></dd>
 
-  <dt>fitgauss</dt>
+  <dt id="arg-fitgauss">fitgauss<a class="anchor" aria-label="anchor" href="#arg-fitgauss"></a></dt>
 <dd><p>logical, if TRUE a Gaussian is fitted to each peak</p></dd>
 
-  <dt>scanrange</dt>
+  <dt id="arg-scanrange">scanrange<a class="anchor" aria-label="anchor" href="#arg-scanrange"></a></dt>
 <dd><p>scan range to process</p></dd>
 
-  <dt>noise</dt>
+  <dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>
 <dd><p>optional argument which is useful for data that was centroided without any intensity threshold,
     centroids with intensity &lt; <code>noise</code> are omitted from ROI detection</p></dd>
 
-  <dt>sleep</dt>
+  <dt id="arg-sleep">sleep<a class="anchor" aria-label="anchor" href="#arg-sleep"></a></dt>
 <dd><p>number of seconds to pause between plotting peak finding cycles</p></dd>
 
-  <dt>verbose.columns</dt>
+  <dt id="arg-verbose-columns">verbose.columns<a class="anchor" aria-label="anchor" href="#arg-verbose-columns"></a></dt>
 <dd><p>logical, if TRUE additional peak meta data columns are returned</p></dd>
 
-  <dt>ROI.list</dt>
+  <dt id="arg-roi-list">ROI.list<a class="anchor" aria-label="anchor" href="#arg-roi-list"></a></dt>
 <dd><p>A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs,
     otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots:
     <code>scmin</code> start scan index,
@@ -134,22 +134,22 @@
     <code>length</code> number of scans,
     <code>intensity</code> summed intensity.</p></dd>
 
-  <dt>firstBaselineCheck</dt>
+  <dt id="arg-firstbaselinecheck">firstBaselineCheck<a class="anchor" aria-label="anchor" href="#arg-firstbaselinecheck"></a></dt>
 <dd><p>logical, if TRUE continuous data within ROI is checked to be above 1st baseline</p></dd>
 
-  <dt>roiScales</dt>
+  <dt id="arg-roiscales">roiScales<a class="anchor" aria-label="anchor" href="#arg-roiscales"></a></dt>
 <dd><p>numeric, optional vector of scales for each ROI in <code>ROI.list</code> to be used for the centWave-wavelets</p></dd>
 
-  <dt>snthreshIsoROIs</dt>
+  <dt id="arg-snthreshisorois">snthreshIsoROIs<a class="anchor" aria-label="anchor" href="#arg-snthreshisorois"></a></dt>
 <dd><p>signal to noise ratio cutoff for predicted isotope ROIs, definition see below.</p></dd>
 
-  <dt>maxcharge</dt>
+  <dt id="arg-maxcharge">maxcharge<a class="anchor" aria-label="anchor" href="#arg-maxcharge"></a></dt>
 <dd><p>max. number of the isotope charge.</p></dd>
 
-  <dt>maxiso</dt>
+  <dt id="arg-maxiso">maxiso<a class="anchor" aria-label="anchor" href="#arg-maxiso"></a></dt>
 <dd><p>max. number of the isotope peaks to predict for each detected feature.</p></dd>
 
-  <dt>mzIntervalExtension</dt>
+  <dt id="arg-mzintervalextension">mzIntervalExtension<a class="anchor" aria-label="anchor" href="#arg-mzintervalextension"></a></dt>
 <dd><p>logical, if TRUE predicted isotope ROIs (regions of interest) are extended in the m/z dimension to increase the detection of low intensity and hence noisy peaks.</p></dd>
 
 </dl></div>
