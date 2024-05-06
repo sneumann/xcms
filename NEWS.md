@@ -1,9 +1,9 @@
 # xcms 4.1
 
-## Changes in version 4.1.13
+## Changes in version 4.1.14
 
 - Fix for issue #734. XIC plot is is now working with MS2 Data.
-  
+
 
 ## Changes in version 4.1.13
 
