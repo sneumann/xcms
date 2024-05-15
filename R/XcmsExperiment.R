@@ -1447,7 +1447,9 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
 
 #' @rdname XcmsExperiment
 setMethod("hasAdjustedRtime", "MsExperiment", function(object) {
-    any(spectraVariables(spectra(object)) == "rtime_adjusted")
+    if (length(spectra(object)))
+        any(spectraVariables(spectra(object)) == "rtime_adjusted")
+    else FALSE
 })
 
 #' @rdname XcmsExperiment

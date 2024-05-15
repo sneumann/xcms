@@ -12,9 +12,6 @@ saving. It can be one of the following classes: \code{\link{RDataParam}},
 \code{\link{PlainTextParam}}, or \code{MzTabParam}.}
 
 \item{...}{Optional parameters.}
-
-\item{file}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
-to be saved.}
 }
 \description{
 The \code{loadResults} function allows to import and create an \code{XcmsExperiment}

@@ -1496,9 +1496,6 @@ setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 #' For specific examples, see the help pages of the individual parameter classes
 #' listed above.
 #'
-#' @param file `MsExperiment` or `XcmsExperiment` The data object that needs
-#' to be saved.
-#'
 #' @param param The parameter object selecting and configuring the format for
 #' saving. It can be one of the following classes: [`RDataParam`],
 #' [`PlainTextParam`], or `MzTabParam`.

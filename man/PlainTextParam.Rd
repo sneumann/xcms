@@ -5,10 +5,14 @@
 \alias{storeResults,MsExperiment,PlainTextParam-method}
 \alias{storeResults,XcmsExperiment,PlainTextParam-method}
 \alias{loadResults,PlainTextParam-method}
-\title{Store/load contents of `MsExperiment` and `XcmsExperiment` objects
-as/from plain text files}
+\title{Store contents of `MsExperiment` and `XcmsExperiment` objects as
+plain text files}
 \usage{
-PlainTextParam(path = tempdir())
+PlainTextParam(
+  path = tempdir(),
+  spectraExport = FALSE,
+  spectraFilePath = character()
+)
 
 \S4method{storeResults}{MsExperiment,PlainTextParam}(object, param)
 
@@ -20,6 +24,16 @@ PlainTextParam(path = tempdir())
 \item{path}{for `PlainTextParam` `character(1)`, defining where the files
 are going to be stored/ should be loaded from. The default will be
 `tempdir()`.}
+
+\item{spectraExport}{for `PlainTextParam` `logical(1)`, defining whether the
+spectra data should be exported/imported. The default is `FALSE`. If
+`spectraExport = TRUE`, the import should be done in a file system similar
+to the one used for the export.}
+
+\item{spectraFilePath}{for `PlainTextParam` `character(1)`, defining the
+absolute path where the spectra files should be exported to when storing the
+object or imported from when loading the object. The default will be set
+using the common file path of all the spectra files when exporting.}
 
 \item{object}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
 to be saved.}
