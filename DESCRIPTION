@@ -1,5 +1,5 @@
 Package: xcms
-Version: 4.3.0
+Version: 4.3.1
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -60,7 +60,7 @@ Imports:
     S4Vectors,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils (>= 1.15.5),
+    MsCoreUtils (>= 1.16.0),
     MsFeatures,
     MsExperiment (>= 1.5.4),
     Spectra (>= 1.13.7),

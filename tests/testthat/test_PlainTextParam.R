@@ -45,7 +45,7 @@ test_that("loadResults, PlainTextParam works", {
     storeResults(mse, param = param)
     load_mse <- loadResults(param)
     expect_true(inherits(load_mse, "MsExperiment"))
-    expect_equal(mse, load_mse) # does nto work but make sense because no spectra data. other checks ?
+    expect_equal(mse, load_mse) # does nto work but make sense because no spectra data. ideas for other checks ?
     expect_equal(sampleData(mse), sampleData(load_mse))
     #with spectra ?
     param <- PlainTextParam(path = pth, spectraExport = TRUE)
@@ -61,12 +61,15 @@ test_that("loadResults, PlainTextParam works", {
     storeResults(xmse_full, param = param)
     load_xmse <- loadResults(param)
     expect_true(inherits(load_xmse, "XcmsExperiment"))
-    expect_equal(xmse_full, load_xmse)
-    expect_equal(processHistory(xmse_full), processHistory(load_xmse))
+    expect_equal(xmse_full, load_xmse) # also fail probably because of spectra missing
+    expect_equal(processHistory(xmse_full), processHistory(load_xmse)) #fail why ?
     expect_equal(xmse_full@featureDefinitions,
                  load_xmse@featureDefinitions)
     expect_equal(adjustedRtime(xmse_full), adjustedRtime(load_xmse))
     param <- PlainTextParam(path = pth, spectraExport = TRUE)
     storeResults(xmse_full, param = param)
+    load_xmse <- loadResults(param)
+    expect_equal(xmse_full, load_xmse)
+    # not sure how to check  for `spectraFilePath`
     })
 

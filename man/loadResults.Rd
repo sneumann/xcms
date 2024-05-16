@@ -46,7 +46,7 @@ xcmse <- loadResults(param = param)
 
 ## Save as a collection of plain text files
 pth = file.path(tempdir(), "test")
-param <- PlainTextParam(path = pth)
+param <- PlainTextParam(path = pth, spectraExport = TRUE)
 storeResults(object = faahko_sub, param = param)
 
 ## Load this saved dataset

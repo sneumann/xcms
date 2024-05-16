@@ -1,4 +1,9 @@
-# xcms 4.1
+# xcms 4.3
+
+## Changes in version 4.3.1
+
+- Addition of generic function `loadResults()`and method for import using 
+  `RDataParam` and `PlaintTextParam`.
 
 ## Changes in version 4.1.14
 

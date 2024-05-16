@@ -56,6 +56,14 @@
 #' `storeResults`. If the folder already exists, previous exports in that
 #' folder might get overwritten.
 #'
+#' If the `spectraExport` parameter is set to `TRUE`, the spectra data will be
+#' exported/imported. The import should be done in a file system similar to the
+#' one used for the export. The `spectraFilePath` parameter can be used to
+#' define the absolute path where the spectra files should be imported from
+#' when loading the object. The default will be set using the common file path
+#' of all the spectra files when exporting. If the `spectraExport` parameter is
+#' set to `FALSE`, the spectra data will not be exported/imported.
+#'
 #' @param path for `PlainTextParam` `character(1)`, defining where the files
 #' are going to be stored/ should be loaded from. The default will be
 #' `tempdir()`.
@@ -109,7 +117,7 @@
 #'
 #' ## Define param
 #' pth = file.path(tempdir(), "test")
-#' param <- PlainTextParam(path = pth)
+#' param <- PlainTextParam(path = pth, spectraExport = TRUE)
 #'
 #' ## Save as a collection of plain text files
 #' storeResults(object = faahko_sub, param = param)
