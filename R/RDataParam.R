@@ -17,7 +17,17 @@
 #' @param fileName for `RDataParam` `character(1)`, defining the file name. The
 #' default will be `tempfile()`.
 #'
+#' @param spectraFilePath for `loadResults` `character(1)`, defining the
+#' absolute path where the spectra files should be imported from when loading
+#' the object. The default will be set using the common file path of all the
+#' spectra files when exporting. This is only supported if the backend of the
+#' object loaded is `MsBackendMzr()`
+#'
 #' @inheritParams storeResults
+#'
+#' @inheritParams loadResults
+#'
+#' @importFrom Spectra dataStorageBasePath
 #'
 #' @return for `RDataParam`: a `RDataParam` class. `storeResults` does not
 #' return anything but saves the object to a RData file. `loadResults` returns
@@ -37,7 +47,7 @@
 #' storeResults(object = faahko_sub, param = param)
 #'
 #' ## Load this saved dataset
-#' xcmse <- loadResults(param = param)
+#' xcmse <- loadResults(object = XcmsExperiment(), param = param)
 #'
 NULL
 
@@ -72,9 +82,14 @@ setMethod("storeResults",
 
 #' @rdname RDataParam
 setMethod("loadResults",
-          signature(param = "RDataParam"),
-          function(param){
-              load(file = param@fileName)
+          signature(object = "XcmsExperiment",
+                    param = "RDataParam"),
+          function(object, param, spectraFilePath){
+              res <- load(file = param@fileName)
+              if (!length(spectraFilePath) == 0 &&
+                  inherits(s@backend, "MsBackendMzR"))
+                  dataStorageBasePath(spectra(res)) <- spectraFilePath
+              res
           }
 )
 

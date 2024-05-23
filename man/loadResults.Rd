@@ -4,9 +4,13 @@
 \alias{loadResults}
 \title{Import various file format as XcmsExperiment object}
 \usage{
-loadResults(param, ...)
+loadResults(object, param, ...)
 }
 \arguments{
+\item{object}{Define the class of the object to be imported. It can be one
+of the following classes: \code{\link[=XcmsExperiment]{XcmsExperiment()}}, \code{\link[=MsExperiment]{MsExperiment()}} for now,
+more class will be supported in the future.}
+
 \item{param}{The parameter object selecting and configuring the format for
 saving. It can be one of the following classes: \code{\link{RDataParam}},
 \code{\link{PlainTextParam}}, or \code{MzTabParam}.}
@@ -20,9 +24,10 @@ defined by the \code{param} argument.
 
 Supported \code{param} objects are:
 \itemize{
-\item \code{\link{RDataParam}}: Import an .RData format file.TBD
-\item \code{\link{PlainTextParam}}: Import/create an \code{XcmsExperiment} object from a folder
-of text files.
+\item \code{\link{RDataParam}}: Import an \code{MsExperiment} or \code{XcmsExperiment} object from
+an .RData file.
+\item \code{\link{PlainTextParam}}: Import an \code{MsExperiment} or \code{XcmsExperiment} object
+from a folder of text files.
 \item \code{MzTabParam}: Load a MzTab-m file (to be defined).
 }
 
@@ -42,7 +47,7 @@ param <- RDataParam(fileName = "example_xcms_object")
 storeResults(object = faahko_sub, param = param)
 
 ## Load this saved dataset
-xcmse <- loadResults(param = param)
+xcmse <- loadResults(object = XcmsExperiment(),param = param)
 
 ## Save as a collection of plain text files
 pth = file.path(tempdir(), "test")
@@ -50,7 +55,7 @@ param <- PlainTextParam(path = pth, spectraExport = TRUE)
 storeResults(object = faahko_sub, param = param)
 
 ## Load this saved dataset
-faahko_load <- loadResults(param = param)
+faahko_load <- loadResults(object= XcmsExperiment(), param = param)
 
 }
 \author{

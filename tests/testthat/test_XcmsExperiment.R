@@ -1413,15 +1413,16 @@ test_that("setAs,XcmsExperiment,xcmsSet works", {
     expect_equal(peaks(res), chromPeaks(xmseg))
 })
 
-test_that("storeResults,RDataParam works", {
+test_that("storeResults,loadResults, RDataParam works", {
     param <- RDataParam(fileName = "test")
     param2 <- RDataParam()
     expect_false(is.null(param2))
     storeResults(xmse, param = param)
     expect_true(file.exists("test"))
-    load("test")
-    expect_s4_class(object, "XcmsExperiment")
-    expect_equal(object, xmse)
+    res <- loadResults(object = XcmsExperiment(), param,
+                       spectraFilePath = character()) #not sure how to test for spectraFilePath not empty
+    expect_s4_class(res, "XcmsExperiment")
+    expect_equal(res, xmse)
 })
 
 test_that("fillChromPeaks,XcmsExperiment works with verboseBetaColumns", {

@@ -73,10 +73,10 @@
 #' `spectraExport = TRUE`, the import should be done in a file system similar
 #' to the one used for the export.
 #'
-#' @param spectraFilePath for `PlainTextParam` `character(1)`, defining the
-#' absolute path where the spectra files should be exported to when storing the
-#' object or imported from when loading the object. The default will be set
-#' using the common file path of all the spectra files when exporting.
+#' @param spectraFilePath for `loadResults` `character(1)`, defining the
+#' absolute path where the spectra files should be imported from when loading
+#' the object. The default will be set using the common file path of all the
+#' spectra files when exporting.
 #'
 #' @inheritParams storeResults
 #'
@@ -123,20 +123,16 @@
 #' storeResults(object = faahko_sub, param = param)
 #'
 #' ## Load this saved dataset
-#' faahko_load <- loadResults(param = param)
+#' faahko_load <- loadResults(object = XcmsExperiment(), param = param)
 #'
 NULL
 
 #' @noRd
 setClass("PlainTextParam",
-         slots = c(path = "character",
-                   spectraExport = "logical",
-                   spectraFilePath = "character"),
+         slots = c(path = "character"),
          contains = "Param",
          prototype = prototype(
-             path = character(),
-             spectraExport = logical(),
-             spectraFilePath = character()),
+             path = character()),
          validity = function(object) {
              msg <- NULL
              if (length(object@path) != 1)
@@ -147,11 +143,8 @@ setClass("PlainTextParam",
 #' @rdname PlainTextParam
 #'
 #' @export
-PlainTextParam <- function(path = tempdir(), spectraExport = FALSE,
-                           spectraFilePath = character()) { # i'm not sure what to put
-    new("PlainTextParam", path = path,
-        spectraExport = spectraExport,
-        spectraFilePath = spectraFilePath)
+PlainTextParam <- function(path = tempdir()) {
+    new("PlainTextParam", path = path)
 }
 
 ### methods
@@ -163,8 +156,7 @@ setMethod("storeResults",
               dir.create(path = param@path,
                          recursive = TRUE,
                          showWarnings = TRUE)
-              .store_msexperiment(x = object, path = param@path,
-                                  spectraExport = param@spectraExport)
+              .store_msexperiment(x = object, path = param@path)
           }
 )
 
@@ -174,47 +166,53 @@ setMethod("storeResults",
                     param = "PlainTextParam"),
           function(object, param){
               callNextMethod()
-              .store_xcmsexperiment(x = object, path = param@path,
-                                    spectraExport = param@spectraExport)
+              .store_xcmsexperiment(x = object, path = param@path)
           }
 )
 
 #' @rdname PlainTextParam
 setMethod("loadResults",
-          signature(param = "PlainTextParam"),
-          function(param){
+          signature(object = "MsExperiment",
+                    param = "PlainTextParam"),
+          function(object, param, spectraFilePath){
               res <- .load_msexperiment(path = param@path,
-                                        spectraExport = param@spectraExport,
-                                        spectraFilePath = param@spectraFilePath)
-              fl <- file.path(param@path, "chrom_peaks.txt")
-              if (file.exists(fl))
-                  res <- .load_xcmsexperiment(res, path = param@path,
-                                              spectraExport = param@spectraExport)
+                                        spectraFilePath = spectraFilePath)
               validObject(res)
               res
               }
 )
 
+#' @rdname PlainTextParam
+setMethod("loadResults",
+          signature(object = "XcmsExperiment",
+                    param = "PlainTextParam"),
+          function(object, param, spectraFilePath){
+              res <- callNextMethod()
+              res <- .load_xcmsexperiment(res, path = param@path,
+                                          spectraFilePath = spectraFilePath) # not sure if the spectraFilePath is necessary here
+              validObject(res)
+              res
+          }
+)
+
 #' @noRd
-.store_msexperiment <- function(x, path = tempdir(),
-                                spectraExport = logical()) {
+.store_msexperiment <- function(x, path = tempdir()) {
     .export_sample_data(as.data.frame(sampleData(x)),
                         file.path(path, "sample_data.txt"))
-    if (spectraExport == TRUE){
-        .export_spectra_files(x, path = path)
-        .export_spectra_processing_queue(spectra(x), path = path)
-    }
+    .export_spectra_files(x, path = path)
+    .export_spectra_processing_queue(spectra(x), path = path)
 }
 
 #' @noRd
-.load_msexperiment <- function(path = character(), spectraExport = logical(),
+.load_msexperiment <- function(path = character(),
                                spectraFilePath = character()) {
     fl <- file.path(path, "sample_data.txt")
     if (file.exists(fl))
         sd <- .import_sample_data(fl)
     else stop("No \"sample_data.txt\" file found in ", path)
     fl <- file.path(path, "spectra_files.txt")
-    if (file.exists(fl) && spectraExport == TRUE){
+    if (file.exists(fl)){
+        spec <- spectra(fl)
         sf <- .import_spectra_files(fl, spectraFilePath = spectraFilePath)
         res <- readMsExperiment(spectraFiles = sf, sampleData = sd)
         fl <- file.path(path, "spectra_processing_queue.json")
@@ -251,7 +249,7 @@ setMethod("loadResults",
         pth <- MsCoreUtils::common_path(fileNames(x))
         if (nchar(pth) > 0)
             pth <- paste0(pth, "/")
-        fnames <- gsub("\\\\", "/", fileNames(x)) # to fix error with windows
+        fnames <- gsub("\\\\", "/", fileNames(x))
         fnames <- sub(pth, "", fixed = TRUE, fnames)
         con <- file(file.path(path, "spectra_files.txt"), open = "wt")
         on.exit(close(con))
@@ -294,7 +292,7 @@ setMethod("loadResults",
     .export_process_history(x, path = path)
     if (hasChromPeaks(x))
         .export_chrom_peaks(x, path)
-    if (hasAdjustedRtime(x) && spectraExport == TRUE)
+    if (hasAdjustedRtime(x))
         .export_adjusted_rtime(x, path)
     if (hasFeatures(x))
         .export_features(x, path)
@@ -311,7 +309,7 @@ setMethod("loadResults",
         x <- .import_process_history(x, fl)
     else stop("No \"process_history.json\" file found in ", path)
     fl <- file.path(path, "rtime_adjusted.txt")
-    if (file.exists(fl) && spectraExport == TRUE)
+    if (file.exists(fl))
         x <- .import_adjusted_rtime(x, fl)
     fl <- file.path(path, "feature_definitions.txt")
     if (file.exists(fl))
