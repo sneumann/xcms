@@ -203,6 +203,8 @@ featureArea(
   features = character()
 )
 
+XcmsExperiment()
+
 \S4method{plot}{MsExperiment,missing}(x, y, msLevel = 1L, peakCol = "#ff000060", ...)
 }
 \arguments{

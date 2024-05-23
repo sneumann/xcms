@@ -35,11 +35,6 @@ saving. It can be one of the following classes: \code{\link{RDataParam}},
 absolute path where the spectra files should be imported from when loading
 the object. The default will be set using the common file path of all the
 spectra files when exporting.}
-
-\item{spectraExport}{for `PlainTextParam` `logical(1)`, defining whether the
-spectra data should be exported/imported. The default is `FALSE`. If
-`spectraExport = TRUE`, the import should be done in a file system similar
-to the one used for the export.}
 }
 \value{
 for `PlainTextParam`: a `PlainTextParam` class. `storeResults` does
@@ -125,7 +120,7 @@ faahko_sub <- loadXcmsData("faahko_sub2")
 
 ## Define param
 pth = file.path(tempdir(), "test")
-param <- PlainTextParam(path = pth, spectraExport = TRUE)
+param <- PlainTextParam(path = pth)
 
 ## Save as a collection of plain text files
 storeResults(object = faahko_sub, param = param)

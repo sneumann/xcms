@@ -2,7 +2,7 @@ xmse_full <- loadXcmsData("xmse")
 
 test_that("storeResults,PlainTextParam,MsExperiment works", {
     pth <- file.path(tempdir(), "test")
-    param <- PlainTextParam(path = pth, spectraExport = TRUE)
+    param <- PlainTextParam(path = pth)
     param2 <- PlainTextParam()
     expect_false(is.null(param2))
     expect_error(new("PlainTextParam", path = c(tempdir(), tempdir())))
@@ -16,7 +16,7 @@ test_that("storeResults,PlainTextParam,MsExperiment works", {
 
 test_that("storeResults,PlainTextParam,XcmsExperiment works", {
     pth = file.path(tempdir(), "test")
-    param <- PlainTextParam(path = pth, spectraExport = TRUE)
+    param <- PlainTextParam(path = pth)
     param2 <- PlainTextParam()
     expect_false(is.null(param2))
     xmse_full <- filterMzRange(xmse_full, c(200, 500))

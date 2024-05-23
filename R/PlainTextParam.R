@@ -68,11 +68,6 @@
 #' are going to be stored/ should be loaded from. The default will be
 #' `tempdir()`.
 #'
-#' @param spectraExport for `PlainTextParam` `logical(1)`, defining whether the
-#' spectra data should be exported/imported. The default is `FALSE`. If
-#' `spectraExport = TRUE`, the import should be done in a file system similar
-#' to the one used for the export.
-#'
 #' @param spectraFilePath for `loadResults` `character(1)`, defining the
 #' absolute path where the spectra files should be imported from when loading
 #' the object. The default will be set using the common file path of all the
@@ -117,7 +112,7 @@
 #'
 #' ## Define param
 #' pth = file.path(tempdir(), "test")
-#' param <- PlainTextParam(path = pth, spectraExport = TRUE)
+#' param <- PlainTextParam(path = pth)
 #'
 #' ## Save as a collection of plain text files
 #' storeResults(object = faahko_sub, param = param)

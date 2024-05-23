@@ -1134,3 +1134,8 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         object@chromPeaks
     else chromPeaks(object@msFeatureData)
 }
+
+#' function to create an empty `XcmsExperiment` object
+XcmsExperiment <- function() {
+    as(MsExperiment(), "XcmsExperiment")
+}
