@@ -27,7 +27,7 @@
 #'
 #' @inheritParams loadResults
 #'
-#' @importFrom Spectra dataStorageBasePath
+#' @importFrom Spectra dataStorageBasePath<-
 #'
 #' @return for `RDataParam`: a `RDataParam` class. `storeResults` does not
 #' return anything but saves the object to a RData file. `loadResults` returns
