@@ -169,7 +169,7 @@ setMethod("storeResults",
 setMethod("loadResults",
           signature(object = "MsExperiment",
                     param = "PlainTextParam"),
-          function(object, param, spectraFilePath){
+          function(object, param, spectraFilePath = character()){
               res <- .load_msexperiment(path = param@path,
                                         spectraFilePath = spectraFilePath)
               validObject(res)
@@ -183,8 +183,7 @@ setMethod("loadResults",
                     param = "PlainTextParam"),
           function(object, param, spectraFilePath){
               res <- callNextMethod()
-              res <- .load_xcmsexperiment(res, path = param@path,
-                                          spectraFilePath = spectraFilePath) # not sure if the spectraFilePath is necessary here
+              res <- .load_xcmsexperiment(res, path = param@path)
               validObject(res)
               res
           }
@@ -207,7 +206,6 @@ setMethod("loadResults",
     else stop("No \"sample_data.txt\" file found in ", path)
     fl <- file.path(path, "spectra_files.txt")
     if (file.exists(fl)){
-        spec <- spectra(fl)
         sf <- .import_spectra_files(fl, spectraFilePath = spectraFilePath)
         res <- readMsExperiment(spectraFiles = sf, sampleData = sd)
         fl <- file.path(path, "spectra_processing_queue.json")

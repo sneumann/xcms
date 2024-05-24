@@ -10,7 +10,7 @@ RDataParam(fileName = tempfile())
 
 \S4method{storeResults}{XcmsExperiment,RDataParam}(object, param)
 
-\S4method{loadResults}{XcmsExperiment,RDataParam}(object, param, spectraFilePath)
+\S4method{loadResults}{XcmsExperiment,RDataParam}(object, param, spectraFilePath = character())
 }
 \arguments{
 \item{fileName}{for `RDataParam` `character(1)`, defining the file name. The

@@ -567,7 +567,8 @@ importMethodsFrom("Spectra", "precursorMz")
 importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "backendBpparam")
-importFrom("Spectra", "MsBackendMemory", "dataStorageBasePath")
+importFrom("Spectra", "MsBackendMemory", "dataStorageBasePath",
+           "dataStorageBasePath<-")
 
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")

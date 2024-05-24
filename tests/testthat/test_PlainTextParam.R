@@ -32,9 +32,8 @@ test_that("storeResults,PlainTextParam,XcmsExperiment works", {
     expect_true(file.exists(file.path(param@path, "feature_definitions.txt")))
     expect_true(file.exists(file.path(param@path, "feature_peak_index.txt")))
     pth = file.path(tempdir(), "test2")
-    param <- PlainTextParam(path = pth, spectraExport = FALSE)
+    param <- PlainTextParam(path = pth)
     storeResults(xmse_full, param = param)
-    expect_false(file.exists(file.path(param@path, "spectra_files.txt")))
 })
 
 test_that("loadResults, PlainTextParam works", {

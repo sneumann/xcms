@@ -84,11 +84,15 @@ setMethod("storeResults",
 setMethod("loadResults",
           signature(object = "XcmsExperiment",
                     param = "RDataParam"),
-          function(object, param, spectraFilePath){
-              res <- load(file = param@fileName)
+          function(object, param, spectraFilePath = character()){
+              env <- new.env()
+              load(file = param@fileName, envir = env)
+              res <- get(ls(env)[1], envir = env)
               if (!length(spectraFilePath) == 0 &&
-                  inherits(s@backend, "MsBackendMzR"))
+                  inherits(spectra(res)@backend, "MsBackendMzR")) {
                   dataStorageBasePath(spectra(res)) <- spectraFilePath
+              }
+
               res
           }
 )

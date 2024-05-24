@@ -15,7 +15,7 @@ PlainTextParam(path = tempdir())
 
 \S4method{storeResults}{XcmsExperiment,PlainTextParam}(object, param)
 
-\S4method{loadResults}{MsExperiment,PlainTextParam}(object, param, spectraFilePath)
+\S4method{loadResults}{MsExperiment,PlainTextParam}(object, param, spectraFilePath = character())
 
 \S4method{loadResults}{XcmsExperiment,PlainTextParam}(object, param, spectraFilePath)
 }
