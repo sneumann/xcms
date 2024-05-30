@@ -152,6 +152,8 @@ setMethod("storeResults",
                          recursive = TRUE,
                          showWarnings = TRUE)
               .store_msexperiment(x = object, path = param@path)
+              ## call export of individual other objects (not MsExperiment data)
+              storeResults(spectra(object), param)
           }
 )
 
@@ -188,6 +190,40 @@ setMethod("loadResults",
               res
           }
 )
+
+setMethod("storeResults", signature(object = "Spectra",
+                                    param = "PlainTextParam"),
+          function(object, param) {
+              ## Check if there is a method to store the backend. Throw an
+              ## error if not.
+              if (!existsMethod("storeResults", c(class(object@backend)[1L],
+                                                  "PlainTextParam")))
+                  stop("Can not store a 'Spectra' object with backend '",
+                       class(object@backend)[1L], "'")
+              ## - Call storeResults on @backend.
+              ## - save @processingQueue -> json (use previously implemented
+              ##   function).
+              ## Save the rest of the slots to a txt file, spectra_slots.txt
+              ## - save @processingQueueVariables, separated by "|"
+              ## - save @processingChunkSize.
+              ## - save the class of the backend (to allow calling import on
+              ##   the specific class.
+          })
+
+setMethod("storeResults", signature(object = "MsBackendMzR",
+                                    param = "PlainTextParam"),
+          function(object, param) {
+              ## save the @spectraData -> text file (tab delimited table).
+})
+
+setMethod("loadResults", signature(object = "MsBackendMzR",
+                                    param = "PlainTextParam"),
+          function(object, param, spectraPath = character()) {
+              ## load spectraData data.frame
+              ## replace the absolute paths in "dataStorage" with
+              ## spectraPath if that is defined.
+})
+
 
 #' @noRd
 .store_msexperiment <- function(x, path = tempdir()) {
