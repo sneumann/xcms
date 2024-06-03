@@ -5,78 +5,47 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="xcms">
 <title>Grouping FTICR-MS data with xcms • xcms</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Grouping FTICR-MS data with xcms">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Grouping FTICR-MS data with xcms">
+<meta name="description" content="xcms">
 <meta property="og:description" content="xcms">
 <meta property="og:image" content="https://sneumann.github.io/xcms/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
-
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0</small>
-
-    
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../articles/xcms.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a>
-    <a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
-    <a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/LC-MS-feature-grouping.html">Compounding (grouping) of LC-MS features</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a></li>
+    <li><a class="dropdown-item" href="../articles/xcms-lcms-ms.html">LC-MS/MS data analysis with xcms</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
-<li><form class="form-inline" role="search">
-<input type="search" class="form-control" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-
-    
   </div>
 </nav><div class="container template-article">
-
 
 
 
@@ -87,15 +56,10 @@
 Bargsten</h4>
                                     <h4 data-toc-skip class="author">Johannes
 Rainer</h4>
-                        
-      
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/vignettes/xcms-direct-injection.Rmd" class="external-link"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
+                                    <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/vignettes/xcms-direct-injection.Rmd" class="external-link"><code>vignettes/xcms-direct-injection.Rmd</code></a></small>
       <div class="d-none name"><code>xcms-direct-injection.Rmd</code></div>
     </div>
-
-    
-    
-<script type="text/javascript">
+        <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector("h1").className = "title";
 });
@@ -109,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </script><div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em> for the
+<p>This document describes how to use <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em> for the
 analysis of direct injection mass spec data, including peak detection,
 calibration and correspondence (grouping of peaks across samples).</p>
 </div>
@@ -120,7 +84,7 @@ calibration and correspondence (grouping of peaks across samples).</p>
 mass spec data. In contrast to the typical metabolomics workflow, in
 which peaks are identified in the chromatographic (time) dimension, in
 direct injection mass spec data sets peaks are identified in the m/z
-dimension. <em><a href="https://bioconductor.org/packages/3.19/xcms" class="external-link">xcms</a></em> uses
+dimension. <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em> uses
 functionality from the <em>MassSpecWavelet</em> package to identify such
 peaks.</p>
 <p>Below we load the required packages. For information on the parallel
@@ -131,8 +95,8 @@ processing setup please see the <em>BiocParallel</em> vignette.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/zeehio/MassSpecWavelet" class="external-link">MassSpecWavelet</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.19/msdata" class="external-link">msdata</a></em>
-package. Assuming that <em><a href="https://bioconductor.org/packages/3.19/msdata" class="external-link">msdata</a></em> is
+<p>In this documentation we use an example data set from the <em><a href="https://bioconductor.org/packages/3.20/msdata" class="external-link">msdata</a></em>
+package. Assuming that <em><a href="https://bioconductor.org/packages/3.20/msdata" class="external-link">msdata</a></em> is
 installed, we locate the path of the package and load the data set. We
 create also a <code>data.frame</code> describing the experimental setup
 based on the file names.</p>
@@ -254,8 +218,8 @@ with the <code>groupChromPeaks</code> method using default settings.</p>
 <span><span class="co">##  Number of spectra: 4 </span></span>
 <span><span class="co">##  MSn retention times: -1:59 - -1:59 minutes</span></span>
 <span><span class="co">## - - - Processing information - - -</span></span>
-<span><span class="co">## Data loaded [Thu May  2 15:25:59 2024] </span></span>
-<span><span class="co">##  MSnbase version: 2.30.1 </span></span>
+<span><span class="co">## Data loaded [Mon Jun  3 16:17:44 2024] </span></span>
+<span><span class="co">##  MSnbase version: 2.31.1 </span></span>
 <span><span class="co">## - - - Meta data  - - -</span></span>
 <span><span class="co">## phenoData</span></span>
 <span><span class="co">##   rowNames: 1 2 3 4</span></span>
@@ -426,14 +390,14 @@ signal at that location an <code>NA</code> is reported.</p>
 <p>Further analysis, i.e. detection of features/metabolites with
 significantly different abundances, or PCA analyses can be performed on
 the feature matrix using functionality from other R packages, such as
-<em><a href="https://bioconductor.org/packages/3.19/limma" class="external-link">limma</a></em>.</p>
+<em><a href="https://bioconductor.org/packages/3.20/limma" class="external-link">limma</a></em>.</p>
 </div>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.4.0 Patched (2024-04-24 r86483)</span></span>
+<pre><code><span><span class="co">## R version 4.4.0 (2024-04-24)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -457,86 +421,77 @@ the feature matrix using functionality from other R packages, such as
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MassSpecWavelet_1.70.0 xcms_4.3.0             BiocParallel_1.38.0   </span></span>
-<span><span class="co">##  [4] MSnbase_2.30.1         ProtGenerics_1.36.0    S4Vectors_0.42.0      </span></span>
-<span><span class="co">##  [7] mzR_2.38.0             Rcpp_1.0.12            Biobase_2.64.0        </span></span>
-<span><span class="co">## [10] BiocGenerics_0.50.0    BiocStyle_2.32.0      </span></span>
+<span><span class="co">##  [1] MassSpecWavelet_1.71.0 xcms_4.3.1             BiocParallel_1.39.0   </span></span>
+<span><span class="co">##  [4] MSnbase_2.31.1         ProtGenerics_1.37.0    S4Vectors_0.43.0      </span></span>
+<span><span class="co">##  [7] mzR_2.39.0             Rcpp_1.0.12            Biobase_2.65.0        </span></span>
+<span><span class="co">## [10] BiocGenerics_0.51.0    BiocStyle_2.33.0      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] DBI_1.2.2                   rlang_1.1.3                </span></span>
+<span><span class="co">##   [1] DBI_1.2.3                   rlang_1.1.3                </span></span>
 <span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
 <span><span class="co">##   [5] matrixStats_1.3.0           compiler_4.4.0             </span></span>
-<span><span class="co">##   [7] systemfonts_1.0.6           vctrs_0.6.5                </span></span>
-<span><span class="co">##   [9] MetaboCoreUtils_1.12.0      pkgconfig_2.0.3            </span></span>
-<span><span class="co">##  [11] crayon_1.5.2                fastmap_1.1.1              </span></span>
-<span><span class="co">##  [13] XVector_0.44.0              utf8_1.2.4                 </span></span>
-<span><span class="co">##  [15] rmarkdown_2.26.2            UCSC.utils_1.0.0           </span></span>
-<span><span class="co">##  [17] preprocessCore_1.66.0       ragg_1.3.0                 </span></span>
-<span><span class="co">##  [19] purrr_1.0.2                 xfun_0.43                  </span></span>
-<span><span class="co">##  [21] MultiAssayExperiment_1.30.0 zlibbioc_1.50.0            </span></span>
-<span><span class="co">##  [23] cachem_1.0.8                GenomeInfoDb_1.40.0        </span></span>
-<span><span class="co">##  [25] jsonlite_1.8.8              progress_1.2.3             </span></span>
-<span><span class="co">##  [27] highr_0.10                  DelayedArray_0.30.0        </span></span>
-<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.4.0             </span></span>
-<span><span class="co">##  [31] cluster_2.1.6               R6_2.5.1                   </span></span>
-<span><span class="co">##  [33] RColorBrewer_1.1-3          bslib_0.7.0                </span></span>
-<span><span class="co">##  [35] limma_3.60.0                GenomicRanges_1.55.4       </span></span>
-<span><span class="co">##  [37] jquerylib_0.1.4             bookdown_0.39              </span></span>
-<span><span class="co">##  [39] SummarizedExperiment_1.33.3 iterators_1.0.14           </span></span>
-<span><span class="co">##  [41] knitr_1.46                  IRanges_2.38.0             </span></span>
-<span><span class="co">##  [43] Matrix_1.7-0                igraph_2.0.3               </span></span>
-<span><span class="co">##  [45] tidyselect_1.2.1            abind_1.4-5                </span></span>
-<span><span class="co">##  [47] yaml_2.3.8                  doParallel_1.0.17          </span></span>
-<span><span class="co">##  [49] codetools_0.2-20            affy_1.82.0                </span></span>
-<span><span class="co">##  [51] lattice_0.22-6              tibble_3.2.1               </span></span>
-<span><span class="co">##  [53] plyr_1.8.9                  signal_1.8-0               </span></span>
-<span><span class="co">##  [55] evaluate_0.23               desc_1.4.3                 </span></span>
-<span><span class="co">##  [57] Spectra_1.13.8              pillar_1.9.0               </span></span>
-<span><span class="co">##  [59] affyio_1.74.0               BiocManager_1.30.22        </span></span>
-<span><span class="co">##  [61] MatrixGenerics_1.16.0       foreach_1.5.2              </span></span>
-<span><span class="co">##  [63] MALDIquant_1.22.2           ncdf4_1.22                 </span></span>
-<span><span class="co">##  [65] generics_0.1.3              hms_1.1.3                  </span></span>
-<span><span class="co">##  [67] ggplot2_3.5.1               munsell_0.5.1              </span></span>
-<span><span class="co">##  [69] scales_1.3.0                MsExperiment_1.6.0         </span></span>
-<span><span class="co">##  [71] glue_1.7.0                  MsFeatures_1.12.0          </span></span>
-<span><span class="co">##  [73] lazyeval_0.2.2              tools_4.4.0                </span></span>
-<span><span class="co">##  [75] mzID_1.42.0                 QFeatures_1.14.0           </span></span>
-<span><span class="co">##  [77] vsn_3.72.0                  fs_1.6.4                   </span></span>
-<span><span class="co">##  [79] XML_3.99-0.16.1             grid_4.4.0                 </span></span>
-<span><span class="co">##  [81] impute_1.78.0               tidyr_1.3.1                </span></span>
-<span><span class="co">##  [83] MsCoreUtils_1.15.7          colorspace_2.1-0           </span></span>
-<span><span class="co">##  [85] GenomeInfoDbData_1.2.12     PSMatch_1.8.0              </span></span>
-<span><span class="co">##  [87] cli_3.6.2                   textshaping_0.3.7          </span></span>
-<span><span class="co">##  [89] fansi_1.0.6                 S4Arrays_1.4.0             </span></span>
-<span><span class="co">##  [91] dplyr_1.1.4                 AnnotationFilter_1.28.0    </span></span>
-<span><span class="co">##  [93] pcaMethods_1.96.0           gtable_0.3.5               </span></span>
-<span><span class="co">##  [95] sass_0.4.9                  digest_0.6.35              </span></span>
-<span><span class="co">##  [97] SparseArray_1.4.0           htmlwidgets_1.6.4          </span></span>
-<span><span class="co">##  [99] memoise_2.0.1               htmltools_0.5.8.1          </span></span>
-<span><span class="co">## [101] pkgdown_2.0.9.9000          lifecycle_1.0.4            </span></span>
-<span><span class="co">## [103] httr_1.4.7                  statmod_1.5.0              </span></span>
-<span><span class="co">## [105] MASS_7.3-60.2</span></span></code></pre>
+<span><span class="co">##   [7] systemfonts_1.1.0           vctrs_0.6.5                </span></span>
+<span><span class="co">##   [9] reshape2_1.4.4              stringr_1.5.1              </span></span>
+<span><span class="co">##  [11] MetaboCoreUtils_1.13.0      pkgconfig_2.0.3            </span></span>
+<span><span class="co">##  [13] crayon_1.5.2                fastmap_1.2.0              </span></span>
+<span><span class="co">##  [15] XVector_0.45.0              utf8_1.2.4                 </span></span>
+<span><span class="co">##  [17] rmarkdown_2.27              UCSC.utils_1.1.0           </span></span>
+<span><span class="co">##  [19] preprocessCore_1.67.0       ragg_1.3.2                 </span></span>
+<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.44                  </span></span>
+<span><span class="co">##  [23] MultiAssayExperiment_1.31.2 zlibbioc_1.51.0            </span></span>
+<span><span class="co">##  [25] cachem_1.1.0                GenomeInfoDb_1.41.1        </span></span>
+<span><span class="co">##  [27] jsonlite_1.8.8              progress_1.2.3             </span></span>
+<span><span class="co">##  [29] highr_0.11                  DelayedArray_0.31.1        </span></span>
+<span><span class="co">##  [31] prettyunits_1.2.0           parallel_4.4.0             </span></span>
+<span><span class="co">##  [33] cluster_2.1.6               R6_2.5.1                   </span></span>
+<span><span class="co">##  [35] RColorBrewer_1.1-3          bslib_0.7.0                </span></span>
+<span><span class="co">##  [37] stringi_1.8.4               limma_3.61.1               </span></span>
+<span><span class="co">##  [39] GenomicRanges_1.57.0        jquerylib_0.1.4            </span></span>
+<span><span class="co">##  [41] iterators_1.0.14            bookdown_0.39              </span></span>
+<span><span class="co">##  [43] SummarizedExperiment_1.35.0 knitr_1.47                 </span></span>
+<span><span class="co">##  [45] IRanges_2.39.0              Matrix_1.7-0               </span></span>
+<span><span class="co">##  [47] igraph_2.0.3                tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [49] abind_1.4-5                 yaml_2.3.8                 </span></span>
+<span><span class="co">##  [51] doParallel_1.0.17           codetools_0.2-20           </span></span>
+<span><span class="co">##  [53] affy_1.83.0                 lattice_0.22-6             </span></span>
+<span><span class="co">##  [55] tibble_3.2.1                plyr_1.8.9                 </span></span>
+<span><span class="co">##  [57] signal_1.8-0                evaluate_0.23              </span></span>
+<span><span class="co">##  [59] desc_1.4.3                  Spectra_1.15.2             </span></span>
+<span><span class="co">##  [61] pillar_1.9.0                affyio_1.75.0              </span></span>
+<span><span class="co">##  [63] BiocManager_1.30.23         MatrixGenerics_1.17.0      </span></span>
+<span><span class="co">##  [65] foreach_1.5.2               MALDIquant_1.22.2          </span></span>
+<span><span class="co">##  [67] ncdf4_1.22                  generics_0.1.3             </span></span>
+<span><span class="co">##  [69] hms_1.1.3                   ggplot2_3.5.1              </span></span>
+<span><span class="co">##  [71] munsell_0.5.1               scales_1.3.0               </span></span>
+<span><span class="co">##  [73] MsExperiment_1.7.0          glue_1.7.0                 </span></span>
+<span><span class="co">##  [75] MsFeatures_1.13.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">##  [77] tools_4.4.0                 mzID_1.43.0                </span></span>
+<span><span class="co">##  [79] QFeatures_1.15.1            vsn_3.73.0                 </span></span>
+<span><span class="co">##  [81] fs_1.6.4                    XML_3.99-0.16.1            </span></span>
+<span><span class="co">##  [83] grid_4.4.0                  impute_1.79.0              </span></span>
+<span><span class="co">##  [85] tidyr_1.3.1                 MsCoreUtils_1.15.7         </span></span>
+<span><span class="co">##  [87] colorspace_2.1-0            GenomeInfoDbData_1.2.12    </span></span>
+<span><span class="co">##  [89] PSMatch_1.9.0               cli_3.6.2                  </span></span>
+<span><span class="co">##  [91] textshaping_0.4.0           fansi_1.0.6                </span></span>
+<span><span class="co">##  [93] S4Arrays_1.5.1              dplyr_1.1.4                </span></span>
+<span><span class="co">##  [95] AnnotationFilter_1.29.0     pcaMethods_1.97.0          </span></span>
+<span><span class="co">##  [97] gtable_0.3.5                sass_0.4.9                 </span></span>
+<span><span class="co">##  [99] digest_0.6.35               SparseArray_1.5.7          </span></span>
+<span><span class="co">## [101] htmlwidgets_1.6.4           htmltools_0.5.8.1          </span></span>
+<span><span class="co">## [103] pkgdown_2.0.9.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [105] httr_1.4.7                  statmod_1.5.0              </span></span>
+<span><span class="co">## [107] MASS_7.3-60.2</span></span></code></pre>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
-
-
-
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
-
 <div class="pkgdown-footer-right">
   <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
-
     </footer>
 </div>
-
-  
-
-  
-
   </body>
 </html>

@@ -1,591 +1,199 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://sneumann.github.io/xcms/404.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/articles/LC-MS-feature-grouping.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/articles/xcms-direct-injection.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/articles/xcms-lcms-ms.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/articles/xcms.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/AutoLockMass-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/BlankFlag.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/DratioFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/GenericParam.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/LamaParama.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/PercentMissingFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/PlainTextParam.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/ProcessHistory-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/RDataParam.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/RsdFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/SSgauss.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XCMSnExp-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XChromatogram.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/XcmsExperiment.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/absent-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/adjustRtime.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/applyAdjustedRtime.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/binYonX.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/breaks_on_binSize.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/breaks_on_nBins.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/c.xcmsSet.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/calibrate.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/chromPeakChromatograms.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/chromPeakSpectra.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/chromatogram-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/colMax.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/collect-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/correlate-Chromatogram.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/descendZero.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/diffreport-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/dirname.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_adjustRtime_peakGroups.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWave.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWaveWithPredIsoROIs.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_massifquant.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_matchedFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_findPeaks_MSW.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_groupChromPeaks_density.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_groupChromPeaks_nearest.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/do_groupPeaks_mzClust.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/doubleMatrix.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/estimatePrecursorIntensity.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/etg.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/exportMetaboAnalyst.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/extractMsData-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/feature-grouping.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/featureChromatograms.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/featureSpectra.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/featureSummary.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/fillChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/fillPeaks-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/fillPeaks.MSW-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/fillPeaks.chrom-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/filter-MChromatograms.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/filterFeatures.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/filtfft.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-CentWaveParam.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-MatchedFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-centWaveWithPredIsoROIs.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-massifquant.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks-matchedFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findChromPeaksIsolationWindow.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findEqualGreater.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findMZ.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks-MSW.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.MS1-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.MSW-xcmsRaw-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.addPredictedIsotopeFeatures-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.centWave-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.centWaveWithPredictedIsotopeROIs-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.massifquant-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findPeaks.matchedFilter-xcmsRaw-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/findneutral.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/getEIC-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/getPeaks-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/getScan-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/getSpec-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/getXcmsRaw-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/group-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/group.density.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/group.mzClust.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/group.nearest.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupFeatures-abundance-correlation.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupFeatures-eic-similarity.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupFeatures-similar-rtime.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupOverlaps.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupnames-XCMSnExp.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupnames-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/groupval-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/highlightChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/image.xcmsRaw.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/imputeLinInterpol.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/imputeRowMin.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/imputeRowMinRand.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/isolationWindowTargetMz-OnDiskMSnExp-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/levelplot.xcmsRaw.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/loadRaw-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/loadXcmsData.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/manualChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/medianFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/msn2xcmsRaw.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/na.flatfill.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/overlappingFeatures.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/panel.cor.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/peakPlots-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/peakTable-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/peaksWithCentWave.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/peaksWithMatchedFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/phenoDataFromPaths.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plot.xcmsEIC.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotAdjustedRtime.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotChrom-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotChromPeakDensity.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotEIC-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotFeatureGroups.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotMsData.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotPeaks-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotQC.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotRaw-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotScan-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotSpec-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotSurf-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotTIC-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/plotrt-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profGenerate.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profMat-xcmsSet.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profMedFilt-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profMethod-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profRange-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/profStep-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/pval.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/rawEIC-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/rawMat-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/reconstructChromPeakSpectra.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/rectUnique.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/refineChromPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/removeIntensity-Chromatogram.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/retcor-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/retcor.obiwarp-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/retexp.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/rla.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/sampnames-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/showError-xcmsSet-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specDist-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specDist.cosine-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specDist.meanMZmatch-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specDist.peakCount-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specNoise.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/specPeaks.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/split.xcmsRaw.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/split.xcmsSet.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/stitch-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/storeResults.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/updateObject-xcmsSet-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/useOriginalCode.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/verify.mzQuantML.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/write.cdf-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/write.mzQuantML.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/write.mzdata-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/writeMSData-XCMSnExp-character-method.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/writeMzTab.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcms-deprecated.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsEIC-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsFileSource-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsFragments-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsFragments.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsPeaks-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsRaw-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsRaw.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsSet-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsSet.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsSource-class.html</loc>
-  </url>
-  <url>
-    <loc>https://sneumann.github.io/xcms/reference/xcmsSource-methods.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://sneumann.github.io/xcms/404.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/LICENSE-text.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/articles/LC-MS-feature-grouping.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/articles/index.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/articles/xcms-direct-injection.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/articles/xcms-lcms-ms.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/articles/xcms.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/authors.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/index.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/news/index.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/AutoLockMass-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/BlankFlag.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/DratioFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/GenericParam.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/LamaParama.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/PercentMissingFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/PlainTextParam.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/ProcessHistory-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/RDataParam.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/RsdFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/SSgauss.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XChromatogram.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XcmsExperiment.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/absent-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/adjustRtime.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/applyAdjustedRtime.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/binYonX.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/breaks_on_binSize.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/breaks_on_nBins.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/c.xcmsSet.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/calibrate.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/chromPeakChromatograms.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/chromPeakSpectra.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/chromatogram-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/colMax.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/collect-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/correlate-Chromatogram.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/descendZero.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/diffreport-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/dirname.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_adjustRtime_peakGroups.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWave.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWaveWithPredIsoROIs.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_massifquant.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_findChromPeaks_matchedFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_findPeaks_MSW.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_groupChromPeaks_density.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_groupChromPeaks_nearest.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/do_groupPeaks_mzClust.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/doubleMatrix.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/estimatePrecursorIntensity.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/etg.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/exportMetaboAnalyst.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/extractMsData-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/feature-grouping.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/featureChromatograms.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/featureSpectra.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/featureSummary.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/fillChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/fillPeaks-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/fillPeaks.MSW-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/fillPeaks.chrom-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/filter-MChromatograms.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/filterFeatures.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/filtfft.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-CentWaveParam.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-MatchedFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-centWaveWithPredIsoROIs.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-massifquant.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks-matchedFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findChromPeaksIsolationWindow.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findEqualGreater.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findMZ.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks-MSW.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.MS1-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.MSW-xcmsRaw-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.addPredictedIsotopeFeatures-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.centWave-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.centWaveWithPredictedIsotopeROIs-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.massifquant-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findPeaks.matchedFilter-xcmsRaw-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/findneutral.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/getEIC-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/getPeaks-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/getScan-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/getSpec-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/getXcmsRaw-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/group-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/group.density.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/group.mzClust.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/group.nearest.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupFeatures-abundance-correlation.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupFeatures-eic-similarity.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupFeatures-similar-rtime.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupOverlaps.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupnames-XCMSnExp.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupnames-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/groupval-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/highlightChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/image.xcmsRaw.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/imputeLinInterpol.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/imputeRowMin.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/imputeRowMinRand.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/isolationWindowTargetMz-OnDiskMSnExp-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/levelplot.xcmsRaw.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/loadRaw-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/loadXcmsData.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/manualChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/medianFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/msn2xcmsRaw.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/na.flatfill.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/overlappingFeatures.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/panel.cor.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/peakPlots-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/peakTable-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/peaksWithCentWave.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/peaksWithMatchedFilter.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/phenoDataFromPaths.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plot.xcmsEIC.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotAdjustedRtime.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotChrom-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotChromPeakDensity.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotEIC-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotFeatureGroups.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotMsData.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotPeaks-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotPrecursorIons.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotQC.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotRaw-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotScan-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotSpec-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotSurf-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotTIC-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/plotrt-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profGenerate.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profMat-xcmsSet.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profMedFilt-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profMethod-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profRange-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/profStep-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/pval.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/rawEIC-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/rawMat-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/reconstructChromPeakSpectra.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/rectUnique.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/refineChromPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/removeIntensity-Chromatogram.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/retcor-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/retcor.obiwarp-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/retexp.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/rla.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/sampnames-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/showError-xcmsSet-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specDist-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specDist.cosine-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specDist.meanMZmatch-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specDist.peakCount-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specNoise.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/specPeaks.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/split.xcmsRaw.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/split.xcmsSet.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/stitch-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/storeResults.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/updateObject-xcmsSet-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/useOriginalCode.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/verify.mzQuantML.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/write.cdf-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/write.mzQuantML.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/write.mzdata-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/writeMSData-XCMSnExp-character-method.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/writeMzTab.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcms-deprecated.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsEIC-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsFileSource-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsFragments-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsFragments.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsPeaks-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsRaw-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsRaw.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsSet-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsSet.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsSource-class.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/xcmsSource-methods.html</loc></url>
 </urlset>
+
