@@ -113,8 +113,11 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
              paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
                     collapse = ", "), " not found in 'peaks' parameter")
 
-    sampleGroups <- as.character(sampleGroups)
-    sampleGroupNames <- unique(sampleGroups)
+    ## With a `factor` we also support excluding samples/groups, i.e. samples
+    ## with an NA are not considered in the feature definition.
+    if (!is.factor(sampleGroups))
+        sampleGroups <- factor(sampleGroups)
+    sampleGroupNames <- levels(sampleGroups)
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
 
@@ -160,15 +163,12 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
             pb$tick()
         if (endIdx - startIdx < 0)
             next
-        resL[[i]] <- .group_peaks_density(peaks[startIdx:endIdx, , drop = FALSE],
-                                          bw = bw, densFrom = densFrom,
-                                          densTo = densTo, densN = densN,
-                                          sampleGroups = sampleGroups,
-                                          sampleGroupTable = sampleGroupTable,
-                                          minFraction = minFraction,
-                                          minSamples = minSamples,
-                                          maxFeatures = maxFeatures,
-                                          sleep = sleep)
+        resL[[i]] <- .group_peaks_density(
+            peaks[startIdx:endIdx, , drop = FALSE], bw = bw,
+            densFrom = densFrom, densTo = densTo, densN = densN,
+            sampleGroups = sampleGroups, sampleGroupTable = sampleGroupTable,
+            minFraction = minFraction, minSamples = minSamples,
+            maxFeatures = maxFeatures, sleep = sleep)
     }
     res <- do.call(rbind, resL)
     if (nrow(res)) {

@@ -85,3 +85,37 @@ test_that(".group_peaks_density works", {
     expect_true(nrow(res) == 0)
     expect_true(is(res, "data.frame"))
 })
+
+test_that("do_groupChromPeaks_density works with skipping samples", {
+    x <- loadXcmsData("xmse")
+    pks <- chromPeaks(x)
+    ## Errors
+    expect_error(do_groupChromPeaks_density(pks), "sampleGroups")
+    expect_error(do_groupChromPeaks_density(3, sampleGroups = 3), "matrix")
+    expect_error(do_groupChromPeaks_density(pks[, 1:3], sampleGroups = 1),
+                 "not found")
+    expect_error(do_groupChromPeaks_density(pks, sampleGroups = 1:3),
+                 "Sample indices")
+
+    ## groups for all samples.
+    grps <- sampleData(x)$sample_group
+    res <- do_groupChromPeaks_density(pks, sampleGroups = grps,
+                                      minFraction = 1, bw = 30)
+    expect_true(all(res$WT == 4 | res$KO == 4))
+    expect_true(all(res$WT <= 4))
+    expect_true(all(res$KO <= 4))
+
+    res_2 <- do_groupChromPeaks_density(
+        pks, sampleGroups = rep(1, length(grps)), minFraction = 1)
+    expect_true(nrow(res_2) < nrow(res))
+    expect_true(all(res_2$`1` == 8))
+
+    ## using only one sample group
+    grps[grps == "KO"] <- NA
+    res_3 <- do_groupChromPeaks_density(pks, sampleGroups = grps,
+                                        minFraction = 1)
+    expect_true(nrow(res_3) < nrow(res))
+    expect_true(all(res_3$WT == 4))
+    expect_equal(nrow(res_3), sum(res$WT == 4))
+    tmp <- res[res$WT == 4, ]
+})

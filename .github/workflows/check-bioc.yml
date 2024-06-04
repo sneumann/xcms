@@ -54,8 +54,8 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: 'devel', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
-          - { os: macOS-latest, r: 'next', bioc: '3.19'}
-          - { os: windows-latest, r: 'next', bioc: '3.19'}
+          - { os: macOS-latest, r: '4.4', bioc: 'devel'}
+          - { os: windows-latest, r: '4.4', bioc: 'devel'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -141,15 +141,15 @@ jobs:
           ## required for ncdf4
           ## brew install netcdf ## Does not work as it is compiled with gcc
           ## Use pre-compiled libraries from https://mac.r-project.org/libs-4/
-          curl -O https://mac.r-project.org/libs-4/netcdf-4.7.4-darwin.17-x86_64.tar.gz
-          tar fvxzm netcdf-4.7.4-darwin.17-x86_64.tar.gz -C /
-          rm netcdf-4.7.4-darwin.17-x86_64.tar.gz
-          curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
-          tar fvxzm hdf5-1.12.0-darwin.17-x86_64.tar.gz -C /
-          rm hdf5-1.12.0-darwin.17-x86_64.tar.gz
-          curl -O https://mac.r-project.org/libs-4/szip-2.1.1-darwin.17-x86_64.tar.gz
-          tar fvxzm szip-2.1.1-darwin.17-x86_64.tar.gz -C /
-          rm szip-2.1.1-darwin.17-x86_64.tar.gz
+          # curl -O https://mac.r-project.org/libs-4/netcdf-4.7.4-darwin.17-x86_64.tar.gz
+          # tar fvxzm netcdf-4.7.4-darwin.17-x86_64.tar.gz -C /
+          # rm netcdf-4.7.4-darwin.17-x86_64.tar.gz
+          # curl -O https://mac.r-project.org/libs-4/hdf5-1.12.0-darwin.17-x86_64.tar.gz
+          # tar fvxzm hdf5-1.12.0-darwin.17-x86_64.tar.gz -C /
+          # rm hdf5-1.12.0-darwin.17-x86_64.tar.gz
+          # curl -O https://mac.r-project.org/libs-4/szip-2.1.1-darwin.17-x86_64.tar.gz
+          # tar fvxzm szip-2.1.1-darwin.17-x86_64.tar.gz -C /
+          # rm szip-2.1.1-darwin.17-x86_64.tar.gz
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'

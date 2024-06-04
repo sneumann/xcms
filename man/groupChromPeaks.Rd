@@ -190,11 +190,13 @@ object will remove previous results.}
 
 \item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
 samples defining the sample group assignments (i.e. which samples
-belong to which sample
-group). This parameter is mandatory for the \code{PeakDensityParam}
-and has to be provided also if there is no sample grouping in the
-experiment (in which case all samples should be assigned to the
-same group).}
+belong to which sample group). This parameter is mandatory for
+\code{PeakDensityParam} and has to be defined also if there is no sample
+grouping in the experiment (in which case all samples should be
+assigned to the same group). Samples for which a \code{NA} is provided will
+not be considered in the feature definitions step. Providing \code{NA} for
+all blanks in an experiment will for example avoid features to be
+defined for signals (chrom peaks) present only in blank samples.}
 
 \item{bw}{For \code{PeakDensityParam}: \code{numeric(1)} defining the bandwidth
 (standard deviation ot the smoothing kernel) to be used. This argument
@@ -271,7 +273,15 @@ larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
-feature. See in addition \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} for the core API
+feature. Only samples with non-missing sample group assignment (i.e. for
+which the value provided with parameter \code{sampleGroups} is different than
+\code{NA}) are considered and counted for the feature definition. This allows
+to exclude certain samples or groups (e.g. blanks) from the feature
+definition avoiding thus features with only detected peaks in these. Note
+that this affects only the \strong{definition} of \strong{new} features.
+Chromatographic peaks in these samples will still be assigned to features
+which were defined based on the other samples.
+See in addition \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} for the core API
 function.
 \item \code{NearestPeaksParam}: performs peak grouping based on the proximity of
 chromatographic peaks from different samples in the m/z - rt space similar

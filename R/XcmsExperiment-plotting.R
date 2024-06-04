@@ -406,3 +406,73 @@ setMethod(
         }
     }
 }
+
+#' @title General visualization of precursor ions of LC-MS/MS data
+#'
+#' @description
+#'
+#' Simple visualization of the position of fragment spectra's precursor ion
+#' in the MS1 retention time by m/z area.
+#'
+#' @param x `MsExperiment` of LC-MS/MS data.
+#'
+#' @param pch `integer(1)` defining the symbol/point type to be used to draw
+#'     points. See [points()] for details. Defaults to `pch = 21` which allows
+#'     defining the background and border color for points.
+#'
+#' @param col the color to be used for all data points. Defines the border
+#'     color if `pch = 21`.
+#'
+#' @param bg the background color (if `pch = 21`).
+#'
+#' @param xlab `character(1)` defining the x-axis label.
+#'
+#' @param ylab `character(1)` defining the y-axis label.
+#'
+#' @param main Optional `character(1)` with the title for **every** plot. If
+#'     not provided (the default) the base file name will be used for each
+#'     sample.
+#'
+#' @param ... additional parameters to be passed to the `plot` calls.
+#'
+#' @importFrom grDevices n2mfrow
+#'
+#' @export
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' ## Load a test data file with DDA LC-MS/MS data
+#' library(MsExperiment)
+#' fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+#' pest_dda <- readMsExperiment(fl)
+#'
+#' plotPrecursorIons(pest_dda)
+#' grid()
+#'
+#' ## Subset the data object to plot the data specifically for one or
+#' ## selected file/sample:
+#' plotPrecursorIons(pest_dda[1L])
+plotPrecursorIons <- function(x, pch = 21, col = "#00000080",
+                              bg = "#00000020", xlab = "retention time",
+                              ylab = "m/z", main = character(), ...) {
+    if (!inherits(x, "MsExperiment"))
+        stop("'x' should be a 'MsExperiment' object or an object of a ",
+             "class extending it.")
+    par(mfrow = n2mfrow(length(x)))
+    for (i in seq_along(x)) {
+        x_sub <- x[i]
+        rtr <- range(rtime(spectra(x_sub)))
+        mzr <- range(range(mz(filterEmptySpectra(spectra(x_sub)))))
+        pmz <- precursorMz(spectra(x_sub))
+        prt <- rtime(spectra(x_sub)[!is.na(pmz)])
+        pmz <- pmz[!is.na(pmz)]
+        if (!length(main))
+            main <- basename(dataOrigin(spectra(x_sub)[1L]))
+        plot(prt, pmz, xlim = rtr, ylim = mzr, pch = pch, col = col, bg = bg,
+             xlab = xlab, ylab = ylab, main = main[1L], ...)
+    }
+}

@@ -1319,7 +1319,15 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'   representing the m/z dependent measurement error of some MS instruments).
 #'   All peaks (from the same or from different samples) with their apex
 #'   position being close on the retention time axis are grouped into a LC-MS
-#'   feature. See in addition [do_groupChromPeaks_density()] for the core API
+#'   feature. Only samples with non-missing sample group assignment (i.e. for
+#'   which the value provided with parameter `sampleGroups` is different than
+#'   `NA`) are considered and counted for the feature definition. This allows
+#'   to exclude certain samples or groups (e.g. blanks) from the feature
+#'   definition avoiding thus features with only detected peaks in these. Note
+#'   that this affects only the **definition** of **new** features.
+#'   Chromatographic peaks in these samples will still be assigned to features
+#'   which were defined based on the other samples.
+#'   See in addition [do_groupChromPeaks_density()] for the core API
 #'   function.
 #'
 #' - `NearestPeaksParam`: performs peak grouping based on the proximity of
@@ -1399,11 +1407,13 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param sampleGroups For `PeakDensityParam`: A vector of the same length than
 #'     samples defining the sample group assignments (i.e. which samples
-#'     belong to which sample
-#'     group). This parameter is mandatory for the `PeakDensityParam`
-#'     and has to be provided also if there is no sample grouping in the
-#'     experiment (in which case all samples should be assigned to the
-#'     same group).
+#'     belong to which sample group). This parameter is mandatory for
+#'     `PeakDensityParam` and has to be defined also if there is no sample
+#'     grouping in the experiment (in which case all samples should be
+#'     assigned to the same group). Samples for which a `NA` is provided will
+#'     not be considered in the feature definitions step. Providing `NA` for
+#'     all blanks in an experiment will for example avoid features to be
+#'     defined for signals (chrom peaks) present only in blank samples.
 #'
 #' @param value Replacement value for `<-` methods.
 #'

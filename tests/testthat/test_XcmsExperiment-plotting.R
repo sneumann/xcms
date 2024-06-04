@@ -53,6 +53,19 @@ test_that("plot,XcmsExperiment and .xmse_plot_xic works", {
     plot(tmp)
 })
 
+test_that("plotPrecursorIons works", {
+    expect_error(plotPrecursorIons(3), "MsExperiment")
+    fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML",
+                      package = "msdata")
+    a <- readMsExperiment(fl)
+    plotPrecursorIons(a, main = "SWATH")
+
+    fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
+                      package = "msdata")
+    a <- readMsExperiment(fl)
+    plotPrecursorIons(a)
+})
+
 test_that(".xmse_plot_xic works with ms2 data", {
   tmp <-  filterMz(filterRt(mse_ms2, rt= c(2160, 2190)), mz = c(990,1000))
   plot(tmp)

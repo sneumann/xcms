@@ -582,6 +582,8 @@ peaks per file along the retention time. See \code{\link[=plotChromPeakImage]{pl
 details.
 \item \code{plotChromPeaks}: indicate identified chromatographic peaks from one
 sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} for details.
+\item \code{plotPrecursorIons}: general visualization of precursor ions of
+LC-MS/MS data. See \code{\link[=plotPrecursorIons]{plotPrecursorIons()}} for details.
 \item \code{refineChromPeaks}: \emph{refines} identified chromatographic peaks in \code{object}.
 See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 }

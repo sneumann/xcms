@@ -500,7 +500,6 @@ test_that("PeakDensityParam works", {
     expect_error(sampleGroups(p) <- NULL)
     expect_error(sampleGroups(p) <- c(2, 2, NA))
     expect_error(PeakDensityParam())
-    expect_error(PeakDensityParam(sampleGroups = c(1, 1, NA)))
 
     p <- new("PeakDensityParam", bw = 3)
     expect_equal(bw(p), 3)

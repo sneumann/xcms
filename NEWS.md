@@ -1,14 +1,23 @@
 # xcms 4.3
 
-## Changes in version 4.3.1
+## Changes in version 4.3.2
 
 - Addition of generic function `loadResults()`and method for import using 
   `RDataParam` and `PlaintTextParam`.
 
+## Changes in version 4.3.1
+
+- Support excluding samples or sample groups from defining features with
+  *PeakDensity* correspondence analysis (issue #742).
+- Add `plotPrecursorIons()` function.
+- Fix in `dropFeatureDefinitions()` that was not correctly removing additional
+  metadata from gap-filled chromatographic peaks.
+
+# xcms 4.1
+
 ## Changes in version 4.1.14
 
 - Fix for issue #734. XIC plot is is now working with MS2 Data.
-
 
 ## Changes in version 4.1.13
 

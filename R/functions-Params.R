@@ -236,9 +236,8 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                              minFraction = 0.5, minSamples = 1,
                              binSize = 0.25, ppm = 0, maxFeatures = 50) {
-    if (length(sampleGroups) == 0 | any(is.na(sampleGroups)))
-        stop("Argument 'sampleGroups' has to be defined. It should not ",
-             "contain 'NA's")
+    if (length(sampleGroups) == 0)
+        stop("Argument 'sampleGroups' has to be defined.")
     new("PeakDensityParam", sampleGroups = sampleGroups, bw = bw,
         minFraction = minFraction, minSamples = minSamples,
         binSize = binSize, ppm = ppm, maxFeatures = maxFeatures)

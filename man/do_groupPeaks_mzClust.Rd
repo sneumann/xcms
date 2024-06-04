@@ -22,11 +22,13 @@ the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{For \code{PeakDensityParam}: A vector of the same length than
 samples defining the sample group assignments (i.e. which samples
-belong to which sample
-group). This parameter is mandatory for the \code{PeakDensityParam}
-and has to be provided also if there is no sample grouping in the
-experiment (in which case all samples should be assigned to the
-same group).}
+belong to which sample group). This parameter is mandatory for
+\code{PeakDensityParam} and has to be defined also if there is no sample
+grouping in the experiment (in which case all samples should be
+assigned to the same group). Samples for which a \code{NA} is provided will
+not be considered in the feature definitions step. Providing \code{NA} for
+all blanks in an experiment will for example avoid features to be
+defined for signals (chrom peaks) present only in blank samples.}
 
 \item{ppm}{For \code{MzClustParam}: \code{numeric(1)} representing the relative m/z
 error for the clustering/grouping (in parts per million).

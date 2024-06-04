@@ -206,6 +206,9 @@
 #' - `plotChromPeaks`: indicate identified chromatographic peaks from one
 #'   sample in the RT-m/z space. See [plotChromPeaks()] for details.
 #'
+#' - `plotPrecursorIons`: general visualization of precursor ions of
+#'   LC-MS/MS data. See [plotPrecursorIons()] for details.
+#'
 #' - `refineChromPeaks`: *refines* identified chromatographic peaks in `object`.
 #'   See [refineChromPeaks()] for details.
 #'
@@ -1555,9 +1558,8 @@ setMethod(
             object@processHistory, type = .PROCSTEP.PEAK.GROUPING, num = 1L)
         object@featureDefinitions <- .empty_feature_definitions()
         if (.hasFilledPeaks(object)) {
-            object@chromPeaks <- object@chromPeaks[
-                                            !object@chromPeakData$is_filled, ,
-                                            drop = FALSE]
+            object <- .filter_chrom_peaks(
+                object, which(!.chromPeakData(object)$is_filled))
             object@processHistory <- dropProcessHistoriesList(
                 object@processHistory, type = .PROCSTEP.PEAK.FILLING)
         }
