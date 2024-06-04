@@ -23,14 +23,21 @@
 #'
 #' - The [sampleData()] stored as a text file named *sample_data.txt*.
 #'
-#' - The [fileNames()] of the *Spectra* object stored in a tabular format in a
-#' text file named *spectra_files.txt*.The file names will only be exported if
-#' the `Spectra` object uses a [MsBackendMzR()] backend. For other backends no
-#' information on raw spectra data is currently exported with `PlainTextParam`.
+#' For a `Spectra` object, the exported files include:
+#'
+#' - The [spectraData()] stored in a tabular format in a text file named
+#' *backend_data.txt*.
+#'
+#' - The `processingQueueVariables`, `processing`, [processingChunkSize()] and
+#' `backend` class information of the object stored in a text file named
+#' *spectra_slots.txt*.
 #'
 #' - Processing queue of the `Spectra` object, ensuring that any spectra data
 #' modifications are retained. It is stored in a `json` file named
 #' *spectra_processing_queue.json*.
+#'
+#' Note : The Spectra object will only be exported if it uses a
+#' [MsBackendMzR()] backend. Other backends are no supported as of now.
 #'
 #' For an `XcmsExperiment` object, the exported files are the same as those
 #' for an `MsExperiment` object, with the addition of the following:
@@ -56,19 +63,11 @@
 #' `storeResults`. If the folder already exists, previous exports in that
 #' folder might get overwritten.
 #'
-#' If the `spectraExport` parameter is set to `TRUE`, the spectra data will be
-#' exported/imported. The import should be done in a file system similar to the
-#' one used for the export. The `spectraFilePath` parameter can be used to
-#' define the absolute path where the spectra files should be imported from
-#' when loading the object. The default will be set using the common file path
-#' of all the spectra files when exporting. If the `spectraExport` parameter is
-#' set to `FALSE`, the spectra data will not be exported/imported.
-#'
 #' @param path for `PlainTextParam` `character(1)`, defining where the files
 #' are going to be stored/ should be loaded from. The default will be
 #' `tempdir()`.
 #'
-#' @param spectraFilePath for `loadResults` `character(1)`, defining the
+#' @param spectraPath for `loadResults` `character(1)`, defining the
 #' absolute path where the spectra files should be imported from when loading
 #' the object. The default will be set using the common file path of all the
 #' spectra files when exporting.
@@ -151,9 +150,12 @@ setMethod("storeResults",
               dir.create(path = param@path,
                          recursive = TRUE,
                          showWarnings = TRUE)
-              .store_msexperiment(x = object, path = param@path)
+              write.table(as.data.frame(sampleData(object)),
+                          file = file.path(param@path,
+                                           "sample_data.txt"))
               ## call export of individual other objects (not MsExperiment data)
               storeResults(spectra(object), param)
+              ## at some point also chromatograms, etc.
           }
 )
 
@@ -171,9 +173,14 @@ setMethod("storeResults",
 setMethod("loadResults",
           signature(object = "MsExperiment",
                     param = "PlainTextParam"),
-          function(object, param, spectraFilePath = character()){
-              res <- .load_msexperiment(path = param@path,
-                                        spectraFilePath = spectraFilePath)
+          function(object, param, spectraPath = character()){
+              fl <- file.path(param@path, "sample_data.txt")
+              if (file.exists(fl)){ # should i have a error if does not exist ?
+                  sd <- read.table(fl)
+                  rownames(sd) <- NULL #read.table force numbering of rownames
+              }
+              s <- loadResults(Spectra(), param)
+              res <- MsExperiment(sampleData = sd, spectra = s)
               validObject(res)
               res
               }
@@ -183,123 +190,117 @@ setMethod("loadResults",
 setMethod("loadResults",
           signature(object = "XcmsExperiment",
                     param = "PlainTextParam"),
-          function(object, param, spectraFilePath){
-              res <- callNextMethod()
+          function(object, param, spectraPath){
+              res <- callNextMethod() #check if need to add spectraPath = spectraPath
               res <- .load_xcmsexperiment(res, path = param@path)
               validObject(res)
               res
           }
 )
 
+#' @rdname PlainTextParam
 setMethod("storeResults", signature(object = "Spectra",
                                     param = "PlainTextParam"),
           function(object, param) {
-              ## Check if there is a method to store the backend. Throw an
-              ## error if not.
+              dir.create(path = param@path,
+                         recursive = TRUE,
+                         showWarnings = TRUE)
               if (!existsMethod("storeResults", c(class(object@backend)[1L],
                                                   "PlainTextParam")))
                   stop("Can not store a 'Spectra' object with backend '",
                        class(object@backend)[1L], "'")
-              ## - Call storeResults on @backend.
-              ## - save @processingQueue -> json (use previously implemented
-              ##   function).
-              ## Save the rest of the slots to a txt file, spectra_slots.txt
-              ## - save @processingQueueVariables, separated by "|"
-              ## - save @processingChunkSize.
-              ## - save the class of the backend (to allow calling import on
-              ##   the specific class.
+              storeResults(object@backend, param = param)
+              .export_spectra_processing_queue(object, path = param@path)
+              .export_spectra_slots(object, path = param@path)
           })
 
+#' @rdname PlainTextParam
+setMethod("loadResults", signature(object = "Spectra",
+                                    param = "PlainTextParam"),
+          function(object, param, spectraPath = character()) {
+              ## here i am NOT making a separate function for the slots
+              fl  <- file.path(param@path, "spectra_slots.txt")
+              if (!file.exists(fl))
+                  stop("No 'spectra_slots.txt' file found in ", param@path)
+              fls  <- readLines(fl)
+              var_names <- sub(" =.*", "", fls)
+              var_values <- sub(".* = ", "", fls)
+              variables <- setNames(var_values, var_names)
+              if (!existsMethod("loadResults", c(variables[["backend"]],
+                                                  "PlainTextParam")))
+                  stop("Can not store a 'Spectra' object with backend '",
+                       variables["backend"], "'")
+              b <- loadResults(object= do.call(what = variables[["backend"]],
+                                               args = list()),
+                          param = param, spectraPath = spectraPath) ##better way to do this ?
+              s <- Spectra(b)
+              s@processingQueueVariables <- unlist(strsplit(variables[["processingQueueVariables"]],
+                                                     "|", fixed = TRUE))
+              s@processing <- unlist(strsplit(variables[["processing"]], "|" ,
+                                              fixed = TRUE))
+              s@processingChunkSize <- as.numeric(variables[["processingChunkSize"]])
+              fl <- file.path(param@path, "spectra_processing_queue.json")
+              if (file.exists(fl))
+                s <- .import_spectra_processing_queue(s, file = fl)
+              s
+          })
+
+
+
+# Notes: This and the Spectra method will be moved to it's respective package
+#' @rdname PlainTextParam
 setMethod("storeResults", signature(object = "MsBackendMzR",
                                     param = "PlainTextParam"),
           function(object, param) {
-              ## save the @spectraData -> text file (tab delimited table).
+              dir.create(path = param@path,
+                         recursive = TRUE,
+                         showWarnings = TRUE)
+              object <-  dropNaSpectraVariables(object)
+              write.table(object@spectraData,
+                          file = file.path(param@path, "backend_data.txt"),
+                          sep = "\t", quote = FALSE)
 })
 
+#' @rdname PlainTextParam
 setMethod("loadResults", signature(object = "MsBackendMzR",
                                     param = "PlainTextParam"),
           function(object, param, spectraPath = character()) {
-              ## load spectraData data.frame
-              ## replace the absolute paths in "dataStorage" with
-              ## spectraPath if that is defined.
+              b <- MsBackendMzR()
+              data <- read.table(file = file.path(param@path,
+                                                  "backend_data.txt"),
+                                 sep = "\t", header = TRUE)
+              rownames(data) <- NULL
+              data <- DataFrame(data)
+              b@spectraData <- data
+              if (length(spectraPath) > 0){
+                  old <- MsCoreUtils::common_path(dataStorage(b))
+                  if (nchar(old) > 0)
+                      old <- paste0(old, "/")
+                  dataStorage(b) <- sub(old, spectraPath, dataStorage(b))
+              }
+              b
 })
 
-
+#' Spectra slots
+#' @param x  `Spectra`
+#'
 #' @noRd
-.store_msexperiment <- function(x, path = tempdir()) {
-    .export_sample_data(as.data.frame(sampleData(x)),
-                        file.path(path, "sample_data.txt"))
-    .export_spectra_files(x, path = path)
-    .export_spectra_processing_queue(spectra(x), path = path)
+.export_spectra_slots <-function(x, path = character()){
+    con <- file(file.path(path, "spectra_slots.txt"), open = "wt")
+    on.exit(close(con))
+    pq <- x@processingQueueVariables
+    writeLines(paste0("processingQueueVariables = ", paste(pq, collapse = "|")),
+               con = con)
+    p <- x@processing
+    writeLines(paste0("processing = ", paste(p,collapse = "|")), con = con)
+    writeLines(paste0("processingChunkSize = ", processingChunkSize(x)),
+               con = con)
+    writeLines(paste0("backend = ", class(x@backend)[1L]), con = con)
 }
 
-#' @noRd
-.load_msexperiment <- function(path = character(),
-                               spectraFilePath = character()) {
-    fl <- file.path(path, "sample_data.txt")
-    if (file.exists(fl))
-        sd <- .import_sample_data(fl)
-    else stop("No \"sample_data.txt\" file found in ", path)
-    fl <- file.path(path, "spectra_files.txt")
-    if (file.exists(fl)){
-        sf <- .import_spectra_files(fl, spectraFilePath = spectraFilePath)
-        res <- readMsExperiment(spectraFiles = sf, sampleData = sd)
-        fl <- file.path(path, "spectra_processing_queue.json")
-        if (file.exists(fl))
-            res <- .import_spectra_processing_queue(res, fl)
-    } else {
-        res <- MsExperiment(sampleData = sd)
-        warning("Spectra data will not be restored")
-    }
-    res
-}
-
-#' Sample data
-#' @noRd
-.export_sample_data <- function(x, file = tempfile()) {
-    write.table(x, file = file)
-}
-
-#' @noRd
-.import_sample_data <- function(file = character()) {
-    x <- read.table(file)
-    rownames(x) <- NULL #read.table force numbering of rownames
-    x
-}
-
-#' Spectra file
-#' @noRd
-.export_spectra_files <- function(x, path = character()) {
-    s <- spectra(x)
-    if (!inherits(s@backend, "MsBackendMzR"))
-        warning("Spectra data will not be exported, backend need to be of ",
-                "class 'MsBackendMzR'")
-    else {
-        pth <- MsCoreUtils::common_path(fileNames(x))
-        if (nchar(pth) > 0)
-            pth <- paste0(pth, "/")
-        fnames <- gsub("\\\\", "/", fileNames(x))
-        fnames <- sub(pth, "", fixed = TRUE, fnames)
-        con <- file(file.path(path, "spectra_files.txt"), open = "wt")
-        on.exit(close(con))
-        writeLines(paste0("spectraFilePath = ", pth), con = con)
-        writeLines(fnames, con = con)
-    }
-}
-
-#' @noRd
-.import_spectra_files <- function(file = character(),
-                                  spectraFilePath = character()) {
-    if (!length(spectraFilePath) > 0){
-        spectraFilePath <- readLines(file, n = 1L)
-        spectraFilePath <- sub("spectraFilePath = ", "", spectraFilePath)
-        }
-    fls <- readLines(file, n = -1L)[-1]
-    fls <- paste0(spectraFilePath, fls)
-}
 
 #' Processing queue
-#' @param x  `Spectra` (for export) `MsExperiment` (for import)
+#' @param x  `Spectra`
 #'
 #' @noRd
 .export_spectra_processing_queue <- function(x, path = character()) {
@@ -311,13 +312,12 @@ setMethod("loadResults", signature(object = "MsBackendMzR",
 
 #' @noRd
 .import_spectra_processing_queue <- function(x, file = character()) {
-    x@spectra@processingQueue <- unserializeJSON(read_json(file)[[1L]])
+    x@processingQueue <- unserializeJSON(read_json(file)[[1L]])
     x
 }
 
 #' @noRd
-.store_xcmsexperiment <- function(x, path = tempdir(),
-                                  spectraExport = logical()) {
+.store_xcmsexperiment <- function(x, path = tempdir()) {
     .export_process_history(x, path = path)
     if (hasChromPeaks(x))
         .export_chrom_peaks(x, path)

@@ -17,7 +17,7 @@
 #' @param fileName for `RDataParam` `character(1)`, defining the file name. The
 #' default will be `tempfile()`.
 #'
-#' @param spectraFilePath for `loadResults` `character(1)`, defining the
+#' @param spectraPath for `loadResults` `character(1)`, defining the
 #' absolute path where the spectra files should be imported from when loading
 #' the object. The default will be set using the common file path of all the
 #' spectra files when exporting. This is only supported if the backend of the
@@ -84,13 +84,13 @@ setMethod("storeResults",
 setMethod("loadResults",
           signature(object = "XcmsExperiment",
                     param = "RDataParam"),
-          function(object, param, spectraFilePath = character()){
+          function(object, param, spectraPath = character()){
               env <- new.env()
               load(file = param@fileName, envir = env)
               res <- get(ls(env)[1], envir = env)
-              if (!length(spectraFilePath) == 0 &&
+              if (!length(spectraPath) == 0 &&
                   inherits(spectra(res)@backend, "MsBackendMzR")) {
-                  dataStorageBasePath(spectra(res)) <- spectraFilePath
+                  dataStorageBasePath(spectra(res)) <- spectraPath
               }
 
               res

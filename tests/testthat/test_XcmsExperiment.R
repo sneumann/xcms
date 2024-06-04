@@ -1420,7 +1420,7 @@ test_that("storeResults,loadResults, RDataParam works", {
     storeResults(xmse, param = param)
     expect_true(file.exists("test"))
     res <- loadResults(object = XcmsExperiment(), param,
-                       spectraFilePath = character()) #not sure how to test for spectraFilePath not empty
+                       spectraPath = character()) #not sure how to test for spectraFilePath not empty
     expect_s4_class(res, "XcmsExperiment")
     expect_equal(res, xmse)
 })

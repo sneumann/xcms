@@ -10,7 +10,7 @@ RDataParam(fileName = tempfile())
 
 \S4method{storeResults}{XcmsExperiment,RDataParam}(object, param)
 
-\S4method{loadResults}{XcmsExperiment,RDataParam}(object, param, spectraFilePath = character())
+\S4method{loadResults}{XcmsExperiment,RDataParam}(object, param, spectraPath = character())
 }
 \arguments{
 \item{fileName}{for `RDataParam` `character(1)`, defining the file name. The
@@ -23,7 +23,7 @@ to be saved.}
 saving. It can be one of the following classes: \code{\link{RDataParam}},
 \code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
 
-\item{spectraFilePath}{for `loadResults` `character(1)`, defining the
+\item{spectraPath}{for `loadResults` `character(1)`, defining the
 absolute path where the spectra files should be imported from when loading
 the object. The default will be set using the common file path of all the
 spectra files when exporting. This is only supported if the backend of the

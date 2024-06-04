@@ -6,6 +6,10 @@
 \alias{storeResults,XcmsExperiment,PlainTextParam-method}
 \alias{loadResults,MsExperiment,PlainTextParam-method}
 \alias{loadResults,XcmsExperiment,PlainTextParam-method}
+\alias{storeResults,Spectra,PlainTextParam-method}
+\alias{loadResults,Spectra,PlainTextParam-method}
+\alias{storeResults,MsBackendMzR,PlainTextParam-method}
+\alias{loadResults,MsBackendMzR,PlainTextParam-method}
 \title{Store contents of `MsExperiment` and `XcmsExperiment` objects as
 plain text files}
 \usage{
@@ -15,9 +19,17 @@ PlainTextParam(path = tempdir())
 
 \S4method{storeResults}{XcmsExperiment,PlainTextParam}(object, param)
 
-\S4method{loadResults}{MsExperiment,PlainTextParam}(object, param, spectraFilePath = character())
+\S4method{loadResults}{MsExperiment,PlainTextParam}(object, param, spectraPath = character())
 
-\S4method{loadResults}{XcmsExperiment,PlainTextParam}(object, param, spectraFilePath)
+\S4method{loadResults}{XcmsExperiment,PlainTextParam}(object, param, spectraPath)
+
+\S4method{storeResults}{Spectra,PlainTextParam}(object, param)
+
+\S4method{loadResults}{Spectra,PlainTextParam}(object, param, spectraPath = character())
+
+\S4method{storeResults}{MsBackendMzR,PlainTextParam}(object, param)
+
+\S4method{loadResults}{MsBackendMzR,PlainTextParam}(object, param, spectraPath = character())
 }
 \arguments{
 \item{path}{for `PlainTextParam` `character(1)`, defining where the files
@@ -31,7 +43,7 @@ to be saved.}
 saving. It can be one of the following classes: \code{\link{RDataParam}},
 \code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
 
-\item{spectraFilePath}{for `loadResults` `character(1)`, defining the
+\item{spectraPath}{for `loadResults` `character(1)`, defining the
 absolute path where the spectra files should be imported from when loading
 the object. The default will be set using the common file path of all the
 spectra files when exporting.}
@@ -56,14 +68,21 @@ For an `MsExperiment` object, the exported files include:
 
 - The [sampleData()] stored as a text file named *sample_data.txt*.
 
-- The [fileNames()] of the *Spectra* object stored in a tabular format in a
-text file named *spectra_files.txt*.The file names will only be exported if
-the `Spectra` object uses a [MsBackendMzR()] backend. For other backends no
-information on raw spectra data is currently exported with `PlainTextParam`.
+For a `Spectra` object, the exported files include:
+
+- The [spectraData()] stored in a tabular format in a text file named
+*backend_data.txt*.
+
+- The `processingQueueVariables`, `processing`, [processingChunkSize()] and
+`backend` class information of the object stored in a text file named
+*spectra_slots.txt*.
 
 - Processing queue of the `Spectra` object, ensuring that any spectra data
 modifications are retained. It is stored in a `json` file named
 *spectra_processing_queue.json*.
+
+Note : The Spectra object will only be exported if it uses a
+[MsBackendMzR()] backend. Other backends are no supported as of now.
 
 For an `XcmsExperiment` object, the exported files are the same as those
 for an `MsExperiment` object, with the addition of the following:
@@ -88,14 +107,6 @@ generic functions `storeResults()` and `loadResults()`.
 The folder defined in the `path` parameter will be created by calling
 `storeResults`. If the folder already exists, previous exports in that
 folder might get overwritten.
-
-If the `spectraExport` parameter is set to `TRUE`, the spectra data will be
-exported/imported. The import should be done in a file system similar to the
-one used for the export. The `spectraFilePath` parameter can be used to
-define the absolute path where the spectra files should be imported from
-when loading the object. The default will be set using the common file path
-of all the spectra files when exporting. If the `spectraExport` parameter is
-set to `FALSE`, the spectra data will not be exported/imported.
 }
 \examples{
 ## Load test data set of class `MsExperiment`
