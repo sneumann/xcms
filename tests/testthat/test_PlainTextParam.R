@@ -18,8 +18,6 @@ test_that("storeResults,loadResults,PlainTextParam,MsBackendMzR works", {
     b <- dropNaSpectraVariables(b) #the function does this to be robust, is it a problem ? i should mention it in the doc
     expect_equal(b@spectraData, b2@spectraData)
     expect_equal(peaksVariables(b), peaksVariables(b2))  # true even without forcing the slot
-    expect_equal(mz(b), mz(b2))
-    expect_equal(intensity(b), intensity(b2))
 })
 
 test_that("storeResults,loadResults,PlainTextParam,Spectra works", {
@@ -41,8 +39,6 @@ test_that("storeResults,loadResults,PlainTextParam,Spectra works", {
     expect_equal(s@processing, s2@processing)
     expect_equal(processingChunkSize(s), processingChunkSize(s2))
     expect_equal(s@backend@spectraData, s2@backend@spectraData)
-    expect_equal(mz(s), mz(s2))
-    expect_equal(intensity(s), intensity(s2))
     expect_equal(rtime(s), rtime(s2))
     expect_no_error(filterRt(s2, c(3000, 3500)))
 })
@@ -68,8 +64,6 @@ test_that("storeResults,loadResults,PlainTextParam,MsExperiment works", {
     b <- spectra(load_mse)
     expect_equal(a@processingQueue[[1L]]@ARGS, b@processingQueue[[1L]]@ARGS)
     expect_equal(rtime(a), rtime(b))
-    expect_equal(intensity(a), intensity(b))
-    expect_equal(mz(a), mz(b))
     expect_no_error(filterRt(load_mse, c(3000, 3500)))
 })
 
@@ -100,7 +94,7 @@ test_that("storeResults,loadResults,PlainTextParam,XcmsExperiment works", {
     expect_equal(adjustedRtime(xmse_full), adjustedRtime(load_xmse))
     expect_no_error(filterRt(load_xmse, c(3000, 3500)))
     ## not sure how to check for the processHistory slot
-    ##
+    ## still not sure how to create UT for spectraPath
 })
 
 

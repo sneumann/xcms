@@ -437,6 +437,8 @@ setMethod(
 #'
 #' @importFrom grDevices n2mfrow
 #'
+#' @importFrom Spectra filterEmptySpectra
+#'
 #' @export
 #'
 #' @author Johannes Rainer

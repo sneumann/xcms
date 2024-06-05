@@ -88,6 +88,10 @@
 #'
 #' @importFrom MsCoreUtils common_path
 #'
+#' @importFrom Spectra processingChunkSize dropNaSpectraVariables Spectra MsBackendMzR
+#'
+#' @importFrom stats setNames
+#'
 #' @examples
 #' ## Load test data set of class `MsExperiment`
 #' library(MsExperiment)

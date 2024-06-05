@@ -559,7 +559,7 @@ importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "selectSpectraVariables")
 importMethodsFrom("Spectra", "setBackend")
 importMethodsFrom("Spectra", "dataOrigin")
-importMethodsFrom("Spectra", "dataStorage")
+importMethodsFrom("Spectra", "dataStorage", "dataStorage<-")
 importMethodsFrom("Spectra", "spectraVariables")
 importMethodsFrom("Spectra", "rtime<-")
 importMethodsFrom("Spectra", "ionCount")
@@ -568,7 +568,8 @@ importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "backendBpparam")
 importFrom("Spectra", "MsBackendMemory", "dataStorageBasePath",
-           "dataStorageBasePath<-")
+           "dataStorageBasePath<-", "processingChunkSize",
+           "dropNaSpectraVariables", "MsBackendMzR", "filterEmptySpectra")
 
 ## MsExperiment things
 importClassesFrom("MsExperiment", "MsExperiment")
@@ -595,9 +596,12 @@ exportMethods("fileNames")
 ## saving/loading xcms objects things
 importFrom("jsonlite", "serializeJSON", "write_json", "unserializeJSON",
            "read_json")
+importFrom("stats", "setNames")
+importFrom("MsCoreUtils", "between")
 export("RDataParam")
 export("PlainTextParam")
 exportMethods("storeResults", "loadResults")
+
 
 ## filtering features things
 importFrom("MetaboCoreUtils", "rowRsd", "rowDratio", "rowPercentMissing",
