@@ -21,7 +21,7 @@ PlainTextParam(path = tempdir())
 
 \S4method{loadResults}{MsExperiment,PlainTextParam}(object, param, spectraPath = character())
 
-\S4method{loadResults}{XcmsExperiment,PlainTextParam}(object, param, spectraPath)
+\S4method{loadResults}{XcmsExperiment,PlainTextParam}(object, param, spectraPath = character())
 
 \S4method{storeResults}{Spectra,PlainTextParam}(object, param)
 
@@ -32,9 +32,9 @@ PlainTextParam(path = tempdir())
 \S4method{loadResults}{MsBackendMzR,PlainTextParam}(object, param, spectraPath = character())
 }
 \arguments{
-\item{path}{for `PlainTextParam` `character(1)`, defining where the files
-are going to be stored/ should be loaded from. The default will be
-`tempdir()`.}
+\item{path}{For `PlainTextParam()`: `character(1)`, defining where the files
+are going to be stored/ should be loaded from. The default is
+`path = tempdir()`.}
 
 \item{object}{\code{MsExperiment} or \code{XcmsExperiment} The data object that needs
 to be saved.}
@@ -43,72 +43,74 @@ to be saved.}
 saving. It can be one of the following classes: \code{\link{RDataParam}},
 \code{\link{PlainTextParam}}, or \code{MzTabMParam}.}
 
-\item{spectraPath}{for `loadResults` `character(1)`, defining the
-absolute path where the spectra files should be imported from when loading
-the object. The default will be set using the common file path of all the
-spectra files when exporting.}
+\item{spectraPath}{For `loadResults()`: `character(1)` optionally allowing to
+define the (absolute) path where the spectra files (*data storage files*)
+can be found. This parameter is passed to the `loadResults()` method of
+the [MsBackend()].}
 }
 \value{
-for `PlainTextParam`: a `PlainTextParam` class. `storeResults` does
+For `PlainTextParam`: a `PlainTextParam` class. `storeResults` does
 not return anything but saves the object to collections of different plain
-text files to a folder.
+text files to a folder. The `loadResults()` method returns the restored
+data as an instance of the class specified with parameter `object`.
 }
 \description{
-The `PlainTextParam` class and method enable users to save/load an
-`MsExperiment` or `XcmsExperiment` object as a collections of plain text
-files in/from a specified folder.
-Note that, while for all xcms results within the `XcmsExperiment` can
-and will be exported, the full raw MS data (of the object's `Spectra` object)
-will currently not be exported in plain text format. For `Spectra` using the
-[MsBackendMzR()] backend, the names of the raw data files will however be
-exported (which enables to *load* the full `Spectra` respectively
-`MsExperiment` objects).
+The `storeResults()` and `loadResults()` methods with the `PlainTextParam`
+option enable users to save/load an `MsExperiment` or `XcmsExperiment`
+object as a collections of plain text files in/from a specified folder. This
+folder, defined with the `path` parameter, will be created by the
+`storeResults()` function. Any previous exports eventually present in that
+folder will be overwritten.
 
-For an `MsExperiment` object, the exported files include:
+For an `MsExperiment` object, the exported files, stored into the directory
+specifyied with the `path` parameter, include:
 
 - The [sampleData()] stored as a text file named *sample_data.txt*.
-
-For a `Spectra` object, the exported files include:
-
-- The [spectraData()] stored in a tabular format in a text file named
-*backend_data.txt*.
-
-- The `processingQueueVariables`, `processing`, [processingChunkSize()] and
-`backend` class information of the object stored in a text file named
-*spectra_slots.txt*.
-
-- Processing queue of the `Spectra` object, ensuring that any spectra data
-modifications are retained. It is stored in a `json` file named
-*spectra_processing_queue.json*.
-
-Note : The Spectra object will only be exported if it uses a
-[MsBackendMzR()] backend. Other backends are no supported as of now.
 
 For an `XcmsExperiment` object, the exported files are the same as those
 for an `MsExperiment` object, with the addition of the following:
 
 - The [processHistory()] information of the object, stored in a `json` file
-named *process_history.json*.
+  named *process_history.json*.
 
 - The chromatographic peak information obtained with [chromPeaks()] and
-[chromPeaksData()], stored in tabular format in the text files
-*chrom_peaks.txt* and *chrom_peak_data.txt* respectively.
+  [chromPeaksData()], stored in tabular format in the text files
+  *chrom_peaks.txt* and *chrom_peak_data.txt* respectively.
 
 - The retention time information obtained with [adjustedRtime()] stored
-in the text file named *rtime_adjusted.txt*.
+  in a text file named *rtime_adjusted.txt*.
 
 - The [featureDefinitions()] stored in a text file named
-*feature_definitions.txt*. Additionally, a second file named
-*feature_peak_index.txt* is generated to connect the features' definitions
-with their names.
+  *feature_definitions.txt*. Additionally, a second file named
+  *feature_peak_index.txt* is generated to connect the features' definitions
+  with their names.
 
-This `param` class and method are part of the possible dispatch of the
-generic functions `storeResults()` and `loadResults()`.
-The folder defined in the `path` parameter will be created by calling
-`storeResults`. If the folder already exists, previous exports in that
-folder might get overwritten.
+For a `Spectra` object, the exported files include:
+
+- The `processingQueueVariables`, `processing`, [processingChunkSize()] and
+  `backend` class information of the object stored in a text file named
+  *spectra_slots.txt*.
+
+- The processing queue of the `Spectra` object, ensuring that any spectra
+  data modifications are retained. It is stored in a `json` file named
+  *spectra_processing_queue.json*.
+
+Import/export of the MS data depends on the respective implementation of
+the respective `MsBackend` object. For `MsBackendMzR`, the exported data
+and related text files are:
+
+- The backend's [spectraData()] stored in a tabular format in a text file
+  named *backend_data.txt*.
+}
+\note{
+The function relies on the `storeResults()` and `loadResults()` methods of
+the [Spectra()] object and the used [MsBackend()] to store and restore the
+MS data. These methods might not be available for all `MsBackend`
+implementations. Also, it might be required to specify the path containing
+the MS data files using the `spectraPath` parameter.
 }
 \examples{
+
 ## Load test data set of class `MsExperiment`
 library(MsExperiment)
 fls <- dir(system.file("sciex", package = "msdata"), full.names = TRUE)
@@ -145,6 +147,6 @@ Other xcms result export and import formats.:
 \code{\link{RDataParam}}
 }
 \author{
-Philippine Louail, Johannes Rainer.
+Philippine Louail
 }
 \concept{xcms result export and import formats.}
