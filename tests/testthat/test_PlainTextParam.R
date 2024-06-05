@@ -1,6 +1,3 @@
-library(xcms)
-library(testthat)
-library(Spectra)
 xmse_full <- loadXcmsData("xmse")
 
 s <- spectra(xmse_full)
