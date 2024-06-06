@@ -63,7 +63,7 @@ Imports:
     MsCoreUtils (>= 1.15.7),
     MsFeatures,
     MsExperiment (>= 1.5.4),
-    Spectra (>= 1.13.7),
+    Spectra (>= 1.15.3),
     progress,
     jsonlite,
     RColorBrewer,
