@@ -19,12 +19,19 @@ representing samples and rows m/z-retention time ranges.
 All functions are described (grouped into topic-related sections) after the
 Arguments section."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -39,14 +46,17 @@ Arguments section."><meta property="og:image" content="https://sneumann.github.i
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Containers for chromatographic and peak detection data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XChromatograms.R" class="external-link"><code>R/functions-XChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XChromatogram.R" class="external-link"><code>R/functions-XChromatogram.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XChromatogram.R" class="external-link"><code>R/methods-XChromatogram.R</code></a>, and 1 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XChromatograms.R" class="external-link"><code>R/functions-XChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XChromatogram.R" class="external-link"><code>R/functions-XChromatogram.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-XChromatogram.R" class="external-link"><code>R/methods-XChromatogram.R</code></a>, and 1 more</small>
       <div class="d-none name"><code>XChromatogram.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>XChromatogram</code> object allows to store chromatographic data (e.g.
 an extracted ion chromatogram) along with identified chromatographic peaks
@@ -59,6 +69,7 @@ representing samples and rows m/z-retention time ranges.</p>
 <p>All functions are described (grouped into topic-related sections) after the
 <strong>Arguments</strong> section.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">XChromatograms</span><span class="op">(</span><span class="va">data</span>, <span class="va">phenoData</span>, <span class="va">featureData</span>, <span class="va">chromPeaks</span>, <span class="va">chromPeakData</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -202,7 +213,7 @@ representing samples and rows m/z-retention time ranges.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XChromatograms,ANY,ANY,ANY'</span></span>
-<span><span class="fu">`[`</span><span class="op">(</span><span class="va">x</span>, <span class="va">i</span>, <span class="va">j</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">x</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XChromatograms'</span></span>
 <span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span></span>
@@ -241,19 +252,28 @@ representing samples and rows m/z-retention time ranges.</p>
 <span><span class="co"># S4 method for class 'XChromatograms'</span></span>
 <span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">transformIntensity</a></span><span class="op">(</span><span class="va">object</span>, FUN <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+
+
+<dl><dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>For <code>XChromatograms</code>: <code>list</code> of <code>Chromatogram</code> or
 <code>XChromatogram</code> objects.</p></dd>
+
+
 <dt id="arg-phenodata">phenoData<a class="anchor" aria-label="anchor" href="#arg-phenodata"></a></dt>
 <dd><p>For <code>XChromatograms</code>: either a <code>data.frame</code>,
 <code>AnnotatedDataFrame</code> or <code>NAnnotatedDataFrame</code> describing the
 phenotypical information of the samples.</p></dd>
+
+
 <dt id="arg-featuredata">featureData<a class="anchor" aria-label="anchor" href="#arg-featuredata"></a></dt>
 <dd><p>For <code>XChromatograms</code>: either a <code>data.frame</code> or
 <code>AnnotatedDataFrame</code> with additional information for each row of
 chromatograms.</p></dd>
+
+
 <dt id="arg-chrompeaks">chromPeaks<a class="anchor" aria-label="anchor" href="#arg-chrompeaks"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>matrix</code> with required columns
 <code>"rt"</code>, <code>"rtmin"</code>, <code>"rtmax"</code>, <code>"into"</code>, <code>"maxo"</code> and <code>"sn"</code>.
@@ -261,16 +281,24 @@ For <code>XChromatograms</code>: <code>list</code>, same length than <code>data<
 chromatographic peaks for each chromatogram. Each element has to be
 a <code>matrix</code>, the ordering has to match the order of the chromatograms
 in <code>data</code>.</p></dd>
+
+
 <dt id="arg-chrompeakdata">chromPeakData<a class="anchor" aria-label="anchor" href="#arg-chrompeakdata"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>DataFrame</code> with optional
 additional annotations for each chromatographic peak. The number of rows
 has to match the number of chromatographic peaks.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>For <code>filterChromPeaks</code>: additional parameters defining how to
 filter chromatographic peaks. See function description below for details.</p></dd>
+
+
 <dt id="arg-rtime">rtime<a class="anchor" aria-label="anchor" href="#arg-rtime"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric</code> with the retention times
 (length has to be equal to the length of <code>intensity</code>).</p></dd>
+
+
 <dt id="arg-intensity">intensity<a class="anchor" aria-label="anchor" href="#arg-intensity"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric</code> with the intensity values
 (length has to be equal to the length of <code>rtime</code>).</p>
@@ -278,6 +306,8 @@ filter chromatographic peaks. See function description below for details.</p></d
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>of the column <span class="cf">in</span> <span class="st">`</span><span class="at">chromPeaks(object)</span><span class="st">`</span> containing the intensity value</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>of the peak that should be used <span class="cf">for</span> the <span class="st">`</span><span class="at">method = "maxint"</span><span class="st">`</span> conflict</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>resolution if.</span></code></pre><p></p></div></dd>
+
+
 <dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric(2)</code> representing the m/z value
 range (min, max) on which the chromatogram was created. This is
@@ -287,40 +317,60 @@ For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>numeric(2
 m/z range for which chromatographic peaks or features should be returned.
 For <code>filterMz</code>: <code>numeric(2)</code> defining the m/z range for which
 chromatographic peaks should be retained.#'</p></dd>
+
+
 <dt id="arg-filtermz">filterMz<a class="anchor" aria-label="anchor" href="#arg-filtermz"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric(2)</code> representing the m/z
 value range (min, max) that was used to filter the original object
 on m/z dimension. If not applicable use <code>filterMz = c(0, 0)</code>.</p></dd>
+
+
 <dt id="arg-precursormz">precursorMz<a class="anchor" aria-label="anchor" href="#arg-precursormz"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric(2)</code> for SRM/MRM transitions.
 Represents the mz of the precursor ion. See details for more information.</p></dd>
+
+
 <dt id="arg-productmz">productMz<a class="anchor" aria-label="anchor" href="#arg-productmz"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>numeric(2)</code> for SRM/MRM transitions.
 Represents the mz of the product. See details for more information.</p></dd>
+
+
 <dt id="arg-fromfile">fromFile<a class="anchor" aria-label="anchor" href="#arg-fromfile"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>integer(1)</code> the index of the file
 within the <code>OnDiskMSnExp</code> or <code>MSnExp</code> object from which the chromatogram
 was extracted.</p></dd>
+
+
 <dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>character(1)</code> specifying the
 function that was used to aggregate intensity values for the same
 retention time across the m/z range.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>For <code>XChromatogram</code>: <code>integer</code> with the MS level from which
 the chromatogram was extracted.
 For <code>chromPeaks</code> and <code>chromPeakData</code>: extract chromatographic peaks of a
 certain MS level.</p></dd>
+
+
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></dd>
+
+
 <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>numeric(2)</code> defining
 the retention time range for which chromatographic peaks or features
 should be returned.
 For <code>filterRt</code>: <code>numeric(2)</code> defining the retention time range to
 reduce <code>object</code> to.</p></dd>
+
+
 <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>numeric(1)</code> defining
 a ppm to expand the provided m/z range.</p></dd>
+
+
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>For <code>chromPeaks</code> and <code>featureDefinitions</code>: <code>character(1)</code>
 defining which peaks or features to return if <code>rt</code> or <code>mz</code> is provided:
@@ -333,6 +383,8 @@ is within <code>rt</code>.</p>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>of [<span class="fu">plot</span>()] <span class="cf">in</span> the <span class="st">`</span><span class="at">graphics</span><span class="st">`</span> package <span class="cf">for</span> more details.</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>For <span class="st">`</span><span class="at">processHistory</span><span class="st">`</span><span class="sc">:</span> restrict returned processing steps to specific</span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>types. Use [<span class="fu">processHistoryTypes</span>()] to list all supported values.</span></code></pre><p></p></div></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>For <code>chromPeaks&lt;-</code>: a numeric <code>matrix</code> with required columns
 <code>"rt"</code>, <code>"rtmin"</code>, <code>"rtmax"</code>, <code>"into"</code> and <code>"maxo"</code>.</p>
@@ -341,19 +393,33 @@ is within <code>rt</code>.</p>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>return the index of the peak associated with the feature <span class="cf">in</span> each sample.</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>To return the integrated peak area instead of the index use</span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">`</span><span class="at">value = "into"</span><span class="st">`</span>.</span></code></pre><p></p></div></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For <code>plot</code>: an <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></dd>
+
+
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>For <code>plot</code>: the color to be used to draw the chromatogram.</p></dd>
+
+
 <dt id="arg-lty">lty<a class="anchor" aria-label="anchor" href="#arg-lty"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the line type.</p></dd>
+
+
 <dt id="arg-xlab">xlab<a class="anchor" aria-label="anchor" href="#arg-xlab"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the x axis label.</p></dd>
+
+
 <dt id="arg-ylab">ylab<a class="anchor" aria-label="anchor" href="#arg-ylab"></a></dt>
 <dd><p>For <code>plot</code>: the y axis label.</p></dd>
+
+
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: an optional title for
 the plot.</p></dd>
+
+
 <dt id="arg-peaktype">peakType<a class="anchor" aria-label="anchor" href="#arg-peaktype"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>:
 <code>character(1)</code> defining how (and if) identified chromatographic peak
@@ -362,26 +428,36 @@ are <code>"polygon"</code> (default): draw the peak borders with the <code>peakC
 and fill the peak area with the <code>peakBg</code> color, <code>"point"</code>: indicate the
 peak's apex with a point, <code>"rectangle"</code>: draw a rectangle around the
 identified peak and <code>"none"</code>: don't draw peaks.</p></dd>
+
+
 <dt id="arg-peakcol">peakCol<a class="anchor" aria-label="anchor" href="#arg-peakcol"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the foreground color
 for the peaks. For <code>peakType = "polygon"</code> and <code>peakType = "rectangle"</code>
 this is the color for the border. Use <code>NA</code> to not use a foreground
 color. This should either be a single color or a vector of colors with
 the same length than <code>chromPeaks(x)</code> has rows.</p></dd>
+
+
 <dt id="arg-peakbg">peakBg<a class="anchor" aria-label="anchor" href="#arg-peakbg"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the background color
 for the peaks. For <code>peakType = "polygon"</code> and <code>peakType = "rectangle"</code>
 the peak are or rectangle will be filled with this color. Use <code>NA</code> to
 skip. This should be either a single color or a vector of colors with
 the same length than <code>chromPeaks(x)</code> has rows.</p></dd>
+
+
 <dt id="arg-peakpch">peakPch<a class="anchor" aria-label="anchor" href="#arg-peakpch"></a></dt>
 <dd><p>For <code>plot</code> and <code>plotChromPeakDensity</code>: the point character
 to be used for <code>peakType = "point"</code>. See <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot()</a></code> in the <code>graphics</code>
 package for more details.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>For <code>groupChromPeaks</code> and <code>plotChromPeakDensity</code>: a
 <code><a href="groupChromPeaks.html">PeakDensityParam()</a></code> object with the settings for the <em>peak density</em>
 correspondence analysis algorithm.</p></dd>
+
+
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>For <code>featureValues</code>: <code>character(1)</code> specifying the method to
 resolve multi-peak mappings within the sample sample, i.e. to select
@@ -393,39 +469,54 @@ of all peaks (only if <code>value</code> is <code>"into"</code> or <code>"maxo"<
 For <code>filterChromPeaks</code>: <code>character(1)</code> defining the method that should
 be used to filter chromatographic peaks. See help on <code>filterChromPeaks</code>
 below for details.</p></dd>
+
+
 <dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p>For <code>transformIntensity</code>: a function to transform the intensity
 values of <code>object</code>.</p></dd>
+
+
 <dt id="arg-fileindex">fileIndex<a class="anchor" aria-label="anchor" href="#arg-fileindex"></a></dt>
 <dd><p>For <code>processHistory</code>: optional <code>integer</code> specifying the
 index of the files/samples for which the <a href="ProcessHistory-class.html">ProcessHistory</a> objects should
 be returned.</p></dd>
+
+
 <dt id="arg-i">i<a class="anchor" aria-label="anchor" href="#arg-i"></a></dt>
 <dd><p>For <code>[</code>: <code>integer</code> with the row indices to subset the
 <code>XChromatograms</code> object.</p></dd>
+
+
 <dt id="arg-j">j<a class="anchor" aria-label="anchor" href="#arg-j"></a></dt>
 <dd><p>For <code>[</code>: <code>integer</code> with the column indices to subset the
 <code>XChromatograms</code> object.</p></dd>
+
+
 <dt id="arg-drop">drop<a class="anchor" aria-label="anchor" href="#arg-drop"></a></dt>
 <dd><p>For <code>[</code>: <code>logical(1)</code> whether the dimensionality should be
 dropped (if possible). Defaults to <code>drop = TRUE</code>, thus, if length of <code>i</code>
 and <code>j</code> is 1 a <code>XChromatogram</code> is returned. Note that <code>drop</code> is ignored
 if length of <code>i</code> or <code>j</code> is larger than 1, thus a <code>XChromatograms</code> is
 returned.</p></dd>
+
+
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
 <dd><p>For <code>featureValues</code>: how missing values should be reported.
 Allowed values are <code>NA</code> (default), a <code>numeric(1)</code> to replace <code>NA</code>s with
 that value or <code>missing = "rowmin_half"</code> to replace <code>NA</code>s with half
 of the row's minimal (non-missing) value.</p></dd>
+
+
 <dt id="arg-simulate">simulate<a class="anchor" aria-label="anchor" href="#arg-simulate"></a></dt>
 <dd><p>For <code>plotChromPeakDensity</code>: <code>logical(1)</code> whether a
 correspondence analysis should be <em>simulated</em> based on the available
 data and the provided <code><a href="groupChromPeaks.html">PeakDensityParam()</a></code> <code>param</code> argument. See
 section <em>Correspondence analysis</em> for details.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>See help of the individual functions.</p>
+    <p>See help of the individual functions.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -439,6 +530,9 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
     </div>
     <div class="section level2">
     <h2 id="creation-of-objects">Creation of objects<a class="anchor" aria-label="anchor" href="#creation-of-objects"></a></h2>
+
+
+
 <p>Objects can be created with the contructor function <code>XChromatogram</code> and
 <code>XChromatograms</code>, respectively. Also, they can be coerced from
 <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> objects using
@@ -446,9 +540,13 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
     </div>
     <div class="section level2">
     <h2 id="filtering-and-subsetting">Filtering and subsetting<a class="anchor" aria-label="anchor" href="#filtering-and-subsetting"></a></h2>
+
+
+
 <p>Besides classical subsetting with <code>[</code> specific filter operations on
 <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> and <code>XChromatograms</code> objects are available. See
 <code><a href="filter-MChromatograms.html">filterColumnsIntensityAbove()</a></code> for more details.</p>
+
 <ul><li><p><code>[</code> allows to subset a <code>XChromatograms</code> object by row (<code>i</code>) and column
 (<code>j</code>), with <code>i</code> and <code>j</code> being of type <code>integer</code>. The <code>featureDefinitions</code>
 will also be subsetted accordingly and the <code>peakidx</code> column updated.</p></li>
@@ -468,6 +566,9 @@ returns a filtered <code>XChromatogram</code> or <code>XChromatograms</code> obj
 </ul></div>
     <div class="section level2">
     <h2 id="accessing-data">Accessing data<a class="anchor" aria-label="anchor" href="#accessing-data"></a></h2>
+
+
+
 <p>See also help of <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a> in the <code>MSnbase</code> package for general
 information and data access. The methods listed here are specific for
 <code>XChromatogram</code> and <code>XChromatograms</code> objects.</p><ul><li><p><code>chromPeaks</code>, <code>chromPeaks&lt;-</code>: extract or set the matrix with the
@@ -538,6 +639,8 @@ the individual performed processing steps. Optional parameters <code>type</code>
 </ul></div>
     <div class="section level2">
     <h2 id="manipulating-data">Manipulating data<a class="anchor" aria-label="anchor" href="#manipulating-data"></a></h2>
+
+
 <ul><li><p><code>transformIntensity</code>: transforms the intensity values of the chromatograms
 with provided function <code>FUN</code>. See <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">transformIntensity()</a></code> in the <code>MSnbase</code>
 package for details. For <code>XChromatogram</code> and <code>XChromatograms</code> in addition
@@ -546,6 +649,8 @@ to the intensity values also columns <code>"into"</code> and <code>"maxo"</code>
 </ul></div>
     <div class="section level2">
     <h2 id="plotting-and-visualizing">Plotting and visualizing<a class="anchor" aria-label="anchor" href="#plotting-and-visualizing"></a></h2>
+
+
 <ul><li><p><code>plot</code> draws the chromatogram and highlights in addition any
 chromatographic peaks present in the <code>XChromatogram</code> or <code>XChromatograms</code>
 (unless <code>peakType = "none"</code> was specified). To draw peaks in different
@@ -560,6 +665,9 @@ analysis results. See section <em>Correspondence analysis</em> for more details.
 </ul></div>
     <div class="section level2">
     <h2 id="chromatographic-peak-detection">Chromatographic peak detection<a class="anchor" aria-label="anchor" href="#chromatographic-peak-detection"></a></h2>
+
+
+
 <p>See <a href="findChromPeaks-Chromatogram-CentWaveParam.html">findChromPeaks-Chromatogram-CentWaveParam</a> for information.</p>
 <p>After chromatographic peak detection it is also possible to <em>refine</em>
 identified chromatographic peaks with the <code>refineChromPeaks</code> method (e.g. to
@@ -569,6 +677,9 @@ reduce peak detection artifacts). Currently, only peak refinement using the
     </div>
     <div class="section level2">
     <h2 id="correspondence-analysis">Correspondence analysis<a class="anchor" aria-label="anchor" href="#correspondence-analysis"></a></h2>
+
+
+
 <p>Identified chromatographic peaks in an <code>XChromatograms</code> object can be grouped
 into <em>features</em> with the <code>groupChromPeaks</code> function. Currently, such a
 correspondence analysis can be performed with the <em>peak density</em> method
@@ -610,6 +721,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -683,7 +795,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon Jun  3 16:14:45 2024 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Fri Jul 26 09:15:45 2024 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -844,12 +956,21 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

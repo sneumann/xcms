@@ -13,6 +13,8 @@ algorithm.
 MassifquantParam(): peak detection using the Kalman filter-based
 massifquant method.
 MSWParam(): single-spectrum non-chromatography MS data peak detection.
+
+
 For specific examples see the help pages of the individual parameter classes
 listed above."><meta property="og:description" content="The findChromPeaks method performs chromatographic peak detection on
 LC/GC-MS data. The peak detection algorithm can be selected, and configured,
@@ -28,15 +30,24 @@ algorithm.
 MassifquantParam(): peak detection using the Kalman filter-based
 massifquant method.
 MSWParam(): single-spectrum non-chromatography MS data peak detection.
+
+
 For specific examples see the help pages of the individual parameter classes
 listed above."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -51,14 +62,17 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Chromatographic Peak Detection</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a></small>
       <div class="d-none name"><code>findChromPeaks.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>findChromPeaks</code> method performs chromatographic peak detection on
 LC/GC-MS data. The peak detection algorithm can be selected, and configured,
@@ -76,6 +90,7 @@ algorithm.</p></li>
 </ul><p>For specific examples see the help pages of the individual parameter classes
 listed above.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">findChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -101,19 +116,30 @@ listed above.</p>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The data object on which to perform the peak detection. Can be
 an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code>
 object.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object selecting and configuring the algorithm.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the
 chromatographic peak detection should be performed.</p></dd>
+
+
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p><code>integer(1)</code> for <code>object</code> being an <code>MsExperiment</code> or
 <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code>: defines the number of files (samples) for which the
@@ -126,15 +152,20 @@ the subset of data loaded currently into memory (in each iteration), the
 value for <code>chunkSize</code> should be match the defined  parallel setting
 setup. Using a parallel processing setup using 4 CPUs (separate
 processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize<code>to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting</code>chunkSize = -1<code>the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all</code>Spectra` <em>backends</em> (see eventually <code>Spectra()</code> for details).</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parallel processing setup. Uses by default the system-wide
 default setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more details.</p></dd>
+
+
 <dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p><code>logical(1)</code> (if <code>object</code> contains already chromatographic peaks,
 i.e. is either an <code>XCMSnExp</code> or <code>XcmsExperiment</code>) whether chromatographic
 peak detection results should be <strong>added</strong> to existing results. By
 default (<code>add = FALSE</code>) any additional <code>findChromPeaks</code> call on a result
 object will remove previous results.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -153,14 +184,24 @@ chromatographic peaks.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

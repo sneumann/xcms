@@ -44,6 +44,7 @@ as an XcmsExperiment object, to a predefined set of landmark features
 called "lamas". These landmark features are characterized by their
 mass-to-charge ratio (m/z) and retention time. see LamaParama() for more
 information on the method.
+
 '><meta property="og:description" content='The adjustRtime method(s) perform retention time correction (alignment)
 between chromatograms of different samples/dataset. Alignment is performed
 by default on MS level 1 data. Retention times of spectra from other MS
@@ -89,14 +90,22 @@ as an XcmsExperiment object, to a predefined set of landmark features
 called "lamas". These landmark features are characterized by their
 mass-to-charge ratio (m/z) and retention time. see LamaParama() for more
 information on the method.
+
 '><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -111,14 +120,17 @@ information on the method.
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Alignment: Retention time correction methods.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 4 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 4 more</small>
       <div class="d-none name"><code>adjustRtime.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>adjustRtime</code> method(s) perform retention time correction (alignment)
 between chromatograms of different samples/dataset. Alignment is performed
@@ -165,6 +177,7 @@ called "lamas". These landmark features are characterized by their
 mass-to-charge ratio (m/z) and retention time. see <code><a href="LamaParama.html">LamaParama()</a></code> for more
 information on the method.</p></li>
 </ul></div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -333,16 +346,25 @@ information on the method.</p></li>
 <span><span class="co"># S4 method for class 'XCMSnExp,ObiwarpParam'</span></span>
 <span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>adjustRtime</code>: an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>,
 <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code> or <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object defining the alignment method (and its
 setting).</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>adjustRtime</code> if <code>object</code> is either an <code>MsExperiment</code> or
 <code>XcmsExperiment</code>: <code>integer(1)</code> defining the number of files (samples)
@@ -356,12 +378,18 @@ the defined  parallel setting setup. Using a parallel processing setup
 using 4 CPUs (separate processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize` to
 the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parallel processing setup. Defaults to <code>BPPARAM = bpparam()</code>.
 See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>For <code>adjustRtime</code>: <code>integer(1)</code> defining the MS level on
 which the alignment should be performed.</p></dd>
+
+
 <dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> between 0 and 1
 defining the minimum required proportion of samples in which peaks for
@@ -373,6 +401,8 @@ group has to contain peaks in all samples of the experiment. Note that if
 defined subset of samples and not to the total number of samples within
 the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).</p></dd>
+
+
 <dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
 number of additional peaks for all samples to be assigned to a peak
@@ -381,80 +411,114 @@ samples, <code>extraPeaks = 1</code> uses all peak groups with a total peak coun
 <code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
 sample that are assigned to the group.</p></dd>
+
+
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the function to
 be used to interpolate corrected retention times for all peak groups.
 Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
+
+
 <dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
 passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
+
+
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
+
+
 <dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: optional <code>matrix</code> of (raw)
 retention times for the (marker) peak groups on which the alignment
 should be performed. Each column represents a sample, each row a
 feature/peak group. The <code>adjustRtimePeakGroups</code> method is used by
 default to determine this matrix on the provided <code>object</code>.</p></dd>
+
+
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>integer</code> with the
 indices of samples within the experiment on which the alignment models
 should be estimated.
 Samples not part of the subset are adjusted based on the closest subset
 sample. See <em>Subset-based alignment</em> section for details.</p></dd>
+
+
 <dt id="arg-subsetadjust">subsetAdjust<a class="anchor" aria-label="anchor" href="#arg-subsetadjust"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>character(1)</code>
 specifying the method with which non-subset samples should be adjusted.
 Supported options are <code>"previous"</code> and <code>"average"</code> (default).
 See <em>Subset-based alignment</em> section for details.</p></dd>
+
+
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
 parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></dd>
+
+
 <dt id="arg-centersample">centerSample<a class="anchor" aria-label="anchor" href="#arg-centersample"></a></dt>
 <dd><p><code>integer(1)</code> defining the index of the center sample
 in the experiment. It defaults to
 <code>floor(median(1:length(fileNames(object))))</code>. Note that if
 <code>subset</code> is used, the index passed with <code>centerSample</code> is
 within these subset samples.</p></dd>
+
+
 <dt id="arg-response">response<a class="anchor" aria-label="anchor" href="#arg-response"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the
 <em>responsiveness</em> of warping with <code>response = 0</code> giving linear warping on
 start and end points and <code>response = 100</code> warping using all bijective
 anchors.</p></dd>
+
+
 <dt id="arg-distfun">distFun<a class="anchor" aria-label="anchor" href="#arg-distfun"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>character(1)</code> defining the distance
 function to be used. Allowed values are <code>"cor"</code> (Pearson's correlation),
 <code>"cor_opt"</code> (calculate only 10% diagonal band of distance matrix;
 better runtime), <code>"cov"</code> (covariance), <code>"prd"</code> (product) and <code>"euc"</code>
 (Euclidian distance). The default value is <code>distFun = "cor_opt"</code>.</p></dd>
+
+
 <dt id="arg-gapinit">gapInit<a class="anchor" aria-label="anchor" href="#arg-gapinit"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for gap
 opening. The default value for depends on the value of <code>distFun</code>:
 <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is <code>0.3</code>, for
 <code>distFun = "cov"</code> and <code>distFun = "prd"</code> <code>0.0</code> and for <code>distFun = "euc"</code>
 <code>0.9</code>.</p></dd>
+
+
 <dt id="arg-gapextend">gapExtend<a class="anchor" aria-label="anchor" href="#arg-gapextend"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for
 gap enlargement. The default value for <code>gapExtend</code> depends on the value
 of <code>distFun</code>: for <code>distFun = "cor"</code> and <code>distFun = "cor_opt"</code> it is
 <code>2.4</code>, <code>distFun = "cov"</code> <code>11.7</code>, for <code>distFun = "euc"</code> <code>1.8</code> and for
 <code>distFun = "prd"</code> <code>7.8</code>.</p></dd>
+
+
 <dt id="arg-factordiag">factorDiag<a class="anchor" aria-label="anchor" href="#arg-factordiag"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the local weight
 applied to diagonal moves in the alignment.</p></dd>
+
+
 <dt id="arg-factorgap">factorGap<a class="anchor" aria-label="anchor" href="#arg-factorgap"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the local weight
 for gap moves in the alignment.</p></dd>
+
+
 <dt id="arg-localalignment">localAlignment<a class="anchor" aria-label="anchor" href="#arg-localalignment"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>logical(1)</code> whether a local
 alignment should be performed instead of the default global alignment.</p></dd>
+
+
 <dt id="arg-initpenalty">initPenalty<a class="anchor" aria-label="anchor" href="#arg-initpenalty"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining the penalty for
 initiating an alignment (for local alignment only).</p></dd>
+
+
 <dt id="arg-rtimedifferencethreshold">rtimeDifferenceThreshold<a class="anchor" aria-label="anchor" href="#arg-rtimedifferencethreshold"></a></dt>
 <dd><p>For <code>ObiwarpParam</code>: <code>numeric(1)</code> defining
 the threshold to identify a <em>gap</em> in the sequence of retention times of
@@ -467,27 +531,33 @@ is <code>rtimeDifferenceThreshold = 5</code>. For Waters data with lockmass scan
 or LC-MS/MS data this might however be a too low threshold and it should
 be increased. See also
 <a href="https://github.com/sneumann/xcms/issues/739" class="external-link">issue #739</a>.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An <code>ObiwarpParam</code>, <code>PeakGroupsParam</code> or <code>LamaParama</code> object.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p><code>adjustRtime</code> on an <code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object will return an
+    <p><code>adjustRtime</code> on an <code>OnDiskMSnExp</code> or <code>XCMSnExp</code> object will return an
 <code>XCMSnExp</code> object with the alignment results.</p>
 <p><code>adjustRtime</code> on an <code>MsExperiment</code> or <code>XcmsExperiment</code> will return an
 <code>XcmsExperiment</code> with the adjusted retention times stored in an new
-<em>spectra variable</em></p>
-<p></p>
-<p><code>rtime_adjusted</code> in the object's <code>spectra</code>.</p>
+<em>spectra variable</em> <code>rtime_adjusted</code> in the object's <code>spectra</code>.</p>
 <p><code>ObiwarpParam</code>, <code>PeakGroupsParam</code> and <code>LamaParama</code> return the respective
 parameter object.</p>
-<p><code>adjustRtimeGroups</code> returns a <code>matrix</code> with the retention times of <em>marker</em></p>
-<p>features in each sample (each row one feature, each row one sample).</p>
+<p><code>adjustRtimeGroups</code> returns a <code>matrix</code> with the retention times of <em>marker</em>
+features in each sample (each row one feature, each row one sample).</p>
     </div>
     <div class="section level2">
     <h2 id="subset-based-alignment">Subset-based alignment<a class="anchor" aria-label="anchor" href="#subset-based-alignment"></a></h2>
+
+
+
 <p>All alignment methods allow to perform the retention time correction on a
 user-selected subset of samples (e.g. QC samples) after which all samples
 not part of that subset will be adjusted based on the adjusted retention
@@ -526,14 +596,24 @@ Nonlinear Peak Alignment, Matching, and Identification" <em>Anal. Chem.</em>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Colin Smith, Johannes Rainer, Philippine Louail, Carl Brunius</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

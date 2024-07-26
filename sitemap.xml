@@ -15,9 +15,7 @@
 <url><loc>https://sneumann.github.io/xcms/reference/GenericParam.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/LamaParama.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/PercentMissingFilter.html</loc></url>
-<url><loc>https://sneumann.github.io/xcms/reference/PlainTextParam.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/ProcessHistory-class.html</loc></url>
-<url><loc>https://sneumann.github.io/xcms/reference/RDataParam.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/RsdFilter.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/SSgauss.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-class.html</loc></url>
@@ -173,7 +171,6 @@
 <url><loc>https://sneumann.github.io/xcms/reference/split.xcmsRaw.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/split.xcmsSet.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/stitch-methods.html</loc></url>
-<url><loc>https://sneumann.github.io/xcms/reference/storeResults.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/updateObject-xcmsSet-method.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/useOriginalCode.html</loc></url>

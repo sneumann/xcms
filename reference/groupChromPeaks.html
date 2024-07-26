@@ -44,6 +44,8 @@ single spectrum metabolomics data (Kazmi 2006). This method should
 only be used for such data as the retention time is not considered
 in the correspondence analysis.
 See in addition do_groupPeaks_mzClust() for the core API function.
+
+
 For specific examples and description of the method and settings see the
 help pages of the individual parameter classes listed above."><meta property="og:description" content="The groupChromPeaks method performs a correspondence analysis i.e., it
 groups chromatographic peaks across samples to define the LC-MS features.
@@ -90,15 +92,24 @@ single spectrum metabolomics data (Kazmi 2006). This method should
 only be used for such data as the retention time is not considered
 in the correspondence analysis.
 See in addition do_groupPeaks_mzClust() for the core API function.
+
+
 For specific examples and description of the method and settings see the
 help pages of the individual parameter classes listed above."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -113,14 +124,17 @@ help pages of the individual parameter classes listed above."><meta property="og
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Correspondence: group chromatographic peaks across samples</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 2 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 2 more</small>
       <div class="d-none name"><code>groupChromPeaks.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>groupChromPeaks</code> method performs a correspondence analysis i.e., it
 groups chromatographic peaks across samples to define the LC-MS <em>features</em>.
@@ -169,6 +183,7 @@ See in addition <code><a href="do_groupPeaks_mzClust.html">do_groupPeaks_mzClust
 </ul><p>For specific examples and description of the method and settings see the
 help pages of the individual parameter classes listed above.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">groupChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -313,24 +328,37 @@ help pages of the individual parameter classes listed above.</p>
 <span><span class="co"># S4 method for class 'XCMSnExp,NearestPeaksParam'</span></span>
 <span><span class="fu">groupChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, add <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The data object on which the correspondence analysis should be
 performed. Can be an <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>The parameter object selecting and configuring the algorithm.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the
 chromatographic peak detection should be performed.</p></dd>
+
+
 <dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p><code>logical(1)</code> (if <code>object</code> contains already chromatographic peaks,
 i.e. is either an <code>XCMSnExp</code> or <code>XcmsExperiment</code>) whether chromatographic
 peak detection results should be <strong>added</strong> to existing results. By
 default (<code>add = FALSE</code>) any additional <code>findChromPeaks</code> call on a result
 object will remove previous results.</p></dd>
+
+
 <dt id="arg-samplegroups">sampleGroups<a class="anchor" aria-label="anchor" href="#arg-samplegroups"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: A vector of the same length than
 samples defining the sample group assignments (i.e. which samples
@@ -341,21 +369,31 @@ assigned to the same group). Samples for which a <code>NA</code> is provided wil
 not be considered in the feature definitions step. Providing <code>NA</code> for
 all blanks in an experiment will for example avoid features to be
 defined for signals (chrom peaks) present only in blank samples.</p></dd>
+
+
 <dt id="arg-bw">bw<a class="anchor" aria-label="anchor" href="#arg-bw"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the bandwidth
 (standard deviation ot the smoothing kernel) to be used. This argument
 is passed to the [density() method.</p></dd>
+
+
 <dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the minimum
 fraction of samples in at least one sample group in which the peaks
 have to be present to be considered as a peak group (feature).</p></dd>
+
+
 <dt id="arg-minsamples">minSamples<a class="anchor" aria-label="anchor" href="#arg-minsamples"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> with the minimum
 number of samples in at least one sample group in which the peaks have
 to be detected to be considered a peak group (feature).</p></dd>
+
+
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> defining the size of the
 overlapping slices in m/z dimension.</p></dd>
+
+
 <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>MzClustParam</code>: <code>numeric(1)</code> representing the relative m/z
 error for the clustering/grouping (in parts per million).
@@ -367,31 +405,46 @@ increased in addition by the <code>ppm</code> of the (upper) m/z boundary of the
 bin. The maximal bin size (used for the largest m/z values) would then
 be <code>binSize</code> plus <code>ppm</code> parts-per-million of the largest m/z value of
 all peaks in the data set.</p></dd>
+
+
 <dt id="arg-maxfeatures">maxFeatures<a class="anchor" aria-label="anchor" href="#arg-maxfeatures"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> with the maximum
 number of peak groups to be identified in a single mz slice.</p></dd>
+
+
 <dt id="arg-absmz">absMz<a class="anchor" aria-label="anchor" href="#arg-absmz"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code> and <code>MzClustParam</code>: <code>numeric(1)</code>
 maximum tolerated distance for m/z values.</p></dd>
+
+
 <dt id="arg-mzvsrtbalance">mzVsRtBalance<a class="anchor" aria-label="anchor" href="#arg-mzvsrtbalance"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> representing the
 factor by which m/z values are multiplied before calculating the
 (euclician) distance between two peaks.</p></dd>
+
+
 <dt id="arg-absrt">absRt<a class="anchor" aria-label="anchor" href="#arg-absrt"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>numeric(1)</code> maximum tolerated
 distance for retention times.</p></dd>
+
+
 <dt id="arg-knn">kNN<a class="anchor" aria-label="anchor" href="#arg-knn"></a></dt>
 <dd><p>For <code>NearestPeaksParam</code>: <code>integer(1)</code> representing the number of
 nearest neighbors to check.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The parameter object.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For <code>groupChromPeaks</code>: either an <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> or <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code></p>
-<p>object with the correspondence result.</p>
+    <p>For <code>groupChromPeaks</code>: either an <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> or <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>
+object with the correspondence result.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -410,14 +463,24 @@ heuristic approach for metabolomics. <em>Metabolomics</em> Vol. 2, No. 2, 75-83.
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Colin Smith, Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

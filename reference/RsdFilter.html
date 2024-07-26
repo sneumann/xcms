@@ -11,12 +11,19 @@ This `filter` is part of the possible dispatch of the generic function
 `filterFeatures`. Features *above* (`&amp;gt;`) the user-input threshold will be
 removed from the entire dataset."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -31,14 +38,17 @@ removed from the entire dataset."><meta property="og:image" content="https://sne
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Filter features based on their coefficient of variation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/method-filterFeatures.R" class="external-link"><code>R/method-filterFeatures.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/method-filterFeatures.R" class="external-link"><code>R/method-filterFeatures.R</code></a></small>
       <div class="d-none name"><code>RsdFilter.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The `RsdFilter` class and methods enable users to filter features from an
 `XcmsExperiment` or `SummarizedExperiment` object based on their relative
@@ -47,6 +57,7 @@ standard deviation (coefficient of variation) for a specified threshold.</p>
 `filterFeatures`. Features *above* (`&gt;`) the user-input threshold will be
 removed from the entire dataset.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">RsdFilter</span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>, qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, mad <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -57,44 +68,62 @@ removed from the entire dataset.</p>
 <span><span class="co"># S4 method for class 'SummarizedExperiment,RsdFilter'</span></span>
 <span><span class="fu"><a href="filterFeatures.html">filterFeatures</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">filter</span>, assay <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
+
+
+<dl><dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>`numeric` value representing the threshold. Features with a
 coefficient of variation *strictly higher* (`&gt;`) than this will be removed
 from the entire dataset.</p></dd>
+
+
 <dt id="arg-qcindex">qcIndex<a class="anchor" aria-label="anchor" href="#arg-qcindex"></a></dt>
 <dd><p>`integer` (or `logical`) vector corresponding to the indices
 of QC samples.</p></dd>
+
+
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>
 <dd><p>`logical` indicates whether missing values (`NA`) should be
 removed prior to the calculations.</p></dd>
+
+
 <dt id="arg-mad">mad<a class="anchor" aria-label="anchor" href="#arg-mad"></a></dt>
 <dd><p>`logical` indicates whether the *Median Absolute Deviation* (MAD)
 should be used instead of the standard deviation. This is suggested for
 non-gaussian distributed data.</p></dd>
+
+
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>XcmsExperiment</code> or <code>SummarizedExperiment</code>. For an
 <code>XcmsExperiment</code> object, the <code>featureValues(object)</code> will be evaluated, and
 for <code>Summarizedesxperiment</code> the <code>assay(object, assay)</code>. The object will be
 filtered.</p></dd>
+
+
 <dt id="arg-filter">filter<a class="anchor" aria-label="anchor" href="#arg-filter"></a></dt>
 <dd><p>The parameter object selecting and configuring the type of
 filtering. It can be one of the following classes: <code>RsdFilter</code>,
 <code><a href="DratioFilter.html">DratioFilter</a></code>, <code><a href="PercentMissingFilter.html">PercentMissingFilter</a></code> or <code><a href="BlankFlag.html">BlankFlag</a></code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Optional parameters. For <code>object</code> being an <code>XcmsExperiment</code>:
 parameters for the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> call.</p></dd>
+
+
 <dt id="arg-assay">assay<a class="anchor" aria-label="anchor" href="#arg-assay"></a></dt>
 <dd><p>For filtering of <code>SummarizedExperiment</code> objects only. Indicates
 which assay the filtering will be based on. Note that the features for the
 entire object will be removed, but the computations are performed on a single
 assay. Default is 1, which means the first assay of the <code>object</code> will
 be evaluated.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For `RsdFilter`: a `RsdFilter` class. `filterFeatures` return the
+    <p>For `RsdFilter`: a `RsdFilter` class. `filterFeatures` return the
 input object minus the features that did not met the user input threshold.</p>
     </div>
     <div class="section level2">
@@ -114,14 +143,24 @@ the RSD.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Philippine Louail</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -3,12 +3,19 @@
 for a grouped xcmsSet, and dependency on sample or absolute m/z'><meta property="og:description" content='Use "democracy" to determine the average m/z and RT deviations
 for a grouped xcmsSet, and dependency on sample or absolute m/z'><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -23,33 +30,48 @@ for a grouped xcmsSet, and dependency on sample or absolute m/z'><meta property=
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot m/z and RT deviations for QC purposes without external reference data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/plotQC.R" class="external-link"><code>R/plotQC.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/plotQC.R" class="external-link"><code>R/plotQC.R</code></a></small>
       <div class="d-none name"><code>plotQC.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Use "democracy" to determine the average m/z and RT deviations
 for a grouped xcmsSet, and dependency on sample or absolute m/z</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotQC</span><span class="op">(</span><span class="va">object</span>, <span class="va">sampNames</span>, <span class="va">sampColors</span>, <span class="va">sampOrder</span>, <span class="va">what</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>A grouped <code><a href="xcmsSet.html">xcmsSet</a></code></p></dd>
+
+
 <dt id="arg-sampnames">sampNames<a class="anchor" aria-label="anchor" href="#arg-sampnames"></a></dt>
 <dd><p>Override sample names (e.g. with simplified names)</p></dd>
+
+
 <dt id="arg-sampcolors">sampColors<a class="anchor" aria-label="anchor" href="#arg-sampcolors"></a></dt>
 <dd><p>Provide a set of colors (default: monochrome ?)</p></dd>
+
+
 <dt id="arg-samporder">sampOrder<a class="anchor" aria-label="anchor" href="#arg-samporder"></a></dt>
 <dd><p>Override the order of samples, e.g. to bring them in order
 of measurement to detect time drift</p></dd>
+
+
 <dt id="arg-what">what<a class="anchor" aria-label="anchor" href="#arg-what"></a></dt>
 <dd><p>A vector of which QC plots to generate.
 "mzdevhist": histogram of mz deviations. Should be gaussian shaped. If it is multimodal, then some peaks seem to have a systematically higher m/z deviation
@@ -58,10 +80,11 @@ of measurement to detect time drift</p></dd>
 "mzdevtime": Shows whether m/z deviations are RT dependent, could indicate instrument drift
 "mzdevsample": median mz deviation for each sample, indicates outliers
 "rtdevsample": median RT deviation for each sample, indicates outliers</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>List with four matrices, each of dimension features * samples:
+    <p>List with four matrices, each of dimension features * samples:
  "mz":    median mz deviation for each sample
  "mzdev": median mz deviation for each sample
  "rt":    median RT deviation for each sample
@@ -76,6 +99,7 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Michael Wenk, Michael Wenk &lt;michael.wenk@student.uni-halle.de&gt;</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
@@ -98,12 +122,21 @@ For the m/z deviations, the median of all m/z withon one group are assumed.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

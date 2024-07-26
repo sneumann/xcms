@@ -24,6 +24,8 @@ such peak detection artifacts by merging chromatographic peaks that are
 overlapping or close in RT and m/z dimension (considering also the measured
 signal between them). See section Details for MergeNeighboringPeaksParam
 for details and a comprehensive description of the approach.
+
+
 refineChromPeaks methods will always remove feature definitions, because
 a call to this method can change or remove identified chromatographic peaks,
 which may be part of features."><meta property="og:description" content="The refineChromPeaks method performs a post-processing of the
@@ -51,16 +53,25 @@ such peak detection artifacts by merging chromatographic peaks that are
 overlapping or close in RT and m/z dimension (considering also the measured
 signal between them). See section Details for MergeNeighboringPeaksParam
 for details and a comprehensive description of the approach.
+
+
 refineChromPeaks methods will always remove feature definitions, because
 a call to this method can change or remove identified chromatographic peaks,
 which may be part of features."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -75,14 +86,17 @@ which may be part of features."><meta property="og:image" content="https://sneum
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Refine Identified Chromatographic Peaks</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 1 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 1 more</small>
       <div class="d-none name"><code>refineChromPeaks.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>refineChromPeaks</code> method performs a post-processing of the
 chromatographic peak detection step to eventually clean and improve the
@@ -112,6 +126,7 @@ for details and a comprehensive description of the approach.</p></li>
 a call to this method can change or remove identified chromatographic peaks,
 which may be part of features.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">refineChromPeaks</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -167,18 +182,29 @@ which may be part of features.</p>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> or <a href="XcmsExperiment.html">XcmsExperiment</a> object with identified
 chromatographic peaks.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>Object defining the refinement method and its settings.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer</code> defining for which MS level(s) the chromatographic
 peaks should be cleaned.</p></dd>
+
+
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>For <code>refineChromPeaks</code> if <code>object</code> is either an
 <code>XcmsExperiment</code>: <code>integer(1)</code> defining the number of files (samples)
@@ -192,26 +218,38 @@ the defined  parallel setting setup. Using a parallel processing setup
 using 4 CPUs (separate processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize` to
 the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parameter object to set up parallel processing. Uses the
 default parallel processing setup returned by <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>. See
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details and examples.</p></dd>
+
+
 <dt id="arg-maxpeakwidth">maxPeakwidth<a class="anchor" aria-label="anchor" href="#arg-maxpeakwidth"></a></dt>
 <dd><p>For <code>CleanPeaksParam</code>: <code>numeric(1)</code> defining the maximal
 allowed peak width (in retention time).</p></dd>
+
+
 <dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> defining by
 how many seconds the retention time window is expanded on both sides to
 check for overlapping peaks.</p></dd>
+
+
 <dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> constant
 value by which the m/z range of each chromatographic peak is expanded
 (on both sides!) to check for overlapping peaks.</p></dd>
+
+
 <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> defining a m/z
 relative value (in parts per million) by which the m/z range of each
 chromatographic peak is expanded (on each side) to check for overlapping
 peaks.</p></dd>
+
+
 <dt id="arg-minprop">minProp<a class="anchor" aria-label="anchor" href="#arg-minprop"></a></dt>
 <dd><p>For <code>MergeNeighboringPeaksParam</code>: <code>numeric(1)</code> between <code>0</code>
 and <code>1</code> representing the proporion of intensity required for peaks to be
@@ -219,25 +257,35 @@ joined. See description for more details. With default (<code>minProp = 0.75</co
 only peaks are joined if the signal half way between them is larger than
 75% of the smallest of the two peak's <code>"maxo"</code> (maximal intensity at
 peak apex).</p></dd>
+
+
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>numeric(1)</code> defining the
 threshold below which peaks are removed.</p></dd>
+
+
 <dt id="arg-nvalues">nValues<a class="anchor" aria-label="anchor" href="#arg-nvalues"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>integer(1)</code> defining the number
 of data points (for each chromatographic peak) that have to be
 <code>&gt;= threshold</code>. Defaults to <code>nValues = 1</code>.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>For <code>FilterIntensityParam</code>: <code>character(1)</code> defining the name
 of the column in <code>chromPeaks</code> that contains the values to be used for
 the filtering.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p><code>XCMSnExp</code> or <a href="XcmsExperiment.html">XcmsExperiment</a> object with the refined
+    <p><code>XCMSnExp</code> or <a href="XcmsExperiment.html">XcmsExperiment</a> object with the refined
 chomatographic peaks.</p>
     </div>
     <div class="section level2">
     <h2 id="details-for-mergeneighboringpeaksparam">Details for MergeNeighboringPeaksParam<a class="anchor" aria-label="anchor" href="#details-for-mergeneighboringpeaksparam"></a></h2>
+
+
+
 <p>For peak refinement using the <code>MergeNeighboringPeaksParam</code>, chromatographic
 peaks are first expanded in m/z and retention time dimension (based on
 parameters <code>expandMz</code>, <code>ppm</code> and <code>expandRt</code>) and subsequently grouped into
@@ -271,6 +319,7 @@ calculation of the peak signal (<code>"into"</code>).</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer, Mar Garcia-Aloy</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -346,12 +395,21 @@ calculation of the peak signal (<code>"into"</code>).</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

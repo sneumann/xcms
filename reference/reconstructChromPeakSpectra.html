@@ -5,12 +5,19 @@ LC-MS/MS analysis vignette for more details and examples."><meta property="og:de
 for data independent acquisition (DIA) data (such as SWATH). See the
 LC-MS/MS analysis vignette for more details and examples."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -25,19 +32,23 @@ LC-MS/MS analysis vignette for more details and examples."><meta property="og:im
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Data independent acquisition (DIA): reconstruct MS2 spectra</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>reconstructChromPeakSpectra.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><em>Reconstructs</em> MS2 spectra for each MS1 chromatographic peak (if possible)
 for data independent acquisition (DIA) data (such as SWATH). See the
 <em>LC-MS/MS analysis</em> vignette for more details and examples.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">reconstructChromPeakSpectra</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -65,45 +76,66 @@ for data independent acquisition (DIA) data (such as SWATH). See the
 <span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Spectra"</span>, <span class="st">"MSpectra"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>XCMSnExp</code> with identified chromatographic peaks.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> allowing to expand the retention time range
 for extracted ion chromatograms by a constant value (for the peak
 shape correlation). Defaults to <code>expandRt = 0</code> hence correlates only
 the signal included in the identified chromatographic peaks.</p></dd>
+
+
 <dt id="arg-diffrt">diffRt<a class="anchor" aria-label="anchor" href="#arg-diffrt"></a></dt>
 <dd><p><code>numeric(1)</code> defining the maximal allowed difference between
 the retention time of the chromatographic peak (apex) and the retention
 times of MS2 chromatographic peaks (apex) to consider them as
 representing candidate fragments of the original ion.</p></dd>
+
+
 <dt id="arg-mincor">minCor<a class="anchor" aria-label="anchor" href="#arg-mincor"></a></dt>
 <dd><p><code>numeric(1)</code> defining the minimal required correlation
 coefficient for MS2 chromatographic peaks to be considered for MS2
 spectrum reconstruction.</p></dd>
+
+
 <dt id="arg-intensity">intensity<a class="anchor" aria-label="anchor" href="#arg-intensity"></a></dt>
 <dd><p><code>character(1)</code> defining the column in the <code>chromPeaks</code>
 matrix that should be used for the intensities of the reconstructed
 spectra's peaks. The same value from the MS1 chromatographic peaks will
 be used as <code>precursorIntensity</code> of the resulting spectra.</p></dd>
+
+
 <dt id="arg-peakid">peakId<a class="anchor" aria-label="anchor" href="#arg-peakid"></a></dt>
 <dd><p>optional <code>character</code> vector with peak IDs (i.e. rownames of
 <code>chromPeaks</code>) of MS1 peaks for which MS2 spectra should be reconstructed.
 By default they are reconstructed for all MS1 chromatographic peaks.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more
 information.</p></dd>
+
+
 <dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p><code>character(1)</code> defining the type of the returned object.
 Only <code>return.type = "Spectra"</code> is supported, <code>return.type = "MSpectra"</code>
 is deprecated.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+
 <ul><li><p><code>Spectra()</code> object (defined in the <code>Spectra</code> package) with the
 reconstructed MS2 spectra for all MS1 peaks in <code>object</code>. Contains
 empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
@@ -145,14 +177,24 @@ peak detection in DIA isolation windows and for examples.</p></div>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer, Michael Witting</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

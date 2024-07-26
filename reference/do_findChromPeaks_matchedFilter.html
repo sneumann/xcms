@@ -23,12 +23,19 @@
     peaks are detected using a signal-to-ration cut-off. For more details
     and illustrations see [Smith 2006]."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -43,14 +50,17 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Core API function for matchedFilter peak detection</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
       <div class="d-none name"><code>do_findChromPeaks_matchedFilter.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>This function identifies peaks in the chromatographic
     time domain as described in [Smith 2006]. The intensity values are
@@ -65,6 +75,7 @@
     peaks are detected using a signal-to-ration cut-off. For more details
     and illustrations see [Smith 2006].</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_findChromPeaks_matchedFilter</span><span class="op">(</span></span>
@@ -86,99 +97,144 @@
 <span>  sleep <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
+
+
+<dl><dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p>Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.</p></dd>
+
+
 <dt id="arg-int">int<a class="anchor" aria-label="anchor" href="#arg-int"></a></dt>
 <dd><p>Numeric vector with the individual intensity values from all
 scans/spectra of one file/sample.</p></dd>
+
+
 <dt id="arg-scantime">scantime<a class="anchor" aria-label="anchor" href="#arg-scantime"></a></dt>
 <dd><p>Numeric vector of length equal to the number of
 spectra/scans of the data representing the retention time of each scan.</p></dd>
+
+
 <dt id="arg-valsperspect">valsPerSpect<a class="anchor" aria-label="anchor" href="#arg-valsperspect"></a></dt>
 <dd><p>Numeric vector with the number of values for each
 spectrum.</p></dd>
+
+
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p><code>numeric(1)</code> specifying the width of the
 bins/slices in m/z dimension.</p></dd>
+
+
 <dt id="arg-impute">impute<a class="anchor" aria-label="anchor" href="#arg-impute"></a></dt>
 <dd><p>Character string specifying the method to be used for missing
 value imputation. Allowed values are <code>"none"</code> (no linear
 interpolation), <code>"lin"</code> (linear interpolation), <code>"linbase"</code>
 (linear interpolation within a certain bin-neighborhood) and
 <code>"intlin"</code>. See <code><a href="imputeLinInterpol.html">imputeLinInterpol</a></code> for more details.</p></dd>
+
+
 <dt id="arg-basevalue">baseValue<a class="anchor" aria-label="anchor" href="#arg-basevalue"></a></dt>
 <dd><p>The base value to which empty elements should be set. This
 is only considered for <code>method = "linbase"</code> and corresponds to the
 <code>profBinLinBase</code>'s <code>baselevel</code> argument.</p></dd>
+
+
 <dt id="arg-distance">distance<a class="anchor" aria-label="anchor" href="#arg-distance"></a></dt>
 <dd><p>For <code>method = "linbase"</code>: number of non-empty
 neighboring element of an empty element that should be considered for
 linear interpolation. See details section for more information.</p></dd>
+
+
 <dt id="arg-fwhm">fwhm<a class="anchor" aria-label="anchor" href="#arg-fwhm"></a></dt>
 <dd><p><code>numeric(1)</code> specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the
 actual sigma, see below.</p></dd>
+
+
 <dt id="arg-sigma">sigma<a class="anchor" aria-label="anchor" href="#arg-sigma"></a></dt>
 <dd><p><code>numeric(1)</code> specifying the standard deviation (width)
 of the matched filtration model peak.</p></dd>
+
+
 <dt id="arg-max">max<a class="anchor" aria-label="anchor" href="#arg-max"></a></dt>
 <dd><p><code>numeric(1)</code> representing the maximum number of peaks
 that are expected/will be identified per slice.</p></dd>
+
+
 <dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+
+
 <dt id="arg-steps">steps<a class="anchor" aria-label="anchor" href="#arg-steps"></a></dt>
 <dd><p><code>numeric(1)</code> defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will
 be joined to the slice in which filtration and peak detection will be
 performed).</p></dd>
+
+
 <dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
 signal.</p></dd>
+
+
 <dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
 <dd><p><code>logical(1)</code> specifying whether indicies should be
 returned instead of values for m/z and retention times.</p></dd>
+
+
 <dt id="arg-sleep">sleep<a class="anchor" aria-label="anchor" href="#arg-sleep"></a></dt>
 <dd><p><code>numeric(1)</code> defining the number of seconds to wait between
 iterations. Defaults to <code>sleep = 0</code>. If <code>&gt; 0</code> a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
 future.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A matrix, each row representing an identified chromatographic peak,
-    with columns:</p>
-<p></p>
-<dl><dt>mz</dt>
+    <p>A matrix, each row representing an identified chromatographic peak,
+    with columns:</p><dl><dt>mz</dt>
 <dd><p>Intensity weighted mean of m/z values of the peak across scans.</p></dd>
+
     <dt>mzmin</dt>
 <dd><p>Minimum m/z of the peak.</p></dd>
+
     <dt>mzmax</dt>
 <dd><p>Maximum m/z of the peak.</p></dd>
+
     <dt>rt</dt>
 <dd><p>Retention time of the peak's midpoint.</p></dd>
+
     <dt>rtmin</dt>
 <dd><p>Minimum retention time of the peak.</p></dd>
+
     <dt>rtmax</dt>
 <dd><p>Maximum retention time of the peak.</p></dd>
+
     <dt>into</dt>
 <dd><p>Integrated (original) intensity of the peak.</p></dd>
+
     <dt>intf</dt>
 <dd><p>Integrated intensity of the filtered peak.</p></dd>
+
     <dt>maxo</dt>
 <dd><p>Maximum intensity of the peak.</p></dd>
+
     <dt>maxf</dt>
 <dd><p>Maximum intensity of the filtered peak.</p></dd>
+
     <dt>i</dt>
 <dd><p>Rank of peak in merged EIC (<code>&lt;= max</code>).</p></dd>
+
     <dt>sn</dt>
 <dd><p>Signal to noise ratio of the peak</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -219,6 +275,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Colin A Smith, Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -256,12 +313,21 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

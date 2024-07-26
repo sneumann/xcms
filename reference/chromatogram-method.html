@@ -7,12 +7,19 @@ chromatogram, a base peak chromatogram or total ion chromatogram) from
 an OnDiskMSnExp or XCMSnExp objects. See also the help page of the
 chromatogram function in the MSnbase package."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -27,20 +34,24 @@ chromatogram function in the MSnbase package."><meta property="og:image" content
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extracting chromatograms</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>chromatogram-method.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><code>chromatogram</code>: extract chromatographic data (such as an extracted ion
 chromatogram, a base peak chromatogram or total ion chromatogram) from
 an <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a> or <a href="XCMSnExp-class.html">XCMSnExp</a> objects. See also the help page of the
 <code>chromatogram</code> function in the <code>MSnbase</code> package.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
@@ -58,47 +69,68 @@ an <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" 
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>Either a <a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a> or <a href="XCMSnExp-class.html">XCMSnExp</a> object from which the
 chromatograms should be extracted.</p></dd>
+
+
 <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p><code>numeric(2)</code> or two-column <code>matrix</code> defining the lower
 and upper boundary for the retention time range(s). If not specified,
 the full retention time range of the original data will be used.</p></dd>
+
+
 <dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p><code>numeric(2)</code> or two-column <code>matrix</code> defining the lower
 and upper mz value for the MS data slice(s). If not specified, the
 chromatograms will be calculated on the full mz range.</p></dd>
+
+
 <dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p><code>character(1)</code> specifying the function to be used to
 aggregate intensity values across the mz value range for the same
 retention time. Allowed values are <code>"sum"</code> (the default), <code>"max"</code>,
 <code>"mean"</code> and <code>"min"</code>.</p></dd>
+
+
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
 <dd><p><code>numeric(1)</code> allowing to specify the intensity value to
 be used if for a given retention time no signal was measured within the
 mz range of the corresponding scan. Defaults to <code>NA_real_</code> (see also
 Details and Notes sections below). Use <code>missing = 0</code> to resemble the
 behaviour of the <code>getEIC</code> from the <em>old</em> user interface.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> specifying the MS level from which the
 chromatogram should be extracted. Defaults to <code>msLevel = 1L</code>.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parallelisation backend to be used, which will
 depend on the architecture. Default is
 <code>BiocParallel::bparam()</code>.</p></dd>
+
+
 <dt id="arg-adjustedrtime">adjustedRtime<a class="anchor" aria-label="anchor" href="#arg-adjustedrtime"></a></dt>
 <dd><p>For <code>chromatogram,XCMSnExp</code>: whether the
 adjusted (<code>adjustedRtime = TRUE</code>) or raw retention times
 (<code>adjustedRtime = FALSE</code>) should be used for filtering and returned
 in the resulting <a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms</a> object. Adjusted
 retention times are used by default if available.</p></dd>
+
+
 <dt id="arg-filled">filled<a class="anchor" aria-label="anchor" href="#arg-filled"></a></dt>
 <dd><p><code>logical(1)</code> whether filled-in peaks should also be
 returned. Defaults to <code>filled = FALSE</code>, i.e. returns only detected
 chromatographic peaks in the result object.</p></dd>
+
+
 <dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
 <dd><p><code>character(1)</code> defining which chromatographic peaks should be
 returned. Supported are <code>include = "apex_within"</code> (the default) which
@@ -106,12 +138,15 @@ returns chromatographic peaks that have their apex within the <code>mz</code> <c
 range, <code>include = "any"</code> to return all chromatographic peaks which
 m/z and rt ranges overlap the <code>mz</code> and <code>rt</code> or <code>include = "none"</code> to
 not include any chromatographic peaks.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional parameters - currently ignored.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p><code>chromatogram</code> returns a <a href="XChromatogram.html">XChromatograms</a> object with
+    <p><code>chromatogram</code> returns a <a href="XChromatogram.html">XChromatograms</a> object with
 the number of columns corresponding to the number of files in
 <code>object</code> and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments <code>mz</code> and/or
@@ -149,14 +184,17 @@ and use these (for the subsetting based on the provided parameter
 <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a> for the object representing chromatographic data.</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>[XChromatograms] <span class="cf">for</span> the object allowing to arrange</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>multiple [XChromatogram] objects.</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>[plot] to plot a [XChromatogram] or [MChromatograms] objects.</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="st">`</span><span class="at">as</span><span class="st">`</span> (<span class="st">`</span><span class="at">as(x, "data.frame")</span><span class="st">`</span>) <span class="cf">in</span> <span class="st">`</span><span class="at">MSnbase</span><span class="st">`</span> <span class="cf">for</span> a method to extract</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>the MS data as <span class="st">`</span><span class="at">data.frame</span><span class="st">`</span>.</span></code></pre><p></p></div></div>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>[plot] to plot a [XChromatogram] or [MChromatograms] objects.</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">`</span><span class="at">as</span><span class="st">`</span> (<span class="st">`</span><span class="at">as(x, "data.frame")</span><span class="st">`</span>) <span class="cf">in</span> <span class="st">`</span><span class="at">MSnbase</span><span class="st">`</span> <span class="cf">for</span> a method to extract</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>the MS data as <span class="st">`</span><span class="at">data.frame</span><span class="st">`</span>.</span></code></pre><p></p></div></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -232,12 +270,21 @@ and use these (for the subsetting based on the provided parameter
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

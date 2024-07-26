@@ -15,12 +15,19 @@ a linear (smooth = "linear") model to the data points. The
 models are subsequently used to adjust the retention time for each
 spectrum in each sample.'><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -35,14 +42,17 @@ spectrum in each sample.'><meta property="og:image" content="https://sneumann.gi
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Align spectrum retention times across samples using peak groups found in most samples</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_adjustRtime-functions.R" class="external-link"><code>R/do_adjustRtime-functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/do_adjustRtime-functions.R" class="external-link"><code>R/do_adjustRtime-functions.R</code></a></small>
       <div class="d-none name"><code>do_adjustRtime_peakGroups.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The function performs retention time correction by assessing
 the retention time deviation across all samples using peak groups
@@ -53,6 +63,7 @@ a linear (<code>smooth = "linear"</code>) model to the data points. The
 models are subsequently used to adjust the retention time for each
 spectrum in each sample.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">do_adjustRtime_peakGroups</span><span class="op">(</span></span>
@@ -69,17 +80,26 @@ spectrum in each sample.</p>
 <span>  subsetAdjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"average"</span>, <span class="st">"previous"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
+
+
+<dl><dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p>a <code>matrix</code> or <code>data.frame</code> with the identified
 chromatographic peaks in the samples.</p></dd>
+
+
 <dt id="arg-peakindex">peakIndex<a class="anchor" aria-label="anchor" href="#arg-peakindex"></a></dt>
 <dd><p>a <code>list</code> of indices that provides the grouping
 information of the chromatographic peaks (across and within samples).</p></dd>
+
+
 <dt id="arg-rtime">rtime<a class="anchor" aria-label="anchor" href="#arg-rtime"></a></dt>
 <dd><p>a <code>list</code> of <code>numeric</code> vectors with the retention
 times per file/sample.</p></dd>
+
+
 <dt id="arg-minfraction">minFraction<a class="anchor" aria-label="anchor" href="#arg-minfraction"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> between 0 and 1
 defining the minimum required proportion of samples in which peaks for
@@ -91,6 +111,8 @@ group has to contain peaks in all samples of the experiment. Note that if
 defined subset of samples and not to the total number of samples within
 the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).</p></dd>
+
+
 <dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
 number of additional peaks for all samples to be assigned to a peak
@@ -99,18 +121,26 @@ samples, <code>extraPeaks = 1</code> uses all peak groups with a total peak coun
 <code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
 assigned to a peak group and considers also multiple peaks within a
 sample that are assigned to the group.</p></dd>
+
+
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the function to
 be used to interpolate corrected retention times for all peak groups.
 Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
+
+
 <dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
 passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
+
+
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
 <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
+
+
 <dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>
 <dd><p>optional <code>matrix</code> of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
@@ -118,21 +148,26 @@ represents a sample, each row a feature/peak group. If not provided,
 this matrix will be determined depending on parameters
 <code>minFraction</code> and <code>extraPeaks</code>. If provided,
 <code>minFraction</code> and <code>extraPeaks</code> will be ignored.</p></dd>
+
+
 <dt id="arg-subset">subset<a class="anchor" aria-label="anchor" href="#arg-subset"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>integer</code> with the
 indices of samples within the experiment on which the alignment models
 should be estimated.
 Samples not part of the subset are adjusted based on the closest subset
 sample. See <em>Subset-based alignment</em> section for details.</p></dd>
+
+
 <dt id="arg-subsetadjust">subsetAdjust<a class="anchor" aria-label="anchor" href="#arg-subsetadjust"></a></dt>
 <dd><p>For <code>ObiwarpParam</code> and <code>PeakGroupsParam</code>: <code>character(1)</code>
 specifying the method with which non-subset samples should be adjusted.
 Supported options are <code>"previous"</code> and <code>"average"</code> (default).
 See <em>Subset-based alignment</em> section for details.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
+    <p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
     retention times grouped by sample.</p>
     </div>
     <div class="section level2">
@@ -167,14 +202,24 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Colin Smith, Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

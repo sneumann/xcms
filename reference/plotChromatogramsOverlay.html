@@ -19,12 +19,19 @@ present chromatographic peaks will also be highlighted/drawn depending on the
 parameters peakType, peakCol, peakBg and peakPch (see also help on
 the plot function for XChromatogram() object for details)."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -39,14 +46,17 @@ the plot function for XChromatogram() object for details)."><meta property="og:i
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot multiple chromatograms into the same plot</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-MChromatograms.R" class="external-link"><code>R/methods-MChromatograms.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-MChromatograms.R" class="external-link"><code>R/methods-MChromatograms.R</code></a></small>
       <div class="d-none name"><code>plotChromatogramsOverlay.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><code>plotOverlay</code> draws chromatographic peak data from multiple (different)
 extracted ion chromatograms (EICs) into the same plot. This allows to
@@ -59,6 +69,7 @@ present chromatographic peaks will also be highlighted/drawn depending on the
 parameters <code>peakType</code>, <code>peakCol</code>, <code>peakBg</code> and <code>peakPch</code> (see also help on
 the <code>plot</code> function for <code><a href="XChromatogram.html">XChromatogram()</a></code> object for details).</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'MChromatograms'</span></span>
@@ -95,28 +106,47 @@ the <code>plot</code> function for <code><a href="XChromatogram.html">XChromatog
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+
+
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>definition of the color in which the chromatograms should be
 drawn. Can be of length 1 or equal to <code>nrow(object)</code> to plot each
 overlayed chromatogram in a different color.</p></dd>
+
+
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p><code>character(1)</code> defing the type of the plot. By default
 (<code>type = "l"</code>) each chromatogram is drawn as a line.</p></dd>
+
+
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>optional title of the plot. If not defined, the range of m/z
 values is used.</p></dd>
+
+
 <dt id="arg-xlab">xlab<a class="anchor" aria-label="anchor" href="#arg-xlab"></a></dt>
 <dd><p><code>character(1)</code> defining the x-axis label.</p></dd>
+
+
 <dt id="arg-ylab">ylab<a class="anchor" aria-label="anchor" href="#arg-ylab"></a></dt>
 <dd><p><code>character(1)</code> defining the y-axis label.</p></dd>
+
+
 <dt id="arg-xlim">xlim<a class="anchor" aria-label="anchor" href="#arg-xlim"></a></dt>
 <dd><p>optional <code>numeric(2)</code> defining the x-axis limits.</p></dd>
+
+
 <dt id="arg-ylim">ylim<a class="anchor" aria-label="anchor" href="#arg-ylim"></a></dt>
 <dd><p>optional <code>numeric(2)</code> defining the y-axis limits.</p></dd>
+
+
 <dt id="arg-stacked">stacked<a class="anchor" aria-label="anchor" href="#arg-stacked"></a></dt>
 <dd><p><code>numeric(1)</code> defining the part (proportion) of the y-axis to
 use to <em>stack</em> EICs depending on their m/z values. If <code>stacked = 0</code> (the
@@ -124,38 +154,51 @@ default) no stacking is performed. With <code>stacked = 1</code> half of the y-a
 is used for stacking and half for the intensity y-axis (i.e. the ratio
 between stacking and intensity y-axis is 1:1). Note that if <code>stacking</code>
 is different from 0 no y-axis and label are drawn.</p></dd>
+
+
 <dt id="arg-transform">transform<a class="anchor" aria-label="anchor" href="#arg-transform"></a></dt>
 <dd><p><code>function</code> to transform the intensity values before
 plotting. Defaults to <code>transform = identity</code> which plots the data as it
 is. With <code>transform = log10</code> intensity values would be log10 transformed
 before plotting.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>optional arguments to be passed to the plotting functions (see
 help on the base R <code>plot</code> function.</p></dd>
+
+
 <dt id="arg-peaktype">peakType<a class="anchor" aria-label="anchor" href="#arg-peaktype"></a></dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: how chromatographic
 peaks should be drawn: <code>peakType = "polygon"</code> (the default): label the
 full chromatographic peak area, <code>peakType = "rectangle"</code>: indicate the
 chromatographic peak by a rectangle and <code>peakType  = "point"</code>: label the
 chromatographic peaks' apex position with a point.</p></dd>
+
+
 <dt id="arg-peakbg">peakBg<a class="anchor" aria-label="anchor" href="#arg-peakbg"></a></dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: definition of
 background color(s) for each chromatographic peak. Has to be either of
 length 1 or equal to the number of peaks in <code>object</code>. If not specified,
 the peak will be drawn in the color defined by <code>col</code>.</p></dd>
+
+
 <dt id="arg-peakcol">peakCol<a class="anchor" aria-label="anchor" href="#arg-peakcol"></a></dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: definition of
 color(s) for each chromatographic peak. Has to be either of length 1 or
 equal to the number of peaks in <code>object</code>. If not specified, the peak will
 be drawn in the color defined by <code>col</code>.</p></dd>
+
+
 <dt id="arg-peakpch">peakPch<a class="anchor" aria-label="anchor" href="#arg-peakpch"></a></dt>
 <dd><p>if <code>object</code> is a <code>XChromatograms</code> object: <em>point character</em> to
 be used to label the apex position of the chromatographic peak if
 <code>peakType = "point"</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>silently returns a <code>list</code> (length equal to <code>ncol(object)</code> of
+    <p>silently returns a <code>list</code> (length equal to <code>ncol(object)</code> of
 <code>numeric</code> (length equal to <code>nrow(object)</code>) with the y position of
 each EIC.</p>
     </div>
@@ -163,6 +206,7 @@ each EIC.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -242,12 +286,21 @@ each EIC.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

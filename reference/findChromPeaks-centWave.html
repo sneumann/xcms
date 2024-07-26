@@ -77,12 +77,19 @@ fistBaselineCheck,firstBaselineCheck&amp;lt;-: getter
 roiScales,roiScales&amp;lt;-: getter and setter for the
     roiScales slot of the object."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -97,14 +104,17 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Chromatographic peak detection using the centWave method</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a>, and 1 more</small>
       <div class="d-none name"><code>findChromPeaks-centWave.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The centWave algorithm perform peak density and wavelet based
     chromatographic peak detection for high resolution LC/MS data in centroid
@@ -146,6 +156,7 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
 <p><code>roiScales</code>,<code>roiScales&lt;-</code>: getter and setter for the
     <code>roiScales</code> slot of the object.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">CentWaveParam</span><span class="op">(</span></span>
@@ -257,23 +268,34 @@ roiScales,roiScales&amp;lt;-: getter and setter for the
 <span><span class="co"># S4 method for class 'CentWaveParam'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
+
+
+<dl><dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> defining the maximal tolerated m/z deviation in
 consecutive scans in parts per million (ppm) for the initial ROI
 definition.</p></dd>
+
+
 <dt id="arg-peakwidth">peakwidth<a class="anchor" aria-label="anchor" href="#arg-peakwidth"></a></dt>
 <dd><p><code>numeric(2)</code> with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
 in seconds.</p></dd>
+
+
 <dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.</p></dd>
+
+
 <dt id="arg-prefilter">prefilter<a class="anchor" aria-label="anchor" href="#arg-prefilter"></a></dt>
 <dd><p><code>numeric(2)</code>: <code>c(k, I)</code> specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least <code>k</code> peaks with intensity
 <code>&gt;= I</code>.</p></dd>
+
+
 <dt id="arg-mzcenterfun">mzCenterFun<a class="anchor" aria-label="anchor" href="#arg-mzcenterfun"></a></dt>
 <dd><p>Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: <code>"wMean"</code>: intensity weighted
@@ -283,29 +305,41 @@ values, <code>"apex"</code>: use the m/z value at the peak apex,
 peak apex and the m/z values left and right of it and <code>"meanApex3"</code>:
 mean of the m/z value of the peak apex and the m/z values left and right
 of it.</p></dd>
+
+
 <dt id="arg-integrate">integrate<a class="anchor" aria-label="anchor" href="#arg-integrate"></a></dt>
 <dd><p>Integration method. For <code>integrate = 1</code> peak limits
 are found through descent on the mexican hat filtered data, for
 <code>integrate = 2</code> the descent is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
+
+
 <dt id="arg-mzdiff">mzdiff<a class="anchor" aria-label="anchor" href="#arg-mzdiff"></a></dt>
 <dd><p><code>numeric(1)</code> representing the minimum difference in m/z
 dimension required for peaks with overlapping retention times; can be
 negative to allow overlap. During peak post-processing, peaks
 defined to be overlapping are reduced to the one peak with the largest
 signal.</p></dd>
+
+
 <dt id="arg-fitgauss">fitgauss<a class="anchor" aria-label="anchor" href="#arg-fitgauss"></a></dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak. This affects mostly the retention time position of the
 peak.</p></dd>
+
+
 <dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>
 <dd><p><code>numeric(1)</code> allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity <code>&lt; noise</code> are omitted from ROI detection).</p></dd>
+
+
 <dt id="arg-verbosecolumns">verboseColumns<a class="anchor" aria-label="anchor" href="#arg-verbosecolumns"></a></dt>
 <dd><p><code>logical(1)</code> whether additional peak meta data
 columns should be returned.</p></dd>
+
+
 <dt id="arg-roilist">roiList<a class="anchor" aria-label="anchor" href="#arg-roilist"></a></dt>
 <dd><p>An optional list of regions-of-interest (ROI) representing
 detected mass traces. If ROIs are submitted the first analysis step is
@@ -316,22 +350,30 @@ ROIs. Each ROI is expected to have the following elements specified:
 (number of scans), <code>intensity</code> (summed intensity). Each ROI should
 be represented by a <code>list</code> of elements or a single row
 <code>data.frame</code>.</p></dd>
+
+
 <dt id="arg-firstbaselinecheck">firstBaselineCheck<a class="anchor" aria-label="anchor" href="#arg-firstbaselinecheck"></a></dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous
 data within regions of interest is checked to be above the first baseline.
 In detail, a first rough estimate of the noise is calculated and peak
 detection is performed only in regions in which multiple sequential
 signals are higher than this first estimated baseline/noise level.</p></dd>
+
+
 <dt id="arg-roiscales">roiScales<a class="anchor" aria-label="anchor" href="#arg-roiscales"></a></dt>
 <dd><p>Optional numeric vector with length equal to <code>roiList</code>
 defining the scale for each region of interest in <code>roiList</code> that
 should be used for the centWave-wavelets.</p></dd>
+
+
 <dt id="arg-extendlengthmsw">extendLengthMSW<a class="anchor" aria-label="anchor" href="#arg-extendlengthmsw"></a></dt>
 <dd><p>Option to force centWave to use all scales when
 running centWave rather than truncating with the EIC length. Uses the "open"
 method to extend the EIC to a integer base-2 length prior to being passed to
 <code>convolve</code> rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.</p></dd>
+
+
 <dt id="arg-verbosebetacolumns">verboseBetaColumns<a class="anchor" aria-label="anchor" href="#arg-verbosebetacolumns"></a></dt>
 <dd><p>Option to calculate two additional metrics of peak
 quality via comparison to an idealized bell curve. Adds <code>beta_cor</code> and
@@ -340,44 +382,62 @@ correlation coefficient to a bell curve with several degrees of skew as well
 as an estimate of signal-to-noise using the residuals from the best-fitting
 bell curve. See https://github.com/sneumann/xcms/pull/685 and
 https://doi.org/10.1186/s12859-023-05533-4 for more information.</p></dd>
+
+
 <dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>For <code>findChromPeaks</code>: an
     <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp</a></code>  object containing the MS- and all
     other experiment-relevant data.</p>
 <p>For all other methods: a parameter object.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>An <code>CentWaveParam</code> object containing all settings for the
 centWave algorithm.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>A parameter class specifying if and how parallel processing
 should be performed. It defaults to <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></code>.
 See documentation of the <code>BiocParallel</code> for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.</p></dd>
+
+
 <dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p>Character specifying what type of object the method should
 return. Can be either <code>"XCMSnExp"</code> (default), <code>"list"</code> or
 <code>"xcmsSet"</code>.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> defining the MS level on which the peak
 detection should be performed. Defaults to <code>msLevel = 1</code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p>The value for the slot.</p></dd>
+
+
 <dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>For <code>integrate</code>: a <code>CentWaveParam</code> object.</p></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The parameter object.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>The <code>CentWaveParam</code> function returns a <code>CentWaveParam</code></p>
-<p>class instance with all of the settings specified for chromatographic
+    <p>The <code>CentWaveParam</code> function returns a <code>CentWaveParam</code>
+    class instance with all of the settings specified for chromatographic
     peak detection by the centWave method.</p>
-<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an</p>
-<p></p>
-<p><code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
+<p>For <code>findChromPeaks</code>: if <code>return.type = "XCMSnExp"</code> an
+    <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object with the results of the peak detection.
     If <code>return.type = "list"</code> a list of length equal to the number of
     samples with matrices specifying the identified peaks.
     If <code>return.type = "xcmsSet"</code> an <code><a href="xcmsSet-class.html">xcmsSet</a></code> object
@@ -406,9 +466,13 @@ The first analysis step is skipped, if regions of interest are passed
     </div>
     <div class="section level2">
     <h2 id="slots">Slots<a class="anchor" aria-label="anchor" href="#slots"></a></h2>
+
+
 <dl><dt><code>ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns</code></dt>
 <dd><p>See corresponding parameter above. Slots values should exclusively be accessed
 <em>via</em> the corresponding getter and setter methods listed above.</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -444,6 +508,7 @@ detection in purely chromatographic data.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Ralf Tautenhahn, Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -503,12 +568,21 @@ detection in purely chromatographic data.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -5,12 +5,19 @@ without m/z values."><meta property="og:description" content="peaksWithCentWave 
 chromatographic data, i.e. based on intensity and retention time values
 without m/z values."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -25,19 +32,23 @@ without m/z values."><meta property="og:image" content="https://sneumann.github.
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Identify peaks in chromatographic data using centWave</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/do_findChromPeaks-functions.R" class="external-link"><code>R/do_findChromPeaks-functions.R</code></a></small>
       <div class="d-none name"><code>peaksWithCentWave.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><code>peaksWithCentWave</code> identifies (chromatographic) peaks in purely
 chromatographic data, i.e. based on intensity and retention time values
 without m/z values.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">peaksWithCentWave</span><span class="op">(</span></span>
@@ -55,54 +66,80 @@ without m/z values.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-int">int<a class="anchor" aria-label="anchor" href="#arg-int"></a></dt>
+
+
+<dl><dt id="arg-int">int<a class="anchor" aria-label="anchor" href="#arg-int"></a></dt>
 <dd><p><code>numeric</code> with intensity values.</p></dd>
+
+
 <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p><code>numeric</code> with the retention time for the intensities. Length has
 to be equal to <code>length(int)</code>.</p></dd>
+
+
 <dt id="arg-peakwidth">peakwidth<a class="anchor" aria-label="anchor" href="#arg-peakwidth"></a></dt>
 <dd><p><code>numeric(2)</code> with the lower and upper bound of the
 expected peak width.</p></dd>
+
+
 <dt id="arg-snthresh">snthresh<a class="anchor" aria-label="anchor" href="#arg-snthresh"></a></dt>
 <dd><p><code>numeric(1)</code> defining the signal to noise ratio cutoff.
 Peaks with a signal to noise ratio &lt; <code>snthresh</code> are omitted.</p></dd>
+
+
 <dt id="arg-prefilter">prefilter<a class="anchor" aria-label="anchor" href="#arg-prefilter"></a></dt>
 <dd><p><code>numeric(2)</code> (<code>c(k, I)</code>): only regions of interest with at
 least <code>k</code> centroids with signal <code>&gt;= I</code> are returned in the first
 step.</p></dd>
+
+
 <dt id="arg-integrate">integrate<a class="anchor" aria-label="anchor" href="#arg-integrate"></a></dt>
 <dd><p><code>numeric(1)</code>, integration method. For <code>integrate = 1</code> peak
 limits are found through descending on the mexican hat filtered data,
 for <code>integrate = 2</code> the descend is done on the real data. The latter
 method is more accurate but prone to noise, while the former is more
 robust, but less exact.</p></dd>
+
+
 <dt id="arg-fitgauss">fitgauss<a class="anchor" aria-label="anchor" href="#arg-fitgauss"></a></dt>
 <dd><p><code>logical(1)</code> whether or not a Gaussian should be fitted
 to each peak.</p></dd>
+
+
 <dt id="arg-noise">noise<a class="anchor" aria-label="anchor" href="#arg-noise"></a></dt>
 <dd><p><code>numeric(1)</code> defining the minimum required intensity for
 centroids to be considered in the first analysis step (definition of
 the <em>regions of interest</em>).</p></dd>
+
+
 <dt id="arg-verbosecolumns">verboseColumns<a class="anchor" aria-label="anchor" href="#arg-verbosecolumns"></a></dt>
 <dd><p><code>logical(1)</code>: whether additional peak meta data
 columns should be returned.</p></dd>
+
+
 <dt id="arg-firstbaselinecheck">firstBaselineCheck<a class="anchor" aria-label="anchor" href="#arg-firstbaselinecheck"></a></dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> continuous data within
 regions of interest is checked to be above the first baseline. In detail,
 a first <em>rough</em> estimate of the noise is calculated and peak detection
 is performed only in regions in which multiple sequential signals are
 higher than this first estimated baseline/noise level.</p></dd>
+
+
 <dt id="arg-extendlengthmsw">extendLengthMSW<a class="anchor" aria-label="anchor" href="#arg-extendlengthmsw"></a></dt>
 <dd><p><code>logical(1)</code>. If <code>TRUE</code> the "open" method of EIC
 extension is used, rather than the default "reflect" method.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>currently ignored.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>A matrix, each row representing an identified chromatographic peak, with
+    <p>A matrix, each row representing an identified chromatographic peak, with
 columns:</p><ul><li><p><code>"rt"</code>: retention time of the peak's midpoint (time of the maximum signal).</p></li>
 <li><p><code>"rtmin"</code>: minimum retention time of the peak.</p></li>
 <li><p><code>"rtmax"</code>: maximum retention time of the peak.</p></li>
@@ -143,6 +180,7 @@ method.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -176,12 +214,21 @@ method.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

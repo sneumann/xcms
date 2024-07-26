@@ -75,12 +75,19 @@ Other functions related to this method:
     what file to inspect by specifying the assay number with the parameter
     `assay`"><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -95,14 +102,17 @@ Other functions related to this method:
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Landmark-based alignment: aligning a dataset against an external reference</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/do_adjustRtime-functions.R" class="external-link"><code>R/do_adjustRtime-functions.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 1 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/do_adjustRtime-functions.R" class="external-link"><code>R/do_adjustRtime-functions.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 1 more</small>
       <div class="d-none name"><code>LamaParama.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Alignment is achieved using the ['adjustRtime()'] method with a `param` of
 class `LamaParama`. This method corrects retention time by aligning
@@ -143,6 +153,7 @@ a single file.</p>
     what file to inspect by specifying the assay number with the parameter
     `assay`</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'XcmsExperiment,LamaParama'</span></span>
@@ -177,71 +188,109 @@ a single file.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An object of class `XcmsExperiment` with defined ChromPeaks.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>An object of class `LamaParama` that will later be used for
 adjustment using the `[adjustRtime()]` function.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For `matchLamasChromPeaks()`: parallel processing setup.
 Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more information.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>For `plot()`: extra parameters to be passed to the function.</p></dd>
+
+
 <dt id="arg-lamas">lamas<a class="anchor" aria-label="anchor" href="#arg-lamas"></a></dt>
 <dd><p>For `LamaParama`: `matrix` or `data.frame` with the m/z and
 retention times values of features (as first and second column) from the
 external dataset on which the alignment will be based on.</p></dd>
+
+
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>For `LamaParama`:`character(1)` with the type of warping.
 Either `method = "gam"` or `method = "loess"` (default).</p></dd>
+
+
 <dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining
 the degree of smoothing (`method = "loess"`). This parameter is passed
 to the internal call to [loess()].</p></dd>
+
+
 <dt id="arg-outliertolerance">outlierTolerance<a class="anchor" aria-label="anchor" href="#arg-outliertolerance"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the settings
 for outlier removal during the fitting. By default
 (with `outlierTolerance = 3`), all data points with absolute residuals
 larger than 3 times the mean absolute residual of all data points from
 the first, initial fit, are removed from the final model fit.</p></dd>
+
+
 <dt id="arg-zeroweight">zeroWeight<a class="anchor" aria-label="anchor" href="#arg-zeroweight"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)`: defines the weight of the
 first data point (i.e. retention times of the first lama-chromatographic
 peak pair). Values larger than 1 reduce warping problems in the early RT
 range.</p></dd>
+
+
 <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
 allowed difference in m/z between `lamas` and chromatographic peaks. Used
 for the mapping of identified chromatographic peaks and lamas.</p></dd>
+
+
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the absolute
 acceptable difference in m/z between lamas and chromatographic peaks.
 Used for the mapping of identified chromatographic peaks and `lamas`.</p></dd>
+
+
 <dt id="arg-tolerancert">toleranceRt<a class="anchor" aria-label="anchor" href="#arg-tolerancert"></a></dt>
 <dd><p>For `LamaParama`: `numeric(1)` defining the absolute
 acceptable difference in retention time between lamas and
 chromatographic peaks. Used for the mapping of identified chromatographic
 peaks and `lamas`.</p></dd>
+
+
 <dt id="arg-bs">bs<a class="anchor" aria-label="anchor" href="#arg-bs"></a></dt>
 <dd><p>For `LamaParama()`: `character(1)` defining the GAM smoothing method.
 (defaults to thin plate, `bs = "tp"`)</p></dd>
+
+
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For `plot()`: object of class `LamaParama` to be plotted.</p></dd>
+
+
 <dt id="arg-index">index<a class="anchor" aria-label="anchor" href="#arg-index"></a></dt>
 <dd><p>For `plot()`: `numeric(1)` index of the file that should be
 plotted.</p></dd>
+
+
 <dt id="arg-colpoints">colPoints<a class="anchor" aria-label="anchor" href="#arg-colpoints"></a></dt>
 <dd><p>For `plot()`: color for the plotting of the datapoint.</p></dd>
+
+
 <dt id="arg-colfit">colFit<a class="anchor" aria-label="anchor" href="#arg-colfit"></a></dt>
 <dd><p>For `plot()`: color of the fitting line.</p></dd>
+
+
 <dt id="arg-xlab-ylab">xlab, ylab<a class="anchor" aria-label="anchor" href="#arg-xlab-ylab"></a></dt>
 <dd><p>For `plot()`: x- and y-axis labels.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For `matchLamasChromPeaks()`: A `LamaParama` object with new slot `rtMap`
+    <p>For `matchLamasChromPeaks()`: A `LamaParama` object with new slot `rtMap`
 composed of a list of matrices representing the 1:1 matches between Lamas
 (ref) and ChromPeaks (obs). To access this, `matchedRtimes()` can be used.</p>
 <p>For `matchedRtimes()`: A list of `data.frame` representing matches
@@ -264,6 +313,7 @@ see the vignette.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Carl Brunius, Philippine Louail</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## load test and reference datasets</span></span></span>
@@ -311,12 +361,21 @@ see the vignette.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

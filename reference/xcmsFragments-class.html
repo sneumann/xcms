@@ -7,12 +7,19 @@
   Tandem MS and e.g. Ion Trap or Orbitrap MS$^n$ peaks, including the
   parent ion relationships."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -27,19 +34,25 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Class xcmsFragments, a class for handling Tandem MS and MS$^n$ data</h1>
+
       <div class="d-none name"><code>xcmsFragments-class.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>This class is similar to <code><a href="xcmsSet.html">xcmsSet</a></code> because it stores peaks
   from a number of individual files. However,  xcmsFragments keeps
   Tandem MS and e.g. Ion Trap or Orbitrap MS$^n$ peaks, including the
   parent ion relationships.</p>
     </div>
+
+
     <div class="section level2">
     <h2 id="objects-from-the-class">Objects from the Class<a class="anchor" aria-label="anchor" href="#objects-from-the-class"></a></h2>
     <p>Objects can be created with the <code><a href="xcmsFragments.html">xcmsFragments</a></code>
@@ -53,20 +66,28 @@
       (e.g. 2 for Tandem MS), rt (retention time in case of LC data), mz
       (fragment mass-to-charge), intensity (peak intensity extracted
       from the original <code>xcmsSet</code>), sample (the index of the rawData-file).</p></dd>
+
     <dt><code>MS2spec</code>:</dt>
 <dd><p>This is a list of matrixes. Each matrix in the list is a single collected spectra from <code>collect</code>. The column ID's are mz, intensity, and full width half maximum(fwhm). The fwhm column is only relevant if the spectra came from profile data.</p></dd>
+
     <dt><code>specinfo</code>:</dt>
 <dd><p>This is a matrix with reference data for the spectra in MS2spec. The column id's are preMZ, AccMZ, rtmin, rtmax, ref, CollisionEnergy. The preMZ is precursor mass from the MS1 scan. This mass is given by the XML file. With some instruments this mass is only given as nominal mass, therefore a AccMZ is given which is a weighted average mass from the MS1 scan of the collected spectra. The retention time is given by rtmin and rtmax. The ref column is a pointer to the MS2spec matrix spectra. The collisionEnergy column is the collision Energy for the spectra.</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
     <p></p><dl><dt><a href="collect-methods.html">collect</a></dt>
 <dd><p><code>signature(object = "xcmsFragments")</code>: gets a xcmsSet-object, collects ms1-peaks from it and the msn-peaks from the corresponding xcmsRaw-files.</p></dd>
+
     <dt>plotTree</dt>
 <dd><p><code>signature(object = "xcmsFragments")</code>: prints a (text based) pseudo-tree of the peaktable to display the dependencies of the peaks among each other.</p></dd>
+
     <dt><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></dt>
 <dd><p><code>signature(object = "xcmsFragments")</code>: print a human-readable
       description of this object to the console.</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -76,14 +97,24 @@
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="xcmsRaw.html">xcmsRaw</a></code></p></div>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

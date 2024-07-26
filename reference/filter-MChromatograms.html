@@ -24,6 +24,7 @@ MChromatograms. Similar to the filterColumnsIntensityAbove function,
 this function allows to use for XChromatograms objects to sort the
 columns by column sortBy = "maxo" or sortBy = "into" of the
 chromPeaks matrix.
+
 '><meta property="og:description" content='These functions allow to filter (subset) MChromatograms() or
 XChromatograms() objects, i.e. sets of chromatographic data, without
 changing the data (intensity and retention times) within the individual
@@ -49,14 +50,22 @@ MChromatograms. Similar to the filterColumnsIntensityAbove function,
 this function allows to use for XChromatograms objects to sort the
 columns by column sortBy = "maxo" or sortBy = "into" of the
 chromPeaks matrix.
+
 '><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -71,14 +80,17 @@ chromPeaks matrix.
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Filtering sets of chromatographic data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-MChromatograms.R" class="external-link"><code>R/methods-MChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XChromatograms.R" class="external-link"><code>R/methods-XChromatograms.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-MChromatograms.R" class="external-link"><code>R/methods-MChromatograms.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-XChromatograms.R" class="external-link"><code>R/methods-XChromatograms.R</code></a></small>
       <div class="d-none name"><code>filter-MChromatograms.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>These functions allow to filter (subset) <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or
 <code><a href="XChromatogram.html">XChromatograms()</a></code> objects, i.e. sets of chromatographic data, without
@@ -105,6 +117,7 @@ this function allows to use for <code>XChromatograms</code> objects to sort the
 columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> of the
 <code>chromPeaks</code> matrix.</p></li>
 </ul></div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'MChromatograms'</span></span>
@@ -139,13 +152,20 @@ columns by column <code>sortBy = "maxo"</code> or <code>sortBy = "into"</code> o
 <span>  aggregationFun <span class="op">=</span> <span class="va">sum</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+
+
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>numeric(1)</code> with the
 threshold value to compare against.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character(1)</code> defining which value should be used in the
 comparison or sorting. Can be <code>value = "bpi"</code> (default) to use the
@@ -154,15 +174,21 @@ of intensities per chromatogram. For <code><a href="XChromatogram.html">XChromat
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
+
+
 <dt id="arg-which">which<a class="anchor" aria-label="anchor" href="#arg-which"></a></dt>
 <dd><p>for <code>filterColumnsIntensityAbove</code>: <code>character(1)</code> defining
 whether <strong>any</strong> (<code>which = "any"</code>, default) or <strong>all</strong> (<code>which = "all"</code>)
 chromatograms in a column have to fulfill the criteria for the column
 to be kept.</p></dd>
+
+
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: <code>integer(1)</code> specifying the number of
 columns that should be returned. <code>n</code> will be rounded to the closest
 (larger) integer value.</p></dd>
+
+
 <dt id="arg-sortby">sortBy<a class="anchor" aria-label="anchor" href="#arg-sortby"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: the value by which columns should
 be ordered to determine the top n columns. Can be either <code>sortBy = "bpi"</code>
@@ -172,16 +198,19 @@ sum of all chromatograms. For <code><a href="XChromatogram.html">XChromatograms(
 <code>value = "maxo"</code> and <code>value = "into"</code> is supported to use the maximum
 intensity or the integrated area of identified chromatographic peaks
 in each chromatogram.</p></dd>
+
+
 <dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p>for <code>filterColumnsKeepTop</code>: function to be used to
 aggregate (combine) the values from all chromatograms in each column.
 Defaults to <code>aggregationFun = sum</code> in which case the sum of the values
 is used to rank the columns. Alternatively the <code>mean</code>, <code>median</code> or
 similar function can be used.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
+    <p>a filtered <code>MChromatograms</code> (or <code>XChromatograms</code>) object with the
 same number of rows (EICs) but eventually a lower number of columns
 (samples).</p>
     </div>
@@ -189,6 +218,7 @@ same number of rows (EICs) but eventually a lower number of columns
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -271,12 +301,21 @@ same number of rows (EICs) but eventually a lower number of columns
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -7,12 +7,19 @@ peak definitions to an existing plot, such as one created by the
 plot method on a Chromatogram or
 MChromatograms object."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -27,20 +34,24 @@ MChromatograms object."><meta property="og:image" content="https://sneumann.gith
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add definition of chromatographic peaks to an extracted chromatogram plot</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>highlightChromPeaks.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>highlightChromPeaks</code> function adds chromatographic
 peak definitions to an existing plot, such as one created by the
 <code>plot</code> method on a <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a></code> or
 <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms</a></code> object.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">highlightChromPeaks</span><span class="op">(</span></span>
@@ -56,30 +67,47 @@ peak definitions to an existing plot, such as one created by the
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>XCMSnExp</code> object with the
 detected peaks.</p></dd>
+
+
 <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: <code>numeric(2)</code> with the
 retention time range from which peaks should be extracted and plotted.</p></dd>
+
+
 <dt id="arg-mz">mz<a class="anchor" aria-label="anchor" href="#arg-mz"></a></dt>
 <dd><p><code>numeric(2)</code> with the mz range from which the peaks should
 be extracted and plotted.</p></dd>
+
+
 <dt id="arg-peakids">peakIds<a class="anchor" aria-label="anchor" href="#arg-peakids"></a></dt>
 <dd><p><code>character</code> defining the IDs (i.e. rownames of the peak
 in the <code>chromPeaks</code> table) of the chromatographic peaks to be
 highlighted in a plot.</p></dd>
+
+
 <dt id="arg-border">border<a class="anchor" aria-label="anchor" href="#arg-border"></a></dt>
 <dd><p>colors to be used to color the border of the rectangles/peaks.
 Has to be equal to the number of samples in <code>x</code>.</p></dd>
+
+
 <dt id="arg-lwd">lwd<a class="anchor" aria-label="anchor" href="#arg-lwd"></a></dt>
 <dd><p><code>numeric(1)</code> defining the width of the line/border.</p></dd>
+
+
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>For <code>highlightChromPeaks</code>: color to be used to fill the
 rectangle (if <code>type = "rect"</code>) or the peak
 (for <code>type = "polygon"</code>).</p></dd>
+
+
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>the plotting type. See <code><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></code> in base grapics for
 more details.
@@ -91,6 +119,8 @@ chromatographic peak with a single point at the position of the peak's
 the peak shape. For <code>type = "polygon"</code> the color of the border and
 area can be defined with parameters <code>"border"</code> and <code>"col"</code>,
 respectively.</p></dd>
+
+
 <dt id="arg-whichpeaks">whichPeaks<a class="anchor" aria-label="anchor" href="#arg-whichpeaks"></a></dt>
 <dd><p><code>character(1)</code> specifying how peaks are called to be
 located within the region defined by <code>mz</code> and <code>rt</code>. Can be
@@ -100,14 +130,18 @@ completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the <code>type</code> argument of the
 <code><a href="XCMSnExp-class.html">chromPeaks</a></code> function. See related documentation for more
 information and examples.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters to the <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></code> or <code>plot</code>
 function.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -142,12 +176,21 @@ function.</p></dd>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

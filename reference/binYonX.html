@@ -15,12 +15,19 @@
     incrementally sorted and, if not, it will be internally sorted (in which
     case also y will be ordered according to the order of x).'><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -35,14 +42,17 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Aggregate values in y for bins defined on x</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-binning.R" class="external-link"><code>R/functions-binning.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-binning.R" class="external-link"><code>R/functions-binning.R</code></a></small>
       <div class="d-none name"><code>binYonX.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>This functions takes two same-sized numeric vectors <code>x</code>
     and <code>y</code>, bins/cuts <code>x</code> into bins (either a pre-defined number
@@ -53,6 +63,7 @@
     incrementally sorted and, if not, it will be internally sorted (in which
     case also <code>y</code> will be ordered according to the order of <code>x</code>).</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">binYonX</span><span class="op">(</span></span>
@@ -73,21 +84,34 @@
 <span>  returnX <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>Numeric vector to be used for binning.</p></dd>
+
+
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p>Numeric vector (same length than <code>x</code>) from which the maximum
 values for each bin should be defined. If not provided, <code>x</code> will
 be used.</p></dd>
+
+
 <dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
 <dd><p>Numeric vector defining the breaks for the bins, i.e. the
 lower and upper values for each bin. See examples below.</p></dd>
+
+
 <dt id="arg-nbins">nBins<a class="anchor" aria-label="anchor" href="#arg-nbins"></a></dt>
 <dd><p>integer(1) defining the number of desired bins.</p></dd>
+
+
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p>numeric(1) defining the desired bin size.</p></dd>
+
+
 <dt id="arg-binfromx">binFromX<a class="anchor" aria-label="anchor" href="#arg-binfromx"></a></dt>
 <dd><p>Optional numeric(1) allowing to manually specify
 the range of x-values to be used for binning.
@@ -95,55 +119,71 @@ This will affect only the calculation of the breaks for the bins
 (i.e. if <code>nBins</code> or <code>binSize</code> is provided).
 If not provided the minimal value in the sub-set
 <code>fromIdx</code>-<code>toIdx</code> in input vector <code>x</code> will be used.</p></dd>
+
+
 <dt id="arg-bintox">binToX<a class="anchor" aria-label="anchor" href="#arg-bintox"></a></dt>
 <dd><p>Same as <code>binFromX</code>, but defining the maximum x-value to be
 used for binning.</p></dd>
+
+
 <dt id="arg-fromidx">fromIdx<a class="anchor" aria-label="anchor" href="#arg-fromidx"></a></dt>
 <dd><p>Integer vector defining the start position of one or multiple
 sub-sets of input vector <code>x</code> that should be used for binning.</p></dd>
+
+
 <dt id="arg-toidx">toIdx<a class="anchor" aria-label="anchor" href="#arg-toidx"></a></dt>
 <dd><p>Same as <code>toIdx</code>, but defining the maximum index (or indices)
 in x to be used for binning.</p></dd>
+
+
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>A character string specifying the method that should be used to
 aggregate values in <code>y</code>. Allowed are <code>"max"</code>, <code>"min"</code>,
 <code>"sum"</code> and <code>"mean"</code> to identify the maximal or minimal value
 or to sum all values within a bin or calculate their mean value.</p></dd>
+
+
 <dt id="arg-basevalue">baseValue<a class="anchor" aria-label="anchor" href="#arg-basevalue"></a></dt>
 <dd><p>The base value for empty bins (i.e. bins into which either
 no values in <code>x</code> did fall, or to which only <code>NA</code> values in
 <code>y</code> were assigned). By default (i.e. if not specified), <code>NA</code>
 is assigned to such bins.</p></dd>
+
+
 <dt id="arg-sortedx">sortedX<a class="anchor" aria-label="anchor" href="#arg-sortedx"></a></dt>
 <dd><p>Whether <code>x</code> is sorted.</p></dd>
+
+
 <dt id="arg-shiftbyhalfbinsize">shiftByHalfBinSize<a class="anchor" aria-label="anchor" href="#arg-shiftbyhalfbinsize"></a></dt>
 <dd><p>Logical specifying whether the bins should be
 shifted by half the bin size to the left. Thus, the first bin will have
 its center at <code>fromX</code> and its lower and upper boundary are
 <code>fromX - binSize/2</code> and <code>fromX + binSize/2</code>. This argument is
 ignored if <code>breaks</code> are provided.</p></dd>
+
+
 <dt id="arg-returnindex">returnIndex<a class="anchor" aria-label="anchor" href="#arg-returnindex"></a></dt>
 <dd><p>Logical indicating whether the index of the max (if
 <code>method = "max"</code>) or min (if <code>method = "min"</code>) value within
 each bin in input vector <code>x</code> should also be reported. For methods
 other than <code>"max"</code> or <code>"min"</code> this argument is ignored.</p></dd>
+
+
 <dt id="arg-returnx">returnX<a class="anchor" aria-label="anchor" href="#arg-returnx"></a></dt>
 <dd><p><code>logical</code> allowing to avoid returning <code>$x</code>, i.e. the
 mid-points of the bins. <code>returnX = FALSE</code> might be useful in cases
 where <code>breaks</code> are pre-defined as it considerably reduces the memory
 demand.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>Returns a list of length 2, the first element (named <code>"x"</code>)
+    <p>Returns a list of length 2, the first element (named <code>"x"</code>)
     contains the bin mid-points, the second element (named <code>"y"</code>) the
-    aggregated values from input vector <code>y</code> within each bin. For</p>
-<p></p>
-<p><code>returnIndex = TRUE</code> the list contains an additional element</p>
-<p></p>
-<p><code>"index"</code> with the index of the max or min (depending on whether</p>
-<p></p>
-<p><code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
+    aggregated values from input vector <code>y</code> within each bin. For
+    <code>returnIndex = TRUE</code> the list contains an additional element
+    <code>"index"</code> with the index of the max or min (depending on whether
+    <code>method = "max"</code> or <code>method = "min"</code>) value within each bin in
     input vector <code>x</code>.</p>
     </div>
     <div class="section level2">
@@ -198,6 +238,7 @@ demand.</p></dd>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">########</span></span></span>
@@ -338,12 +379,21 @@ demand.</p></dd>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -33,12 +33,19 @@ isolation window target m/z (seprarately for each file). The parameter
 param allows to define and configure the peak detection algorithm (see
 findChromPeaks() for more information)."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -53,14 +60,17 @@ findChromPeaks() for more information)."><meta property="og:image" content="http
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Data independent acquisition (DIA): peak detection in isolation windows</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-OnDiskMSnExp.R" class="external-link"><code>R/methods-OnDiskMSnExp.R</code></a></small>
       <div class="d-none name"><code>findChromPeaksIsolationWindow.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>The <code>findChromPeaksIsolationWindow</code> function allows to perform a
 chromatographic peak detection in MS level &gt; 1 spectra of certain isolation
@@ -80,6 +90,7 @@ isolation window target m/z (seprarately for each file). The parameter
 <code>param</code> allows to define and configure the peak detection algorithm (see
 <code><a href="findChromPeaks.html">findChromPeaks()</a></code> for more information).</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">findChromPeaksIsolationWindow</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -104,37 +115,53 @@ isolation window target m/z (seprarately for each file). The parameter
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p><code>MsExperiment</code>, <code>XcmsExperiment</code>, <code>OnDiskMSnExp</code> or <code>XCMSnExp</code>
 object with the DIA data.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>currently not used.</p></dd>
+
+
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
 <dd><p>Peak detection parameter object, such as a
 <a href="findChromPeaks-centWave.html">CentWaveParam</a> object defining and configuring the chromographic
 peak detection algorithm.
 See also <code><a href="findChromPeaks.html">findChromPeaks()</a></code> for more details.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p><code>integer(1)</code> specifying the MS level in which the peak
 detection should be performed. By default <code>msLevel = 2L</code>.</p></dd>
+
+
 <dt id="arg-isolationwindow">isolationWindow<a class="anchor" aria-label="anchor" href="#arg-isolationwindow"></a></dt>
 <dd><p><code>factor</code> or similar defining the isolation windows in
 which the peak detection should be performed with length equal to the
 number of spectra in <code>object</code>.</p></dd>
+
+
 <dt id="arg-chunksize">chunkSize<a class="anchor" aria-label="anchor" href="#arg-chunksize"></a></dt>
 <dd><p>if <code>object</code> is an <code>MsExperiment</code> or <code>XcmsExperiment</code>:
 <code>integer(1)</code> defining the number of files (samples) that should be
 loaded into memory and processed at a time. See <code><a href="findChromPeaks.html">findChromPeaks()</a></code> for
 more information.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>if <code>object</code> is an <code>MsExperiment</code> or <code>XcmsExperiment</code>:
 parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more information.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>An <code>XcmsExperiment</code> or <code>XCMSnExp</code> object with the chromatographic peaks
+    <p>An <code>XcmsExperiment</code> or <code>XCMSnExp</code> object with the chromatographic peaks
 identified in spectra of each isolation window from each file added to the
 <code>chromPeaks</code> matrix.
 Isolation window definition for each identified peak are stored as additional
@@ -149,14 +176,24 @@ MS2 spectra for each MS1 chromatographic peak.</p></div>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer, Michael Witting</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

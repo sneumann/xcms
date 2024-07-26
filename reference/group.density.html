@@ -3,12 +3,19 @@
  calculation of smoothed peak distributions in chromatographic time."><meta property="og:description" content="Group peaks together across samples using overlapping m/z bins and
  calculation of smoothed peak distributions in chromatographic time."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -23,53 +30,70 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Group peaks from different samples together</h1>
+
       <div class="d-none name"><code>group.density.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Group peaks together across samples using overlapping m/z bins and
  calculation of smoothed peak distributions in chromatographic time.</p>
     </div>
+
+
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
+
 <dl><dt>object = "xcmsSet"</dt>
 <dd><p><code>
     group(object, bw = 30, minfrac = 0.5, minsamp = 1,
     mzwid = 0.25, max = 50, sleep = 0)
   </code></p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+    <p></p>
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsSet</code> object</p></dd>
+
   <dt id="arg-minfrac">minfrac<a class="anchor" aria-label="anchor" href="#arg-minfrac"></a></dt>
 <dd><p>minimum fraction of samples necessary in at least one of the sample
     groups for it to be a valid group</p></dd>
+
   <dt id="arg-minsamp">minsamp<a class="anchor" aria-label="anchor" href="#arg-minsamp"></a></dt>
 <dd><p>minimum number of samples necessary in at least one of the sample
     groups for it to be a valid group</p></dd>
+
   <dt id="arg-bw">bw<a class="anchor" aria-label="anchor" href="#arg-bw"></a></dt>
 <dd><p>bandwidth (standard deviation or half width at half maximum)
     of gaussian smoothing kernel to apply to the peak density
     chromatogram</p></dd>
+
   <dt id="arg-mzwid">mzwid<a class="anchor" aria-label="anchor" href="#arg-mzwid"></a></dt>
 <dd><p>width of overlapping m/z slices to use for creating peak density
     chromatograms and grouping peaks across samples</p></dd>
+
   <dt id="arg-max">max<a class="anchor" aria-label="anchor" href="#arg-max"></a></dt>
 <dd><p>maximum number of groups to identify in a single m/z slice</p></dd>
+
   <dt id="arg-sleep">sleep<a class="anchor" aria-label="anchor" href="#arg-sleep"></a></dt>
 <dd><p>seconds to pause between plotting successive steps of the peak
     grouping algorithm. peaks are plotted as points showing relative
     intensity. identified groups are flanked by dotted vertical
     lines.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>An <code>xcmsSet</code> object with peak group assignments and statistics.</p>
+    <p>An <code>xcmsSet</code> object with peak group assignments and statistics.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -78,14 +102,24 @@
   <code><a href="xcmsSet-class.html">xcmsSet-class</a></code>,
   <code><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></code></p></div>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

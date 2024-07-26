@@ -3,12 +3,19 @@
 the m/z - rt space."><meta property="og:description" content="overlappingFeatures identifies features that are overlapping or close in
 the m/z - rt space."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -23,51 +30,66 @@ the m/z - rt space."><meta property="og:image" content="https://sneumann.github.
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Identify overlapping features</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>overlappingFeatures.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><code>overlappingFeatures</code> identifies features that are overlapping or close in
 the m/z - rt space.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">overlappingFeatures</span><span class="op">(</span><span class="va">x</span>, expandMz <span class="op">=</span> <span class="fl">0</span>, expandRt <span class="op">=</span> <span class="fl">0</span>, ppm <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> or <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> object with the features.</p></dd>
+
+
 <dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in m/z dimension before identifying overlapping features.
 The resulting <code>"mzmin"</code> for the feature is thus <code>mzmin - expandMz</code> and
 the <code>"mzmax"</code> <code>mzmax + expandMz</code>.</p></dd>
+
+
 <dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> with the value to expand each feature (on each
 side) in retention time dimension before identifying overlapping
 features. The resulting <code>"rtmin"</code> for the
 feature is thus <code>rtmin - expandRt</code> and the <code>"rtmax"</code> <code>rtmax + expandRt</code>.</p></dd>
+
+
 <dt id="arg-ppm">ppm<a class="anchor" aria-label="anchor" href="#arg-ppm"></a></dt>
 <dd><p><code>numeric(1)</code> to grow the m/z width of the feature by a relative
 value: <code>mzmin - mzmin * ppm / 2e6</code>, <code>mzmax + mzmax * ppm / 2e6</code>. Each
 feature is thus expanded in m/z dimension by ppm/2 on each side before
 identifying overlapping features.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p><code>list</code> with indices of features (in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>) that
+    <p><code>list</code> with indices of features (in <code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>) that
 are overlapping.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -100,12 +122,21 @@ are overlapping.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

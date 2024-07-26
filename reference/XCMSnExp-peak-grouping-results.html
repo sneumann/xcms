@@ -35,12 +35,19 @@ processing of the data. Internally, the featureValues method
 is used to extract the feature abundances, parameters for that method can
 be passed to quantify with ...."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -55,14 +62,17 @@ be passed to quantify with ...."><meta property="og:image" content="https://sneu
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Accessing mz-rt feature data values</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-XCMSnExp.R" class="external-link"><code>R/methods-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>XCMSnExp-peak-grouping-results.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p><code>featureValues,XCMSnExp</code> : extract a <code>matrix</code> for
 feature values with rows representing features and columns samples.
@@ -83,6 +93,7 @@ processing of the data. Internally, the <code>featureValues</code> method
 is used to extract the feature abundances, parameters for that method can
 be passed to <code>quantify</code> with <code>...</code>.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
@@ -99,14 +110,21 @@ be passed to <code>quantify</code> with <code>...</code>.</p>
 <span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>A <code><a href="XCMSnExp-class.html">XCMSnExp</a></code> object providing the feature
 definitions.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>For <code>quantify</code>: additional parameters to be passed on to the
 <code>featureValues</code> method.</p></dd>
+
+
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p><code>character</code> specifying the method to resolve
 multi-peak mappings within the same sample, i.e. to define the
@@ -116,42 +134,51 @@ peak closest to the median retention time of the feature.
 If <code>"maxint"</code>: select the peak yielding the largest signal. If
 <code>"sum"</code>: sum the values (only if <code>value</code> is <code>"into"</code> or
 <code>"maxo"</code>.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character</code> specifying the name of the column in
 <code>chromPeaks(object)</code> that should be returned. Defaults to
 <code>"into"</code> in which case the integrated peak area is returned. To
 get the index of the peak in the <code>chromPeaks(object)</code> matrix use
 <code>"index"</code>.</p></dd>
+
+
 <dt id="arg-intensity">intensity<a class="anchor" aria-label="anchor" href="#arg-intensity"></a></dt>
 <dd><p><code>character</code> specifying the name of the column in the
 <code>chromPeaks(objects)</code> matrix containing the intensity value of the
 peak that should be used for the conflict resolution if
 <code>method = "maxint"</code>.</p></dd>
+
+
 <dt id="arg-filled">filled<a class="anchor" aria-label="anchor" href="#arg-filled"></a></dt>
 <dd><p><code>logical(1)</code> specifying whether values for filled-in
 peaks should be returned or not. If <code>filled = FALSE</code>, an <code>NA</code>
 is returned in the matrix for the respective peak. See
 <code><a href="fillChromPeaks.html">fillChromPeaks</a></code> for details on peak filling.</p></dd>
+
+
 <dt id="arg-missing">missing<a class="anchor" aria-label="anchor" href="#arg-missing"></a></dt>
 <dd><p>how missing values should be reported. Allowed values are
 <code>NA</code> (the default), a <code>numeric</code> or
 <code>missing = "rowmin_half"</code>. The latter replaces any <code>NA</code> with
 half of the row's minimal (non-missing) value.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>for `featureValues`: `integer` defining the MS level(s) for
 which feature values should be returned. By default, values for features
 defined for all MS levels are returned.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For <code>featureValues</code>: a <code>matrix</code> with
+    <p>For <code>featureValues</code>: a <code>matrix</code> with
 feature values, columns representing samples, rows features. The order
 of the features matches the order found in the
-<code>featureDefinitions(object)</code></p>
-<p></p>
-<p><code>DataFrame</code>. The rownames of the
-<code>matrix</code> are the same than those of the <code>featureDefinitions</code></p>
-<p><code>DataFrame</code>. <code>NA</code> is reported for features without
+<code>featureDefinitions(object)</code> <code>DataFrame</code>. The rownames of the
+<code>matrix</code> are the same than those of the <code>featureDefinitions</code>
+<code>DataFrame</code>. <code>NA</code> is reported for features without
 corresponding chromatographic peak in the respective sample(s).</p>
 <p>For <code>quantify</code>: a <code>SummarizedExperiment</code> representing
 the preprocessing results.</p>
@@ -178,14 +205,24 @@ feature.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

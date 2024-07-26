@@ -13,12 +13,19 @@ deviations (RSD) are calculated for the integrated peak areas per feature
 across samples. For `perSampleCounts = TRUE` also the individual
 chromatographic peak counts per sample are returned."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -33,14 +40,17 @@ chromatographic peak counts per sample are returned."><meta property="og:image" 
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Simple feature summaries</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>featureSummary.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Simple function to calculate feature summaries. These include counts and
 percentages of samples in which a chromatographic peak is present for each
@@ -50,6 +60,7 @@ deviations (RSD) are calculated for the integrated peak areas per feature
 across samples. For `perSampleCounts = TRUE` also the individual
 chromatographic peak counts per sample are returned.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">featureSummary</span><span class="op">(</span></span>
@@ -60,28 +71,40 @@ chromatographic peak counts per sample are returned.</p>
 <span>  skipFilled <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>[XcmsExperiment()] or [XCMSnExp()] object with correspondence
 results.</p></dd>
+
+
 <dt id="arg-group">group<a class="anchor" aria-label="anchor" href="#arg-group"></a></dt>
 <dd><p>`numeric`, `logical`, `character` or `factor` with the same
 length than `x` has samples to aggregate counts by the groups defined
 in `group`.</p></dd>
+
+
 <dt id="arg-persamplecounts">perSampleCounts<a class="anchor" aria-label="anchor" href="#arg-persamplecounts"></a></dt>
 <dd><p>`logical(1)` whether feature wise individual peak
 counts per sample should be returned too.</p></dd>
+
+
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
 <dd><p>`character` passed to the [featureValues()] function. See
 respective help page for more information.</p></dd>
+
+
 <dt id="arg-skipfilled">skipFilled<a class="anchor" aria-label="anchor" href="#arg-skipfilled"></a></dt>
 <dd><p>`logical(1)` whether filled-in peaks should be excluded
 (default) or included in the summary calculation.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>`matrix` with one row per feature and columns:</p>
+    <p>`matrix` with one row per feature and columns:</p>
 <p>- `"count"`: the total number of samples in which a peak was found.
 - `"perc"`: the percentage of samples in which a peak was found.
 - `"multi_count"`: the total number of samples in which more than one peak
@@ -89,8 +112,8 @@ respective help page for more information.</p></dd>
 - `"multi_perc"`: the percentage of those samples in which a peak was found,
   that have also multiple peaks annotated to the feature. Example: for a
   feature, at least one peak was detected in 50 samples. In 5 of them 2 peaks
-  were assigned to the feature. `"multi_perc"` is in this case 10<!-- %. --></p>
-<p>- `"rsd"`: relative standard deviation (coefficient of variation) of the
+  were assigned to the feature. `"multi_perc"` is in this case 10<!-- %. -->
+- `"rsd"`: relative standard deviation (coefficient of variation) of the
   integrated peak area of the feature's peaks.
 - The same 4 columns are repeated for each unique element (level) in `group`
   if `group` was provided.</p>
@@ -101,14 +124,24 @@ with the peak counts per sample.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -1,3 +1,0 @@
-"/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko15.CDF"
-"/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko16.CDF"
-"/usr/local/lib/R/host-site-library/faahKO/cdf/KO/ko18.CDF"

@@ -15,12 +15,19 @@ each sample along the retention time axis as an *image* plot, i.e.
 with the number of peaks detected in each bin along the retention time
 represented with the color of the respective cell."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -35,14 +42,17 @@ represented with the color of the respective cell."><meta property="og:image" co
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>General visualizations of peak detection results</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment-plotting.R" class="external-link"><code>R/XcmsExperiment-plotting.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment-plotting.R" class="external-link"><code>R/XcmsExperiment-plotting.R</code></a></small>
       <div class="d-none name"><code>plotChromPeaks.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>`plotChromPeaks` plots the identified chromatographic
 peaks from one file into the plane spanned by the retention time (x-axis)
@@ -53,6 +63,7 @@ each sample along the retention time axis as an *image* plot, i.e.
 with the number of peaks detected in each bin along the retention time
 represented with the color of the respective cell.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotChromPeaks</span><span class="op">(</span></span>
@@ -82,59 +93,91 @@ represented with the color of the respective cell.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A [XcmsExperiment()] or [XCMSnExp()] object.</p></dd>
+
+
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>For `plotChromPeaks`: `integer(1)` specifying the
 index of the file within `x` for which the plot should be created.
 Defaults to `file = 1`.</p></dd>
+
+
 <dt id="arg-xlim">xlim<a class="anchor" aria-label="anchor" href="#arg-xlim"></a></dt>
 <dd><p>`numeric(2)` specifying the x-axis limits (retention time
 dimension). Defaults to `xlim = NULL` in which case the full retention
 time range of the file is used.</p></dd>
+
+
 <dt id="arg-ylim">ylim<a class="anchor" aria-label="anchor" href="#arg-ylim"></a></dt>
 <dd><p>For `plotChromPeaks`: `numeric(2)` specifying the
 y-axis limits (m/z dimension). Defaults to `ylim = NULL` in which
 case the full m/z range of the file is used.</p></dd>
+
+
 <dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
 <dd><p>For `plotChromPeaks`: `logical(1)` whether the plot
 should be added to an existing plot or if a new plot should be created.</p></dd>
+
+
 <dt id="arg-border">border<a class="anchor" aria-label="anchor" href="#arg-border"></a></dt>
 <dd><p>For `plotChromPeaks`: the color for the rectangles'
 border.</p></dd>
+
+
 <dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
 <dd><p>For `plotChromPeaks`: the color to be used to fill the
 rectangles.</p></dd>
+
+
 <dt id="arg-xlab">xlab<a class="anchor" aria-label="anchor" href="#arg-xlab"></a></dt>
 <dd><p>`character(1)` defining the x-axis label.</p></dd>
+
+
 <dt id="arg-ylab">ylab<a class="anchor" aria-label="anchor" href="#arg-ylab"></a></dt>
 <dd><p>For `plotChromPeaks`: `character(1)` defining the
 y-axis label.</p></dd>
+
+
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>`character(1)` defining the plot title. By default (i.e.
 `main = NULL`) the name of the file will be used as title.</p></dd>
+
+
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
 <dd><p>`integer(1)` defining the MS level from which the peaks
 should be visualized.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to the `plot` (for
 `plotChromPeaks`) and `image` (for
 `plotChromPeakImage`) functions. Ignored for `add = TRUE`.</p></dd>
+
+
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p>For `plotChromPeakImage`: `numeric(1)` defining the
 size of the bins along the x-axis (retention time). Defaults to
 `binSize = 30`, peaks within each 30 seconds will thus counted and
 plotted.</p></dd>
+
+
 <dt id="arg-log">log<a class="anchor" aria-label="anchor" href="#arg-log"></a></dt>
 <dd><p>For `plotChromPeakImage`: `logical(1)` whether the peak
 counts should be log2 transformed before plotting.</p></dd>
+
+
 <dt id="arg-yaxt">yaxt<a class="anchor" aria-label="anchor" href="#arg-yaxt"></a></dt>
 <dd><p>For `plotChromPeakImage`: `character(1)` defining
 whether y-axis labels should be added. To disable the y-axis use
 `yaxt = "n"`. For any other value of `yaxt` the axis will be
 drawn. See [par()] help page for more details.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -147,6 +190,7 @@ and `par(lty = 2)`, respectively.</p>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -169,12 +213,21 @@ and `par(lty = 2)`, respectively.</p>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

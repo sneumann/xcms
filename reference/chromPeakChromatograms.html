@@ -5,12 +5,19 @@ of length equal to the number of chromatographic peaks (and one column)."><meta 
 XcmsExperiment() object. The result is returned as an XChromatograms()
 of length equal to the number of chromatographic peaks (and one column)."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -25,19 +32,23 @@ of length equal to the number of chromatographic peaks (and one column)."><meta 
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract an ion chromatogram for each chromatographic peak</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a></small>
       <div class="d-none name"><code>chromPeakChromatograms.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Extract an ion chromatogram (EIC) for each chromatographic peak in an
 <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object. The result is returned as an <code><a href="XChromatogram.html">XChromatograms()</a></code>
 of length equal to the number of chromatographic peaks (and one column).</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">chromPeakChromatograms</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -54,40 +65,58 @@ of length equal to the number of chromatographic peaks (and one column).</p>
 <span>  progressbar <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> with identified chromatographic peaks.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>currently ignored.</p></dd>
+
+
 <dt id="arg-expandrt">expandRt<a class="anchor" aria-label="anchor" href="#arg-expandrt"></a></dt>
 <dd><p><code>numeric(1)</code> to eventually expand the retention time range
 from which the signal should be integrated. The chromatogram will
 contain signal from <code>chromPeaks[, "rtmin"] - expandRt</code> to
 <code>chromPeaks[, "rtmax"] + expandRt</code>. The default is <code>expandRt = 0</code>.</p></dd>
+
+
 <dt id="arg-expandmz">expandMz<a class="anchor" aria-label="anchor" href="#arg-expandmz"></a></dt>
 <dd><p><code>numeric(1)</code> to eventually expand the m/z range
 from which the signal should be integrated. The chromatogram will
 contain signal from <code>chromPeaks[, "mzmin"] - expandMz</code> to
 <code>chromPeaks[, "mzmax"] + expandMz</code>. The default is <code>expandMz = 0</code>.</p></dd>
+
+
 <dt id="arg-aggregationfun">aggregationFun<a class="anchor" aria-label="anchor" href="#arg-aggregationfun"></a></dt>
 <dd><p><code>character(1)</code> defining the function how signals
 within the m/z range in each spectrum (i.e. for each discrete retention
 time) should be aggregated. The default (<code>aggregationFun = "max"</code>)
 reports the largest signal for each spectrum.</p></dd>
+
+
 <dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p>optional <code>character</code> providing the IDs of the chromatographic
 peaks (i.e. the row names of the peaks in <code>chromPeaks(object)</code>) for
 which chromatograms should be returned.</p></dd>
+
+
 <dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
 <dd><p><code>character(1)</code> specifying the type of the returned object.
 Can be either <code>return.type = "XChromatograms"</code> (the default) or
 <code>return.type = "MChromatograms"</code> to return either a chromatographic
 object with or without the identified chromatographic peaks,
 respectively.</p></dd>
+
+
 <dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
 <dd><p><code>logical(1)</code> whether the progress of the extraction
 process should be displayed.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -97,6 +126,7 @@ process should be displayed.</p></dd>
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
@@ -164,12 +194,21 @@ process should be displayed.</p></dd>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

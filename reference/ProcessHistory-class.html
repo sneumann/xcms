@@ -39,12 +39,19 @@ The processInfo extracts optional additional information
 The fileIndex extracts the indices of the files on which
     the processing step was applied."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -59,14 +66,17 @@ The fileIndex extracts the indices of the files on which
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Tracking data processing</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/HEAD/R/methods-ProcessHistory.R" class="external-link"><code>R/methods-ProcessHistory.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/DataClasses.R" class="external-link"><code>R/DataClasses.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/methods-ProcessHistory.R" class="external-link"><code>R/methods-ProcessHistory.R</code></a></small>
       <div class="d-none name"><code>ProcessHistory-class.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Objects of the type <code>ProcessHistory</code> allow to keep track
     of any data processing step in an metabolomics experiment. They are
@@ -89,6 +99,7 @@ The fileIndex extracts the indices of the files on which
 <p>The <code>fileIndex</code> extracts the indices of the files on which
     the processing step was applied.</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'ProcessHistory'</span></span>
@@ -115,16 +126,19 @@ The fileIndex extracts the indices of the files on which
 <span><span class="co"># S4 method for class 'ProcessHistory'</span></span>
 <span><span class="fu">fileIndex</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>A <code>ProcessHistory</code> or <code>XProcessHistory</code> object.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For <code>processParam</code>: a parameter object extending the</p>
-<p></p>
-<p><code>Param</code> class.</p>
+    <p>For <code>processParam</code>: a parameter object extending the
+    <code>Param</code> class.</p>
 <p>The <code>processType</code> method returns a character string with the
     processing step type.</p>
 <p>The <code>processDate</code> method returns a character string with the
@@ -136,39 +150,65 @@ The fileIndex extracts the indices of the files on which
     </div>
     <div class="section level2">
     <h2 id="slots">Slots<a class="anchor" aria-label="anchor" href="#slots"></a></h2>
+
+
 <dl><dt><code>type</code></dt>
 <dd><p>character(1): string defining the type of the processing step.
 This string has to match predefined values. Use
 <code><a href="XCMSnExp-class.html">processHistoryTypes</a></code> to list them.</p></dd>
+
+
 <dt><code>date</code></dt>
 <dd><p>character(1): date time stamp when the processing step was started.</p></dd>
+
+
 <dt><code>info</code></dt>
 <dd><p>character(1): optional additional information.</p></dd>
+
+
 <dt><code>fileIndex</code></dt>
 <dd><p>integer of length 1 or &gt; 1 to specify on which
 samples of the object the processing was performed.</p></dd>
+
+
 <dt><code>error</code></dt>
 <dd><p>(ANY): used to store eventual calculation errors.</p></dd>
+
+
 <dt><code>param</code></dt>
 <dd><p>(Param): an object of type <code>Param</code> (e.g.
 <code><a href="findChromPeaks-centWave.html">CentWaveParam</a></code>) specifying the settings of the processing
 step.</p></dd>
+
+
 <dt><code>msLevel:</code></dt>
 <dd><p><code>integer</code> definining the MS level(s) on which the
 analysis was performed.</p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

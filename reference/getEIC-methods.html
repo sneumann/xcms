@@ -11,12 +11,19 @@ Note that this method will always return profile, not raw
   data (with profile data being the binned data along M/Z). See details
   for further information."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -31,13 +38,17 @@ Note that this method will always return profile, not raw
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Get extracted ion chromatograms for specified m/z ranges</h1>
+
       <div class="d-none name"><code>getEIC-methods.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Generate multiple extracted ion chromatograms for m/z values of
   interest. For <code>xcmsSet</code> objects, reread original raw data
@@ -46,18 +57,26 @@ Note that this method will always return profile, not raw
   data (with profile data being the binned data along M/Z). See details
   for further information.</p>
     </div>
+
+
     <div class="section level2">
     <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
+
 <dl><dt>object = "xcmsRaw"</dt>
 <dd><p><code>getEIC(object, mzrange, rtrange = NULL, step = 0.1)</code></p></dd>
+
 <dt>object = "xcmsSet"</dt>
 <dd><p><code>getEIC(object, mzrange, rtrange = 200, groupidx,
                sampleidx = sampnames(object), rt = c("corrected", "raw"))</code></p></dd>
+
+
 </dl></div>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+    <p></p>
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>the <code>xcmsRaw</code> or <code>xcmsSet</code> object</p></dd>
+
   <dt id="arg-mzrange">mzrange<a class="anchor" aria-label="anchor" href="#arg-mzrange"></a></dt>
 <dd><p>Either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns <code>mzmin</code> and
@@ -66,6 +85,7 @@ Note that this method will always return profile, not raw
     each RT across all m/z).</p>
 <p>For <code>xcmsSet</code> objects the group data will be used if
     <code>mzrange</code> is not provided.</p></dd>
+
   <dt id="arg-rtrange">rtrange<a class="anchor" aria-label="anchor" href="#arg-rtrange"></a></dt>
 <dd><p>A two column matrix the same size as <code>mzrange</code> with minimum
     and maximum retention times between which to return EIC data
@@ -74,18 +94,23 @@ Note that this method will always return profile, not raw
 <p>For <code>xcmsSet</code> objects, it may also be a single number
     specifying the time window around the peak to return EIC data
     points</p></dd>
+
   <dt id="arg-step">step<a class="anchor" aria-label="anchor" href="#arg-step"></a></dt>
 <dd><p>step (bin) size to use for profile generation. Note that a
     value of <code>step = 0</code> is not supported.</p></dd>
+
   <dt id="arg-groupidx">groupidx<a class="anchor" aria-label="anchor" href="#arg-groupidx"></a></dt>
 <dd><p>either character vector with names or integer vector with
     indicies of peak groups for which to get EICs</p></dd>
+
   <dt id="arg-sampleidx">sampleidx<a class="anchor" aria-label="anchor" href="#arg-sampleidx"></a></dt>
 <dd><p>either character vector with names or integer vector with
     indicies of samples for which to get EICs</p></dd>
+
   <dt id="arg-rt">rt<a class="anchor" aria-label="anchor" href="#arg-rt"></a></dt>
 <dd><p><code>"corrected"</code> for using corrected retention times, or
     <code>"raw"</code> for using raw retention times</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -97,7 +122,7 @@ Note that this method will always return profile, not raw
     </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>For <code>xcmsSet</code> and <code>xcmsRaw</code> objects, an <code>xcmsEIC</code> object.</p>
+    <p>For <code>xcmsSet</code> and <code>xcmsRaw</code> objects, an <code>xcmsEIC</code> object.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -106,14 +131,24 @@ Note that this method will always return profile, not raw
   <code><a href="xcmsEIC-class.html">xcmsEIC-class</a></code>,
   <code><a href="rawEIC-methods.html">rawEIC</a></code></p></div>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 

@@ -3,12 +3,19 @@
 software (or the MetaboAnalystR R package)."><meta property="og:description" content="Export the feature table for further analysis in the MetaboAnalyst
 software (or the MetaboAnalystR R package)."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+
+
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.1</small>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.2</small>
+
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/xcms.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -23,18 +30,22 @@ software (or the MetaboAnalystR R package)."><meta property="og:image" content="
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/sneumann/xcms/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
+
+
   </div>
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Export data for use in MetaboAnalyst</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/HEAD/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-XCMSnExp.R" class="external-link"><code>R/functions-XCMSnExp.R</code></a></small>
       <div class="d-none name"><code>exportMetaboAnalyst.Rd</code></div>
     </div>
+
     <div class="ref-description section level2">
     <p>Export the feature table for further analysis in the MetaboAnalyst
 software (or the <code>MetaboAnalystR</code> R package).</p>
     </div>
+
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">exportMetaboAnalyst</span><span class="op">(</span></span>
@@ -47,52 +58,78 @@ software (or the <code>MetaboAnalystR</code> R package).</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
+
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p><a href="XCMSnExp-class.html">XCMSnExp</a> object with identified chromatographic peaks grouped
 across samples.</p></dd>
+
+
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p><code>character(1)</code> defining the file name. If not specified, the
 <code>matrix</code> with the content is returned.</p></dd>
+
+
 <dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
 <dd><p>either <code>character(1)</code> specifying the phenodata column in <code>x</code>
 defining the sample grouping or a vector with the same length than
 samples in <code>x</code> defining the group assignment of the samples.</p></dd>
+
+
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
 <dd><p><code>character(1)</code> specifying the value to be returned for each
 feature. See <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code> for more details.</p></dd>
+
+
 <dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
 <dd><p><code>integer(1)</code> defining the number of significant digits to be
 used for numeric. The default <code>NULL</code> uses <code>getOption("digits")</code>. See
 <code><a href="https://rdrr.io/pkg/BiocGenerics/man/format.html" class="external-link">format()</a></code> for more information.</p></dd>
+
+
 <dt id="arg-groupnames">groupnames<a class="anchor" aria-label="anchor" href="#arg-groupnames"></a></dt>
 <dd><p><code>logical(1)</code> whether row names of the resulting matrix
 should be the feature IDs (<code>groupnames = FALSE</code>; default) or IDs that
 are composed of the m/z and retention time of the features (in the
 format <code>M&lt;m/z&gt;T&lt;rt&gt;</code> (<code>groupnames = TRUE</code>). See help of the <a href="groupnames-methods.html">groupnames</a>
 function for details.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters to be passed to the <code><a href="XCMSnExp-peak-grouping-results.html">featureValues()</a></code>
 function.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-<p>If <code>file</code> is not specified, the function returns the <code>matrix</code> in
+    <p>If <code>file</code> is not specified, the function returns the <code>matrix</code> in
 the format supported by MetaboAnalyst.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Johannes Rainer</p>
     </div>
+
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
+
+
     <footer><div class="pkgdown-footer-left">
   <p>Developed by Colin A. Smith, Ralf Tautenhahn, Steffen Neumann, Paul Benton, Christopher Conley, Johannes Rainer, William Kumler, Philippine Louail.</p>
 </div>
+
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
+
     </footer></div>
+
+
+
+
+
   </body></html>
 
