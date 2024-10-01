@@ -32,7 +32,7 @@ setMethod("show", "XChromatogram", function(object) {
 #'   value) and `"mzmax"` (maximal m/z value), `"rt"` (retention time of the
 #'   peak apex), `"rtmin"` (the lower peak boundary in retention time
 #'   dimension), `"rtmax"` (the upper peak boundary in retention time
-#'   dimension), `"into"` (the ingegrated peak signal/area of the peak),
+#'   dimension), `"into"` (the integrated peak signal/area of the peak),
 #'   `"maxo"` (the maximum instensity of the peak and `"sn"` (the signal to
 #'   noise ratio).
 #'   Note that, depending on the peak detection algorithm, the matrix may

@@ -470,7 +470,7 @@ eics <- chromPeakChromatograms(
     faahko, peaks = rownames(chromPeaks(faahko))[c(4, 6)])
 ```
 
-```{r peak-quality-metrics, fig.widht = 10, fig.height = 5, fig.cap = "Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor = 0.98, right: peak CP0006 with a beta_cor = 0.13."}
+```{r peak-quality-metrics, fig.width = 10, fig.height = 5, fig.cap = "Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor = 0.98, right: peak CP0006 with a beta_cor = 0.13."}
 peak_1 <- eics[1]
 peak_2 <- eics[2]
 par(mfrow = c(1, 2))
@@ -509,7 +509,7 @@ faahko_pp <- refineChromPeaks(faahko, mpp)
 
 An example for a merged peak is given below.
 
-```{r peak-postprocessing-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
+```{r peak-postprocessing-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
 mzr_1 <- 305.1 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
@@ -524,7 +524,7 @@ plot(chr_2)
 peaks into a single one (right panel in the figure above). Other close peaks,
 with a lower intensity between them, were however not merged (see below).
 
-```{r peak-postprocessing-not-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
+```{r peak-postprocessing-not-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
 mzr_1 <- 496.2 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)

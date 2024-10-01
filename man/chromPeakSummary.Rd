@@ -43,20 +43,21 @@ columns, their names and content depend on the used parameter object. See
 the respective documentation above for more details.
 }
 \description{
-The \code{chromPeakSummary()} method calculates summary statistic or other
-metrics for each of the identified chromatographic peaks in an \emph{xcms}
-result object, such as the \code{\link[=XcmsExperiment]{XcmsExperiment()}}. Different metrics can be
-calculated, depending (and configured) using dedicated \emph{parameter} classes.
-As a result, the method returns a \code{matrix} or \code{data.frame} with one row
-per chromatographic peak. Each column contains calculated values, depending
-on the used method/parameter class.
+The \code{chromPeakSummary()} method calculates summary statistics or other
+metrics for each of the identified chromatographic peaks in an \emph{xcms} result
+object, such as the \code{\link[=XcmsExperiment]{XcmsExperiment()}}. Different metrics can be calculated,
+depending upon (and configured by) using dedicated \emph{parameter} classes. As a
+result, the method returns a \code{matrix} or \code{data.frame} with one row per
+chromatographic peak. Each column contains calculated values, depending on
+the used method/parameter class.
 
 Currently implemented methods/parameter classes are:
 \itemize{
 \item \code{BetaDistributionParam}: calculates the \emph{beta_cor} and \emph{beta_snr} quality
-metrics as described in (Kumler 2023) representing the result from a
-(correlation) test of similarity to a bell curve and the signal-to-noise
-ratio calculated on the residulas of this test.
+metrics as described in Kumler 2023 representing the result from a
+(correlation) test of similarity (using Pearson's correlation coefficient)
+to a bell curve and the signal-to-noise ratio calculated on the residuals
+of this test.
 }
 }
 \references{
@@ -65,5 +66,5 @@ assessing chromatographic peak quality with simple metrics in metabolomics"
 \emph{BMC Bioinformatics} 24(1):404. doi: 10.1186/s12859-023-05533-4
 }
 \author{
-Pablo Vangeenderhuysen, Johannes Rainer
+Pablo Vangeenderhuysen, Johannes Rainer, William Kumler
 }

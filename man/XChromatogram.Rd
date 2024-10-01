@@ -455,7 +455,7 @@ a \code{matrix} with columns \code{"mz"} (mean m/z value), \code{"mzmin"} (minim
 value) and \code{"mzmax"} (maximal m/z value), \code{"rt"} (retention time of the
 peak apex), \code{"rtmin"} (the lower peak boundary in retention time
 dimension), \code{"rtmax"} (the upper peak boundary in retention time
-dimension), \code{"into"} (the ingegrated peak signal/area of the peak),
+dimension), \code{"into"} (the integrated peak signal/area of the peak),
 \code{"maxo"} (the maximum instensity of the peak and \code{"sn"} (the signal to
 noise ratio).
 Note that, depending on the peak detection algorithm, the matrix may
