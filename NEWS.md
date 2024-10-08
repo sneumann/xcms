@@ -1,5 +1,12 @@
 # xcms 4.3
 
+## Changes in version XXX
+
+- Change the naming convention of chromatographic peaks to include also the MS
+  level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
+  in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
+  in MS level 2.
+
 ## Changes in version 4.3.4
 
 - Address issue #765: peak detection on chromatographic data: report a

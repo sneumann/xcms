@@ -219,7 +219,7 @@
         return(list(chromPeaks = pks, chromPeakData = pkd))
     idx <- order(pks[, "rtmin"])
     pks <- pks[idx, , drop = FALSE]
-    pkd <- pkd[idx, ]
+    pkd <- pkd[idx, , drop = FALSE]
     rownames(pkd) <- NULL
     pks_new <- pks
     pks_new[ , ] <- NA_real_
@@ -278,25 +278,25 @@
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
-                    pkd[current_peak, ] <- pkd[i, ] # replace peak data with new
+                    pkd[current_peak, ] <- pkd[i, , drop = FALSE]
                 }
                 rownames(pks_new)[current_peak] <- NA_character_
             } else {
                 current_peak <- current_peak + 1
                 pks_new[current_peak, ] <- pks[i, ]
                 rownames(pks_new)[current_peak] <- rownames(pks)[i]
-                pkd[current_peak, ] <- pkd[i, ]
+                pkd[current_peak, ] <- pkd[i, , drop = FALSE]
             }
         } else {
             current_peak <- current_peak + 1
             pks_new[current_peak, ] <- pks[i, ]
             rownames(pks_new)[current_peak] <- rownames(pks)[i]
-            pkd[current_peak, ] <- pkd[i, ]
+            pkd[current_peak, ] <- pkd[i, , drop = FALSE]
         }
     }
     keep <- which(!is.na(pks_new[, "rt"]))
     list(chromPeaks = pks_new[keep, , drop = FALSE],
-         chromPeakData = pkd[keep, ])
+         chromPeakData = pkd[keep, , drop = FALSE])
 }
 
 #' similar to functions-XCMSnExp.R/.merge_neigboring_peaks but works on only
@@ -317,17 +317,17 @@
 #' @noRd
 .merge_neighboring_peaks2 <- function(x, pks, pkd, rt, expandRt = 2,
                                       expandMz = 0, ppm = 10, minProp = 0.75) {
-    cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
+    cands <- xcms:::.define_merge_candidates(pks, expandMz, ppm, expandRt)
     if (!length(cands))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     cands <- cands[[2L]]
     pks_new <- pkd_new <- vector("list", length(cands))
     for (i in seq_along(cands)) {
-        res <- .merge_neighboring_peak_candidates(
+        res <- xcms:::.merge_neighboring_peak_candidates(
             x, rt = rt, pks[cands[[i]], , drop = FALSE],
             pkd[cands[[i]], , drop = FALSE], diffRt = 2 * expandRt,
             minProp = minProp, expandMz = expandMz, ppm = ppm)
-        pks_new[[i]] <- res$chromPeaks
+         pks_new[[i]] <- res$chromPeaks
         pkd_new[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, pks_new)
@@ -337,12 +337,12 @@
     keep <- !(rownames(pks) %in% setdiff(unlist(cands, use.names = FALSE),
                                          rownames(pks_new)))
     pks <- pks[keep, , drop = FALSE]
-    pkd <- pkd[keep, ]
+    pkd <- pkd[keep, , drop = FALSE]
     ## add merged peaks
     news <- is.na(rownames(pks_new))
     if (any(news)) {
         pks <- rbind(pks, pks_new[news, , drop = FALSE])
-        pkd <- rbind(pkd, pkd_new[news, ])
+        pkd <- rbind(pkd, pkd_new[news, , drop = FALSE])
     }
     list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks))
 }
@@ -533,7 +533,7 @@
                 )
                 if ("beta_cor" %in% cn) {
                     res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
-                        vapply(xsub[nr > 0], function(z) sum(z[, "intensity"]), 
+                        vapply(xsub[nr > 0], function(z) sum(z[, "intensity"]),
                                NA_real_),
                         rt[keep][nr > 0])
                 }
@@ -544,7 +544,7 @@
 }
 
 
-#' Calculates quality metrics for a chromatographic peak. 
+#' Calculates quality metrics for a chromatographic peak.
 #'
 #' @param x `list` of peak matrices (from a single MS level and from a single
 #'     file/sample).

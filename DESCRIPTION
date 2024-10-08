@@ -83,7 +83,8 @@ Suggests:
     multtest,
     MsBackendMgf,
     signal,
-    mgcv
+    mgcv,
+    rhdf5
 Enhances:
     Rgraphviz,
     rgl
@@ -106,6 +107,9 @@ Collate:
     'XcmsExperiment-functions.R'
     'XcmsExperiment-plotting.R'
     'XcmsExperiment.R'
+    'XcmsExperimentHdf5-functions.R'
+    'hidden_aliases.R'
+    'XcmsExperimentHdf5.R'
     'c.R'
     'cwTools.R'
     'databases.R'
