@@ -293,13 +293,16 @@ test_that(".match_reference_anchors works", {
                rt = c(100, 150.1, 190, 190, 190, 192))
     b <- cbind(mz = c(200.2, 232, 233.1, 234),
                rt = c(150, 190.4, 193, 240))
+    rownames(a) <- rep("a", nrow(a))
+    rownames(b) <- rep("b", nrow(b))
 
     res <- .match_reference_anchors(a, b)
     expect_true(is.data.frame(res))
-    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(colnames(res), c("ref", "obs", "chromPeaksId"))
     expect_true(nrow(res) == 1L)
     expect_equal(res$ref, 193.0)
     expect_equal(res$obs, 190.0)
+    expect_equal(res$chromPeaksId, "a")
 
     ## no matches:
     res <- .match_reference_anchors(a, b, tolerance = 0, toleranceRt = 0)
@@ -311,7 +314,7 @@ test_that(".match_reference_anchors works", {
     ## rows 5 and 6 from `a` match row 3 from `b`
     res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 52)
     expect_true(is.data.frame(res))
-    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(colnames(res),c("ref", "obs", "chromPeaksId"))
     expect_equal(res$ref, 190.4)
     expect_equal(res$obs, 190.0)
 
@@ -320,7 +323,7 @@ test_that(".match_reference_anchors works", {
     ## `b` and should thus not be reported.
     res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 5)
     expect_true(is.data.frame(res))
-    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(colnames(res), c("ref", "obs", "chromPeaksId"))
     expect_equal(res$ref, c(150, 190.4))
     expect_equal(res$obs, c(150.1, 190.0))
 
@@ -328,7 +331,7 @@ test_that(".match_reference_anchors works", {
     ## with row 3 in `b`.
     res <- .match_reference_anchors(a, b, tolerance = 0.1, toleranceRt = 2)
     expect_true(is.data.frame(res))
-    expect_equal(colnames(res), c("ref", "obs"))
+    expect_equal(colnames(res), c("ref", "obs", "chromPeaksId"))
     expect_equal(res$ref, c(150, 190.4, 193.0))
     expect_equal(res$obs, c(150.1, 190.0, 192.0))
 })

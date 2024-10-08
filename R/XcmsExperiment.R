@@ -1391,7 +1391,7 @@ setMethod(
         rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
             if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
                 .adjust_rt_model(y, method = param@method,
-                                 rt_map = x, span = param@span,
+                                 rt_map = x[, c("ref","obs")], span = param@span,
                                  resid_ratio = param@outlierTolerance,
                                  zero_weight = param@zeroWeight,
                                  bs = param@bs)
