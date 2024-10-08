@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2024-08-09 10:25:37.626173<br><strong>Compiled</strong>: Fri Aug 9 11:32:59 2024</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2024-10-08 11:38:57.853544<br><strong>Compiled</strong>: Tue Oct 8 13:01:59 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -242,9 +242,9 @@ chromatographic peak are returned.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Fri Aug  9 11:33:11 2024]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Fri Aug  9 11:33:18 2024]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Fri Aug  9 11:33:18 2024]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Oct  8 13:02:11 2024]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  8 13:02:19 2024]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  8 13:02:19 2024]</span></span></code></pre>
 <p>By default <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -318,21 +318,21 @@ peak in the present data set.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Fri Aug  9 11:33:11 2024]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Fri Aug  9 11:33:18 2024]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Fri Aug  9 11:33:18 2024]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Oct  8 13:02:11 2024]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  8 13:02:19 2024]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  8 13:02:19 2024]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
-single MS2 spectrum using the <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combineSpectra()</a></code> method
-employing the <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combinePeaks()</a></code> function to determine which
+single MS2 spectrum using the <code><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra()</a></code> method
+employing the <code><a href="https://rdrr.io/pkg/Spectra/man/combinePeaks.html" class="external-link">combinePeaks()</a></code> function to determine which
 peaks to keep in the resulting spectrum (have a look at the
-<code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">?combinePeaks</a></code> help page for details). Parameter
+<code><a href="https://rdrr.io/pkg/Spectra/man/combinePeaks.html" class="external-link">?combinePeaks</a></code> help page for details). Parameter
 <code>f</code> allows to specify which spectra in the input object
 should be combined into one. Note that this combination of multiple
 fragment spectra into a single spectrum might not be generally the best
 approach or suggested for all types of data.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span><span class="va">ex_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,</span>
+<code class="sourceCode R"><span><span class="va">ex_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span><span class="va">ex_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                              peaks <span class="op">=</span> <span class="st">"intersect"</span>, minProp <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>                              intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span>,</span>
 <span>                              f <span class="op">=</span> <span class="va">ex_spectra</span><span class="op">$</span><span class="va">peak_id</span><span class="op">)</span></span></code></pre></div>
@@ -346,9 +346,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 34 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Fri Aug  9 11:33:11 2024]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Fri Aug  9 11:33:18 2024]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Fri Aug  9 11:33:18 2024]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Oct  8 13:02:11 2024]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  8 13:02:19 2024]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  8 13:02:19 2024]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -822,7 +822,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Fri Aug  9 11:33:27 2024]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  8 13:02:28 2024]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -984,13 +984,13 @@ peak.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Fri Aug  9 11:33:11 2024]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Fri Aug  9 11:33:18 2024]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Fri Aug  9 11:33:18 2024]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s) 1 2 [Tue Oct  8 13:02:11 2024]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Tue Oct  8 13:02:19 2024]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Tue Oct  8 13:02:19 2024]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">prochloraz_dda_spectrum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra</a></span><span class="op">(</span></span>
 <span>    <span class="va">prochloraz_dda_spectra</span>, FUN <span class="op">=</span> <span class="va">combinePeaks</span>, ppm <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>    peaks <span class="op">=</span> <span class="st">"intersect"</span>, minProp <span class="op">=</span> <span class="fl">0.8</span>, intensityFun <span class="op">=</span> <span class="va">median</span>, mzFun <span class="op">=</span> <span class="va">median</span>,</span>
 <span>    f <span class="op">=</span> <span class="va">prochloraz_dda_spectra</span><span class="op">$</span><span class="va">peak_id</span><span class="op">)</span></span></code></pre></div>
@@ -1125,7 +1125,7 @@ also correlation with intensity values across several samples.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.4.1 (2024-06-14)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.5 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1148,63 +1148,63 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] MetaboCoreUtils_1.13.0 MsBackendMgf_1.13.0    MsExperiment_1.7.0    </span></span>
-<span><span class="co">##  [4] pander_0.6.5           Spectra_1.15.7         ProtGenerics_1.37.1   </span></span>
-<span><span class="co">##  [7] S4Vectors_0.43.2       BiocGenerics_0.51.0    xcms_4.3.3            </span></span>
+<span><span class="co">##  [4] ProtGenerics_1.37.1    pander_0.6.5           Spectra_1.15.11       </span></span>
+<span><span class="co">##  [7] S4Vectors_0.43.2       BiocGenerics_0.51.3    xcms_4.3.4            </span></span>
 <span><span class="co">## [10] BiocParallel_1.39.0    BiocStyle_2.33.1      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] DBI_1.2.3                   rlang_1.1.4                </span></span>
 <span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
-<span><span class="co">##   [5] MassSpecWavelet_1.71.0      matrixStats_1.3.0          </span></span>
+<span><span class="co">##   [5] MassSpecWavelet_1.71.0      matrixStats_1.4.1          </span></span>
 <span><span class="co">##   [7] compiler_4.4.1              systemfonts_1.1.0          </span></span>
 <span><span class="co">##   [9] vctrs_0.6.5                 reshape2_1.4.4             </span></span>
 <span><span class="co">##  [11] stringr_1.5.1               pkgconfig_2.0.3            </span></span>
 <span><span class="co">##  [13] crayon_1.5.3                fastmap_1.2.0              </span></span>
 <span><span class="co">##  [15] XVector_0.45.0              utf8_1.2.4                 </span></span>
-<span><span class="co">##  [17] rmarkdown_2.27              UCSC.utils_1.1.0           </span></span>
-<span><span class="co">##  [19] preprocessCore_1.67.0       ragg_1.3.2                 </span></span>
-<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.46                  </span></span>
-<span><span class="co">##  [23] MultiAssayExperiment_1.31.4 zlibbioc_1.51.1            </span></span>
-<span><span class="co">##  [25] cachem_1.1.0                GenomeInfoDb_1.41.1        </span></span>
-<span><span class="co">##  [27] jsonlite_1.8.8              progress_1.2.3             </span></span>
-<span><span class="co">##  [29] highr_0.11                  DelayedArray_0.31.11       </span></span>
+<span><span class="co">##  [17] rmarkdown_2.28              UCSC.utils_1.1.0           </span></span>
+<span><span class="co">##  [19] preprocessCore_1.67.1       ragg_1.3.3                 </span></span>
+<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.48                  </span></span>
+<span><span class="co">##  [23] MultiAssayExperiment_1.31.5 zlibbioc_1.51.1            </span></span>
+<span><span class="co">##  [25] cachem_1.1.0                GenomeInfoDb_1.41.2        </span></span>
+<span><span class="co">##  [27] jsonlite_1.8.9              progress_1.2.3             </span></span>
+<span><span class="co">##  [29] highr_0.11                  DelayedArray_0.31.14       </span></span>
 <span><span class="co">##  [31] prettyunits_1.2.0           parallel_4.4.1             </span></span>
 <span><span class="co">##  [33] cluster_2.1.6               R6_2.5.1                   </span></span>
 <span><span class="co">##  [35] bslib_0.8.0                 stringi_1.8.4              </span></span>
-<span><span class="co">##  [37] RColorBrewer_1.1-3          limma_3.61.9               </span></span>
+<span><span class="co">##  [37] RColorBrewer_1.1-3          limma_3.61.12              </span></span>
 <span><span class="co">##  [39] GenomicRanges_1.57.1        jquerylib_0.1.4            </span></span>
 <span><span class="co">##  [41] iterators_1.0.14            Rcpp_1.0.13                </span></span>
-<span><span class="co">##  [43] bookdown_0.40               SummarizedExperiment_1.35.1</span></span>
+<span><span class="co">##  [43] bookdown_0.40               SummarizedExperiment_1.35.3</span></span>
 <span><span class="co">##  [45] knitr_1.48                  IRanges_2.39.2             </span></span>
 <span><span class="co">##  [47] Matrix_1.7-0                igraph_2.0.3               </span></span>
-<span><span class="co">##  [49] tidyselect_1.2.1            abind_1.4-5                </span></span>
+<span><span class="co">##  [49] tidyselect_1.2.1            abind_1.4-8                </span></span>
 <span><span class="co">##  [51] yaml_2.3.10                 doParallel_1.0.17          </span></span>
-<span><span class="co">##  [53] codetools_0.2-20            affy_1.83.0                </span></span>
+<span><span class="co">##  [53] codetools_0.2-20            affy_1.83.1                </span></span>
 <span><span class="co">##  [55] lattice_0.22-6              tibble_3.2.1               </span></span>
-<span><span class="co">##  [57] plyr_1.8.9                  Biobase_2.65.0             </span></span>
-<span><span class="co">##  [59] evaluate_0.24.0             desc_1.4.3                 </span></span>
-<span><span class="co">##  [61] pillar_1.9.0                affyio_1.75.0              </span></span>
-<span><span class="co">##  [63] BiocManager_1.30.23         MatrixGenerics_1.17.0      </span></span>
+<span><span class="co">##  [57] plyr_1.8.9                  Biobase_2.65.1             </span></span>
+<span><span class="co">##  [59] evaluate_1.0.0              desc_1.4.3                 </span></span>
+<span><span class="co">##  [61] pillar_1.9.0                affyio_1.75.1              </span></span>
+<span><span class="co">##  [63] BiocManager_1.30.25         MatrixGenerics_1.17.0      </span></span>
 <span><span class="co">##  [65] foreach_1.5.2               MSnbase_2.31.1             </span></span>
-<span><span class="co">##  [67] MALDIquant_1.22.2           ncdf4_1.22                 </span></span>
+<span><span class="co">##  [67] MALDIquant_1.22.3           ncdf4_1.23                 </span></span>
 <span><span class="co">##  [69] generics_0.1.3              hms_1.1.3                  </span></span>
 <span><span class="co">##  [71] ggplot2_3.5.1               munsell_0.5.1              </span></span>
-<span><span class="co">##  [73] scales_1.3.0                glue_1.7.0                 </span></span>
+<span><span class="co">##  [73] scales_1.3.0                glue_1.8.0                 </span></span>
 <span><span class="co">##  [75] MsFeatures_1.13.0           lazyeval_0.2.2             </span></span>
 <span><span class="co">##  [77] tools_4.4.1                 mzID_1.43.0                </span></span>
-<span><span class="co">##  [79] QFeatures_1.15.2            vsn_3.73.0                 </span></span>
-<span><span class="co">##  [81] mzR_2.39.0                  fs_1.6.4                   </span></span>
+<span><span class="co">##  [79] QFeatures_1.15.3            vsn_3.73.0                 </span></span>
+<span><span class="co">##  [81] mzR_2.39.1                  fs_1.6.4                   </span></span>
 <span><span class="co">##  [83] XML_3.99-0.17               grid_4.4.1                 </span></span>
 <span><span class="co">##  [85] impute_1.79.0               tidyr_1.3.1                </span></span>
-<span><span class="co">##  [87] MsCoreUtils_1.17.1          colorspace_2.1-1           </span></span>
-<span><span class="co">##  [89] GenomeInfoDbData_1.2.12     PSMatch_1.9.0              </span></span>
+<span><span class="co">##  [87] MsCoreUtils_1.17.2          colorspace_2.1-1           </span></span>
+<span><span class="co">##  [89] GenomeInfoDbData_1.2.13     PSMatch_1.9.0              </span></span>
 <span><span class="co">##  [91] cli_3.6.3                   textshaping_0.4.0          </span></span>
-<span><span class="co">##  [93] fansi_1.0.6                 S4Arrays_1.5.7             </span></span>
+<span><span class="co">##  [93] fansi_1.0.6                 S4Arrays_1.5.10            </span></span>
 <span><span class="co">##  [95] dplyr_1.1.4                 AnnotationFilter_1.29.0    </span></span>
 <span><span class="co">##  [97] pcaMethods_1.97.0           gtable_0.3.5               </span></span>
-<span><span class="co">##  [99] sass_0.4.9                  digest_0.6.36              </span></span>
-<span><span class="co">## [101] SparseArray_1.5.31          htmlwidgets_1.6.4          </span></span>
-<span><span class="co">## [103] htmltools_0.5.8.1           pkgdown_2.1.0.9000         </span></span>
+<span><span class="co">##  [99] sass_0.4.9                  digest_0.6.37              </span></span>
+<span><span class="co">## [101] SparseArray_1.5.44          htmlwidgets_1.6.4          </span></span>
+<span><span class="co">## [103] htmltools_0.5.8.1           pkgdown_2.1.1.9000         </span></span>
 <span><span class="co">## [105] lifecycle_1.0.4             httr_1.4.7                 </span></span>
 <span><span class="co">## [107] statmod_1.5.0               MASS_7.3-61</span></span></code></pre>
 </div>
@@ -1231,7 +1231,7 @@ systems biology</em> 2018, <strong>14</strong>:e8126.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
     </footer>

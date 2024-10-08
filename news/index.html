@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,17 +41,22 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.3" id="xcms-43">xcms 4.3<a class="anchor" aria-label="anchor" href="#xcms-43"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-version-4-3">Changes in version 4.3.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3"></a></h3>
+<h3 id="changes-in-version-4-3">Changes in version 4.3.4<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3"></a></h3>
+<ul><li>Small update to the <code>matchLamaChromPeaks()</code> function to get the chromPeaksId of the chromPeaks matched with Lamas.</li>
+<li>Small fix to the .yml file for the github actions, so they do not crash on warnings.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-3-1">Changes in version 4.3.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3-1"></a></h3>
 <ul><li>Fix issue <a href="https://github.com/sneumann/xcms/issues/755" class="external-link">#755</a>: <code><a href="../reference/chromatogram-method.html">chromatogram()</a></code> with <code>msLevel = 2</code> fails to extract chromatographic data if <code>isolationWindowTargetMz</code> is not specified or available (e.g. for MSe data).</li>
 <li>Support coercing from <code>XcmsExperiment</code> to <code>XCMSnExp</code> with <code>as(object, "XCMSnExp")</code>.</li>
 <li>Change <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">estimatePrecursorIntensity()</a></code> to a method and add an implementation for <code>MsExperiment</code> objects.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-3-1">Changes in version 4.3.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3-1"></a></h3>
+<h3 id="changes-in-version-4-3-2">Changes in version 4.3.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3-2"></a></h3>
 <ul><li>Remove data/results import/export functionality as it is being developed in the <em>MsIO</em> package.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-3-2">Changes in version 4.3.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3-2"></a></h3>
+<h3 id="changes-in-version-4-3-3">Changes in version 4.3.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-3-3"></a></h3>
 <ul><li>Support excluding samples or sample groups from defining features with <em>PeakDensity</em> correspondence analysis (issue <a href="https://github.com/sneumann/xcms/issues/742" class="external-link">#742</a>).</li>
 <li>Add <code><a href="../reference/plotPrecursorIons.html">plotPrecursorIons()</a></code> function.</li>
 <li>Fix in <code><a href="../reference/XCMSnExp-class.html">dropFeatureDefinitions()</a></code> that was not correctly removing additional metadata from gap-filled chromatographic peaks.</li>
@@ -1051,7 +1056,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
     </footer></div>
