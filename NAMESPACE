@@ -603,3 +603,6 @@ export("RsdFilter")
 export("DratioFilter")
 export("PercentMissingFilter")
 export("BlankFlag")
+
+## HDF5 storage mode
+exportClasses("XcmsExperimentHdf5")

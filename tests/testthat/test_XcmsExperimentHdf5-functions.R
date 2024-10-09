@@ -69,8 +69,24 @@ test_that(".h5_subset_xcms_experiment works", {
     a <- new("XcmsExperimentHdf5")
     res <- .h5_subset_xcms_experiment(a)
     expect_equal(a, res)
-    LLLLLLL
     a <- xmse_h5
+    res <- .h5_subset_xcms_experiment(a, c(1, 3))
+    expect_equal(length(res), 2)
+    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
+    expect_true(hasChromPeaks(res))
+    res <- .h5_subset_xcms_experiment(a, c(1, 3), keepChromPeaks = FALSE)
+    expect_equal(length(res), 2)
+    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
+    expect_false(hasChromPeaks(res))
+    res <- .h5_subset_xcms_experiment(a, c(1, 3), keepChromPeaks = FALSE,
+                                      ignoreHistory = TRUE)
+    expect_equal(length(res), 2)
+    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
+    expect_false(hasChromPeaks(res))
+    expect_equal(res@processHistory, a@processHistory)
 })
 
 test_that(".h5_xmse_merge_neighboring_peaks works", {

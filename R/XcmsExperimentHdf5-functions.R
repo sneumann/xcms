@@ -82,7 +82,7 @@
         stop("Subsetting with features present needs to be implemented")
         drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
     }
-    if (!keepChromPeaks && hasChromPeaks()) {
+    if (!keepChromPeaks && hasChromPeaks(x)) {
         x@has_chrom_peaks <- FALSE
         drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
                   .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
