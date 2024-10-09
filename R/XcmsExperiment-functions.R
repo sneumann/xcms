@@ -414,15 +414,21 @@
     unlist(res, use.names = FALSE)
 }
 
-#' Apply any function `FUN` to chunks of an `XcmsExperiment`.
+#' Apply any function `FUN` to chunks of an `XcmsExperiment`. Subsets of
+#' `x` defined by `chunkSize` are extracted at a time and the function `FUN`
+#' is applied to them. Parameter `SUBSET_FUN` allows to define a function
+#' to (efficiently) subset `x`.
 #'
 #' @author Johannes Rainer
 #'
 #' @noRd
-.xmse_apply_chunks <- function(x, FUN, ..., keepChromPeaks = TRUE,
-                               keepAdjustedRtime = FALSE, keepFeatures = FALSE,
-                               ignoreHistory = FALSE, keepSampleIndex = FALSE,
-                               chunkSize = 1L) {
+.xmse_apply_chunks <- function(x, FUN, ..., chunkSize = 1L,
+                               SUBSET_FUN = .subset_xcms_experiment,
+                               keepChromPeaks = TRUE,
+                               keepAdjustedRtime = FALSE,
+                               keepFeatures = FALSE,
+                               ignoreHistory = FALSE,
+                               keepSampleIndex = FALSE) {
     idx <- seq_along(x)
     chunks <- split(idx, ceiling(idx / chunkSize))
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
@@ -432,11 +438,13 @@
     pb$tick(0)
     lapply(chunks, function(z, ...) {
         suppressMessages(
-            res <- FUN(.subset_xcms_experiment(
-                x, i = z, keepChromPeaks = keepChromPeaks,
-                keepAdjustedRtime = keepAdjustedRtime,
-                keepFeatures = keepFeatures, ignoreHistory = ignoreHistory,
-                keepSampleIndex = keepSampleIndex), ...)
+            res <- FUN(
+                SUBSET_FUN(x, i = z, keepChromPeaks = keepChromPeaks,
+                           keepAdjustedRtime = keepAdjustedRtime,
+                           keepFeatures = keepFeatures,
+                           ignoreHistory = ignoreHistory,
+                           keepSampleIndex = keepSampleIndex),
+                ...)
         )
         pb$tick()
         res

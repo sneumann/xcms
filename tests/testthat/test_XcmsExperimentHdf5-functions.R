@@ -1,4 +1,5 @@
 library(rhdf5)
+xmse_h5 <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tempfile())
 
 test_that(".xcms_experiment_to_hdf5 works", {
     expect_error(.xcms_experiment_to_hdf5(4), "Parameter 'h5_file'")
@@ -62,6 +63,26 @@ test_that(".xcms_experiment_to_hdf5 works", {
     rhdf5::H5Fclose(h5)
     file.remove(h5f)
     expect_error(validObject(res), "Data storage file")
+})
+
+test_that(".h5_subset_xcms_experiment works", {
+    a <- new("XcmsExperimentHdf5")
+    res <- .h5_subset_xcms_experiment(a)
+    expect_equal(a, res)
+    LLLLLLL
+    a <- xmse_h5
+})
+
+test_that(".h5_xmse_merge_neighboring_peaks works", {
+    h5f <- tempfile()
+    ref <- loadXcmsData("faahko_sub2")
+    x <- .xcms_experiment_to_hdf5(ref, h5f)
+    res <- .h5_xmse_merge_neighboring_peaks(x)
+    expect_equal(res, 248)
+    mod_count <- as.vector(rhdf5::h5read(h5f, "/header/modcount"))
+    expect_true(mod_count > x@hdf5_mod_count)
+
+    file.remove(h5f)
 })
 
 test_that(".h5_read_chrom_peaks works", {

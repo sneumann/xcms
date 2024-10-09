@@ -45,11 +45,53 @@
             x@chromPeaks[integer(), , drop = FALSE]
         slot(x, "chromPeakData", check = FALSE) <-
             x@chromPeakData[integer(), , drop = FALSE]
+        slot(x, "has_chrom_peaks", check = FALSE) <- TRUE
     }
-    if (has_features)
+    if (has_features) {
         stop("Can not yet save feature definitions to HDF5")
+        slot(x, "has_features", check = FALSE) <- TRUE
+    }
     x@hdf5_mod_count <- mod_count
     x
+}
+
+#' Subset an `XcmsExperimentHdf5` object. Similar to `.subset_xcms_experiment()`
+#' for `XcmsExperiment`, but optimized for `XcmsExperimentHdf5`.
+#'
+#' @noRd
+.h5_subset_xcms_experiment <- function(x, i = integer(),
+                                       keepChromPeaks = TRUE,
+                                       keepAdjustedRtime = FALSE,
+                                       keepFeatures = FALSE,
+                                       ignoreHistory = FALSE,
+                                       ...) {
+    i <- i2index(i, length(x))
+    if (any(i < 0)) {
+        if (all(i < 0))
+            i <- seq_along(x)[i]
+        else stop("Mixing positive and negative indices is not supported.")
+    }
+    drop <- character()
+    if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
+        svs <- unique(c(spectraVariables(x@spectra), "mz", "intensity"))
+        x@spectra <- selectSpectraVariables(
+            x@spectra, svs[svs != "rtime_adjusted"])
+        drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
+    }
+    if (!keepFeatures && hasFeatures(x)) {
+        stop("Subsetting with features present needs to be implemented")
+        drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
+    }
+    if (!keepChromPeaks && hasChromPeaks()) {
+        x@has_chrom_peaks <- FALSE
+        drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
+                  .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
+    }
+    if (!ignoreHistory && length(drop))
+        x@processHistory <- dropProcessHistoriesList(
+            x@processHistory, type = drop)
+    x@sample_id <- x@sample_id[i]
+    getMethod("[", "MsExperiment")(x, i = i)
 }
 
 #' Similar to `.xmse_merge_neighboring_peaks()` in XcmsExperiment-functions.R,
@@ -87,11 +129,26 @@
         MoreArgs = list(expandRt = expandRt, expandMz = expandMz,
                         ppm = ppm, minProp = minProp),
         SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
-    ## Replace the data.
-    has_merged <- vapply(res, function(z) any(is.na(rownames(z[[1L]]))), NA)
-    ## Only replace the ones with changed data.
-    ## ? should we replace/update the rownames already here or in the outer
-    ## loop?
+    ## Replace data in hdf5 for samples with changed data.
+    has_merged <- which(
+        vapply(res, function(z) any(is.na(rownames(z[[1L]]))), NA))
+    for (i in has_merged) {
+        l <- list(res[[i]]$chromPeaks)
+        names(l) <- x@sample_id[i]
+        .h5_write_data(h5_file = x@hdf5_file, data_list = l,
+                       name = "chrom_peaks", ms_level = msLevel,
+                       replace = TRUE, write_colnames = FALSE,
+                       write_rownames = FALSE)
+        pkd <- res[[i]]$chromPeakData
+        if (!any(colnames(pkd) == "merged"))
+            pkd$merged <- FALSE
+        pkd$merged[grep("^CP", rownames(pkd), invert = TRUE)] <- TRUE
+        l <- list(pkd)
+        names(l) <- x@sample_id[i]
+        .h5_write_data(h5_file = x@hdf5_file, data_list = l,
+                       name = "chrom_peak_data", ms_level = msLevel,
+                       replace = TRUE)
+    }
     ## Report the highest CP number back.
     cp_id
 }
@@ -102,7 +159,9 @@
 #' @param by_sample `logical(1)` whether a `list` of `chromPeak` matrices split
 #'     per sample should be returned or the *conventional* matrix with an
 #'     additional column `"sample"`.
-.h5_chrom_peaks <- function(x, by_sample = TRUE) {
+#'
+#' @noRd
+.h5_chrom_peaks <- function(x, columns = character(), by_sample = TRUE) {
     h5 <- rhdf5::H5Fopen(x@hdf5_file)
     .h5_check_mod_count(h5, x@hdf5_mod_count)
     grps <- .h5_dataset_names("/", h5)

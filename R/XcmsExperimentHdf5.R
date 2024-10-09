@@ -4,13 +4,27 @@ setClass("XcmsExperimentHdf5",
          contains = "XcmsExperiment",
          slots = c(hdf5_file = "character",
                    hdf5_mod_count = "integer",
-                   sample_id = "integer"))
+                   sample_id = "integer",
+                   has_chrom_peaks = "logical",
+                   has_features = "logical"),
+         prototype = prototype(
+             hdf5_file = character(),
+             hdf5_mod_count = 0L,
+             sample_id = integer(),
+             has_chrom_peaks = FALSE,
+             has_features = FALSE
+         ))
 
 setValidity("XcmsExperimentHdf5", function(object) {
-    if (length(object@hdf5_file) && !file.exists(object@hdf5_file))
-        return(paste0("Data storage file \"", object@hdf5_file,
-                      "\" does not exist!"))
-    .h5_valid_file(object@hdf5_file, object@hdf5_mod_count)
+    if (length(object@hdf5_file)) {
+        if(!file.exists(object@hdf5_file))
+            return(paste0("Data storage file \"", object@hdf5_file,
+                          "\" does not exist!"))
+        .h5_valid_file(object@hdf5_file, object@hdf5_mod_count)
+    }
+    if (length(object@sample_id) != nrow(sampleData(object)))
+        return(paste0("Corrupt data: number of samples does not match ",
+                      "length of sample IDs."))
     TRUE
 })
 
@@ -93,13 +107,17 @@ setMethod(
         ## the last chrom peak ID. Use these to update the rownames in all
         ## tables of the same MS level.
         res <- .xmse_apply_chunks(
-            object, .xmse_merge_neighboring_peaks, msLevel = msLevel,
+            ## LLLLL can we fit/adapt xmse_apply_chunks?
+            object, .h5_xmse_merge_neighboring_peaks, msLevel = msLevel,
             expandRt = param@expandRt, expandMz = param@expandMz,
             ppm = param@ppm, minProp = param@minProp, BPPARAM = BPPARAM,
             keepAdjustedRtime = TRUE, ignoreHistory = TRUE,
             keepSampleIndex = FALSE, chunkSize = chunkSize)
         ## Update the rownames of all data sets of that MS level.
+        ## res should be the highest number per subset. use the max of that to
+        ## define the names.
 
+        ## Update the @hdf5_mod_count with the one from the file.
 
 
         pks <- do.call(rbind, lapply(res, `[[`, 1L))
