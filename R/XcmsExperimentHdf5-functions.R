@@ -161,18 +161,18 @@
 #'     additional column `"sample"`.
 #'
 #' @noRd
-.h5_chrom_peaks <- function(x, columns = character(), by_sample = TRUE) {
-    h5 <- rhdf5::H5Fopen(x@hdf5_file)
-    .h5_check_mod_count(h5, x@hdf5_mod_count)
-    grps <- .h5_dataset_names("/", h5)
-    rhdf5::H5Fclose(h5)
-    msl <- sort(as.integer(sub("ms_", "", grep("^ms_", grps, value = TRUE))))
-    ids <- rep(x@sample_id, length(msl))
-    msl <- rep(msl, each = length(x@sample_id))
-    res <- .h5_read_data(h5_file, index = ids, name = "chrom_peaks",
-                         ms_level = msl, read_colnames = TRUE,
-                         read_rownames = TRUE)
-}
+## .h5_chrom_peaks <- function(x, columns = character(), by_sample = TRUE) {
+##     h5 <- rhdf5::H5Fopen(x@hdf5_file)
+##     .h5_check_mod_count(h5, x@hdf5_mod_count)
+##     grps <- .h5_dataset_names("/", h5)
+##     rhdf5::H5Fclose(h5)
+##     msl <- sort(as.integer(sub("ms_", "", grep("^ms_", grps, value = TRUE))))
+##     ids <- rep(x@sample_id, length(msl))
+##     msl <- rep(msl, each = length(x@sample_id))
+##     res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
+##                          ms_level = msl, read_colnames = TRUE,
+##                          read_rownames = TRUE)
+## }
 
 ################################################################################
 ##
@@ -188,6 +188,16 @@
 #'   /ms_<ms_level>/<sample id>/chrom_peaks_rownames (character array)
 #'   /ms_<ms_level>/<sample id>/chrom_peaks_colnames (character array)
 #'   /ms_<ms_level>/<sample id>/chrom_peak_data (list of arrays).
+
+.h5_have_rhdf5 <- function() {
+    return(requireNamespace("rhdf5", quietly = TRUE))
+}
+
+.h5_require_rhdf5 <- function() {
+    if (!.h5_have_rhdf5())
+        stop("Package 'rhdf5' is required for this functionality. Please ",
+             "install using 'BiocManager::install(\"rhdf5\")' and try again.")
+}
 
 ##  --------  READING  --------
 
@@ -257,7 +267,7 @@
 .h5_dataset_names <- function(name, h5, recursive = FALSE) {
     g <- rhdf5::H5Gopen(h5, name)
     on.exit(rhdf5::H5Gclose(g))
-    h5ls(g, recursive = recursive, datasetinfo = FALSE)$name
+    rhdf5::h5ls(g, recursive = recursive, datasetinfo = FALSE)$name
 }
 
 .h5_ms_levels <- function(h5) {

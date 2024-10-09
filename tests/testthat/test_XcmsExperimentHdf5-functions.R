@@ -52,7 +52,7 @@ test_that(".xcms_experiment_to_hdf5 works", {
     colnames(pks) <- pks_cn
     pks_ref <- chromPeaks(ref)[chromPeaks(ref)[, "sample"] == 8, ]
     expect_equal(colnames(pks_ref), c(pks_cn, "sample"))
-    expect_equal(rownames(pks_ref), rownames(pks))
+    expect_equal(sub("CP", "CP1", rownames(pks_ref)), rownames(pks))
     expect_equal(pks_ref[, colnames(pks_ref) != "sample"], pks)
     pkd <- as.data.frame(rhdf5::h5read(h5, "/ms_1/8/chrom_peak_data"))
     pkd_ref <- chromPeakData(
@@ -80,6 +80,7 @@ test_that(".h5_subset_xcms_experiment works", {
     expect_equal(res@sample_id, c(1L, 3L))
     expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
     expect_false(hasChromPeaks(res))
+    expect_true(length(res@processHistory) == 0)
     res <- .h5_subset_xcms_experiment(a, c(1, 3), keepChromPeaks = FALSE,
                                       ignoreHistory = TRUE)
     expect_equal(length(res), 2)
@@ -133,7 +134,7 @@ test_that(".h5_read_chrom_peaks works", {
     expect_equal(res, unname(a[, c(1, 3)]))
     H5Fclose(h5)
     file.remove(h5f)
-}})
+})
 
 test_that(".h5_read_chrom_peak_data works", {
     h5f <- tempfile()

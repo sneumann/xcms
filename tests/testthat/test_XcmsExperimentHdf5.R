@@ -13,3 +13,6 @@ test_that("XcmsExperimentHdf5 validation works", {
     a@sample_id <- c(1L, 3L)
     expect_error(validObject(a), "number of samples does not match")
 })
+
+test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
+})
