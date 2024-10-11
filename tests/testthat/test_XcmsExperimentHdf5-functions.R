@@ -19,7 +19,6 @@ test_that(".xcms_experiment_to_hdf5 works", {
     hdr <- rhdf5::h5read(h5, "header")
     expect_equal(as.vector(hdr$modcount), 0)
     expect_equal(as.vector(hdr$package), "package:xcms")
-    expect_equal(.h5_ms_levels(h5), integer())
     expect_false(hasChromPeaks(res))
 
     rhdf5::H5Fclose(h5)
@@ -36,7 +35,7 @@ test_that(".xcms_experiment_to_hdf5 works", {
     expect_true(res@hdf5_mod_count > 0)
     h5 <- rhdf5::H5Fopen(h5f)
     ## General checks
-    expect_equal(.h5_ms_levels(h5), 1L)
+    expect_equal(.h5_ms_levels(h5, "S1"), 1L)
     expect_true(hasChromPeaks(res))
     expect_true(hasChromPeaks(res, 1L))
     expect_false(hasChromPeaks(res, 2L))
@@ -45,16 +44,16 @@ test_that(".xcms_experiment_to_hdf5 works", {
     hdr <- rhdf5::h5read(h5, "header")
     expect_equal(as.vector(hdr$modcount), res@hdf5_mod_count)
     expect_equal(as.vector(hdr$package), "package:xcms")
-    pks <- rhdf5::h5read(h5, "/ms_1/8/chrom_peaks")
-    pks_rn <- as.vector(rhdf5::h5read(h5, "/ms_1/8/chrom_peaks_rownames"))
-    pks_cn <- as.vector(rhdf5::h5read(h5, "/ms_1/8/chrom_peaks_colnames"))
-    rownames(pks) <- pks_rn
+    pks <- rhdf5::h5read(h5, "/S8/ms_1/chrom_peaks")
+    pks_rn <- as.vector(rhdf5::h5read(h5, "/S8/ms_1/chrom_peaks_rownames"))
+    expect_true(!anyDuplicated(pks_rn))
+    pks_cn <- as.vector(rhdf5::h5read(h5, "/S8/ms_1/chrom_peaks_colnames"))
     colnames(pks) <- pks_cn
     pks_ref <- chromPeaks(ref)[chromPeaks(ref)[, "sample"] == 8, ]
+    rownames(pks_ref) <- NULL
     expect_equal(colnames(pks_ref), c(pks_cn, "sample"))
-    expect_equal(sub("CP", "CP1", rownames(pks_ref)), rownames(pks))
     expect_equal(pks_ref[, colnames(pks_ref) != "sample"], pks)
-    pkd <- as.data.frame(rhdf5::h5read(h5, "/ms_1/8/chrom_peak_data"))
+    pkd <- as.data.frame(rhdf5::h5read(h5, "/S8/ms_1/chrom_peak_data"))
     pkd_ref <- chromPeakData(
         ref, return.type = "data.frame")[chromPeaks(ref)[, "sample"] == 8, ]
     expect_equal(colnames(pkd_ref), c("ms_level", colnames(pkd)))
@@ -65,6 +64,28 @@ test_that(".xcms_experiment_to_hdf5 works", {
     expect_error(validObject(res), "Data storage file")
 })
 
+test_that(".h5_dataset_names works", {
+    h5 <- rhdf5::H5Fopen(xmse_h5@hdf5_file)
+    res <- .h5_dataset_names("/", h5)
+    expect_true(length(res) > 1)
+    expect_true("header" %in% res)
+    res <- .h5_dataset_names("/header", h5)
+    expect_equal(res, c("modcount", "package"))
+    rhdf5::H5Fclose(h5)
+})
+
+test_that(".h5_ms_levels works", {
+    h5 <- rhdf5::H5Fopen(xmse_h5@hdf5_file)
+    res <- .h5_ms_levels(h5, "S1")
+    expect_equal(res, 1L)
+    rhdf5::H5Fclose(h5)
+})
+
+test_that(".h5_chrom_peak_ms_levels works", {
+    res <- .h5_chrom_peak_ms_levels(xmse_h5@hdf5_file, "S1")
+    expect_equal(res, 1L)
+})
+
 test_that(".h5_subset_xcms_experiment works", {
     a <- new("XcmsExperimentHdf5")
     res <- .h5_subset_xcms_experiment(a)
@@ -72,19 +93,19 @@ test_that(".h5_subset_xcms_experiment works", {
     a <- xmse_h5
     res <- .h5_subset_xcms_experiment(a, c(1, 3))
     expect_equal(length(res), 2)
-    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(res@sample_id, a@sample_id[c(1L, 3L)])
     expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
     expect_true(hasChromPeaks(res))
     res <- .h5_subset_xcms_experiment(a, c(1, 3), keepChromPeaks = FALSE)
     expect_equal(length(res), 2)
-    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(res@sample_id, a@sample_id[c(1L, 3L)])
     expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
     expect_false(hasChromPeaks(res))
     expect_true(length(res@processHistory) == 0)
     res <- .h5_subset_xcms_experiment(a, c(1, 3), keepChromPeaks = FALSE,
                                       ignoreHistory = TRUE)
     expect_equal(length(res), 2)
-    expect_equal(res@sample_id, c(1L, 3L))
+    expect_equal(res@sample_id, a@sample_id[c(1L, 3L)])
     expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
     expect_false(hasChromPeaks(res))
     expect_equal(res@processHistory, a@processHistory)
@@ -94,12 +115,47 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
     h5f <- tempfile()
     ref <- loadXcmsData("faahko_sub2")
     x <- .xcms_experiment_to_hdf5(ref, h5f)
-    res <- .h5_xmse_merge_neighboring_peaks(x)
-    expect_equal(res, 248)
+    ref <- .h5_read_data(x@hdf5_file, index = x@sample_id,
+                         ms_level = rep(1L, length(x)),
+                         read_colnames = TRUE, read_rownames = TRUE)
+    .h5_xmse_merge_neighboring_peaks(x)
     mod_count <- as.vector(rhdf5::h5read(h5f, "/header/modcount"))
     expect_true(mod_count > x@hdf5_mod_count)
-
+    ## Check that content was changed.
+    res <- .h5_read_data(x@hdf5_file, index = x@sample_id,
+                         ms_level = rep(1L, length(x)),
+                         read_colnames = TRUE, read_rownames = TRUE)
+    expect_true(nrow(ref[[1L]]) > nrow(res[[1L]]))
+    expect_true(nrow(ref[[2L]]) > nrow(res[[2L]]))
+    expect_true(nrow(ref[[3]]) > nrow(res[[3L]]))
+    expect_true(!anyDuplicated(rownames(res[[1L]])))
+    expect_true(!anyDuplicated(rownames(res[[2L]])))
+    expect_true(!anyDuplicated(rownames(res[[3L]])))
+    same <- intersect(rownames(ref[[1L]]), rownames(res[[1L]]))
+    expect_equal(ref[[1L]][same, ], res[[1L]][same, ])
+    same <- intersect(rownames(ref[[2L]]), rownames(res[[2L]]))
+    expect_equal(ref[[2L]][same, ], res[[2L]][same, ])
+    same <- intersect(rownames(ref[[3L]]), rownames(res[[3L]]))
+    expect_equal(ref[[3L]][same, ], res[[3L]][same, ])
     file.remove(h5f)
+
+    ## Compare with reference results.
+    h5f <- tempfile()
+    ref <- loadXcmsData("faahko_sub2")
+    res <- .xcms_experiment_to_hdf5(ref, h5f)
+
+    .h5_xmse_merge_neighboring_peaks(res)
+    res <- .h5_read_data(res@hdf5_file, index = res@sample_id,
+                         ms_level = rep(1L, length(res)),
+                         read_colnames = TRUE, read_rownames = TRUE)
+    ref <- .xmse_merge_neighboring_peaks(ref)
+    ref <- split.data.frame(ref[[1L]], ref[[1L]][, "sample"])
+    expect_equal(unname(ref[[1L]][, colnames(ref[[1L]]) != "sample"]),
+                 unname(res[[1L]]))
+    expect_equal(unname(ref[[2L]][, colnames(ref[[2L]]) != "sample"]),
+                 unname(res[[2L]]))
+    expect_equal(unname(ref[[3L]][, colnames(ref[[3L]]) != "sample"]),
+                 unname(res[[3L]]))
 })
 
 test_that(".h5_read_chrom_peaks works", {
@@ -116,20 +172,20 @@ test_that(".h5_read_chrom_peaks works", {
                                 ms_level = c(1L, 1L)), 1L)
 
     h5 <- H5Fopen(h5f)
-    res <- .h5_read_chrom_peaks("/ms_1/1/chrom_peaks", h5)
+    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5)
     expect_equal(res, unname(a))
-    res <- .h5_read_chrom_peaks("/ms_1/1/chrom_peaks", h5,
+    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5,
                                 read_colnames = TRUE)
     expect_equal(unname(res), unname(a))
     expect_equal(colnames(res), colnames(a))
     expect_equal(rownames(res), NULL)
-    res <- .h5_read_chrom_peaks("/ms_1/1/chrom_peaks", h5,
+    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5,
                                 read_colnames = TRUE, read_rownames = TRUE)
     expect_equal(res, a)
-    res <- .h5_read_chrom_peaks("/ms_1/1/chrom_peaks", h5, index = 3,
+    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5, index = 3,
                                 read_colnames = TRUE, read_rownames = TRUE)
     expect_equal(res, a[, 3, drop = FALSE])
-    res <- .h5_read_chrom_peaks("/ms_1/1/chrom_peaks", h5, index = c(1, 3),
+    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5, index = c(1, 3),
                                 read_colnames = FALSE, read_rownames = FALSE)
     expect_equal(res, unname(a[, c(1, 3)]))
     H5Fclose(h5)
@@ -154,19 +210,19 @@ test_that(".h5_read_chrom_peak_data works", {
     .h5_write_data(h5f, l, name = "chrom_peaks", ms_level = c(2L, 2L))
 
     h5 <- H5Fopen(h5f)
-    res <- .h5_read_chrom_peak_data("/ms_2/1/chrom_peak_data", h5,
+    res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
                                     read_rownames = TRUE)
     expect_equal(rownames(res), rownames(a))
     expect_equal(colnames(res), c("is_filled", "other_col"))
-    res <- .h5_read_chrom_peak_data("/ms_2/1/chrom_peak_data", h5,
+    res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
                                     read_rownames = FALSE)
     expect_equal(colnames(res), c("is_filled", "other_col"))
     expect_equal(rownames(res), c("1", "2"))
 
     ## Read single column
-    res <- .h5_dataset_names("/ms_2/1/chrom_peak_data", h5)
+    res <- .h5_dataset_names("/1/ms_2/chrom_peak_data", h5)
     expect_equal(res, c("is_filled", "other_col"))
-    res <- .h5_read_chrom_peak_data("/ms_2/2/chrom_peak_data/other_col", h5,
+    res <- .h5_read_chrom_peak_data("/2/ms_2/chrom_peak_data/other_col", h5,
                                     read_rownames = FALSE)
     expect_equal(res[, 1L], c("d", "d", "d"))
     H5Fclose(h5)
@@ -343,15 +399,15 @@ test_that(".h5_write_data works", {
     ## chrom peaks
     expect_equal(.h5_write_data(h5f, l, name = "chrom_peaks",
                                 ms_level = c(1L, 1L)), 1L)
-    res <- h5read(h5f, "/ms_1/1/chrom_peaks")
+    res <- h5read(h5f, "/1/ms_1/chrom_peaks")
     expect_equal(res, unname(a))
-    res <- h5read(h5f, "/ms_1/2/chrom_peaks")
+    res <- h5read(h5f, "/2/ms_1/chrom_peaks")
     expect_equal(res, unname(b))
     ## Update the first data set.
     a[1, 1] <- 10.4
     expect_equal(.h5_write_data(h5f, list(`1` = a), name = "chrom_peaks",
                                 ms_level = 1L, replace = FALSE), 2L)
-    res <- h5read(h5f, "/ms_1/1/chrom_peaks")
+    res <- h5read(h5f, "/1/ms_1/chrom_peaks")
     expect_equal(res, unname(a))
 
     ## chrom peak data
@@ -361,7 +417,7 @@ test_that(".h5_write_data works", {
     names(l) <- 1:2
     expect_equal(.h5_write_data(h5f, l, name = "chrom_peak_data",
                                 ms_level = c(1L, 1L)), 3L)
-    res <- h5read(h5f, "/ms_1/1/chrom_peak_data")
+    res <- h5read(h5f, "/1/ms_1/chrom_peak_data")
     expect_equal(a, as.data.frame(res))
 
     file.remove(h5f)

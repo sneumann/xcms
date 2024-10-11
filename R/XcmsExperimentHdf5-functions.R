@@ -10,36 +10,36 @@
     has_chrom_peaks <- hasChromPeaks(x)
     has_features <- hasFeatures(x)
     x <- as(x, "XcmsExperimentHdf5")
-    x@sample_id <- seq_along(x)
+    x@sample_id <- .featureIDs(length(x), "S")
     x@hdf5_file <- h5_file
     mod_count <- 0L
     if (has_chrom_peaks) {
-        ## Check if we need to change the rownames to the expected format
-        ## CP<MS level><index>
-        first_cpid <- rownames(x@chromPeaks)[1L]
-        if (nchar(first_cpid) == 3 || substring(first_cpid, 3, 3) == "0")
-            rownames(x@chromPeaks) <-
-                paste0("CP", x@chromPeakData$ms_level,
-                       substring(rownames(x@chromPeaks), 3))
+        message("Note: reformatting row names for the chromPeaks matrix.")
         ## Memory-efficient export: save the data for one sample at a time. If
         ## that is too slow we could split the data and export all in one go.
         is_sample <- colnames(x@chromPeaks) == "sample"
         msl <- unique(x@chromPeakData$ms_level)
 
-        for (i in x@sample_id) {
+        for (i in seq_along(x@sample_id)) {
             idx <- unname(which(x@chromPeaks[, is_sample] == i))
             pks <- x@chromPeaks[idx, !is_sample, drop = FALSE]
             pkd <- x@chromPeakData[idx, , drop = FALSE]
             f <- factor(pkd$ms_level, levels = msl)
+            ## Update chrom peak IDs to the new format
             pks <- split.data.frame(pks, f)
+            for (j in length(msl))
+                rownames(pks[[j]]) <- .featureIDs(
+                    nrow(pks[[j]]), paste0("CP", msl[j], x@sample_id[i]))
             pkd <- split.data.frame(
                 pkd[, colnames(pkd) != "ms_level", drop = FALSE], f)
-            names(pks) <- i
-            names(pkd) <- i
+            names(pks) <- x@sample_id[i]
+            names(pkd) <- x@sample_id[i]
             mod_count <- .h5_write_data(
-                h5_file, pks, name = "chrom_peaks", ms_level = msl)
+                h5_file, pks, name = "chrom_peaks", ms_level = msl,
+                replace = FALSE, write_colnames = TRUE, write_rownames = TRUE)
             mod_count <- .h5_write_data(
-                h5_file, pkd, name = "chrom_peak_data", ms_level = msl)
+                h5_file, pkd, name = "chrom_peak_data", ms_level = msl,
+                replace = FALSE)
         }
         slot(x, "chromPeaks", check = FALSE) <-
             x@chromPeaks[integer(), , drop = FALSE]
@@ -96,7 +96,8 @@
 
 #' Similar to `.xmse_merge_neighboring_peaks()` in XcmsExperiment-functions.R,
 #' but this does not return the chromatograpic peaks but stores them into
-#' the HDF5 file instead.
+#' the HDF5 file instead. The function needs also to update/define rownames
+#' for the newly added chromatographic peaks.
 #'
 #' @param x `XcmsExperimentHdf5` object with potentially multiple samples.
 #'
@@ -109,36 +110,40 @@
     f <- as.factor(fromFile(x)[keep])
     if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
     else rt <- rtime(spectra(x))[keep]
-    ## Get the list of chromPeaks for x.
+    ## Get the list of chromPeak data for x.
     pksl <- .h5_read_data(
         x@hdf5_file, index = x@sample_id, name = "chrom_peaks",
         ms_level = rep(msLevel, length(x@sample_id)),
         read_colnames = TRUE, read_rownames = TRUE)
-    prefix <- paste0("CP", msLevel)
-    cp_id <- max(c(0L, vapply(pksl, function(z)
-        max(as.integer(sub(prefix, "", rownames(z)))), 1L)))
+    ## Get the max index of a chrom peak per sample
+    max_index <- integer(length(pksl))
+    for (i in seq_along(pksl))
+        max_index[i] <- max(
+            c(0L, as.integer(sub(paste0("CP", msLevel, x@sample_id[i]), "",
+                                 rownames(pksl[[i]])))))
     ## Get the list of chromPeakData for x.
     pkdl <- .h5_read_data(
         x@hdf5_file, index = x@sample_id, name = "chrom_peak_data",
         ms_level = rep(msLevel, length(x@sample_id)), read_rownames = TRUE)
     ## Do refinement (in parallel)
     res <- bpmapply(
-        xcms:::.merge_neighboring_peaks2,
+        .merge_neighboring_peaks2,
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
                         f = factor()), f), pksl, pkdl, split(rt, f),
         MoreArgs = list(expandRt = expandRt, expandMz = expandMz,
                         ppm = ppm, minProp = minProp),
         SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
     ## Replace data in hdf5 for samples with changed data.
-    has_merged <- which(
-        vapply(res, function(z) any(is.na(rownames(z[[1L]]))), NA))
-    for (i in has_merged) {
+    for (i in seq_along(res)) {
         l <- list(res[[i]]$chromPeaks)
+        nas <- is.na(rownames(l[[1L]]))
+        rownames(l[[1L]])[nas] <- .featureIDs(
+            sum(nas), paste0("CP", msLevel, x@sample_id[i]), max_index[i] + 1L)
         names(l) <- x@sample_id[i]
         .h5_write_data(h5_file = x@hdf5_file, data_list = l,
                        name = "chrom_peaks", ms_level = msLevel,
                        replace = TRUE, write_colnames = FALSE,
-                       write_rownames = FALSE)
+                       write_rownames = TRUE)
         pkd <- res[[i]]$chromPeakData
         if (!any(colnames(pkd) == "merged"))
             pkd$merged <- FALSE
@@ -149,11 +154,17 @@
                        name = "chrom_peak_data", ms_level = msLevel,
                        replace = TRUE)
     }
-    ## Report the highest CP number back.
-    cp_id
 }
 
 #' Extract the `chromPeaks` `matrix` of selected samples.
+#'
+#' - It should be possible to run this function in a chunk-wise manner. This
+#'   would make sense if e.g. `mz` or `rt` was provided. For extraction of the
+#'   full data it would not make any sense, though. So, maybe `chromPeaks()`
+#'   has to decide how to best run it (directly call it on the full data or
+#'   run it chunk-wise).
+#' - The function should return a `list` of matrices - always (?)
+#' - The function should allow to select single columns.
 #'
 #'
 #' @param by_sample `logical(1)` whether a `list` of `chromPeak` matrices split
@@ -161,6 +172,8 @@
 #'     additional column `"sample"`.
 #'
 #' @noRd
+NULL
+
 ## .h5_chrom_peaks <- function(x, columns = character(), by_sample = TRUE) {
 ##     h5 <- rhdf5::H5Fopen(x@hdf5_file)
 ##     .h5_check_mod_count(h5, x@hdf5_mod_count)
@@ -182,12 +195,15 @@
 
 #' Properties of the HDF5 file used for on-disk storage of xcms results:
 #' - all preprocessing results are stored within the same file.
-#' - storage of chrom peak detection results are organized by MS level and
-#'   sample:
-#'   /ms_<ms_level>/<sample id>/chrom_peaks (float array)
-#'   /ms_<ms_level>/<sample id>/chrom_peaks_rownames (character array)
-#'   /ms_<ms_level>/<sample id>/chrom_peaks_colnames (character array)
-#'   /ms_<ms_level>/<sample id>/chrom_peak_data (list of arrays).
+#' - storage of chrom peak detection results are organized by sample and
+#'   MS level:
+#'   /<sample id>/ms_<ms_level>/chrom_peaks (float array)
+#'   /<sample id>/ms_<ms_level>/chrom_peaks_rownames (character array)
+#'   /<sample id>/ms_<ms_level>/chrom_peaks_colnames (character array)
+#'   /<sample id>/ms_<ms_level>/chrom_peak_data (list of arrays).
+#'
+#' @noRd
+NULL
 
 .h5_have_rhdf5 <- function() {
     return(requireNamespace("rhdf5", quietly = TRUE))
@@ -270,9 +286,22 @@
     rhdf5::h5ls(g, recursive = recursive, datasetinfo = FALSE)$name
 }
 
-.h5_ms_levels <- function(h5) {
-    nms <- .h5_dataset_names("/", h5)
+
+.h5_ms_levels <- function(h5, sample_id) {
+    nms <- .h5_dataset_names(paste0("/", sample_id), h5)
     as.integer(unique(sub("ms_", "", grep("^ms", nms, value = TRUE))))
+}
+
+.h5_chrom_peak_ms_levels <- function(h5_file, sample_id) {
+    h5 <- rhdf5::H5Fopen(h5_file)
+    on.exit(rhdf5::H5Fclose(h5))
+    msl <- .h5_ms_levels(h5, sample_id)
+    has_cp <- vapply(
+        paste0("/", sample_id, "/ms_", msl, "/"),
+        function(x) {
+            any(.h5_dataset_names(x, h5) == "chrom_peaks")
+        }, NA)
+    msl[has_cp]
 }
 
 #' Read selected datasets from a HDF5 file.
@@ -322,7 +351,7 @@
         FUN <- .h5_read_chrom_peak_data
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
-    d <- paste0("/ms_", ms_level, "/", index, "/", name)
+    d <- paste0("/", index, "/ms_", ms_level, "/", name)
     if (is.character(column) && length(column) == 1L)
         d <- paste0(d, "/", column)
     lapply(d, FUN = FUN, read_colnames = read_colnames,
@@ -416,7 +445,7 @@
 #' @param h5 HDF5 file handle.
 #'
 #' @param name `character(1)` with the name for the data set (e.g.
-#'     `"/ms_1/1/chrom_peaks"`.
+#'     `"/S1/ms_1/chrom_peaks"`.
 #'
 #' @param level `integer(1)` with the compression level.
 #'
@@ -426,18 +455,32 @@
 #' @param write_rownames `logical(1)` whether to write the rownames of `x` as
 #'     an additional data set `paste0(name, "_rownames")`.
 #'
+#' @param replace `logical(1)` whether an eventually existing data set should
+#'     be replaced or updated. Data sets can only be updated if their
+#'     dimensions are identical.
+#'
 #' @noRd
 .h5_write_chrom_peaks <- function(x, h5, name, level, write_colnames = TRUE,
-                                  write_rownames = TRUE) {
+                                  write_rownames = TRUE, replace = TRUE) {
+    if (replace && rhdf5::H5Lexists(h5, name))
+        rhdf5::h5delete(h5, name)
     rhdf5::h5write(x, h5, name = name, level = level,
                    write.attributes = FALSE,
                    createnewfile = FALSE)
-    if (write_rownames)
-        rhdf5::h5write(rownames(x), h5, name = paste0(name, "_rownames"),
+    if (write_rownames) {
+        dn <- paste0(name, "_rownames")
+        if (replace && rhdf5::H5Lexists(h5, dn))
+            rhdf5::h5delete(h5, dn)
+        rhdf5::h5write(rownames(x), h5, name = dn,
                        level = level, createnewfile = FALSE)
-    if (write_colnames)
-        rhdf5::h5write(colnames(x), h5, name = paste0(name, "_colnames"),
+    }
+    if (write_colnames) {
+        dn <- paste0(name, "_colnames")
+        if (replace && rhdf5::H5Lexists(h5, dn))
+            rhdf5::h5delete(h5, dn)
+        rhdf5::h5write(colnames(x), h5, name = dn,
                        level = level, createnewfile = FALSE)
+    }
 }
 
 #' Bare writing function of the chromPeakData DATA.FRAME
@@ -450,24 +493,29 @@
 #'
 #' @param level `integer(1)` with the compression level.
 #'
+#' @param replace `logical(1)` whether an eventually existing data set should
+#'     be replaced or updated. Data sets can only be updated if their
+#'     dimensions are identical.
+#'
 #' @noRd
-.h5_write_chrom_peak_data <- function(x, h5, name, level, ...) {
+.h5_write_chrom_peak_data <- function(x, h5, name, level, replace = TRUE, ...) {
+    if (replace && rhdf5::H5Lexists(h5, name))
+        rhdf5::h5delete(h5, name)
     rhdf5::h5writeDataset(x, h5, name, level = level,
                           DataFrameAsCompound = FALSE)
 }
 
-#' Writes data (matrix, data.frame) to a HDF5 file organized by MS level and
-#' sample:
+#' Writes data (matrix, data.frame) to a HDF5 file organized by sample and
+#' MS level:
 #'
-#' /ms_<MS level>/<sample id>/<data set>
+#' /<sample id>/ms_<MS level>/<data set>
 #'
 #' Example:
 #'
-#' /ms_1/1/chrom_peaks
-#' /ms_1/1/chrom_peak_data
-#' /ms_1/2/chrom_peaks
-#' /ms_1/2/chrom_peak_data
-#' /ms_2/1/chromPeaks
+#' /S001/ms_1/chrom_peaks
+#' /S001/ms_2/chrom_peaks
+#' /S002/ms_1/chrom_peaks
+#' /S002/ms_2/chrom_peaks
 #' ...
 #'
 #' @param h5_file the HDF5 file.
@@ -491,8 +539,8 @@
                            name = c("chrom_peaks", "chrom_peak_data"),
                            ms_level = integer(),
                            replace = TRUE,
-                           write_colnames = replace,
-                           write_rownames = replace) {
+                           write_colnames = TRUE,
+                           write_rownames = TRUE) {
     if (!length(data_list)) return(TRUE)
     stopifnot(length(ms_level) == length(data_list))
     stopifnot(!is.null(names(data_list)))
@@ -504,17 +552,16 @@
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     comp_level <- .h5_compression_level()
     for (i in seq_along(data_list)) {
-        group_ms <- paste0("/ms_", ms_level[i])
-        if (!rhdf5::H5Lexists(h5, group_ms))
-            rhdf5::h5createGroup(h5, group_ms)
-        group_sample <- paste0(group_ms, "/", names(data_list)[i])
+        group_sample <- paste0("/", names(data_list)[i])
         if (!rhdf5::H5Lexists(h5, group_sample))
             rhdf5::h5createGroup(h5, group_sample)
-        group_data <- paste0(group_sample, "/", name)
-        if (replace && rhdf5::H5Lexists(h5, group_data))
-            rhdf5::h5delete(h5, group_data)
+        group_ms <- paste0(group_sample, "/ms_", ms_level[i])
+        if (!rhdf5::H5Lexists(h5, group_ms))
+            rhdf5::h5createGroup(h5, group_ms)
+        group_data <- paste0(group_ms, "/", name)
         FUN(data_list[[i]], h5, group_data, comp_level,
-            write_colnames = write_colnames, write_rownames = write_rownames)
+            write_colnames = write_colnames, write_rownames = write_rownames,
+            replace = replace)
     }
     .h5_increment_mod_count(h5)
 }

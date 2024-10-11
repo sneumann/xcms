@@ -3,10 +3,49 @@
 \docType{methods}
 \name{hidden_aliases}
 \alias{hidden_aliases}
+\alias{show,XcmsExperimentHdf5-method}
 \alias{hasChromPeaks,XcmsExperimentHdf5-method}
+\alias{chromPeaks<-,XcmsExperimentHdf5-method}
+\alias{chromPeaks,XcmsExperimentHdf5-method}
+\alias{chromPeakData<-,XcmsExperimentHdf5-method}
+\alias{chromPeakData,XcmsExperimentHdf5-method}
+\alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
 \title{Internal page for hidden aliases}
 \usage{
+\S4method{show}{XcmsExperimentHdf5}(object)
+
 \S4method{hasChromPeaks}{XcmsExperimentHdf5}(object, msLevel = integer())
+
+\S4method{chromPeaks}{XcmsExperimentHdf5}(object) <- value
+
+\S4method{chromPeaks}{XcmsExperimentHdf5}(
+  object,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  msLevel = integer(),
+  sample = integer(),
+  type = c("any", "within", "apex_within"),
+  columns = character(),
+  isFilledColumn = FALSE
+)
+
+\S4method{chromPeakData}{XcmsExperimentHdf5}(object) <- value
+
+\S4method{chromPeakData}{XcmsExperimentHdf5}(
+  object,
+  msLevel = integer(),
+  sample = integer(),
+  return.type = c("DataFrame", "data.frame")
+)
+
+\S4method{refineChromPeaks}{XcmsExperimentHdf5,MergeNeighboringPeaksParam}(
+  object,
+  param,
+  msLevel = 1L,
+  chunkSize = 2L,
+  BPPARAM = bpparam()
+)
 }
 \value{
 Not applicable
