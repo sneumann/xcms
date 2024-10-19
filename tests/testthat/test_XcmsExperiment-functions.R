@@ -164,6 +164,17 @@ test_that(".index_chrom_peaks works", {
                                          rt = c(2500, 2700)))
 })
 
+test_that(".is_chrom_peaks_within_mz_rt works", {
+    pks <- chromPeaks(xmse)
+    res <- .is_chrom_peaks_within_mz_rt(
+        pks, mz = c(400, 600), type = "apex_within", rt = c(2500, 2700))
+    expect_true(is.logical(res))
+    expect_equal(length(res), nrow(pks))
+    ref <- pks[res, c("mz", "rt")]
+    expect_true(all(ref[, "mz"] >= 400 & ref[, "mz"] <= 600 &
+                    ref[, "rt"] >= 2500 & ref[, "rt"] <= 2700))
+})
+
 test_that(".chromPeaks works", {
     x <- new("XcmsExperiment")
     res <- .chromPeaks(x)

@@ -185,7 +185,8 @@
 #'
 #' @noRd
 .h5_chrom_peaks <- function(x, msLevel = integer(), columns = character(),
-                            by_sample = TRUE) {
+                            rt = numeric(), mz = numeric(), ppm = 0,
+                            type = "any", by_sample = TRUE) {
     if (length(columns)) {
         ## Get column names, convert column names to indices.
         cn <- rhdf5::h5read(x@hdf5_file,
@@ -202,6 +203,11 @@
     res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
                          ms_level = msl, read_colnames = TRUE,
                          read_rownames = TRUE, column = idx_columns)
+    if (length(mz) | length(rt))
+        res <- lapply(res, function(z, rt, mz, ppm, type) {
+            z[.is_chrom_peaks_within_mz_rt(
+                z, rt = rt, mz = mz, ppm = ppm, type = type), , drop = FALSE]
+        }, rt = rt, mz = mz, ppm = ppm, type = type)
     if (by_sample) {
         names(res) <- ids
     } else {

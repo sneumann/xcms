@@ -1136,15 +1136,21 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         keep <- keep &
             chromPeakData(
                 object, return.type = "data.frame")$ms_level %in% msLevel
+    which(keep & .is_chrom_peaks_within_mz_rt(pks, rt, mz, ppm, type))
+}
+
+.is_chrom_peaks_within_mz_rt <- function(x, rt = numeric(), mz = numeric(),
+                                         ppm = 0, type) {
     ## Select peaks within rt range.
+    keep <- rep(TRUE, nrow(x))
     if (length(rt)) {
         rt <- range(as.numeric(rt))
         if (type == "any")
-            keep <- keep & pks[, "rtmin"] <= rt[2L] & pks[, "rtmax"] >= rt[1L]
+            keep <- keep & x[, "rtmin"] <= rt[2L] & x[, "rtmax"] >= rt[1L]
         if (type == "within")
-            keep <- keep & pks[, "rtmin"] >= rt[1L] & pks[, "rtmax"] <= rt[2L]
+            keep <- keep & x[, "rtmin"] >= rt[1L] & x[, "rtmax"] <= rt[2L]
         if (type == "apex_within")
-            keep <- keep & pks[, "rt"] >= rt[1L] & pks[, "rt"] <= rt[2L]
+            keep <- keep & x[, "rt"] >= rt[1L] & x[, "rt"] <= rt[2L]
     }
     ## Select peaks within mz range, considering also ppm
     if (length(mz)) {
@@ -1154,13 +1160,13 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         if (is.finite(mz[2L]))
             mz[2L] <- mz[2L] + mz[2L] * ppm / 1e6
         if (type == "any")
-            keep <- keep & pks[, "mzmin"] <= mz[2L] & pks[, "mzmax"] >= mz[1L]
+            keep <- keep & x[, "mzmin"] <= mz[2L] & x[, "mzmax"] >= mz[1L]
         if (type == "within")
-            keep <- keep & pks[, "mzmin"] >= mz[1L] & pks[, "mzmax"] <= mz[2L]
+            keep <- keep & x[, "mzmin"] >= mz[1L] & x[, "mzmax"] <= mz[2L]
         if (type == "apex_within")
-            keep <- keep & pks[, "mz"] >= mz[1L] & pks[, "mz"] <= mz[2L]
+            keep <- keep & x[, "mz"] >= mz[1L] & x[, "mz"] <= mz[2L]
     }
-    which(keep)
+    keep
 }
 
 #' Helper function to return the chromPeakData as-is (as a data.frame) from

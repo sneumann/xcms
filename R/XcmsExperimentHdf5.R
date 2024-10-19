@@ -1,16 +1,39 @@
 #' @include hidden_aliases.R
 
-#' XcmsExperimentHdf5 uses a different convention for chrom peak IDs: for
-#' efficiency reasons, chromatographic peak data is organized by MS level and
-#' sample/file. The chrom peak IDs are hence in the format
-#' *CP<MS level><sample id><chrom peak index>* with <MS level> being the MS
+#' @title xcms result object for very large data sets
+#'
+#' @name XcmsExperimentHdf5
+#'
+#' @description
+#'
+#' The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] kepp all
+#' preprocessing results in memory and can thus (depending on the size of the
+#' data set) require a large amount of memory. The `XcmsExperimentHdf5` class,
+#' by using an on-disk data storage mechanism, has a much lower memory
+#' footprint allowing thus also to represent and analyze very large data sets
+#' on regular computer systems. With some exceptions including additional
+#' parameters the functionality and usability of this object is identical to
+#' the one of `XcmsExperiment` objects. This help page lists only functions
+#' that have additional or different parameters than the *default* ones for
+#' [XcmsExperiment()] objects.
+#'
+#' @details
+#'
+#' The `XcmsExperimentHdf5` object stores all preprocessing results (except
+#' adjusted retention times, which are stored as an additional spectra variable
+#' in the object's [Spectra()] object), in a file in HDF5 format.
+#'
+#' `XcmsExperimentHdf5` uses a different naming scheme for chromatographic
+#' peaks: for efficiency reasons, chromatographic peak data is organized by
+#' sample and MS level. The chrom peak IDs are hence in the format
+#' *CP<MS level>S<sample id><chrom peak index>* with <MS level> being the MS
 #' level in which the chromatographic peaks were detected and <sample id>
 #' the ID of the sample (usually related to the index in the original
-#' `MsExperiment` object) and the <chrom peak index> the index
-#' of the chromatographic peak in the chrom peak matrix **of that sample** and
+#' `MsExperiment` object) and the <chrom peak index> the index of the
+#' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
-#' @noRd
+#' @author Johannes Rainerr, Philippine Louail
 NULL
 
 setClass("XcmsExperimentHdf5",
@@ -96,17 +119,25 @@ setReplaceMethod("chromPeaks", "XcmsExperimentHdf5", function(object, value) {
 setMethod(
     "chromPeaks", "XcmsExperimentHdf5",
     function(object, rt = numeric(), mz = numeric(), ppm = 0,
-             msLevel = integer(), sample = integer(),
-             type = c("any", "within", "apex_within"),
-             columns = character(), isFilledColumn = FALSE) {
+             msLevel = integer(),  type = c("any", "within", "apex_within"),
+             isFilledColumn = FALSE, columns = character()) {
+        if (isFilledColumn)
+            stop("Parameter 'isFilledColumn = TRUE' is not supported")
         type <- match.arg(type)
-    stop("Not implemented for ", class(object)[1L])
-        ## pks <- object@chromPeaks
-        ## if (isFilledColumn)
-        ##     pks <- cbind(
-        ##         pks, is_filled = as.numeric(object@chromPeakData$is_filled))
-        ## pks[.index_chrom_peaks(object, rt = rt, mz = mz, ppm = ppm,
-        ##                        msLevel = msLevel, type = type), , drop = FALSE]
+        xcms:::.h5_require_rhdf5()
+        if (!length(object))
+            return(object@chromPeaks)
+        xcms:::.h5_check_mod_count(object@hdf5_file, object@hdf5_mod_count)
+        if (!hasChromPeaks(object, msLevel = msLevel))
+            return(object@chromPeaks)
+        msl <- xcms:::.h5_chrom_peak_ms_levels(object@hdf5_file,
+                                               object@sample_id[1L])
+        if (length(msLevel))
+            msl <- msl[msl %in% msLevel]
+        ## Eventually run chunk-wise?
+        .h5_chrom_peaks(object, msLevel = msl, columns = columns,
+                        by_sample = FALSE, mz = mz, rt = rt, ppm = ppm,
+                        type = type)
     })
 
 #' @rdname hidden_aliases

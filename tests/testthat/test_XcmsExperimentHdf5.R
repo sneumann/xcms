@@ -1,5 +1,5 @@
 h5f <- tempfile()
-xmse_h5 <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), h5f)
+xmse_h5 <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), h5f)
 
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
@@ -12,6 +12,30 @@ test_that("XcmsExperimentHdf5 validation works", {
     a <- xmse_h5
     a@sample_id <- a@sample_id[c(1L, 3L)]
     expect_error(validObject(a), "number of samples does not match")
+})
+
+test_that("chromPeaks,XcmsExperiementHdf5 works", {
+    a <- new("XcmsExperimentHdf5")
+    res <- chromPeaks(a)
+    expect_equal(res, a@chromPeaks)
+    expect_error(chromPeaks(a, isFilledColumn = TRUE), "not supported")
+
+    a <- xmse_h5
+    res <- chromPeaks(a, msLevel = c(1, 3))
+    expect_equal(res, a@chromPeaks)
+    res <- chromPeaks(a)
+    ref <- chromPeaks(loadXcmsData("faahko_sub2"))
+    expect_equal(colnames(res), colnames(ref))
+    expect_equal(unname(res), unname(ref))
+
+    res <- chromPeaks(a, msLevel = 1, columns = c("mz", "mzmin", "mzmax"))
+    expect_equal(colnames(res), c("mz", "mzmin", "mzmax", "sample"))
+    expect_equal(unname(res), unname(ref[, c("mz","mzmin","mzmax","sample")]))
+
+    ## providing mz and rt
+    res <- chromPeaks(a, msLevel = 1, type = "apex_within", rt = c(2500, 2600))
+    expect_true(all(res[, "rt"] > 2500))
+    expect_true(all(res[, "rt"] < 2600))
 })
 
 test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {

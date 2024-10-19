@@ -26,7 +26,21 @@ test_that(".h5_chrom_peaks works", {
     expect_error(
         .h5_chrom_peaks(xmse_h5, msLevel = 1L, by_sample = FALSE,
                         columns = c("mz", "rt", "maxo", "other")),
-                 "not found")
+        "not found")
+
+    ## with rt
+    res <- .h5_chrom_peaks(xmse_h5, rt = c(2500, 2700), type = "apex_within",
+                           msLevel = 1L, by_sample = FALSE)
+    expect_true(all(res[, "rt"] > 2500))
+    expect_true(all(res[, "rt"] < 2700))
+
+    ## with mz and rt
+    res <- .h5_chrom_peaks(xmse_h5, rt = c(2500, 2700), type = "apex_within",
+                           msLevel = 1L, by_sample = FALSE, mz = c(400, 600))
+    expect_true(all(res[, "rt"] > 2500))
+    expect_true(all(res[, "rt"] < 2700))
+    expect_true(all(res[, "mz"] > 400))
+    expect_true(all(res[, "mz"] < 600))
 })
 
 test_that(".xcms_experiment_to_hdf5 works", {
