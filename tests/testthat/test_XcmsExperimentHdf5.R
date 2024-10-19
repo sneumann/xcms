@@ -1,5 +1,5 @@
 h5f <- tempfile()
-xmse_h5 <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), h5f)
+xmse_h5 <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), h5f)
 
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
@@ -23,16 +23,16 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
 
     af <- tempfile()
     ref <- loadXcmsData("faahko_sub2")
-    a <- xcms:::.xcms_experiment_to_hdf5(ref, af)
+    a <- .xcms_experiment_to_hdf5(ref, af)
     res <- refineChromPeaks(a, MergeNeighboringPeaksParam())
     expect_error(validObject(a))
     expect_true(validObject(res))
     ## Compare results from both. Need chromPeaks() function first.
     ref <- refineChromPeaks(ref, MergeNeighboringPeaksParam())
     ref_pks <- chromPeaks(ref)
-    res_pks <- xcms:::.h5_read_data(res@hdf5_file, index = res@sample_id,
-                         ms_level = rep(1L, length(res)),
-                         read_colnames = TRUE, read_rownames = TRUE)
+    res_pks <- .h5_read_data(res@hdf5_file, index = res@sample_id,
+                             ms_level = rep(1L, length(res)),
+                             read_colnames = TRUE, read_rownames = TRUE)
     res_pks <- do.call(
         rbind, mapply(FUN = function(x, i) cbind(x, sample = rep(i, nrow(x))),
                       res_pks, seq_along(res_pks)))

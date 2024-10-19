@@ -1,6 +1,34 @@
 library(rhdf5)
 xmse_h5 <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tempfile())
 
+test_that(".h5_chrom_peaks works", {
+    res <- .h5_chrom_peaks(xmse_h5)
+    expect_true(is.list(res))
+    expect_true(length(res) == 0)
+
+    res <- .h5_chrom_peaks(xmse_h5, msLevel = 1L)
+    expect_true(is.list(res))
+    expect_true(length(res) == 3)
+    expect_equal(names(res), xmse_h5@sample_id)
+
+    res <- .h5_chrom_peaks(xmse_h5, msLevel = 1L, by_sample = FALSE)
+    expect_true(is.matrix(res))
+    expect_true(any(colnames(res) == "sample"))
+    expect_true(is.numeric(res))
+
+    res_2 <- .h5_chrom_peaks(xmse_h5, msLevel = 1L, by_sample = FALSE,
+                             columns = c("mz", "rt", "maxo"))
+    expect_true(is.matrix(res_2))
+    expect_true(is.numeric(res_2))
+    expect_equal(colnames(res_2), c("mz", "rt", "maxo", "sample"))
+    expect_equal(res[, colnames(res_2)], res_2)
+
+    expect_error(
+        .h5_chrom_peaks(xmse_h5, msLevel = 1L, by_sample = FALSE,
+                        columns = c("mz", "rt", "maxo", "other")),
+                 "not found")
+})
+
 test_that(".xcms_experiment_to_hdf5 works", {
     expect_error(.xcms_experiment_to_hdf5(4), "Parameter 'h5_file'")
 

@@ -257,9 +257,15 @@ useOriginalCode <- function(x) {
 #'
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
+#' @param min_len integer(1) defining the minimum length of the numeric part
+#'     of the string. A value of 2 ensures that, independently of `x` and
+#'     `from` the length of the numbers is at least 2, thus resulting in
+#'     numbers 01, 02, etc.
+#'
 #' @noRd
-.featureIDs <- function(x, prefix = "FT", from = 1L) {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + from)), "d"),
+.featureIDs <- function(x, prefix = "FT", from = 1L, min_len = 1) {
+    n <- max(ceiling(log10(x + from)), min_len)
+    sprintf(paste0(prefix, "%0", n, "d"),
             seq(from = from, length.out = x))
 }
 

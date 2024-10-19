@@ -29,7 +29,8 @@
             pks <- split.data.frame(pks, f)
             for (j in length(msl))
                 rownames(pks[[j]]) <- .featureIDs(
-                    nrow(pks[[j]]), paste0("CP", msl[j], x@sample_id[i]))
+                    nrow(pks[[j]]), paste0("CP", msl[j], x@sample_id[i]),
+                    min_len = 6)
             pkd <- split.data.frame(
                 pkd[, colnames(pkd) != "ms_level", drop = FALSE], f)
             names(pks) <- x@sample_id[i]
@@ -156,36 +157,69 @@
     }
 }
 
-#' Extract the `chromPeaks` `matrix` of selected samples.
+#' Internal function to extract the `chromPeaks` `matrix` of `x`. Mandatory
+#' variables are `x` and `msLevel`.
 #'
-#' - It should be possible to run this function in a chunk-wise manner. This
-#'   would make sense if e.g. `mz` or `rt` was provided. For extraction of the
-#'   full data it would not make any sense, though. So, maybe `chromPeaks()`
-#'   has to decide how to best run it (directly call it on the full data or
-#'   run it chunk-wise).
-#' - The function should return a `list` of matrices - always (?)
-#' - The function should allow to select single columns.
+#' @param x `XcmsExperimentHdf5` for which the `chromPeaks()` information
+#'     should be returned. The function returns data for all samples in the
+#'     object.
 #'
+#' @param msLevel `integer(1)` to restrict the extraction to selected MS
+#'     level(s). MS level(s) **have** to be provided.
+#'
+#' @param columns optional `character` allowing to define a subset of columns
+#'     from which the data should be returned.
 #'
 #' @param by_sample `logical(1)` whether a `list` of `chromPeak` matrices split
 #'     per sample should be returned or the *conventional* matrix with an
 #'     additional column `"sample"`.
 #'
+#' @return
+#'
+#' For `by_sample = TRUE`: a `list` of chrom peak matrices, one element for
+#' each sample/MS level. This is useful only for internal functions that
+#' process the data per sample to avoid unnecessary merging and splitting.
+#'
+#' For `by_sample = FALSE`: a `numeric` `matrix` with the chrom peak matrix. A
+#' columns `"sample"` is added to indicate the sample from which the data is.
+#'
 #' @noRd
-NULL
+.h5_chrom_peaks <- function(x, msLevel = integer(), columns = character(),
+                            by_sample = TRUE) {
+    if (length(columns)) {
+        ## Get column names, convert column names to indices.
+        cn <- rhdf5::h5read(x@hdf5_file,
+                            name = paste0("/", x@sample_id[1L], "/ms_",
+                                          msLevel[1L], "/chrom_peaks_colnames"))
+        idx_columns <- match(columns, cn)
+        if (anyNA(idx_columns))
+            stop("Column(s) ", paste0("\"", columns[is.na(idx_columns)], "\"",
+                                      collapse = ", "), " not found",
+                 call. = FALSE)
+    } else idx_columns <- NULL
+    ids <- rep(x@sample_id, length(msLevel))
+    msl <- rep(msLevel, each = length(x@sample_id))
+    res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
+                         ms_level = msl, read_colnames = TRUE,
+                         read_rownames = TRUE, column = idx_columns)
+    if (by_sample) {
+        names(res) <- ids
+    } else {
+        l <- vapply(res, nrow, 1L)
+        res <- cbind(do.call(rbind, res),
+                     sample = rep(match(ids, x@sample_id), l))
+    }
+    res
+}
 
-## .h5_chrom_peaks <- function(x, columns = character(), by_sample = TRUE) {
-##     h5 <- rhdf5::H5Fopen(x@hdf5_file)
-##     .h5_check_mod_count(h5, x@hdf5_mod_count)
-##     grps <- .h5_dataset_names("/", h5)
-##     rhdf5::H5Fclose(h5)
-##     msl <- sort(as.integer(sub("ms_", "", grep("^ms_", grps, value = TRUE))))
-##     ids <- rep(x@sample_id, length(msl))
-##     msl <- rep(msl, each = length(x@sample_id))
-##     res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
-##                          ms_level = msl, read_colnames = TRUE,
-##                          read_rownames = TRUE)
-## }
+.filter_chrom_peak_matrix <- function(x, msLevel = integer(),
+                                      mz = matrix(nrow = 0, ncol = 2),
+                                      rt = matrix(nrow = 0, ncol = 2)) {
+}
+
+.h5_chrom_peak_data <- function(x, columns = character(), by_sample = TRUE) {
+    ## LLLL implement; following .h5_chrom_peaks
+}
 
 ################################################################################
 ##
@@ -331,7 +365,7 @@ NULL
 #'     select a **single** column to read. For `name = "chrom_peaks"`: `integer`
 #'     with the indices of the column(s) that should be imported.
 #'
-#' @return `list()` with the read datasets. Will be a `list` or `numeric`
+#' @return `list()` with the read datasets. Will be a `list` of `numeric`
 #'     matrices for `name = "chrom_peaks"` or a `list` with `data.frame`s for
 #'     `name = "chrom_peak_data"`.
 #'
