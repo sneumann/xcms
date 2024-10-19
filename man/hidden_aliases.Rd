@@ -24,10 +24,9 @@
   mz = numeric(),
   ppm = 0,
   msLevel = integer(),
-  sample = integer(),
   type = c("any", "within", "apex_within"),
-  columns = character(),
-  isFilledColumn = FALSE
+  isFilledColumn = FALSE,
+  columns = character()
 )
 
 \S4method{chromPeakData}{XcmsExperimentHdf5}(object) <- value

@@ -150,8 +150,9 @@
 #'   mass peak of the chromatographic peak), `"sample"` (index of the sample
 #'   in `object` in which the peak was identified). Parameters `rt`, `mz`,
 #'   `ppm`, `msLevel` and `type` allow to extract subsets of identified
-#'   chromatographic peaks from the `object`. See parameter description below
-#'   for details.
+#'   chromatographic peaks from the `object`. Parameter `columns` allows to
+#'   optionally define which columns to extract. See parameter description
+#'   below for details.
 #'
 #' - `chromPeakData`: returns a `DataFrame` with potential additional
 #'   *annotations* for the identified chromatographic peaks. Each row in this
@@ -383,7 +384,7 @@
 #'     retention times should be returned. The default is to return adjusted
 #'     retention times, if available.
 #'
-#' @param aggregationFun For `chromatogram`: `character(1)` defining the
+#' @param aggregationFun For `chromatogram()`: `character(1)` defining the
 #'     function that should be used to *aggregate* intensities for retention
 #'     time (i.e. each spectrum) along the specified m/z range (parameter
 #'     `mz`). Defaults to `aggregationFun = "sum"` and hence all intensities
@@ -394,7 +395,7 @@
 #' @param BPPARAM For `chromatogram`: parallel processing setup. Defaults
 #'     to `BPPARAM = bpparam()`. See [bpparam()] for more information.
 #'
-#' @param chromPeaks For `chromatogram`: `character(1)` defining which
+#' @param chromPeaks For `chromatogram()`: `character(1)` defining which
 #'     chromatographic peaks should be returned. Can be either
 #'     `chromPeaks = "apex_within"` (default) to return all chromatographic
 #'     peaks with the m/z and RT of their apex within the m/z and retention
@@ -403,16 +404,20 @@
 #'     `chromPeaks = "none"` to not include any chromatographic peaks. See
 #'     also parameter `type` below for additional information.
 #'
-#' @param chunkSize For `chromatogram`: `integer(1)` defining the number of
+#' @param chunkSize For `chromatogram()`: `integer(1)` defining the number of
 #'     files from which the data should be loaded at a time into memory.
 #'     Defaults to `chunkSize = 2L`.
 #'
+#' @param columns For `chromPeaks()`: optional `character` to specify the
+#'     names of the columns that should be returned. By default (with
+#'     `columns = character()` all columns are returned.
+#'
 #' @param drop For `[`: ignored.
 #'
-#' @param features For `filterFeatureDefinitions` and `featureArea`: `logical`,
-#'     `integer` or `character` defining the features to keep or from which
-#'     to extract the feature area, respectively. See function description
-#'     for more information.
+#' @param features For `filterFeatureDefinitions()` and `featureArea()`:
+#'     `logical`, `integer` or `character` defining the features to keep or
+#'     from which to extract the feature area, respectively. See function
+#'     description for more information.
 #'
 #' @param file For `filterFile`: `integer` with the indices of the samples
 #'     (files) to which the data should be subsetted.
@@ -991,14 +996,15 @@ setMethod(
     "chromPeaks", "XcmsExperiment",
     function(object, rt = numeric(), mz = numeric(), ppm = 0,
              msLevel = integer(), type = c("any", "within", "apex_within"),
-             isFilledColumn = FALSE) {
+             isFilledColumn = FALSE, columns = character()) {
         type <- match.arg(type)
         pks <- object@chromPeaks
         if (isFilledColumn)
             pks <- cbind(
                 pks, is_filled = as.numeric(object@chromPeakData$is_filled))
         pks[.index_chrom_peaks(object, rt = rt, mz = mz, ppm = ppm,
-                               msLevel = msLevel, type = type), , drop = FALSE]
+                               msLevel = msLevel, type = type),
+            columns, drop = FALSE]
     })
 
 #' @rdname XcmsExperiment

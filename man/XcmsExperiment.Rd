@@ -122,7 +122,8 @@ featureArea(
   ppm = 0,
   msLevel = integer(),
   type = c("any", "within", "apex_within"),
-  isFilledColumn = FALSE
+  isFilledColumn = FALSE,
+  columns = character()
 )
 
 \S4method{chromPeakData}{XcmsExperiment}(object) <- value
@@ -241,7 +242,7 @@ data should be subset.}
 \item{file}{For \code{filterFile}: \code{integer} with the indices of the samples
 (files) to which the data should be subsetted.}
 
-\item{aggregationFun}{For \code{chromatogram}: \code{character(1)} defining the
+\item{aggregationFun}{For \code{chromatogram()}: \code{character(1)} defining the
 function that should be used to \emph{aggregate} intensities for retention
 time (i.e. each spectrum) along the specified m/z range (parameter
 \code{mz}). Defaults to \code{aggregationFun = "sum"} and hence all intensities
@@ -259,7 +260,7 @@ generated. For MS1 data (\code{msLevel = 1L}, the default), this parameter
 is ignored. See examples on \code{chromatogram} below for further
 information.}
 
-\item{chunkSize}{For \code{chromatogram}: \code{integer(1)} defining the number of
+\item{chunkSize}{For \code{chromatogram()}: \code{integer(1)} defining the number of
 files from which the data should be loaded at a time into memory.
 Defaults to \code{chunkSize = 2L}.}
 
@@ -292,10 +293,10 @@ a feature based on the \code{"rtmax"} values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 \code{rtmax = max}.}
 
-\item{features}{For \code{filterFeatureDefinitions} and \code{featureArea}: \code{logical},
-\code{integer} or \code{character} defining the features to keep or from which
-to extract the feature area, respectively. See function description
-for more information.}
+\item{features}{For \code{filterFeatureDefinitions()} and \code{featureArea()}:
+\code{logical}, \code{integer} or \code{character} defining the features to keep or
+from which to extract the feature area, respectively. See function
+description for more information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
 
@@ -343,6 +344,10 @@ types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
 
+\item{columns}{For \code{chromPeaks()}: optional \code{character} to specify the
+names of the columns that should be returned. By default (with
+\code{columns = character()} all columns are returned.}
+
 \item{keep}{For \code{filterChromPeaks}: \code{logical}, \code{integer} or \code{character}
 specifying which chromatographic peaks to keep. If \code{logical} the
 length of \code{keep} needs to match the number of rows of \code{chromPeaks}.
@@ -384,7 +389,7 @@ intensity. Defaults to \code{missing = NA_real_}.}
 \item{include}{For \code{chromatogram}: deprecated; use parameter \code{chromPeaks}
 instead.}
 
-\item{chromPeaks}{For \code{chromatogram}: \code{character(1)} defining which
+\item{chromPeaks}{For \code{chromatogram()}: \code{character(1)} defining which
 chromatographic peaks should be returned. Can be either
 \code{chromPeaks = "apex_within"} (default) to return all chromatographic
 peaks with the m/z and RT of their apex within the m/z and retention
@@ -536,8 +541,9 @@ intensity of the chromatographic peak), \code{"maxo"} (maximal intensity of any
 mass peak of the chromatographic peak), \code{"sample"} (index of the sample
 in \code{object} in which the peak was identified). Parameters \code{rt}, \code{mz},
 \code{ppm}, \code{msLevel} and \code{type} allow to extract subsets of identified
-chromatographic peaks from the \code{object}. See parameter description below
-for details.
+chromatographic peaks from the \code{object}. Parameter \code{columns} allows to
+optionally define which columns to extract. See parameter description
+below for details.
 \item \code{chromPeakData}: returns a \code{DataFrame} with potential additional
 \emph{annotations} for the identified chromatographic peaks. Each row in this
 \code{DataFrame} corresponds to a row (same index and row name) in the
