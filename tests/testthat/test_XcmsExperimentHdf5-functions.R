@@ -1,5 +1,5 @@
 library(rhdf5)
-xmse_h5 <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tempfile())
+xmse_h5 <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tempfile())
 
 test_that(".h5_chrom_peaks works", {
     res <- .h5_chrom_peaks(xmse_h5)
@@ -41,6 +41,45 @@ test_that(".h5_chrom_peaks works", {
     expect_true(all(res[, "rt"] < 2700))
     expect_true(all(res[, "mz"] > 400))
     expect_true(all(res[, "mz"] < 600))
+})
+
+test_that(".h5_chrom_peaks_chunk works", {
+    p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
+    sps <- spectra(xmse_h5)[xmse_h5@sampleDataLinks[["spectra"]][, 2]]
+    sps$.SAMPLE_IDX <- xmse_h5@sampleDataLinks[["spectra"]][, 1L]
+    sps <- sps[sps$.SAMPLE_IDX %in% 2:3]
+
+    h5_file <- tempfile()
+    .h5_initialize_file(h5_file)
+
+    res <- .h5_find_chrom_peaks_chunk(
+        sps, msLevel = 1L, param = p, h5_file = h5_file,
+        sample_id = xmse_h5@sample_id)
+    expect_true(is.integer(res))
+    expect_equal(res, 2L)
+    h5 <- rhdf5::H5Fopen(h5_file)
+    expect_equal(.h5_dataset_names("/", h5), c("S2", "S3", "header"))
+    expect_equal(.h5_dataset_names("/S2/ms_1/", h5),
+                 c("chrom_peak_data", "chrom_peaks",
+                   "chrom_peaks_colnames", "chrom_peaks_rownames"))
+    H5Fclose(h5)
+    a <- .h5_read_data(h5_file, index = "S2", name = "chrom_peaks",
+                       ms_level = 1L, read_colnames = TRUE,
+                       read_rownames = TRUE)[[1L]]
+    ## add = TRUE
+    res <- .h5_find_chrom_peaks_chunk(
+        sps, msLevel = 1L, param = p, h5_file = h5_file, add = TRUE,
+        sample_id = xmse_h5@sample_id)
+    expect_equal(res, 4L)
+    b <- .h5_read_data(h5_file, index = "S2", name = "chrom_peaks",
+                       ms_level = 1L, read_colnames = TRUE,
+                       read_rownames = TRUE)[[1L]]
+    expect_equal(nrow(b), 2 * nrow(a))
+    expect_equal(anyDuplicated(rownames(b)), 0L)
+    same <- rownames(b) %in% rownames(a)
+    expect_equal(a, b[same, ])
+    expect_equal(unname(a), unname(b[!same, ]))
+    unlink(tempfile())
 })
 
 test_that(".xcms_experiment_to_hdf5 works", {
@@ -200,7 +239,7 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
                  unname(res[[3L]]))
 })
 
-test_that(".h5_read_chrom_peaks works", {
+test_that(".h5_read_matrix works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
 
@@ -214,27 +253,27 @@ test_that(".h5_read_chrom_peaks works", {
                                 ms_level = c(1L, 1L)), 1L)
 
     h5 <- H5Fopen(h5f)
-    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5)
+    res <- .h5_read_matrix("/1/ms_1/chrom_peaks", h5)
     expect_equal(res, unname(a))
-    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5,
-                                read_colnames = TRUE)
+    res <- .h5_read_matrix("/1/ms_1/chrom_peaks", h5,
+                           read_colnames = TRUE)
     expect_equal(unname(res), unname(a))
     expect_equal(colnames(res), colnames(a))
     expect_equal(rownames(res), NULL)
-    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5,
-                                read_colnames = TRUE, read_rownames = TRUE)
+    res <- .h5_read_matrix("/1/ms_1/chrom_peaks", h5,
+                           read_colnames = TRUE, read_rownames = TRUE)
     expect_equal(res, a)
-    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5, index = 3,
-                                read_colnames = TRUE, read_rownames = TRUE)
+    res <- .h5_read_matrix("/1/ms_1/chrom_peaks", h5, index = 3,
+                           read_colnames = TRUE, read_rownames = TRUE)
     expect_equal(res, a[, 3, drop = FALSE])
-    res <- .h5_read_chrom_peaks("/1/ms_1/chrom_peaks", h5, index = c(1, 3),
-                                read_colnames = FALSE, read_rownames = FALSE)
+    res <- .h5_read_matrix("/1/ms_1/chrom_peaks", h5, index = c(1, 3),
+                           read_colnames = FALSE, read_rownames = FALSE)
     expect_equal(res, unname(a[, c(1, 3)]))
     H5Fclose(h5)
     file.remove(h5f)
 })
 
-test_that(".h5_read_chrom_peak_data works", {
+test_that(".h5_read_data_frame works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
 
@@ -253,20 +292,20 @@ test_that(".h5_read_chrom_peak_data works", {
 
     h5 <- H5Fopen(h5f)
     res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
-                                    read_rownames = TRUE)
+                                           read_rownames = TRUE)
     expect_equal(rownames(res), rownames(a))
     expect_equal(colnames(res), c("is_filled", "other_col"))
-    res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
-                                    read_rownames = FALSE)
+    res <- .h5_read_data_frame("/1/ms_2/chrom_peak_data", h5,
+                               read_rownames = FALSE)
     expect_equal(colnames(res), c("is_filled", "other_col"))
     expect_equal(rownames(res), c("1", "2"))
 
     ## Read single column
     res <- .h5_dataset_names("/1/ms_2/chrom_peak_data", h5)
     expect_equal(res, c("is_filled", "other_col"))
-    res <- .h5_read_chrom_peak_data("/2/ms_2/chrom_peak_data/other_col", h5,
-                                    read_rownames = FALSE)
-    expect_equal(res[, 1L], c("d", "d", "d"))
+    res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data/other_col", h5)
+    expect_true(is.data.frame(res))
+    expect_equal(res[, 1L], c("c", "c"))
     H5Fclose(h5)
     file.remove(h5f)
 })
@@ -365,6 +404,7 @@ test_that(".h5_increment_mod_count works", {
 })
 
 test_that("HDF5 validity works", {
+    expect_error(.h5_valid_file(), "missing with no default")
     h5f <- tempfile()
     h5 <- H5Fcreate(h5f)
     expect_error(.h5_valid_file(h5f), "not in correct format")
@@ -384,7 +424,7 @@ test_that("HDF5 validity works", {
     file.remove(h5f)
 })
 
-test_that(".h5_write_chrom_peaks works", {
+test_that(".h5_write_matrix works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
     h5 <- H5Fopen(h5f)
@@ -392,7 +432,7 @@ test_that(".h5_write_chrom_peaks works", {
     mat <- cbind(mz = c(1.12, 1.34, 43.4), rt = c(23.2, 124.3, 123.5))
     rownames(mat) <- c("CP01", "CP02", "CP03")
 
-    .h5_write_chrom_peaks(mat, h5, "test_1", 0L)
+    .h5_write_matrix(mat, h5, "test_1", 0L)
     expect_equal(h5read(h5, "test_1"), unname(mat))
     expect_equal(as.vector(h5read(h5, "test_1_rownames")), rownames(mat))
     expect_equal(as.vector(h5read(h5, "test_1_colnames")), colnames(mat))
@@ -400,7 +440,7 @@ test_that(".h5_write_chrom_peaks works", {
     expect_true(any(l$name == "test_1_colnames"))
     expect_true(any(l$name == "test_1_rownames"))
 
-    .h5_write_chrom_peaks(mat, h5, "test_2", 0L, FALSE, FALSE)
+    .h5_write_matrix(mat, h5, "test_2", 0L, FALSE, FALSE)
     l <- h5ls(h5)
     expect_false(any(l$name == "test_2_colnames"))
     expect_false(any(l$name == "test_2_rownames"))
@@ -408,14 +448,14 @@ test_that(".h5_write_chrom_peaks works", {
     file.remove(h5f)
 })
 
-test_that(".h5_write_chrom_peak_data works", {
+test_that(".h5_write_data_frame works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
     h5 <- H5Fopen(h5f)
 
     df <- data.frame(ms_level = c(1L, 2L), is_filled = FALSE)
 
-    .h5_write_chrom_peak_data(df, h5, "test_1", 0L)
+    .h5_write_data_frame(df, h5, "test_1", 0L)
     res <- h5read(h5, "test_1")
     expect_true(is.list(res))
     expect_equal(names(res), c("is_filled", "ms_level"))

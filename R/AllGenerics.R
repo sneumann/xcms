@@ -1198,6 +1198,12 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     separately, and in parallel, for each sample. This will however not work
 #'     for all `Spectra` *backends* (see eventually [Spectra()] for details).
 #'
+#' @param hdf5File For `object` being an `MsExperiment`: `character(1)`
+#'     specifying the name (inclusive path) of a file that should be used for
+#'     on-disk storage of preprocessing results. This option is suggested for
+#'     very large data sets since it drastically reduces the memory footprint.
+#'     See [XcmsExperimentHdf5] for more information,
+#'
 #' @param msLevel `integer(1)` defining the MS level on which the
 #'     chromatographic peak detection should be performed.
 #'

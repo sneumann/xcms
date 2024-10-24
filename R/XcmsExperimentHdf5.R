@@ -6,16 +6,23 @@
 #'
 #' @description
 #'
-#' The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] kepp all
+#' The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] keep all
 #' preprocessing results in memory and can thus (depending on the size of the
 #' data set) require a large amount of memory. The `XcmsExperimentHdf5` class,
 #' by using an on-disk data storage mechanism, has a much lower memory
 #' footprint allowing thus also to represent and analyze very large data sets
-#' on regular computer systems. With some exceptions including additional
-#' parameters the functionality and usability of this object is identical to
+#' on regular computer systems. With some exceptions, including additional
+#' parameters, the functionality and usability of this object is identical to
 #' the one of `XcmsExperiment` objects. This help page lists only functions
 #' that have additional or different parameters than the *default* ones for
 #' [XcmsExperiment()] objects.
+#'
+#' @section Using the HDF5 file-based on-disk data storage:
+#'
+#' Calling [findChromPeaks()] on an `MsExperiment` using the parameter
+#' `hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
+#' hence use the on-disk data storage mode described on this page. All data
+#' is stored in a file with the name specifyied with parameter `hdf5File`.
 #'
 #' @details
 #'
@@ -41,14 +48,16 @@ setClass("XcmsExperimentHdf5",
          slots = c(hdf5_file = "character",
                    hdf5_mod_count = "integer",
                    sample_id = "character",
-                   has_chrom_peaks = "logical",
-                   has_features = "logical"),
+                   chrom_peaks_ms_level = "integer", # use to keep track of the
+                                        # MS levels for which chrom peaks are
+                                        # available
+                   features_ms_level = "integer"),
          prototype = prototype(
              hdf5_file = character(),
              hdf5_mod_count = 0L,
              sample_id = character(),
-             has_chrom_peaks = FALSE,
-             has_features = FALSE
+             chrom_peaks_ms_level = integer(),
+             features_ms_level = integer()
          ))
 
 setValidity("XcmsExperimentHdf5", function(object) {
@@ -72,10 +81,8 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
     cat(" xcms results:\n")
     if (length(object@hdf5_file)) {
         if (hasChromPeaks(object)) {
-            msl <- .h5_chrom_peak_ms_levels(object@hdf5_file,
-                                            object@sample_id[1L])
             cat("  - chromatographic peaks in MS level(s):",
-                paste0(msl, collapse = ", "), "\n")
+                paste0(object@chrom_peaks_ms_level, collapse = ", "), "\n")
         }
     if (hasAdjustedRtime(object))
         cat("  - adjusted retention times: mean absolute difference",
@@ -83,11 +90,22 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
                            spectra(object)$rtime_adjusted)),
                    digits = 3), "seconds\n")
     }
-    ## if (hasFeatures(object))
-    ##     cat("  - correspondence results:", nrow(object@featureDefinitions),
-    ##         "features in MS level(s):",
-    ##         paste(unique(object@featureDefinitions$ms_level), collapse = ", "),
-    ##         "\n")
+    if (hasFeatures(object))
+        cat("  - correspondence results in MS level(s):",
+            paste(object@features_ms_level, collapse = ", "), "\n")
+})
+
+################################################################################
+##
+##        SUBSET AND FILTER
+##
+################################################################################
+
+#' @rdname XcmsExperiment
+setMethod("[", "XcmsExperimentHdf5", function(x, i, j, ...) {
+    if (!missing(j))
+        stop("subsetting by j not supported")
+    .h5_subset_xcms_experiment(x, i = i, ...)
 })
 
 ################################################################################
@@ -97,16 +115,87 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
 ################################################################################
 
 #' @rdname hidden_aliases
+setMethod(
+    "findChromPeaks",
+    signature(object = "XcmsExperimentHdf5", param = "Param"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, add = FALSE,
+             ..., BPPARAM = bpparam()) {
+
+        .h5_valid_file(object@hdf5_file, object@hdf5_mod_count)
+        if (length(msLevel) > 1)
+            stop("Currently only peak detection in a single MS level is ",
+                 "supported", call. = FALSE)
+        if (!msLevel %in% uniqueMsLevels(object)) {
+            warning("No spectra of MS level ", msLevel, " present in 'object'",
+                    call. = FALSE)
+            return(object)
+        }
+        if (hasFeatures(object)) {
+            message("Remove feature definitions")
+            object <- dropFeatureDefinitions(
+                object, keepAdjustedRtime = hasAdjustedRtime(object))
+        }
+        if (hasChromPeaks(object) && !add) {
+            message("Remove previously identified chromatographic peaks")
+            object <- dropChromPeaks(
+                object, keepAdjustedRtime = hasAdjustedRtime(object))
+        }
+        res <- .mse_spectrapply_chunks(
+            object, FUN = .h5_find_chrom_peaks_chunk, msLevel = msLevel,
+            param = param, h5_file = object@hdf5_file,
+            sample_id = object@sample_id, chunkSize = chunkSize,
+            BPPARAM = BPPARAM, add = add & hasChromPeaks(object, msLevel))
+        ph <- XProcessHistory(param = param,
+                              type. = .PROCSTEP.PEAK.DETECTION,
+                              fileIndex. = seq_along(object),
+                              msLevel = msLevel)
+        object@hdf5_mod_count <- max(unlist(res, use.names = FALSE))
+        object@chrom_peaks_ms_level <- unique(
+            c(object@chrom_peaks_ms_level, msLevel))
+        object <- addProcessHistory(object, ph)
+        object
+    })
+
+#' @rdname hidden_aliases
+setMethod(
+    "dropChromPeaks", "XcmsExperimentHdf5",
+    function(object, keepAdjustedRtime = FALSE) {
+        if (hasChromPeaks(object)) {
+            pt <- vapply(object@processHistory, processType, character(1))
+            object@processHistory <- dropProcessHistoriesList(
+                object@processHistory,
+                type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+                         .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+                         .PROCSTEP.PEAK.REFINEMENT))
+            object@chrom_peaks_ms_level <- integer()
+            if (hasAdjustedRtime(object) && !keepAdjustedRtime) {
+                stop("Needs to be implemented")
+                ## remove if alignment performed AFTER chrom peaks
+                nom <- length(pt) + 1L
+                idx_cp <- .match_last(.PROCSTEP.PEAK.DETECTION, pt,
+                                      nomatch = nom)
+                idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, pt,
+                                      nomatch = nom)
+                if (idx_al > idx_cp)
+                    object <- dropAdjustedRtime(object)
+            }
+            if (hasFeatures(object)) {
+                object <- dropFeatureDefinitions(
+                    object, keepAdjustedRtime = keepAdjustedRtime)
+            }
+        }
+        object
+    })
+
+#' @rdname hidden_aliases
 setMethod("hasChromPeaks", "XcmsExperimentHdf5",
           function(object, msLevel = integer()) {
               .h5_require_rhdf5()
               if (!length(object)) return(FALSE)
-              if (object@has_chrom_peaks) {
-                  if (length(msLevel)) {
-                      msl <- .h5_chrom_peak_ms_levels(object@hdf5_file,
-                                                      object@sample_id[1L])
-                      all(msLevel %in% msl)
-                  } else TRUE
+              if (length(object@chrom_peaks_ms_level)) {
+                  if (length(msLevel))
+                      all(msLevel %in% object@chrom_peaks_ms_level)
+                  else TRUE
               } else FALSE
           })
 
@@ -124,14 +213,13 @@ setMethod(
         if (isFilledColumn)
             stop("Parameter 'isFilledColumn = TRUE' is not supported")
         type <- match.arg(type)
-        xcms:::.h5_require_rhdf5()
+        .h5_require_rhdf5()
         if (!length(object))
             return(object@chromPeaks)
-        xcms:::.h5_check_mod_count(object@hdf5_file, object@hdf5_mod_count)
+        .h5_check_mod_count(object@hdf5_file, object@hdf5_mod_count)
         if (!hasChromPeaks(object, msLevel = msLevel))
             return(object@chromPeaks)
-        msl <- xcms:::.h5_chrom_peak_ms_levels(object@hdf5_file,
-                                               object@sample_id[1L])
+        msl <- object@chrom_peaks_ms_level
         if (length(msLevel))
             msl <- msl[msl %in% msLevel]
         ## Eventually run chunk-wise?
@@ -205,8 +293,7 @@ setMethod(
         }
         if (hasFeatures(object)) {
             message("Removing feature definitions")
-            stop("Needs to be implemented")
-            ## object <- dropFeatureDefinitions(object)
+            object <- dropFeatureDefinitions(object)
         }
         validObject(param)
         .xmse_apply_chunks(
@@ -268,5 +355,174 @@ setMethod(
 ##         object
 ##     })
 
-#' chromPeaks needs to iterate through all - will need also a chunkSize for
-#' that.
+#' TODO:
+#' - add chunkSize to chromPeaks?
+#' - chromPeakData,XcmsExperimentHdf5
+#' - adjustRtime,XcmsExperimentHdf5
+#' - findChromPeaks,XcmsExperimentHdf5
+#'
+#' @noRd
+NULL
+
+
+################################################################################
+##
+##        RETENTION TIME ALIGNMENT
+##
+################################################################################
+
+setMethod(
+    "adjustRtime", signature(object = "XcmsExperimentHdf5",
+                             param = "PeakGroupsParam"),
+    function(object, param, msLevel = 1L, ...) {
+        if (hasAdjustedRtime(object))
+            stop("Alignment results already present. Please either remove ",
+                 "them with 'dropAdjustedRtime' in order to perform an ",
+                 "alternative, new, alignment, or use 'applyAdjustedRtime'",
+                 " prior 'adjustRtime' to perform a second round of ",
+                 "alignment.")
+        if (any(msLevel != 1L))
+            stop("Alignment is currently only supported for MS level 1")
+        if (!nrow(peakGroupsMatrix(param))) {
+            if (!hasFeatures(object))
+                stop("No feature definitions present in 'object'. Please ",
+                     "perform first a correspondence analysis using ",
+                     "'groupChromPeaks'")
+            peakGroupsMatrix(param) <- adjustRtimePeakGroups(
+                object, param = param)
+        }
+        fidx <- as.factor(fromFile(object))
+        rt_raw <- split(rtime(object), fidx)
+        rt_adj <- .adjustRtime_peakGroupsMatrix(
+            rt_raw, peakGroupsMatrix(param), smooth = smooth(param),
+            span = span(param), family = family(param),
+            subset = subset(param), subsetAdjust = subsetAdjust(param))
+        pt <- vapply(object@processHistory, processType, character(1))
+        idx_pg <- .match_last(.PROCSTEP.PEAK.GROUPING, pt, nomatch = -1L)
+        if (idx_pg > 0)
+            ph <- object@processHistory[idx_pg]
+        else ph <- list()
+        object <- dropFeatureDefinitions(object)
+        object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
+        ## LLLLL need to fix this here.
+        object@chromPeaks <- .applyRtAdjToChromPeaks(
+            .chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        xph <- XProcessHistory(
+            param = param, type. = .PROCSTEP.RTIME.CORRECTION,
+            fileIndex = seq_along(object), msLevel = msLevel)
+        object@processHistory <- c(object@processHistory, ph, list(xph))
+        validObject(object)
+        object
+})
+
+################################################################################
+##
+##        CORRESPONDENCE
+##
+################################################################################
+
+#' @rdname hidden_aliases
+setMethod("hasFeatures", "XcmsExperimentHdf5", function(object,
+                                                        msLevel = integer()) {
+    .h5_require_rhdf5()
+    if (!length(object)) return(FALSE)
+    if (length(object@features_ms_level)) {
+        if (length(msLevel))
+            all(msLevel %in% object@features_ms_level)
+        else TRUE
+    } else FALSE
+})
+
+#' @rdname hidden_aliases
+setMethod(
+    "dropFeatureDefinitions", "XcmsExperimentHdf5",
+    function(object, keepAdjustedRtime = FALSE) {
+        if (!hasFeatures(object))
+            return(object)
+        ptype <- vapply(object@processHistory, processType, character(1))
+        nom <- length(ptype) + 1L
+        idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, ptype, nomatch = nom)
+        idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
+        object@processHistory <- dropProcessHistoriesList(
+            object@processHistory, type = .PROCSTEP.PEAK.GROUPING, num = 1L)
+        object@features_ms_level <- integer()
+        if (.hasFilledPeaks(object)) {
+            stop("Removal of gap-filled peaks needs to be implemented")
+            ## object <- .filter_chrom_peaks(
+            ##     object, which(!.chromPeakData(object)$is_filled))
+            ## object@processHistory <- dropProcessHistoriesList(
+            ##     object@processHistory, type = .PROCSTEP.PEAK.FILLING)
+        }
+        if (!keepAdjustedRtime && hasAdjustedRtime(object) && idx_al > idx_co) {
+            object <- dropAdjustedRtime(object)
+        }
+        object
+    })
+
+#' @rdname hidden_aliases
+setMethod(
+    "groupChromPeaks",
+    signature(object = "XcmsExperimentHdf5", param = "Param"),
+    function(object, param, msLevel = 1L, add = FALSE) {
+        msLevel <- unique(msLevel)
+        if (length(msLevel) != 1)
+            stop("Can only perform the correspondence analysis on one MS",
+                 " level at a time. Please repeat for other MS levels ",
+                 "with parameter `add = TRUE`.")
+        if (!hasChromPeaks(object, msLevel))
+            stop("No chromatographic peak for MS level ", msLevel,
+                 " present. Please perform first a peak detection ",
+                 "using the 'findChromPeaks' method.", call. = FALSE)
+        if (hasFeatures(object) && !add)
+            object <- dropFeatureDefinitions(object)
+        if (hasFeatures(object, msLevel) && add)
+            stop("Adding new features to existing correspondence results of ",
+                 "the same MS level is currently not supported.", call. = FALSE)
+        cps <- .h5_chrom_peaks(object, msLevel = msLevel,
+                               columns = c("mz", "rt"), by_sample = FALSE)
+        res <- .xmse_group_cpeaks(cps, param = param)
+        if (!nrow(res))
+            return(object)
+        object@features_ms_level <- unique(c(object@features_ms_level, msLevel))
+        cpk_idx <- res$peakidx
+        res$peakidx <- NULL
+        rownames(res) <- .featureIDs(
+            nrow(res), prefix = paste0("FT", msLevel), min_len = 6)
+        ## Save features to "/features/ms_<msLevel>/feature_definitions"
+        .h5_write_data(object@hdf5_file, list(features = res),
+                       name = "feature_definitions", ms_level = msLevel,
+                       replace = TRUE, write_rownames = TRUE)
+        ## Define the mapping of features to chrom peaks PER SAMPLE
+        i <- ncol(cps)
+        cps <- unname(cps)
+        sample_f <- factor(
+            unlist(lapply(cpk_idx, function(idx) cps[idx, i])),
+            levels = seq_along(object@sample_id))
+        fts_to_cps <- split.data.frame(
+            cbind(rep(seq_len(nrow(res)), lengths(cpk_idx)),
+                  unlist(cpk_idx, use.names = FALSE)), f = sample_f)
+        ## Fix indices relative to chrom peak matrices WITHIN sample
+        ## Maybe add an index -1 for features with no assigned peaks? Just
+        ## to ensure all features are listed at least once?
+        npks <- as.integer(
+            table(factor(cps[, i], levels = seq_along(object@sample_id))))
+        fts_to_cps <- mapply(function(a, b) {
+            if (nrow(a))
+                a[, 2L] <- a[, 2L] - b
+            a
+        }, fts_to_cps, as.list(c(0, cumsum(npks)[-length(npks)])))
+        names(fts_to_cps) <- object@sample_id
+        mc <- .h5_write_data(
+            object@hdf5_file, fts_to_cps, name = "feature_to_chrom_peaks",
+            ms_level = rep(msLevel, length(fts_to_cps)), replace = TRUE,
+            write_rownames = FALSE, write_colnames = FALSE)
+        object@hdf5_mod_count <- mc
+        xph <- XProcessHistory(param = param, type. = .PROCSTEP.PEAK.GROUPING,
+                               fileIndex = seq_along(object), msLevel = msLevel)
+        object <- addProcessHistory(object, xph)
+        validObject(object)
+        object
+    })
+
+## featureDefinitions
+## featureValues; of only one MS level?

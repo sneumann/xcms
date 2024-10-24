@@ -851,11 +851,24 @@ setMethod(
 setMethod(
     "findChromPeaks",
     signature(object = "MsExperiment", param = "Param"),
-    function(object, param, msLevel = 1L, chunkSize = 2L, ...,
-             BPPARAM = bpparam()) {
+    function(object, param, msLevel = 1L, chunkSize = 2L,
+             hdf5File = character(), ..., BPPARAM = bpparam()) {
         if (length(msLevel) > 1)
             stop("Currently only peak detection in a single MS level is ",
                  "supported", call. = FALSE)
+        if (length(hdf5File)) {
+            if (file.exists(hdf5File))
+                stop("File ", hdf5File, " already exists. Replacing results ",
+                     "is not supported. Please remove the file and try again",
+                     call. = FALSE)
+            .h5_require_rhdf5()
+            .h5_initialize_file(hdf5File)
+            object <- as(object, "XcmsExperimentHdf5")
+            object@sample_id <- .featureIDs(length(object), "S")
+            object@hdf5_file <- hdf5File
+            return(findChromPeaks(object, param = param, msLevel = msLevel,
+                                  chunkSize = chunkSize, BPPARAM = BPPARAM))
+        }
         if (chunkSize < 0) {
             res <- .mse_find_chrom_peaks(
                 object, msLevel = msLevel, param = param,
@@ -999,9 +1012,13 @@ setMethod(
              isFilledColumn = FALSE, columns = character()) {
         type <- match.arg(type)
         pks <- object@chromPeaks
-        if (isFilledColumn)
+        if (!length(columns))
+            columns <- colnames(pks)
+        if (isFilledColumn) {
             pks <- cbind(
                 pks, is_filled = as.numeric(object@chromPeakData$is_filled))
+            columns <- c(columns, "is_filled")
+        }
         pks[.index_chrom_peaks(object, rt = rt, mz = mz, ppm = ppm,
                                msLevel = msLevel, type = type),
             columns, drop = FALSE]
@@ -1497,7 +1514,8 @@ setMethod(
                  "using the 'findChromPeaks' method.", call. = FALSE)
         if (hasFeatures(object) && !add)
             object <- dropFeatureDefinitions(object)
-        cps <- chromPeaks(object, msLevel = msLevel)
+        cps <- chromPeaks(object, msLevel = msLevel,
+                          columns = c("mz", "rt", "sample"))
         res <- .xmse_group_cpeaks(
             cps, param = param,
             index = match(rownames(cps), rownames(.chromPeaks(object))))

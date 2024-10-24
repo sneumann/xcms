@@ -1,3 +1,32 @@
+#' Properties of the HDF5 file used for on-disk storage of xcms results:
+#' - all preprocessing results are stored within the same file (in HDF5 format).
+#' - the file contains an additional field/data set */header/modcount* that is
+#'   used to keep track of every data write operation to the file using an
+#'   incremental number. Comparing the value of this *modcount* with the one
+#'   stored within the `XcmsExperimentHdf5` object in R can be used to validate
+#'   the object/data.
+#' - storage of chrom peak detection results are organized by sample and
+#'   MS level:
+#'   /<sample id>/ms_<ms_level>/chrom_peaks (float array)
+#'   /<sample id>/ms_<ms_level>/chrom_peaks_rownames (character array)
+#'   /<sample id>/ms_<ms_level>/chrom_peaks_colnames (character array)
+#'   /<sample id>/ms_<ms_level>/chrom_peak_data (list of arrays).
+#' - the feature definitions `data.frame` is stored as a data set with its
+#'   rownames as additional (character) array:
+#'   /features/feature_definitions (list of arrays)
+#'   /features/feature_definitions_rownames (character array)
+#' - the information which chrom peaks of a sample are assigned to which
+#'   feature is saved along with the chrom peaks data as a two column integer
+#'   array, the first row with the indices of the features, the second with
+#'   the index of the chrom peak(s) assigned to the respective feature.
+#'   /<sample id>/ms_<ms_level>/features_to_chrom_peaks (integer array)
+#'
+#' Getting feature values requires looping through the samples and extracting
+#' the chrom peak values for the respective features.
+#'
+#' @noRd
+NULL
+
 
 #' Convert a `XcmsExperiment` to an `XcmsExperimentHdf5` object: export all
 #' data to a HDF5 file `h5_file` and return the `XcmsExperimentHdf5`.
@@ -40,13 +69,13 @@
                 replace = FALSE, write_colnames = TRUE, write_rownames = TRUE)
             mod_count <- .h5_write_data(
                 h5_file, pkd, name = "chrom_peak_data", ms_level = msl,
-                replace = FALSE)
+                replace = FALSE, write_rownames = FALSE)
         }
         slot(x, "chromPeaks", check = FALSE) <-
             x@chromPeaks[integer(), , drop = FALSE]
         slot(x, "chromPeakData", check = FALSE) <-
             x@chromPeakData[integer(), , drop = FALSE]
-        slot(x, "has_chrom_peaks", check = FALSE) <- TRUE
+        slot(x, "chrom_peaks_ms_level", check = FALSE) <- msl
     }
     if (has_features) {
         stop("Can not yet save feature definitions to HDF5")
@@ -84,7 +113,7 @@
         drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
     }
     if (!keepChromPeaks && hasChromPeaks(x)) {
-        x@has_chrom_peaks <- FALSE
+        x@chrom_peaks_ms_level <- integer()
         drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
                   .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
     }
@@ -93,6 +122,81 @@
             x@processHistory, type = drop)
     x@sample_id <- x@sample_id[i]
     getMethod("[", "MsExperiment")(x, i = i)
+}
+
+################################################################################
+##
+##        CHROM PEAK RELATED THINGS
+##
+################################################################################
+
+## findChromPeaks ->
+## .mse_find_chrom_peaks_chunks ->
+## .mse_spectrapply_chunks -> .mse_find_chrom_peaks_chunk (performs peak
+## detection with Spectra as input)
+## .mse_spectrapply_chunks: needs to get a function that also saves the
+## results to hdf5.
+
+#' This is equivalent to .mse_find_chrom_peaks_chunk, but instead of returning
+#' the detected peaks saves them to the specified `hdf5_file`
+#'
+#' @param x `Spectra` of the samples from the present chunk
+#'
+#' @param h5_file HDF5 file name to which the results should be saved to.
+#'
+#' @param sample_id `character` with the names/IDs of (all!) samples (i.e.
+#'     @sample_id)
+#'
+#' @param add `logical(1)` whether newly identified chromatographic peaks
+#'     should be added to existing chromatographic peaks. If `add = FALSE` (the
+#'     default) previous results get replaced. Note: the upstream function
+#'     should ensure that there are chrom peaks for that ms level for `TRUE`.
+#'
+#' @noRd
+.h5_find_chrom_peaks_chunk <- function(x, msLevel = 1L, param,
+                                       h5_file = character(),
+                                       sample_id = character(),
+                                       add = FALSE,
+                                       ...,
+                                       BPPARAM = bpparam()) {
+    chunk_sample_index <- unique(x$.SAMPLE_IDX)
+    message("sample index: ", paste0(chunk_sample_index, collapse = ", "))
+    res <- .mse_find_chrom_peaks_chunk(
+        x, msLevel = msLevel, param = param, BPPARAM = BPPARAM)
+    names(res) <- sample_id[chunk_sample_index]
+    pkdl <- vector("list", length(res)) # chromPeakData list
+    names(pkdl) <- names(res)
+    for (i in seq_along(res)) {
+        sid <- sample_id[chunk_sample_index[i]]
+        max_index <- 0L
+        rnames <- character()
+        nr <- nrow(res[[i]])
+        pkd <- data.frame(ms_level = rep(msLevel, nr),
+                          is_filled = rep(FALSE, nr))
+        if (add) {
+            ## Need to load previous results and append to that.
+            pks <- .h5_read_data(h5_file, index = sid, name = "chrom_peaks",
+                                 ms_level = msLevel, read_colnames = TRUE,
+                                 read_rownames = TRUE)[[1L]]
+            rnames <- rownames(pks)
+            max_index <- max(
+                as.integer(sub(paste0("CP", msLevel, sid), "", rnames)))
+            res[[i]] <- rbindFill(pks, res[[i]])
+            pkd <- rbindFill(.h5_read_data(
+                h5_file, index = sid, name = "chrom_peak_data",
+                ms_level = msLevel, read_rownames = FALSE)[[1L]], pkd)
+        }
+        pkdl[[i]] <- pkd
+        rownames(res[[i]]) <- c(
+            rnames, .featureIDs(nr, paste0("CP", msLevel, sid),
+                                from = max_index + 1L, min_len = 6))
+    }
+    .h5_write_data(h5_file, res, name = "chrom_peaks",
+                   ms_level = rep(msLevel, length(res)), replace = TRUE,
+                   write_colnames = TRUE, write_rownames = TRUE)
+    .h5_write_data(h5_file, pkdl, name = "chrom_peak_data",
+                   ms_level = rep(msLevel, length(res)), replace = TRUE,
+                   write_rownames = FALSE)
 }
 
 #' Similar to `.xmse_merge_neighboring_peaks()` in XcmsExperiment-functions.R,
@@ -153,7 +257,7 @@
         names(l) <- x@sample_id[i]
         .h5_write_data(h5_file = x@hdf5_file, data_list = l,
                        name = "chrom_peak_data", ms_level = msLevel,
-                       replace = TRUE)
+                       replace = TRUE, write_rownames = FALSE)
     }
 }
 
@@ -218,32 +322,18 @@
     res
 }
 
-.filter_chrom_peak_matrix <- function(x, msLevel = integer(),
-                                      mz = matrix(nrow = 0, ncol = 2),
-                                      rt = matrix(nrow = 0, ncol = 2)) {
-}
-
 .h5_chrom_peak_data <- function(x, columns = character(), by_sample = TRUE) {
     ## LLLL implement; following .h5_chrom_peaks
 }
+
+
+
 
 ################################################################################
 ##
 ##        HDF5 FUNCTIONALITY
 ##
 ################################################################################
-
-#' Properties of the HDF5 file used for on-disk storage of xcms results:
-#' - all preprocessing results are stored within the same file.
-#' - storage of chrom peak detection results are organized by sample and
-#'   MS level:
-#'   /<sample id>/ms_<ms_level>/chrom_peaks (float array)
-#'   /<sample id>/ms_<ms_level>/chrom_peaks_rownames (character array)
-#'   /<sample id>/ms_<ms_level>/chrom_peaks_colnames (character array)
-#'   /<sample id>/ms_<ms_level>/chrom_peak_data (list of arrays).
-#'
-#' @noRd
-NULL
 
 .h5_have_rhdf5 <- function() {
     return(requireNamespace("rhdf5", quietly = TRUE))
@@ -257,7 +347,7 @@ NULL
 
 ##  --------  READING  --------
 
-#' Reads a single chrom peaks `matrix` from the HDF5 file. Depending on
+#' Reads a single `matrix` from the HDF5 file. Depending on
 #' `read_colnames` and `read_rownames` also the rownames and colnames are read.
 #' Not reading them has performance advantages.
 #'
@@ -276,16 +366,15 @@ NULL
 #' @return numeric `matrix`
 #'
 #' @noRd
-.h5_read_chrom_peaks <- function(name, h5, index = NULL,
-                                 read_colnames = FALSE,
-                                 read_rownames = FALSE) {
+.h5_read_matrix <- function(name, h5, index = NULL,
+                            read_colnames = FALSE,
+                            read_rownames = FALSE,
+                            rownames = paste0(name, "_rownames")) {
     d <- rhdf5::h5read(h5, name = name, index = list(NULL, index))
     if (read_rownames)
-        rownames(d) <- as.vector(
-            rhdf5::h5read(h5, name = paste0(name, "_rownames")))
+        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE)
     if (read_colnames) {
-        cn <- as.vector(
-            rhdf5::h5read(h5, name = paste0(name, "_colnames")))
+        cn <- rhdf5::h5read(h5, name = paste0(name, "_colnames"), drop = TRUE)
         if (length(index))
             colnames(d) <- cn[index]
         else colnames(d) <- cn
@@ -293,7 +382,7 @@ NULL
     d
 }
 
-#' Read a single chromPeakData `data.frame` from the HDF5 file. With
+#' Read a single `data.frame` from the HDF5 file. With
 #' `read_rownames = TRUE` also the row names are read and set, which requires
 #' an additional reading step. Note that for a `data.frame` each column
 #' is stored as a separate array/DATASET type for the `data.frame` GROUP. Thus,
@@ -306,13 +395,24 @@ NULL
 #'
 #' @param read_rownames `logical(1)` whether rownames should be read and set.
 #'
+#' @param rownames `character(1)` defining the name of the HDF5 array
+#'     containing the rownames.
+#'
 #' @noRd
-.h5_read_chrom_peak_data <- function(name, h5, read_rownames = FALSE, ...) {
-    d <- as.data.frame(rhdf5::h5read(h5, name = name))
+.h5_read_data_frame <- function(name, h5, read_rownames = FALSE,
+                                rownames = paste0(name, "_rownames"), ...) {
+    d <- rhdf5::h5read(h5, name = name)
+    if (is.list(d))
+        d <- lapply(d, as.vector)
+    d <- as.data.frame(d)
     if (read_rownames)
-        rownames(d) <- as.vector(
-            rhdf5::h5read(h5, sub("_data", "s_rownames", name)))
+        rownames(d) <- rhdf5::h5read(h5, rownames, drop = TRUE)
     d
+}
+
+.h5_read_chrom_peak_data <- function(name, h5, read_rownames = FALSE, ...) {
+    .h5_read_data_frame(name, h5, read_rownames = read_rownames,
+                        rownames = sub("_data", "s_rownames", name))
 }
 
 #' Reads the names of the data sets of a group. This can for example be used
@@ -367,6 +467,9 @@ NULL
 #' @param read_rownames `logical(1)` whether row names should be read and
 #'     set for each `matrix` or `data.frame`
 #'
+#' @param rownames `logical(1)` defining the name of the HDF5 array containing
+#'     the row names.
+#'
 #' @param column For `name = "chrom_peak_data"`: `character(1)` allowing to
 #'     select a **single** column to read. For `name = "chrom_peaks"`: `integer`
 #'     with the indices of the column(s) that should be imported.
@@ -378,7 +481,9 @@ NULL
 #' @noRd
 .h5_read_data <- function(h5_file = character(),
                           index = integer(),
-                          name = c("chrom_peaks", "chrom_peak_data"),
+                          name = c("chrom_peaks", "chrom_peak_data",
+                                   "feature_definitions",
+                                   "feature_to_chrom_peaks"),
                           ms_level = integer(),
                           read_colnames = FALSE,
                           read_rownames = FALSE,
@@ -386,9 +491,13 @@ NULL
     if (!length(index)) return(list())
     stopifnot(length(ms_level) == length(index))
     name <- match.arg(name)
-    FUN <- .h5_read_chrom_peaks
-    if (name == "chrom_peak_data")
-        FUN <- .h5_read_chrom_peak_data
+    FUN <- switch(name,
+                  chrom_peak_data = .h5_read_chrom_peak_data,
+                  feature_definitions = .h5_read_data_frame,
+                  .h5_read_matrix)
+    ## FUN <- .h5_read_matrix
+    ## if (name %in% c("chrom_peak_data", "feature_definitions"))
+    ##     FUN <- .h5_read_data_frame
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     d <- paste0("/", index, "/ms_", ms_level, "/", name)
@@ -435,7 +544,9 @@ NULL
 #'     not valid.
 #'
 #' @noRd
-.h5_valid_file <- function(h5_file, mod_count = 0L) {
+.h5_valid_file <- function(h5_file = character(), mod_count = 0L) {
+    if (!length(h5_file))
+        stop("'hdf5_file' missing with no default")
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     if (!rhdf5::H5Lexists(h5, "/header/package"))
@@ -478,9 +589,9 @@ NULL
     mc
 }
 
-#' Bare writing function of the chromPeaks `matrix`
+#' Bare writing function of a `matrix`
 #'
-#' @param x `matrix` with the chrom peak results **of a single sample**
+#' @param x `matrix` with e.g. the chrom peak results **of a single sample**
 #'
 #' @param h5 HDF5 file handle.
 #'
@@ -500,8 +611,8 @@ NULL
 #'     dimensions are identical.
 #'
 #' @noRd
-.h5_write_chrom_peaks <- function(x, h5, name, level, write_colnames = TRUE,
-                                  write_rownames = TRUE, replace = TRUE) {
+.h5_write_matrix <- function(x, h5, name, level, write_colnames = TRUE,
+                             write_rownames = TRUE, replace = TRUE) {
     if (replace && rhdf5::H5Lexists(h5, name))
         rhdf5::h5delete(h5, name)
     rhdf5::h5write(x, h5, name = name, level = level,
@@ -523,7 +634,7 @@ NULL
     }
 }
 
-#' Bare writing function of the chromPeakData DATA.FRAME
+#' Bare writing function of a data.frame
 #'
 #' @param x `data.frame`
 #'
@@ -538,11 +649,19 @@ NULL
 #'     dimensions are identical.
 #'
 #' @noRd
-.h5_write_chrom_peak_data <- function(x, h5, name, level, replace = TRUE, ...) {
+.h5_write_data_frame <- function(x, h5, name, level, replace = TRUE,
+                                 write_rownames = FALSE, ...) {
     if (replace && rhdf5::H5Lexists(h5, name))
         rhdf5::h5delete(h5, name)
     rhdf5::h5writeDataset(x, h5, name, level = level,
                           DataFrameAsCompound = FALSE)
+    if (write_rownames) {
+        dn <- paste0(name, "_rownames")
+        if (replace && rhdf5::H5Lexists(h5, dn))
+            rhdf5::h5delete(h5, dn)
+        rhdf5::h5write(rownames(x), h5, name = dn,
+                       level = level, createnewfile = FALSE)
+    }
 }
 
 #' Writes data (matrix, data.frame) to a HDF5 file organized by sample and
@@ -576,7 +695,9 @@ NULL
 #' @noRd
 .h5_write_data <- function(h5_file = character(),
                            data_list = list(),
-                           name = c("chrom_peaks", "chrom_peak_data"),
+                           name = c("chrom_peaks", "chrom_peak_data",
+                                    "feature_definitions",
+                                    "feature_to_chrom_peaks"),
                            ms_level = integer(),
                            replace = TRUE,
                            write_colnames = TRUE,
@@ -585,11 +706,11 @@ NULL
     stopifnot(length(ms_level) == length(data_list))
     stopifnot(!is.null(names(data_list)))
     name <- match.arg(name)
-    FUN <- .h5_write_chrom_peaks
-    if (name == "chrom_peak_data")
-        FUN <- .h5_write_chrom_peak_data
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
+    FUN <- .h5_write_matrix
+    if (name %in% c("chrom_peak_data", "feature_definition"))
+        FUN <- .h5_write_data_frame
     comp_level <- .h5_compression_level()
     for (i in seq_along(data_list)) {
         group_sample <- paste0("/", names(data_list)[i])

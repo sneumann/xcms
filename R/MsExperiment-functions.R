@@ -116,6 +116,8 @@
 #' (as a new spectra variable). This can be used by FUN to split the spectra
 #' by sample and process them separately (and in parallel).
 #'
+#' @param x `MsExperiment`
+#'
 #' @author Johannes Rainer
 #'
 #' @noRd
@@ -139,9 +141,9 @@
     }
     sps <- spectra(x)[x@sampleDataLinks[["spectra"]][, 2L]]
     sps$.SAMPLE_IDX <- x@sampleDataLinks[["spectra"]][, 1L] # or as.factor?
-    lapply(chunks, function(z, ..., pb) {
+    lapply(chunks, function(z, ..., BPPARAM, pb) {
         suppressMessages(
-            res <- FUN(sps[sps$.SAMPLE_IDX %in% z], ...)
+            res <- FUN(sps[sps$.SAMPLE_IDX %in% z], ..., BPPARAM = BPPARAM)
         )
         if (progressbar) pb$tick()
         res
