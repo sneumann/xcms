@@ -2,6 +2,8 @@
 
 #' @title xcms result object for very large data sets
 #'
+#' @aliases XcmsExperimentHdf5-class
+#'
 #' @name XcmsExperimentHdf5
 #'
 #' @description
@@ -39,6 +41,18 @@
 #' `MsExperiment` object) and the <chrom peak index> the index of the
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
+#'
+#' @section Correspondence analysis results:
+#'
+#' - `featureDefinitions()`: similarly to `featureDefinitions()` for
+#'   [XcmsExperiment] objects, this method returns a `data.frame` with the
+#'   characteristics for the defined LC-MS features. The function for
+#'   `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
+#'   with the indices of the chromatographic peaks per feature. Also, the
+#'   columns are usually returned in alphabetic order.
+#'
+#' - `featureValues()`: parameter `value = "index"` (i.e. returning the index
+#'   of the chromatographic peaks per feature) is not supported.
 #'
 #' @author Johannes Rainerr, Philippine Louail
 NULL
@@ -483,7 +497,8 @@ setMethod(
         res <- .xmse_group_cpeaks(cps, param = param)
         if (!nrow(res))
             return(object)
-        object@features_ms_level <- unique(c(object@features_ms_level, msLevel))
+        object@features_ms_level <- as.integer(
+            unique(c(object@features_ms_level, msLevel)))
         cpk_idx <- res$peakidx
         res$peakidx <- NULL
         rownames(res) <- .featureIDs(
@@ -524,5 +539,69 @@ setMethod(
         object
     })
 
-## featureDefinitions
-## featureValues; of only one MS level?
+#' @rdname hidden_aliases
+setReplaceMethod("featureDefinitions", "XcmsExperimentHdf5",
+                 function(object, value) {
+                     stop("Not implemented for ", class(object)[1L])
+                 })
+
+#' @rdname hidden_aliases
+setMethod(
+    "featureDefinitions", "XcmsExperimentHdf5",
+    function(object, mz = numeric(), rt = numeric(), ppm = 0,
+             type = c("any", "within", "apex_within"), msLevel = integer()) {
+        if (!hasFeatures(object))
+            return(object@featureDefinitions)
+        type <- match.arg(type)
+        if (length(msLevel))
+            msLevel <- intersect(msLevel, object@features_ms_level)
+        else msLevel <- object@features_ms_level
+        if (!length(msLevel))
+            return(object@featureDefinitions)
+        fd <- .h5_read_data(object@hdf5_file, rep("features", length(msLevel)),
+                            name = "feature_definitions", ms_level = msLevel,
+                            read_rownames = TRUE)
+        msl <- rep(msLevel, vapply(fd, nrow, 1L))
+        fd <- do.call(rbind, fd)
+        fd$ms_level <- msl
+        .subset_feature_definitions(fd, mz = mz, rt = rt,
+                                    ppm = ppm, type = type)
+    })
+
+#' @rdname hidden_aliases
+setMethod(
+    "featureValues", "XcmsExperimentHdf5",
+    function(object, method = c("medret", "maxint", "sum"), value = "into",
+             intensity = "into", filled = TRUE, missing = NA_real_,
+             msLevel = integer()) {
+        if (!length(msLevel)) msLevel <- object@features_ms_level
+        if (!hasFeatures(object, msLevel = msLevel))
+            stop("No feature definitions for MS level(s) ", msLevel," present.")
+        method <- match.arg(method)
+        if (value == "index")
+            stop("'featureValues' for 'XcmsExperimentHdf5' does not support ",
+                 "'value = \"index\"'.", call. = FALSE)
+        if (is.character(missing) && !(missing %in% c("rowmin_half")))
+            stop("if 'missing' is not 'NA' or a numeric it should",
+                 " be one of: \"rowmin_half\".")
+        msLevel <- intersect(msLevel, object@features_ms_level)
+        vals <- do.call(
+            rbindFill,
+            lapply(msLevel, .h5_feature_values_ms_level, x = object,
+                   method = method, value = value, intensity = intensity,
+                   filled = filled)
+        )
+        colnames(vals) <- basename(fileNames(object))
+        missing <- missing[1L]
+        if (!is.na(missing)) {
+            if (is.numeric(missing))
+                vals[is.na(vals)] <- missing
+            if (missing == "rowmin_half")
+                for (i in seq_len(nrow(vals))) {
+                    nas <- is.na(vals[i, ])
+                    if (any(nas))
+                        vals[i, nas] <- min(vals[i, ], na.rm = TRUE) / 2
+            }
+        }
+        vals
+    })

@@ -504,3 +504,13 @@ test_that(".h5_write_data works", {
 
     file.remove(h5f)
 })
+
+test_that(".h5_feature_values_sample", {
+    ## unit test in test_XcmsExperimentHdf5.R
+    expect_true(TRUE)
+})
+
+test_that(".h5_feature_Values_ms_level", {
+    ## unit test in text_XcmsExperimentHdf5.R
+    expect_true(TRUE)
+})

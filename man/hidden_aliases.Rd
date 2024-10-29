@@ -4,15 +4,35 @@
 \name{hidden_aliases}
 \alias{hidden_aliases}
 \alias{show,XcmsExperimentHdf5-method}
+\alias{findChromPeaks,XcmsExperimentHdf5,Param-method}
+\alias{dropChromPeaks,XcmsExperimentHdf5-method}
 \alias{hasChromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeaks<-,XcmsExperimentHdf5-method}
 \alias{chromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
 \alias{chromPeakData,XcmsExperimentHdf5-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
+\alias{hasFeatures,XcmsExperimentHdf5-method}
+\alias{dropFeatureDefinitions,XcmsExperimentHdf5-method}
+\alias{groupChromPeaks,XcmsExperimentHdf5,Param-method}
+\alias{featureDefinitions<-,XcmsExperimentHdf5-method}
+\alias{featureDefinitions,XcmsExperimentHdf5-method}
+\alias{featureValues,XcmsExperimentHdf5-method}
 \title{Internal page for hidden aliases}
 \usage{
 \S4method{show}{XcmsExperimentHdf5}(object)
+
+\S4method{findChromPeaks}{XcmsExperimentHdf5,Param}(
+  object,
+  param,
+  msLevel = 1L,
+  chunkSize = 2L,
+  add = FALSE,
+  ...,
+  BPPARAM = bpparam()
+)
+
+\S4method{dropChromPeaks}{XcmsExperimentHdf5}(object, keepAdjustedRtime = FALSE)
 
 \S4method{hasChromPeaks}{XcmsExperimentHdf5}(object, msLevel = integer())
 
@@ -44,6 +64,33 @@
   msLevel = 1L,
   chunkSize = 2L,
   BPPARAM = bpparam()
+)
+
+\S4method{hasFeatures}{XcmsExperimentHdf5}(object, msLevel = integer())
+
+\S4method{dropFeatureDefinitions}{XcmsExperimentHdf5}(object, keepAdjustedRtime = FALSE)
+
+\S4method{groupChromPeaks}{XcmsExperimentHdf5,Param}(object, param, msLevel = 1L, add = FALSE)
+
+\S4method{featureDefinitions}{XcmsExperimentHdf5}(object) <- value
+
+\S4method{featureDefinitions}{XcmsExperimentHdf5}(
+  object,
+  mz = numeric(),
+  rt = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within"),
+  msLevel = integer()
+)
+
+\S4method{featureValues}{XcmsExperimentHdf5}(
+  object,
+  method = c("medret", "maxint", "sum"),
+  value = "into",
+  intensity = "into",
+  filled = TRUE,
+  missing = NA_real_,
+  msLevel = integer()
 )
 }
 \value{

@@ -4,13 +4,13 @@
 \alias{XcmsExperimentHdf5}
 \title{xcms result object for very large data sets}
 \description{
-The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] kepp all
+The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] keep all
 preprocessing results in memory and can thus (depending on the size of the
 data set) require a large amount of memory. The `XcmsExperimentHdf5` class,
 by using an on-disk data storage mechanism, has a much lower memory
 footprint allowing thus also to represent and analyze very large data sets
-on regular computer systems. With some exceptions including additional
-parameters the functionality and usability of this object is identical to
+on regular computer systems. With some exceptions, including additional
+parameters, the functionality and usability of this object is identical to
 the one of `XcmsExperiment` objects. This help page lists only functions
 that have additional or different parameters than the *default* ones for
 [XcmsExperiment()] objects.
@@ -30,6 +30,29 @@ the ID of the sample (usually related to the index in the original
 chromatographic peak in the chrom peak matrix **of that sample** and
 MS level.
 }
+\section{Using the HDF5 file-based on-disk data storage}{
+
+
+Calling [findChromPeaks()] on an `MsExperiment` using the parameter
+`hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
+hence use the on-disk data storage mode described on this page. All data
+is stored in a file with the name specifyied with parameter `hdf5File`.
+}
+
+\section{Correspondence analysis results}{
+
+
+- `featureDefinitions()`: similarly to `featureDefinitions()` for
+  [XcmsExperiment] objects, this method returns a `data.frame` with the
+  characteristics for the defined LC-MS features. The function for
+  `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
+  with the indices of the chromatographic peaks per feature. Also, the
+  columns are usually returned in alphabetic order.
+
+- `featureValues()`: parameter `value = "index"` (i.e. returning the index
+  of the chromatographic peaks per feature) is not supported.
+}
+
 \author{
 Johannes Rainerr, Philippine Louail
 }

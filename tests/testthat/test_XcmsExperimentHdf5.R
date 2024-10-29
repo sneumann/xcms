@@ -4,6 +4,13 @@ h5f_full <- tempfile()
 a <- dropFeatureDefinitions(loadXcmsData("xmse"))
 xmse_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full)
 
+## correspondence
+h5f_full_g <- tempfile()
+xmseg_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full_g)
+param <- PeakDensityParam(sampleGroups = sampleData(xmseg_full_h5)$sample_group,
+                          minFraction = 0.4, bw = 30)
+xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, param, msLevel = 1L)
+
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
     expect_true(validObject(a))
@@ -128,7 +135,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
     file.remove(af)
 })
 
-test_that("groupChromPeaks,XcmsExperimentHdf5 works", {
+test_that("groupChromPeaks,featureDefinitions,XcmsExperimentHdf5 works", {
     x <- xmse_full_h5
     param <- PeakDensityParam(sampleGroups = sampleData(x)$sample_group,
                               minFraction = 0.4, bw = 30)
@@ -152,7 +159,8 @@ test_that("groupChromPeaks,XcmsExperimentHdf5 works", {
     ref$ms_level <- NULL
     rownames(a) <- NULL
     rownames(ref) <- NULL
-    expect_equal(ref, a)
+    expect_true(all(colnames(ref) %in% colnames(a)))
+    expect_equal(ref, a[, colnames(ref)])
     pks <- .h5_chrom_peaks(x, msLevel = 1L)
     for (i in seq_along(pks)) {
         b <- .h5_read_matrix(paste0("/S", i, "/ms_1/feature_to_chrom_peaks"),
@@ -161,6 +169,18 @@ test_that("groupChromPeaks,XcmsExperimentHdf5 works", {
     }
     expect_error(groupChromPeaks(x, param, msLevel = 1L, add = TRUE),
                  "currently not supported")
+
+    ## featureDefinitions
+    res <- featureDefinitions(x, msLevel = 2L)
+    expect_true(is.data.frame(res))
+    expect_true(nrow(res) == 0)
+    res <- featureDefinitions(x, msLevel = 1:2)
+    expect_true(is.data.frame(res))
+    expect_true(nrow(res) > 0)
+    ref$ms_level <- 1L
+    rownames(res) <- NULL
+    expect_true(all(colnames(res) %in% colnames(ref)))
+    expect_equal(ref, res[, colnames(ref)])
 })
 
 test_that("hasFeatures,XcmsExperimentHdf5 works", {
@@ -168,3 +188,87 @@ test_that("hasFeatures,XcmsExperimentHdf5 works", {
     expect_false(hasFeatures(new("XcmsExperimentHdf5")))
     expect_false(hasFeatures(new("XcmsExperimentHdf5"), msLevel = 2))
 })
+
+test_that("featureDefinitions,XcmsExperimentHdf5 works", {
+    expect_error(featureDefinitions(xmse_full_h5) <- 4, "Not implemented")
+})
+
+test_that("featureValues,XcmsExperimentHdf5 etc works", {
+    ref <- loadXcmsData("xmse")
+    a <- featureDefinitions(ref)
+    a$peakidx <- NULL
+    b <- featureDefinitions(xmseg_full_h5)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    all(colnames(a) %in% colnames(b))
+    expect_equal(a, b[, colnames(a)])
+    nf <- nrow(b)
+    rtmed <- b$rtmed
+    ## .h5_feature_values_sample
+    a <- .h5_feature_values_sample(
+        xmseg_full_h5@hdf5_file, sample_id = "S1", ms_level = 1L,
+        n_features = nf, method = "sum", filled = FALSE, col_idx = 9L)
+    b <- unname(featureValues(ref, method = "sum", value = "maxo",
+                              filled = FALSE)[, 1L])
+    expect_equal(a, b)
+    a <- .h5_feature_values_sample(
+        xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
+        n_features = nf, filled = FALSE, method = "maxint", col_idx = c(7L, 9L))
+    b <- unname(featureValues(ref, method = "maxint", value = "into",
+                              filled = FALSE, intensity = "maxo")[, 4L])
+    expect_equal(a, b)
+    a <- .h5_feature_values_sample(
+        xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
+        n_features = nf, filled = FALSE, method = "medret", col_idx = c(8L, 4L),
+        rtmed = rtmed)
+    b <- unname(featureValues(ref, method = "medret", value = "intb",
+                              filled = FALSE)[, 4L])
+    expect_equal(a, b)
+
+    ## .h5_feature_values_ms_level
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
+                                     value = "into", filled = FALSE)
+    b <- featureValues(ref, method = "medret", value = "into", filled = FALSE)
+    expect_equal(unname(a), unname(b))
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "sum",
+                                     value = "maxo", filled = FALSE)
+    b <- featureValues(ref, method = "sum", value = "maxo", filled = FALSE)
+    expect_equal(unname(a), unname(b))
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "maxint",
+                                     value = "sn", intensity = "into",
+                                     filled = FALSE)
+    b <- featureValues(ref, method = "maxint", value = "sn", intensity = "into",
+                       filled = FALSE)
+    expect_equal(unname(a), unname(b))
+
+    ## featureValues
+    expect_error(featureValues(xmse_h5), "No feature definitions")
+    expect_error(featureValues(xmseg_full_h5, value = "index"),
+                 "does not support")
+    expect_error(featureValues(xmseg_full_h5, missing = "other"),
+                 "or a numeric")
+    ## column that does not exist.
+    expect_error(featureValues(xmseg_full_h5, msLevel = 1L, value = "other"),
+                 "Not all requested columns available.")
+    ## check column names, missing values.
+    fv_ref <- featureValues(ref, value = "into", method = "maxint",
+                            intensity = "maxo", filled = FALSE)
+    res <- featureValues(xmseg_full_h5, value = "into", method = "maxint",
+                         intensity = "maxo", filled = FALSE)
+    rownames(fv_ref) <- NULL
+    rownames(res) <- NULL
+    expect_equal(res, fv_ref)
+    fv_ref <- featureValues(ref, value = "into", method = "maxint",
+                            intensity = "maxo", filled = FALSE,
+                            missing = "rowmin_half")
+    res <- featureValues(xmseg_full_h5, value = "into", method = "maxint",
+                         intensity = "maxo", filled = FALSE,
+                         missing = "rowmin_half")
+    rownames(fv_ref) <- NULL
+    rownames(res) <- NULL
+    expect_equal(res, fv_ref)
+})
+
+unlink(h5f)
+unlink(h5f_full)
+unlink(h5f_full_g)

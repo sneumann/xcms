@@ -327,7 +327,108 @@ NULL
 }
 
 
+################################################################################
+##
+##        FEATURES THINGS
+##
+################################################################################
 
+#' Extracts feature values for one sample summing intensities for features
+#' with multiple peaks assigned.
+#'
+#' @param hdf5_file `character(1)` with the HDF5 file name.
+#'
+#' @param sample_id `character(1)` with the sample ID.
+#'
+#' @param ms_level `integer(1)` with the MS level.
+#'
+#' @param n_features `integer(1)` with the total number of features for that
+#'     MS level.
+#'
+#' @param method `character(1)` defining the method to be used to tackle
+#'     features with multiple peaks.
+#'
+#' @param col_idx `integer` with the index of the peak columns that should be
+#'     loaded and processed by the functions. The first index **must** be the
+#'     index of the `value` column (i.e. the column that should be reported).
+#'     For `method = "maxint"`, the second column should be the column defined
+#'     with parameter `intensity`, i.e. the column with the intensity values
+#'     to select the *larger* peak. For `method = "rtmed"` it should be the
+#'     index of the column `"rt"`.
+#'
+#' @param filled `logical(1)` whether gap-filled values should be reported or
+#'     removed.
+#'
+#' @param rtmed `numeric` with the `"rtmed"` column of the feature definitions.
+#'     Only used (but required) for `method = "medret"`.
+#'
+#' @noRd
+.h5_feature_values_sample <- function(sample_id, hdf5_file, ms_level,
+                                      n_features, method,
+                                      col_idx = integer(),
+                                      filled = TRUE, rtmed, ...) {
+    res <- rep(NA_real_, n_features)
+    sid <- paste0("/", sample_id, "/ms_", ms_level)
+    vals <- .h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
+                          ms_level = ms_level, column = col_idx)[[1L]]
+    fidx <- .h5_read_data(hdf5_file, sample_id, name = "feature_to_chrom_peaks",
+                          ms_level = ms_level)[[1L]]
+    ## remove gap-filled values
+    if (!filled) {
+        is_filled <- rhdf5::h5read(hdf5_file,
+                                   paste0(sid, "/chrom_peak_data/is_filled"),
+                                   drop = TRUE)
+        vals[is_filled, 1L] <- NA_real_
+    }
+    ## set/assign single and multiple values.
+    res[fidx[, 1L]] <- vals[fidx[, 2L], 1L]
+    if (method == "medret") {
+        ## calculate difference between feature and peak rt
+        vals[fidx[, 2L], 2L] <- vals[fidx[, 2L], 2L] - rtmed[fidx[, 1L]]
+    }
+    ## handle duplicates
+    f <- factor(fidx[, 1L], levels = seq_len(n_features))
+    pk_idx <- split(fidx[, 2L], f)
+    idx_multi <- which(lengths(pk_idx) > 1L)
+    FUN <- switch(
+        method,
+        sum = function(z) sum(vals[z, 1L]),
+        maxint = function(z) vals[z, 1L][which.max(vals[z, 2L])],
+        medret = function(z) vals[z, 1L][which.min(abs(vals[z, 2L]))])
+    res[idx_multi] <- vapply(pk_idx[idx_multi], FUN, 1.1)
+    res
+}
+
+#' Get feature values for a specific MS level.
+#'
+#' @noRd
+.h5_feature_values_ms_level <- function(ms_level, x, method, value, intensity,
+                                        filled = TRUE) {
+    cn <- h5read(x@hdf5_file, paste0("/", x@sample_id[1L], "/ms_", ms_level,
+                                     "/chrom_peaks_colnames"), drop = TRUE)
+    col <- switch(method,
+                  sum = value,
+                  medret = c(value, "rt"),
+                  maxint = c(value, intensity))
+    if (!all(col %in% cn))
+        stop("Not all requested columns available. Please make sure 'value' ",
+             "and 'intensity' (if defined) are available columns in the ",
+             "chrom peak matrix.", call. = FALSE)
+    col_idx <- match(col, cn)
+    rtmed <- rhdf5::h5read(x@hdf5_file,
+                           paste0("/features/ms_", ms_level,
+                                  "/feature_definitions/rtmed"), drop = TRUE)
+    rn <- rhdf5::h5read(x@hdf5_file,
+                        paste0("/features/ms_", ms_level,
+                               "/feature_definitions_rownames"), drop = TRUE)
+    res <- do.call(
+        cbind, lapply(x@sample_id, .h5_feature_values_sample,
+                      hdf5_file = x@hdf5_file, ms_level = ms_level,
+                      n_features = length(rtmed), method = method,
+                      col_idx = col_idx, filled = filled, rtmed = rtmed))
+    rownames(res) <- rn
+    res
+}
 
 ################################################################################
 ##
@@ -709,7 +810,7 @@ NULL
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     FUN <- .h5_write_matrix
-    if (name %in% c("chrom_peak_data", "feature_definition"))
+    if (name %in% c("chrom_peak_data", "feature_definitions"))
         FUN <- .h5_write_data_frame
     comp_level <- .h5_compression_level()
     for (i in seq_along(data_list)) {
