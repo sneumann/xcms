@@ -788,7 +788,9 @@ NULL
 #'
 #' @return a `data.frame` with columns `"ref"` and `"obs"` with the retention
 #'     times of the pairs of matched peaks. This `data.frame` can be used
-#'     in `.adjust_rt_model`'s parameter `rt_raw`.
+#'     in `.adjust_rt_model`'s parameter `rt_raw`. The column `chromPeaksId`
+#'     contains the rownames of the `obs_peaks` matrix. This can be used to
+#'     identify the peaks that were matched.
 #'
 #' @author Johannes Rainer, Philippine Louail
 #'
@@ -804,7 +806,8 @@ NULL
     dups <- idx[duplicated(idx[, 2L]), 2L]
     idx <- idx[!idx[, 2L] %in% dups, , drop = FALSE]
     data.frame(ref = ref_anchors[idx[, 2L], 2L],
-               obs = obs_peaks[idx[, 1L], 2L])
+               obs = obs_peaks[idx[, 1L], 2L],
+               chromPeaksId = rownames(obs_peaks[idx[, 1L], ,drop = FALSE]))
 }
 
 #' @description

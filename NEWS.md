@@ -1,4 +1,4 @@
-# xcms 4.3
+# xcms 4.5
 
 ## Changes in version XXX
 
@@ -7,7 +7,7 @@
   in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
   in MS level 2.
 
-## Changes in version 4.3.4
+## Changes in version 4.5.1
 
 - Address issue #765: peak detection on chromatographic data: report a
   chromatogram's `"mz"`, `"mzmin"` and `"mzmax"` as the mean m/z and lower and
@@ -18,6 +18,14 @@
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
 
+# xcms 4.3
+
+## Changes in version 4.3.4
+
+- Small update to the `matchLamaChromPeaks()` function to get the chromPeaksId
+  of the chromPeaks matched with Lamas.
+- Small fix to the .yml file for the github actions, so they do not crash on
+  warnings.
 
 ## Changes in version 4.3.3
 
