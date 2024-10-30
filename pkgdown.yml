@@ -1,12 +1,12 @@
 pandoc: '3.4'
 pkgdown: 2.1.1.9000
-pkgdown_sha: 0cb9d38d1dc25946f01ee7500be9665985d8784e
+pkgdown_sha: ffe60d5f60934e95285d416dae12c05e24ed1dac
 articles:
   LC-MS-feature-grouping: LC-MS-feature-grouping.html
   xcms-direct-injection: xcms-direct-injection.html
   xcms-lcms-ms: xcms-lcms-ms.html
   xcms: xcms.html
-last_built: 2024-10-08T12:58Z
+last_built: 2024-10-30T14:02Z
 urls:
   reference: https://sneumann.github.io/xcms/reference
   article: https://sneumann.github.io/xcms/articles
