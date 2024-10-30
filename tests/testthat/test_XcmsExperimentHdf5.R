@@ -269,6 +269,32 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     expect_equal(res, fv_ref)
 })
 
+test_that("adjustRtime,XcmsExperimentHdf5,PeakGroupsParam works", {
+    object <- xmseg_full_h5
+    msLevel <- 1L
+    param <- PeakGroupsParam(span = 0.4)
+})
+
+test_that(".h5_feature_chrom_peaks_sample works", {
+    cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
+    res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
+                                          1L, j = match("into", cn))
+    ref <- featureValues(xmseg_full_h5, method = "sum", value = "into")
+    vals <- split(res[, 2L], factor(res[, 1L], levels = seq_len(nrow(ref))))
+    vals <- vapply(vals, function(z) {
+        if (length(z))
+            sum(z)
+        else NA_real_
+    }, 2.2)
+    expect_equal(unname(vals), unname(ref[, 3L]))
+    ## With index.
+    i <- c(1, 4, 2, 3, 2)
+    res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
+                                          1L, j = match("into", cn), i = i)
+    expect_equal(res[, 1L], c(4, 2, 2))
+    expect_equal(res[, 2L], unname(ref[c(4, 2, 2), 3L]))
+})
+
 unlink(h5f)
 unlink(h5f_full)
 unlink(h5f_full_g)

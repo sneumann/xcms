@@ -28,7 +28,7 @@ importClassesFrom("S4Vectors", "Rle", "DataFrame", "Hits")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List",
            "as.matrix")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
-                  "extractROWS", "findMatches")
+                  "extractROWS", "findMatches", "to")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")

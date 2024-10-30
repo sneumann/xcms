@@ -404,6 +404,8 @@ setMethod(
                      "'groupChromPeaks'")
             peakGroupsMatrix(param) <- adjustRtimePeakGroups(
                 object, param = param)
+            ## Need to implement an `adjustRtimePeakGroups,XcmsExperimentHdf5`.
+
         }
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
@@ -605,3 +607,50 @@ setMethod(
         }
         vals
     })
+
+################################################################################
+##
+##        OTHER FUNCTIONALIY
+##
+################################################################################
+
+#' While previously we were first extracting the chromatograms and then adding
+#' the chrom peaks later for `XcmsExperimentHdf5` it might be more efficient to
+#' also extract the chrom peaks in the loop/chunk processing. So, essentially:
+#' - process `object` chunk-wise
+#' - for each chunk:
+#'   - extract chromatograms (in parallel?)
+#'   - get chrom peaks for each sample/chrom peak.
+#'
+#' @noRd
+## #' @rdname hidden_aliases
+## setMethod(
+##     "chromatogram", "XcmsExperimentHdf5",
+##     function(object, rt = matrix(nrow = 0, ncol = 2),
+##              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
+##              msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
+##              return.type = c("XChromatograms", "MChromatograms"),
+##              include = character(),
+##              chromPeaks = c("apex_within", "any", "none"),
+##              BPPARAM = bpparam()) {
+##         if (!is.matrix(rt)) rt <- matrix(rt, ncol = 2L)
+##         if (!is.matrix(mz)) mz <- matrix(mz, ncol = 2L)
+##         if (length(include)) {
+##             warning("Parameter 'include' is deprecated, please use ",
+##                     "'chromPeaks' instead")
+##             chromPeaks <- include
+##         }
+##         if (nrow(mz) && !nrow(rt))
+##             rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
+##         if (nrow(rt) && !nrow(mz))
+##             mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
+##         return.type <- match.arg(return.type)
+##         chromPeaks <- match.arg(chromPeaks)
+##         if (hasAdjustedRtime(object))
+##             object <- applyAdjustedRtime(object)
+##         .xmse_extract_chromatograms_old(
+##             object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+##             msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
+##             chunkSize = chunkSize, chromPeaks = chromPeaks,
+##             return.type = return.type, BPPARAM = BPPARAM)
+##     })

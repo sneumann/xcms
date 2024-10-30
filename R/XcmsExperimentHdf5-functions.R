@@ -293,9 +293,7 @@ NULL
                             type = "any", by_sample = TRUE) {
     if (length(columns)) {
         ## Get column names, convert column names to indices.
-        cn <- rhdf5::h5read(x@hdf5_file,
-                            name = paste0("/", x@sample_id[1L], "/ms_",
-                                          msLevel[1L], "/chrom_peaks_colnames"))
+        cn <- .h5_chrom_peaks_colnames(x, msLevel = msLevel)
         idx_columns <- match(columns, cn)
         if (anyNA(idx_columns))
             stop("Column(s) ", paste0("\"", columns[is.na(idx_columns)], "\"",
@@ -306,7 +304,7 @@ NULL
     msl <- rep(msLevel, each = length(x@sample_id))
     res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
                          ms_level = msl, read_colnames = TRUE,
-                         read_rownames = TRUE, column = idx_columns)
+                         read_rownames = TRUE, j = idx_columns)
     if (length(mz) | length(rt))
         res <- lapply(res, function(z, rt, mz, ppm, type) {
             z[.is_chrom_peaks_within_mz_rt(
@@ -326,12 +324,52 @@ NULL
     ## LLLL implement; following .h5_chrom_peaks
 }
 
+.h5_chrom_peaks_colnames <- function(x, msLevel = 1L) {
+    rhdf5::h5read(x@hdf5_file,
+                  name = paste0("/", x@sample_id[1L], "/ms_",
+                                msLevel[1L], "/chrom_peaks_colnames"),
+                  drop = TRUE)
+}
 
 ################################################################################
 ##
 ##        FEATURES THINGS
 ##
 ################################################################################
+
+#' Get chrom peaks for features from one sample. Allows to define/subset by
+#' features (`i`) and select column(s) from the chrom peaks matrix to return.
+#'
+#' @param sample_id `character(1)` with the ID of the sample from which to
+#'     return the data.
+#'
+#' @param hdf5_file `character(1)` with the HDF5 file name
+#'
+#' @param ms_level `integer(1)` with the MS level of the features/chrom peaks
+#'
+#' @param i optional `integer` to select the features for which to return the
+#'     data.
+#'
+#' @param j optional `integer` defining the index of the column(s) to return.
+#'
+#' @return `matrix` with the chrom peak data, first column being the feature
+#'     index.
+#'
+#' @importFrom S4Vectors findMatches to
+#'
+#' @noRd
+.h5_feature_chrom_peaks_sample <- function(sample_id, hdf5_file, ms_level,
+                                           i = integer(), j = NULL) {
+    fidx <- xcms:::.h5_read_data(hdf5_file, sample_id, name = "feature_to_chrom_peaks",
+                          ms_level = ms_level)[[1L]]
+    if (length(i)) {
+        hits <- findMatches(i, fidx[, 1L])
+        fidx <- fidx[to(hits), , drop = FALSE]
+    }
+    vals <- xcms:::.h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
+                          ms_level = ms_level, i = fidx[, 2L], j = j)[[1L]]
+    cbind(fidx[, 1L], vals)
+}
 
 #' Extracts feature values for one sample summing intensities for features
 #' with multiple peaks assigned.
@@ -370,7 +408,7 @@ NULL
     res <- rep(NA_real_, n_features)
     sid <- paste0("/", sample_id, "/ms_", ms_level)
     vals <- .h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
-                          ms_level = ms_level, column = col_idx)[[1L]]
+                          ms_level = ms_level, j = col_idx)[[1L]]
     fidx <- .h5_read_data(hdf5_file, sample_id, name = "feature_to_chrom_peaks",
                           ms_level = ms_level)[[1L]]
     ## remove gap-filled values
@@ -404,8 +442,7 @@ NULL
 #' @noRd
 .h5_feature_values_ms_level <- function(ms_level, x, method, value, intensity,
                                         filled = TRUE) {
-    cn <- h5read(x@hdf5_file, paste0("/", x@sample_id[1L], "/ms_", ms_level,
-                                     "/chrom_peaks_colnames"), drop = TRUE)
+    cn <- .h5_chrom_peaks_colnames(x, ms_level)
     col <- switch(method,
                   sum = value,
                   medret = c(value, "rt"),
@@ -429,6 +466,30 @@ NULL
     rownames(res) <- rn
     res
 }
+
+################################################################################
+##
+##        ALIGNMENT RELATED FUNCTIONALITY
+##
+################################################################################
+
+#' .getPeakGroupsRtMatrix in do_adjustRtime-functions.R
+#' Need a function that gets a matrix with columns being samples and rows the
+#' retention time of a (defined) peak group. Peak groups get defined based
+#' on the number of available peaks per feature.
+#'
+#' define the features based on the features_to_chrom_peaks data set.
+#' for those we need to get then their retention times.
+#'
+#' @noRd
+.get_peak_groups_rt_matrix <- function(x, ms_level = 1L) {
+    ## LLLLLL continue.
+    i <- 1L
+    idx <- rhdf5::h5read(x@hdf5_file, paste0("/S", i, "/ms_", ms_level,
+                                             "/feature_to_chrom_peaks"))
+    rts <- xcms:::.h5_read_data(, index = LLLL)
+}
+
 
 ################################################################################
 ##
@@ -456,8 +517,8 @@ NULL
 #'
 #' @param h5 HDF5 file handle
 #'
-#' @param index `integer` with the index (or indices) of the columns to read.
-#'     By default, with `index = NULL` all columns are read.
+#' @param index `list` with `integer` indices of the rows and columns to read
+#'     only a subset of the data. Is passed directly to `rhdf5::h5read()`.
 #'
 #' @param read_colnames `logical(1)` whether column names should also be read
 #'     and set.
@@ -467,19 +528,17 @@ NULL
 #' @return numeric `matrix`
 #'
 #' @noRd
-.h5_read_matrix <- function(name, h5, index = NULL,
+.h5_read_matrix <- function(name, h5, index = list(NULL, NULL),
                             read_colnames = FALSE,
                             read_rownames = FALSE,
                             rownames = paste0(name, "_rownames")) {
-    d <- rhdf5::h5read(h5, name = name, index = list(NULL, index))
+    d <- rhdf5::h5read(h5, name = name, index = index)
     if (read_rownames)
-        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE)
-    if (read_colnames) {
-        cn <- rhdf5::h5read(h5, name = paste0(name, "_colnames"), drop = TRUE)
-        if (length(index))
-            colnames(d) <- cn[index]
-        else colnames(d) <- cn
-    }
+        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
+                                     index = index[1L])
+    if (read_colnames)
+        colnames(d) <- rhdf5::h5read(h5, name = paste0(name, "_colnames"),
+                                     drop = TRUE, index = index[2L])
     d
 }
 
@@ -494,13 +553,19 @@ NULL
 #'
 #' @param h5 HDF5 file handle
 #'
+#' @param index `list` with integer indices passed to rhdf5::h5read to read
+#'     only a subset of the data. Since `rhdf5::h5read()` seems to not support
+#'     parameter `index` for data sets the subsetting is done in R - but only
+#'     for `index[[1L]]`, i.e. rows. `index[[2L]]` is currently IGNORED.
+#'
 #' @param read_rownames `logical(1)` whether rownames should be read and set.
 #'
 #' @param rownames `character(1)` defining the name of the HDF5 array
 #'     containing the rownames.
 #'
 #' @noRd
-.h5_read_data_frame <- function(name, h5, read_rownames = FALSE,
+.h5_read_data_frame <- function(name, h5, index = list(NULL, NULL),
+                                read_rownames = FALSE,
                                 rownames = paste0(name, "_rownames"), ...) {
     d <- rhdf5::h5read(h5, name = name)
     if (is.list(d))
@@ -508,11 +573,14 @@ NULL
     d <- as.data.frame(d)
     if (read_rownames)
         rownames(d) <- rhdf5::h5read(h5, rownames, drop = TRUE)
-    d
+    if (length(index[[1L]]))
+        d[index[[1L]], , drop = FALSE]
+    else d
 }
 
-.h5_read_chrom_peak_data <- function(name, h5, read_rownames = FALSE, ...) {
-    .h5_read_data_frame(name, h5, read_rownames = read_rownames,
+.h5_read_chrom_peak_data <- function(name, h5, index = list(NULL, NULL),
+                                     read_rownames = FALSE, ...) {
+    .h5_read_data_frame(name, h5, read_rownames = read_rownames, index = index,
                         rownames = sub("_data", "s_rownames", name))
 }
 
@@ -571,7 +639,9 @@ NULL
 #' @param rownames `logical(1)` defining the name of the HDF5 array containing
 #'     the row names.
 #'
-#' @param column For `name = "chrom_peak_data"`: `character(1)` allowing to
+#' @param i optional index with the rows to read.
+#'
+#' @param j For `name = "chrom_peak_data"`: `character(1)` allowing to
 #'     select a **single** column to read. For `name = "chrom_peaks"`: `integer`
 #'     with the indices of the column(s) that should be imported.
 #'
@@ -588,7 +658,7 @@ NULL
                           ms_level = integer(),
                           read_colnames = FALSE,
                           read_rownames = FALSE,
-                          column = NULL) {
+                          i = NULL, j = NULL) {
     if (!length(index)) return(list())
     stopifnot(length(ms_level) == length(index))
     name <- match.arg(name)
@@ -602,10 +672,13 @@ NULL
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     d <- paste0("/", index, "/ms_", ms_level, "/", name)
-    if (is.character(column) && length(column) == 1L)
-        d <- paste0(d, "/", column)
+    index <- list(i, j)
+    if (is.character(j) && length(j) == 1L) {
+        d <- paste0(d, "/", j)
+        index <- list(i, NULL)
+    }
     lapply(d, FUN = FUN, read_colnames = read_colnames,
-           read_rownames = read_rownames, index = column, h5 = h5)
+           read_rownames = read_rownames, index = index, h5 = h5)
 }
 
 
