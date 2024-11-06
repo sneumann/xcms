@@ -42,6 +42,13 @@
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
+#' @section Retention time alignment:
+#'
+#' - `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
+#'   parameter `extraPeaks` of `PeakGroupsParam` is ignored. Anchor peaks are
+#'   only defined using the `minFraction` parameter (and eventually, if
+#'   provided, the `subset` parameter).
+#'
 #' @section Correspondence analysis results:
 #'
 #' - `featureDefinitions()`: similarly to `featureDefinitions()` for
@@ -49,7 +56,7 @@
 #'   characteristics for the defined LC-MS features. The function for
 #'   `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
 #'   with the indices of the chromatographic peaks per feature. Also, the
-#'   columns are usually returned in alphabetic order.
+#'   columns are returned in alphabetic order.
 #'
 #' - `featureValues()`: parameter `value = "index"` (i.e. returning the index
 #'   of the chromatographic peaks per feature) is not supported.
@@ -373,7 +380,6 @@ setMethod(
 #' - add chunkSize to chromPeaks?
 #' - chromPeakData,XcmsExperimentHdf5
 #' - adjustRtime,XcmsExperimentHdf5
-#' - findChromPeaks,XcmsExperimentHdf5
 #'
 #' @noRd
 NULL
@@ -384,6 +390,25 @@ NULL
 ##        RETENTION TIME ALIGNMENT
 ##
 ################################################################################
+
+#' @rdname XcmsExperimentHdf5
+setMethod(
+    "adjustRtimePeakGroups", c("XcmsExperimentHdf5", "PeakGroupsParam"),
+    function(object, param = PeakGroupsParam(), msLevel = 1L) {
+        if (!hasFeatures(object, msLevel = msLevel))
+            stop("No features present. Please run 'groupChromPeaks' first.")
+        subs <- param@subset
+        if (!length(subs)) subs <- seq_along(object)
+        if (!all(subs %in% seq_along(object)))
+            stop("Parameter 'subset' is out of bounds.")
+        object@sample_id <- object@sample_id[subs] # quick subset hack.
+        rts <- .h5_feature_values_ms_level(msLevel, object, method = "maxint",
+                                           intensity = "into", value = "rt")
+        pres <- apply(rts, 1, function(z) sum(!is.na(z)))
+        rts <- rts[pres >= param@minFraction * length(subs), , drop = FALSE]
+        colnames(rts) <- basename(fileNames(object))[subs]
+        rts[order(rowMedians(rts, na.rm = TRUE)), , drop = FALSE]
+    })
 
 setMethod(
     "adjustRtime", signature(object = "XcmsExperimentHdf5",
@@ -407,6 +432,7 @@ setMethod(
             ## Need to implement an `adjustRtimePeakGroups,XcmsExperimentHdf5`.
 
         }
+        ## LLLLL continue here
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
         rt_adj <- .adjustRtime_peakGroupsMatrix(

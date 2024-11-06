@@ -2,7 +2,12 @@
 % Please edit documentation in R/XcmsExperimentHdf5.R
 \name{XcmsExperimentHdf5}
 \alias{XcmsExperimentHdf5}
+\alias{XcmsExperimentHdf5-class}
+\alias{adjustRtimePeakGroups,XcmsExperimentHdf5,PeakGroupsParam-method}
 \title{xcms result object for very large data sets}
+\usage{
+\S4method{adjustRtimePeakGroups}{XcmsExperimentHdf5,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)
+}
 \description{
 The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] keep all
 preprocessing results in memory and can thus (depending on the size of the
@@ -39,6 +44,15 @@ hence use the on-disk data storage mode described on this page. All data
 is stored in a file with the name specifyied with parameter `hdf5File`.
 }
 
+\section{Retention time alignment}{
+
+
+- `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
+  parameter `extraPeaks` of `PeakGroupsParam` is ignored. Anchor peaks are
+  only defined using the `minFraction` parameter (and eventually, if
+  provided, the `subset` parameter).
+}
+
 \section{Correspondence analysis results}{
 
 
@@ -47,7 +61,7 @@ is stored in a file with the name specifyied with parameter `hdf5File`.
   characteristics for the defined LC-MS features. The function for
   `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
   with the indices of the chromatographic peaks per feature. Also, the
-  columns are usually returned in alphabetic order.
+  columns are returned in alphabetic order.
 
 - `featureValues()`: parameter `value = "index"` (i.e. returning the index
   of the chromatographic peaks per feature) is not supported.

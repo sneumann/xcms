@@ -2,13 +2,6 @@
 #' @include AllGenerics.R functions-XChromatogram.R functions-XChromatograms.R
 
 ############################################################
-## Class unions
-setClassUnion("characterOrNULL", c("character", "NULL"))
-setClassUnion("logicalOrNumeric", c("logical", "numeric"))
-##setClassUnion("ANYorNULL", c("ANY", "NULL"))
-
-
-############################################################
 ## xcmsSet
 ##
 setClass("xcmsSet",
@@ -2186,4 +2179,8 @@ setClass("FilterIntensityParam",
 setClass("BetaDistributionParam",
          contains = "Param"
          )
-        
+
+############################################################
+## Class unions
+setClassUnion("characterOrNULL", c("character", "NULL"))
+setClassUnion("logicalOrNumeric", c("logical", "numeric"))

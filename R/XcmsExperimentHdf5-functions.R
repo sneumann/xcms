@@ -337,39 +337,40 @@ NULL
 ##
 ################################################################################
 
-#' Get chrom peaks for features from one sample. Allows to define/subset by
-#' features (`i`) and select column(s) from the chrom peaks matrix to return.
-#'
-#' @param sample_id `character(1)` with the ID of the sample from which to
-#'     return the data.
-#'
-#' @param hdf5_file `character(1)` with the HDF5 file name
-#'
-#' @param ms_level `integer(1)` with the MS level of the features/chrom peaks
-#'
-#' @param i optional `integer` to select the features for which to return the
-#'     data.
-#'
-#' @param j optional `integer` defining the index of the column(s) to return.
-#'
-#' @return `matrix` with the chrom peak data, first column being the feature
-#'     index.
-#'
-#' @importFrom S4Vectors findMatches to
-#'
-#' @noRd
-.h5_feature_chrom_peaks_sample <- function(sample_id, hdf5_file, ms_level,
-                                           i = integer(), j = NULL) {
-    fidx <- xcms:::.h5_read_data(hdf5_file, sample_id, name = "feature_to_chrom_peaks",
-                          ms_level = ms_level)[[1L]]
-    if (length(i)) {
-        hits <- findMatches(i, fidx[, 1L])
-        fidx <- fidx[to(hits), , drop = FALSE]
-    }
-    vals <- xcms:::.h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
-                          ms_level = ms_level, i = fidx[, 2L], j = j)[[1L]]
-    cbind(fidx[, 1L], vals)
-}
+## ## WE MIGHT ACTUALLY NOT NEED THIS!
+## #' Get chrom peaks for features from one sample. Allows to define/subset by
+## #' features (`i`) and select column(s) from the chrom peaks matrix to return.
+## #'
+## #' @param sample_id `character(1)` with the ID of the sample from which to
+## #'     return the data.
+## #'
+## #' @param hdf5_file `character(1)` with the HDF5 file name
+## #'
+## #' @param ms_level `integer(1)` with the MS level of the features/chrom peaks
+## #'
+## #' @param i optional `integer` to select the features for which to return the
+## #'     data.
+## #'
+## #' @param j optional `integer` defining the index of the column(s) to return.
+## #'
+## #' @return `matrix` with the chrom peak data, first column being the feature
+## #'     index.
+## #'
+## #' @importFrom S4Vectors findMatches to
+## #'
+## #' @noRd
+## .h5_feature_chrom_peaks_sample <- function(sample_id, hdf5_file, ms_level,
+##                                            i = integer(), j = NULL) {
+##     fidx <- .h5_read_data(hdf5_file, sample_id, name = "feature_to_chrom_peaks",
+##                           ms_level = ms_level)[[1L]]
+##     if (length(i)) {
+##         hits <- findMatches(i, fidx[, 1L])
+##         fidx <- fidx[to(hits), , drop = FALSE]
+##     }
+##     vals <- .h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
+##                           ms_level = ms_level, i = fidx[, 2L], j = j)[[1L]]
+##     cbind(fidx[, 1L], vals)
+## }
 
 #' Extracts feature values for one sample summing intensities for features
 #' with multiple peaks assigned.
@@ -428,12 +429,14 @@ NULL
     f <- factor(fidx[, 1L], levels = seq_len(n_features))
     pk_idx <- split(fidx[, 2L], f)
     idx_multi <- which(lengths(pk_idx) > 1L)
-    FUN <- switch(
-        method,
-        sum = function(z) sum(vals[z, 1L]),
-        maxint = function(z) vals[z, 1L][which.max(vals[z, 2L])],
-        medret = function(z) vals[z, 1L][which.min(abs(vals[z, 2L]))])
-    res[idx_multi] <- vapply(pk_idx[idx_multi], FUN, 1.1)
+    if (length(idx_multi)) {
+        FUN <- switch(
+            method,
+            sum = function(z) sum(vals[z, 1L]),
+            maxint = function(z) vals[z, 1L][which.max(vals[z, 2L])],
+            medret = function(z) vals[z, 1L][which.min(abs(vals[z, 2L]))])
+        res[idx_multi] <- vapply(pk_idx[idx_multi], FUN, 1.1)
+    }
     res
 }
 
@@ -473,23 +476,6 @@ NULL
 ##
 ################################################################################
 
-#' .getPeakGroupsRtMatrix in do_adjustRtime-functions.R
-#' Need a function that gets a matrix with columns being samples and rows the
-#' retention time of a (defined) peak group. Peak groups get defined based
-#' on the number of available peaks per feature.
-#'
-#' define the features based on the features_to_chrom_peaks data set.
-#' for those we need to get then their retention times.
-#'
-#' @noRd
-.get_peak_groups_rt_matrix <- function(x, ms_level = 1L) {
-    ## LLLLLL continue.
-    i <- 1L
-    idx <- rhdf5::h5read(x@hdf5_file, paste0("/S", i, "/ms_", ms_level,
-                                             "/feature_to_chrom_peaks"))
-    rts <- xcms:::.h5_read_data(, index = LLLL)
-}
-
 
 ################################################################################
 ##
@@ -513,6 +499,11 @@ NULL
 #' `read_colnames` and `read_rownames` also the rownames and colnames are read.
 #' Not reading them has performance advantages.
 #'
+#' This function supports reading only subsets of the data from the HDF5 file,
+#' which, surprisingly, has a negative impact on performance. Maybe chunking
+#' might improve that behaviour. Thus, for now, the `.h5_read_matrix2()`
+#' function should be used instead.
+#'
 #' @param name `character(1)` with the name of the data set to read.
 #'
 #' @param h5 HDF5 file handle
@@ -533,6 +524,30 @@ NULL
                             read_rownames = FALSE,
                             rownames = paste0(name, "_rownames")) {
     d <- rhdf5::h5read(h5, name = name, index = index)
+    if (read_rownames)
+        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
+                                     index = index[1L])
+    if (read_colnames)
+        colnames(d) <- rhdf5::h5read(h5, name = paste0(name, "_colnames"),
+                                     drop = TRUE, index = index[2L])
+    d
+}
+
+#' Same functionality as `.h5_read_matrix`, but this one does the subsetting
+#' in R, i.e. reads first the **full** matrix into R and does the subsetting
+#' in R. For data matrices up to 100,000 rows and 3 columns this function
+#' is faster.
+#'
+#' @noRd
+.h5_read_matrix2 <- function(name, h5, index = list(NULL, NULL),
+                             read_colnames = FALSE,
+                             read_rownames = FALSE,
+                             rownames = paste0(name, "_rownames")) {
+    d <- rhdf5::h5read(h5, name = name)
+    if (length(index[[1L]]))
+        d <- d[index[[1L]], , drop = FALSE]
+    if (length(index[[2L]]))
+        d <- d[, index[[2L]], drop = FALSE]
     if (read_rownames)
         rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
                                      index = index[1L])
@@ -665,10 +680,7 @@ NULL
     FUN <- switch(name,
                   chrom_peak_data = .h5_read_chrom_peak_data,
                   feature_definitions = .h5_read_data_frame,
-                  .h5_read_matrix)
-    ## FUN <- .h5_read_matrix
-    ## if (name %in% c("chrom_peak_data", "feature_definitions"))
-    ##     FUN <- .h5_read_data_frame
+                  .h5_read_matrix2)
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     d <- paste0("/", index, "/ms_", ms_level, "/", name)
@@ -736,6 +748,8 @@ NULL
 
 .h5_compression_level <- function() 0L
 
+.h5_filter <- function() "NONE"
+
 #' Initializes the HDF5 file
 #'
 #' @noRd
@@ -746,9 +760,12 @@ NULL
     h5 <- rhdf5::H5Fcreate(x)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
     comp_level <- .h5_compression_level()
+    flt <- .h5_filter()
     rhdf5::h5createGroup(h5, "header")
-    rhdf5::h5write("package:xcms", h5, "/header/package", level = comp_level)
-    rhdf5::h5write(mod_count, h5, "/header/modcount", level = comp_level)
+    rhdf5::h5write("package:xcms", h5, "/header/package",
+                   level = comp_level)
+    rhdf5::h5write(mod_count, h5, "/header/modcount",
+                   level = comp_level)
 }
 
 #' Every writing operation should increate the "mod count", i.e. the
@@ -886,6 +903,7 @@ NULL
     if (name %in% c("chrom_peak_data", "feature_definitions"))
         FUN <- .h5_write_data_frame
     comp_level <- .h5_compression_level()
+    flt <- .h5_filter()
     for (i in seq_along(data_list)) {
         group_sample <- paste0("/", names(data_list)[i])
         if (!rhdf5::H5Lexists(h5, group_sample))

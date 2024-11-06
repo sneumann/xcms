@@ -2588,3 +2588,39 @@ test_that("fillChromPeaks,XcmsExperiment works with verboseBetaColumns", {
     pks_fil <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
     expect_true(sum(is.na(pks_fil[, "beta_cor"])) < 4)
 })
+
+test_that("adjustRtimePeakGroups works", {
+    skip_on_os(os = "windows", arch = "i386")
+
+    pkGrp <- adjustRtimePeakGroups(xod_xg,
+                                   param = PeakGroupsParam(minFraction = 1))
+    expect_equal(colnames(pkGrp), basename(fileNames(xod_xg)))
+    ## reported retention times should be correct.
+    ref <- featureValues(xod_xg, method = "maxint", intensity = "into",
+                         value = "rt")
+    expect_equal(ref[rownames(pkGrp), ], pkGrp)
+
+    ## No NAs allowed across samples:
+    isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
+    expect_true(all(isNa == 0))
+    pkGrp <- adjustRtimePeakGroups(
+        xod_xg, param = PeakGroupsParam(minFraction = 0.5))
+    isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
+    expect_true(max(isNa) == 1)
+
+    ## Test adjustRtime adjusting also MS level > 1.
+    ## Artificially changing the MS level of some spectra.
+    xod_mod <- xod_xg
+    ## Select the spectra for MS level 2:
+    idx_ms2 <- c(300:500, 300:500 + 1277, 300:500 + 2554)
+    xod_mod@featureData$msLevel[idx_ms2] <- 2
+    xod_mod_adj <- adjustRtime(xod_mod,
+                               param = PeakGroupsParam(span = 0.4))
+    ## rtime of the MS level 2 spectra are expected to be adjusted too
+    expect_equal(rtime(xod_xgr), rtime(xod_mod_adj))
+    expect_true(all(rtime(xod_mod)[idx_ms2] != rtime(xod_mod_adj)[idx_ms2]))
+
+    res <- adjustRtimePeakGroups(xod_xg,
+                                 param = PeakGroupsParam(subset = c(1, 3)))
+    expect_equal(colnames(res), basename(fileNames(xod_xg)[c(1, 3)]))
+})

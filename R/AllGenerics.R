@@ -269,7 +269,11 @@ setGeneric("addProcessHistory", function(object, ...)
 setGeneric("adjustRtime", function(object, param, ...)
     standardGeneric("adjustRtime"))
 
-setGeneric("adjustedRtime", function(object, ...) standardGeneric("adjustedRtime"))
+#' @rdname adjustRtime
+setGeneric("adjustRtimePeakGroups", function(object, param, ...)
+           standardGeneric("adjustRtimePeakGroups"))
+setGeneric("adjustedRtime", function(object, ...)
+    standardGeneric("adjustedRtime"))
 setGeneric("adjustedRtime<-", function(object, value)
     standardGeneric("adjustedRtime<-"))
 setGeneric("ampTh", function(object, ...) standardGeneric("ampTh"))

@@ -577,35 +577,6 @@ dropGenericProcessHistory <- function(x, fun) {
     idxs
 }
 
-#' @rdname adjustRtime
-adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
-                                  msLevel = 1L) {
-    if (!(inherits(object, "XCMSnExp") | inherits(object, "XcmsExperiment")))
-        stop("'object' has to be an 'XCMSnExp' or 'XcmsExperiment' object.")
-    if (!hasFeatures(object))
-        stop("No features present. Please run 'groupChromPeaks' first.")
-    if (hasAdjustedRtime(object))
-        warning("Alignment/retention time correction was already performed, ",
-                "returning a matrix with adjusted retention times.")
-    subs <- subset(param)
-    if (!length(subs))
-        subs <- seq_along(fileNames(object))
-    nSamples <- length(subs)
-    missingSample <- nSamples - (nSamples * minFraction(param))
-    pkGrp <- .getPeakGroupsRtMatrix(
-        peaks = chromPeaks(object, msLevel = msLevel),
-        peakIndex = .peakIndex(
-            .update_feature_definitions(
-                featureDefinitions(object), rownames(chromPeaks(object)),
-                rownames(chromPeaks(object, msLevel = msLevel)))),
-        sampleIndex = subs,
-        missingSample = missingSample,
-        extraPeaks = extraPeaks(param)
-    )
-    colnames(pkGrp) <- basename(fileNames(object))[subs]
-    pkGrp
-}
-
 .plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                  col = "#00000080", xlab = "retention time",
                                  ylab = "sample", xlim = range(rt),

@@ -185,6 +185,36 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
     object
 })
 
+#' @rdname hidden_aliases
+setMethod(
+    "adjustRtimePeakGroups", c("XcmsResult", "PeakGroupsParam"),
+    function(object, param = PeakGroupsParam(),
+             msLevel = 1L) {
+        if (!hasFeatures(object))
+            stop("No features present. Please run 'groupChromPeaks' first.")
+        if (hasAdjustedRtime(object))
+            warning("Alignment/retention time correction was already ",
+                    "performed returning a matrix with adjusted retention ",
+                    "times.")
+        subs <- subset(param)
+        if (!length(subs))
+            subs <- seq_along(fileNames(object))
+        nSamples <- length(subs)
+        missingSample <- nSamples - (nSamples * minFraction(param))
+        pkGrp <- .getPeakGroupsRtMatrix(
+            peaks = chromPeaks(object, msLevel = msLevel),
+            peakIndex = .peakIndex(
+                .update_feature_definitions(
+                    featureDefinitions(object), rownames(chromPeaks(object)),
+                    rownames(chromPeaks(object, msLevel = msLevel)))),
+            sampleIndex = subs,
+            missingSample = missingSample,
+            extraPeaks = extraPeaks(param)
+        )
+        colnames(pkGrp) <- basename(fileNames(object))[subs]
+        pkGrp
+    })
+
 #' @aliases featureDefinitions featureDefinitions,MsFeatureData-method
 #'
 #' @description

@@ -7,9 +7,9 @@ xmse_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full)
 ## correspondence
 h5f_full_g <- tempfile()
 xmseg_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full_g)
-param <- PeakDensityParam(sampleGroups = sampleData(xmseg_full_h5)$sample_group,
+pdp <- PeakDensityParam(sampleGroups = sampleData(xmseg_full_h5)$sample_group,
                           minFraction = 0.4, bw = 30)
-xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, param, msLevel = 1L)
+xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, pdp, msLevel = 1L)
 
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
@@ -269,31 +269,64 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     expect_equal(res, fv_ref)
 })
 
+test_that("adjustRtimePeakGroups works", {
+    ref <- dropFeatureDefinitions(loadXcmsData("xmse"))
+    ref <- groupChromPeaks(ref, pdp, msLevel = 1L)
+
+    a <- featureValues(
+        ref, method = "maxint", intensity = "into", value = "rt")
+    b <- featureValues(
+        xmseg_full_h5, method = "maxint", intensity = "into", value = "rt")
+    expect_equal(unname(a), unname(b))
+
+    p <- PeakGroupsParam(minFraction = 0.7, extraPeaks = 100,
+                         subset = c(1, 2, 20, 23))
+    expect_error(adjustRtimePeakGroups(xmse_full_h5, PeakGroupsParam()),
+                 "No features present")
+    expect_error(adjustRtimePeakGroups(xmseg_full_h5, p, msLevel = 2L),
+                 "No features present")
+    expect_error(adjustRtimePeakGroups(xmseg_full_h5, p),
+                 "out of bounds")
+    p@subset <- c(1L, 3L, 4L, 7L, 8L)
+
+    apeaks_ref <- adjustRtimePeakGroups(ref, p)
+    apeaks <- adjustRtimePeakGroups(xmseg_full_h5, p)
+    expect_equal(unname(apeaks_ref), unname(apeaks))
+    expect_equal(colnames(apeaks_ref), colnames(apeaks))
+
+    p <- PeakGroupsParam(minFraction = 0.3, extraPeaks = 100,
+                         subset = c(1, 2, 3, 4, 7, 8))
+    apeaks_ref <- adjustRtimePeakGroups(ref, p)
+    apeaks <- adjustRtimePeakGroups(xmseg_full_h5, p)
+    expect_equal(unname(apeaks_ref), unname(apeaks))
+    expect_equal(colnames(apeaks_ref), colnames(apeaks))
+})
+
 test_that("adjustRtime,XcmsExperimentHdf5,PeakGroupsParam works", {
     object <- xmseg_full_h5
     msLevel <- 1L
     param <- PeakGroupsParam(span = 0.4)
 })
 
-test_that(".h5_feature_chrom_peaks_sample works", {
-    cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
-    res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
-                                          1L, j = match("into", cn))
-    ref <- featureValues(xmseg_full_h5, method = "sum", value = "into")
-    vals <- split(res[, 2L], factor(res[, 1L], levels = seq_len(nrow(ref))))
-    vals <- vapply(vals, function(z) {
-        if (length(z))
-            sum(z)
-        else NA_real_
-    }, 2.2)
-    expect_equal(unname(vals), unname(ref[, 3L]))
-    ## With index.
-    i <- c(1, 4, 2, 3, 2)
-    res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
-                                          1L, j = match("into", cn), i = i)
-    expect_equal(res[, 1L], c(4, 2, 2))
-    expect_equal(res[, 2L], unname(ref[c(4, 2, 2), 3L]))
-})
+## test_that(".h5_feature_chrom_peaks_sample works", {
+##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
+##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
+##                                           1L, j = match("into", cn))
+##     ref <- featureValues(xmseg_full_h5, method = "sum", value = "into")
+##     vals <- split(res[, 2L], factor(res[, 1L], levels = seq_len(nrow(ref))))
+##     vals <- vapply(vals, function(z) {
+##         if (length(z))
+##             sum(z)
+##         else NA_real_
+##     }, 2.2)
+##     expect_equal(unname(vals), unname(ref[, 3L]))
+##     ## With index in arbitrary order and with duplicates
+##     i <- c(1, 4, 2, 3, 2)
+##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
+##                                           1L, j = match("into", cn), i = i)
+##     expect_equal(res[, 1L], c(4, 2, 2))
+##     expect_equal(res[, 2L], unname(ref[c(4, 2, 2), 3L]))
+## })
 
 unlink(h5f)
 unlink(h5f_full)
