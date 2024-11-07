@@ -170,8 +170,8 @@ do_adjustRtime_peakGroups <-
             stop("The retention times in 'peakGroupsMatrix' have to be within",
                  " the retention time range of the experiment!")
         rt <- peakGroupsMatrix
-        message("Performing retention time correction using ", nrow(rt),
-                " peak groups.")
+        message("Performing retention time alignment using ", nrow(rt),
+                " anchor peaks.")
 
         ## Calculate the deviation of each peak group in each sample from its
         ## median

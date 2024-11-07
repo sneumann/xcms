@@ -13,6 +13,8 @@
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
 \alias{chromPeakData,XcmsExperimentHdf5-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
+\alias{adjustRtime,XcmsExperimentHdf5,PeakGroupsParam-method}
+\alias{dropAdjustedRtime,XcmsExperimentHdf5-method}
 \alias{hasFeatures,XcmsExperimentHdf5-method}
 \alias{dropFeatureDefinitions,XcmsExperimentHdf5-method}
 \alias{groupChromPeaks,XcmsExperimentHdf5,Param-method}
@@ -67,6 +69,10 @@
   chunkSize = 2L,
   BPPARAM = bpparam()
 )
+
+\S4method{adjustRtime}{XcmsExperimentHdf5,PeakGroupsParam}(object, param, msLevel = 1L, ...)
+
+\S4method{dropAdjustedRtime}{XcmsExperimentHdf5}(object)
 
 \S4method{hasFeatures}{XcmsExperimentHdf5}(object, msLevel = integer())
 

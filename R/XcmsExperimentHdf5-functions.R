@@ -331,6 +331,47 @@ NULL
                   drop = TRUE)
 }
 
+#' Replace the retention times of chrom peaks with new values, depending
+#' on the provided rts. This function is used during retention time alignment
+#'
+#' @param id `character(1)` with the ID of the sample
+#'
+#' @param rt_old `numeric` with the original retention times
+#'
+#' @param rt_new `numeric` with the new retention times
+#'
+#' @param ms_level `integer` defining for which MS levels the retention times
+#'     should be adjusted. Ideally for all!
+#'
+#' @param hdf5_file `character(1)` with the name of the HDF5 file.
+#'
+#' @return hdf5_count
+#'
+#' @noRd
+.h5_update_rt_chrom_peaks_sample <- function(id, rt_old, rt_new, ms_level,
+                                             hdf5_file) {
+    ## loop over MS levels
+    cnt <- 0L
+    for (msl in ms_level) {
+        ## read chrom peaks
+        cp <- .h5_read_data(hdf5_file, index = id, name = "chrom_peaks",
+                            ms_level = msl, read_colnames = TRUE,
+                            read_rownames = FALSE)[[1L]]
+        ## adjust chrom peak rt - use .applyRtAdjToChromPeaks for that.
+        cp <- .applyRtAdjToChromPeaks(
+            cbind(cp, sample = rep(1, nrow(cp))), rtraw = list(rt_old),
+            rtadj = list(rt_new))
+        l <- list(cp[, colnames(cp) != "sample", drop = FALSE])
+        names(l) <- id
+        ## replace chrom peaks
+        cnt <- .h5_write_data(hdf5_file, data_list = l, "chrom_peaks",
+                              ms_level = msl, replace = FALSE,
+                              write_colnames = FALSE, write_rownames = FALSE)
+    }
+    cnt
+}
+
+
 ################################################################################
 ##
 ##        FEATURES THINGS

@@ -610,4 +610,9 @@ test_that(".h5_filter works", {
     expect_equal(.h5_filter(), "NONE")
 })
 
+test_that(".h5_update_rt_chrom_peaks_sample works", {
+    ## Unit test is in text_XcmsExperimentHdf5.R @adjustRtime,XcmsExperimentHdf5
+    expect_true(TRUE)
+})
+
 rm(h5f_full_g)

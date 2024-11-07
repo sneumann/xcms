@@ -553,7 +553,12 @@ dropGenericProcessHistory <- function(x, fun) {
 }
 
 .hasFilledPeaks <- function(object) {
-    hasChromPeaks(object) & any(chromPeakData(object)$is_filled, na.rm = TRUE)
+    if (is(object, "XcmsExperimentHdf5")) {
+        length(object@gap_peaks_ms_level) > 0
+    } else {
+        hasChromPeaks(object) &
+            any(chromPeakData(object)$is_filled, na.rm = TRUE)
+    }
 }
 
 #' @description

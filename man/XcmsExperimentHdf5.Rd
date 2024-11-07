@@ -48,9 +48,9 @@ is stored in a file with the name specifyied with parameter `hdf5File`.
 
 
 - `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
-  parameter `extraPeaks` of `PeakGroupsParam` is ignored. Anchor peaks are
-  only defined using the `minFraction` parameter (and eventually, if
-  provided, the `subset` parameter).
+  parameter `extraPeaks` of `PeakGroupsParam` is **ignored**. Anchor peaks
+  are thus only defined using the `minFraction` and the optional `subset`
+  parameter.
 }
 
 \section{Correspondence analysis results}{

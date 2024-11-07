@@ -1,14 +1,15 @@
 h5f <- tempfile()
 xmse_h5 <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), h5f)
 h5f_full <- tempfile()
-a <- dropFeatureDefinitions(loadXcmsData("xmse"))
+a <- loadXcmsData("xmse") |>
+    dropFeatureDefinitions()
 xmse_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full)
 
 ## correspondence
 h5f_full_g <- tempfile()
 xmseg_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full_g)
 pdp <- PeakDensityParam(sampleGroups = sampleData(xmseg_full_h5)$sample_group,
-                          minFraction = 0.4, bw = 30)
+                        minFraction = 0.4, bw = 30)
 xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, pdp, msLevel = 1L)
 
 test_that("XcmsExperimentHdf5 validation works", {
@@ -302,10 +303,82 @@ test_that("adjustRtimePeakGroups works", {
     expect_equal(colnames(apeaks_ref), colnames(apeaks))
 })
 
-test_that("adjustRtime,XcmsExperimentHdf5,PeakGroupsParam works", {
-    object <- xmseg_full_h5
-    msLevel <- 1L
-    param <- PeakGroupsParam(span = 0.4)
+test_that("adjustRtime,XcmsExperimentHdf5 and related function work", {
+    ## Note: using `extraPeaks = 100` because that parameter is not supported
+    ## for XcmsExperimentHdf5
+    p <- PeakGroupsParam(span = 0.4, minFraction = 0.7, subset = c(1, 3, 5, 7),
+                         extraPeaks = 100)
+    ## Define the reference data
+    ref <- loadXcmsData("xmse") |>
+        dropFeatureDefinitions() |>
+        applyAdjustedRtime()
+    res_h5 <- tempfile()
+    res <- xcms:::.xcms_experiment_to_hdf5(ref, res_h5)
+    ## Create a single sample XcmsExperimentHdf5
+    a <- ref[3L]
+    a_h5 <- tempfile()
+    a <- xcms:::.xcms_experiment_to_hdf5(a, a_h5)
+    ## Perform retention time alignment on reference data
+    ref <- ref |>
+        groupChromPeaks(pdp, msLevel = 1L) |>
+        adjustRtime(param = p)
+    rt_raw <- rtime(ref, adjusted = FALSE)
+    rt_raw <- split(rt_raw, fromFile(ref))[[3L]]
+    rt_adj <- rtime(ref, adjusted = TRUE)
+    rt_adj <- split(rt_adj, fromFile(ref))[[3L]]
+    cp_raw <- chromPeaks(a)
+
+    ############################################################################
+    ## .h5_update_rt_chrom_peaks_sample: adjust rt of chrom peaks:
+    cnt <- .h5_update_rt_chrom_peaks_sample(
+        a@sample_id[1L], rt_raw, rt_adj, 1L, a@hdf5_file)
+    expect_equal(cnt, a@hdf5_mod_count + 1L)
+    a@hdf5_mod_count <- cnt
+    cp_adj <- chromPeaks(a)
+    expect_true(all(cp_raw[, "rt"] != cp_adj[, "rt"]))
+    expect_true(all(cp_raw[, "rtmin"] != cp_adj[, "rtmin"]))
+    expect_true(all(cp_raw[, "rtmax"] != cp_adj[, "rtmax"]))
+
+    ############################################################################
+    ## adjustRtime: retention time adjustment
+    ## errors
+    expect_error(adjustRtime(xmseg_full_h5, p), "Alignment results already")
+    expect_error(adjustRtime(res, p, msLevel = 2L), "supported for MS level 1")
+    expect_error(adjustRtime(res, p), "No feature definitions present")
+
+    ## Perform alignment
+    res <- groupChromPeaks(res, pdp, msLevel = 1L)
+    expect_false(hasAdjustedRtime(res))
+    cp_ref_raw <- chromPeaks(res)
+    res <- adjustRtime(res, param = p)
+    expect_true(hasAdjustedRtime(res))
+    expect_equal(rtime(res), rtime(ref))
+    expect_equal(unname(chromPeaks(ref)), unname(chromPeaks(res)))
+    expect_true(all(chromPeaks(res)[, "rt"] != cp_ref_raw[, "rt"]))
+    expect_true(validObject(res))
+
+    ############################################################################
+    ## dropAdjustedRtime: revert retention times
+    cp_ref_adj <- chromPeaks(res)
+    cnt <- res@hdf5_mod_count
+    phl <- length(res@processHistory)
+    res <- dropAdjustedRtime(res)
+    expect_true(res@hdf5_mod_count > cnt)
+    expect_true(length(res@processHistory) < phl)
+    expect_false(hasAdjustedRtime(res))
+    expect_true(all(chromPeaks(res)[, "rt"] != cp_ref_adj[, "rt"]))
+    ref <- dropAdjustedRtime(ref)
+    expect_equal(rtime(ref), rtime(res))
+    expect_equal(unname(chromPeaks(ref)), unname(chromPeaks(res)))
+    res <- dropAdjustedRtime(res)
+    expect_false(hasAdjustedRtime(res))
+
+    unlink(a_h5)
+    unlink(res_h5)
+})
+
+test_that(".hasFilledPeaks works with XcmsExperimentHdf5", {
+    expect_false(.hasFilledPeaks(xmse_h5))
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

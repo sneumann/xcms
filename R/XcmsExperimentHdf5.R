@@ -45,9 +45,9 @@
 #' @section Retention time alignment:
 #'
 #' - `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
-#'   parameter `extraPeaks` of `PeakGroupsParam` is ignored. Anchor peaks are
-#'   only defined using the `minFraction` parameter (and eventually, if
-#'   provided, the `subset` parameter).
+#'   parameter `extraPeaks` of `PeakGroupsParam` is **ignored**. Anchor peaks
+#'   are thus only defined using the `minFraction` and the optional `subset`
+#'   parameter.
 #'
 #' @section Correspondence analysis results:
 #'
@@ -72,12 +72,14 @@ setClass("XcmsExperimentHdf5",
                    chrom_peaks_ms_level = "integer", # use to keep track of the
                                         # MS levels for which chrom peaks are
                                         # available
+                   gap_peaks_ms_level = "integer", # gap-filled chrom peaks
                    features_ms_level = "integer"),
          prototype = prototype(
              hdf5_file = character(),
              hdf5_mod_count = 0L,
              sample_id = character(),
              chrom_peaks_ms_level = integer(),
+             gap_peaks_ms_level = integer(),
              features_ms_level = integer()
          ))
 
@@ -410,29 +412,26 @@ setMethod(
         rts[order(rowMedians(rts, na.rm = TRUE)), , drop = FALSE]
     })
 
+#' @rdname hidden_aliases
 setMethod(
     "adjustRtime", signature(object = "XcmsExperimentHdf5",
                              param = "PeakGroupsParam"),
     function(object, param, msLevel = 1L, ...) {
         if (hasAdjustedRtime(object))
             stop("Alignment results already present. Please either remove ",
-                 "them with 'dropAdjustedRtime' in order to perform an ",
-                 "alternative, new, alignment, or use 'applyAdjustedRtime'",
-                 " prior 'adjustRtime' to perform a second round of ",
+                 "them with 'dropAdjustedRtime()' in order to perform an ",
+                 "alternative, new, alignment, or use 'applyAdjustedRtime()'",
+                 " prior 'adjustRtime()' to perform a second round of ",
                  "alignment.")
         if (any(msLevel != 1L))
             stop("Alignment is currently only supported for MS level 1")
         if (!nrow(peakGroupsMatrix(param))) {
-            if (!hasFeatures(object))
+            if (!hasFeatures(object, msLevel = msLevel))
                 stop("No feature definitions present in 'object'. Please ",
                      "perform first a correspondence analysis using ",
-                     "'groupChromPeaks'")
-            peakGroupsMatrix(param) <- adjustRtimePeakGroups(
-                object, param = param)
-            ## Need to implement an `adjustRtimePeakGroups,XcmsExperimentHdf5`.
-
+                     "'groupChromPeaks()'")
+            peakGroupsMatrix(param) <- adjustRtimePeakGroups(object, param)
         }
-        ## LLLLL continue here
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
         rt_adj <- .adjustRtime_peakGroupsMatrix(
@@ -446,15 +445,50 @@ setMethod(
         else ph <- list()
         object <- dropFeatureDefinitions(object)
         object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
-        ## LLLLL need to fix this here.
-        object@chromPeaks <- .applyRtAdjToChromPeaks(
-            .chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        res <- mapply(
+            FUN = .h5_update_rt_chrom_peaks_sample,
+            object@sample_id, rt_raw, rt_adj,
+            MoreArgs = list(ms_level = object@chrom_peaks_ms_level,
+                            hdf5_file = object@hdf5_file))
+        object@hdf5_mod_count <- max(unlist(res, use.names = FALSE))
         xph <- XProcessHistory(
             param = param, type. = .PROCSTEP.RTIME.CORRECTION,
             fileIndex = seq_along(object), msLevel = msLevel)
         object@processHistory <- c(object@processHistory, ph, list(xph))
         validObject(object)
         object
+})
+
+#' @rdname hidden_aliases
+setMethod("dropAdjustedRtime", "XcmsExperimentHdf5", function(object) {
+    if (!hasAdjustedRtime(object))
+        return(object)
+    ptype <- vapply(object@processHistory, processType, character(1))
+    nom <- length(ptype) + 1L
+    idx_al <- .match_last(.PROCSTEP.RTIME.CORRECTION, ptype, nomatch = nom)
+    idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
+    if (hasChromPeaks(object)) {
+        fidx <- as.factor(fromFile(object))
+        res <- mapply(
+            FUN = .h5_update_rt_chrom_peaks_sample,
+            object@sample_id,
+            split(rtime(object, adjusted = TRUE), fidx),
+            split(rtime(object, adjusted = FALSE), fidx),
+            MoreArgs = list(ms_level = object@chrom_peaks_ms_level,
+                            hdf5_file = object@hdf5_file))
+        object@hdf5_mod_count <- max(unlist(res, use.names = FALSE))
+    }
+    svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))
+    object@spectra <- selectSpectraVariables(
+        object@spectra, svs[svs != "rtime_adjusted"])
+    object@processHistory <- dropProcessHistoriesList(
+        object@processHistory, type = .PROCSTEP.RTIME.CORRECTION, num = 1L)
+    if (hasFeatures(object) && idx_co > idx_al) {
+        warning("Had to remove feature definitions along with the adjusted ",
+                "retention times because of the dependency between them.")
+        object <- dropFeatureDefinitions(object)
+    }
+    object
 })
 
 ################################################################################
