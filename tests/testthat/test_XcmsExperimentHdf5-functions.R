@@ -72,7 +72,7 @@ test_that(".h5_chrom_peaks_chunk works", {
                  c("chrom_peak_data", "chrom_peaks",
                    "chrom_peaks_colnames", "chrom_peaks_rownames"))
     H5Fclose(h5)
-    a <- .h5_read_data(h5_file, index = "S2", name = "chrom_peaks",
+    a <- .h5_read_data(h5_file, id = "S2", name = "chrom_peaks",
                        ms_level = 1L, read_colnames = TRUE,
                        read_rownames = TRUE)[[1L]]
     ## add = TRUE
@@ -80,7 +80,7 @@ test_that(".h5_chrom_peaks_chunk works", {
         sps, msLevel = 1L, param = p, h5_file = h5_file, add = TRUE,
         sample_id = xmse_h5@sample_id)
     expect_equal(res, 4L)
-    b <- .h5_read_data(h5_file, index = "S2", name = "chrom_peaks",
+    b <- .h5_read_data(h5_file, id = "S2", name = "chrom_peaks",
                        ms_level = 1L, read_colnames = TRUE,
                        read_rownames = TRUE)[[1L]]
     expect_equal(nrow(b), 2 * nrow(a))
@@ -205,14 +205,14 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
     h5f <- tempfile()
     ref <- loadXcmsData("faahko_sub2")
     x <- .xcms_experiment_to_hdf5(ref, h5f)
-    ref <- .h5_read_data(x@hdf5_file, index = x@sample_id,
+    ref <- .h5_read_data(x@hdf5_file, id = x@sample_id,
                          ms_level = rep(1L, length(x)),
                          read_colnames = TRUE, read_rownames = TRUE)
     .h5_xmse_merge_neighboring_peaks(x)
     mod_count <- as.vector(rhdf5::h5read(h5f, "/header/modcount"))
     expect_true(mod_count > x@hdf5_mod_count)
     ## Check that content was changed.
-    res <- .h5_read_data(x@hdf5_file, index = x@sample_id,
+    res <- .h5_read_data(x@hdf5_file, id = x@sample_id,
                          ms_level = rep(1L, length(x)),
                          read_colnames = TRUE, read_rownames = TRUE)
     expect_true(nrow(ref[[1L]]) > nrow(res[[1L]]))
@@ -235,7 +235,7 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
     res <- .xcms_experiment_to_hdf5(ref, h5f)
 
     .h5_xmse_merge_neighboring_peaks(res)
-    res <- .h5_read_data(res@hdf5_file, index = res@sample_id,
+    res <- .h5_read_data(res@hdf5_file, id = res@sample_id,
                          ms_level = rep(1L, length(res)),
                          read_colnames = TRUE, read_rownames = TRUE)
     ref <- .xmse_merge_neighboring_peaks(ref)
@@ -250,7 +250,7 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
 
 test_that(".h5_read_matrix works", {
     h5f <- tempfile()
-    xcms:::.h5_initialize_file(h5f)
+    .h5_initialize_file(h5f)
 
     a <- cbind(a = c(1.2, 1.4), b = c(3.5, 3.6), c = c(5.3, 5.1))
     rownames(a) <- c("CP1", "CP2")
@@ -317,6 +317,26 @@ test_that(".h5_read_matrix works", {
 
     H5Fclose(h5)
     file.remove(h5f)
+})
+
+test_that(".h5_read_chrom_peaks_matrix works", {
+    res <- .h5_read_chrom_peaks_matrix(
+        "/S2/ms_1/chrom_peaks", xmse_h5@hdf5_file,
+        read_colnames = FALSE, read_rownames = FALSE)
+    expect_true(is.matrix(res))
+    expect_true(is.numeric(res))
+    res <- .h5_read_chrom_peaks_matrix(
+        "/S2/ms_1/chrom_peaks", xmse_h5@hdf5_file,
+        read_colnames = TRUE, read_rownames = FALSE,
+        mz = c(300, 350), rt = c(3000, 3500), type = "within")
+    expect_true(all(res[, "mz"] > 300 & res[, "mz"] < 350))
+    expect_true(all(res[, "rt"] > 3000 & res[, "rt"] < 3500))
+
+    res <- .h5_read_chrom_peaks_matrix(
+        "/S2/ms_1/chrom_peaks", xmse_h5@hdf5_file,
+        read_colnames = TRUE, read_rownames = FALSE,
+        mz = c(300, 350), type = "within")
+    expect_true(all(res[, "mz"] > 300 & res[, "mz"] < 350))
 })
 
 test_that(".h5_read_data_frame works", {
@@ -401,32 +421,32 @@ test_that(".h5_read_data works", {
     ## chrom peaks
     res <- .h5_read_data(h5f)
     expect_equal(res, list())
-    res <- .h5_read_data(h5f, index = 2, name = "chrom_peaks", ms_level = 2L)
+    res <- .h5_read_data(h5f, id = 2, name = "chrom_peaks", ms_level = 2L)
     expect_equal(length(res), 1L)
     expect_equal(res[[1L]], unname(b2))
-    res <- .h5_read_data(h5f, index = 1, name = "chrom_peaks", ms_level = 2L,
+    res <- .h5_read_data(h5f, id = 1, name = "chrom_peaks", ms_level = 2L,
                          read_colnames = TRUE)
     expect_equal(unname(res[[1L]]), unname(a2))
     expect_equal(colnames(res[[1L]]), colnames(a2))
     expect_true(is.null(rownames(res[[1L]])))
-    res <- .h5_read_data(h5f, index = 1, name = "chrom_peaks", ms_level = 2L,
+    res <- .h5_read_data(h5f, id = 1, name = "chrom_peaks", ms_level = 2L,
                          read_rownames = TRUE)
     expect_equal(unname(res[[1L]]), unname(a2))
     expect_equal(rownames(res[[1L]]), rownames(a2))
     expect_true(is.null(colnames(res[[1L]])))
     ## single column
-    res <- .h5_read_data(h5f, index = c(2, 1), name = "chrom_peaks",
+    res <- .h5_read_data(h5f, id = c(2, 1), name = "chrom_peaks",
                          ms_level = c(2L, 2L), j = 2)
     expect_equal(length(res), 2L)
     expect_true(ncol(res[[1L]]) == 1L)
     expect_equal(res[[1L]][, 1], unname(b2[, 2]))
-    res <- .h5_read_data(h5f, index = c(2, 1), name = "chrom_peaks",
+    res <- .h5_read_data(h5f, id = c(2, 1), name = "chrom_peaks",
                          ms_level = c(2L, 2L), j = 2, read_colnames = TRUE,
                          read_rownames = TRUE)
     expect_equal(length(res), 2L)
     expect_true(ncol(res[[1L]]) == 1L)
     expect_equal(res[[1L]][, 1, drop = FALSE], b2[, 2, drop = FALSE])
-    res <- .h5_read_data(h5f, index = c(1, 2, 1), name = "chrom_peaks",
+    res <- .h5_read_data(h5f, id = c(1, 2, 1), name = "chrom_peaks",
                          ms_level = c(2, 2, 2), j = 1L,
                          read_colnames = TRUE,
                          read_rownames = TRUE)
@@ -435,7 +455,7 @@ test_that(".h5_read_data works", {
     expect_equal(res[[2]], b2[, 1, drop = FALSE])
 
     ## selected rows.
-    res <- .h5_read_data(h5f, index = c(1, 2, 1), name = "chrom_peaks",
+    res <- .h5_read_data(h5f, id = c(1, 2, 1), name = "chrom_peaks",
                          ms_level = c(2, 2, 2), j = 1L, i = c(2, 1, 2),
                          read_colnames = TRUE,
                          read_rownames = TRUE)
@@ -445,13 +465,13 @@ test_that(".h5_read_data works", {
     expect_equal(res[[1]], a2[c(2, 1, 2), 1, drop = FALSE])
 
     ## chrom peak data
-    res <- .h5_read_data(h5f, index = c(2, 1), name = "chrom_peak_data",
+    res <- .h5_read_data(h5f, id = c(2, 1), name = "chrom_peak_data",
                          ms_level = c(2L, 2L), read_colnames = TRUE,
                          read_rownames = TRUE)
     expect_equal(length(res), 2)
     rownames(b) <- c("CP3", "CP4", "CP5")
     expect_equal(unname(res[[1L]]), unname(b))
-    res <- .h5_read_data(h5f, index = 1, name = "chrom_peak_data",
+    res <- .h5_read_data(h5f, id = 1, name = "chrom_peak_data",
                          ms_level = 2L, j = "is_filled")
     expect_equal(length(res), 1L)
     expect_equal(res[[1L]][, 1], a$is_filled)

@@ -175,7 +175,7 @@ NULL
                           is_filled = rep(FALSE, nr))
         if (add) {
             ## Need to load previous results and append to that.
-            pks <- .h5_read_data(h5_file, index = sid, name = "chrom_peaks",
+            pks <- .h5_read_data(h5_file, id = sid, name = "chrom_peaks",
                                  ms_level = msLevel, read_colnames = TRUE,
                                  read_rownames = TRUE)[[1L]]
             rnames <- rownames(pks)
@@ -183,7 +183,7 @@ NULL
                 as.integer(sub(paste0("CP", msLevel, sid), "", rnames)))
             res[[i]] <- rbindFill(pks, res[[i]])
             pkd <- rbindFill(.h5_read_data(
-                h5_file, index = sid, name = "chrom_peak_data",
+                h5_file, id = sid, name = "chrom_peak_data",
                 ms_level = msLevel, read_rownames = FALSE)[[1L]], pkd)
         }
         pkdl[[i]] <- pkd
@@ -217,7 +217,7 @@ NULL
     else rt <- rtime(spectra(x))[keep]
     ## Get the list of chromPeak data for x.
     pksl <- .h5_read_data(
-        x@hdf5_file, index = x@sample_id, name = "chrom_peaks",
+        x@hdf5_file, id = x@sample_id, name = "chrom_peaks",
         ms_level = rep(msLevel, length(x@sample_id)),
         read_colnames = TRUE, read_rownames = TRUE)
     ## Get the max index of a chrom peak per sample
@@ -228,7 +228,7 @@ NULL
                                  rownames(pksl[[i]])))))
     ## Get the list of chromPeakData for x.
     pkdl <- .h5_read_data(
-        x@hdf5_file, index = x@sample_id, name = "chrom_peak_data",
+        x@hdf5_file, id = x@sample_id, name = "chrom_peak_data",
         ms_level = rep(msLevel, length(x@sample_id)), read_rownames = TRUE)
     ## Do refinement (in parallel)
     res <- bpmapply(
@@ -302,22 +302,24 @@ NULL
     } else idx_columns <- NULL
     ids <- rep(x@sample_id, length(msLevel))
     msl <- rep(msLevel, each = length(x@sample_id))
-    res <- .h5_read_data(x@hdf5_file, index = ids, name = "chrom_peaks",
+    res <- .h5_read_data(x@hdf5_file, id = ids, name = "chrom_peaks",
                          ms_level = msl, read_colnames = TRUE,
-                         read_rownames = TRUE, j = idx_columns)
-    if (length(mz) | length(rt))
-        res <- lapply(res, function(z, rt, mz, ppm, type) {
-            z[.is_chrom_peaks_within_mz_rt(
-                z, rt = rt, mz = mz, ppm = ppm, type = type), , drop = FALSE]
-        }, rt = rt, mz = mz, ppm = ppm, type = type)
+                         read_rownames = TRUE, j = idx_columns,
+                         rt = rt, mz = mz, ppm = ppm, type = type)
+    ## ## Might be better (memory wise) to pass this to the import function
+    ## ## instead
+    ## if (length(mz) | length(rt))
+    ##     res <- lapply(res, function(z, rt, mz, ppm, type) {
+    ##         z[.is_chrom_peaks_within_mz_rt(
+    ##             z, rt = rt, mz = mz, ppm = ppm, type = type), , drop = FALSE]
+    ##     }, rt = rt, mz = mz, ppm = ppm, type = type)
     if (by_sample) {
         names(res) <- ids
+        res
     } else {
         l <- vapply(res, nrow, 1L)
-        res <- cbind(do.call(rbind, res),
-                     sample = rep(match(ids, x@sample_id), l))
+        cbind(do.call(rbind, res), sample = rep(match(ids, x@sample_id), l))
     }
-    res
 }
 
 .h5_chrom_peak_data <- function(x, columns = character(), by_sample = TRUE) {
@@ -354,7 +356,7 @@ NULL
     cnt <- 0L
     for (msl in ms_level) {
         ## read chrom peaks
-        cp <- .h5_read_data(hdf5_file, index = id, name = "chrom_peaks",
+        cp <- .h5_read_data(hdf5_file, id = id, name = "chrom_peaks",
                             ms_level = msl, read_colnames = TRUE,
                             read_rownames = FALSE)[[1L]]
         ## adjust chrom peak rt - use .applyRtAdjToChromPeaks for that.
@@ -487,7 +489,7 @@ NULL
 .h5_feature_values_ms_level <- function(ms_level, x, method, value, intensity,
                                         filled = TRUE) {
     cn <- .h5_chrom_peaks_colnames(x, ms_level)
-    col <- switch(method,
+  col <- switch(method,
                   sum = value,
                   medret = c(value, "rt"),
                   maxint = c(value, intensity))
@@ -598,6 +600,21 @@ NULL
     d
 }
 
+.h5_read_chrom_peaks_matrix <- function(name, h5, index = list(NULL, NULL),
+                                        read_colnames = FALSE,
+                                        read_rownames = FALSE,
+                                        rownames = paste0(name, "_rownames"),
+                                        rt = numeric(), mz = numeric(),
+                                        ppm = 0, type = "any") {
+    read_colnames <- read_colnames || length(rt) > 0 || length(mz) > 0
+    d <- .h5_read_matrix2(name, h5, index, read_colnames, read_rownames,
+                          rownames)
+    if (length(rt) | length(mz))
+        d[.is_chrom_peaks_within_mz_rt(d, rt = rt, mz = mz,
+                                       ppm = ppm, type = type), , drop = FALSE]
+    else d
+}
+
 #' Read a single `data.frame` from the HDF5 file. With
 #' `read_rownames = TRUE` also the row names are read and set, which requires
 #' an additional reading step. Note that for a `data.frame` each column
@@ -679,12 +696,12 @@ NULL
 #'
 #' @param h5_file `character(1)` with the HDF5 file name
 #'
-#' @param index `integer` with the indices/IDs of the data sets to read.
+#' @param id `character` with the ID(s) of the data sets to read.
 #'
 #' @param name `character(1)` specifying which data should be read.
 #'
 #' @param ms_level `integer` with the MS level of each sample/data set that
-#'     should be read. Has to have the same length than `index`.
+#'     should be read. Has to have the same length than `id`.
 #'
 #' @param read_colnames `logical(1)` whether column names should be read and
 #'     set for each `matrix`.
@@ -701,39 +718,41 @@ NULL
 #'     select a **single** column to read. For `name = "chrom_peaks"`: `integer`
 #'     with the indices of the column(s) that should be imported.
 #'
+#' @param ... additional parameters passed to `FUN`
+#'
 #' @return `list()` with the read datasets. Will be a `list` of `numeric`
 #'     matrices for `name = "chrom_peaks"` or a `list` with `data.frame`s for
 #'     `name = "chrom_peak_data"`.
 #'
 #' @noRd
 .h5_read_data <- function(h5_file = character(),
-                          index = integer(),
+                          id = character(),
                           name = c("chrom_peaks", "chrom_peak_data",
                                    "feature_definitions",
                                    "feature_to_chrom_peaks"),
                           ms_level = integer(),
                           read_colnames = FALSE,
                           read_rownames = FALSE,
-                          i = NULL, j = NULL) {
-    if (!length(index)) return(list())
-    stopifnot(length(ms_level) == length(index))
+                          i = NULL, j = NULL, ...) {
+    if (!length(id)) return(list())
+    stopifnot(length(ms_level) == length(id))
     name <- match.arg(name)
     FUN <- switch(name,
                   chrom_peak_data = .h5_read_chrom_peak_data,
                   feature_definitions = .h5_read_data_frame,
+                  chrom_peaks = .h5_read_chrom_peaks_matrix,
                   .h5_read_matrix2)
     h5 <- rhdf5::H5Fopen(h5_file)
     on.exit(invisible(rhdf5::H5Fclose(h5)))
-    d <- paste0("/", index, "/ms_", ms_level, "/", name)
+    d <- paste0("/", id, "/ms_", ms_level, "/", name)
     index <- list(i, j)
     if (is.character(j) && length(j) == 1L) {
         d <- paste0(d, "/", j)
         index <- list(i, NULL)
     }
     lapply(d, FUN = FUN, read_colnames = read_colnames,
-           read_rownames = read_rownames, index = index, h5 = h5)
+           read_rownames = read_rownames, index = index, h5 = h5, ...)
 }
-
 
 ##  --------  VALIDITY  --------
 

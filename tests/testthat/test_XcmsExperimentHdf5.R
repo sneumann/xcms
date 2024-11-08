@@ -124,7 +124,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
     ## Compare results from both. Need chromPeaks() function first.
     ref <- refineChromPeaks(ref, MergeNeighboringPeaksParam())
     ref_pks <- chromPeaks(ref)
-    res_pks <- .h5_read_data(res@hdf5_file, index = res@sample_id,
+    res_pks <- .h5_read_data(res@hdf5_file, id = res@sample_id,
                              ms_level = rep(1L, length(res)),
                              read_colnames = TRUE, read_rownames = TRUE)
     res_pks <- do.call(
