@@ -52,6 +52,30 @@ test_that(".h5_chrom_peaks works", {
     expect_true(all(res[, "mz"] < 600))
 })
 
+test_that(".h5_chrom_peak_data works", {
+    cp <- chromPeaks(xmse_h5)
+    res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = FALSE)
+    expect_true(is.data.frame(res))
+    expect_equal(nrow(cp), nrow(res))
+    expect_equal(colnames(res), c("is_filled", "ms_level"))
+
+    res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = TRUE,
+                               peaks = rownames(cp)[c(4, 10, 100, 200)])
+    expect_true(is.list(res))
+    expect_equal(names(res), xmse_h5@sample_id)
+    expect_equal(rownames(res[[1L]]), rownames(cp)[c(4, 10)])
+    expect_equal(rownames(res[[2L]]), rownames(cp)[100])
+    expect_equal(rownames(res[[3L]]), rownames(cp)[200])
+    res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = FALSE,
+                               peaks = rownames(cp)[c(4, 10, 100, 200)])
+    expect_equal(rownames(res), rownames(cp)[c(4, 10, 100, 200)])
+})
+
+test_that(".h5_chrom_peak_data_colnames works", {
+    res <- .h5_chrom_peak_data_colnames(xmse_h5)
+    expect_equal(res, c("is_filled", "ms_level"))
+})
+
 test_that(".h5_chrom_peaks_chunk works", {
     p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
     sps <- spectra(xmse_h5)[xmse_h5@sampleDataLinks[["spectra"]][, 2]]
@@ -371,16 +395,16 @@ test_that(".h5_read_data_frame works", {
 
     ## Read selected rows
     res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
-                                           read_rownames = FALSE,
-                                           index = list(2, NULL))
+                                    read_rownames = FALSE,
+                                    index = list(2, NULL))
     expect_equal(res, a[2, ])
     res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
-                                           read_rownames = FALSE,
-                                           index = list(c(2, 1, 2), NULL))
+                                    read_rownames = FALSE,
+                                    index = list(c(2, 1, 2), NULL))
     expect_equal(res, a[c(2, 1, 2), ])
     res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
-                                           read_rownames = TRUE,
-                                           index = list(c(2, 1, 2), NULL))
+                                    read_rownames = TRUE,
+                                    index = list(c(2, 1, 2), NULL))
     expect_equal(rownames(res), c("CP2", "CP1", "CP2.1"))
 
     ## Read single column
@@ -395,6 +419,20 @@ test_that(".h5_read_data_frame works", {
                                     index = list(2, NULL))
     expect_true(nrow(res) == 1L)
     expect_equal(res[, 1L], FALSE)
+
+    ## Read selected rows using chromPeak IDs.
+    cp <- chromPeaks(xmse_h5)
+    res <- .h5_read_chrom_peak_data(
+        "/S1/ms_1/chrom_peak_data", xmse_h5@hdf5_file,
+        peaks = rownames(cp)[4:10])
+    expect_equal(nrow(res), 7)
+    expect_equal(rownames(res), as.character(1:7))
+
+    res <- .h5_read_chrom_peak_data(
+        "/S1/ms_1/chrom_peak_data", xmse_h5@hdf5_file,
+        peaks = rownames(cp)[c(4, 20, 100, 200)], read_rownames = TRUE)
+    expect_equal(nrow(res), 2L)
+    expect_equal(rownames(res), rownames(cp)[c(4, 20)])
 
     H5Fclose(h5)
     file.remove(h5f)
@@ -633,6 +671,33 @@ test_that(".h5_filter works", {
 test_that(".h5_update_rt_chrom_peaks_sample works", {
     ## Unit test is in text_XcmsExperimentHdf5.R @adjustRtime,XcmsExperimentHdf5
     expect_true(TRUE)
+})
+
+test_that(".h5_x_chromatogram wokrs", {
+    rt <- matrix(c(2600, 2700), nrow = 1)
+    mz <- matrix(c(340, 400), nrow = 1)
+
+    res <- .h5_x_chromatogram(xmse_h5, mz = mz, rt = rt, chromPeaks = "any")
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_equal(ncol(res), length(xmse_h5))
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    ref <- chromatogram(loadXcmsData("faahko_sub2"), mz = mz, rt = rt,
+                        chromPeaks = "any")
+    expect_equal(unname(chromPeaks(res)), unname(chromPeaks(ref)))
+
+    ## Multiple rows.
+    res <- .h5_x_chromatogram(
+        xmse_h5, mz = chromPeaks(xmse_h5)[1:10, c("mzmin", "mzmax")],
+        rt = chromPeaks(xmse_h5)[1:10, c("rtmin", "rtmax")],
+        ms_level = 1L,  chromPeaks = "apex_within", BPPARAM = bpparam())
+    expect_true(nrow(res) == 10L)
+
 })
 
 rm(h5f_full_g)

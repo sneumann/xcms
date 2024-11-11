@@ -42,6 +42,15 @@
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
+#' @section Functionality related to chromatographic peaks:
+#'
+#' - `chromPeakData()` gains a new parameter `peaks` which allows to specify
+#'   from which chromatographic peaks data should be returned. For these
+#'   chromatographic peaks the ID (row name in `chromPeaks()`) should be
+#'   provided with the `peaks` parameter. This can reduce the memory
+#'   requirement for cases in which only data of some selected chromatographic
+#'   peaks needs to be extracted.
+#'
 #' @section Retention time alignment:
 #'
 #' - `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
@@ -245,7 +254,6 @@ setMethod(
         msl <- object@chrom_peaks_ms_level
         if (length(msLevel))
             msl <- msl[msl %in% msLevel]
-        ## Eventually run chunk-wise?
         .h5_chrom_peaks(object, msLevel = msl, columns = columns,
                         by_sample = FALSE, mz = mz, rt = rt, ppm = ppm,
                         type = type)
@@ -258,16 +266,24 @@ setReplaceMethod(
     stop("Not implemented for ", class(object)[1L])
 })
 
-#' @rdname hidden_aliases
+#' @rdname XcmsExperimentHdf5
 setMethod(
     "chromPeakData", "XcmsExperimentHdf5",
-    function(object, msLevel = integer(), sample = integer(),
+    function(object, msLevel = integer(), peaks = character(),
              return.type = c("DataFrame", "data.frame")) {
         return.type <- match.arg(return.type)
-        stop("Not implemented for ", class(object)[1L])
-        ## if (return.type == "DataFrame")
-        ##     as(.chromPeakData(object, msLevel = msLevel), "DataFrame")
-        ## else .chromPeakData(object, msLevel = msLevel)
+        if (!length(object))
+            return(as(object@chromPeakData, return.type))
+        .h5_check_mod_count(object@hdf5_file, object@hdf5_mod_count)
+        if (!length(msLevel))
+            msLevel <- object@chrom_peaks_ms_level
+        if (!hasChromPeaks(object, msLevel = msLevel))
+            return(as(object@chromPeakData, return.type))
+        if (return.type == "DataFrame")
+            as(.h5_chrom_peak_data(object, msLevel, peaks = peaks,
+                                   by_sample = FALSE), "DataFrame")
+        else .h5_chrom_peak_data(object, msLevel, peaks = peaks,
+                                 by_sample = FALSE)
     })
 
 ## #' @rdname refineChromPeaks
@@ -683,34 +699,42 @@ setMethod(
 #'   - get chrom peaks for each sample/chrom peak.
 #'
 #' @noRd
-## #' @rdname hidden_aliases
-## setMethod(
-##     "chromatogram", "XcmsExperimentHdf5",
-##     function(object, rt = matrix(nrow = 0, ncol = 2),
-##              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
-##              msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
-##              return.type = c("XChromatograms", "MChromatograms"),
-##              include = character(),
-##              chromPeaks = c("apex_within", "any", "none"),
-##              BPPARAM = bpparam()) {
-##         if (!is.matrix(rt)) rt <- matrix(rt, ncol = 2L)
-##         if (!is.matrix(mz)) mz <- matrix(mz, ncol = 2L)
-##         if (length(include)) {
-##             warning("Parameter 'include' is deprecated, please use ",
-##                     "'chromPeaks' instead")
-##             chromPeaks <- include
-##         }
-##         if (nrow(mz) && !nrow(rt))
-##             rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
-##         if (nrow(rt) && !nrow(mz))
-##             mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
-##         return.type <- match.arg(return.type)
-##         chromPeaks <- match.arg(chromPeaks)
-##         if (hasAdjustedRtime(object))
-##             object <- applyAdjustedRtime(object)
-##         .xmse_extract_chromatograms_old(
-##             object, rt = rt, mz = mz, aggregationFun = aggregationFun,
-##             msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
-##             chunkSize = chunkSize, chromPeaks = chromPeaks,
-##             return.type = return.type, BPPARAM = BPPARAM)
-##     })
+#' @rdname hidden_aliases
+setMethod(
+    "chromatogram", "XcmsExperimentHdf5",
+    function(object, rt = matrix(nrow = 0, ncol = 2),
+             mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
+             msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
+             return.type = c("XChromatograms", "MChromatograms"),
+             include = character(),
+             chromPeaks = c("apex_within", "any", "none"),
+             BPPARAM = bpparam()) {
+        if (!is.matrix(rt)) rt <- matrix(rt, ncol = 2L)
+        if (!is.matrix(mz)) mz <- matrix(mz, ncol = 2L)
+        if (length(include)) {
+            warning("Parameter 'include' is deprecated, please use ",
+                    "'chromPeaks' instead")
+            chromPeaks <- include
+        }
+        if (nrow(mz) && !nrow(rt))
+            rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
+        if (nrow(rt) && !nrow(mz))
+            mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
+        return.type <- match.arg(return.type)
+        chromPeaks <- match.arg(chromPeaks)
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        ## process the data in chunks.
+        ## in each chunk: get chromatograms, load chrom peaks and process those.
+        ## ? how to get/define the features too? get the feature indices?
+        ## Implementation notes:
+        ## XChromatogram has slots @chromPeaks (matrix) @chromPeakData (DataFrame)
+        ## XChromatograms has slot @featureDefinitions (DataFrame)
+
+
+        .xmse_extract_chromatograms_old(
+            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+            msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
+            chunkSize = chunkSize, chromPeaks = chromPeaks,
+            return.type = return.type, BPPARAM = BPPARAM)
+    })

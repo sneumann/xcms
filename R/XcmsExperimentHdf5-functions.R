@@ -306,13 +306,6 @@ NULL
                          ms_level = msl, read_colnames = TRUE,
                          read_rownames = TRUE, j = idx_columns,
                          rt = rt, mz = mz, ppm = ppm, type = type)
-    ## ## Might be better (memory wise) to pass this to the import function
-    ## ## instead
-    ## if (length(mz) | length(rt))
-    ##     res <- lapply(res, function(z, rt, mz, ppm, type) {
-    ##         z[.is_chrom_peaks_within_mz_rt(
-    ##             z, rt = rt, mz = mz, ppm = ppm, type = type), , drop = FALSE]
-    ##     }, rt = rt, mz = mz, ppm = ppm, type = type)
     if (by_sample) {
         names(res) <- ids
         res
@@ -322,8 +315,40 @@ NULL
     }
 }
 
-.h5_chrom_peak_data <- function(x, columns = character(), by_sample = TRUE) {
-    ## LLLL implement; following .h5_chrom_peaks
+#' Extract the `chromPeakData` data.frame. Using `peaks` allows to reduce memory
+#' demand because only data from the specified chrom peaks is returned. This
+#' assumes that `chromPeaks()` was called before to get the IDs of the peaks.
+#'
+#' @param x `XcmsExperimentHdf5`
+#'
+#' @param columns optional `character()` to define the columns to extract.
+#'
+#' @param peaks optional `character()` to define selected chromatographic peaks
+#'     for which the data should be returned. If not specified data for all
+#'     chrom peaks is returned.
+#'
+#' @param by_sample `logical(1)` whether results should be `rbind` or returned
+#'     as a `list` of `data.frame`.
+#'
+#' @noRd
+.h5_chrom_peak_data <- function(x, msLevel = integer(), columns = character(),
+                                peaks = character(), by_sample = TRUE) {
+    ids <- rep(x@sample_id, length(msLevel))
+    msl <- rep(msLevel, each = length(x@sample_id))
+    ## Eventually pass chrom peak ids along to read only specicic data...
+    res <- .h5_read_data(x@hdf5_file, id = ids, name = "chrom_peak_data",
+                         ms_level = msl, read_rownames = TRUE, peaks = peaks)
+    if (by_sample) {
+        names(res) <- ids
+        res <- mapply(FUN = function(a, b) {
+            a$ms_level <- b
+            a
+        }, res, msl, SIMPLIFY = FALSE)
+        res
+    } else {
+        l <- vapply(res, nrow, 1L)
+        cbind(do.call(rbind, res), ms_level = rep(msl, l))
+    }
 }
 
 .h5_chrom_peaks_colnames <- function(x, msLevel = 1L) {
@@ -331,6 +356,14 @@ NULL
                   name = paste0("/", x@sample_id[1L], "/ms_",
                                 msLevel[1L], "/chrom_peaks_colnames"),
                   drop = TRUE)
+}
+
+.h5_chrom_peak_data_colnames <- function(x, msLevel = 1L) {
+    h5 <- rhdf5::H5Fopen(x@hdf5_file)
+    on.exit(rhdf5::H5Fclose(h5))
+    c(.h5_dataset_names(
+        paste0("/", x@sample_id[1L], "/ms_", msLevel, "/chrom_peak_data"), h5),
+      "ms_level")
 }
 
 #' Replace the retention times of chrom peaks with new values, depending
@@ -522,6 +555,65 @@ NULL
 
 ################################################################################
 ##
+##        EIC/CHROMATOGRAMS FUNCTIONALITY
+##
+################################################################################
+#' Read chromatograms for a set of samples (chunk) and adds chromatographic
+#' peaks.
+#'
+#' @param x `XcmsExperimentHdf5` for one subset/chunk of data from which the
+#'     data should be extracted
+#'
+#' @param index `integer` with the index of the current subset `x` in the *full*
+#'     data set.
+#'
+#' @param ms_level `integer(1)` with the MS level.
+#' @noRd
+.h5_x_chromatogram <- function(x, index = seq_along(x), ms_level = 1L,
+                               mz, rt, ppm = 0, chromPeaks = "any",
+                               BPPARAM = bpparam()) {
+    ## Get the chromatograms in parallel.
+    chr <- as(chromatogram(as(x, "MsExperiment"), mz = mz,
+                        rt = rt, BPPARAM = BPPARAM), "XChromatograms")
+    js <- seq_len(nrow(chr))
+    message("Processing chromatographic peaks")
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = ncol(chr) + 1L, clear = FALSE)
+    for (i in seq_along(x)) {
+        cp <- .h5_read_data(x@hdf5_file, x@sample_id[i], "chrom_peaks",
+                            ms_level = ms_level, read_colnames = TRUE,
+                            read_rownames = TRUE)[[1L]]
+        for (j in js) {
+            idx <- which(.is_chrom_peaks_within_mz_rt(
+                cp, rt[j, ], mz[j, ], ppm, chromPeaks), useNames = FALSE)
+            a <- cbind(cp[idx, , drop = FALSE], sample = rep(i, length(idx)))
+            b <- .h5_read_data(
+                x@hdf5_file, x@sample_id[i], "chrom_peak_data",
+                ms_level = ms_level, read_colnames = TRUE, i = idx,
+                read_rownames = FALSE)[[1L]]
+            b$ms_level <- rep(ms_level, length(idx))
+            rownames(b) <- rownames(a)
+            tmp <- chr@.Data[j, i][[1L]]
+            slot(tmp, "chromPeaks", check = FALSE) <- a
+            slot(tmp, "chromPeakData", check = FALSE) <- as(b, "DataFrame")
+            chr@.Data[j, i][[1L]] <- tmp
+        }
+        pb$tick()
+    }
+    pb$tick()
+    if (hasFeatures(x, ms_level)) {
+        stop("Not yet implemented")
+        ## Somehow add features.
+    }
+    chr@.processHistory <- x@processHistory
+    chr
+}
+
+
+################################################################################
+##
 ##        HDF5 FUNCTIONALITY
 ##
 ################################################################################
@@ -587,9 +679,9 @@ NULL
                              read_rownames = FALSE,
                              rownames = paste0(name, "_rownames")) {
     d <- rhdf5::h5read(h5, name = name)
-    if (length(index[[1L]]))
+    if (!is.null(index[[1L]]))
         d <- d[index[[1L]], , drop = FALSE]
-    if (length(index[[2L]]))
+    if (!is.null(index[[2L]]))
         d <- d[, index[[2L]], drop = FALSE]
     if (read_rownames)
         rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
@@ -646,15 +738,24 @@ NULL
     d <- as.data.frame(d)
     if (read_rownames)
         rownames(d) <- rhdf5::h5read(h5, rownames, drop = TRUE)
-    if (length(index[[1L]]))
-        d[index[[1L]], , drop = FALSE]
-    else d
+    if (is.null(index[[1L]]))
+        d
+    else d[index[[1L]], , drop = FALSE]
 }
 
 .h5_read_chrom_peak_data <- function(name, h5, index = list(NULL, NULL),
-                                     read_rownames = FALSE, ...) {
-    .h5_read_data_frame(name, h5, read_rownames = read_rownames, index = index,
-                        rownames = sub("_data", "s_rownames", name))
+                                     read_rownames = FALSE, peaks = character(),
+                                     ...) {
+    cd <- .h5_read_data_frame(
+        name, h5, read_rownames = read_rownames || length(peaks) > 0,
+        index = index, rownames = sub("_data", "s_rownames", name))
+    if (length(peaks)) {
+        idx <- match(peaks, rownames(cd))
+        cd <- cd[idx[!is.na(idx)], , drop = FALSE]
+        if (!read_rownames)
+            rownames(cd) <- NULL
+    }
+    cd
 }
 
 #' Reads the names of the data sets of a group. This can for example be used

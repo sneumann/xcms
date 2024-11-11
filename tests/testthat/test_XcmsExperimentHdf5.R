@@ -54,6 +54,36 @@ test_that("chromPeaks,XcmsExperiementHdf5 works", {
     expect_true(all(res[, "rt"] < 2600))
 })
 
+test_that("chromPeakData,XcmsExperimentHdf5 works", {
+    a <- new("XcmsExperimentHdf5")
+    res <- chromPeakData(a)
+    expect_s4_class(res, "DataFrame")
+    expect_true(nrow(res) == 0)
+    res <- chromPeakData(a, return.type = "data.frame")
+    expect_true(is.data.frame(res))
+    expect_true(nrow(res) == 0)
+
+    a <- xmse_h5
+    res <- chromPeakData(a, msLevel = 3L)
+    expect_s4_class(res, "DataFrame")
+    expect_true(nrow(res) == 0)
+
+    cp <- chromPeaks(a)
+    res <- chromPeakData(a, return.type = "data.frame")
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("is_filled", "ms_level"))
+    expect_equal(nrow(res), nrow(cp))
+    expect_equal(rownames(res), rownames(cp))
+
+    res <- chromPeakData(a, peaks = rownames(cp)[3:10])
+    expect_s4_class(res, "DataFrame")
+    expect_true(nrow(res) == 8)
+    expect_equal(rownames(res), rownames(cp)[3:10])
+
+    res <- chromPeakData(a, msLevel = c(1L, 3L))
+    expect_true(nrow(res) == 0)
+})
+
 test_that("findChromPeaks,XcmsExperimentHdf5 works", {
     a <- as(xmse_h5, "MsExperiment")
     a <- as(a, "XcmsExperimentHdf5")
