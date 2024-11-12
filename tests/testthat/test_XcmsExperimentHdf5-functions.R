@@ -361,6 +361,19 @@ test_that(".h5_read_chrom_peaks_matrix works", {
         read_colnames = TRUE, read_rownames = FALSE,
         mz = c(300, 350), type = "within")
     expect_true(all(res[, "mz"] > 300 & res[, "mz"] < 350))
+
+    ## with sample_index
+    sidx <- c(4L, 5L, 6L)
+    names(sidx) <- c("/S1/ms_1/chrom_peaks", "/S2/ms_1/chrom_peaks",
+                     "/S3/ms_1/chrom_peaks")
+    res <- .h5_read_chrom_peaks_matrix(
+        "/S2/ms_1/chrom_peaks", xmse_h5@hdf5_file, read_colnames = TRUE,
+        read_rownames = FALSE, sample_index = sidx)
+    expect_true(is.matrix(res))
+    expect_true(is.numeric(res))
+    expect_true(nrow(res) > 0)
+    expect_true(any(colnames(res) %in% "sample"))
+    expect_true(all(res[, "sample"] == 5))
 })
 
 test_that(".h5_read_data_frame works", {
@@ -662,6 +675,13 @@ test_that(".h5_chrom_peaks_colnames works", {
     res <- .h5_chrom_peaks_colnames(xmse_h5, 1L)
     expect_true(is.character(res))
     expect_true(all(c("mz", "mzmin", "mzmax", "rt") %in% res))
+})
+
+test_that(".h5_chrom_peaks_rownames works", {
+    res <- .h5_chrom_peaks_rownames(xmse_h5)
+    expect_true(is.list(res))
+    expect_equal(length(res), 3L)
+    expect_true(is.character(res[[1L]]))
 })
 
 test_that(".h5_filter works", {

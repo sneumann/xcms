@@ -57,6 +57,8 @@ importFrom("utils", "flush.console", "head", "object.size",
 
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
+importFrom("data.table", "rbindlist")
+
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
                   "MChromatograms", "MSpectra")

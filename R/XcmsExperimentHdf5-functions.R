@@ -302,22 +302,31 @@ NULL
     } else idx_columns <- NULL
     ids <- rep(x@sample_id, length(msLevel))
     msl <- rep(msLevel, each = length(x@sample_id))
+    if (by_sample) {
+        sample_idx <- integer()
+    } else {
+        ## pass the sample index to the import function to add the "sample" col
+        sample_idx <- match(ids, x@sample_id)
+        names(sample_idx) <- paste0("/", ids, "/ms_", msl, "/chrom_peaks")
+    }
     res <- .h5_read_data(x@hdf5_file, id = ids, name = "chrom_peaks",
                          ms_level = msl, read_colnames = TRUE,
                          read_rownames = TRUE, j = idx_columns,
-                         rt = rt, mz = mz, ppm = ppm, type = type)
+                         rt = rt, mz = mz, ppm = ppm, type = type,
+                         sample_index = sample_idx)
     if (by_sample) {
         names(res) <- ids
         res
     } else {
-        l <- vapply(res, nrow, 1L)
-        cbind(do.call(rbind, res), sample = rep(match(ids, x@sample_id), l))
+        do.call(base::rbind, res)
     }
 }
 
 #' Extract the `chromPeakData` data.frame. Using `peaks` allows to reduce memory
 #' demand because only data from the specified chrom peaks is returned. This
 #' assumes that `chromPeaks()` was called before to get the IDs of the peaks.
+#' We're using the data.table::rbindlist to combine the data.frames because its
+#' much faster - but unfortunately drops also the rownames.
 #'
 #' @param x `XcmsExperimentHdf5`
 #'
@@ -330,24 +339,25 @@ NULL
 #' @param by_sample `logical(1)` whether results should be `rbind` or returned
 #'     as a `list` of `data.frame`.
 #'
+#' @importFrom data.table rbindlist
+#'
 #' @noRd
 .h5_chrom_peak_data <- function(x, msLevel = integer(), columns = character(),
                                 peaks = character(), by_sample = TRUE) {
     ids <- rep(x@sample_id, length(msLevel))
     msl <- rep(msLevel, each = length(x@sample_id))
-    ## Eventually pass chrom peak ids along to read only specicic data...
+    names(msl) <- paste0("/", ids, "/ms_", msl, "/chrom_peak_data")
     res <- .h5_read_data(x@hdf5_file, id = ids, name = "chrom_peak_data",
-                         ms_level = msl, read_rownames = TRUE, peaks = peaks)
+                         ms_level = msl, read_rownames = TRUE, peaks = peaks,
+                         ms_levels = msl)
     if (by_sample) {
         names(res) <- ids
-        res <- mapply(FUN = function(a, b) {
-            a$ms_level <- b
-            a
-        }, res, msl, SIMPLIFY = FALSE)
         res
     } else {
-        l <- vapply(res, nrow, 1L)
-        cbind(do.call(rbind, res), ms_level = rep(msl, l))
+        rn <- unlist(lapply(res, rownames), use.names= FALSE, recursive = FALSE)
+        res <- base::as.data.frame(data.table::rbindlist(res))
+        attr(res, "row.names") <- rn
+        res
     }
 }
 
@@ -356,6 +366,15 @@ NULL
                   name = paste0("/", x@sample_id[1L], "/ms_",
                                 msLevel[1L], "/chrom_peaks_colnames"),
                   drop = TRUE)
+}
+
+.h5_chrom_peaks_rownames <- function(x, msLevel = x@chrom_peaks_ms_level) {
+    ids <- rep(x@sample_id, length(msLevel))
+    msl <- rep(msLevel, each = length(x@sample_id))
+    h5 <- rhdf5::H5Fopen(x@hdf5_file)
+    on.exit(invisible(rhdf5::H5Fclose(h5)))
+    d <- paste0("/", ids, "/ms_", msl, "/chrom_peaks_rownames")
+    lapply(d, FUN = rhdf5::h5read, file = h5, drop = TRUE)
 }
 
 .h5_chrom_peak_data_colnames <- function(x, msLevel = 1L) {
@@ -594,7 +613,7 @@ NULL
                 ms_level = ms_level, read_colnames = TRUE, i = idx,
                 read_rownames = FALSE)[[1L]]
             b$ms_level <- rep(ms_level, length(idx))
-            rownames(b) <- rownames(a)
+            attr(b, "row.names") <- rownames(a)
             tmp <- chr@.Data[j, i][[1L]]
             slot(tmp, "chromPeaks", check = FALSE) <- a
             slot(tmp, "chromPeakData", check = FALSE) <- as(b, "DataFrame")
@@ -697,14 +716,19 @@ NULL
                                         read_rownames = FALSE,
                                         rownames = paste0(name, "_rownames"),
                                         rt = numeric(), mz = numeric(),
-                                        ppm = 0, type = "any") {
+                                        ppm = 0, type = "any",
+                                        sample_index = integer()) {
     read_colnames <- read_colnames || length(rt) > 0 || length(mz) > 0
-    d <- .h5_read_matrix2(name, h5, index, read_colnames, read_rownames,
-                          rownames)
+    d <- .h5_read_matrix2(
+        name, h5, index, read_colnames, read_rownames, rownames)
     if (length(rt) | length(mz))
-        d[.is_chrom_peaks_within_mz_rt(d, rt = rt, mz = mz,
-                                       ppm = ppm, type = type), , drop = FALSE]
-    else d
+        d <- d[.is_chrom_peaks_within_mz_rt(d, rt = rt, mz = mz,
+                                            ppm = ppm, type = type), ,
+               drop = FALSE]
+    ## If sample_index is provided add a column "sample" with the index.
+    if (length(sample_index))
+        d <- cbind(d, sample = sample_index[name])
+    d
 }
 
 #' Read a single `data.frame` from the HDF5 file. With
@@ -737,15 +761,25 @@ NULL
         d <- lapply(d, as.vector)
     d <- as.data.frame(d)
     if (read_rownames)
-        rownames(d) <- rhdf5::h5read(h5, rownames, drop = TRUE)
+        attr(d, "row.names") <- rhdf5::h5read(h5, rownames, drop = TRUE)
     if (is.null(index[[1L]]))
         d
     else d[index[[1L]], , drop = FALSE]
 }
 
+#' Function to read the chromPeakData `data.frame` for one sample.
+#'
+#' @param peaks optional `character` with the chrom peak IDs for which the
+#'     data should be extracted.
+#'
+#' @param ms_levels optional **named** `integer` with the MS levels of all
+#'     imported data sets. At least one of the `names(ms_levels)` should match
+#'     param `name`. If provided, a column `$ms_level` is added to the result.
+#'
+#' @noRd
 .h5_read_chrom_peak_data <- function(name, h5, index = list(NULL, NULL),
                                      read_rownames = FALSE, peaks = character(),
-                                     ...) {
+                                     ms_levels = integer(), ...) {
     cd <- .h5_read_data_frame(
         name, h5, read_rownames = read_rownames || length(peaks) > 0,
         index = index, rownames = sub("_data", "s_rownames", name))
@@ -755,6 +789,8 @@ NULL
         if (!read_rownames)
             rownames(cd) <- NULL
     }
+    if (length(ms_levels))
+        cd$ms_level <- rep(unname(ms_levels[name]), nrow(cd))
     cd
 }
 

@@ -66,7 +66,8 @@ Imports:
     Spectra (>= 1.15.7),
     progress,
     RColorBrewer,
-    MetaboCoreUtils (>= 1.11.2)
+    MetaboCoreUtils (>= 1.11.2),
+    data.table
 Suggests:
     BiocStyle,
     caTools,

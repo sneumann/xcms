@@ -42,14 +42,28 @@
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
+#' HDF5 does not support parallel processing, thus preprocessing results need
+#' to be loaded sequentially.
+#'
+#' All functionality for `XcmsExperimentHdf5` objects is optimized to reduce
+#' memory demand at the cost of eventually lower performance.
+#'
 #' @section Functionality related to chromatographic peaks:
 #'
-#' - `chromPeakData()` gains a new parameter `peaks` which allows to specify
-#'   from which chromatographic peaks data should be returned. For these
-#'   chromatographic peaks the ID (row name in `chromPeaks()`) should be
-#'   provided with the `peaks` parameter. This can reduce the memory
+#' - `chromPeaks()` gains parameter `bySample = FALSE` that, if set to `TRUE`
+#'   returns a `list` of `chromPeaks` matrices, one for each sample. Due to
+#'   the way data is organized in `XcmsExperimentHdf5` objects this is more
+#'   efficient than `bySample = FALSE`. Thus, in cases where chrom peak data
+#'   is subsequently evaluated or processed by sample, it is suggested to
+#'   use `bySample = TRUE`.
+#'
+#' - `chromPeakData()` gains a new parameter `peaks = character()` which allows
+#'   to specify from which chromatographic peaks data should be returned.
+#'   For these chromatographic peaks the ID (row name in `chromPeaks()`)
+#'   should be provided with the `peaks` parameter. This can reduce the memory
 #'   requirement for cases in which only data of some selected chromatographic
-#'   peaks needs to be extracted.
+#'   peaks needs to be extracted. Also, `chromPeakData()` supports the
+#'   `bySample` parameter described for `chromPeaks()` above.
 #'
 #' @section Retention time alignment:
 #'
@@ -133,7 +147,7 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
 ##
 ################################################################################
 
-#' @rdname XcmsExperiment
+#' @rdname hidden_aliases
 setMethod("[", "XcmsExperimentHdf5", function(x, i, j, ...) {
     if (!missing(j))
         stop("subsetting by j not supported")
@@ -241,7 +255,7 @@ setMethod(
     "chromPeaks", "XcmsExperimentHdf5",
     function(object, rt = numeric(), mz = numeric(), ppm = 0,
              msLevel = integer(),  type = c("any", "within", "apex_within"),
-             isFilledColumn = FALSE, columns = character()) {
+             isFilledColumn = FALSE, columns = character(), bySample = FALSE) {
         if (isFilledColumn)
             stop("Parameter 'isFilledColumn = TRUE' is not supported")
         type <- match.arg(type)
@@ -255,7 +269,7 @@ setMethod(
         if (length(msLevel))
             msl <- msl[msl %in% msLevel]
         .h5_chrom_peaks(object, msLevel = msl, columns = columns,
-                        by_sample = FALSE, mz = mz, rt = rt, ppm = ppm,
+                        by_sample = bySample, mz = mz, rt = rt, ppm = ppm,
                         type = type)
     })
 
@@ -270,8 +284,9 @@ setReplaceMethod(
 setMethod(
     "chromPeakData", "XcmsExperimentHdf5",
     function(object, msLevel = integer(), peaks = character(),
-             return.type = c("DataFrame", "data.frame")) {
+             return.type = c("DataFrame", "data.frame"), bySample = FALSE) {
         return.type <- match.arg(return.type)
+        .h5_require_rhdf5()
         if (!length(object))
             return(as(object@chromPeakData, return.type))
         .h5_check_mod_count(object@hdf5_file, object@hdf5_mod_count)
@@ -283,7 +298,7 @@ setMethod(
             as(.h5_chrom_peak_data(object, msLevel, peaks = peaks,
                                    by_sample = FALSE), "DataFrame")
         else .h5_chrom_peak_data(object, msLevel, peaks = peaks,
-                                 by_sample = FALSE)
+                                 by_sample = bySample)
     })
 
 ## #' @rdname refineChromPeaks

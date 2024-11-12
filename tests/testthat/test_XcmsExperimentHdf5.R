@@ -236,19 +236,19 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     nf <- nrow(b)
     rtmed <- b$rtmed
     ## .h5_feature_values_sample
-    a <- .h5_feature_values_sample(
+    a <- xcms:::.h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S1", ms_level = 1L,
         n_features = nf, method = "sum", filled = FALSE, col_idx = 9L)
     b <- unname(featureValues(ref, method = "sum", value = "maxo",
                               filled = FALSE)[, 1L])
     expect_equal(a, b)
-    a <- .h5_feature_values_sample(
+    a <- xcms:::.h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "maxint", col_idx = c(7L, 9L))
     b <- unname(featureValues(ref, method = "maxint", value = "into",
                               filled = FALSE, intensity = "maxo")[, 4L])
     expect_equal(a, b)
-    a <- .h5_feature_values_sample(
+    a <- xcms:::.h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "medret", col_idx = c(8L, 4L),
         rtmed = rtmed)
@@ -257,7 +257,7 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     expect_equal(a, b)
 
     ## .h5_feature_values_ms_level
-    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
+    a <- xcms:::.h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
                                      value = "into", filled = FALSE)
     b <- featureValues(ref, method = "medret", value = "into", filled = FALSE)
     expect_equal(unname(a), unname(b))
