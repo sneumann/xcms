@@ -921,6 +921,7 @@
                                             msLevel, isolationWindow = NULL,
                                             chunkSize, chromPeaks,
                                             return.type, BPPARAM) {
+    message("Extracting chromatographic data")
     chrs <- as(.mse_chromatogram(
         as(object, "MsExperiment"), rt = rt, mz = mz,
         aggregationFun = aggregationFun, msLevel = msLevel,
@@ -956,7 +957,8 @@
         }
     }
     pb$tick()
-    ## Process features - that is not perfect.
+    ## Process features - that is not perfect: features are selected based on
+    ## mz and rt, not based on the selected chrom peaks.
     if (hasFeatures(object)) {
         message("Processing features")
         pb <- progress_bar$new(format = paste0("[:bar] :current/:",

@@ -5,13 +5,13 @@
 \name{hidden_aliases}
 \alias{hidden_aliases}
 \alias{show,XcmsExperimentHdf5-method}
+\alias{[,XcmsExperimentHdf5,ANY,ANY,ANY-method}
 \alias{findChromPeaks,XcmsExperimentHdf5,Param-method}
 \alias{dropChromPeaks,XcmsExperimentHdf5-method}
 \alias{hasChromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeaks<-,XcmsExperimentHdf5-method}
 \alias{chromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
-\alias{chromPeakData,XcmsExperimentHdf5-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
 \alias{adjustRtime,XcmsExperimentHdf5,PeakGroupsParam-method}
 \alias{dropAdjustedRtime,XcmsExperimentHdf5-method}
@@ -21,10 +21,13 @@
 \alias{featureDefinitions<-,XcmsExperimentHdf5-method}
 \alias{featureDefinitions,XcmsExperimentHdf5-method}
 \alias{featureValues,XcmsExperimentHdf5-method}
+\alias{chromatogram,XcmsExperimentHdf5-method}
 \alias{adjustRtimePeakGroups,XcmsResult,PeakGroupsParam-method}
 \title{Internal page for hidden aliases}
 \usage{
 \S4method{show}{XcmsExperimentHdf5}(object)
+
+\S4method{[}{XcmsExperimentHdf5,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{findChromPeaks}{XcmsExperimentHdf5,Param}(
   object,
@@ -50,17 +53,11 @@
   msLevel = integer(),
   type = c("any", "within", "apex_within"),
   isFilledColumn = FALSE,
-  columns = character()
+  columns = character(),
+  bySample = FALSE
 )
 
 \S4method{chromPeakData}{XcmsExperimentHdf5}(object) <- value
-
-\S4method{chromPeakData}{XcmsExperimentHdf5}(
-  object,
-  msLevel = integer(),
-  sample = integer(),
-  return.type = c("DataFrame", "data.frame")
-)
 
 \S4method{refineChromPeaks}{XcmsExperimentHdf5,MergeNeighboringPeaksParam}(
   object,
@@ -99,6 +96,20 @@
   filled = TRUE,
   missing = NA_real_,
   msLevel = integer()
+)
+
+\S4method{chromatogram}{XcmsExperimentHdf5}(
+  object,
+  rt = matrix(nrow = 0, ncol = 2),
+  mz = matrix(nrow = 0, ncol = 2),
+  aggregationFun = "sum",
+  msLevel = 1L,
+  chunkSize = 2L,
+  isolationWindowTargetMz = NULL,
+  return.type = c("XChromatograms", "MChromatograms"),
+  include = character(),
+  chromPeaks = c("apex_within", "any", "none"),
+  BPPARAM = bpparam()
 )
 
 \S4method{adjustRtimePeakGroups}{XcmsResult,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)

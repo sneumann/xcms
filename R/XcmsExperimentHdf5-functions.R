@@ -578,7 +578,10 @@ NULL
 ##
 ################################################################################
 #' Read chromatograms for a set of samples (chunk) and adds chromatographic
-#' peaks.
+#' peaks. Chromatographic peaks are added/processed by sample reading the
+#' respective information from the hdf5 file. Features are added by processing
+#' the feature and chrom peak IDs of the selected chrom peaks.
+#'
 #'
 #' @param x `XcmsExperimentHdf5` for one subset/chunk of data from which the
 #'     data should be extracted
@@ -588,48 +591,89 @@ NULL
 #'
 #' @param ms_level `integer(1)` with the MS level.
 #' @noRd
-.h5_x_chromatogram <- function(x, index = seq_along(x), ms_level = 1L,
-                               mz, rt, ppm = 0, chromPeaks = "any",
+.h5_x_chromatograms <- function(x, index = seq_along(x), aggregationFun = "sum",
+                               ms_level = 1L, mz, rt, isolationWindow = NULL,
+                               chromPeaks = "any", chunkSize = 2L,
+                               return.type = "XChromatograms",
                                BPPARAM = bpparam()) {
-    ## Get the chromatograms in parallel.
-    chr <- as(chromatogram(as(x, "MsExperiment"), mz = mz,
-                        rt = rt, BPPARAM = BPPARAM), "XChromatograms")
-    js <- seq_len(nrow(chr))
+    message("Extracting chromatographic data")
+    chr <- as(.mse_chromatogram(
+        as(x, "MsExperiment"), rt = rt, mz = mz, msLevel = ms_level,
+        aggregationFun = aggregationFun, isolationWindow = isolationWindow,
+        chunkSize = chunkSize, BPPARAM = BPPARAM), return.type)
+    if (return.type == "MChromatograms" || chromPeaks == "none")
+        return(chr)
     message("Processing chromatographic peaks")
+    js <- seq_len(nrow(chr))
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
                                            "total (:percent) in ",
                                            ":elapsed"),
-                           total = ncol(chr) + 1L, clear = FALSE)
-    for (i in seq_along(x)) {
+                           total = length(x), clear = FALSE)
+    has_features <- hasFeatures(x, ms_level)
+    if (has_features) {
+        fd <- .h5_read_data(x@hdf5_file, "features", "feature_definitions",
+                            read_rownames = TRUE, ms_level = ms_level)[[1L]]
+        f2p <- vector("list", 1000) # initialize with an educated guess;
+        cnt <- 1L
+    }
+    for (i in seq_along(x)) { # iterate over samples
         cp <- .h5_read_data(x@hdf5_file, x@sample_id[i], "chrom_peaks",
                             ms_level = ms_level, read_colnames = TRUE,
                             read_rownames = TRUE)[[1L]]
-        for (j in js) {
+        cd <- .h5_read_data(x@hdf5_file, x@sample_id[i], "chrom_peak_data",
+                            ms_level = ms_level, read_colnames = TRUE,
+                            read_rownames = FALSE)[[1L]]
+        if (has_features)
+            fidx <- .h5_read_data(x@hdf5_file, x@sample_id[i],
+                                  "feature_to_chrom_peaks",
+                                  ms_level = ms_level)[[1L]]
+        for (j in js) { # iterate over ranges/EICs
             idx <- which(.is_chrom_peaks_within_mz_rt(
-                cp, rt[j, ], mz[j, ], ppm, chromPeaks), useNames = FALSE)
-            a <- cbind(cp[idx, , drop = FALSE], sample = rep(i, length(idx)))
-            b <- .h5_read_data(
-                x@hdf5_file, x@sample_id[i], "chrom_peak_data",
-                ms_level = ms_level, read_colnames = TRUE, i = idx,
-                read_rownames = FALSE)[[1L]]
-            b$ms_level <- rep(ms_level, length(idx))
+                cp, rt[j, ], mz[j, ], type = chromPeaks), useNames = FALSE)
+            li <- length(idx)
+            a <- cbind(cp[idx, , drop = FALSE], sample = rep(i, li))
+            b <- extractROWS(cd, idx)
+            b$ms_level <- rep(ms_level, li)
             attr(b, "row.names") <- rownames(a)
             tmp <- chr@.Data[j, i][[1L]]
             slot(tmp, "chromPeaks", check = FALSE) <- a
             slot(tmp, "chromPeakData", check = FALSE) <- as(b, "DataFrame")
-            chr@.Data[j, i][[1L]] <- tmp
+            chr@.Data[j, i][[1L]] <- tmp # this does not seem to cause copying
+            ## Add mapping of features and chrom peaks for that sample/EIC
+            if (li && has_features) {
+                is_feature <- fidx[, 2L] %in% idx
+                if (any(is_feature)) {
+                    f2p[[cnt]] <- cbind(rownames(fd)[fidx[is_feature, 1L]],
+                                        rownames(cp)[fidx[is_feature, 2L]],
+                                        rep(as.character(j), sum(is_feature)))
+                    cnt <- cnt + 1L
+                }
+            }
         }
         pb$tick()
     }
-    pb$tick()
-    if (hasFeatures(x, ms_level)) {
-        stop("Not yet implemented")
-        ## Somehow add features.
+    if (has_features) {
+        message("Processing features")
+        ## Define the featureDefinitions and assign chrom peaks to each,
+        ## matching the same `"row"` (!).
+        f2p <- do.call(base::rbind, f2p) # mapping of features and chrom peaks
+        cp <- chromPeaks(chr)            # chrom peaks to calculate index
+        cp_row_id <- paste0(rownames(cp), ".", cp[, "row"])
+        ft_cp_row_id <- paste0(f2p[, 2], ".", f2p[, 3])
+        ft_row_id <- paste0(f2p[, 1], ".", f2p[, 3])
+        peakidx <- lapply(split(ft_cp_row_id, ft_row_id),
+                          base::match, table = cp_row_id)
+        id <- strsplit(names(peakidx), ".", fixed = TRUE)
+        fts <- fd[vapply(id, `[`, i = 1L, FUN.VALUE = NA_character_), ]
+        fts$peakidx <- unname(peakidx)
+        fts$row <- vapply(id, function(z) as.integer(z[2L]), NA_integer_)
+        fts$ms_level <- ms_level
+        slot(chr, "featureDefinitions", check = FALSE) <-
+            DataFrame(extractROWS(fts, order(fts$row)))
     }
-    chr@.processHistory <- x@processHistory
+    slot(chr, ".processHistory", check = FALSE) <- x@processHistory
     chr
 }
-
 
 ################################################################################
 ##
@@ -805,7 +849,6 @@ NULL
     rhdf5::h5ls(g, recursive = recursive, datasetinfo = FALSE)$name
 }
 
-
 .h5_ms_levels <- function(h5, sample_id) {
     nms <- .h5_dataset_names(paste0("/", sample_id), h5)
     as.integer(unique(sub("ms_", "", grep("^ms", nms, value = TRUE))))
@@ -909,7 +952,7 @@ NULL
 #'
 #' @noRd
 .h5_check_mod_count <- function(h5, mod_count = 0L) {
-    mc <- rhdf5::h5read(h5, "/header/modcount")[1L]
+    mc <- .h5_mod_count(h5)
     if (mc != mod_count)
         stop("The HDF5 file was changed by a different process. This xcms ",
              "result object/variable is no longer valid.")
@@ -965,13 +1008,17 @@ NULL
                    level = comp_level)
 }
 
+.h5_mod_count <- function(h5) {
+    rhdf5::h5read(h5, "/header/modcount")[1L]
+}
+
 #' Every writing operation should increate the "mod count", i.e. the
 #' count of data modifications. This function increases the mod count by +1
 #' and returns this value.
 #'
 #' @noRd
 .h5_increment_mod_count <- function(h5) {
-    mc <- rhdf5::h5read(h5, "/header/modcount")[1L] + 1L
+    mc <- .h5_mod_count(h5) + 1L
     rhdf5::h5write(mc, h5, "/header/modcount",
                    level = .h5_compression_level())
     mc

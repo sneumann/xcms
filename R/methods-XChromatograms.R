@@ -3,14 +3,14 @@
 
 setAs("MChromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
-    res@.Data <- matrix(lapply(from, function(z) {
+    slot(res, ".Data", check = FALSE) <- matrix(lapply(from@.Data, function(z) {
         if (is(z, "Chromatogram"))
             as(z, "XChromatogram")
         else z
     }), nrow = nrow(from), ncol = ncol(from), dimnames = dimnames(from))
-    res@phenoData <- from@phenoData
-    res@featureData <- from@featureData
-    if (validObject(resetClass)) res
+    slot(res, "phenoData", check = FALSE) <- from@phenoData
+    slot(res, "featureData", check = FALSE) <- from@featureData
+    res
 })
 
 #' @rdname XChromatogram

@@ -233,7 +233,7 @@ test_that(".h5_xmse_merge_neighboring_peaks works", {
                          ms_level = rep(1L, length(x)),
                          read_colnames = TRUE, read_rownames = TRUE)
     .h5_xmse_merge_neighboring_peaks(x)
-    mod_count <- as.vector(rhdf5::h5read(h5f, "/header/modcount"))
+    mod_count <- .h5_mod_count(h5f)
     expect_true(mod_count > x@hdf5_mod_count)
     ## Check that content was changed.
     res <- .h5_read_data(x@hdf5_file, id = x@sample_id,
@@ -542,6 +542,13 @@ test_that(".h5_initialize_file", {
     file.remove(h5f)
 })
 
+test_that(".h5_mod_count works", {
+    h5f <- tempfile()
+    .h5_initialize_file(h5f, mod_count = 7L)
+    expect_identical(.h5_mod_count(h5f), 7L)
+    file.remove(h5f)
+})
+
 test_that(".h5_increment_mod_count works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
@@ -693,11 +700,11 @@ test_that(".h5_update_rt_chrom_peaks_sample works", {
     expect_true(TRUE)
 })
 
-test_that(".h5_x_chromatogram wokrs", {
+test_that(".h5_x_chromatogram works", {
     rt <- matrix(c(2600, 2700), nrow = 1)
     mz <- matrix(c(340, 400), nrow = 1)
 
-    res <- .h5_x_chromatogram(xmse_h5, mz = mz, rt = rt, chromPeaks = "any")
+    res <- .h5_x_chromatograms(xmse_h5, mz = mz, rt = rt, chromPeaks = "any")
     expect_s4_class(res, "XChromatograms")
     expect_true(nrow(res) == 1L)
     expect_equal(ncol(res), length(xmse_h5))
@@ -712,12 +719,48 @@ test_that(".h5_x_chromatogram wokrs", {
     expect_equal(unname(chromPeaks(res)), unname(chromPeaks(ref)))
 
     ## Multiple rows.
-    res <- .h5_x_chromatogram(
+    res <- .h5_x_chromatograms(
         xmse_h5, mz = chromPeaks(xmse_h5)[1:10, c("mzmin", "mzmax")],
         rt = chromPeaks(xmse_h5)[1:10, c("rtmin", "rtmax")],
         ms_level = 1L,  chromPeaks = "apex_within", BPPARAM = bpparam())
     expect_true(nrow(res) == 10L)
 
+    ## With features.
+    rt <- rbind(rt, c(3000, 3500))
+    mz <- rbind(mz, c(450, 500))
+    tmp <- loadXcmsData("xmse") |>
+        dropFeatureDefinitions() |>
+        groupChromPeaks(pdp, msLevel = 1L)
+
+    ref <- chromatogram(tmp, mz = mz, rt = rt, chromPeaks = "any")
+    res <- .h5_x_chromatograms(xmseg_full_h5, mz = mz, rt = rt,
+                               chromPeaks = "any")
+    a <- chromPeaks(ref)
+    b <- chromPeaks(res)
+    expect_equal(colnames(a), colnames(b))
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+
+    a <- featureDefinitions(ref)
+    b <- featureDefinitions(res)
+    expect_true(all(colnames(a) %in% colnames(b)))
+    ## We don't have exactly the same number of features, because XcmsExperiment
+    ## selects features based on mz and rt range, not based on included chrom
+    ## peaks.
+    expect_true(all(a$mzmed %in% b$mzmed))
+    b <- b[b$mzmed %in% a$mzmed, ]
+    expect_equal(a$peakidx, b$peakidx)
+
+    ## With overlapping ranges -> duplicated features and chrom peaks.
+    mz <- rbind(mz, mz[1, ])
+    rt <- rbind(rt, rt[1, ])
+    res <- .h5_x_chromatograms(xmseg_full_h5, mz = mz, rt = rt,
+                               chromPeaks = "apex_within")
+    cp <- chromPeaks(res)
+    expect_equal(cp[cp[, "row"] == 1L, colnames(cp) != "row"],
+                 cp[cp[, "row"] == 3L, colnames(cp) != "row"])
+    fts <- featureDefinitions(res)
 })
 
 rm(h5f_full_g)

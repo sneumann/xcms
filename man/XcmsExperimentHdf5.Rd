@@ -3,9 +3,18 @@
 \name{XcmsExperimentHdf5}
 \alias{XcmsExperimentHdf5}
 \alias{XcmsExperimentHdf5-class}
+\alias{chromPeakData,XcmsExperimentHdf5-method}
 \alias{adjustRtimePeakGroups,XcmsExperimentHdf5,PeakGroupsParam-method}
 \title{xcms result object for very large data sets}
 \usage{
+\S4method{chromPeakData}{XcmsExperimentHdf5}(
+  object,
+  msLevel = integer(),
+  peaks = character(),
+  return.type = c("DataFrame", "data.frame"),
+  bySample = FALSE
+)
+
 \S4method{adjustRtimePeakGroups}{XcmsExperimentHdf5,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)
 }
 \description{
@@ -34,6 +43,12 @@ the ID of the sample (usually related to the index in the original
 `MsExperiment` object) and the <chrom peak index> the index of the
 chromatographic peak in the chrom peak matrix **of that sample** and
 MS level.
+
+HDF5 does not support parallel processing, thus preprocessing results need
+to be loaded sequentially.
+
+All functionality for `XcmsExperimentHdf5` objects is optimized to reduce
+memory demand at the cost of eventually lower performance.
 }
 \section{Using the HDF5 file-based on-disk data storage}{
 
@@ -42,6 +57,25 @@ Calling [findChromPeaks()] on an `MsExperiment` using the parameter
 `hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
 hence use the on-disk data storage mode described on this page. All data
 is stored in a file with the name specifyied with parameter `hdf5File`.
+}
+
+\section{Functionality related to chromatographic peaks}{
+
+
+- `chromPeaks()` gains parameter `bySample = FALSE` that, if set to `TRUE`
+  returns a `list` of `chromPeaks` matrices, one for each sample. Due to
+  the way data is organized in `XcmsExperimentHdf5` objects this is more
+  efficient than `bySample = FALSE`. Thus, in cases where chrom peak data
+  is subsequently evaluated or processed by sample, it is suggested to
+  use `bySample = TRUE`.
+
+- `chromPeakData()` gains a new parameter `peaks = character()` which allows
+  to specify from which chromatographic peaks data should be returned.
+  For these chromatographic peaks the ID (row name in `chromPeaks()`)
+  should be provided with the `peaks` parameter. This can reduce the memory
+  requirement for cases in which only data of some selected chromatographic
+  peaks needs to be extracted. Also, `chromPeakData()` supports the
+  `bySample` parameter described for `chromPeaks()` above.
 }
 
 \section{Retention time alignment}{

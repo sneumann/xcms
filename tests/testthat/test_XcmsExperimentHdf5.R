@@ -11,6 +11,9 @@ xmseg_full_h5 <- xcms:::.xcms_experiment_to_hdf5(a, h5f_full_g)
 pdp <- PeakDensityParam(sampleGroups = sampleData(xmseg_full_h5)$sample_group,
                         minFraction = 0.4, bw = 30)
 xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, pdp, msLevel = 1L)
+## reference
+xmseg_full_ref <- dropFeatureDefinitions(loadXcmsData("xmse"))
+xmseg_full_ref <- groupChromPeaks(xmseg_full_ref, pdp, msLevel = 1L)
 
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
@@ -88,7 +91,7 @@ test_that("findChromPeaks,XcmsExperimentHdf5 works", {
     a <- as(xmse_h5, "MsExperiment")
     a <- as(a, "XcmsExperimentHdf5")
     h5_file <- tempfile()
-    xcms:::.h5_initialize_file(h5_file)
+    .h5_initialize_file(h5_file)
     a@hdf5_file <- h5_file
     a@sample_id <- c("S1", "S2", "S3")
     p <- xmse_h5@processHistory[[1L]]@param
@@ -236,19 +239,19 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     nf <- nrow(b)
     rtmed <- b$rtmed
     ## .h5_feature_values_sample
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S1", ms_level = 1L,
         n_features = nf, method = "sum", filled = FALSE, col_idx = 9L)
     b <- unname(featureValues(ref, method = "sum", value = "maxo",
                               filled = FALSE)[, 1L])
     expect_equal(a, b)
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "maxint", col_idx = c(7L, 9L))
     b <- unname(featureValues(ref, method = "maxint", value = "into",
                               filled = FALSE, intensity = "maxo")[, 4L])
     expect_equal(a, b)
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "medret", col_idx = c(8L, 4L),
         rtmed = rtmed)
@@ -257,7 +260,7 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     expect_equal(a, b)
 
     ## .h5_feature_values_ms_level
-    a <- xcms:::.h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
                                      value = "into", filled = FALSE)
     b <- featureValues(ref, method = "medret", value = "into", filled = FALSE)
     expect_equal(unname(a), unname(b))
@@ -301,8 +304,7 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
 })
 
 test_that("adjustRtimePeakGroups works", {
-    ref <- dropFeatureDefinitions(loadXcmsData("xmse"))
-    ref <- groupChromPeaks(ref, pdp, msLevel = 1L)
+    ref <- xmseg_full_ref
 
     a <- featureValues(
         ref, method = "maxint", intensity = "into", value = "rt")
@@ -343,11 +345,11 @@ test_that("adjustRtime,XcmsExperimentHdf5 and related function work", {
         dropFeatureDefinitions() |>
         applyAdjustedRtime()
     res_h5 <- tempfile()
-    res <- xcms:::.xcms_experiment_to_hdf5(ref, res_h5)
+    res <- .xcms_experiment_to_hdf5(ref, res_h5)
     ## Create a single sample XcmsExperimentHdf5
     a <- ref[3L]
     a_h5 <- tempfile()
-    a <- xcms:::.xcms_experiment_to_hdf5(a, a_h5)
+    a <- .xcms_experiment_to_hdf5(a, a_h5)
     ## Perform retention time alignment on reference data
     ref <- ref |>
         groupChromPeaks(pdp, msLevel = 1L) |>
@@ -409,6 +411,89 @@ test_that("adjustRtime,XcmsExperimentHdf5 and related function work", {
 
 test_that(".hasFilledPeaks works with XcmsExperimentHdf5", {
     expect_false(.hasFilledPeaks(xmse_h5))
+})
+
+test_that("chromatogram,XcmsExperimentHdf5 works", {
+    expect_error(chromatogram(xmse_h5, adjustedRtime = FALSE), "unused")
+    expect_warning(res <- chromatogram(xmse_h5, include = "apex_within",
+                                       return.type = "MChromatograms"),
+                   "deprecated")
+    expect_s4_class(res, "MChromatograms")
+    expect_true(nrow(res) == 1L)
+    ref <- chromatogram(faahko_od)
+    expect_equal(intensity(res[1, 1]), unname(intensity(ref[1, 1])))
+
+    rtr <- c(2600, 2700)
+    mzr <- c(340, 400)
+    res <- chromatogram(xmse_h5, mz = mzr, rt = rtr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    ref <- chromatogram(xod_x, mz = mzr, rt = rtr)
+    expect_equal(unname(chromPeaks(res)), unname(chromPeaks(ref)))
+
+    ## with features
+    res <- chromatogram(
+        xmseg_full_h5, mz = chromPeaks(xmseg_full_h5)[1:5, c("mzmin", "mzmax")],
+        rt = chromPeaks(xmseg_full_h5)[1:5, c("rtmin", "rtmax")],
+        chunkSize = 2L, BPPARAM = bpparam(), msLevel = 1L,
+        aggregationFun = "sum", isolationWindow = NULL,
+        chromPeaks = "apex_within", return.type = "XChromatograms")
+    expect_true(nrow(featureDefinitions(res)) == 2)
+    expect_true(all(unlist(featureDefinitions(res)$peakidx) %in%
+                    seq_len(nrow(chromPeaks(res)))))
+    ref <- chromatogram(
+        xmseg_full_ref,
+        mz = chromPeaks(xmseg_full_h5)[1:5, c("mzmin", "mzmax")],
+        rt = chromPeaks(xmse_full_h5)[1:5, c("rtmin", "rtmax")])
+    a <- featureDefinitions(res)
+    b <- featureDefinitions(res)
+    expect_true(all(colnames(a) %in% colnames(b)))
+    expect_equal(unname(a[, colnames(b)]), unname(b[, colnames(b)]))
+
+    ## MS2 data.
+    res <- chromatogram(xmseg_full_h5, msLevel = 2L,
+                        mz = chromPeaks(xmse_full_h5)[1:5, c("mzmin", "mzmax")],
+                        rt = chromPeaks(xmse_full_h5)[1:5, c("rtmin", "rtmax")])
+    expect_true(validObject(res))
+    expect_true(length(intensity(res[[1L]])) == 0)
+    expect_true(length(intensity(res[[2L]])) == 0)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(chromPeaks(res)) == 0)
+
+    ## Defining only mz or rt.
+    rtr <- c(2600, 2700)
+    mzr <- c(340, 400)
+    res <- chromatogram(xmse_h5, mz = mzr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(all(chromPeaks(res)[, "mz"] >= 340 &
+                    chromPeaks(res)[, "mz"] <= 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    rrt <- range(lapply(res, rtime))
+    expect_true(rrt[1] < 2600)
+    expect_true(rrt[2] > 4400)
+
+    res <- chromatogram(xmse_h5, rt = rtr)
+    expect_s4_class(res, "XChromatograms")
+    expect_true(nrow(res) == 1L)
+    expect_true(nrow(chromPeaks(res)) > 0)
+    expect_true(any(chromPeaks(res)[, "mz"] < 340 |
+                    chromPeaks(res)[, "mz"] > 400))
+    expect_true(all(chromPeaks(res[1, 1])[, "sample"] == 1L))
+    expect_true(all(chromPeaks(res[1, 2])[, "sample"] == 2L))
+    expect_true(all(chromPeaks(res[1, 3])[, "sample"] == 3L))
+    rrt <- range(lapply(res, rtime))
+    expect_true(rrt[1] >= 2600)
+    expect_true(rrt[2] <= 2700)
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

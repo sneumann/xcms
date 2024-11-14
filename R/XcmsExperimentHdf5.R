@@ -410,13 +410,13 @@ setMethod(
 ##     })
 
 #' TODO:
-#' - add chunkSize to chromPeaks?
-#' - chromPeakData,XcmsExperimentHdf5
-#' - adjustRtime,XcmsExperimentHdf5
+#' - fillChromPeaks,XcmsExperimentHdf5
+#' - filterMsLevel
+#' - filterRt
+#' - filterMz
 #'
 #' @noRd
 NULL
-
 
 ################################################################################
 ##
@@ -594,7 +594,7 @@ setMethod(
             unique(c(object@features_ms_level, msLevel)))
         cpk_idx <- res$peakidx
         res$peakidx <- NULL
-        rownames(res) <- .featureIDs(
+        attr(res, "row.names") <- .featureIDs(
             nrow(res), prefix = paste0("FT", msLevel), min_len = 6)
         ## Save features to "/features/ms_<msLevel>/feature_definitions"
         .h5_write_data(object@hdf5_file, list(features = res),
@@ -705,15 +705,6 @@ setMethod(
 ##
 ################################################################################
 
-#' While previously we were first extracting the chromatograms and then adding
-#' the chrom peaks later for `XcmsExperimentHdf5` it might be more efficient to
-#' also extract the chrom peaks in the loop/chunk processing. So, essentially:
-#' - process `object` chunk-wise
-#' - for each chunk:
-#'   - extract chromatograms (in parallel?)
-#'   - get chrom peaks for each sample/chrom peak.
-#'
-#' @noRd
 #' @rdname hidden_aliases
 setMethod(
     "chromatogram", "XcmsExperimentHdf5",
@@ -737,19 +728,14 @@ setMethod(
             mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
         return.type <- match.arg(return.type)
         chromPeaks <- match.arg(chromPeaks)
+        if (!hasChromPeaks(object, msLevel))
+            chromPeaks <- "none"
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        ## process the data in chunks.
-        ## in each chunk: get chromatograms, load chrom peaks and process those.
-        ## ? how to get/define the features too? get the feature indices?
-        ## Implementation notes:
-        ## XChromatogram has slots @chromPeaks (matrix) @chromPeakData (DataFrame)
-        ## XChromatograms has slot @featureDefinitions (DataFrame)
-
-
-        .xmse_extract_chromatograms_old(
-            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
-            msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
-            chunkSize = chunkSize, chromPeaks = chromPeaks,
-            return.type = return.type, BPPARAM = BPPARAM)
+        .h5_x_chromatograms(
+            object, ms_level = msLevel, chromPeaks = chromPeaks,
+            mz = mz, rt = rt, aggregationFun = aggregationFun,
+            chunkSize = chunkSize, return.type = return.type,
+            isolationWindow = isolationWindowTargetMz,
+            BPPARAM = BPPARAM)
     })
