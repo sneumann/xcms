@@ -565,6 +565,51 @@ NULL
     res
 }
 
+#' Returns the rtmin, rtmax, mzmin and mzmax for each feature depending on the
+#' associated chrom peaks.
+#'
+#' For the final calculation of the region boundaries using the functions
+#' defined with parameters `mzmin`, `mzmax`, `rtmin` and `rtmax` we consider
+#' here, if multiple chrom peaks are assigned in a sample to a feature,
+#' the min `"rtmin"`, `"mzmin"`, max `"rtmax"`, `"mzmax"` for each feature
+#' in each sample (in contrast to the `.features_ms_region()` function that
+#' considered all values for all chrom peaks of a feature).
+#'
+#' @noRd
+.h5_features_ms_region <- function(x, mzmin, mzmax, rtmin, rtmax, feature_idx,
+                                   ms_level = 1L) {
+    ## - Get for each feature_idx, each sample the min rtmin, mzmin and max
+    ##   rtmax, mzmax.
+    ## - add the values to a `matrix` or a `list`? what is more efficient?
+    ## - calculate the boundaries using these.
+    ## need to get for each feature all values to select min/max/median or
+    ## whatever.
+    for (i in seq_along(x@sample_id)) {
+        sample_id <- x@sample_id[i]
+        sid <- paste0("/", sample_id, "/ms_", ms_level)
+        fidx <- xcms:::.h5_read_data(x@hdf5_file, sample_id,
+                              name = "feature_to_chrom_peaks",
+                              ms_level = ms_level)[[1L]]
+        fidx <- fidx[fidx[, 1L] %in% feature_ids, ]
+
+        vals <- .h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
+                          ms_level = ms_level, j = col_idx)[[1L]]
+LLLLLL
+    }
+}
+
+a <- function() {
+    m <- matrix(NA_real_, ncol = 1000, nrow = 2000)
+    for (i in 1:1000) {
+    }
+}
+
+b <- function() {
+    l <- vector("list", 1000)
+    for (i in 1:1000) {
+    }
+}
+
 ################################################################################
 ##
 ##        ALIGNMENT RELATED FUNCTIONALITY

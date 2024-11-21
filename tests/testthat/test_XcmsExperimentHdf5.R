@@ -501,6 +501,18 @@ test_that("chromatogram,XcmsExperimentHdf5 works", {
     expect_true(rrt[2] <= 2700)
 })
 
+test_that("hasFilledChromPeaks,XcmsExperimentHdf5 works", {
+    expect_false(hasFilledChromPeaks(new("XcmsExperimentHdf5")))
+})
+
+test_that("fillChromPeaks,XcmsExperimentHdf5 works", {
+    expect_error(fillChromPeaks(new("XcmsExperimentHdf5"),
+                                ChromPeakAreaParam(),
+                                msLevel = 1:2), "one MS level at a time")
+    expect_error(fillChromPeaks(xmse_full_h5, ChromPeakAreaParam()),
+                 "No feature definitions")
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

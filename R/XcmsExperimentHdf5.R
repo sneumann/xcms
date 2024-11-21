@@ -409,7 +409,115 @@ setMethod(
 ##         object
 ##     })
 
-#' TODO:
+#' @rdname hidden_aliases
+setMethod("hasFilledChromPeaks", "XcmsExperimentHdf5", function(object) {
+    length(object@gap_peaks_ms_level) > 0
+})
+
+#' @rdname hidden_aliases
+setMethod(
+    "fillChromPeaks",
+    signature(object = "XcmsExperimentHdf5", param = "ChromPeakAreaParam"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+        if (length(msLevel) != 1)
+            stop("Can only perform peak filling for one MS level at a time.")
+        if (!hasFeatures(object, msLevel = msLevel))
+            stop("No feature definitions for MS level ", msLevel, " present.")
+        ## Identify for each feature the samples in which there is a missing
+        ## value
+        fvals <- is.na(featureValues(object, msLevel = msLevel, method = "sum"))
+        keep <- rowSums(fvals) > 0
+        fidx <- seq_len(nrow(fvals))[keep]
+        fvals <- fvals[keep, , drop = FALSE]
+        ## Define the feature region to integrate signal from. Need to iterate
+        ## over all samples/files.
+
+
+        feature_ids <- rownames(featureDefinitions(object, msLevel = msLevel))
+        fr <- .features_ms_region(object, mzmin = param@mzmin,
+                                  mzmax = param@mzmax, rtmin = param@rtmin,
+                                  rtmax = param@rtmax, features = feature_ids)
+        fr <- cbind(
+            fr, mzmed = featureDefinitions(object, msLevel = msLevel)$mzmed)
+        fvals <- featureValues(object, value = "index", msLevel = msLevel)
+        ## For each sample, keep features with some missing values.
+        pal <- lapply(seq_len(ncol(fvals)), function(i) {
+            fr[is.na(fvals[, i]), , drop = FALSE]
+        })
+        names(pal) <- seq_along(pal)
+        ## Get integration function and other info.
+        ph <- .xmse_process_history(object, .PROCSTEP.PEAK.DETECTION,
+                                    msLevel = msLevel)
+        fill_fun <- .history2fill_fun(ph)
+        mzf <- "wMean"
+        if (length(ph) && inherits(ph[[1L]], "XProcessHistory")) {
+            prm <- ph[[1L]]@param
+            if (any(slotNames(prm) == "mzCenterFun"))
+                mzf <- prm@mzCenterFun
+        } else
+            prm <- MatchedFilterParam()
+        mzf <- paste0("mzCenter.", gsub("mzCenter.", "", mzf, fixed = TRUE))
+        ## Manual chunk processing because we have to split `object` and `pal`
+        idx <- seq_along(object)
+        chunks <- split(idx, ceiling(idx / chunkSize))
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks) + 1L, clear = FALSE)
+        pb$tick(0)
+        res <- lapply(chunks, function(z, ...) {
+            pb$tick()
+            .xmse_integrate_chrom_peaks(
+                .subset_xcms_experiment(object, i = z, keepAdjustedRtime = TRUE,
+                                        ignoreHistory = TRUE),
+                pal = pal[z], intFun = fill_fun, mzCenterFun = mzf,
+                param = prm, BPPARAM = BPPARAM)
+        })
+        res <- do.call(rbind, res)
+        ## Update feature definitions
+        i_res <- seq((nrow(.chromPeaks(object)) + 1L), length.out = nrow(res))
+        i_res <- split(i_res, rownames(res))
+        i_ft <- match(names(i_res), rownames(featureDefinitions(object)))
+        for (i in seq_along(i_res))
+            object@featureDefinitions$peakidx[[i_ft[i]]] <-
+                sort(c(object@featureDefinitions$peakidx[[i_ft[i]]],i_res[[i]]))
+        ## Add results
+        nr <- nrow(res)
+        maxi <- max(as.integer(sub("CP", "", rownames(.chromPeaks(object)))))
+        rownames(res) <- .featureIDs(nr, "CP", maxi + 1)
+        cpd <- data.frame(ms_level = rep(as.integer(msLevel), nr),
+                          is_filled = rep(TRUE, nr))
+        rownames(cpd) <- rownames(res)
+        object@chromPeaks <- rbind(object@chromPeaks, res)
+        object@chromPeakData <- rbindFill(object@chromPeakData, cpd)
+        pb$tick()
+        ## Need to update the index in the featureDefinitions
+        ph <- XProcessHistory(param = param,
+                              date. = date(),
+                              type. = .PROCSTEP.PEAK.FILLING,
+                              fileIndex = seq_along(object),
+                              msLevel = msLevel)
+        object <- addProcessHistory(object, ph)
+        validObject(object)
+        object
+    })
+
+#' @rdname hidden_aliases
+## setMethod("dropFilledChromPeaks", "XcmsExperiment", function(object) {
+##     if (!.hasFilledPeaks(object))
+##         return(object)
+##     keep_pks <- which(!.chromPeakData(object)$is_filled)
+##     object <- .filter_chrom_peaks(object, keep_pks)
+##     object@processHistory <- dropProcessHistoriesList(
+##         object@processHistory, type = .PROCSTEP.PEAK.FILLING)
+##                 type = c(.PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.GROUPING,
+##                          .PROCSTEP.PEAK.FILLING, .PROCSTEP.CALIBRATION,
+##                          .PROCSTEP.PEAK.REFINEMENT)
+##     validObject(object)
+##     object
+## })
+
+#' TODO: LLLLLL
 #' - fillChromPeaks,XcmsExperimentHdf5
 #' - filterMsLevel
 #' - filterRt
