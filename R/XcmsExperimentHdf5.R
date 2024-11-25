@@ -426,12 +426,16 @@ setMethod(
         ## Identify for each feature the samples in which there is a missing
         ## value
         fvals <- is.na(featureValues(object, msLevel = msLevel, method = "sum"))
-        keep <- rowSums(fvals) > 0
-        fidx <- seq_len(nrow(fvals))[keep]
+        fidx <- which(rowSums(fvals) > 0)
         fvals <- fvals[keep, , drop = FALSE]
         ## Define the feature region to integrate signal from. Need to iterate
         ## over all samples/files.
-
+        message("Defining MS area to integrate signal from")
+        fr <- .h5_features_ms_region(
+            object, mzmin = param@mzmin, mzmax = param@mzmax,
+            rtmin = param@rtmin, rtmax = param@rtmax, feature_idx = fidx,
+            ms_level = msLevel)
+        ## LLLLLL
 
         feature_ids <- rownames(featureDefinitions(object, msLevel = msLevel))
         fr <- .features_ms_region(object, mzmin = param@mzmin,
@@ -738,6 +742,24 @@ setMethod(
         object <- addProcessHistory(object, xph)
         validObject(object)
         object
+    })
+
+#' @rdname hidden_aliases
+setMethod(
+    "featureArea", "XcmsExperimentHdf5",
+    function(object, mzmin = min, mzmax = max, rtmin = min,
+             rtmax = max, features = character(), msLevel = 1L) {
+        if (!hasFeatures(object, msLevel))
+            stop("No correspondence results available. Please run ",
+                 "'groupChromPeaks' first.", call. = FALSE)
+        if (!length(features))
+            features <- rhdf5::h5read(object@hdf5_file,
+                                      paste0("/features/ms_", msLevel,
+                                             "/feature_definitions_rownames"),
+                                      drop = TRUE)
+        .h5_features_ms_region(
+            object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+            rtmax = rtmax, features, ms_level = msLevel)
     })
 
 #' @rdname hidden_aliases

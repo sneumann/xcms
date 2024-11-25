@@ -1549,6 +1549,20 @@ setMethod(
     })
 
 #' @rdname XcmsExperiment
+setMethod(
+    "featureArea", "XcmsResult",
+    function(object, mzmin = min, mzmax = max, rtmin = min,
+             rtmax = max, features = character()) {
+        if (!hasFeatures(object))
+            stop("No correspondence results available. Please run ",
+                 "'groupChromPeaks' first.")
+        if (!length(features))
+            features <- rownames(featureDefinitions(object))
+        .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                            rtmax = rtmax, features = features)
+    })
+
+#' @rdname XcmsExperiment
 setReplaceMethod("featureDefinitions", "XcmsExperiment",
                  function(object, value) {
                      object@featureDefinitions <- value

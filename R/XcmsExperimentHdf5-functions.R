@@ -114,6 +114,7 @@ NULL
     }
     if (!keepChromPeaks && hasChromPeaks(x)) {
         x@chrom_peaks_ms_level <- integer()
+        x@gap_peaks_ms_level <- integer()
         drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
                   .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
     }
@@ -566,7 +567,15 @@ NULL
 }
 
 #' Returns the rtmin, rtmax, mzmin and mzmax for each feature depending on the
-#' associated chrom peaks.
+#' associated chrom peaks. For XcmsExperimentHdf5 we have to:
+#' - loop over each sample
+#' - load the mapping of features to chrom peaks
+#' - load the chrom peak data
+#' - extract the required information per feature
+#' - after the loop: aggregate the information.
+#'
+#' We could also use `featureValues()`, but would need to call that 4 times,
+#' i.e. load the data 4 times.
 #'
 #' For the final calculation of the region boundaries using the functions
 #' defined with parameters `mzmin`, `mzmax`, `rtmin` and `rtmax` we consider
@@ -575,39 +584,73 @@ NULL
 #' in each sample (in contrast to the `.features_ms_region()` function that
 #' considered all values for all chrom peaks of a feature).
 #'
+#' @param features `character` with the feature IDs.
+#'
 #' @noRd
-.h5_features_ms_region <- function(x, mzmin, mzmax, rtmin, rtmax, feature_idx,
+.h5_features_ms_region <- function(x, mzmin, mzmax, rtmin, rtmax, features,
                                    ms_level = 1L) {
-    ## - Get for each feature_idx, each sample the min rtmin, mzmin and max
-    ##   rtmax, mzmax.
-    ## - add the values to a `matrix` or a `list`? what is more efficient?
-    ## - calculate the boundaries using these.
-    ## need to get for each feature all values to select min/max/median or
-    ## whatever.
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = length(x@sample_id) + 1L, clear = FALSE)
+    pb$tick(0)
+    fids <- rhdf5::h5read(x@hdf5_file,
+                          paste0("/features/ms_", ms_level,
+                                 "/feature_definitions_rownames"), drop = TRUE)
+    feature_idx <- unique(match(features, fids))
+    if (anyNA(feature_idx))
+        stop("Some of the provided feature IDs were not found in the",
+             " data set.", call. = FALSE)
+    feature_idx <- sort(feature_idx)
+    cn <- .h5_chrom_peaks_colnames(x, ms_level)
+    cn_idx <- match(c("mzmin", "mzmax", "rtmin", "rtmax"), cn)
+    template <- rep(NA_real_, length(feature_idx))
+    rtmin_mat <- rtmax_mat <- mzmin_mat <- mzmax_mat <-
+        vector("list", length(x@sample_id))
     for (i in seq_along(x@sample_id)) {
         sample_id <- x@sample_id[i]
         sid <- paste0("/", sample_id, "/ms_", ms_level)
-        fidx <- xcms:::.h5_read_data(x@hdf5_file, sample_id,
+        fidx <- .h5_read_data(x@hdf5_file, sample_id,
                               name = "feature_to_chrom_peaks",
                               ms_level = ms_level)[[1L]]
-        fidx <- fidx[fidx[, 1L] %in% feature_ids, ]
-
-        vals <- .h5_read_data(hdf5_file, sample_id, name = "chrom_peaks",
-                          ms_level = ms_level, j = col_idx)[[1L]]
-LLLLLL
+        fidx <- fidx[fidx[, 1L] %in% feature_idx, , drop = FALSE]
+        if (nrow(fidx)) {
+            vals <- .h5_read_data(
+                x@hdf5_file, sample_id, name = "chrom_peaks",
+                ms_level = ms_level, i = fidx[, 2L], j = cn_idx,
+                read_colnames = FALSE, read_rownames = FALSE)[[1L]]
+            idx <- as.factor(match(fidx[, 1L], feature_idx))
+            mzmin_mat[[i]] <- .h5_features_ms_region_values(
+                template, vals[, 1L], idx, dups = base::min)
+            mzmax_mat[[i]] <- .h5_features_ms_region_values(
+                template, vals[, 2L], idx, dups = base::max)
+            rtmin_mat[[i]] <- .h5_features_ms_region_values(
+                template, vals[, 3L], idx, dups = base::min)
+            rtmax_mat[[i]] <- .h5_features_ms_region_values(
+                template, vals[, 4L], idx, dups = base::max)
+        } else
+            mzmin_mat[[i]] <- mzmax_mat[[i]] <- rtmin_mat[[i]] <-
+                rtmax_mat[[i]] <- template
+        pb$tick()
     }
+    mzmin_mat <- do.call(base::cbind, mzmin_mat)
+    mzmax_mat <- do.call(base::cbind, mzmax_mat)
+    rtmin_mat <- do.call(base::cbind, rtmin_mat)
+    rtmax_mat <- do.call(base::cbind, rtmax_mat)
+    res <- cbind(mzmin = apply(mzmin_mat, 1L, mzmin, na.rm = TRUE),
+                 mzmax = apply(mzmax_mat, 1L, mzmax, na.rm = TRUE),
+                 rtmin = apply(rtmin_mat, 1L, rtmin, na.rm = TRUE),
+                 rtmax = apply(rtmax_mat, 1L, rtmax, na.rm = TRUE))
+    rownames(res) <- fids[feature_idx]
+    res[features, , drop = FALSE]
 }
 
-a <- function() {
-    m <- matrix(NA_real_, ncol = 1000, nrow = 2000)
-    for (i in 1:1000) {
-    }
-}
-
-b <- function() {
-    l <- vector("list", 1000)
-    for (i in 1:1000) {
-    }
+.h5_features_ms_region_values <- function(x, vals, map, dups = base::min) {
+    vl <- base::split(vals, map)
+    l <- lengths(vl) > 1L
+    x[as.integer(names(vl[!l]))] <- unlist(vl[!l], FALSE, FALSE)
+    x[as.integer(names(vl[l]))] <- vapply(vl[l], dups, x[1L], USE.NAMES = FALSE)
+    x
 }
 
 ################################################################################

@@ -647,6 +647,7 @@ setGeneric("factorGap", function(object) standardGeneric("factorGap"))
 setGeneric("factorGap<-", function(object, value) standardGeneric("factorGap<-"))
 setGeneric("family", function(object, ...) standardGeneric("family"))
 setGeneric("family<-", function(object, value) standardGeneric("family<-"))
+setGeneric("featureArea", function(object, ...) standardGeneric("featureArea"))
 
 #' @title Extract ion chromatograms for each feature
 #'

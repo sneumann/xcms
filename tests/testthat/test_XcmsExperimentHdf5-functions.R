@@ -763,4 +763,51 @@ test_that(".h5_x_chromatogram works", {
     fts <- featureDefinitions(res)
 })
 
+test_that(".h5_features_ms_region_values works", {
+    tmpl <- rep(NA_real_, 20)
+    v <- as.numeric(1:14)
+    m <- c(2, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 9, 10, 11)
+    res <- .h5_features_ms_region_values(tmpl, v, m)
+    expect_true(is.na(res[1L]))
+    expect_true(all(is.na(res[12:20])))
+    expect_equal(res[2:11], c(1, 3, 4, 5, 6, 7, 8, 10, 13, 14))
+    res <- .h5_features_ms_region_values(tmpl, v, m, max)
+    expect_true(is.na(res[1L]))
+    expect_true(all(is.na(res[12:20])))
+    expect_equal(res[2:11], c(2, 3, 4, 5, 6, 7, 9, 12, 13, 14))
+})
+
+test_that(".h5_features_ms_region works", {
+    res <- xcms:::.h5_features_ms_region(
+        xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
+        features = rownames(featureDefinitions(xmseg_full_h5)),
+        ms_level = 1L)
+    expect_true(is.matrix(res))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_equal(nrow(res), nrow(featureDefinitions(xmseg_full_h5)))
+    expect_equal(rownames(res), rownames(featureDefinitions(xmseg_full_h5)))
+
+    res_sub <- xcms:::.h5_features_ms_region(
+        xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
+        features = rownames(res)[c(4, 10, 12)], ms_level = 1L)
+    expect_true(is.matrix(res_sub))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_equal(nrow(res_sub), 3)
+    expect_equal(res[c(4, 10, 12), ], res_sub)
+
+    res_sub <- xcms:::.h5_features_ms_region(
+        xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
+        features = rownames(res)[c(10, 12, 10, 4)], ms_level = 1L)
+    expect_true(is.matrix(res_sub))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_equal(nrow(res_sub), 4)
+    expect_equal(res[c(10, 12, 10, 4), ], res_sub)
+
+    ## errors
+    expect_error(xcms:::.h5_features_ms_region(
+        xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
+        features = c(rownames(res)[c(10, 12, 10, 4)], "a"), ms_level = 1L),
+        "not found")
+})
+
 rm(h5f_full_g)

@@ -513,6 +513,19 @@ test_that("fillChromPeaks,XcmsExperimentHdf5 works", {
                  "No feature definitions")
 })
 
+test_that("featureArea,XcmsExperimentHdf5 works", {
+    expect_error(featureArea(xmse_h5), "No correspondence")
+    expect_error(featureArea(xmseg_full_h5, msLevel = 2L), "No correspondence")
+    expect_error(featureArea(xmseg_full_h5, features = c("a", "b")),
+                 "Some of the provided")
+    res <- featureArea(xmseg_full_h5)
+    ref <- featureArea(xmseg_full_ref)
+    expect_equal(unname(res), unname(ref))
+    res <- featureArea(xmseg_full_h5, features = rownames(res)[c(5, 12, 20)])
+    ref <- featureArea(xmseg_full_ref, features = rownames(ref)[c(5, 12, 20)])
+    expect_equal(unname(res), unname(ref))
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

@@ -982,18 +982,6 @@
     chrs
 }
 
-#' @rdname XcmsExperiment
-featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
-                        rtmax = max, features = character()) {
-    if (!hasFeatures(object))
-        stop("No correspondence results available. Please run ",
-             "'groupChromPeaks' first.")
-    if (!length(features))
-        features <- rownames(featureDefinitions(object))
-    .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                        rtmax = rtmax, features = features)
-}
-
 #' @title Define MS regions for features
 #'
 #' @param x `XcmsExperiment` or `XCMSnExp`.
