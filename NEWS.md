@@ -7,7 +7,7 @@
   in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
   in MS level 2.
 
-## Changes in version 4.5.1
+## Changes in version 4.5.2
 
 - Address issue #765: peak detection on chromatographic data: report a
   chromatogram's `"mz"`, `"mzmin"` and `"mzmax"` as the mean m/z and lower and
@@ -17,6 +17,12 @@
   chromatographic peak detection with parameter `verboseBetaColumns = TRUE`.
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
+
+# xcms 4.5.1
+
+## Changes in version 4.5.1
+
+- Fix compile errors with R-4.5
 
 # xcms 4.3
 

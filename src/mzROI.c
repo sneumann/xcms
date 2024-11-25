@@ -76,7 +76,7 @@ struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned
 
     mzROI = (struct mzROIStruct *) realloc(mzROI, newLength * sizeof(struct mzROIStruct));
     if (mzROI == NULL)
-        error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct) );
+        Rf_error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct) );
 
     mzLength->mzROITotal = newLength;
   }
@@ -99,7 +99,7 @@ struct mzROIStruct * checkmzvalBufSize(struct mzROIStruct *mzval, const unsigned
 
     mzval = (struct mzROIStruct *) realloc(mzval, newLength * sizeof(struct mzROIStruct));
     if (mzval == NULL)
-      error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct));
+      Rf_error("findmzROI/realloc: buffer memory could not be allocated ! (%lu bytes)\n", newLength * sizeof(struct mzROIStruct));
 
     mzLength->mzvalTotal = newLength;
   }
@@ -202,7 +202,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten,
 
     if (ddiff <= ddev)
     { // match (smaller than defined ppm) -> extend this ROI
-          if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
+          if ( (i > hpos) || (i<lpos) ) Rf_error("! scan: %d \n",scan);
           wasfound = TRUE;
           //recursive m/z mean update
           mzval[i].mz = ((mzval[i].length * mzval[i].mz) + fMass) / (mzval[i].length + 1);
@@ -311,7 +311,7 @@ int i,p,del=0;
       }
         if (entries > ctScan) {
             #ifdef DEBUG
-                error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval[i].mz,mzval[i].length,lastscan,ctScan);
+                Rf_error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval[i].mz,mzval[i].length,lastscan,ctScan);
             #endif
           (*scerr)++;
         }
@@ -328,7 +328,7 @@ int i,p,del=0;
     p=0;
     struct mzROIStruct * tmp = (struct mzROIStruct *) calloc(mzLength->mzval - del,  sizeof(struct mzROIStruct));
     if (tmp == NULL)
-      error("findmzROI/cleanup: buffer memory could not be allocated ! (%lu bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
+      Rf_error("findmzROI/cleanup: buffer memory could not be allocated ! (%lu bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
     for (i=0; i < mzLength->mzval; i++) {
         if (mzval[i].deleteMe == FALSE) {
             tmp[p].mz = mzval[i].mz;
@@ -379,7 +379,7 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
         scanbuf->thisScan= (struct scanStruct  *) calloc(N, sizeof(struct scanStruct));
         // scanbuf->thisScan= (struct scanStruct  *) malloc(N * sizeof(struct scanStruct));
         if (scanbuf->thisScan == NULL)
-	    error("findmzROI/getThisScan: Memory could not be allocated!\n");
+	    Rf_error("findmzROI/getThisScan: Memory could not be allocated!\n");
 
         scanbuf->thisScanLength=N;
 
@@ -411,7 +411,7 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
         if (N > 0) {
             scanbuf->nextScan= (double *) calloc(N, sizeof(double));
             if (scanbuf->nextScan == NULL)
-                error("findmzROI/getNextScan: Memory could not be allocated!\n");
+                Rf_error("findmzROI/getNextScan: Memory could not be allocated!\n");
             scanbuf->nextScanLength=N;
 
             for (idx=idx1;idx <= idx2; idx++)
@@ -463,7 +463,7 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrang
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-     error("Error in scanrange \n");
+     Rf_error("Error in scanrange \n");
   char *names[2] = {"scan", "intensity"};
   PROTECT(list_names = allocVector(STRSXP, 2));
   for(i = 0; i < 2; i++)
@@ -508,7 +508,7 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-     error("Error in scanrange \n");
+     Rf_error("Error in scanrange \n");
 
   buflength = scanrangeTo - scanrangeFrom +1;
   PROTECT(res = NEW_NUMERIC(buflength));
@@ -563,7 +563,7 @@ SEXP getWeightedMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom < firstScan) || (scanrangeFrom > ilastScan) ||
       (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-    error("Error in scanrange \n");
+    Rf_error("Error in scanrange \n");
 
   buflength = scanrangeTo - scanrangeFrom +1;
   PROTECT(res = NEW_NUMERIC(buflength));
@@ -626,11 +626,11 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
 
   struct mzROIStruct * mzROI = (struct mzROIStruct *) calloc(ROI_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzROI == NULL)
-      error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
+      Rf_error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
   struct mzROIStruct * mzval = (struct mzROIStruct *) calloc(MZVAL_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzval == NULL)
-      error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
+      Rf_error("findmzROI/calloc: buffer memory could not be allocated ! (%lu bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
   mzLength.mzvalTotal = MZVAL_INIT_LENGTH;
   mzLength.mzROITotal = ROI_INIT_LENGTH;
@@ -678,7 +678,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
           fInten = scanbuf->thisScan[p].intensity;
 
           if (fMass < lastMass)
-            error("m/z sort assumption violated ! (scan %d, p %d, current %2.4f (I=%2.2f), last %2.4f) \n",ctScan,p,fMass,fInten,lastMass);
+            Rf_error("m/z sort assumption violated ! (scan %d, p %d, current %2.4f (I=%2.2f), last %2.4f) \n",ctScan,p,fMass,fInten,lastMass);
           lastMass = fMass;
 
           if (fInten > inoise)

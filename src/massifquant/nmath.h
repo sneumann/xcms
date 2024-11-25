@@ -46,11 +46,11 @@ double  gamma_cody(double);
 #ifndef MATHLIB_STANDALONE
 
 #include <R_ext/Error.h>
-# define MATHLIB_ERROR(fmt,x)       error(fmt,x);
-# define MATHLIB_WARNING(fmt,x)     warning(fmt,x)
-# define MATHLIB_WARNING2(fmt,x,x2) warning(fmt,x,x2)
-# define MATHLIB_WARNING3(fmt,x,x2,x3)  warning(fmt,x,x2,x3)
-# define MATHLIB_WARNING4(fmt,x,x2,x3,x4) warning(fmt,x,x2,x3,x4)
+# define MATHLIB_ERROR(fmt,x)       Rf_error(fmt,x);
+# define MATHLIB_WARNING(fmt,x)     Rf_warning(fmt,x)
+# define MATHLIB_WARNING2(fmt,x,x2) Rf_warning(fmt,x,x2)
+# define MATHLIB_WARNING3(fmt,x,x2,x3)  Rf_warning(fmt,x,x2,x3)
+# define MATHLIB_WARNING4(fmt,x,x2,x3,x4) Rf_warning(fmt,x,x2,x3,x4)
 
 #include <R_ext/Arith.h>
 #define ML_POSINF   R_PosInf
