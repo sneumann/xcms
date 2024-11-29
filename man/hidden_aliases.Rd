@@ -13,11 +13,14 @@
 \alias{chromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
+\alias{hasFilledChromPeaks,XcmsExperimentHdf5-method}
+\alias{fillChromPeaks,XcmsExperimentHdf5,ChromPeakAreaParam-method}
 \alias{adjustRtime,XcmsExperimentHdf5,PeakGroupsParam-method}
 \alias{dropAdjustedRtime,XcmsExperimentHdf5-method}
 \alias{hasFeatures,XcmsExperimentHdf5-method}
 \alias{dropFeatureDefinitions,XcmsExperimentHdf5-method}
 \alias{groupChromPeaks,XcmsExperimentHdf5,Param-method}
+\alias{featureArea,XcmsExperimentHdf5-method}
 \alias{featureDefinitions<-,XcmsExperimentHdf5-method}
 \alias{featureDefinitions,XcmsExperimentHdf5-method}
 \alias{featureValues,XcmsExperimentHdf5-method}
@@ -67,6 +70,16 @@
   BPPARAM = bpparam()
 )
 
+\S4method{hasFilledChromPeaks}{XcmsExperimentHdf5}(object)
+
+\S4method{fillChromPeaks}{XcmsExperimentHdf5,ChromPeakAreaParam}(
+  object,
+  param,
+  msLevel = 1L,
+  chunkSize = 2L,
+  BPPARAM = bpparam()
+)
+
 \S4method{adjustRtime}{XcmsExperimentHdf5,PeakGroupsParam}(object, param, msLevel = 1L, ...)
 
 \S4method{dropAdjustedRtime}{XcmsExperimentHdf5}(object)
@@ -76,6 +89,16 @@
 \S4method{dropFeatureDefinitions}{XcmsExperimentHdf5}(object, keepAdjustedRtime = FALSE)
 
 \S4method{groupChromPeaks}{XcmsExperimentHdf5,Param}(object, param, msLevel = 1L, add = FALSE)
+
+\S4method{featureArea}{XcmsExperimentHdf5}(
+  object,
+  mzmin = min,
+  mzmax = max,
+  rtmin = min,
+  rtmax = max,
+  features = character(),
+  msLevel = 1L
+)
 
 \S4method{featureDefinitions}{XcmsExperimentHdf5}(object) <- value
 

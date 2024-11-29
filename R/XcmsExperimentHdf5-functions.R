@@ -244,7 +244,8 @@ NULL
         l <- list(res[[i]]$chromPeaks)
         nas <- is.na(rownames(l[[1L]]))
         rownames(l[[1L]])[nas] <- .featureIDs(
-            sum(nas), paste0("CP", msLevel, x@sample_id[i]), max_index[i] + 1L)
+            sum(nas), paste0("CP", msLevel, x@sample_id[i]),
+            max_index[i] + 1L, min_len = 6)
         names(l) <- x@sample_id[i]
         .h5_write_data(h5_file = x@hdf5_file, data_list = l,
                        name = "chrom_peaks", ms_level = msLevel,
@@ -261,6 +262,107 @@ NULL
                        replace = TRUE, write_rownames = FALSE)
     }
 }
+
+#' Perform peak integration on provided m/z - RT regions. Can be called for
+#' gap filling or manual definition of chrom peaks.
+#'
+#' The newly defined chrom peaks will be appended to eventually existing chrom
+#' peak array in the HDF5 file. Also, content to the chrom peak data of the
+#' respective peaks will be added to the HDF5 file.
+#'
+#' For gap-filling, the rownames of the individual matrices in `pal` need to
+#' represent the feature IDs and `update_features` needs to be set to `TRUE`.
+#'
+#' @param x `XcmsExperimentHdf5` with data from potentially multiple files.
+#'
+#' @param pal `list` of peak area matrices defining (for each individual sample
+#'     in `x`) the MS area from which the signal should be integrated. Names
+#'     should represent the file/sample index!
+#'
+#' @param msLevel `integer(1)` with the MS level on which to integrate the data.
+#'
+#' @param intFun function to be used for the integration.
+#'
+#' @param mzCenterFun function to calculate the m/z value
+#'
+#' @param update_features `logical(1)` whether feature to chrom peak mappings
+#'     should be updated too. If `TRUE` (i.e. for gap filling with
+#'     `fillChromPeaks()`) the rownames of the individual peak area definitions
+#'     in `pal` need to correspond to feature IDs.
+#'
+#' @return `integer(1)` being the hdf5 counter that keeps track of the number
+#'     of writing operations to the HDF5 file.
+#'
+#' @noRd
+.h5_xmse_integrate_chrom_peaks <-
+    function(x, pal, msLevel = 1L, intFun = .chrom_peak_intensity_centWave,
+             mzCenterFun = "mzCenter.wMean", param = MatchedFilterParam(),
+             BPPARAM = bpparam(), update_features = FALSE, ...) {
+        keep <- which(msLevel(spectra(x)) == msLevel)
+        f <- as.factor(fromFile(x)[keep])
+        if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
+        else rt <- rtime(spectra(x))[keep]
+        cn <- c(.h5_chrom_peaks_colnames(x, msLevel = msLevel), "sample")
+        res <- bpmapply(
+            split(peaksData(filterMsLevel(spectra(x), msLevel),f =factor()),f),
+            split(rt, f),
+            pal,
+            as.integer(names(pal)),
+            FUN = intFun,
+            MoreArgs = list(mzCenterFun = mzCenterFun, cn = cn, param = param),
+            SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
+        if (update_features) {
+            fids <- .h5_feature_definitions_rownames(x, msLevel)[[1L]]
+            feature_idx <- lapply(res, function(z) match(rownames(z), fids))
+        }
+        ## Update HDF5 file content per sample
+        mc <- x@hdf5_mod_count
+        for (i in seq_along(res)) {
+            ## chrom peaks
+            pks <- .h5_read_data(
+                x@hdf5_file, id = x@sample_id[i], ms_level = msLevel,
+                name = "chrom_peaks", read_colnames=TRUE,
+                read_rownames = TRUE)[[1L]]
+            prefix <- paste0("CP", msLevel, x@sample_id[i])
+            max_index <- max(as.integer(sub(prefix, "", rownames(pks))))
+            rownames(res[[i]]) <- .featureIDs(
+                nrow(res[[i]]), prefix, max_index + 1L, min_len = 6)
+            l <- list(rbindFill(pks, res[[i]][, colnames(res[[i]]) !="sample"]))
+            names(l) <- x@sample_id[i]
+            rm(pks)
+            .h5_write_data(
+                x@hdf5_file, l, name = "chrom_peaks", ms_level = msLevel,
+                replace = TRUE, write_colnames = TRUE, write_rownames = TRUE)
+            ## chrom peak data
+            pkd <- .h5_read_data(
+                x@hdf5_file, id = x@sample_id[i], ms_level = msLevel,
+                name = "chrom_peak_data", read_colnames = TRUE)[[1L]]
+            l <- list(rbindFill(
+                pkd, data.frame(is_filled = rep(TRUE, nrow(res[[i]])),
+                                merged = FALSE)))
+            names(l) <- x@sample_id[i]
+            mc <- .h5_write_data(
+                x@hdf5_file, l, name = "chrom_peak_data", ms_level = msLevel,
+                replace = TRUE, write_rownames = FALSE)
+            ## feature to chrom peak mapping
+            if (update_features) {
+                fmap <- rbind(
+                    .h5_read_data(
+                        x@hdf5_file, x@sample_id[i],
+                        "feature_to_chrom_peaks", msLevel)[[1L]],
+                    cbind(feature_idx[[i]],
+                          seq(nrow(pkd) + 1, length.out = nrow(res[[i]])))
+                )
+                l <- list(fmap[order(fmap[, 1L]), , drop = FALSE])
+                names(l) <- x@sample_id[i]
+                mc <- .h5_write_data(
+                    x@hdf5_file, l, name = "feature_to_chrom_peaks",
+                    write_colnames = FALSE, write_rownames = FALSE,
+                    ms_level = msLevel)
+            }
+        }
+        mc
+    }
 
 #' Internal function to extract the `chromPeaks` `matrix` of `x`. Mandatory
 #' variables are `x` and `msLevel`.
@@ -542,7 +644,7 @@ NULL
 .h5_feature_values_ms_level <- function(ms_level, x, method, value, intensity,
                                         filled = TRUE) {
     cn <- .h5_chrom_peaks_colnames(x, ms_level)
-  col <- switch(method,
+    col <- switch(method,
                   sum = value,
                   medret = c(value, "rt"),
                   maxint = c(value, intensity))
@@ -554,9 +656,7 @@ NULL
     rtmed <- rhdf5::h5read(x@hdf5_file,
                            paste0("/features/ms_", ms_level,
                                   "/feature_definitions/rtmed"), drop = TRUE)
-    rn <- rhdf5::h5read(x@hdf5_file,
-                        paste0("/features/ms_", ms_level,
-                               "/feature_definitions_rownames"), drop = TRUE)
+    rn <- .h5_feature_definitions_rownames(x, ms_level)[[1L]]
     res <- do.call(
         cbind, lapply(x@sample_id, .h5_feature_values_sample,
                       hdf5_file = x@hdf5_file, ms_level = ms_level,
@@ -594,9 +694,7 @@ NULL
                                            ":elapsed"),
                            total = length(x@sample_id) + 1L, clear = FALSE)
     pb$tick(0)
-    fids <- rhdf5::h5read(x@hdf5_file,
-                          paste0("/features/ms_", ms_level,
-                                 "/feature_definitions_rownames"), drop = TRUE)
+    fids <- .h5_feature_definitions_rownames(x, ms_level)[[1L]]
     feature_idx <- unique(match(features, fids))
     if (anyNA(feature_idx))
         stop("Some of the provided feature IDs were not found in the",
@@ -651,6 +749,13 @@ NULL
     x[as.integer(names(vl[!l]))] <- unlist(vl[!l], FALSE, FALSE)
     x[as.integer(names(vl[l]))] <- vapply(vl[l], dups, x[1L], USE.NAMES = FALSE)
     x
+}
+
+.h5_feature_definitions_rownames <- function(x, msLevel = x@features_ms_level) {
+    ids <- paste0("/features/ms_", msLevel, "/feature_definitions_rownames")
+    h5 <- rhdf5::H5Fopen(x@hdf5_file)
+    on.exit(invisible(rhdf5::H5Fclose(h5)))
+    lapply(ids, FUN = rhdf5::h5read, file = h5, drop = TRUE)
 }
 
 ################################################################################

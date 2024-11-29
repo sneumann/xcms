@@ -526,6 +526,60 @@ test_that("featureArea,XcmsExperimentHdf5 works", {
     expect_equal(unname(res), unname(ref))
 })
 
+test_that("fillChromPeaks,XcmsExperimentHdf5,PeakAreaParam", {
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+    fvals <- featureValues(x, msLevel = 1L)
+    cps <- chromPeaks(x, msLevel = 1L)
+
+    expect_error(
+        fillChromPeaks(x, param = ChromPeakAreaParam(), msLevel = 1:2),
+        "Can only perform peak filling")
+    expect_error(
+        fillChromPeaks(x, param = ChromPeakAreaParam(), msLevel = 2),
+        "No feature definitions for MS level")
+
+    p <- ChromPeakAreaParam(mzmin = min, mzmax = max, rtmin = min, rtmax = max)
+    res <- fillChromPeaks(x, param = p)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    expect_equal(res@gap_peaks_ms_level, 1L)
+    res_cpd <- chromPeakData(res)
+    res_cps <- chromPeaks(res)
+    expect_true(sum(res_cpd$is_filled) > 0)
+    expect_true(length(res@processHistory) > length(x@processHistory))
+
+    ## Compare results with "reference"
+    ref <- fillChromPeaks(xmseg_full_ref, p)
+    ref_cpd <- chromPeakData(ref)
+    ref_cps <- chromPeaks(ref)
+    idx <- order(ref_cps[, "sample"])
+    ref_cpd <- ref_cpd[idx, ]
+    ref_cps <- ref_cps[idx, ]
+    expect_equal(res_cpd$is_filled, ref_cpd$is_filled)
+    expect_equal(unname(res_cps), unname(ref_cps))
+
+    ## Compare feature values.
+    fvals_res <- featureValues(res, msLevel = 1L)
+    expect_equal(dim(fvals_res), dim(fvals))
+    expect_equal(dimnames(fvals_res), dimnames(fvals))
+    expect_true(sum(is.na(fvals_res)) < sum(is.na(fvals)))
+    rownames(fvals_res) <- NULL
+
+    fvals_ref <- featureValues(ref, msLevel = 1L)
+    rownames(fvals_ref) <- NULL
+    expect_equal(fvals_ref, fvals_res)
+
+    ## Test featureValues with filled = FALSE
+    tmp <- featureValues(res, msLevel = 1L, filled = FALSE)
+    expect_equal(tmp, fvals)
+
+##    LLLLL test dropFille
+
+    rm(tf)
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

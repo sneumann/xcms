@@ -50,10 +50,14 @@ fixedRt(object)
 fixedMz(object)
 
 ChromPeakAreaParam(
-  mzmin = function(z) quantile(z, probs = 0.25, names = FALSE),
-  mzmax = function(z) quantile(z, probs = 0.75, names = FALSE),
-  rtmin = function(z) quantile(z, probs = 0.25, names = FALSE),
-  rtmax = function(z) quantile(z, probs = 0.75, names = FALSE)
+  mzmin = function(z, na.rm = TRUE) quantile(z, probs = 0.25, names = FALSE, na.rm =
+    na.rm),
+  mzmax = function(z, na.rm = TRUE) quantile(z, probs = 0.75, names = FALSE, na.rm =
+    na.rm),
+  rtmin = function(z, na.rm = TRUE) quantile(z, probs = 0.25, names = FALSE, na.rm =
+    na.rm),
+  rtmax = function(z, na.rm = TRUE) quantile(z, probs = 0.75, names = FALSE, na.rm =
+    na.rm)
 )
 
 \S4method{expandMz}{FillChromPeaksParam}(object)

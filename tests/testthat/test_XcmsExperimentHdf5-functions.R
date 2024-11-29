@@ -778,16 +778,15 @@ test_that(".h5_features_ms_region_values works", {
 })
 
 test_that(".h5_features_ms_region works", {
-    res <- xcms:::.h5_features_ms_region(
+    res <- .h5_features_ms_region(
         xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
-        features = rownames(featureDefinitions(xmseg_full_h5)),
-        ms_level = 1L)
+        features = rownames(featureDefinitions(xmseg_full_h5)), ms_level = 1L)
     expect_true(is.matrix(res))
     expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
     expect_equal(nrow(res), nrow(featureDefinitions(xmseg_full_h5)))
     expect_equal(rownames(res), rownames(featureDefinitions(xmseg_full_h5)))
 
-    res_sub <- xcms:::.h5_features_ms_region(
+    res_sub <- .h5_features_ms_region(
         xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
         features = rownames(res)[c(4, 10, 12)], ms_level = 1L)
     expect_true(is.matrix(res_sub))
@@ -795,7 +794,7 @@ test_that(".h5_features_ms_region works", {
     expect_equal(nrow(res_sub), 3)
     expect_equal(res[c(4, 10, 12), ], res_sub)
 
-    res_sub <- xcms:::.h5_features_ms_region(
+    res_sub <- .h5_features_ms_region(
         xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
         features = rownames(res)[c(10, 12, 10, 4)], ms_level = 1L)
     expect_true(is.matrix(res_sub))
@@ -804,10 +803,83 @@ test_that(".h5_features_ms_region works", {
     expect_equal(res[c(10, 12, 10, 4), ], res_sub)
 
     ## errors
-    expect_error(xcms:::.h5_features_ms_region(
+    expect_error(.h5_features_ms_region(
         xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
         features = c(rownames(res)[c(10, 12, 10, 4)], "a"), ms_level = 1L),
         "not found")
+})
+
+test_that(".h5_xmse_integrate_chrom_peaks works", {
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    tmp <- xmseg_full_h5
+    tmp@hdf5_file <- tf
+
+    x <- .h5_subset_xcms_experiment(
+        tmp, 1:2, keepChromPeaks = TRUE, keepAdjustedRtime = TRUE,
+        keepFeatures = TRUE, ignoreHistory = TRUE)
+    pal <- split.data.frame(chromPeaks(x), chromPeaks(x)[, "sample"])
+    res <- .h5_xmse_integrate_chrom_peaks(x, pal, param = CentWaveParam())
+    expect_equal(res, 22L)
+    ## check file content.
+    a <- .h5_read_data(x@hdf5_file, x@sample_id, name = "chrom_peaks",
+                       ms_level = rep(1L, 2), read_rownames = TRUE,
+                       read_colnames = TRUE)
+    expect_equal(nrow(a[[1L]]), 2 * nrow(pal[[1L]]))
+    expect_equal(nrow(a[[2L]]), 2 * nrow(pal[[2L]]))
+    expect_equal(a[[1L]][seq_len(nrow(pal[[1L]])), ],
+                 pal[[1L]][, colnames(pal[[1L]]) != "sample"])
+    expect_equal(a[[2L]][seq_len(nrow(pal[[2L]])), ],
+                 pal[[2L]][, colnames(pal[[2L]]) != "sample"])
+    a <- .h5_read_data(x@hdf5_file, x@sample_id, name = "chrom_peak_data",
+                       ms_level = rep(1L, 2))
+    expect_equal(nrow(a[[1L]]), 2 * nrow(pal[[1L]]))
+    expect_equal(nrow(a[[2L]]), 2 * nrow(pal[[2L]]))
+    expect_true(all(!a[[1L]]$is_filled[seq_len(nrow(pal[[1L]]))]))
+    expect_true(all(a[[1L]]$is_filled[seq(nrow(pal[[1L]]) + 1L,
+                                          length.out = nrow(pal[[1L]]))]))
+
+    ## Test with two other samples, get chrom peak area for some features
+    ## present in a file. then integrate. check that featureValues are doubled
+    ## with sum.
+    tmp@hdf5_mod_count <- 22L
+    x <- .h5_subset_xcms_experiment(
+        tmp, 3:4, keepChromPeaks = TRUE, keepAdjustedRtime = TRUE,
+        keepFeatures = TRUE, ignoreHistory = TRUE)
+    fvals_a <- featureValues(x, method = "sum")
+    idx <- c(2, 4, 5, 6)
+    fvals <- fvals_a[idx, ]
+    a <- .h5_read_data(x@hdf5_file, id = x@sample_id,
+                       "feature_to_chrom_peaks", ms_level = c(1L, 1L))
+    pks <- .h5_read_data(x@hdf5_file, id = x@sample_id, "chrom_peaks",
+                         ms_level = c(1L, 1L), read_colnames = TRUE)
+    pal <- mapply(pks, a, FUN = function(z, i) {
+        z[i[i[, 1L] %in% idx, 2L], c("mzmin", "mzmax", "rtmin", "rtmax")]
+    }, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    pal <- lapply(pal, function(z) {
+        rownames(z) <- rownames(fvals_a)[idx]
+        z
+    })
+    names(pal) <- seq_along(pal)
+    res <- .h5_xmse_integrate_chrom_peaks(
+        x, pal, param = CentWaveParam(), BPPARAM = SerialParam(),
+        update_features = TRUE)
+    expect_equal(res, 28L)
+    b <- .h5_read_data(x@hdf5_file, id = x@sample_id, "feature_to_chrom_peaks",
+                       ms_level = c(1L, 1L))
+    expect_equal(vapply(a, nrow, NA_integer_) + 4L,
+                 vapply(b, nrow, NA_integer_))
+
+    fvals_b <- featureValues(x, method = "sum")
+    expect_equal(fvals_a[-idx, ], fvals_b[-idx, ])
+    expect_true(all(fvals_b[idx, ] > fvals_a[idx, ]))
+    rm(tf)
+})
+
+test_that(".h5_feature_definitions_rownames works", {
+    res <- .h5_feature_definitions_rownames(xmseg_full_h5)
+    expect_true(is.list(res))
+    expect_equal(res[[1L]], rownames(featureDefinitions(xmseg_full_h5)))
 })
 
 rm(h5f_full_g)
