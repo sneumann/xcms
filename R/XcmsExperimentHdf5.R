@@ -489,10 +489,10 @@ setMethod("dropFilledChromPeaks", "XcmsExperimentHdf5", function(object) {
     for (msl in object@gap_peaks_ms_level) {
         for (id in object@sample_id) {
             pks <- .h5_read_data(
-                object@hdf5_file, id, msl, "chrom_peaks",
-                read_colnames= TRUE, read_rownames= TRUE)[[1L]]
+                object@hdf5_file, id, "chrom_peaks", msl,
+                read_colnames = TRUE, read_rownames = TRUE)[[1L]]
             pkd <- .h5_read_data(
-                object@hdf5_file, id, msl, "chrom_peak_data",
+                object@hdf5_file, id, "chrom_peak_data", msl,
                 read_colnames = TRUE)[[1L]]
             keep <- which(!pkd$is_filled)
             l <- list(pks[keep, , drop = FALSE])
@@ -507,10 +507,10 @@ setMethod("dropFilledChromPeaks", "XcmsExperimentHdf5", function(object) {
                 replace = TRUE, write_rownames = FALSE)
             fmap <- .h5_read_data(
                 object@hdf5_file, id, "feature_to_chrom_peaks", msl)[[1L]]
-            l <- list(fmap[!fmap[, 2L] %in% keep, , drop = FALSE])
+            l <- list(fmap[fmap[, 2L] %in% keep, , drop = FALSE])
             names(l) <- id
             mc <- .h5_write_data(
-                x@hdf5_file, l, name = "feature_to_chrom_peaks",
+                object@hdf5_file, l, name = "feature_to_chrom_peaks",
                 write_colnames = FALSE, write_rownames = FALSE,
                 ms_level = msl)
        }

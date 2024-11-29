@@ -575,7 +575,18 @@ test_that("fillChromPeaks,XcmsExperimentHdf5,PeakAreaParam", {
     tmp <- featureValues(res, msLevel = 1L, filled = FALSE)
     expect_equal(tmp, fvals)
 
-##    LLLLL test dropFille
+    ## dropFilledChromPeaks
+    res <- dropFilledChromPeaks(res)
+    expect_equal(res@hdf5_mod_count, 66L)
+    expect_false(hasFilledChromPeaks(res))
+    cps_res <- chromPeaks(res)
+    expect_equal(cps_res, cps)
+    cpd_res <- chromPeakData(res)
+    expect_true(all(!cpd_res$is_filled))
+
+    fvals_res <- featureValues(res, msLevel = 1L)
+    expect_equal(fvals, fvals_res)
+    expect_equal(res@processHistory, x@processHistory)
 
     rm(tf)
 })
