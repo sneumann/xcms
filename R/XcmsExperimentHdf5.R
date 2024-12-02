@@ -81,8 +81,9 @@
 #'   with the indices of the chromatographic peaks per feature. Also, the
 #'   columns are returned in alphabetic order.
 #'
-#' - `featureValues()`: parameter `value = "index"` (i.e. returning the index
-#'   of the chromatographic peaks per feature) is not supported.
+#' - `featureValues()`: for parameter `value`, the option `value = "index"`
+#'   (i.e. returning the index of the chromatographic peaks within the
+#'   `chromPeaks()` matrix per feature) is **not** supported.
 #'
 #' @author Johannes Rainerr, Philippine Louail
 NULL
@@ -525,14 +526,6 @@ setMethod("dropFilledChromPeaks", "XcmsExperimentHdf5", function(object) {
     object
 })
 
-#' TODO: LLLLLL
-#' - filterMsLevel
-#' - filterRt
-#' - filterMz
-#'
-#' @noRd
-NULL
-
 ################################################################################
 ##
 ##        RETENTION TIME ALIGNMENT
@@ -869,3 +862,31 @@ setMethod(
             isolationWindow = isolationWindowTargetMz,
             BPPARAM = BPPARAM)
     })
+
+#' @rdname hidden_aliases
+setMethod(
+    "filterMsLevel", "XcmsExperimentHdf5",
+    function(object, msLevel. = uniqueMsLevels(object)) {
+        if (!length(msLevel.))
+            return(object)
+        if (hasChromPeaks(object)) {
+            object@chrom_peaks_ms_level <-
+                object@chrom_peaks_ms_level[
+                           object@chrom_peaks_ms_level %in% msLevel.]
+            object@gap_peaks_ms_level <-
+                object@gap_peaks_ms_level[
+                       object@gap_peaks_ms_level %in% msLevel.]
+        }
+        if (hasFeatures(object))
+            object@features_ms_level <-
+                object@features_ms_level[object@features_ms_level %in% msLevel.]
+        getMethod("filterMsLevel", "MsExperiment")(object, msLevel.)
+    })
+
+#' TODO: LLLLLL
+#' - filterMsLevel
+#' - filterRt
+#' - filterMz
+#'
+#' @noRd
+NULL

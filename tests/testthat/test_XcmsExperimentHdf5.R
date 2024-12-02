@@ -591,6 +591,22 @@ test_that("fillChromPeaks,XcmsExperimentHdf5,PeakAreaParam", {
     rm(tf)
 })
 
+test_that("filterMsLevel,XcmsExperimentHdf5 works", {
+    res <- filterMsLevel(xmseg_full_h5, msLevel. = integer())
+    expect_equal(res@chrom_peaks_ms_level, xmseg_full_h5@chrom_peaks_ms_level)
+    res <- filterMsLevel(xmseg_full_h5)
+    expect_equal(res@chrom_peaks_ms_level, xmseg_full_h5@chrom_peaks_ms_level)
+    expect_equal(res@chrom_peaks_ms_level, 1L)
+    expect_equal(msLevel(res@spectra), msLevel(xmseg_full_h5@spectra))
+
+    res <- filterMsLevel(xmseg_full_h5, 2L)
+    expect_equal(res@chrom_peaks_ms_level, integer())
+    expect_equal(res@gap_peaks_ms_level, integer())
+    expect_equal(res@features_ms_level, integer())
+    expect_equal(length(res@spectra), 0L)
+    expect_equal(sampleData(res), sampleData(xmseg_full_h5))
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,
