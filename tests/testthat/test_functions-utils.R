@@ -505,3 +505,21 @@ test_that(".match_last works", {
     res <- .match_last(c("c", "a", "d"), a)
     expect_equal(res, c(3L, 4L, NA_integer_))
 })
+
+test_that(".which_chrom_peaks_rt works", {
+    a <- cbind(rtmin = c(1, 2, 3, 4, 5, 6),
+               rt = c(3, 4, 3.4, 5, 8, 12.2))
+    res <- .which_chrom_peaks_rt(a)
+    expect_equal(res, 1:6)
+    res <- .which_chrom_peaks_rt(a, c(20, 30))
+    expect_equal(res, integer())
+    res <- .which_chrom_peaks_rt(a, c(3, 6))
+    expect_equal(res, 1:4)
+})
+
+test_that(".is_equal works", {
+    expect_false(.is_equal(1:3, 1:4))
+    expect_true(.is_equal("a", "a"))
+    expect_true(.is_equal(c(1:3), 1:3))
+    expect_true(.is_equal(as.character(1:3), 1:3))
+})

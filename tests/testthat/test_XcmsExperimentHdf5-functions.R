@@ -882,4 +882,40 @@ test_that(".h5_feature_definitions_rownames works", {
     expect_equal(res[[1L]], rownames(featureDefinitions(xmseg_full_h5)))
 })
 
+test_that(".h5_filter_chrom_peaks,XcmsExperimentHdf5 works", {
+    tf <- tempfile()
+    file.copy(xmse_h5@hdf5_file, tf)
+    x <- xmse_h5
+    x@hdf5_file <- tf
+    res <- .h5_filter_chrom_peaks(x, 1L, .which_chrom_peaks_rt,
+                                  rt = c(-Inf, Inf))
+    expect_equal(res, x@hdf5_mod_count)
+    res <- .h5_filter_chrom_peaks(x, 1L, .which_chrom_peaks_rt,
+                                  rt = c(3000, 3300))
+    expect_equal(res, x@hdf5_mod_count + 6)
+    x@hdf5_mod_count <- res
+    pks <- chromPeaks(x)
+    expect_true(all(pks[, "rt"] > 3000 & pks[, "rt"] < 3300))
+    rm(tf)
+
+    ## With features.
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+    res <- .h5_filter_chrom_peaks(
+        x, 1L, .which_chrom_peaks_rt, rt = c(3000, 3300))
+    expect_equal(res, x@hdf5_mod_count * 2)
+    fts <- .h5_read_data(
+        x@hdf5_file, "features", "feature_definitions", 1L)[[1L]]
+    expect_true(all(fts[, "rtmax"] > 3000))
+    expect_true(all(fts[, "rtmin"] < 3300))
+    map <- .h5_read_data(x@hdf5_file, x@sample_id, "feature_to_chrom_peaks",
+                         rep(1L, length(x)))
+    lapply(map, function(z) {
+        expect_true(!anyNA(z))
+        expect_true(all(z[, 1L] %in% seq_len(nrow(fts))))
+    })
+})
+
 rm(h5f_full_g)

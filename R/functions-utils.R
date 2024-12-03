@@ -923,3 +923,11 @@ groupOverlaps <- function(xmin, xmax) {
     cbind(rtime = scantime[scns],
           intensity = res$intensity)
 }
+
+.which_chrom_peaks_rt <- function(x, rt = c(-Inf, Inf)) {
+    base::which(between(x[, "rt"], rt))
+}
+
+.is_equal <- function(a, b) {
+    length(a) == length(b) && all(a == b)
+}

@@ -598,6 +598,7 @@ test_that("filterMsLevel,XcmsExperimentHdf5 works", {
     expect_equal(res@chrom_peaks_ms_level, xmseg_full_h5@chrom_peaks_ms_level)
     expect_equal(res@chrom_peaks_ms_level, 1L)
     expect_equal(msLevel(res@spectra), msLevel(xmseg_full_h5@spectra))
+    expect_s4_class(res, "XcmsExperimentHdf5")
 
     res <- filterMsLevel(xmseg_full_h5, 2L)
     expect_equal(res@chrom_peaks_ms_level, integer())
@@ -605,6 +606,45 @@ test_that("filterMsLevel,XcmsExperimentHdf5 works", {
     expect_equal(res@features_ms_level, integer())
     expect_equal(length(res@spectra), 0L)
     expect_equal(sampleData(res), sampleData(xmseg_full_h5))
+    expect_s4_class(res, "XcmsExperimentHdf5")
+})
+
+test_that("filterRt,XcmsExperimentHdf5 works", {
+    tf <- tempfile()
+    file.copy(xmse_h5@hdf5_file, tf)
+    x <- xmse_h5
+    x@hdf5_file <- tf
+    x <- filterRt(x, rt = c(3300, 3500))
+    expect_true(validObject(x))
+    ref <- loadXcmsData("faahko_sub2")
+    ref <- filterRt(ref, rt = c(3300, 3500))
+    expect_equal(unname(chromPeaks(x)), unname(chromPeaks(ref)))
+    rm(tf)
+
+    ## with features
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+    x <- filterRt(x, rt = c(3300, 3500))
+    expect_true(validObject(x))
+    ref <- filterRt(xmseg_full_ref, rt = c(3300, 3500))
+    expect_equal(unname(chromPeaks(x)), unname(chromPeaks(ref)))
+    a <- chromPeakData(x)
+    b <- chromPeakData(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b[, colnames(a)])
+    a <- featureDefinitions(x)
+    b <- featureDefinitions(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b[, colnames(a)])
+    a <- featureValues(x, method = "sum")
+    b <- featureValues(ref, method = "sum")
+    expect_equal(unname(a), unname(b))
+
+    rm(ft)
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

@@ -528,6 +528,75 @@ NULL
     cnt
 }
 
+#' Filter the chrom peak HDF5 entries based on a user provided filter function.
+#' If present, this function updates also the chrom peak to feature mapping and
+#' feature definitions entries.
+#'
+#' Functions that can be used for `FUN`:
+#' - `.which_chrom_peaks_rt()`: filter based on rt range.
+#'
+#' @param x `XcmsExperimentHdf5`.
+#'
+#' @param FUN function to filter each chrom peak matrix. Additional parameters
+#'     to this functions are provided through `...`. This function is expected
+#'     to take either the chrom peaks `matrix` or chrom peak data `data.frame`
+#'     and returns an `integer` with the index of the rows to keep.
+#'
+#' @return the function returns the *mod counter* representing eventual updates
+#'     to the file content.
+#'
+#' @noRd
+.h5_filter_chrom_peaks <- function(x, msLevel, FUN = NULL, ...) {
+    mc <- x@hdf5_mod_count
+    keep_features <- vector("list", length(x))
+    names(keep_features) <- x@sample_id
+    h5f <- x@hdf5_file
+    for (msl in msLevel) {
+        handle_features <- any(x@features_ms_level %in% msl)
+        for (id in x@sample_id) {
+            pks <- .h5_read_data(h5f, id, "chrom_peaks", msl,
+                                 read_colnames =TRUE, read_rownames =TRUE)[[1L]]
+            pkd <- .h5_read_data(h5f, id, "chrom_peak_data", msl,
+                                 read_colnames = TRUE)[[1L]]
+            idx <- FUN(pks, ...)
+            if (.is_equal(idx, 1:nrow(pks))) next
+            ## Subset and export
+            l <- list(pks[idx, , drop = FALSE])
+            names(l) <- id
+            .h5_write_data(h5f, l, "chrom_peaks", msl, replace = TRUE,
+                           write_colnames = TRUE, write_rownames = TRUE)
+            l <- list(extractROWS(pkd, idx))
+            names(l) <- id
+            mc <- .h5_write_data(h5f, l, "chrom_peak_data", msl,
+                                 replace = TRUE, write_rownames = FALSE)
+            if (handle_features) {
+                fmap <- .h5_read_data(
+                    h5f, id, "feature_to_chrom_peaks", msl)[[1L]]
+                fmap <- fmap[fmap[, 2L] %in% idx, , drop = FALSE]
+                keep_features[[id]] <- cbind(fmap[, 1L], match(fmap[, 2L], idx))
+            }
+        }
+        if (handle_features) {
+            fd <- .h5_read_data(h5f, "features", "feature_definitions",
+                                read_rownames = TRUE, ms_level = msl)[[1L]]
+            keep <- sort(unique(unlist(
+                lapply(keep_features, `[`, , j = 1L), use.names = FALSE)))
+            fd <- extractROWS(fd, keep)
+            .h5_write_data(h5f, list(features = fd), "feature_definitions",
+                           msl, replace = TRUE, write_rownames = TRUE)
+            keep_features <- lapply(keep_features,
+                                    function(z, i) {
+                                        z[, 1L] <- match(z[, 1L], keep)
+                                        z
+                                    }, i = keep)
+            mc <- .h5_write_data(
+                h5f, keep_features, "feature_to_chrom_peaks",
+                rep(msl, length(x)), write_colnames = FALSE,
+                write_rownames = FALSE)
+        }
+    }
+    mc
+}
 
 ################################################################################
 ##
