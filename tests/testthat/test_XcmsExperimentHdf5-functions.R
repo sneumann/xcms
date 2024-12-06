@@ -584,13 +584,13 @@ test_that("HDF5 validity works", {
 
 test_that(".h5_write_matrix works", {
     h5f <- tempfile()
-    .h5_initialize_file(h5f)
+    xcms:::.h5_initialize_file(h5f)
     h5 <- H5Fopen(h5f)
 
     mat <- cbind(mz = c(1.12, 1.34, 43.4), rt = c(23.2, 124.3, 123.5))
     rownames(mat) <- c("CP01", "CP02", "CP03")
 
-    .h5_write_matrix(mat, h5, "test_1", 0L)
+    xcms:::.h5_write_matrix(mat, h5, "test_1", 0L)
     expect_equal(h5read(h5, "test_1"), unname(mat))
     expect_equal(as.vector(h5read(h5, "test_1_rownames")), rownames(mat))
     expect_equal(as.vector(h5read(h5, "test_1_colnames")), colnames(mat))
@@ -598,17 +598,32 @@ test_that(".h5_write_matrix works", {
     expect_true(any(l$name == "test_1_colnames"))
     expect_true(any(l$name == "test_1_rownames"))
 
-    .h5_write_matrix(mat, h5, "test_2", 0L, FALSE, FALSE)
+    xcms:::.h5_write_matrix(mat, h5, "test_2", 0L, FALSE, FALSE)
     l <- h5ls(h5)
     expect_false(any(l$name == "test_2_colnames"))
     expect_false(any(l$name == "test_2_rownames"))
+
+    xcms:::.h5_write_matrix(mat[integer(), , drop = FALSE], h5, "test_3", 0L,
+                            TRUE, TRUE)
+    l <- h5ls(h5)
+    expect_true(any(l$name == "test_3_colnames"))
+    expect_true(any(l$name == "test_3_rownames"))
+    res <- h5read(h5, "/test_3")
+    expect_true(is.matrix(res))
+    expect_equal(ncol(res), 2)
+    expect_equal(nrow(res), 0)
+    res <- h5read(h5, "/test_3_colnames")
+    expect_equal(as.vector(res), c("mz", "rt"))
+    res <- h5read(h5, "/test_3_rownames")
+    expect_equal(as.vector(res), character())
+
     H5Fclose(h5)
     file.remove(h5f)
 })
 
 test_that(".h5_write_data_frame works", {
     h5f <- tempfile()
-    .h5_initialize_file(h5f)
+    xcms:::.h5_initialize_file(h5f)
     h5 <- H5Fopen(h5f)
 
     df <- data.frame(ms_level = c(1L, 2L), is_filled = FALSE)
@@ -621,6 +636,19 @@ test_that(".h5_write_data_frame works", {
     expect_equal(as.vector(res$is_filled), unname(df$is_filled))
     res <- as.data.frame(res)
     expect_equal(res[, colnames(df)], df)
+
+    ## Write an empty data.frame
+    df <- df[integer(), , drop = FALSE]
+    .h5_write_data_frame(df, h5, "test_1", 0L)
+    res <- h5read(h5, "test_1")
+    expect_true(is.list(res))
+    expect_equal(names(res), c("is_filled", "ms_level"))
+    expect_equal(as.vector(res$ms_level), unname(df$ms_level))
+    expect_equal(as.vector(res$is_filled), unname(df$is_filled))
+    res <- as.data.frame(res)
+    expect_equal(res[, colnames(df)], df)
+
+    ## write an empty data.frame
     H5Fclose(h5)
     file.remove(h5f)
 })
@@ -887,11 +915,11 @@ test_that(".h5_filter_chrom_peaks,XcmsExperimentHdf5 works", {
     file.copy(xmse_h5@hdf5_file, tf)
     x <- xmse_h5
     x@hdf5_file <- tf
-    res <- .h5_filter_chrom_peaks(x, 1L, .which_chrom_peaks_rt,
-                                  rt = c(-Inf, Inf))
+    res <- .h5_filter_chrom_peaks(x, 1L, .which_in_range,
+                                  range = c(-Inf, Inf), column = "rt")
     expect_equal(res, x@hdf5_mod_count)
-    res <- .h5_filter_chrom_peaks(x, 1L, .which_chrom_peaks_rt,
-                                  rt = c(3000, 3300))
+    res <- .h5_filter_chrom_peaks(x, 1L, .which_in_range,
+                                  range = c(3000, 3300), column = "rt")
     expect_equal(res, x@hdf5_mod_count + 6)
     x@hdf5_mod_count <- res
     pks <- chromPeaks(x)
@@ -904,7 +932,7 @@ test_that(".h5_filter_chrom_peaks,XcmsExperimentHdf5 works", {
     x <- xmseg_full_h5
     x@hdf5_file <- tf
     res <- .h5_filter_chrom_peaks(
-        x, 1L, .which_chrom_peaks_rt, rt = c(3000, 3300))
+        x, 1L, .which_in_range, range = c(3000, 3300), column = "rt")
     expect_equal(res, x@hdf5_mod_count * 2)
     fts <- .h5_read_data(
         x@hdf5_file, "features", "feature_definitions", 1L)[[1L]]

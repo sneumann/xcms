@@ -1398,6 +1398,26 @@ test_that("findChromPeaksIsolationWindow, etc, MsExperiment works", {
     expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(a)))
     expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
     expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
+
+    ## With an XcmsExperimentHdf5
+    tf <- tempfile()
+    a_h5 <- .xcms_experiment_to_hdf5(a, tf)
+    expect_true(hasChromPeaks(a_h5, 1L))
+    expect_true(hasChromPeaks(a_h5, 2L))
+
+    res <- filterIsolationWindow(a_h5)
+    expect_equal(chromPeaks(res), chromPeaks(a_h5))
+
+    res <- filterIsolationWindow(a_h5, mz = 301)
+    expect_true(length(spectra(res)) < length(spectra(mse_dia)))
+    expect_true(all(isolationWindowLowerMz(res@spectra) < 301))
+    expect_true(all(isolationWindowUpperMz(res@spectra) > 301))
+
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(a)))
+    expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
+    expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
+
+    rm(tf)
 })
 
 test_that("chromPeaksChromatograms,XcmsExperiment works", {

@@ -506,14 +506,14 @@ test_that(".match_last works", {
     expect_equal(res, c(3L, 4L, NA_integer_))
 })
 
-test_that(".which_chrom_peaks_rt works", {
+test_that(".which_in_range works", {
     a <- cbind(rtmin = c(1, 2, 3, 4, 5, 6),
                rt = c(3, 4, 3.4, 5, 8, 12.2))
-    res <- .which_chrom_peaks_rt(a)
+    res <- .which_in_range(a)
     expect_equal(res, 1:6)
-    res <- .which_chrom_peaks_rt(a, c(20, 30))
+    res <- .which_in_range(a, c(20, 30), "rt")
     expect_equal(res, integer())
-    res <- .which_chrom_peaks_rt(a, c(3, 6))
+    res <- .which_in_range(a, c(3, 6), "rt")
     expect_equal(res, 1:4)
 })
 
@@ -522,4 +522,13 @@ test_that(".is_equal works", {
     expect_true(.is_equal("a", "a"))
     expect_true(.is_equal(c(1:3), 1:3))
     expect_true(.is_equal(as.character(1:3), 1:3))
+})
+
+test_that(".which_isolation_window works", {
+    x <- data.frame(isolationWindowLowerMz = c(3, 3, 4, 4, 5, 5),
+                    isolationWindowUpperMz = c(5, 5, 6, 6, 7, 7))
+    res <- .which_isolation_window(x, mz = 4)
+    expect_equal(res, c(1L, 2L))
+    res <- .which_isolation_window(x, mz = 2)
+    expect_equal(res, integer())
 })

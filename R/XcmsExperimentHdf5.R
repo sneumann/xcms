@@ -175,22 +175,28 @@ setMethod(
         getMethod("filterMsLevel", "MsExperiment")(object, msLevel.)
     })
 
-## #' @rdname XcmsExperiment
-## setMethod(
-##     "filterIsolationWindow", "XcmsExperiment",
-##     function(object, mz = numeric()) {
-##         if (length(mz) > 1L)
-##             mz <- mz[1L]
-##         object <- filterSpectra(object, filterIsolationWindow, mz = mz)
-##         if (hasChromPeaks(object) && length(mz) &&
-##             all(c("isolationWindowLowerMz", "isolationWindowUpperMz") %in%
-##                 colnames(object@chromPeakData))) {
-##             idx <- which(object@chromPeakData$isolationWindowLowerMz < mz &
-##                          object@chromPeakData$isolationWindowUpperMz > mz)
-##             object <- .filter_chrom_peaks(object, idx)
-##         }
-##         object
-##     })
+#' @rdname hidden_aliases
+setMethod(
+    "filterIsolationWindow", "XcmsExperimentHdf5",
+    function(object, mz = numeric()) {
+        if (length(mz) > 1L)
+            mz <- mz[1L]
+        object <- filterSpectra(object, filterIsolationWindow, mz = mz)
+        if (hasChromPeaks(object) && length(mz)) {
+            cn <- .h5_read_data(
+                object@hdf5_file, id = object@sample_id[1L], "chrom_peak_data",
+                ms_level = object@chrom_peaks_ms_level[1L], read_colnames =TRUE)
+            if (all(c("isolationWindowLowerMz", "isolationWindowUpperMz") %in%
+                    colnames(cn[[1L]]))) {
+                mc <- .h5_filter_chrom_peaks(
+                    object, object@chrom_peaks_ms_level,
+                    FUN = .which_isolation_window, mz = mz,
+                    chrom_peak_data = TRUE)
+                object@hdf5_mod_count <- mc
+            }
+        }
+        object
+    })
 
 #' @rdname hidden_aliases
 setMethod(
@@ -202,27 +208,31 @@ setMethod(
         if (hasChromPeaks(object)) {
             msl <- intersect(msLevel., object@chrom_peaks_ms_level)
             mc <- .h5_filter_chrom_peaks(
-                object, msl, FUN = .which_chrom_peaks_rt, rt = rt)
+                object, msl, FUN = .which_in_range,
+                range = rt, column = "rt")
             object@hdf5_mod_count <- mc
         }
         getMethod("filterRt", "MsExperiment")(
             object, rt = rt, msLevel. = msLevel.)
     })
 
-## #' @rdname XcmsExperiment
-## setMethod(
-##     "filterMzRange", "XcmsExperiment",
-##     function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
-##         if (missing(mz) || !length(mz))
-##             return(object)
-##         mz <- range(mz)
-##         if (hasChromPeaks(object)) {
-##             keep <- between(.chromPeaks(object)[, "mz"], mz)
-##             keep <- keep | (!.chromPeakData(object)$ms_level %in% msLevel.)
-##             object <- .filter_chrom_peaks(object, idx = base::which(keep))
-##         }
-##         callNextMethod(object = object, mz = mz, msLevel. = msLevel.)
-##     })
+#' @rdname hidden_aliases
+setMethod(
+    "filterMzRange", "XcmsExperimentHdf5",
+    function(object, mz = numeric(), msLevel. = uniqueMsLevels(object)) {
+        if (missing(mz) || !length(mz))
+            return(object)
+        mz <- range(mz)
+        if (hasChromPeaks(object)) {
+            msl <- intersect(msLevel., object@chrom_peaks_ms_level)
+            mc <- .h5_filter_chrom_peaks(
+                object, msl, FUN = .which_in_range,
+                range = mz, column = "mz")
+            object@hdf5_mod_count <- mc
+        }
+        getMethod("filterMzRange", "MsExperiment")(
+            object, mz = mz, msLevel. = msLevel.)
+    })
 
 ################################################################################
 ##
@@ -933,8 +943,9 @@ setMethod(
     })
 
 #' TODO: LLLLLL
-#' - filterRt
-#' - filterMz
+#'
+#' - Complete method to convert XcmsExperiment to XcmsExperimentHdf5
+#' - Add method to convert XcmsExperimentHdf5 to XcmsExperiment
 #'
 #' @noRd
 NULL

@@ -56,14 +56,14 @@ NULL
             f <- factor(pkd$ms_level, levels = msl)
             ## Update chrom peak IDs to the new format
             pks <- split.data.frame(pks, f)
-            for (j in length(msl))
+            for (j in seq_along(msl))
                 rownames(pks[[j]]) <- .featureIDs(
                     nrow(pks[[j]]), paste0("CP", msl[j], x@sample_id[i]),
                     min_len = 6)
             pkd <- split.data.frame(
                 pkd[, colnames(pkd) != "ms_level", drop = FALSE], f)
-            names(pks) <- x@sample_id[i]
-            names(pkd) <- x@sample_id[i]
+            names(pks) <- rep(x@sample_id[i], length(pks))
+            names(pkd) <- rep(x@sample_id[i], length(pkd))
             mod_count <- .h5_write_data(
                 h5_file, pks, name = "chrom_peaks", ms_level = msl,
                 replace = FALSE, write_colnames = TRUE, write_rownames = TRUE)
@@ -78,6 +78,11 @@ NULL
         slot(x, "chrom_peaks_ms_level", check = FALSE) <- msl
     }
     if (has_features) {
+        ## LLLLLLL
+        ## Get MS levels of features, per MS level
+        ## write the feature definition data.frame
+        ## Use the peakidx to iterate over samples and write the chrom peak to
+        ## feature mapping.
         stop("Can not yet save feature definitions to HDF5")
         slot(x, "has_features", check = FALSE) <- TRUE
     }
@@ -533,7 +538,7 @@ NULL
 #' feature definitions entries.
 #'
 #' Functions that can be used for `FUN`:
-#' - `.which_chrom_peaks_rt()`: filter based on rt range.
+#' - `.which_in_range()`: filter based on rt or m/z range.
 #'
 #' @param x `XcmsExperimentHdf5`.
 #'
@@ -542,11 +547,16 @@ NULL
 #'     to take either the chrom peaks `matrix` or chrom peak data `data.frame`
 #'     and returns an `integer` with the index of the rows to keep.
 #'
+#' @param chrom_peak_data `logical(1)` whether FUN should be applied to the
+#'     chrom peak `matrix` (the default) or the chrom peak data `data.frame`
+#'     (`chrom_peak_data = TRUE`).
+#'
 #' @return the function returns the *mod counter* representing eventual updates
 #'     to the file content.
 #'
 #' @noRd
-.h5_filter_chrom_peaks <- function(x, msLevel, FUN = NULL, ...) {
+.h5_filter_chrom_peaks <- function(x, msLevel, FUN = NULL,
+                                   chrom_peak_data = FALSE, ...) {
     mc <- x@hdf5_mod_count
     keep_features <- vector("list", length(x))
     names(keep_features) <- x@sample_id
@@ -558,7 +568,8 @@ NULL
                                  read_colnames =TRUE, read_rownames =TRUE)[[1L]]
             pkd <- .h5_read_data(h5f, id, "chrom_peak_data", msl,
                                  read_colnames = TRUE)[[1L]]
-            idx <- FUN(pks, ...)
+            if (chrom_peak_data) idx <- FUN(pkd, ...)
+            else idx <- FUN(pks, ...)
             if (.is_equal(idx, 1:nrow(pks))) next
             ## Subset and export
             l <- list(pks[idx, , drop = FALSE])
@@ -1033,7 +1044,7 @@ NULL
                drop = FALSE]
     ## If sample_index is provided add a column "sample" with the index.
     if (length(sample_index))
-        d <- cbind(d, sample = sample_index[name])
+        d <- cbind(d, sample = rep(sample_index[name], nrow(d)))
     d
 }
 
@@ -1316,11 +1327,12 @@ NULL
                    write.attributes = FALSE,
                    createnewfile = FALSE)
     if (write_rownames) {
+        rn <- rownames(x)
+        if (is.null(rn)) rn <- character()
         dn <- paste0(name, "_rownames")
         if (replace && rhdf5::H5Lexists(h5, dn))
             rhdf5::h5delete(h5, dn)
-        rhdf5::h5write(rownames(x), h5, name = dn,
-                       level = level, createnewfile = FALSE)
+        rhdf5::h5write(rn, h5, name = dn, level = level, createnewfile = FALSE)
     }
     if (write_colnames) {
         dn <- paste0(name, "_colnames")
@@ -1353,11 +1365,12 @@ NULL
     rhdf5::h5writeDataset(x, h5, name, level = level,
                           DataFrameAsCompound = FALSE)
     if (write_rownames) {
+        rn <- rownames(x)
+        if (is.null(rn)) rn <- character()
         dn <- paste0(name, "_rownames")
         if (replace && rhdf5::H5Lexists(h5, dn))
             rhdf5::h5delete(h5, dn)
-        rhdf5::h5write(rownames(x), h5, name = dn,
-                       level = level, createnewfile = FALSE)
+        rhdf5::h5write(rn, h5, name = dn, level = level, createnewfile = FALSE)
     }
 }
 

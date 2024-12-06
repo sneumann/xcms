@@ -644,7 +644,50 @@ test_that("filterRt,XcmsExperimentHdf5 works", {
     b <- featureValues(ref, method = "sum")
     expect_equal(unname(a), unname(b))
 
-    rm(ft)
+    rm(tf)
+})
+
+test_that("filterMzRange,XcmsExperimentHdf5 works", {
+    tf <- tempfile()
+    file.copy(xmse_h5@hdf5_file, tf)
+    x <- xmse_h5
+    x@hdf5_file <- tf
+    x <- filterMzRange(x, mz = c(350, 400))
+    expect_true(validObject(x))
+    ref <- loadXcmsData("faahko_sub2")
+    ref <- filterMzRange(ref, mz = c(350, 400))
+    expect_equal(unname(chromPeaks(x)), unname(chromPeaks(ref)))
+    rm(tf)
+
+    ## with features
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+    x <- filterMzRange(x, mz = c(350, 400))
+    expect_true(validObject(x))
+    ref <- filterMzRange(xmseg_full_ref, mz = c(350, 400))
+    expect_equal(unname(chromPeaks(x)), unname(chromPeaks(ref)))
+    a <- chromPeakData(x)
+    b <- chromPeakData(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b[, colnames(a)])
+    a <- featureDefinitions(x)
+    b <- featureDefinitions(ref)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b[, colnames(a)])
+    a <- featureValues(x, method = "sum")
+    b <- featureValues(ref, method = "sum")
+    expect_equal(unname(a), unname(b))
+
+    rm(tf)
+})
+
+test_that("filterIsolationWindow,XcmsExperimentHdf5 works", {
+    expect_true(TRUE)
+    ## unit tests is in test_XcmsExperiment.R
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

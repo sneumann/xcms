@@ -810,7 +810,7 @@ setMethod(
         msLevel. <- uniqueMsLevels(object)
         if (hasChromPeaks(object))
             object <- .filter_chrom_peaks(
-                object, .which_chrom_peaks_rt(.chromPeaks(object), rt))
+                object, .which_in_range(.chromPeaks(object), rt, "rt"))
         callNextMethod(object = object, rt = rt, msLevel. = msLevel.)
     })
 

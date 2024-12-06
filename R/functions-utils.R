@@ -924,8 +924,14 @@ groupOverlaps <- function(xmin, xmax) {
           intensity = res$intensity)
 }
 
-.which_chrom_peaks_rt <- function(x, rt = c(-Inf, Inf)) {
-    base::which(between(x[, "rt"], rt))
+.which_in_range <- function(x, range = c(-Inf, Inf),
+                            column = "rt") {
+    base::which(between(x[, column], range))
+}
+
+.which_isolation_window <- function(x, mz) {
+    base::which(x$isolationWindowLowerMz < mz &
+                x$isolationWindowUpperMz > mz)
 }
 
 .is_equal <- function(a, b) {
