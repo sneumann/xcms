@@ -176,6 +176,50 @@ test_that(".xcms_experiment_to_hdf5 works", {
     rhdf5::H5Fclose(h5)
     file.remove(h5f)
     expect_error(validObject(res), "Data storage file")
+
+    ## With feature definitions.
+    ref <- loadXcmsData("xmse")
+    h5f <- tempfile()
+
+    res <- .xcms_experiment_to_hdf5(ref, h5f)
+    expect_true(validObject(res))
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    expect_true(hasFeatures(res))
+    expect_equal(res@features_ms_level, 1L)
+    a <- featureDefinitions(ref)
+    b <- featureDefinitions(res)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a[, colnames(b)], b)
+
+    a <- featureValues(ref, method = "sum")
+    b <- featureValues(res, method = "sum")
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+
+    expect_equal(hasFilledChromPeaks(ref), hasFilledChromPeaks(res))
+    a <- featureValues(ref, method = "sum", filled = FALSE)
+    b <- featureValues(res, method = "sum", filled = FALSE)
+    rownames(a) <- NULL
+    rownames(b) <- NULL
+    expect_equal(a, b)
+
+    file.remove(h5f)
+})
+
+test_that("toXcmsExperimentHdf5 works", {
+    res <- toXcmsExperimentHdf5(XcmsExperiment())
+    expect_true(validObject(res))
+    expect_s4_class(res, "XcmsExperimentHdf5")
+
+    expect_error(toXcmsExperimentHdf5(5), "'XcmsExperiment'")
+
+    tf <- tempfile()
+    ref <- loadXcmsData("faahko_sub2")
+    res <- toXcmsExperimentHdf5(ref, tf)
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    rm(tf)
 })
 
 test_that(".h5_dataset_names works", {
@@ -944,6 +988,25 @@ test_that(".h5_filter_chrom_peaks,XcmsExperimentHdf5 works", {
         expect_true(!anyNA(z))
         expect_true(all(z[, 1L] %in% seq_len(nrow(fts))))
     })
+})
+
+test_that(".h5_to_xcms_experiment works", {
+    res <- toXcmsExperiment(xmse_h5)
+    expect_equal(chromPeaks(res), chromPeaks(xmse_h5))
+    expect_equal(rtime(res), rtime(xmse_h5))
+    expect_equal(res@processHistory, xmse_h5@processHistory)
+
+    res <- xcms:::.h5_to_xcms_experiment(xmseg_full_h5)
+    expect_equal(chromPeaks(res), chromPeaks(xmseg_full_h5))
+    expect_equal(rtime(res), rtime(xmseg_full_h5))
+    expect_equal(res@processHistory, xmseg_full_h5@processHistory)
+    expect_equal(chromPeakData(res), chromPeakData(xmseg_full_h5))
+    a <- featureDefinitions(res)
+    b <- featureDefinitions(xmseg_full_h5)
+    expect_equal(a[, colnames(b)], b)
+    a <- featureValues(res, method = "sum")
+    b <- featureValues(xmseg_full_h5, method = "sum")
+    expect_equal(a, b)
 })
 
 rm(h5f_full_g)

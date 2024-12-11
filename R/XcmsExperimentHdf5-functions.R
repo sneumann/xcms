@@ -27,6 +27,49 @@
 #' @noRd
 NULL
 
+#' @rdname XcmsExperimentHdf5
+toXcmsExperimentHdf5 <- function(object, hdf5File = tempfile()) {
+    if (missing(object) || !is(object, "XcmsExperiment"))
+        stop("'object' is expected to be an instance of class 'XcmsExperiment'")
+    .xcms_experiment_to_hdf5(object, h5_file = hdf5File)
+}
+
+#' @rdname XcmsExperimentHdf5
+toXcmsExperiment <- function(object, ...) {
+    if (missing(object) || !is(object, "XcmsExperimentHdf5"))
+        stop("'object' is expected to be an instance of ",
+             "class 'XcmsExperimentHdf5'")
+    .h5_to_xcms_experiment(object)
+}
+
+#' Coerce from XcmsExperimentHdf5 to XcmsExperiment
+#'
+#' @noRd
+.h5_to_xcms_experiment <- function(from) {
+    res <- as(as(from, "MsExperiment"), "XcmsExperiment")
+    if (hasChromPeaks(from)) {
+        res@chromPeaks <- chromPeaks(from)
+        res@chromPeakData <- chromPeakData(from, return.type = "data.frame")
+    }
+    if (hasFeatures(from)) {
+        map <- do.call(rbind, lapply(from@features_ms_level, function(m) {
+            tmp <- .h5_read_data(from@hdf5_file, from@sample_id,
+                                 "feature_to_chrom_peak",
+                                 rep(m, length(from@sample_id)))
+            fid <- .h5_feature_definitions_rownames(from, m)[[1L]]
+            cid <- .h5_chrom_peaks_rownames(from, m)
+            do.call(rbind, mapply(tmp, cid, FUN = function(a, b) {
+                cbind(fid[a[, 1L]], b[a[, 2L]])
+            }))
+        }))
+        fd <- featureDefinitions(from)
+        pkidx <- match(map[, 2L], rownames(res@chromPeaks))
+        fd$peakidx <- split(pkidx, factor(map[, 1L], levels = rownames(fd)))
+        res@featureDefinitions <- fd
+    }
+    res@processHistory <- from@processHistory
+    res
+}
 
 #' Convert a `XcmsExperiment` to an `XcmsExperimentHdf5` object: export all
 #' data to a HDF5 file `h5_file` and return the `XcmsExperimentHdf5`.
@@ -38,17 +81,20 @@ NULL
     .h5_initialize_file(h5_file)
     has_chrom_peaks <- hasChromPeaks(x)
     has_features <- hasFeatures(x)
+    gap_peaks_ms_level <- integer()
     x <- as(x, "XcmsExperimentHdf5")
     x@sample_id <- .featureIDs(length(x), "S")
     x@hdf5_file <- h5_file
     mod_count <- 0L
+    if (has_features)
+        pidx <- split(x@featureDefinitions$peakidx,
+                      x@featureDefinitions$ms_level)
     if (has_chrom_peaks) {
         message("Note: reformatting row names for the chromPeaks matrix.")
         ## Memory-efficient export: save the data for one sample at a time. If
         ## that is too slow we could split the data and export all in one go.
         is_sample <- colnames(x@chromPeaks) == "sample"
         msl <- unique(x@chromPeakData$ms_level)
-
         for (i in seq_along(x@sample_id)) {
             idx <- unname(which(x@chromPeaks[, is_sample] == i))
             pks <- x@chromPeaks[idx, !is_sample, drop = FALSE]
@@ -56,35 +102,66 @@ NULL
             f <- factor(pkd$ms_level, levels = msl)
             ## Update chrom peak IDs to the new format
             pks <- split.data.frame(pks, f)
-            for (j in seq_along(msl))
+            for (j in seq_along(msl)) {
                 rownames(pks[[j]]) <- .featureIDs(
                     nrow(pks[[j]]), paste0("CP", msl[j], x@sample_id[i]),
                     min_len = 6)
+            }
             pkd <- split.data.frame(
                 pkd[, colnames(pkd) != "ms_level", drop = FALSE], f)
             names(pks) <- rep(x@sample_id[i], length(pks))
             names(pkd) <- rep(x@sample_id[i], length(pkd))
+            gaps <- vapply(pkd, function(z) any(z$is_filled), NA)
+            gap_peaks_ms_level <- union(gap_peaks_ms_level, msl[gaps])
             mod_count <- .h5_write_data(
                 h5_file, pks, name = "chrom_peaks", ms_level = msl,
                 replace = FALSE, write_colnames = TRUE, write_rownames = TRUE)
             mod_count <- .h5_write_data(
                 h5_file, pkd, name = "chrom_peak_data", ms_level = msl,
                 replace = FALSE, write_rownames = FALSE)
+            if (has_features) {
+                ## Create chrom peak to feature mapping per MS level
+                idx <- split(idx, f)
+                for (j in names(pidx)) {
+                    map <- lapply(pidx[[j]], function(z) {
+                        mtch <- match(z, idx[[j]])
+                        mtch[!is.na(mtch)]
+                    })
+                    l <- list(cbind(rep(seq_along(map), lengths(map)),
+                                    unlist(map, use.names = FALSE)))
+                    names(l) <- x@sample_id[i]
+                    .h5_write_data(
+                        h5_file, l, name = "feature_to_chrom_peaks",
+                        write_colnames = FALSE, write_rownames = FALSE,
+                        ms_level = j)
+                }
+            }
         }
         slot(x, "chromPeaks", check = FALSE) <-
             x@chromPeaks[integer(), , drop = FALSE]
         slot(x, "chromPeakData", check = FALSE) <-
             x@chromPeakData[integer(), , drop = FALSE]
         slot(x, "chrom_peaks_ms_level", check = FALSE) <- msl
+        slot(x, "gap_peaks_ms_level", check = FALSE) <- gap_peaks_ms_level
     }
     if (has_features) {
-        ## LLLLLLL
-        ## Get MS levels of features, per MS level
-        ## write the feature definition data.frame
-        ## Use the peakidx to iterate over samples and write the chrom peak to
-        ## feature mapping.
-        stop("Can not yet save feature definitions to HDF5")
-        slot(x, "has_features", check = FALSE) <- TRUE
+        message("Note: reformatting feature IDs.")
+        ## Export the feature definitions, split by MS level
+        msl <- unique(x@featureDefinitions$ms_level)
+        for (m in msl) {
+            fd <- extractROWS(x@featureDefinitions,
+                              which(x@featureDefinitions$ms_level == m))
+            fd$peakidx <- NULL
+            fd$ms_level <- NULL
+            attr(fd, "row.names") <- .featureIDs(
+                nrow(fd), prefix = paste0("FT", m), min_len = 6)
+            mod_count <- .h5_write_data(
+                h5_file, list(features = fd), "feature_definitions",
+                m, replace = TRUE, write_rownames = TRUE)
+        }
+        x@features_ms_level <- msl
+        slot(x, "featureDefinitions", check = FALSE) <-
+            x@featureDefinitions[integer(), , drop = FALSE]
     }
     x@hdf5_mod_count <- mod_count
     x

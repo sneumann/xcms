@@ -1,6 +1,7 @@
 #' @title Next Generation `xcms` Result Object
 #'
 #' @aliases XcmsExperiment-class show,XcmsExperiment-method filterChromPeaks
+#' @aliases featureArea
 #'
 #' @description
 #'

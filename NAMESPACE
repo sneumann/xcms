@@ -256,7 +256,9 @@ export(
     "matchLamasChromPeaks",
     "summarizeLamaMatch",
     "matchedRtimes",
-    "XcmsExperiment"
+    "XcmsExperiment",
+    "toXcmsExperiment",
+    "toXcmsExperimentHdf5"
 )
 
 ## New analysis methods

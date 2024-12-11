@@ -19,13 +19,6 @@
 #' that have additional or different parameters than the *default* ones for
 #' [XcmsExperiment()] objects.
 #'
-#' @section Using the HDF5 file-based on-disk data storage:
-#'
-#' Calling [findChromPeaks()] on an `MsExperiment` using the parameter
-#' `hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
-#' hence use the on-disk data storage mode described on this page. All data
-#' is stored in a file with the name specifyied with parameter `hdf5File`.
-#'
 #' @details
 #'
 #' The `XcmsExperimentHdf5` object stores all preprocessing results (except
@@ -47,6 +40,15 @@
 #'
 #' All functionality for `XcmsExperimentHdf5` objects is optimized to reduce
 #' memory demand at the cost of eventually lower performance.
+#'
+#' @section Using the HDF5 file-based on-disk data storage:
+#'
+#' Calling [findChromPeaks()] on an `MsExperiment` using the parameter
+#' `hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
+#' hence use the on-disk data storage mode described on this page. The
+#' `toXcmsExperimentHdf5()` function can be used to convert from an
+#' [XcmsExperiment] object to `XcmsExperimentHdf5`. The results are stored
+#' in the file specified with parameter `hdf5File`.
 #'
 #' @section Functionality related to chromatographic peaks:
 #'
@@ -140,6 +142,8 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
     if (hasFeatures(object))
         cat("  - correspondence results in MS level(s):",
             paste(object@features_ms_level, collapse = ", "), "\n")
+    cat(" results storage file:\n")
+    cat("   ", object@hdf5_file, "\n", sep = "")
 })
 
 ################################################################################
@@ -814,7 +818,7 @@ setMethod(
         object@hdf5_mod_count <- mc
         xph <- XProcessHistory(param = param, type. = .PROCSTEP.PEAK.GROUPING,
                                fileIndex = seq_along(object), msLevel = msLevel)
-        object <- addProcessHistory(object, xph)
+        object <- xcms:::addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -944,8 +948,21 @@ setMethod(
 
 #' TODO: LLLLLL
 #'
-#' - Complete method to convert XcmsExperiment to XcmsExperimentHdf5
-#' - Add method to convert XcmsExperimentHdf5 to XcmsExperiment
+#' - SWATH support: need to check if it's already available.
+#'   - `findChromPeaksIsolationWindow()`.
+#' - Add missing `refineChromPeaks()` methods.
+#' - `manualChromPeaks()`
+#' - `filterChromPeaks()`
+#' - `chromPeakSpectra()`
+#' - `reconstructChromPeakSpectra()`
+#' - `adjustRtime,LamaParama()`
+#' - `manualFeatures()`
+#' - `chromPeakChromatograms()`
+#' - `featureChromatograms()`
+#' - `filterFeatureDefinitions()`
+#' - `featureSpectra()`
+#' - `chromPeakSummary()`
+#' - Vignette describing the functionality and some notes/properties.
 #'
 #' @noRd
 NULL
