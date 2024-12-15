@@ -8,8 +8,8 @@
 <title>Compounding (grouping) of LC-MS features • xcms</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Compounding (grouping) of LC-MS features">
 </head>
 <body>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-10-30 12:47:57.499579<br><strong>Compiled</strong>: Wed Oct 30 14:04:58 2024</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-12-15 11:12:03.730368<br><strong>Compiled</strong>: Sun Dec 15 12:38:24 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -94,10 +94,10 @@ ions generated during ionization will be detected as different features.
 <em>Compounding</em> aims now at grouping such features presumably
 representing signal from the same originating compound to reduce data
 set complexity (and to aid in subsequent annotation steps). General MS
-feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.20/MsFeatures" class="external-link">MsFeatures</a></em>
-package with additional functionality being implemented in the <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em> package
+feature grouping functionality if defined by the <em><a href="https://bioconductor.org/packages/3.21/MsFeatures" class="external-link">MsFeatures</a></em>
+package with additional functionality being implemented in the <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em> package
 to enable the compounding of LC-MS data.</p>
-<p>This document provides a simple compounding workflow using <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em>. Note
+<p>This document provides a simple compounding workflow using <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em>. Note
 that the present functionality does not (yet) <em>aggregate</em> or
 combine the actual features per values, but does only define the feature
 groups (one per compound).</p>
@@ -106,7 +106,7 @@ groups (one per compound).</p>
 <h2 id="compounding-of-lc-ms-data">Compounding of LC-MS data<a class="anchor" aria-label="anchor" href="#compounding-of-lc-ms-data"></a>
 </h2>
 <p>We demonstrate the compounding (feature grouping) functionality on
-the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em> package
+the simple toy data set used also in the <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em> package
 and provided through the <em>faahKO</em> package. This data set consists
 of samples from 4 mice with knock-out of the fatty acid amide hydrolase
 (FAAH) and 4 wild type mice. Pre-processing of this data set is
@@ -793,13 +793,13 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 </h2>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.4.1 (2024-06-14)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-12-10 r87437)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.5 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.1 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
-<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## locale:</span></span>
 <span><span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
@@ -817,67 +817,66 @@ this set of 30 features. Any feature which has an <code>NA</code> in the
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] pheatmap_1.0.12     faahKO_1.45.0       MSnbase_2.31.1     </span></span>
-<span><span class="co">##  [4] ProtGenerics_1.37.1 S4Vectors_0.43.2    mzR_2.39.2         </span></span>
-<span><span class="co">##  [7] Rcpp_1.0.13         Biobase_2.65.1      BiocGenerics_0.51.3</span></span>
-<span><span class="co">## [10] MsFeatures_1.13.0   xcms_4.5.0          BiocParallel_1.39.0</span></span>
-<span><span class="co">## [13] BiocStyle_2.33.1   </span></span>
+<span><span class="co">##  [1] pheatmap_1.0.12     faahKO_1.47.1       MSnbase_2.33.2     </span></span>
+<span><span class="co">##  [4] ProtGenerics_1.39.0 S4Vectors_0.45.2    mzR_2.41.1         </span></span>
+<span><span class="co">##  [7] Rcpp_1.0.13-1       Biobase_2.67.0      BiocGenerics_0.53.3</span></span>
+<span><span class="co">## [10] generics_0.1.3      MsFeatures_1.15.0   xcms_4.5.2         </span></span>
+<span><span class="co">## [13] BiocParallel_1.41.0 BiocStyle_2.35.0   </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] DBI_1.2.3                   rlang_1.1.4                </span></span>
-<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
-<span><span class="co">##   [5] MassSpecWavelet_1.71.0      matrixStats_1.4.1          </span></span>
-<span><span class="co">##   [7] compiler_4.4.1              systemfonts_1.1.0          </span></span>
+<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-66                </span></span>
+<span><span class="co">##   [5] MassSpecWavelet_1.73.0      matrixStats_1.4.1          </span></span>
+<span><span class="co">##   [7] compiler_4.5.0              systemfonts_1.1.0          </span></span>
 <span><span class="co">##   [9] vctrs_0.6.5                 reshape2_1.4.4             </span></span>
-<span><span class="co">##  [11] stringr_1.5.1               MetaboCoreUtils_1.13.0     </span></span>
+<span><span class="co">##  [11] stringr_1.5.1               MetaboCoreUtils_1.15.0     </span></span>
 <span><span class="co">##  [13] pkgconfig_2.0.3             crayon_1.5.3               </span></span>
-<span><span class="co">##  [15] fastmap_1.2.0               XVector_0.45.0             </span></span>
-<span><span class="co">##  [17] utf8_1.2.4                  rmarkdown_2.28             </span></span>
-<span><span class="co">##  [19] UCSC.utils_1.1.0            preprocessCore_1.67.1      </span></span>
+<span><span class="co">##  [15] fastmap_1.2.0               XVector_0.47.0             </span></span>
+<span><span class="co">##  [17] utf8_1.2.4                  rmarkdown_2.29             </span></span>
+<span><span class="co">##  [19] UCSC.utils_1.3.0            preprocessCore_1.69.0      </span></span>
 <span><span class="co">##  [21] ragg_1.3.3                  purrr_1.0.2                </span></span>
-<span><span class="co">##  [23] xfun_0.48                   MultiAssayExperiment_1.31.5</span></span>
-<span><span class="co">##  [25] zlibbioc_1.51.2             cachem_1.1.0               </span></span>
-<span><span class="co">##  [27] GenomeInfoDb_1.41.2         jsonlite_1.8.9             </span></span>
-<span><span class="co">##  [29] progress_1.2.3              highr_0.11                 </span></span>
-<span><span class="co">##  [31] DelayedArray_0.31.14        prettyunits_1.2.0          </span></span>
-<span><span class="co">##  [33] parallel_4.4.1              cluster_2.1.6              </span></span>
-<span><span class="co">##  [35] R6_2.5.1                    bslib_0.8.0                </span></span>
-<span><span class="co">##  [37] stringi_1.8.4               RColorBrewer_1.1-3         </span></span>
-<span><span class="co">##  [39] limma_3.61.12               GenomicRanges_1.57.2       </span></span>
-<span><span class="co">##  [41] jquerylib_0.1.4             iterators_1.0.14           </span></span>
-<span><span class="co">##  [43] bookdown_0.41               SummarizedExperiment_1.35.5</span></span>
-<span><span class="co">##  [45] knitr_1.48                  IRanges_2.39.2             </span></span>
-<span><span class="co">##  [47] Matrix_1.7-1                igraph_2.1.1               </span></span>
-<span><span class="co">##  [49] tidyselect_1.2.1            abind_1.4-8                </span></span>
-<span><span class="co">##  [51] yaml_2.3.10                 doParallel_1.0.17          </span></span>
-<span><span class="co">##  [53] codetools_0.2-20            affy_1.83.1                </span></span>
-<span><span class="co">##  [55] lattice_0.22-6              tibble_3.2.1               </span></span>
-<span><span class="co">##  [57] plyr_1.8.9                  evaluate_1.0.1             </span></span>
-<span><span class="co">##  [59] desc_1.4.3                  Spectra_1.15.13            </span></span>
-<span><span class="co">##  [61] pillar_1.9.0                affyio_1.75.1              </span></span>
-<span><span class="co">##  [63] BiocManager_1.30.25         MatrixGenerics_1.17.1      </span></span>
-<span><span class="co">##  [65] foreach_1.5.2               MALDIquant_1.22.3          </span></span>
-<span><span class="co">##  [67] ncdf4_1.23                  generics_0.1.3             </span></span>
-<span><span class="co">##  [69] hms_1.1.3                   ggplot2_3.5.1              </span></span>
-<span><span class="co">##  [71] munsell_0.5.1               scales_1.3.0               </span></span>
-<span><span class="co">##  [73] MsExperiment_1.7.0          glue_1.8.0                 </span></span>
-<span><span class="co">##  [75] lazyeval_0.2.2              tools_4.4.1                </span></span>
-<span><span class="co">##  [77] mzID_1.43.0                 QFeatures_1.15.3           </span></span>
-<span><span class="co">##  [79] vsn_3.73.0                  fs_1.6.4                   </span></span>
-<span><span class="co">##  [81] XML_3.99-0.17               grid_4.4.1                 </span></span>
-<span><span class="co">##  [83] impute_1.79.0               tidyr_1.3.1                </span></span>
-<span><span class="co">##  [85] MsCoreUtils_1.17.3          colorspace_2.1-1           </span></span>
-<span><span class="co">##  [87] GenomeInfoDbData_1.2.13     PSMatch_1.9.1              </span></span>
-<span><span class="co">##  [89] cli_3.6.3                   textshaping_0.4.0          </span></span>
-<span><span class="co">##  [91] fansi_1.0.6                 S4Arrays_1.5.11            </span></span>
-<span><span class="co">##  [93] dplyr_1.1.4                 AnnotationFilter_1.29.0    </span></span>
-<span><span class="co">##  [95] pcaMethods_1.97.0           gtable_0.3.6               </span></span>
-<span><span class="co">##  [97] sass_0.4.9                  digest_0.6.37              </span></span>
-<span><span class="co">##  [99] SparseArray_1.5.45          farver_2.1.2               </span></span>
-<span><span class="co">## [101] htmlwidgets_1.6.4           htmltools_0.5.8.1          </span></span>
-<span><span class="co">## [103] pkgdown_2.1.1.9000          lifecycle_1.0.4            </span></span>
-<span><span class="co">## [105] httr_1.4.7                  statmod_1.5.0              </span></span>
-<span><span class="co">## [107] MASS_7.3-61</span></span></code></pre>
+<span><span class="co">##  [23] xfun_0.49                   MultiAssayExperiment_1.33.1</span></span>
+<span><span class="co">##  [25] zlibbioc_1.53.0             cachem_1.1.0               </span></span>
+<span><span class="co">##  [27] GenomeInfoDb_1.43.2         jsonlite_1.8.9             </span></span>
+<span><span class="co">##  [29] progress_1.2.3              DelayedArray_0.33.3        </span></span>
+<span><span class="co">##  [31] prettyunits_1.2.0           parallel_4.5.0             </span></span>
+<span><span class="co">##  [33] cluster_2.1.8               R6_2.5.1                   </span></span>
+<span><span class="co">##  [35] bslib_0.8.0                 stringi_1.8.4              </span></span>
+<span><span class="co">##  [37] RColorBrewer_1.1-3          limma_3.63.2               </span></span>
+<span><span class="co">##  [39] GenomicRanges_1.59.1        jquerylib_0.1.4            </span></span>
+<span><span class="co">##  [41] iterators_1.0.14            bookdown_0.41              </span></span>
+<span><span class="co">##  [43] SummarizedExperiment_1.37.0 knitr_1.49                 </span></span>
+<span><span class="co">##  [45] IRanges_2.41.2              Matrix_1.7-1               </span></span>
+<span><span class="co">##  [47] igraph_2.1.2                tidyselect_1.2.1           </span></span>
+<span><span class="co">##  [49] abind_1.4-8                 yaml_2.3.10                </span></span>
+<span><span class="co">##  [51] doParallel_1.0.17           codetools_0.2-20           </span></span>
+<span><span class="co">##  [53] affy_1.85.0                 lattice_0.22-6             </span></span>
+<span><span class="co">##  [55] tibble_3.2.1                plyr_1.8.9                 </span></span>
+<span><span class="co">##  [57] evaluate_1.0.1              desc_1.4.3                 </span></span>
+<span><span class="co">##  [59] Spectra_1.17.2              pillar_1.9.0               </span></span>
+<span><span class="co">##  [61] affyio_1.77.0               BiocManager_1.30.25        </span></span>
+<span><span class="co">##  [63] MatrixGenerics_1.19.0       foreach_1.5.2              </span></span>
+<span><span class="co">##  [65] MALDIquant_1.22.3           ncdf4_1.23                 </span></span>
+<span><span class="co">##  [67] hms_1.1.3                   ggplot2_3.5.1              </span></span>
+<span><span class="co">##  [69] munsell_0.5.1               scales_1.3.0               </span></span>
+<span><span class="co">##  [71] MsExperiment_1.9.0          glue_1.8.0                 </span></span>
+<span><span class="co">##  [73] lazyeval_0.2.2              tools_4.5.0                </span></span>
+<span><span class="co">##  [75] mzID_1.45.0                 QFeatures_1.17.0           </span></span>
+<span><span class="co">##  [77] vsn_3.75.0                  fs_1.6.5                   </span></span>
+<span><span class="co">##  [79] XML_3.99-0.17               grid_4.5.0                 </span></span>
+<span><span class="co">##  [81] impute_1.81.0               tidyr_1.3.1                </span></span>
+<span><span class="co">##  [83] MsCoreUtils_1.17.3          colorspace_2.1-1           </span></span>
+<span><span class="co">##  [85] GenomeInfoDbData_1.2.13     PSMatch_1.11.0             </span></span>
+<span><span class="co">##  [87] cli_3.6.3                   textshaping_0.4.1          </span></span>
+<span><span class="co">##  [89] fansi_1.0.6                 S4Arrays_1.7.1             </span></span>
+<span><span class="co">##  [91] dplyr_1.1.4                 AnnotationFilter_1.31.0    </span></span>
+<span><span class="co">##  [93] pcaMethods_1.99.0           gtable_0.3.6               </span></span>
+<span><span class="co">##  [95] sass_0.4.9                  digest_0.6.37              </span></span>
+<span><span class="co">##  [97] SparseArray_1.7.2           farver_2.1.2               </span></span>
+<span><span class="co">##  [99] htmlwidgets_1.6.4           htmltools_0.5.8.1          </span></span>
+<span><span class="co">## [101] pkgdown_2.1.1.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [103] httr_1.4.7                  statmod_1.5.0              </span></span>
+<span><span class="co">## [105] MASS_7.3-61</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

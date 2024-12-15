@@ -8,8 +8,8 @@
 <title>LC-MS data preprocessing and analysis with xcms • xcms</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="LC-MS data preprocessing and analysis with xcms">
 </head>
 <body>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,11 +78,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-10-30 12:47:57.499579<br><strong>Compiled</strong>: Wed Oct 30 14:06:34 2024</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer<br><strong>Modified</strong>: 2024-12-15 11:12:03.731368<br><strong>Compiled</strong>: Sun Dec 15 12:39:58 2024</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <em><a href="https://bioconductor.org/packages/3.20/xcms" class="external-link">xcms</a></em> package
+<p>The <em><a href="https://bioconductor.org/packages/3.21/xcms" class="external-link">xcms</a></em> package
 provides the functionality to perform the preprocessing of LC-MS, GC-MS
 or LC-MS/MS data in which raw signals from mzML, mzXML or CDF files are
 processed into <em>feature</em> abundances. This preprocessing includes
@@ -91,11 +91,11 @@ analysis.</p>
 <p>The first version of the package was already published in 2006 <span class="citation">[1]</span> and has since been updated and modernized in
 several rounds to better integrate it with other R-based packages for
 the analysis of untargeted metabolomics data. This includes version 3 of
-<em>xcms</em> that used the <em><a href="https://bioconductor.org/packages/3.20/MSnbase" class="external-link">MSnbase</a></em>
+<em>xcms</em> that used the <em><a href="https://bioconductor.org/packages/3.21/MSnbase" class="external-link">MSnbase</a></em>
 package for MS data representation <span class="citation">[2]</span>.
 The most recent update (<em>xcms</em> version 4) enables in addition
-preprocessing of MS data represented by the modern <em><a href="https://bioconductor.org/packages/3.20/MsExperiment" class="external-link">MsExperiment</a></em>
-and <em><a href="https://bioconductor.org/packages/3.20/Spectra" class="external-link">Spectra</a></em>
+preprocessing of MS data represented by the modern <em><a href="https://bioconductor.org/packages/3.21/MsExperiment" class="external-link">MsExperiment</a></em>
+and <em><a href="https://bioconductor.org/packages/3.21/Spectra" class="external-link">Spectra</a></em>
 packages which provides an even better integration with the <a href="https://rformassspectrometry.org" class="external-link">RforMassSpectrometry</a> R
 package ecosystem simplifying e.g. also compound annotation <span class="citation">[3]</span>.</p>
 <p>This document describes data import, exploration and preprocessing of
@@ -104,7 +104,10 @@ a simple test LC-MS data set with the <em>xcms</em> package version
 <em>MSnbase</em>-based workflows (xcms version 3). Additional documents
 and tutorials covering also other topics of untargeted metabolomics
 analysis are listed at the end of this document. There is also a <a href="https://jorainer.github.io/xcmsTutorials" class="external-link">xcms tutorial</a>
-available with more examples and details.</p>
+available with more examples and details. To get a complete overview of
+LCMS-MS analysis, an end-to-end workflow <a href="https://rformassspectrometry.github.io/metabonaut/" class="external-link">Metabonaut
+website</a>, which integrate the <em>xcms</em> preprocessing steps with
+the downstream analysis, is available.</p>
 </div>
 <div class="section level2">
 <h2 id="preprocessing-of-lc-ms-data">Preprocessing of LC-MS data<a class="anchor" aria-label="anchor" href="#preprocessing-of-lc-ms-data"></a>
@@ -113,7 +116,7 @@ available with more examples and details.</p>
 <h3 id="data-import">Data import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h3>
 <p><em>xcms</em> supports analysis of any LC-MS(/MS) data that can be
-imported with the <em><a href="https://bioconductor.org/packages/3.20/Spectra" class="external-link">Spectra</a></em>
+imported with the <em><a href="https://bioconductor.org/packages/3.21/Spectra" class="external-link">Spectra</a></em>
 package. Such data will typically be provided in (AIA/ANDI) NetCDF,
 mzXML and mzML format but can, through dedicated extensions to the
 <em>Spectra</em> package, also be imported from other sources, e.g. also
@@ -122,7 +125,7 @@ directly from raw data files in manufacturer’s formats.</p>
 subset of the data from <span class="citation">[4]</span> in which the
 metabolic consequences of the knock-out of the fatty acid amide
 hydrolase (FAAH) gene in mice was investigated. The raw data files (in
-NetCDF format) are provided through the <em><a href="https://bioconductor.org/packages/3.20/faahKO" class="external-link">faahKO</a></em>
+NetCDF format) are provided through the <em><a href="https://bioconductor.org/packages/3.21/faahKO" class="external-link">faahKO</a></em>
 data package. The data set consists of samples from the spinal cords of
 6 knock-out and 6 wild-type mice. Each file contains data in centroid
 mode acquired in positive ion polarity from 200-600 m/z and 2500-4500
@@ -154,7 +157,7 @@ if it is in Excel file format.</p>
 <span>                 sample_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"KO"</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"WT"</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                 stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>We next load our data using the <code>readMsExperiment</code>
-function from the <em><a href="https://bioconductor.org/packages/3.20/MsExperiment" class="external-link">MsExperiment</a></em>
+function from the <em><a href="https://bioconductor.org/packages/3.21/MsExperiment" class="external-link">MsExperiment</a></em>
 package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html" class="external-link">readMsExperiment</a></span><span class="op">(</span>spectraFiles <span class="op">=</span> <span class="va">cdfs</span>, sampleData <span class="op">=</span> <span class="va">pd</span><span class="op">)</span></span>
@@ -168,7 +171,7 @@ package.</p>
 <code>Spectra</code> object within <code>faahko</code>. Note that this
 <code>MsExperiment</code> container could in addition to spectra data
 also contain other types of data or also references to other files. See
-the vignette from the <em><a href="https://bioconductor.org/packages/3.20/MsExperiment" class="external-link">MsExperiment</a></em>
+the vignette from the <em><a href="https://bioconductor.org/packages/3.21/MsExperiment" class="external-link">MsExperiment</a></em>
 for more details. Also, when loading data from mzML, mzXML or CDF files,
 by default only general spectra data is loaded into memory while the
 actual <em>peaks data</em>, i.e. the m/z and intensity values are only
@@ -179,7 +182,7 @@ high performance computing environments. Note that also different
 alternative <em>backends</em> (and hence data representations) could be
 used for the <code>Spectra</code> object within <code>faahko</code> with
 eventually even lower memory footprint, or higher performance. See the
-package vignette from the <em><a href="https://bioconductor.org/packages/3.20/Spectra" class="external-link">Spectra</a></em>
+package vignette from the <em><a href="https://bioconductor.org/packages/3.21/Spectra" class="external-link">Spectra</a></em>
 package or the <a href="https://jorainer.github.io/SpectraTutorials" class="external-link">SpectraTutorials</a>
 tutorial for more details on <code>Spectra</code> backends and how to
 change between them.</p>
@@ -1456,11 +1459,11 @@ reported if no signal is measured at all for a specific sample.</p>
 <h3 id="final-result">Final result<a class="anchor" aria-label="anchor" href="#final-result"></a>
 </h3>
 <p>While we can continue using the <em>xcms</em> result set for further
-analysis (e.g. also for feature grouping with the <em><a href="https://bioconductor.org/packages/3.20/MsFeatures" class="external-link">MsFeatures</a></em>
+analysis (e.g. also for feature grouping with the <em><a href="https://bioconductor.org/packages/3.21/MsFeatures" class="external-link">MsFeatures</a></em>
 package; see the LC-MS feature grouping vignette for details) we could
 also extract all results as a <code>SummarizedExperiment</code> object.
 This is the <em>standard</em> data container for Bioconductor defined in
-the <em><a href="https://bioconductor.org/packages/3.20/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
+the <em><a href="https://bioconductor.org/packages/3.21/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
 package and integration with other Bioconductor packages might thus be
 easier using that type of object. Below we use the
 <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify()</a></code> function to extract the <em>xcms</em>
@@ -1500,6 +1503,13 @@ overlapping peaks in each sample).</p>
 <pre><code><span><span class="co">## Loading required package: GenomicRanges</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: stats4</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: BiocGenerics</span></span></code></pre>
+<pre><code><span><span class="co">## Loading required package: generics</span></span></code></pre>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## Attaching package: 'generics'</span></span></code></pre>
+<pre><code><span><span class="co">## The following objects are masked from 'package:base':</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##     as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,</span></span>
+<span><span class="co">##     setequal, union</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'BiocGenerics'</span></span></code></pre>
 <pre><code><span><span class="co">## The following objects are masked from 'package:stats':</span></span>
@@ -1509,10 +1519,10 @@ overlapping peaks in each sample).</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##     anyDuplicated, aperm, append, as.data.frame, basename, cbind,</span></span>
 <span><span class="co">##     colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,</span></span>
-<span><span class="co">##     get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,</span></span>
-<span><span class="co">##     match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,</span></span>
-<span><span class="co">##     Position, rank, rbind, Reduce, rownames, sapply, saveRDS, setdiff,</span></span>
-<span><span class="co">##     table, tapply, union, unique, unsplit, which.max, which.min</span></span></code></pre>
+<span><span class="co">##     get, grep, grepl, is.unsorted, lapply, Map, mapply, match, mget,</span></span>
+<span><span class="co">##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span></span>
+<span><span class="co">##     rbind, Reduce, rownames, sapply, saveRDS, table, tapply, unique,</span></span>
+<span><span class="co">##     unsplit, which.max, which.min</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: S4Vectors</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'S4Vectors'</span></span></code></pre>
@@ -1543,7 +1553,7 @@ overlapping peaks in each sample).</p>
 <pre><code><span><span class="co">## The following objects are masked from 'package:matrixStats':</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##     anyMissing, rowMedians</span></span></code></pre>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify</a></span><span class="op">(</span><span class="va">faahko</span>, value <span class="op">=</span> <span class="st">"into"</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: SummarizedExperiment </span></span>
@@ -1559,7 +1569,7 @@ in the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExp
 provides annotations and information for each <strong>row</strong> in
 the <code>SummarizedExperiment</code> (which in our case are the
 <strong>features</strong>).</p>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb118"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 351 rows and 10 columns</span></span>
 <span><span class="co">##           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks</span></span>
@@ -1592,7 +1602,7 @@ the <code>SummarizedExperiment</code> (which in our case are the
 <strong>samples</strong>) are stored as <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>. In this
 data frame each row contains annotations for one sample (and hence one
 column in the feature values matrix).</p>
-<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb120"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 8 rows and 4 columns</span></span>
 <span><span class="co">##          sample_name sample_group spectraOrigin sample_type</span></span>
@@ -1610,13 +1620,13 @@ object. Note that a <code>SummarizedExperiment</code> can have multiple
 assays which have to be numeric matrices with the number of rows and
 columns matching the number of features and samples, respectively. Below
 we list the names of the available assays.</p>
-<div class="sourceCode" id="cb119"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb122"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"</span></span></code></pre>
 <p>And we can access the actual data using the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay()</a></code>
 function, optionally also providing the name of the assay we want to
 access. Below we show the first 6 lines of that matrix.</p>
-<div class="sourceCode" id="cb121"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001  135162.4  506848.9  111657.3  169955.6  209929.4  141607.9  226853.7</span></span>
@@ -1636,14 +1646,14 @@ access. Below we show the first 6 lines of that matrix.</p>
 we in addition add also the feature value matrix
 <strong>without</strong> filled-in values (i.e. feature intensities that
 were added by the gap filling step).</p>
-<div class="sourceCode" id="cb123"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">$</span><span class="va">raw_nofill</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">faahko</span>, filled <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span></span></code></pre></div>
 <p>With that we have now two assays in our result object.</p>
-<div class="sourceCode" id="cb124"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assayNames</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "raw"        "raw_nofill"</span></span></code></pre>
 <p>And we can extract the feature values without gap-filling:</p>
-<div class="sourceCode" id="cb126"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw_nofill"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        ko15.CDF  ko16.CDF  ko21.CDF  ko22.CDF  wt15.CDF  wt16.CDF  wt21.CDF</span></span>
 <span><span class="co">## FT001        NA  506848.9        NA  169955.6        NA        NA        NA</span></span>
@@ -1662,12 +1672,12 @@ were added by the gap filling step).</p>
 <p>Finally, a history of the full processing with <em>xcms</em> is
 available as <em>metadata</em> in the
 <code>SummarizedExperiment</code>.</p>
-<div class="sourceCode" id="cb128"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb131"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:09 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:32 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1676,7 +1686,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:12 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:34 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1685,7 +1695,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:24 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:46 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1694,7 +1704,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:24 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:46 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1703,7 +1713,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:29 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:52 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1712,7 +1722,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:34 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:57 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1720,11 +1730,11 @@ available as <em>metadata</em> in the
 <p>This same information can also be extracted from the <em>xcms</em>
 result object using the <code><a href="../reference/XCMSnExp-class.html">processHistory()</a></code> function. Below we
 extract the information for the first processing step.</p>
-<div class="sourceCode" id="cb130"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb133"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Wed Oct 30 14:07:09 2024 </span></span>
+<span><span class="co">##  date: Sun Dec 15 12:40:32 2024 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1732,7 +1742,7 @@ extract the information for the first processing step.</p>
 <p>These processing steps contain also the individual parameter objects
 used for the analysis, hence allowing to exactly reproduce the
 analysis.</p>
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/ProcessHistory-class.html">processParam</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class:  CentWaveParam </span></span>
 <span><span class="co">##  Parameters:</span></span>
@@ -1755,7 +1765,7 @@ analysis.</p>
 the grouping of the samples in this experiment. Note that we did not
 perform any data normalization hence the grouping might (and will) also
 be influenced by technical biases.</p>
-<div class="sourceCode" id="cb134"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Extract the features and log2 transform them</span></span>
 <span><span class="va">ft_ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1810,51 +1820,6 @@ function to perform quality assessment and filtering on both the
 <code>filter</code> argument can accommodate various types of input,
 each determining the specific type of quality assessment and filtering
 to be performed.</p>
-<p>The <code>RsdFilter</code> enable users to filter features based on
-their relative standard deviation (coefficient of variation) for a
-specified <code>threshold</code>. It is recommended to base the
-computation on quality control (QC) samples, as demonstrated below:</p>
-<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set up parameters for RsdFilter</span></span>
-<span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>,</span>
-<span>                        qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Apply the filter to faakho object</span></span>
-<span><span class="va">filtered_faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">faahko</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 255 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb137"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Now apply the same strategy to the res object</span></span>
-<span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>, qcIndex <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
-<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">res</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span>, assay <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 260 features were removed</span></span></code></pre>
-<p>All features with an RSD (CV) strictly larger than 0.3 in QC samples
-were thus removed from the data set.</p>
-<p>The <code>DratioFilter</code> can be used to filter features based on
-the D-ratio or <em>dispersion ratio</em>, which compares the standard
-deviation in QC samples to that in study samples.</p>
-<div class="sourceCode" id="cb139"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set up parameters for DratioFilter</span></span>
-<span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
-<span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>    qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span>,</span>
-<span>    studyIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"study"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Apply the filter to faahko object</span></span>
-<span><span class="va">filtered_faakho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faahko</span>,</span>
-<span>                                  filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 38 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb141"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Now same but for the res object</span></span>
-<span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
-<span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>    qcIndex <span class="op">=</span> <span class="va">filtered_res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span>,</span>
-<span>    studyIndex <span class="op">=</span> <span class="va">filtered_res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"study"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_res</span>,</span>
-<span>                               filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 38 features were removed</span></span></code></pre>
-<p>All features with an D-ratio strictly larger than 0.5 were thus
-removed from the data set.</p>
 <p>The <code>PercentMissingFilter</code> allows to filter features based
 on the percentage of missing values for each feature. This function
 takes as an input the parameter <code>f</code> which is supposed to be a
@@ -1865,29 +1830,24 @@ based on this. Features with a percent of missing values larger than the
 threshold in all sample groups will be removed. Another option is to
 base this quality assessment and filtering only on QC samples.</p>
 <p>Both examples are shown below:</p>
-<div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb138"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># To set up parameter `f` to filter only based on QC samples</span></span>
-<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faakho</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
 <span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">!=</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
 <span><span class="co"># To set up parameter `f` to filter per sample type excluding QC samples</span></span>
-<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faakho</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
+<span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
 <span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
-<span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>                                       f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
-<span></span>
+<span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
 <span><span class="co"># Apply the filter to faakho object</span></span>
-<span><span class="va">filtered_faakho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faakho</span>,</span>
-<span>                                  filter <span class="op">=</span> <span class="va">missing_filter</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 0 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<span><span class="va">filtered_faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">faahko</span>, filter <span class="op">=</span> <span class="va">missing_filter</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 3 features were removed</span></span></code></pre>
+<div class="sourceCode" id="cb140"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Apply the filter to res object</span></span>
-<span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>                                       f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
-<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_res</span>,</span>
-<span>                               filter <span class="op">=</span> <span class="va">missing_filter</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## 0 features were removed</span></span></code></pre>
+<span><span class="va">missing_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">30</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span></span>
+<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">res</span>, filter <span class="op">=</span> <span class="va">missing_filter</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 3 features were removed</span></span></code></pre>
 <p>Here, no feature was removed, meaning that all the features had less
 than 30% of <code>NA</code> values in at least one of the sample
 type.</p>
@@ -1895,7 +1855,7 @@ type.</p>
 <code>BlankFlag</code> filter can be used to flag features based on the
 intensity relationship between blank and QC samples. More information
 can be found in the documentation of the filter:</p>
-<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb142"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieve documentation for the main function and the specific filter.</span></span>
 <span><span class="op">?</span><span class="va">filterFeatures</span></span></code></pre></div>
 <pre><code><span><span class="co">## Help on topic 'filterFeatures' was found in the following packages:</span></span>
@@ -1907,22 +1867,53 @@ can be found in the documentation of the filter:</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Using the first match ...</span></span></code></pre>
-<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb144"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">BlankFlag</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="normalization">Normalization<a class="anchor" aria-label="anchor" href="#normalization"></a>
-</h3>
-<p>Normalizing features’ signal intensities is required, but at present
-not (yet) supported in <code>xcms</code> (some methods might be added in
-near future). It is advised to use the <code>SummarizedExperiment</code>
-returned by the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">quantify()</a></code> method for any further data
-processing, as this type of object stores feature definitions, sample
-annotations as well as feature abundances in the same object. For the
-identification of e.g. features with significant different
-intensities/abundances it is suggested to use functionality provided in
-other R packages, such as Bioconductor’s excellent <em>limma</em>
-package.</p>
+<p>The <code>RsdFilter</code> enable users to filter features based on
+their relative standard deviation (coefficient of variation) for a
+specified <code>threshold</code>. It is recommended to base the
+computation on quality control (QC) samples, as demonstrated below:</p>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Set up parameters for RsdFilter</span></span>
+<span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>                        qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Apply the filter to faakho object</span></span>
+<span><span class="va">filtered_faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faahko</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 252 features were removed</span></span></code></pre>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Now apply the same strategy to the res object</span></span>
+<span><span class="va">rsd_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RsdFilter.html">RsdFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0.3</span>, qcIndex <span class="op">=</span> <span class="va">filtered_res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span><span class="op">)</span></span>
+<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_res</span>, filter <span class="op">=</span> <span class="va">rsd_filter</span>, assay <span class="op">=</span> <span class="st">"raw"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 257 features were removed</span></span></code></pre>
+<p>All features with an RSD (CV) strictly larger than 0.3 in QC samples
+were thus removed from the data set.</p>
+<p>The <code>DratioFilter</code> can be used to filter features based on
+the D-ratio or <em>dispersion ratio</em>, which compares the standard
+deviation in QC samples to that in study samples.</p>
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Set up parameters for DratioFilter</span></span>
+<span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
+<span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    qcIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span>,</span>
+<span>    studyIndex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">filtered_faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"study"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Apply the filter to faahko object</span></span>
+<span><span class="va">filtered_faakho</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_faahko</span>,</span>
+<span>                                  filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 38 features were removed</span></span></code></pre>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Now same but for the res object</span></span>
+<span><span class="va">dratio_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DratioFilter.html">DratioFilter</a></span><span class="op">(</span></span>
+<span>    threshold <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    qcIndex <span class="op">=</span> <span class="va">filtered_res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"QC"</span>,</span>
+<span>    studyIndex <span class="op">=</span> <span class="va">filtered_res</span><span class="op">$</span><span class="va">sample_type</span> <span class="op">==</span> <span class="st">"study"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">filtered_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">filtered_res</span>,</span>
+<span>                               filter <span class="op">=</span> <span class="va">dratio_filter</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## 38 features were removed</span></span></code></pre>
+<p>All features with an D-ratio strictly larger than 0.5 were thus
+removed from the data set.</p>
 </div>
 <div class="section level3">
 <h3 id="alignment-to-an-external-reference-dataset">Alignment to an external reference dataset<a class="anchor" aria-label="anchor" href="#alignment-to-an-external-reference-dataset"></a>
@@ -1940,7 +1931,7 @@ go through this step by step below.</p>
 previous dataset before alignment, which will be <code>tst</code>. We
 will first restrict their retention time range to be the same for both
 dataset.</p>
-<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="st">"xmse"</span><span class="op">)</span></span>
 <span><span class="va">tst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/loadXcmsData.html">loadXcmsData</a></span><span class="op">(</span><span class="st">"faahko_sub2"</span><span class="op">)</span></span></code></pre></div>
 <p>Now, we will attempt to align these two samples with the previous
@@ -1953,12 +1944,12 @@ will be utilized to filter the features using the
 <code>PercentMissingFilter</code> parameter within the
 <code><a href="../reference/filterFeatures.html">filterFeatures()</a></code> function (see section above for more
 information on this method)</p>
-<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">ref</span><span class="op">)</span><span class="op">$</span><span class="va">sample_type</span></span>
 <span><span class="va">f</span><span class="op">[</span><span class="va">f</span> <span class="op">!=</span> <span class="st">"QC"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="va">ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterFeatures.html">filterFeatures</a></span><span class="op">(</span><span class="va">ref</span>, <span class="fu"><a href="../reference/PercentMissingFilter.html">PercentMissingFilter</a></span><span class="op">(</span>threshold <span class="op">=</span> <span class="fl">0</span>, f <span class="op">=</span> <span class="va">f</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## 4 features were removed</span></span></code></pre>
-<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ref_mz_rt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">ref</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mzmed"</span>,<span class="st">"rtmed"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ref_mz_rt</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       mzmed    rtmed</span></span>
@@ -1968,7 +1959,7 @@ information on this method)</p>
 <span><span class="co">## FT004 207.1 2718.560</span></span>
 <span><span class="co">## FT005 233.0 3023.579</span></span>
 <span><span class="co">## FT006 241.1 3683.299</span></span></code></pre>
-<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ref_mz_rt</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 347</span></span></code></pre>
 <p>This is what the <code>lamas</code> input should look like for
@@ -1984,7 +1975,7 @@ parameters are related to the type of fitting generated between these
 data points. More details on each parameter and the overall method can
 be found by searching <code><a href="../reference/adjustRtime.html">?adjustRtime</a></code>. Below is an example
 using default parameters.</p>
-<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">LamaParama</a></span><span class="op">(</span>lamas <span class="op">=</span> <span class="va">ref_mz_rt</span>, method <span class="op">=</span> <span class="st">"loess"</span>, span <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>                    outlierTolerance <span class="op">=</span> <span class="fl">3</span>, zeroWeight <span class="op">=</span> <span class="fl">10</span>, ppm <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>                    tolerance <span class="op">=</span> <span class="fl">0</span>, toleranceRt <span class="op">=</span> <span class="fl">20</span>, bs <span class="op">=</span> <span class="st">"tp"</span><span class="op">)</span></span>
@@ -1994,14 +1985,14 @@ using default parameters.</p>
 <span><span class="va">tst_adjusted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/applyAdjustedRtime.html">applyAdjustedRtime</a></span><span class="op">(</span><span class="va">tst_adjusted</span><span class="op">)</span></span></code></pre></div>
 <p>We extract the base peak chromatogram (BPC) to visualize and evaluate
 the alignment:</p>
-<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' evaluate the results with BPC</span></span>
 <span><span class="va">bpc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">ref</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="va">bpc_tst_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">tst</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="va">bpc_tst_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">tst_adjusted</span>, chromPeaks <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <p>We generate plots to visually compare the alignment to the reference
 dataset (black) both before (red) and after (blue) adjustment:</p>
-<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' BPC of a sample</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2.5</span>, <span class="fl">1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpc</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"#00000080"</span>, main <span class="op">=</span> <span class="st">"Before Alignment"</span><span class="op">)</span></span>
@@ -2021,7 +2012,7 @@ illustrated below. The <code>matchLamaChromPeaks()</code> function
 facilitates the assessment of how well the <code>lamas</code> correspond
 with the chromatographic peaks in each file. This analysis can be
 conducted prior to any adjustments.</p>
-<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">param</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">matchLamasChromPeaks</a></span><span class="op">(</span><span class="va">tst</span>, param <span class="op">=</span> <span class="va">param</span><span class="op">)</span></span>
 <span><span class="va">mtch</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">matchedRtimes</a></span><span class="op">(</span><span class="va">param</span><span class="op">)</span></span>
 <span></span>
@@ -2040,7 +2031,7 @@ were matched to the <code>lamas</code> between 2500 and 3000 seconds and
 hence the alignment in that region was not good. For the second file,
 chrom peaks could also be matched in that region resulting in a better
 alignment.</p>
-<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpc</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"#00000080"</span>, main <span class="op">=</span> <span class="st">"Distribution CP matched to Lamas"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
@@ -2057,26 +2048,19 @@ Additionally, it is feasible to directly <code><a href="https://rdrr.io/r/base/p
 <code>param</code> object for the file of interest, showcasing the
 distribution of these chromatographic peaks along with the fitted model
 line.</p>
-<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' access summary of matches and model information</span></span>
-<span><span class="va">summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">summarizeLamaMatch</a></span><span class="op">(</span><span class="va">param</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in rbind(deparse.level, ...): number of columns of result, 3, is not a</span></span>
-<span><span class="co">## multiple of vector length 2 of arg 1</span></span>
-<span><span class="co">## Warning in rbind(deparse.level, ...): number of columns of result, 3, is not a</span></span>
-<span><span class="co">## multiple of vector length 2 of arg 1</span></span>
-<span><span class="co">## Warning in rbind(deparse.level, ...): number of columns of result, 3, is not a</span></span>
-<span><span class="co">## multiple of vector length 2 of arg 1</span></span></code></pre>
-<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">summary</span></span></code></pre></div>
+<span><span class="va">summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LamaParama.html">summarizeLamaMatch</a></span><span class="op">(</span><span class="va">param</span><span class="op">)</span></span>
+<span><span class="va">summary</span></span></code></pre></div>
 <pre><code><span><span class="co">##   Total_peaks Matched_peaks Total_lamas Model_summary</span></span>
 <span><span class="co">## 1          87            34         347  30, c(0.....</span></span>
 <span><span class="co">## 2         100            51         347  48, c(0.....</span></span>
 <span><span class="co">## 3          61            34         347  33, c(0.....</span></span></code></pre>
-<div class="sourceCode" id="cb166"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' coverage for each file</span></span>
 <span><span class="va">summary</span><span class="op">$</span><span class="va">Matched_peaks</span> <span class="op">/</span> <span class="va">summary</span><span class="op">$</span><span class="va">Total_peaks</span> <span class="op">*</span> <span class="fl">100</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 39.08046 51.00000 55.73770</span></span></code></pre>
-<div class="sourceCode" id="cb168"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb169"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' access the information on the model of for the first file</span></span>
 <span><span class="va">summary</span><span class="op">$</span><span class="va">Model_summary</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Call:</span></span>
@@ -2096,14 +2080,11 @@ line.</p>
 <span><span class="co">##   normalize:  TRUE</span></span>
 <span><span class="co">##  parametric:  FALSE</span></span>
 <span><span class="co">## drop.square:  FALSE</span></span></code></pre>
-<div class="sourceCode" id="cb170"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb171"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' Plot obs vs. ref with fitting line</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">param</span>, index <span class="op">=</span> <span class="fl">1L</span>, main <span class="op">=</span> <span class="st">"ChromPeaks versus Lamas for the first file"</span>,</span>
-<span>     colPoint <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in rbind(deparse.level, ...): number of columns of result, 3, is not a</span></span>
-<span><span class="co">## multiple of vector length 2 of arg 1</span></span></code></pre>
-<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, lty <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
+<span>     colPoint <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, lty <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="xcms_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
 </div>
@@ -2140,10 +2121,10 @@ parallel processes is defined.</p>
 globally we <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register()</a></code> the parameter class. Note also that
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart()</a></code> is used below to initialize the parallel
 processes.</p>
-<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb172"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Windows supports only socket-based parallel processing:</p>
-<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb173"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">register</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">bpstart</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SnowParam-class.html" class="external-link">SnowParam</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -2177,7 +2158,7 @@ examples for annotation of metabolomics data from <span class="citation">[3]</sp
 <span class="citation">[2]</span>: describes the concept of the
 <em>on-disk</em> data modes used also in <em>xcms</em>.</li>
 <li>
-<a href="">SpectraTutorials</a>: tutorials describing the <em><a href="https://bioconductor.org/packages/3.20/Spectra" class="external-link">Spectra</a></em>
+<a href="">SpectraTutorials</a>: tutorials describing the <em><a href="https://bioconductor.org/packages/3.21/Spectra" class="external-link">Spectra</a></em>
 package and its functionality.</li>
 </ul>
 </div>
@@ -2185,15 +2166,15 @@ package and its functionality.</li>
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <p>R packages used for this document are listed below.</p>
-<div class="sourceCode" id="cb175"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.4.1 (2024-06-14)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-12-10 r87437)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.5 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.1 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
-<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## locale:</span></span>
 <span><span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
@@ -2211,69 +2192,69 @@ package and its functionality.</li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SummarizedExperiment_1.35.5 Biobase_2.65.1             </span></span>
-<span><span class="co">##  [3] GenomicRanges_1.57.2        GenomeInfoDb_1.41.2        </span></span>
-<span><span class="co">##  [5] IRanges_2.39.2              S4Vectors_0.43.2           </span></span>
-<span><span class="co">##  [7] BiocGenerics_0.51.3         MatrixGenerics_1.17.1      </span></span>
-<span><span class="co">##  [9] matrixStats_1.4.1           MsExperiment_1.7.0         </span></span>
-<span><span class="co">## [11] ProtGenerics_1.37.1         pheatmap_1.0.12            </span></span>
-<span><span class="co">## [13] RColorBrewer_1.1-3          pander_0.6.5               </span></span>
-<span><span class="co">## [15] faahKO_1.45.0               xcms_4.5.0                 </span></span>
-<span><span class="co">## [17] BiocParallel_1.39.0         BiocStyle_2.33.1           </span></span>
+<span><span class="co">##  [1] SummarizedExperiment_1.37.0 Biobase_2.67.0             </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.59.1        GenomeInfoDb_1.43.2        </span></span>
+<span><span class="co">##  [5] IRanges_2.41.2              S4Vectors_0.45.2           </span></span>
+<span><span class="co">##  [7] BiocGenerics_0.53.3         generics_0.1.3             </span></span>
+<span><span class="co">##  [9] MatrixGenerics_1.19.0       matrixStats_1.4.1          </span></span>
+<span><span class="co">## [11] MsExperiment_1.9.0          ProtGenerics_1.39.0        </span></span>
+<span><span class="co">## [13] pheatmap_1.0.12             RColorBrewer_1.1-3         </span></span>
+<span><span class="co">## [15] pander_0.6.5                faahKO_1.47.1              </span></span>
+<span><span class="co">## [17] xcms_4.5.2                  BiocParallel_1.41.0        </span></span>
+<span><span class="co">## [19] BiocStyle_2.35.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] DBI_1.2.3                   rlang_1.1.4                </span></span>
-<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-65                </span></span>
-<span><span class="co">##   [5] MassSpecWavelet_1.71.0      compiler_4.4.1             </span></span>
+<span><span class="co">##   [3] magrittr_2.0.3              clue_0.3-66                </span></span>
+<span><span class="co">##   [5] MassSpecWavelet_1.73.0      compiler_4.5.0             </span></span>
 <span><span class="co">##   [7] systemfonts_1.1.0           vctrs_0.6.5                </span></span>
 <span><span class="co">##   [9] reshape2_1.4.4              stringr_1.5.1              </span></span>
-<span><span class="co">##  [11] MetaboCoreUtils_1.13.0      pkgconfig_2.0.3            </span></span>
+<span><span class="co">##  [11] MetaboCoreUtils_1.15.0      pkgconfig_2.0.3            </span></span>
 <span><span class="co">##  [13] crayon_1.5.3                fastmap_1.2.0              </span></span>
-<span><span class="co">##  [15] XVector_0.45.0              utf8_1.2.4                 </span></span>
-<span><span class="co">##  [17] rmarkdown_2.28              UCSC.utils_1.1.0           </span></span>
-<span><span class="co">##  [19] preprocessCore_1.67.1       ragg_1.3.3                 </span></span>
-<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.48                  </span></span>
-<span><span class="co">##  [23] MultiAssayExperiment_1.31.5 zlibbioc_1.51.2            </span></span>
+<span><span class="co">##  [15] XVector_0.47.0              utf8_1.2.4                 </span></span>
+<span><span class="co">##  [17] rmarkdown_2.29              UCSC.utils_1.3.0           </span></span>
+<span><span class="co">##  [19] preprocessCore_1.69.0       ragg_1.3.3                 </span></span>
+<span><span class="co">##  [21] purrr_1.0.2                 xfun_0.49                  </span></span>
+<span><span class="co">##  [23] MultiAssayExperiment_1.33.1 zlibbioc_1.53.0            </span></span>
 <span><span class="co">##  [25] cachem_1.1.0                jsonlite_1.8.9             </span></span>
-<span><span class="co">##  [27] progress_1.2.3              highr_0.11                 </span></span>
-<span><span class="co">##  [29] DelayedArray_0.31.14        prettyunits_1.2.0          </span></span>
-<span><span class="co">##  [31] parallel_4.4.1              cluster_2.1.6              </span></span>
-<span><span class="co">##  [33] R6_2.5.1                    bslib_0.8.0                </span></span>
-<span><span class="co">##  [35] stringi_1.8.4               limma_3.61.12              </span></span>
-<span><span class="co">##  [37] jquerylib_0.1.4             iterators_1.0.14           </span></span>
-<span><span class="co">##  [39] Rcpp_1.0.13                 bookdown_0.41              </span></span>
-<span><span class="co">##  [41] knitr_1.48                  Matrix_1.7-1               </span></span>
-<span><span class="co">##  [43] igraph_2.1.1                tidyselect_1.2.1           </span></span>
-<span><span class="co">##  [45] abind_1.4-8                 yaml_2.3.10                </span></span>
-<span><span class="co">##  [47] doParallel_1.0.17           codetools_0.2-20           </span></span>
-<span><span class="co">##  [49] affy_1.83.1                 lattice_0.22-6             </span></span>
-<span><span class="co">##  [51] tibble_3.2.1                plyr_1.8.9                 </span></span>
-<span><span class="co">##  [53] evaluate_1.0.1              desc_1.4.3                 </span></span>
-<span><span class="co">##  [55] Spectra_1.15.13             pillar_1.9.0               </span></span>
-<span><span class="co">##  [57] affyio_1.75.1               BiocManager_1.30.25        </span></span>
-<span><span class="co">##  [59] foreach_1.5.2               MSnbase_2.31.1             </span></span>
-<span><span class="co">##  [61] MALDIquant_1.22.3           ncdf4_1.23                 </span></span>
-<span><span class="co">##  [63] generics_0.1.3              hms_1.1.3                  </span></span>
-<span><span class="co">##  [65] ggplot2_3.5.1               munsell_0.5.1              </span></span>
-<span><span class="co">##  [67] scales_1.3.0                glue_1.8.0                 </span></span>
-<span><span class="co">##  [69] MsFeatures_1.13.0           lazyeval_0.2.2             </span></span>
-<span><span class="co">##  [71] tools_4.4.1                 mzID_1.43.0                </span></span>
-<span><span class="co">##  [73] QFeatures_1.15.3            vsn_3.73.0                 </span></span>
-<span><span class="co">##  [75] mzR_2.39.2                  fs_1.6.4                   </span></span>
-<span><span class="co">##  [77] XML_3.99-0.17               grid_4.4.1                 </span></span>
-<span><span class="co">##  [79] impute_1.79.0               tidyr_1.3.1                </span></span>
-<span><span class="co">##  [81] MsCoreUtils_1.17.3          colorspace_2.1-1           </span></span>
-<span><span class="co">##  [83] GenomeInfoDbData_1.2.13     PSMatch_1.9.1              </span></span>
-<span><span class="co">##  [85] cli_3.6.3                   textshaping_0.4.0          </span></span>
-<span><span class="co">##  [87] fansi_1.0.6                 S4Arrays_1.5.11            </span></span>
-<span><span class="co">##  [89] dplyr_1.1.4                 AnnotationFilter_1.29.0    </span></span>
-<span><span class="co">##  [91] pcaMethods_1.97.0           gtable_0.3.6               </span></span>
-<span><span class="co">##  [93] sass_0.4.9                  digest_0.6.37              </span></span>
-<span><span class="co">##  [95] SparseArray_1.5.45          farver_2.1.2               </span></span>
-<span><span class="co">##  [97] htmlwidgets_1.6.4           htmltools_0.5.8.1          </span></span>
-<span><span class="co">##  [99] pkgdown_2.1.1.9000          lifecycle_1.0.4            </span></span>
-<span><span class="co">## [101] httr_1.4.7                  statmod_1.5.0              </span></span>
-<span><span class="co">## [103] MASS_7.3-61</span></span></code></pre>
+<span><span class="co">##  [27] progress_1.2.3              DelayedArray_0.33.3        </span></span>
+<span><span class="co">##  [29] prettyunits_1.2.0           parallel_4.5.0             </span></span>
+<span><span class="co">##  [31] cluster_2.1.8               R6_2.5.1                   </span></span>
+<span><span class="co">##  [33] bslib_0.8.0                 stringi_1.8.4              </span></span>
+<span><span class="co">##  [35] limma_3.63.2                jquerylib_0.1.4            </span></span>
+<span><span class="co">##  [37] iterators_1.0.14            Rcpp_1.0.13-1              </span></span>
+<span><span class="co">##  [39] bookdown_0.41               knitr_1.49                 </span></span>
+<span><span class="co">##  [41] Matrix_1.7-1                igraph_2.1.2               </span></span>
+<span><span class="co">##  [43] tidyselect_1.2.1            abind_1.4-8                </span></span>
+<span><span class="co">##  [45] yaml_2.3.10                 doParallel_1.0.17          </span></span>
+<span><span class="co">##  [47] codetools_0.2-20            affy_1.85.0                </span></span>
+<span><span class="co">##  [49] lattice_0.22-6              tibble_3.2.1               </span></span>
+<span><span class="co">##  [51] plyr_1.8.9                  evaluate_1.0.1             </span></span>
+<span><span class="co">##  [53] desc_1.4.3                  Spectra_1.17.2             </span></span>
+<span><span class="co">##  [55] pillar_1.9.0                affyio_1.77.0              </span></span>
+<span><span class="co">##  [57] BiocManager_1.30.25         foreach_1.5.2              </span></span>
+<span><span class="co">##  [59] MSnbase_2.33.2              MALDIquant_1.22.3          </span></span>
+<span><span class="co">##  [61] ncdf4_1.23                  hms_1.1.3                  </span></span>
+<span><span class="co">##  [63] ggplot2_3.5.1               munsell_0.5.1              </span></span>
+<span><span class="co">##  [65] scales_1.3.0                glue_1.8.0                 </span></span>
+<span><span class="co">##  [67] MsFeatures_1.15.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">##  [69] tools_4.5.0                 mzID_1.45.0                </span></span>
+<span><span class="co">##  [71] QFeatures_1.17.0            vsn_3.75.0                 </span></span>
+<span><span class="co">##  [73] mzR_2.41.1                  fs_1.6.5                   </span></span>
+<span><span class="co">##  [75] XML_3.99-0.17               grid_4.5.0                 </span></span>
+<span><span class="co">##  [77] impute_1.81.0               tidyr_1.3.1                </span></span>
+<span><span class="co">##  [79] MsCoreUtils_1.17.3          colorspace_2.1-1           </span></span>
+<span><span class="co">##  [81] GenomeInfoDbData_1.2.13     PSMatch_1.11.0             </span></span>
+<span><span class="co">##  [83] cli_3.6.3                   textshaping_0.4.1          </span></span>
+<span><span class="co">##  [85] fansi_1.0.6                 S4Arrays_1.7.1             </span></span>
+<span><span class="co">##  [87] dplyr_1.1.4                 AnnotationFilter_1.31.0    </span></span>
+<span><span class="co">##  [89] pcaMethods_1.99.0           gtable_0.3.6               </span></span>
+<span><span class="co">##  [91] sass_0.4.9                  digest_0.6.37              </span></span>
+<span><span class="co">##  [93] SparseArray_1.7.2           farver_2.1.2               </span></span>
+<span><span class="co">##  [95] htmlwidgets_1.6.4           htmltools_0.5.8.1          </span></span>
+<span><span class="co">##  [97] pkgdown_2.1.1.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">##  [99] httr_1.4.7                  statmod_1.5.0              </span></span>
+<span><span class="co">## [101] MASS_7.3-61</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
