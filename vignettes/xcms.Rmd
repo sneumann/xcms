@@ -1253,17 +1253,13 @@ f[f != "QC"] <- NA
 f <- sampleData(faahko)$sample_type
 f[f == "QC"] <- NA
 
-missing_filter <- PercentMissingFilter(threshold = 30,
-                                       f = f)
+missing_filter <- PercentMissingFilter(threshold = 30, f = f)
 # Apply the filter to faakho object
-filtered_faahko <- filterFeatures(object = faahko,
-                                  filter = missing_filter)
+filtered_faahko <- filterFeatures(object = faahko, filter = missing_filter)
 
 # Apply the filter to res object
-missing_filter <- PercentMissingFilter(threshold = 30,
-                                       f = f)
-filtered_res <- filterFeatures(object = res,
-                               filter = missing_filter)
+missing_filter <- PercentMissingFilter(threshold = 30, f = f)
+filtered_res <- filterFeatures(object = res, filter = missing_filter)
 ```
 
 Here, no feature was removed, meaning that all the features had less than 30%

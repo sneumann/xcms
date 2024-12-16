@@ -59,7 +59,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     }
 
     if ((scanrangeFrom <  firstScan) || (scanrangeFrom > totalScanNums) || (scanrangeTo < firstScan) || (scanrangeTo > totalScanNums))
-        error("Error in scanrange \n");
+        Rf_error("Error in scanrange \n");
 
     //show the progress please
     Rprintf("\n Detecting Kalman ROI's ... \n percent finished: ");
@@ -112,17 +112,17 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     Rprintf(" %d\n", 100);
 
     const char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
-    PROTECT(list_names = allocVector(STRSXP, N_NAMES));
+    PROTECT(list_names = Rf_allocVector(STRSXP, N_NAMES));
     for(int j = 0; j < N_NAMES; j++)
-        SET_STRING_ELT(list_names, j,  mkChar(names[j]));
+        SET_STRING_ELT(list_names, j,  Rf_mkChar(names[j]));
 
-    PROTECT(peaklist = allocVector(VECSXP, busybody.getPicCounts()));
+    PROTECT(peaklist = Rf_allocVector(VECSXP, busybody.getPicCounts()));
     for (int i=0;i<busybody.getPicCounts();i++) {
 
         std::vector<double> featInfo = busybody.iterOverFeatures(i, pscantime);
 	//jo int scanLength = int(featInfo.at(5) - featInfo.at(4) + 1);
 
-        PROTECT(entrylist = allocVector(VECSXP, N_NAMES));
+        PROTECT(entrylist = Rf_allocVector(VECSXP, N_NAMES));
 
         //allow for new vars declared to be passed out
         PROTECT(vmz = NEW_NUMERIC(1));
@@ -153,7 +153,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         SET_VECTOR_ELT(entrylist, 5, vlength);
         SET_VECTOR_ELT(entrylist, 6, vintensity);
 
-        setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
+        Rf_setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
         SET_VECTOR_ELT(peaklist, i, entrylist);
         UNPROTECT(N_NAMES + 1); //entrylist + values
     }

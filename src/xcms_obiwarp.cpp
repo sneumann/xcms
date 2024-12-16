@@ -39,16 +39,16 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     double *pscantime2, *pmz2, *pintensity2;
     SEXP corrected;
 
-    PROTECT(valscantime = coerceVector(valscantime, INTSXP));
-    mzrange = coerceVector(mzrange, INTSXP);
+    PROTECT(valscantime = Rf_coerceVector(valscantime, INTSXP));
+    mzrange = Rf_coerceVector(mzrange, INTSXP);
     pvalscantime = INTEGER(valscantime)[0];
     pmzrange = INTEGER(mzrange)[0];
     pscantime = REAL(scantime);
     pmz = REAL(mz);
     pintensity = REAL(intensity);
 
-    PROTECT(valscantime2 = coerceVector(valscantime2, INTSXP));
-    mzrange2 = coerceVector(mzrange2, INTSXP);
+    PROTECT(valscantime2 = Rf_coerceVector(valscantime2, INTSXP));
+    mzrange2 = Rf_coerceVector(mzrange2, INTSXP);
     pvalscantime2 = INTEGER(valscantime2)[0];
     pmzrange2 = INTEGER(mzrange2)[0];
     pscantime2 = REAL(scantime2);
@@ -120,8 +120,8 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     lmat2.tm_axis_vals(nOut, nOutF);
     lmat2.warp_tm(nOutF, mOutF);
 
-    PROTECT(corrected = allocVector(REALSXP, length(scantime2)));
-    for(int i=0; i < length(scantime2);i++){
+    PROTECT(corrected = Rf_allocVector(REALSXP, Rf_length(scantime2)));
+    for(int i=0; i < Rf_length(scantime2);i++){
       REAL(corrected)[i] = lmat2.tm()->back()[i];
     }
 

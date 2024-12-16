@@ -1,6 +1,6 @@
 # xcms 4.5
 
-## Changes in version 4.5.1
+## Changes in version 4.5.3
 
 - Address issue #765: peak detection on chromatographic data: report a
   chromatogram's `"mz"`, `"mzmin"` and `"mzmax"` as the mean m/z and lower and
@@ -10,6 +10,19 @@
   chromatographic peak detection with parameter `verboseBetaColumns = TRUE`.
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
+
+## Changes in version 4.5.2
+
+- Small update to `featureSpectra()` and `chromPeakSpectra()` to allow addition
+  of `chromPeaks()` and `featuresDefinitions()` columns to be added to the
+  `Spectra` output.
+- Tidied the `xcms` vignette, to order the filtering of features and remove
+  the outdated normalisation paragraph.In depth discussion on this subject can
+  be found on `metabonaut`.
+
+## Changes in version 4.5.1
+
+- Fix compile errors with R-4.5
 
 # xcms 4.3
 

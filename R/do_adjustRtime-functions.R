@@ -874,7 +874,7 @@ NULL
                       resid_ratio = 3,
                       zero_weight = 10,
                       bs = "tp"){
-    rt_map <- rt_map[order(rt_map$obs), ]
+    rt_map <- rt_map[order(rt_map$obs), c("ref", "obs")]
     # add first row of c(0,0) to set a fix timepoint.
     rt_map <- rbind(c(0,0), rt_map)
     weights <- rep(1, nrow(rt_map))

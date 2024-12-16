@@ -197,12 +197,21 @@ specifying `msLevel = 1L` in the call above (e.g. to evaluate the full MS1
 signal at the peak's apex position).
 
 The returned `Spectra` contains also the reference to the respective
-chromatographic peak as additional *spectra variable* `"peak_id"` that contains
+chromatographic peak as additional *spectra variable* `"chrom_peak_id"` that contains
 the identifier for the chromatographic peak (i.e. its row name in the
-`chromPeaks` matrix).
+`chromPeaks` matrix). 
 
-```{r peak_id}
-dda_spectra$peak_id
+```{r chrom_peak_id}
+dda_spectra$chrom_peak_id
+```
+
+Some information about the chromatographic peak can also be added to the 
+returned `Spectra` object using the `chrompeakColumns` parameter in 
+`chromPeakSpectra()`. By default, the m/z and retention time of the 
+chromatographic peak are added to the spectra metadata.
+
+```{r chrom_peak_mz}
+dda_spectra$chrom_peak_mz
 ```
 
 Note also that with `return.type = "List"` a list parallel to the `chromPeaks`
@@ -231,7 +240,7 @@ chromatographic peak using the ID of the peak in the present data set.
 
 ```{r dda-ms2-get-ms2, message = FALSE}
 ex_id <- rownames(chromPeaks(dda_data, mz = ex_mz, ppm = 20))
-ex_spectra <- dda_spectra[dda_spectra$peak_id == ex_id]
+ex_spectra <- dda_spectra[dda_spectra$chrom_peak_id == ex_id]
 ex_spectra
 ```
 
@@ -248,7 +257,7 @@ generally the best approach or suggested for all types of data.
 ex_spectrum <- combineSpectra(ex_spectra, FUN = combinePeaks, ppm = 20,
                               peaks = "intersect", minProp = 0.8,
                               intensityFun = median, mzFun = median,
-                              f = ex_spectra$peak_id)
+                              f = ex_spectra$chrom_peak_id)
 ex_spectrum
 ```
 
@@ -769,7 +778,7 @@ match almost perfectly. Next we get the MS2 spectra for this peak.
 
 ```{r pro-dda-ms2}
 prochloraz_dda_spectra <- dda_spectra[
-    dda_spectra$peak_id == rownames(prochloraz_dda_peak)]
+    dda_spectra$chrom_peak_id == rownames(prochloraz_dda_peak)]
 prochloraz_dda_spectra
 ```
 
@@ -780,7 +789,7 @@ peaks. Next we combine them into a consensus spectrum.
 prochloraz_dda_spectrum <- combineSpectra(
     prochloraz_dda_spectra, FUN = combinePeaks, ppm = 20,
     peaks = "intersect", minProp = 0.8, intensityFun = median, mzFun = median,
-    f = prochloraz_dda_spectra$peak_id)
+    f = prochloraz_dda_spectra$chrom_peak_id)
 ```
 
 At last we load also the Prochloraz MS2 spectra (for different collision

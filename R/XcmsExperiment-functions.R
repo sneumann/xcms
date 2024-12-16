@@ -833,10 +833,16 @@
                                                  "largest_bpi"),
                                    msLevel = 2L, expandRt = 0, expandMz = 0,
                                    ppm = 0, skipFilled = FALSE,
-                                   peaks = integer(), BPPARAM = bpparam()) {
+                                   peaks = integer(),
+                                   chromPeakColumns = c("rt", "mz"),
+                                   BPPARAM = bpparam()) {
     method <- match.arg(method)
-    pks <- .chromPeaks(x)[, c("mz", "mzmin", "mzmax", "rt",
-                              "rtmin", "rtmax", "maxo", "sample")]
+    if (!all(chromPeakColumns %in% colnames(.chromPeaks(x))))
+        stop("One or more of the columns in 'chromPeakColumns' are not ",
+             "available in the 'chromPeaks' data.")
+    pks <- .chromPeaks(x)[, union(c("mz", "mzmin", "mzmax", "rt",
+                              "rtmin", "rtmax", "maxo", "sample"),
+                              chromPeakColumns)]
     if (ppm != 0)
         expandMz <- expandMz + pks[, "mz"] * ppm / 1e6
     if (expandMz[1L] != 0) {
@@ -858,7 +864,7 @@
     res <- bpmapply(
         split.data.frame(pks, f),
         split(spectra(x), factor(fromFile(x), levels = levels(f))),
-        FUN = function(pk, sp, msLevel, method) {
+        FUN = function(pk, sp, msLevel, method, chromPeakColumns) {
             sp <- filterMsLevel(sp, msLevel)
             idx <- switch(
                 method,
@@ -869,12 +875,33 @@
                 largest_bpi = .spectra_index_list_largest_bpi(sp, pk, msLevel))
             ids <- rep(rownames(pk), lengths(idx))
             res <- sp[unlist(idx)]
-            res$peak_id <- ids
+            pk_data <- as.data.frame(pk[ids, chromPeakColumns, drop = FALSE])
+            pk_data$id <- ids
+            colnames(pk_data) <- paste0("chrom_peak_", colnames(pk_data))
+            res <- .add_spectra_data(res, pk_data)
             res
         },
-        MoreArgs = list(msLevel = msLevel, method = method),
+        MoreArgs = list(msLevel = msLevel, method = method,
+                        chromPeakColumns = chromPeakColumns),
         BPPARAM = BPPARAM)
     Spectra:::.concatenate_spectra(res)
+}
+
+#' @param x `Spectra` object.
+#'
+#' @param data `data.frame` or `matrix` with the data to be added to the
+#'     spectra object.
+#'
+#' @noRd
+.add_spectra_data <- function(x, data) {
+    if (is(data, "matrix"))
+        data <- as.data.frame(data)
+    if (nrow(data) != length(x))
+        stop("Length of 'data' does not match the number of spectra in 'x'")
+    for (i in colnames(data)) {
+        x[[i]] <- data[, i]
+    }
+    x
 }
 
 #' @param peaks `matrix` with chrom peaks.

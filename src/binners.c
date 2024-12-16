@@ -72,11 +72,11 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   base_value = REAL(baseValue)[0];
 
   if (from_idx < 0 || to_idx < 0)
-    error("'fromIdx' and 'toIdx' have to be >= 0!");
+    Rf_error("'fromIdx' and 'toIdx' have to be >= 0!");
   if (from_idx > to_idx)
-    error("'fromIdx' has to be smaller than 'toIdx'!");
+    Rf_error("'fromIdx' has to be smaller than 'toIdx'!");
   if (to_idx >= LENGTH(x))
-    error("'toIdx' can not be larger than length(x)!");
+    Rf_error("'toIdx' can not be larger than length(x)!");
 
   /* Define from_x and to_x */
   if (ISNA(REAL(fromX)[0])) {
@@ -95,12 +95,12 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     n_bin = (LENGTH(breaks) - 1);
     p_brks = REAL(breaks);
     if (n_bin < 1)
-      error("Not enough breaks defined!");
+      Rf_error("Not enough breaks defined!");
   } else if (INTEGER(nBins)[0] != NA_INTEGER) {
     /* Calculating breaks based on the number of bins. */
     n_bin = asInteger(nBins);
     if (n_bin <= 0)
-      error("'nBins' must be larger 1!");
+      Rf_error("'nBins' must be larger 1!");
     PROTECT(brks = allocVector(REALSXP, n_bin + 1));
     count_protect++;
     /* Calculate the breaks */
@@ -110,7 +110,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     /* Calculating breaks based on bin size. */
     bin_size = REAL(binSize)[0];
     if (bin_size < 0)
-      error("'binSize' has to be > 0!");
+      Rf_error("'binSize' has to be > 0!");
     if (shift_by_half_bin_size > 0) {
       from_x = from_x - (bin_size / 2);
       to_x = to_x + (bin_size / 2);
@@ -224,7 +224,7 @@ SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   SEXP res, from_idx, to_idx, current_res;
   int n_subsets, *p_subset_from_idx, *p_subset_to_idx;
   if (LENGTH(subsetFromIdx) != LENGTH(subsetToIdx)) {
-    error("Arguments 'subsetFromIdx' and 'subsetToIdx' have to have the same length!");
+    Rf_error("Arguments 'subsetFromIdx' and 'subsetToIdx' have to have the same length!");
   }
   n_subsets = LENGTH(subsetFromIdx);
   p_subset_from_idx = INTEGER(subsetFromIdx);

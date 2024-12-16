@@ -1229,6 +1229,7 @@ setMethod(
                                 "largest_tic", "largest_bpi"),
              msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
              skipFilled = FALSE, peaks = character(),
+             chromPeakColumns = c("rt", "mz"),
              return.type = c("Spectra", "List"), BPPARAM = bpparam()) {
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
@@ -1244,14 +1245,15 @@ setMethod(
         else pkidx <- integer()
         res <- .mse_spectra_for_peaks(object, method, msLevel, expandRt,
                                       expandMz, ppm, skipFilled, pkidx,
+                                      chromPeakColumns,
                                       BPPARAM)
         if (!length(pkidx))
             peaks <- rownames(.chromPeaks(object))
         else peaks <- rownames(.chromPeaks(object))[pkidx]
         if (return.type == "Spectra")
-            res <- res[as.matrix(findMatches(peaks, res$peak_id))[, 2L]]
+            res <- res[as.matrix(findMatches(peaks, res$chrom_peak_id))[, 2L]]
         else
-            as(split(res, factor(res$peak_id, levels = peaks)), "List")
+            as(split(res, factor(res$chrom_peak_id, levels = peaks)), "List")
     })
 
 #' @rdname reconstructChromPeakSpectra
@@ -1773,11 +1775,16 @@ setMethod(
     "featureSpectra", "XcmsExperiment",
     function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
              skipFilled = FALSE, return.type = c("Spectra", "List"),
-             features = character(), ...) {
+             features = character(),
+             featureColumns = c("rtmed", "mzmed"),
+             ...) {
         return.type <- match.arg(return.type)
         if (!hasFeatures(object))
             stop("No feature definitions present. Please run ",
                  "'groupChromPeaks' first.")
+        if (!all(featureColumns %in% colnames(featureDefinitions(object))))
+            stop("One or more of the requested 'featureColumns' are not ",
+                 "present in the feature definitions.")
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
         features_all <- rownames(featureDefinitions(object))
@@ -1794,11 +1801,15 @@ setMethod(
             expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
             peaks = unique(pindex), ...)
         mtch <- as.matrix(
-            findMatches(sps$peak_id, rownames(.chromPeaks(object))[pindex]))
+            findMatches(sps$chrom_peak_id,
+                        rownames(.chromPeaks(object))[pindex]))
         sps <- sps[mtch[, 1L]]
         fid <- rep(
             ufeatures, lengths(featureDefinitions(object)$peakidx[findex]))
-        sps$feature_id <- fid[mtch[, 2L]]
+        f_data <- featureDefinitions(object)[fid[mtch[, 2L]], featureColumns]
+        f_data$id <- fid[mtch[, 2L]]
+        colnames(f_data) <- paste0("feature_", colnames(f_data))
+        sps <- .add_spectra_data(sps, f_data)
         if (return.type == "List") {
             sps <- List(split(sps, f = factor(sps$feature_id,
                                               levels = ufeatures)))
