@@ -533,7 +533,7 @@
                 )
                 if ("beta_cor" %in% cn) {
                     res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
-                        vapply(xsub[nr > 0], function(z) sum(z[, "intensity"]), 
+                        vapply(xsub[nr > 0], function(z) sum(z[, "intensity"]),
                                NA_real_),
                         rt[keep][nr > 0])
                 }
@@ -544,7 +544,7 @@
 }
 
 
-#' Calculates quality metrics for a chromatographic peak. 
+#' Calculates quality metrics for a chromatographic peak.
 #'
 #' @param x `list` of peak matrices (from a single MS level and from a single
 #'     file/sample).
@@ -1209,6 +1209,70 @@ XcmsExperiment <- function() {
     as(MsExperiment(), "XcmsExperiment")
 }
 
+#' Convert a XCMSnExp to a XcmsExperiment.
+#'
+#' @noRd
+.xcms_n_exp_to_xcms_experiment <- function(from) {
+    requireNamespace("MsExperiment", quietly = TRUE)
+    ## Check requirements:
+    ## - an empty processing queue
+    if (length(from@spectraProcessingQueue))
+        stop("Processing queue is not empty. Can only convert objects with ",
+             "an empty spectra processing queue.")
+    res <- readMsExperiment(spectraFiles = fileNames(from),
+                            sampleData = MSnbase::pData(from))
+    res <- as(res, "XcmsExperiment")
+    res@processHistory <- from@.processHistory
+    res <- filterSpectra(
+        res, filterRt, rt = range(rtime(from, adjusted = FALSE)))
+    if (hasAdjustedRtime(from)) {
+        rts <- rtime(from)
+        if (length(rts) != length(res@spectra))
+            stop("Number of spectra don't match. Was the XCMSnExp subset?")
+        res@spectra$rtime_adjusted <- unname(rts)
+    }
+    if (hasChromPeaks(from)) {
+        res@chromPeaks <- chromPeaks(from)
+        res@chromPeakData <- as.data.frame(chromPeakData(from))
+    }
+    if (hasFeatures(from))
+        res@featureDefinitions <- as.data.frame(featureDefinitions(from))
+    res
+}
+
+#' Combine `XcmsExperiment` objects. Only combining of chrom peaks is supported.
+#' Any alignment or correspondence results are removed.
+#'
+#' @param x `list` of `XcmsExperiment` objects.
+#'
+#' @noRd
+.xmse_combine <- function(x) {
+    x <- lapply(x, function(z) {
+        if (!is(z, "XcmsExperiment"))
+            stop("Only 'XcmsExperiment' objects accepted.")
+        if (hasFeatures(z))
+            z <- dropFeatureDefinitions(z)
+        if (hasAdjustedRtime(z))
+            z <- dropAdjustedRtime(z)
+        z
+    })
+    res <- .mse_combine(x)
+    nsamp <- lengths(x)
+    nsamp <- c(0, cumsum(nsamp)[-length(nsamp)])
+    res@chromPeaks <- do.call(rbindFill, mapply(function(z, i) {
+        z <- chromPeaks(z)
+        z[, "sample"] <- z[, "sample"] + i
+        z
+    }, x, nsamp, SIMPLIFY = FALSE, USE.NAMES = FALSE))
+    rownames(res@chromPeaks) <- .featureIDs(nrow(res@chromPeaks), "CP")
+    res@chromPeakData <- do.call(
+        rbindFill,
+        lapply(x, chromPeakData, return.type = "data.frame"))
+    rownames(res@chromPeakData) <- rownames(res@chromPeaks)
+    res@processHistory <- do.call(c, lapply(x, processHistory))
+    res
+}
+
 #' function to convert an XcmsExperiment into an XCMSnExp.
 #'
 #' @author Johannes Rainer
@@ -1231,7 +1295,7 @@ XcmsExperiment <- function() {
              " of the Spectra object is not empty.")
     ## -> OnDiskMSnExp
     n@processingData <- new("MSnProcess",
-                            processing = paste0("Data converted [", date(), "]"),
+                            processing = paste0("Data converted [", date(),"]"),
                             files = fileNames(from),
                             smoothed = NA)
     n@phenoData <- new("NAnnotatedDataFrame", as.data.frame(sampleData(from)))

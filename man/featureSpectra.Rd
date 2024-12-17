@@ -72,7 +72,8 @@ object. The columns will be named as they are written in the
 Defaults to \code{c("mzmed", "rtmed")}.}
 }
 \value{
-The function returns either a \code{\link[=Spectra]{Spectra()}} (for \code{return.type = "Spectra"})
+The function returns either a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} (for
+\code{return.type = "Spectra"})
 or a \code{List} of \code{Spectra} (for \code{return.type = "List"}). For the latter,
 the order and the length matches parameter \code{features} (or if no \code{features}
 is defined the order of the features in \code{featureDefinitions(object)}).
@@ -104,7 +105,8 @@ spectrum \strong{per chromatographic peak} will be returned (hence multiple
 spectra per feature).
 
 The information from \code{featureDefinitions} for each feature can be included
-in the returned \code{\link[=Spectra]{Spectra()}} object using the \code{featureColumns} parameter.
+in the returned \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object using the \code{featureColumns}
+parameter.
 This is useful for keeping details such as the median retention time (\code{rtmed})
 or median m/z (\code{mzmed}). The columns will retain their names as specified
 in the \code{featureDefinitions} object, prefixed by \code{"feature_"}
@@ -113,9 +115,11 @@ name of the feature in the \code{featureDefinitions} data.frame) is always added
 as a metadata column named \code{"feature_id"}.
 
 See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}}, as it supports a similar parameter for
-including columns from the chromatographic peaks in the returned spectra object.
+including columns from the chromatographic peaks in the returned spectra
+object.
 These parameters can be used in combination to include information from both
-the chromatographic peaks and the features in the returned \code{\link[=Spectra]{Spectra()}}.
+the chromatographic peaks and the features in the returned
+\code{\link[Spectra:Spectra]{Spectra::Spectra()}}.
 The \emph{peak ID} (i.e., the row name of the peak in the \code{chromPeaks} matrix)
 is added as a metadata column named \code{"chrom_peak_id"}.
 }

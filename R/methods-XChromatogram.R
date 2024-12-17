@@ -41,8 +41,8 @@ setMethod("show", "XChromatogram", function(object) {
 #'   and `"column"` specifying in which chromatogram of `object` the peak was
 #'   identified. Chromatographic peaks are ordered by row.
 #'
-#' - `chromPeakData`, `chromPeakData<-`: extract or set the [DataFrame()] with
-#'   optional chromatographic peak annotations.
+#' - `chromPeakData`, `chromPeakData<-`: extract or set the
+#'   [S4Vectors::DataFrame()] with optional chromatographic peak annotations.
 #'
 #' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
 #'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
@@ -177,7 +177,7 @@ setMethod("show", "XChromatogram", function(object) {
 #' @seealso
 #'
 #' [findChromPeaks-centWave][findChromPeaks-Chromatogram-CentWaveParam] for peak
-#' detection on [MChromatograms()] objects.
+#' detection on [MSnbase::MChromatograms()] objects.
 #'
 #' @examples
 #'

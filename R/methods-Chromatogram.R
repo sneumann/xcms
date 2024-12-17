@@ -24,7 +24,7 @@
 #'
 #' @param BPPARAM a parameter class specifying if and how parallel processing
 #'     should be performed (only for `XChromatograms` objects). It defaults to
-#'     `bpparam()`. See [bpparam()] for more information.
+#'     `bpparam()`. See [BiocParallel::bpparam()] for more information.
 #'
 #' @param ... currently ignored.
 #'
@@ -167,24 +167,24 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' chromatogram. See help on `alignRt` in [MSnbase::Chromatogram()] for more
 #' details.
 #'
-#' If `correlate` is called on a single [MChromatograms()] object a pairwise
-#' correlation of each chromatogram with each other is performed and a `matrix`
-#' with the correlation coefficients is returned.
+#' If `correlate` is called on a single [MSnbase::MChromatograms()] object a
+#' pairwise correlation of each chromatogram with each other is performed and
+#' a `matrix` with the correlation coefficients is returned.
 #'
 #' Note that the correlation of two chromatograms depends also on their order,
 #' e.g. `correlate(chr1, chr2)` might not be identical to
 #' `correlate(chr2, chr1)`. The lower and upper triangular part of the
 #' correlation matrix might thus be different.
 #'
-#' @param x [Chromatogram()] or [MChromatograms()] object.
+#' @param x [MSnbase::Chromatogram()] or [MSnbase::MChromatograms()] object.
 #'
-#' @param y [Chromatogram()] or [MChromatograms()] object.
+#' @param y [MSnbase::Chromatogram()] or [MSnbase::MChromatograms()] object.
 #'
 #' @param use `character(1)` passed to the `cor` function. See [cor()] for
 #'     details.
 #'
-#' @param method `character(1)` passed to the `cor` function. See [cor()] for
-#'     details.
+#' @param method `character(1)` passed to the `cor` function. See
+#'     [stats::cor()] for details.
 #'
 #' @param align `character(1)` defining the alignment method to be used. See
 #'     help on `alignRt` in [MSnbase::Chromatogram()] for details. The value of
@@ -244,7 +244,7 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' matching certain conditions (depending on parameter `which`). The
 #' intensities are actually not *removed* but replaced with `NA_real_`. To
 #' actually **remove** the intensities (and the associated retention times)
-#' use [clean()] afterwards.
+#' use [MSnbase::clean()] afterwards.
 #'
 #' Parameter `which` allows to specify which intensities should be replaced by
 #' `NA_real_`. By default (`which = "below_threshod"` intensities below
@@ -258,8 +258,8 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' chromatographic data.
 #'
 #' @param object an object representing chromatographic data. Can be a
-#'     [Chromatogram()], [MChromatograms()], [XChromatogram()] or
-#'     [XChromatograms()] object.
+#'     [MSnbase::Chromatogram()], [MSnbase::MChromatograms()],
+#'     [XChromatogram()] or [XChromatograms()] object.
 #'
 #' @param which `character(1)` defining the condition to remove intensities.
 #'     See description for details and options.

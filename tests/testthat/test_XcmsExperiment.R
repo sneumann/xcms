@@ -1471,3 +1471,14 @@ test_that("chromPeakSummary,XcmsExperiment works", {
   expect_true(all(c("beta_cor", "beta_snr") %in% colnames(mat)))
   expect_true(is.numeric(mat))
 })
+
+test_that("c,XcmsExperiment works", {
+    a <- loadXcmsData("faahko_sub2")
+    res <- c(a)
+    expect_equal(res, a)
+
+    res <- c(a, a)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res) == length(a) * 2)
+    expect_true(nrow(chromPeaks(res)) == nrow(chromPeaks(a)) * 2)
+})

@@ -10,6 +10,8 @@
   chromatographic peak detection with parameter `verboseBetaColumns = TRUE`.
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
+- Add `c()` method to combine multiple `XcmsExperiment` objects into one.
+- Add a method to coerce from `XCMSnExp` to `XcmsExperiment` objects.
 
 ## Changes in version 4.5.2
 

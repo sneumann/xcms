@@ -114,10 +114,10 @@ setMethod("removeIntensity", "MChromatograms",
 #'
 #' @description
 #'
-#' These functions allow to filter (subset) [MChromatograms()] or
+#' These functions allow to filter (subset) [MSnbase::MChromatograms()] or
 #' [XChromatograms()] objects, i.e. sets of chromatographic data, without
 #' changing the data (intensity and retention times) within the individual
-#' chromatograms ([Chromatogram()] objects).
+#' chromatograms ([MSnbase::Chromatogram()] objects).
 #'
 #' - `filterColumnsIntensityAbove`: subsets a `MChromatograms` objects keeping
 #'   only columns (samples) for which `value` is larger than the provided
@@ -156,7 +156,7 @@ setMethod("removeIntensity", "MChromatograms",
 #'     columns that should be returned. `n` will be rounded to the closest
 #'     (larger) integer value.
 #'
-#' @param object [MChromatograms()] or [XChromatograms()] object.
+#' @param object [MSnbase::MChromatograms()] or [XChromatograms()] object.
 #'
 #' @param sortBy for `filterColumnsKeepTop`: the value by which columns should
 #'     be ordered to determine the top n columns. Can be either `sortBy = "bpi"`
@@ -291,9 +291,10 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 #' `plotOverlay` draws chromatographic peak data from multiple (different)
 #' extracted ion chromatograms (EICs) into the same plot. This allows to
 #' directly compare the peak shape of these EICs in the same sample. In
-#' contrast to the `plot` function for [MChromatograms()] object, which draws
-#' the data from the same EIC across multiple samples in the same plot, this
-#' function draws the different EICs from the same sample into the same plot.
+#' contrast to the `plot` function for [MSnbase::MChromatograms()] object,
+#' which draws the data from the same EIC across multiple samples in the
+#' same plot, this function draws the different EICs from the same sample
+#' into the same plot.
 #'
 #' If `plotChromatogramsOverlay` is called on a `XChromatograms` object any
 #' present chromatographic peaks will also be highlighted/drawn depending on the
@@ -307,7 +308,7 @@ setMethod("filterColumnsKeepTop", "MChromatograms",
 #' @param main optional title of the plot. If not defined, the range of m/z
 #'     values is used.
 #'
-#' @param object [MChromatograms()] or [XChromatograms()] object.
+#' @param object [MSnbase::MChromatograms()] or [XChromatograms()] object.
 #'
 #' @param peakBg if `object` is a `XChromatograms` object: definition of
 #'     background color(s) for each chromatographic peak. Has to be either of

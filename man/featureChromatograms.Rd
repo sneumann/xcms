@@ -98,8 +98,8 @@ peaks of a feature will be used.}
 \item{progressbar}{\code{logical(1)} defining whether a progress bar is shown.}
 
 \item{BPPARAM}{For \code{object} being an \code{XcmsExperiment}: parallel processing
-setup. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more
-information.}
+setup. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+for more information.}
 
 \item{include}{Only for \code{object} being an \code{XCMSnExp}: \code{character(1)}
 defining which chromatographic peaks (and related feature definitions)

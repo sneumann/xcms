@@ -93,7 +93,7 @@ into memory and will thus in most settings cause an out-of-memory error.}
 
 \item{BPPARAM}{parameter object to set up parallel processing. Uses the
 default parallel processing setup returned by \code{bpparam()}. See
-\code{\link[=bpparam]{bpparam()}} for details and examples.}
+\code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details and examples.}
 
 \item{maxPeakwidth}{For \code{CleanPeaksParam}: \code{numeric(1)} defining the maximal
 allowed peak width (in retention time).}

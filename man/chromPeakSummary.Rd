@@ -34,7 +34,8 @@ on which the metric should be calculated.}
 \item{chunkSize}{\code{integer(1)} defining the number of samples from which data
 should be loaded and processed at a time.}
 
-\item{BPPARAM}{Parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for details.}
+\item{BPPARAM}{Parallel processing setup. See
+\code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details.}
 }
 \value{
 A \code{matrix} or \code{data.frame} with the same number of rows as there are

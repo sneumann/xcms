@@ -436,3 +436,29 @@ test_that(".update_sample_data_links_spectra works", {
     expect_true(length(spectra(res[2L])) == 0)
     expect_true(length(spectra(res[3L])) == 1)
 })
+
+test_that(".mse_combine works", {
+    a <- as(loadXcmsData("xmse"), "MsExperiment")
+    b <- as(loadXcmsData("faahko_sub2"), "MsExperiment")
+
+    res <- .mse_combine(list(a, b, a))
+    expect_s4_class(res, "MsExperiment")
+    expect_true(validObject(res))
+    expect_equal(length(res), 19)
+    expect_equal(rtime(res), c(rtime(a), rtime(b), rtime(a)))
+
+    sd_test <- sampleData(res[12:19])
+    sd_ref <- sampleData(a)
+    expect_equal(sampleData(res[12:19])[, colnames(sampleData(a))],
+                 sampleData(a))
+    expect_equal(colnames(sampleData(res)),
+                 union(colnames(sampleData(a)), colnames(sampleData(b))))
+
+    s <- spectra(res[9:11])
+    expect_equal(rtime(spectra(b)), rtime(s))
+    expect_equal(mz(spectra(b)), mz(s))
+
+    expect_error(.mse_combine(list(a, 3)), "objects extending")
+    b@otherData[[1L]] <- 3
+    expect_error(.mse_combine(list(a, b)), "not empty")
+})

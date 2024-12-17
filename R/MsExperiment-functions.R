@@ -546,3 +546,34 @@
     x@sampleDataLinks[["spectra"]] <- sdl
     x
 }
+
+#' WARNING: this only joins @sampleData, @spectra and
+#' `@sampleDataLinks[["spectra"]]`! All other slots are ignored.
+#'
+#' @noRd
+.mse_combine <- function(x) {
+    if (!all(vapply(x, inherits, NA, "MsExperiment")))
+        stop("Only objects extending 'MsExperiment' accepted as input.")
+    ## check other slots
+    lapply(x, function(z) {
+        if (length(z@experimentFiles) || length(z@qdata) || length(z@otherData))
+            stop("Slots 'experimentFiles', 'qdata' or 'otherData' are not ",
+                 "empty! Can only combine objects for which these data slots ",
+                 "are empty.", call. = FALSE)
+    })
+    res <- x[[1L]]
+    res@sampleData <- do.call(MsCoreUtils::rbindFill, lapply(x, sampleData))
+    res@spectra <- do.call(c, lapply(x, spectra))
+    sl <- lapply(x, function(z) z@sampleDataLinks[["spectra"]])
+    nsamp <- lengths(x)
+    nsamp <- c(0, cumsum(nsamp)[-length(nsamp)])
+    nspec <- vapply(sl, nrow, NA_integer_)
+    nspec <- c(0, cumsum(nspec)[-length(nspec)])
+    res@sampleDataLinks[["spectra"]] <- do.call(
+        rbind, mapply(function(z, i, j) {
+            z[, 1L] <- z[, 1L] + i
+            z[, 2L] <- z[, 2L] + j
+            z
+        }, sl, nsamp, nspec, SIMPLIFY = FALSE, USE.NAMES = FALSE))
+    res
+}

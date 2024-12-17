@@ -84,7 +84,8 @@ using 4 CPUs (separate processes) but using \verb{chunkSize = }1\verb{will not p
 the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.}
 
-\item{BPPARAM}{parallel processing settings (see \code{\link[=bpparam]{bpparam()}} for details).}
+\item{BPPARAM}{parallel processing settings (see \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+for details).}
 
 \item{peakIdx}{For \code{manualFeatures}: \code{list} of \code{integer} vectors with the
 indices of chromatographic peaks in the object's \code{chromPeaks} matrix
