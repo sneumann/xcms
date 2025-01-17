@@ -1,13 +1,13 @@
 # xcms 4.5
 
-## Changes in version XXX
+## Changes in version 4.5.4
 
 - Change the naming convention of chromatographic peaks to include also the MS
   level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
   in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
   in MS level 2.
 
-## Changes in version 4.5.2
+## Changes in version 4.5.3
 
 - Address issue #765: peak detection on chromatographic data: report a
   chromatogram's `"mz"`, `"mzmin"` and `"mzmax"` as the mean m/z and lower and
@@ -18,7 +18,14 @@
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
 
-# xcms 4.5.1
+## Changes in version 4.5.2
+
+- Small update to `featureSpectra()` and `chromPeakSpectra()` to allow addition
+  of `chromPeaks()` and `featuresDefinitions()` columns to be added to the
+  `Spectra` output.
+- Tidied the `xcms` vignette, to order the filtering of features and remove
+  the outdated normalisation paragraph.In depth discussion on this subject can
+  be found on `metabonaut`.
 
 ## Changes in version 4.5.1
 

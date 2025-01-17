@@ -925,22 +925,22 @@ test_that(".spectra_index_list_closest_mz works", {
 test_that(".mse_spectra_for_peaks works", {
     res <- .mse_spectra_for_peaks(xmse)
     expect_s4_class(res, "Spectra")
-    expect_true(any(spectraVariables(res) == "peak_id"))
+    expect_true(any(spectraVariables(res) == "chrom_peak_id"))
     expect_true(length(res) == 0)
 
     res <- .mse_spectra_for_peaks(xmse, msLevel = 1L, method = "closest_rt")
     expect_s4_class(res, "Spectra")
-    expect_true(any(spectraVariables(res) == "peak_id"))
+    expect_true(any(spectraVariables(res) == "chrom_peak_id"))
     expect_true(length(res) == nrow(chromPeaks(xmse)))
 
     res <- .mse_spectra_for_peaks(xmse, msLevel = 1L, method = "all",
                                   peaks = 220)
-    expect_true(all(res$peak_id == "CP220"))
+    expect_true(all(res$chrom_peak_id == "CP220"))
 
     ## Duplicates index?
     res <- .mse_spectra_for_peaks(xmse, msLevel = 1L, method = "closest_rt",
                                   peaks = c(3, 2, 3, 3, 1))
-    expect_equal(res$peak_id, c("CP003", "CP002", "CP003", "CP003", "CP001"))
+    expect_equal(res$chrom_peak_id, c("CP003", "CP002", "CP003", "CP003", "CP001"))
     expect_equal(rtime(res)[1], rtime(res)[3])
     expect_equal(mz(res)[1], mz(res)[3])
 })
@@ -952,6 +952,9 @@ test_that("chromPeakSpectra works", {
     expect_error(chromPeakSpectra(xmse, peaks = "other"), "out of bounds")
 
     pks <- c("CP242", "CP007", "CP123")
+
+    expect_error(chromPeakSpectra(xmse, peaks = pks,
+                                  chromPeakColumns = "other"), "not available")
     res <- chromPeakSpectra(xmse, peaks = pks)
     expect_s4_class(res, "Spectra")
     expect_equal(length(res), 0)
@@ -961,32 +964,34 @@ test_that("chromPeakSpectra works", {
     expect_equal(names(res), pks)
     res <- chromPeakSpectra(xmse, peaks = pks, msLevel = 1L)
     expect_s4_class(res, "Spectra")
-    expect_equal(unique(res$peak_id), pks)
+    expect_equal(unique(res$chrom_peak_id), pks)
 
     res2 <- chromPeakSpectra(xmse, msLevel = 1L, method = "closest_rt")
     expect_equal(length(res2), nrow(chromPeaks(xmse)))
-    expect_equal(res2$peak_id, rownames(chromPeaks(xmse)))
+    expect_equal(res2$chrom_peak_id, rownames(chromPeaks(xmse)))
 
     res2 <- chromPeakSpectra(xmse, msLevel = 1L, method = "largest_tic",
                              peaks = pks)
     expect_equal(length(res2), length(pks))
-    expect_equal(res2$peak_id, pks)
-    ic <- split(ionCount(res), factor(res$peak_id, levels = pks))
+    expect_equal(res2$chrom_peak_id, pks)
+    ic <- split(ionCount(res), factor(res$chrom_peak_id, levels = pks))
     idx <- vapply(ic, which.max, integer(1))
-    expect_equal(rtime(res2[1L]), rtime(res[res$peak_id == pks[1L]])[idx[1L]])
-    expect_equal(rtime(res2[2L]), rtime(res[res$peak_id == pks[2L]])[idx[2L]])
-    expect_equal(rtime(res2[3L]), rtime(res[res$peak_id == pks[3L]])[idx[3L]])
+    expect_equal(rtime(res2[1L]), rtime(res[res$chrom_peak_id == pks[1L]])[idx[1L]])
+    expect_equal(rtime(res2[2L]), rtime(res[res$chrom_peak_id == pks[2L]])[idx[2L]])
+    expect_equal(rtime(res2[3L]), rtime(res[res$chrom_peak_id == pks[3L]])[idx[3L]])
+    expect_true(all(c("chrom_peak_id", "chrom_peak_mz", "chrom_peak_rt") %in%
+                   spectraVariables(res2)))
 
     res2 <- chromPeakSpectra(xmse, msLevel = 1L, method = "largest_bpi",
                              peaks = pks, return.type = "List")
     expect_equal(length(res2), length(pks))
     expect_equal(names(res2), pks)
     expect_true(all(lengths(res2) == 1L))
-    bpi <- split(max(intensity(res)), factor(res$peak_id, levels = pks))
+    bpi <- split(max(intensity(res)), factor(res$chrom_peak_id, levels = pks))
     idx <- vapply(bpi, which.max, integer(1))
-    expect_equal(rtime(res2[[1L]]), rtime(res[res$peak_id == pks[1L]])[idx[1L]])
-    expect_equal(rtime(res2[[2L]]), rtime(res[res$peak_id == pks[2L]])[idx[2L]])
-    expect_equal(rtime(res2[[3L]]), rtime(res[res$peak_id == pks[3L]])[idx[3L]])
+    expect_equal(rtime(res2[[1L]]), rtime(res[res$chrom_peak_id == pks[1L]])[idx[1L]])
+    expect_equal(rtime(res2[[2L]]), rtime(res[res$chrom_peak_id == pks[2L]])[idx[2L]])
+    expect_equal(rtime(res2[[3L]]), rtime(res[res$chrom_peak_id == pks[3L]])[idx[3L]])
 
     ## DDA data
     fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
@@ -1092,10 +1097,15 @@ test_that("filterFeatureDefinitions works", {
 
 test_that("featureSpectra works", {
     expect_error(featureSpectra(xmse), "No feature definitions")
+    expect_error(featureSpectra(xmseg,
+                                  featureColumns = "other"), "not present")
     res_all <- featureSpectra(xmseg, msLevel = 1L)
     expect_s4_class(res_all, "Spectra")
     expect_true(all(rownames(featureDefinitions(xmseg)) %in%
                     res_all$feature_id))
+    expect_true(all(c("chrom_peak_rt", "chrom_peak_mz", "chrom_peak_id",
+                      "feature_rtmed", "feature_mzmed", "feature_id") %in%
+                   spectraVariables(res_all)))
 
     res_all <- featureSpectra(xmseg, msLevel = 1L, method = "closest_rt",
                               return.type = "List")
@@ -1115,10 +1125,10 @@ test_that("featureSpectra works", {
     res_2 <- featureSpectra(xmseg, msLevel = 1L, features = c("FT03", "FT01"),
                             return.type = "List")
     expect_true(length(res[[1L]]) < length(res_2[[1L]]))
-    expect_true(all(res[[1L]]$peak_id %in% res_2[[1L]]$peak_id))
+    expect_true(all(res[[1L]]$chrom_peak_id %in% res_2[[1L]]$chrom_peak_id))
     expect_equal(unique(res[[1L]]$feature_id), unique(res_2[[1L]]$feature_id))
     expect_true(length(res[[2L]]) < length(res_2[[2L]]))
-    expect_true(all(res[[2L]]$peak_id %in% res_2[[2L]]$peak_id))
+    expect_true(all(res[[2L]]$chrom_peak_id %in% res_2[[2L]]$chrom_peak_id))
     expect_equal(unique(res[[2L]]$feature_id), unique(res_2[[2L]]$feature_id))
 })
 
