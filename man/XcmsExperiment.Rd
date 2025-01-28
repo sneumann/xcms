@@ -20,6 +20,7 @@
 \alias{XcmsExperiment-class}
 \alias{show,XcmsExperiment-method}
 \alias{filterChromPeaks}
+\alias{featureArea}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{filterIsolationWindow,XcmsExperiment-method}
 \alias{filterRt,XcmsExperiment-method}

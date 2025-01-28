@@ -138,7 +138,28 @@ test_that("dropChromPeaks,XcmsExperimentHdf5 works", {
     expect_equal(res@chrom_peaks_ms_level, integer())
     expect_true(validObject(res))
     ## With adjusted retention times
+
     ## With features
+    tmpf <- tempfile()
+    ref <- loadXcmsData("xmse")
+    x <- xcms:::.xcms_experiment_to_hdf5(ref, tmpf)
+    expect_true(hasChromPeaks(x))
+    expect_true(hasAdjustedRtime(x))
+    expect_true(hasFeatures(x))
+    expect_warning(res <- dropChromPeaks(x), "adjusted retention")
+    expect_false(hasChromPeaks(res))
+    expect_false(hasAdjustedRtime(res))
+    expect_false(hasFeatures(res))
+    expect_equal(res@processHistory, list())
+    file.remove(tmpf)
+
+    tmpf <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(ref, tmpf)
+    res <- dropChromPeaks(x, keepAdjustedRtime = TRUE)
+    expect_false(hasChromPeaks(res))
+    expect_true(hasAdjustedRtime(res))
+    expect_false(hasFeatures(res))
+    expect_true(length(res@processHistory) > 0)
 })
 
 test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
@@ -223,8 +244,32 @@ test_that("hasFeatures,XcmsExperimentHdf5 works", {
     expect_false(hasFeatures(new("XcmsExperimentHdf5"), msLevel = 2))
 })
 
+test_that("dropFeatureDefinitions,XcmsExperimentHdf5 works", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    expect_true(hasFeatures(x))
+    expect_true(hasAdjustedRtime(x))
+    expect_true(hasFilledChromPeaks(x))
+    h <- x@processHistory
+    res <- dropFeatureDefinitions(x)
+    expect_false(hasFeatures(res))
+    expect_true(hasAdjustedRtime(res))
+    expect_false(hasFilledChromPeaks(res))
+    expect_true(length(res@processHistory) < length(h))
+    file.remove(tmp)
+    res2 <- dropFeatureDefinitions(res)
+    expect_equal(res2@hdf5_mod_count, res@hdf5_mod_count)
+})
+
 test_that("featureDefinitions,XcmsExperimentHdf5 works", {
     expect_error(featureDefinitions(xmse_full_h5) <- 4, "Not implemented")
+    res <- featureDefinitions(xmseg_full_h5)
+    ## reference
+    ref <- featureDefinitions(xmseg_full_ref)
+    expect_equal(nrow(res), nrow(ref))
+    res <- featureDefinitions(xmseg_full_h5, msLevel = 2L)
+    expect_true(is.data.frame(res))
+    expect_equal(nrow(res), 0L)
 })
 
 test_that("featureValues,XcmsExperimentHdf5 etc works", {
@@ -688,6 +733,38 @@ test_that("filterMzRange,XcmsExperimentHdf5 works", {
 test_that("filterIsolationWindow,XcmsExperimentHdf5 works", {
     expect_true(TRUE)
     ## unit tests is in test_XcmsExperiment.R
+})
+
+test_that("filterChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+
+    expect_warning(
+        res <- refineChromPeaks(x, CleanPeaksParam(), msLevel = 2L),
+        "No chromatographic")
+    expect_equal(res@hdf5_mod_count, x@hdf5_mod_count)
+    res <- refineChromPeaks(x, CleanPeaksParam(), msLevel = 1L)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    cp <- chromPeaks(res)
+    expect_true(all(cp[, "rtmax"] - cp[, "rtmin"] <
+                    CleanPeaksParam()@maxPeakwidth))
+
+    ## With features.
+    file.remove(tmp)
+
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    expect_true(hasFeatures(x))
+    expect_true(hasAdjustedRtime(x))
+
+    res <- refineChromPeaks(x, CleanPeaksParam(), msLevel = 1L)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    cp <- chromPeaks(res)
+    expect_true(all(cp[, "rtmax"] - cp[, "rtmin"] <
+                    CleanPeaksParam()@maxPeakwidth))
+    expect_false(hasFeatures(x))
+
+    file.remove(tmp)
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

@@ -6,15 +6,21 @@
 \alias{hidden_aliases}
 \alias{show,XcmsExperimentHdf5-method}
 \alias{[,XcmsExperimentHdf5,ANY,ANY,ANY-method}
+\alias{filterMsLevel,XcmsExperimentHdf5-method}
+\alias{filterIsolationWindow,XcmsExperimentHdf5-method}
+\alias{filterRt,XcmsExperimentHdf5-method}
+\alias{filterMzRange,XcmsExperimentHdf5-method}
 \alias{findChromPeaks,XcmsExperimentHdf5,Param-method}
 \alias{dropChromPeaks,XcmsExperimentHdf5-method}
 \alias{hasChromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeaks<-,XcmsExperimentHdf5-method}
 \alias{chromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
+\alias{refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
 \alias{hasFilledChromPeaks,XcmsExperimentHdf5-method}
 \alias{fillChromPeaks,XcmsExperimentHdf5,ChromPeakAreaParam-method}
+\alias{dropFilledChromPeaks,XcmsExperimentHdf5-method}
 \alias{adjustRtime,XcmsExperimentHdf5,PeakGroupsParam-method}
 \alias{dropAdjustedRtime,XcmsExperimentHdf5-method}
 \alias{hasFeatures,XcmsExperimentHdf5-method}
@@ -31,6 +37,14 @@
 \S4method{show}{XcmsExperimentHdf5}(object)
 
 \S4method{[}{XcmsExperimentHdf5,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{filterMsLevel}{XcmsExperimentHdf5}(object, msLevel. = uniqueMsLevels(object))
+
+\S4method{filterIsolationWindow}{XcmsExperimentHdf5}(object, mz = numeric())
+
+\S4method{filterRt}{XcmsExperimentHdf5}(object, rt, msLevel. = uniqueMsLevels(object))
+
+\S4method{filterMzRange}{XcmsExperimentHdf5}(object, mz = numeric(), msLevel. = uniqueMsLevels(object))
 
 \S4method{findChromPeaks}{XcmsExperimentHdf5,Param}(
   object,
@@ -62,6 +76,8 @@
 
 \S4method{chromPeakData}{XcmsExperimentHdf5}(object) <- value
 
+\S4method{refineChromPeaks}{XcmsExperimentHdf5,CleanPeaksParam}(object, param = CleanPeaksParam(), msLevel = 1L)
+
 \S4method{refineChromPeaks}{XcmsExperimentHdf5,MergeNeighboringPeaksParam}(
   object,
   param,
@@ -79,6 +95,8 @@
   chunkSize = 2L,
   BPPARAM = bpparam()
 )
+
+\S4method{dropFilledChromPeaks}{XcmsExperimentHdf5}(object)
 
 \S4method{adjustRtime}{XcmsExperimentHdf5,PeakGroupsParam}(object, param, msLevel = 1L, ...)
 

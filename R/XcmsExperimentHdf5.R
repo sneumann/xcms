@@ -298,7 +298,6 @@ setMethod(
                          .PROCSTEP.PEAK.REFINEMENT))
             object@chrom_peaks_ms_level <- integer()
             if (hasAdjustedRtime(object) && !keepAdjustedRtime) {
-                stop("Needs to be implemented")
                 ## remove if alignment performed AFTER chrom peaks
                 nom <- length(pt) + 1L
                 idx_cp <- .match_last(.PROCSTEP.PEAK.DETECTION, pt,
@@ -384,37 +383,51 @@ setMethod(
                                  by_sample = bySample)
     })
 
-## #' @rdname refineChromPeaks
-## setMethod(
-##     "refineChromPeaks",
-##     signature(object = "XcmsExperiment", param = "CleanPeaksParam"),
-##     function(object, param = CleanPeaksParam(), msLevel = 1L) {
-##         if (!hasChromPeaks(object, msLevel = msLevel)) {
-##             warning("No chromatographic peaks for MS level ",
-##                     msLevel, " present", call. = FALSE)
-##             return(object)
-##         }
-##         if (hasFeatures(object)) {
-##             message("Removing feature definitions")
-##             object <- dropFeatureDefinitions(object)
-##         }
-##         validObject(param)
-##         rtw <- .chromPeaks(object)[, "rtmax"] - .chromPeaks(object)[, "rtmin"]
-##         keep_ms <- object@chromPeakData$ms_level %in% msLevel
-##         keep_rt <- rtw < param@maxPeakwidth & keep_ms
-##         keep <- which(keep_rt | !keep_ms)
-##         message("Removed ", nrow(.chromPeaks(object)) - length(keep), " of ",
-##                 nrow(.chromPeaks(object)), " chromatographic peaks.")
-##         object@chromPeaks <- object@chromPeaks[keep, , drop = FALSE]
-##         object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
-##         xph <- XProcessHistory(param = param, date. = date(),
-##                                type. = .PROCSTEP.PEAK.REFINEMENT,
-##                                fileIndex = seq_along(object),
-##                                msLevel = msLevel)
-##         object <- addProcessHistory(object, xph)
-##         validObject(object)
-##         object
-##     })
+#' @rdname hidden_aliases
+setMethod(
+    "refineChromPeaks",
+    signature(object = "XcmsExperimentHdf5", param = "CleanPeaksParam"),
+    function(object, param = CleanPeaksParam(), msLevel = 1L) {
+        if (!hasChromPeaks(object, msLevel = msLevel)) {
+            warning("No chromatographic peaks for MS level ",
+                    msLevel, " present", call. = FALSE)
+            return(object)
+        }
+        if (hasFeatures(object)) {
+            message("Removing feature definitions")
+            object <- dropFeatureDefinitions(object)
+        }
+        validObject(param)
+        mc <- object@hdf5_mod_count
+        for (i in seq_along(x@sample_id)) {
+            pks <- .h5_read_data(
+                object@hdf5_file, id = i, name = "chrom_peaks",
+                ms_level = msLevel, read_colnames = TRUE,
+                read_rownames = TRUE)[[1L]]
+            keep <- which(pks[, "rtmax"] - pks[, "rtmin"] < param@maxPeakwidth)
+            pkd <- .h5_read_data(
+                object@hdf5_file, id = i, name = "chrom_peak_data",
+                ms_level = msLevel, read_colnames = TRUE)[[1L]]
+            pks <- list(pks[keep, , drop = FALSE])
+            pkd <- list(pkd[keep, , drop = FALSE])
+            names(pks) <- i
+            names(pkd) <- i
+            .h5_write_data(
+                object@hdf5_file, pks, name = "chrom_peaks",
+                ms_level = msLevel, replace = TRUE, write_colnames = TRUE,
+                write_rownames = TRUE)
+            mc <- .h5_write_data(
+                object@hdf5_file, pkd, name = "chrom_peak_data",
+                ms_level = msLevel, replace = TRUE, write_rownames = FALSE)
+        }
+        object@hdf5_mod_count <- mc
+        xph <- XProcessHistory(param = param, date. = date(),
+                               type. = .PROCSTEP.PEAK.REFINEMENT,
+                               fileIndex = seq_along(object),
+                               msLevel = msLevel)
+        object <- addProcessHistory(object, xph)
+        object
+    })
 
 #' @rdname hidden_aliases
 setMethod(
@@ -744,13 +757,8 @@ setMethod(
         object@processHistory <- dropProcessHistoriesList(
             object@processHistory, type = .PROCSTEP.PEAK.GROUPING, num = 1L)
         object@features_ms_level <- integer()
-        if (.hasFilledPeaks(object)) {
-            stop("Removal of gap-filled peaks needs to be implemented")
-            ## object <- .filter_chrom_peaks(
-            ##     object, which(!.chromPeakData(object)$is_filled))
-            ## object@processHistory <- dropProcessHistoriesList(
-            ##     object@processHistory, type = .PROCSTEP.PEAK.FILLING)
-        }
+        if (.hasFilledPeaks(object))
+            object <- dropFilledChromPeaks(object)
         if (!keepAdjustedRtime && hasAdjustedRtime(object) && idx_al > idx_co) {
             object <- dropAdjustedRtime(object)
         }
