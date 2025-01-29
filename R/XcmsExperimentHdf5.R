@@ -976,50 +976,78 @@ setMethod(
             BPPARAM = BPPARAM)
     })
 
-## #' @rdname hidden_aliases
-## setMethod(
-##     "chromPeakSpectra", "XcmsExperimentHdf5",
-##     function(object, method = c("all", "closest_rt", "closest_mz",
-##                                 "largest_tic", "largest_bpi"),
-##              msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
-##              skipFilled = FALSE, peaks = character(),
-##              chromPeakColumns = c("rt", "mz"),
-##              return.type = c("Spectra", "List"), BPPARAM = bpparam()) {
-##         if (hasAdjustedRtime(object))
-##             object <- applyAdjustedRtime(object)
-##         method <- match.arg(method)
-##         return.type <- match.arg(return.type)
-##         if (msLevel == 1L && method %in% c("closest_mz")) {
-##             warning("method = \"closest_mz\" is not supported for msLevel = 1.",
-##                     " Changing to method = \"all\".")
-##             method <- "all"
-##         }
-##         ## iterate through files/samples
-##         ## for each file
-##         ## - read chrom peaks
-
-##         if (length(peaks))
-##             pkidx <- .i2index(peaks, rownames(.chromPeaks(object)), "peaks")
-##         else pkidx <- integer()
-##         res <- .mse_spectra_for_peaks(object, method, msLevel, expandRt,
-##                                       expandMz, ppm, skipFilled, pkidx,
-##                                       chromPeakColumns,
-##                                       BPPARAM)
-##         if (!length(pkidx))
-##             peaks <- rownames(.chromPeaks(object))
-##         else peaks <- rownames(.chromPeaks(object))[pkidx]
-##         if (return.type == "Spectra")
-##             res <- res[as.matrix(findMatches(peaks, res$chrom_peak_id))[, 2L]]
-##         else
-##             as(split(res, factor(res$chrom_peak_id, levels = peaks)), "List")
-##     })
+#' @rdname hidden_aliases
+setMethod(
+    "chromPeakSpectra", "XcmsExperimentHdf5",
+    function(object, method = c("all", "closest_rt", "closest_mz",
+                                "largest_tic", "largest_bpi"),
+             msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             skipFilled = FALSE, peaks = character(),
+             chromPeakColumns = c("rt", "mz"),
+             return.type = c("Spectra", "List"), BPPARAM = bpparam()) {
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        if (!is.character(peaks))
+            stop("'peaks' has to be a character vector with the IDs of",
+                 " the chromatographic peaks", call. = FALSE)
+        method <- match.arg(method)
+        return.type <- match.arg(return.type)
+        if (msLevel == 1L && method %in% c("closest_mz")) {
+            warning("method = \"closest_mz\" is not supported for msLevel = 1.",
+                    " Changing to method = \"all\".")
+            method <- "all"
+        }
+        ## Need to iterate through files/samples
+        res <- lapply(seq_along(object), function(i) {
+            id <- object@sample_id[i]
+            p <- .h5_read_data(
+                object@hdf5_file, id = id, name = "chrom_peaks",
+                ms_level = 1L, read_colnames = TRUE,
+                read_rownames = TRUE)[[1L]]
+            if (skipFilled) {
+                pkd <- .h5_read_data(
+                    object@hdf5_file, id = id, name = "chrom_peak_data",
+                    ms_level = msLevel, read_colnames = TRUE)[[1L]]
+                p <- p[!pkd$is_filled, , drop = FALSE]
+            }
+            if (length(peaks))
+                p <- p[which(rownames(p) %in% peaks), , drop = FALSE]
+            if (nrow(p)) {
+                s <- filterMsLevel(spectra(object[i]), msLevel)
+                idx <- switch(
+                    method,
+                    all = .spectra_index_list(s, p, msLevel),
+                    closest_rt = .spectra_index_list_closest_rt(s, p, msLevel),
+                    closest_mz = .spectra_index_list_closest_mz(s, p, msLevel),
+                    largest_tic = .spectra_index_list_largest_tic(s,p,msLevel),
+                    largest_bpi = .spectra_index_list_largest_bpi(s,p,msLevel))
+                ids <- rep(rownames(p), lengths(idx))
+                s <- s[unlist(idx)]
+                pk_data <- as.data.frame(p[ids, chromPeakColumns, drop = FALSE])
+                pk_data$id <- ids
+                colnames(pk_data) <- paste0("chrom_peak_", colnames(pk_data))
+                s <- .add_spectra_data(s, pk_data)
+                s
+            } else
+                Spectra()
+        })
+        res <- Spectra:::.concatenate_spectra(res)
+        if (return.type == "Spectra") {
+            if (length(peaks))
+                res[as.matrix(findMatches(peaks, res$chrom_peak_id))[, 2L]]
+            else res
+        } else {
+            if (!length(peaks))
+                peaks <- unique(res$chrom_peak_id)
+            as(split(res, factor(res$chrom_peak_id, levels = peaks)), "List")
+        }
+    })
 
 
 #' TODO: LLLLLL
 #'
 #' - SWATH support: need to check if it's already available.
 #'   - `findChromPeaksIsolationWindow()`.
-#' - `chromPeakSpectra()`
 #' - `featureSpectra()`
 #' - `chromPeakChromatograms()`
 #' - `featureChromatograms()`

@@ -15,6 +15,15 @@ xmseg_full_h5 <- groupChromPeaks(xmseg_full_h5, pdp, msLevel = 1L)
 xmseg_full_ref <- dropFeatureDefinitions(loadXcmsData("xmse"))
 xmseg_full_ref <- groupChromPeaks(xmseg_full_ref, pdp, msLevel = 1L)
 
+## LC-MS/MS data
+h5f_dda <- tempfile()
+fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+tmp <- readMsExperiment(fl)
+h5_dda <- findChromPeaks(
+    tmp, CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                       peakwidth = c(3, 20), prefilter = c(3, 1000)),
+    hdf5File = h5f_dda)
+
 test_that("XcmsExperimentHdf5 validation works", {
     a <- new("XcmsExperimentHdf5")
     expect_true(validObject(a))
@@ -812,6 +821,48 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam works", {
     expect_false(hasFeatures(res))
 
     file.remove(tmp)
+})
+
+test_that("chromPeakSpectra,XcmsExperimentHdf5 works", {
+    ## get MS1 spectra
+    expect_error(chromPeakSpectra(xmse_h5, peaks = c(1L, 3L)), "character")
+    cp <- chromPeaks(xmse_h5)
+    ref <- loadXcmsData("faahko_sub2")
+    expect_warning(
+        s_all <- chromPeakSpectra(xmse_h5, msLevel = 1L, method = "closest_mz"),
+        "Changing")
+    expect_s4_class(s_all, "Spectra")
+    expect_true(all(rownames(cp) %in% s_all$chrom_peak_id))
+    expect_false(is.unsorted(match(rownames(cp), s_all$chrom_peak_id)))
+    s_ref <- chromPeakSpectra(ref, msLevel = 1L)
+    expect_equal(s_all$rtime, s_ref$rtime)
+
+    s_all <- chromPeakSpectra(xmse_h5, msLevel = 1L, method = "closest_rt")
+    expect_s4_class(s_all, "Spectra")
+    expect_equal(s_all$chrom_peak_id, rownames(cp))
+    pids <- c("CP1S3000006", "CP1S3000003", "CP1S1000060", "CP1S3000048")
+    s_sel <- chromPeakSpectra(xmse_h5, msLevel = 1L, peaks = pids,
+                              method = "closest_rt")
+    expect_s4_class(s_sel, "Spectra")
+    expect_equal(s_sel$chrom_peak_id, pids)
+    expect_equal(rtime(s_sel), rtime(s_all[match(pids, s_all$chrom_peak_id)]))
+
+    s_all <- chromPeakSpectra(xmse_h5, msLevel = 1L, method = "largest_tic",
+                              return.type = "List")
+    expect_s4_class(s_all, "List")
+    expect_equal(names(s_all), rownames(cp))
+    expect_true(all(lengths(s_all) == 1))
+    s_sel <- chromPeakSpectra(xmse_h5, msLevel = 1L, peaks = pids,
+                              method = "largest_tic", return.type = "List")
+    expect_s4_class(s_sel, "List")
+    expect_equal(names(s_sel), pids)
+
+    ## get MS2 spectra
+    cp <- chromPeaks(h5_dda)
+    s_all <- chromPeakSpectra(h5_dda)
+    expect_s4_class(s_all, "Spectra")
+    expect_true(all(msLevel(s_all) == 2L))
+    expect_false(all(rownames(cp) %in% s_all$chrom_peak_id))
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

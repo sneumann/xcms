@@ -12,6 +12,7 @@
 \alias{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,MergeNeighboringPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,FilterIntensityParam-method}
+\alias{refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam-method}
 \alias{CleanPeaksParam}
 \alias{MergeNeighboringPeaksParam}
 \alias{FilterIntensityParam}
@@ -32,9 +33,15 @@ refineChromPeaks(object, param, ...)
   BPPARAM = bpparam()
 )
 
-\S4method{refineChromPeaks}{XcmsExperiment,FilterIntensityParam}(object, param, msLevel = 1L, ...)
+\S4method{refineChromPeaks}{XcmsExperiment,FilterIntensityParam}(
+  object,
+  param,
+  msLevel = 1L,
+  chunkSize = 2L,
+  BPPARAM = bpparam()
+)
 
-\S4method{refineChromPeaks}{XcmsExperiment,FilterIntensityParam}(object, param, msLevel = 1L, ...)
+\S4method{refineChromPeaks}{XcmsExperimentHdf5,FilterIntensityParam}(object, param, msLevel = 1L, ...)
 
 CleanPeaksParam(maxPeakwidth = 10)
 
