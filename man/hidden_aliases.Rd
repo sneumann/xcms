@@ -16,8 +16,8 @@
 \alias{chromPeaks<-,XcmsExperimentHdf5-method}
 \alias{chromPeaks,XcmsExperimentHdf5-method}
 \alias{chromPeakData<-,XcmsExperimentHdf5-method}
-\alias{refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam-method}
+\alias{refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam-method}
 \alias{hasFilledChromPeaks,XcmsExperimentHdf5-method}
 \alias{fillChromPeaks,XcmsExperimentHdf5,ChromPeakAreaParam-method}
 \alias{dropFilledChromPeaks,XcmsExperimentHdf5-method}
@@ -76,8 +76,6 @@
 
 \S4method{chromPeakData}{XcmsExperimentHdf5}(object) <- value
 
-\S4method{refineChromPeaks}{XcmsExperimentHdf5,CleanPeaksParam}(object, param = CleanPeaksParam(), msLevel = 1L)
-
 \S4method{refineChromPeaks}{XcmsExperimentHdf5,MergeNeighboringPeaksParam}(
   object,
   param,
@@ -85,6 +83,8 @@
   chunkSize = 2L,
   BPPARAM = bpparam()
 )
+
+\S4method{refineChromPeaks}{XcmsExperimentHdf5,CleanPeaksParam}(object, param = CleanPeaksParam(), msLevel = 1L)
 
 \S4method{hasFilledChromPeaks}{XcmsExperimentHdf5}(object)
 

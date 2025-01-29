@@ -401,7 +401,7 @@
                                    numeric(1))
                     sum(vals >= threshold, na.rm = TRUE) >= nValues
                 }
-            }, logical(1))
+            }, NA)
         },
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
                         f = factor()), f),

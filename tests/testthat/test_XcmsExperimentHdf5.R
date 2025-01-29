@@ -735,7 +735,7 @@ test_that("filterIsolationWindow,XcmsExperimentHdf5 works", {
     ## unit tests is in test_XcmsExperiment.R
 })
 
-test_that("filterChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
+test_that("refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
     tmp <- tempfile()
     x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
 
@@ -748,21 +748,68 @@ test_that("filterChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
     cp <- chromPeaks(res)
     expect_true(all(cp[, "rtmax"] - cp[, "rtmin"] <
                     CleanPeaksParam()@maxPeakwidth))
-
-    ## With features.
     file.remove(tmp)
 
+    ## With features.
     tmp <- tempfile()
     x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     expect_true(hasFeatures(x))
     expect_true(hasAdjustedRtime(x))
+    expect_true(hasChromPeaks(x))
 
-    res <- refineChromPeaks(x, CleanPeaksParam(), msLevel = 1L)
+    res <- refineChromPeaks(x, CleanPeaksParam(maxPeakwidth = 20), msLevel = 1L)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    expect_true(hasChromPeaks(res))
+    expect_true(hasAdjustedRtime(res))
+    cp <- chromPeaks(res)
+    expect_true(all(cp[, "rtmax"] - cp[, "rtmin"] < 20))
+    expect_false(hasFeatures(res))
+
+    file.remove(tmp)
+})
+
+test_that("refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam works", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+
+    fip <- FilterIntensityParam(threshold = 100000, nValues = 1)
+    expect_warning(
+        res <- refineChromPeaks(x, fip, msLevel = 2L),
+        "No chromatographic")
+    expect_equal(res@hdf5_mod_count, x@hdf5_mod_count)
+    res <- refineChromPeaks(x, fip, msLevel = 1L)
     expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
     cp <- chromPeaks(res)
-    expect_true(all(cp[, "rtmax"] - cp[, "rtmin"] <
-                    CleanPeaksParam()@maxPeakwidth))
-    expect_false(hasFeatures(x))
+    expect_true(all(cp[, "maxo"] > 100000))
+    file.remove(tmp)
+
+    ## nValues > 1
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+
+    fip <- FilterIntensityParam(threshold = 100000, nValues = 4)
+    res <- refineChromPeaks(x, fip, msLevel = 1L)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    cp_2 <- chromPeaks(res)
+    expect_true(all(cp_2[, "maxo"] > 100000))
+    expect_true(nrow(cp_2) < nrow(cp))
+    file.remove(tmp)
+
+    ## With features.
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    fip <- FilterIntensityParam(threshold = 100000, nValues = 1)
+    expect_true(hasFeatures(x))
+    expect_true(hasAdjustedRtime(x))
+    expect_true(hasChromPeaks(x))
+
+    res <- refineChromPeaks(x, fip, msLevel = 1L)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    expect_true(hasChromPeaks(res))
+    expect_true(hasAdjustedRtime(res))
+    cp <- chromPeaks(res)
+    expect_true(all(cp_2[, "maxo"] > 100000))
+    expect_false(hasFeatures(res))
 
     file.remove(tmp)
 })
