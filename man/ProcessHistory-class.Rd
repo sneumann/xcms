@@ -57,15 +57,15 @@ The \code{fileIndex} method returns a integer vector with the index
     of the files/samples on which the processing step was applied.
 }
 \description{
-Objects of the type \code{ProcessHistory} allow to keep track
-    of any data processing step in an metabolomics experiment. They are
-    created by the data processing methods, such as
-    \code{\link{findChromPeaks}} and added to the corresponding results
-    objects. Thus, usually, users don't need to create them.
+Objects of the type \link{ProcessHistory} allow to keep track
+of any data processing step in an metabolomics experiment. They are
+created by the data processing methods, such as
+\code{\link[=findChromPeaks]{findChromPeaks()}} and added to the corresponding results
+objects. Thus, usually, users don't need to create them.
 
 The \code{XProcessHistory} extends the \code{ProcessHistory} by
-    adding a slot \code{param} that allows to store the actual parameter
-    class of the processing step.
+adding a slot \code{param} that allows to store the actual parameter
+class of the processing step.
 
 \code{processParam}, \code{processParam<-}: get or set the
     parameter class from an \code{XProcessHistory} object.
@@ -88,13 +88,14 @@ The \code{fileIndex} extracts the indices of the files on which
 \section{Slots}{
 
 \describe{
-\item{\code{type}}{character(1): string defining the type of the processing step.
+\item{\code{type}}{\code{character(1)}: string defining the type of the processing step.
 This string has to match predefined values. Use
-\code{\link{processHistoryTypes}} to list them.}
+\code{\link[=processHistoryTypes]{processHistoryTypes()}} to list them.}
 
-\item{\code{date}}{character(1): date time stamp when the processing step was started.}
+\item{\code{date}}{\code{character(1)}: date time stamp when the processing step
+was started.}
 
-\item{\code{info}}{character(1): optional additional information.}
+\item{\code{info}}{\code{character(1)}: optional additional information.}
 
 \item{\code{fileIndex}}{integer of length 1 or > 1 to specify on which
 samples of the object the processing was performed.}
@@ -102,7 +103,7 @@ samples of the object the processing was performed.}
 \item{\code{error}}{(ANY): used to store eventual calculation errors.}
 
 \item{\code{param}}{(Param): an object of type \code{Param} (e.g.
-\code{\link{CentWaveParam}}) specifying the settings of the processing
+\code{\link[=CentWaveParam]{CentWaveParam()}}) specifying the settings of the processing
 step.}
 
 \item{\code{msLevel:}}{\code{integer} definining the MS level(s) on which the

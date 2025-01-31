@@ -178,10 +178,8 @@ processHistoryTypes()
 \S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"), peakCol = "#ff000060", ...)
 }
 \arguments{
-\item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
-\code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and
-\code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
-object, for all other methods a \code{XCMSnExp} object.}
+\item{object}{either a \code{MsFeatureData} or a \code{XCMSnExp}
+object.}
 
 \item{method}{\code{character(1)} defining the profile matrix generation method.
 Allowed are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}.
@@ -210,29 +208,30 @@ details.}
 to be used for binnind. If not provided, the whole m/z value range is
 used.}
 
-\item{fileIndex}{For \code{processHistory}: optional \code{integer}
+\item{fileIndex}{For \code{processHistory()}: optional \code{integer}
 specifying the index of the files/samples for which the
-\code{\link{ProcessHistory}} objects should be retrieved.}
+\code{\link[=ProcessHistory]{ProcessHistory()}} objects should be retrieved.}
 
 \item{...}{Additional parameters.}
 
 \item{msLevel}{\code{integer} specifying the MS level(s) for which identified
 chromatographic peaks should be returned.}
 
-\item{bySample}{logical(1) specifying whether results should be grouped by
+\item{bySample}{\code{logical(1)} specifying whether results should be grouped by
 sample.}
 
-\item{value}{For \code{adjustedRtime<-}: a \code{list} (length equal to the
-    number of samples) with numeric vectors representing the adjusted
-    retention times per scan.
+\item{value}{For \verb{adjustedRtime<-}: a \code{list} (length equal to the
+number of samples) with numeric vectors representing the adjusted
+retention times per scan.
 
-    For \code{featureDefinitions<-}: a \code{DataFrame} with peak
-    grouping information. See return value for the \code{featureDefinitions}
-    method for the expected format.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For `featureDefinitions<-`: a `DataFrame` with peak
+grouping information. See return value for the `featureDefinitions`
+method for the expected format.
 
-    For \code{chromPeaks<-}: a \code{matrix} with information on
-    detected peaks. See return value for the \code{chromPeaks} method for the
-    expected format.}
+For `chromPeaks<-`: a `matrix` with information on
+detected peaks. See return value for the `chromPeaks` method for the
+expected format.
+}\if{html}{\out{</div>}}}
 
 \item{mz}{optional \code{numeric(2)} defining the mz range for which
 chromatographic peaks should be returned.}
@@ -245,49 +244,43 @@ which chromatographic peaks should be returned.}
 peaks within \code{mz[1] - ppm / 1e6} and \code{mz[2] + ppm / 1e6} are
 returned.}
 
-\item{type}{For \code{processHistory}: restrict returned
-\code{\link{ProcessHistory}} objects to analysis steps of a certain
-type. Use the \code{processHistoryTypes} to list all supported values.
-For \code{chromPeaks}: \code{character} specifying which peaks to return
-if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-chromatographic peaks partially overlapping the range defined by
-\code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
-only peaks completely within the region and \code{type = "apex_within"}
+\item{type}{For \code{processHistory()}: restrict returned
+\code{\link[=ProcessHistory]{ProcessHistory()}} objects to analysis steps of a certain
+type. Use the \code{processHistoryTypes()} to list all supported values.
+For \verb{chromPeaks()]: }character\verb{specifying which peaks to return if}rt\code{or}mz\verb{are defined. For}type = "any"\verb{all chromatographic peaks partially overlapping the range defined by}mz\code{and/or}rt\verb{are returned,}type = "within"\verb{returns only peaks completely within the region and}type = "apex_within"`
 peaks for which the peak's apex is within the region.}
 
 \item{isFilledColumn}{\code{logical(1)} whether a column \code{"is_filled"}
-is included in the returned \code{"matrix"} providing the information
-if a peak was filled in. Alternatively, this information would be
-provided by the \code{chromPeakData} data frame.}
+is included in the returned "matrix"\verb{providing the information if a peak was filled in. Alternatively, this information would be provided by the}chromPeakData()` data frame.}
 
-\item{adjusted}{logical(1) whether adjusted or raw (i.e. the original
+\item{adjusted}{\code{logical(1)} whether adjusted or raw (i.e. the original
 retention times reported in the files) should be returned.}
 
 \item{BPPARAM}{Parameter class for parallel processing. See
-\code{\link{bpparam}}.}
+\code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.}
 
-\item{keepAdjustedRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
+\item{keepAdjustedRtime}{For \verb{dropFeatureDefinitions,XCMSnExp()}:
 \code{logical(1)} defining whether eventually present retention time
 adjustment should not be dropped. By default dropping feature definitions
 drops retention time adjustment results too.}
 
-\item{dropLastN}{For \code{dropFeatureDefinitions,XCMSnExp}:
+\item{dropLastN}{For \verb{dropFeatureDefinitions,XCMSnExp()}:
 \code{numeric(1)} defining the number of peak grouping related process
 history steps to remove. By default \code{dropLastN = -1}, dropping the
 chromatographic peaks removes all process history steps related to peak
 grouping. Setting e.g. \code{dropLastN = 1} will only remove the most
 recent peak grouping related process history step.}
 
-\item{param}{A \code{\link{CentWaveParam}}, \code{\link{MatchedFilterParam}},
-\code{\link{MassifquantParam}}, \code{\link{MSWParam}} or
-\code{\link{CentWavePredIsoParam}} object with the settings for the
+\item{param}{A \code{\link[=CentWaveParam]{CentWaveParam()}}, \code{\link[=MatchedFilterParam]{MatchedFilterParam()}},
+\code{\link[=MassifquantParam]{MassifquantParam()}}, \code{\link[=MSWParam]{MSWParam()}} or
+\code{\link[=CentWavePredIsoParam]{CentWavePredIsoParam()}} object with the settings for the
 chromatographic peak detection algorithm.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-\code{"xcmsSet"}.}
+return. Can be either `"XCMSnExp"` (default), `"list"` or
+`"xcmsSet"`.}
 
-\item{add}{For \code{findChromPeaks}: if newly identified chromatographic
+\item{add}{For \code{\link[=findChromPeaks]{findChromPeaks()}}: if newly identified chromatographic
 peaks should be added to the peak matrix with the already identified
 chromatographic peaks. By default (\code{add = FALSE}) previous
 peak detection results will be removed.}
@@ -295,27 +288,27 @@ peak detection results will be removed.}
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
 
-\item{x}{For \code{plot}: \code{XCMSnExp} object.}
+\item{x}{For \code{plot()}: \code{XCMSnExp} object.}
 
-\item{y}{For \code{plot}: not used.}
+\item{y}{For \code{plot()}: not used.}
 
-\item{peakCol}{For \code{plot}: the color that should be used to indicate
+\item{peakCol}{For \code{plot()}: the color that should be used to indicate
 identified chromatographic peaks (only in combination with
 \code{type = "XIC"} and if chromatographic peaks are present).}
 }
 \value{
-For \code{profMat}: a \code{list} with a the profile matrix
-    \code{matrix} (or matrices if \code{fileIndex} was not specified or if
-    \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for
-    general help and information about the profile matrix.
+For \code{profMat()}: a \code{list} with a the profile matrix
+\code{matrix} (or matrices if \code{fileIndex} was not specified or if
+`length(fileIndex) > 1). See \link{profile-matrix} for
+general help and information about the profile matrix.
 
-For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
+For `adjustedRtime()`: if `bySample = FALSE` a `numeric`
 vector with the adjusted retention for each spectrum of all files/samples
-within the object. If \code{bySample = TRUE } a \code{list} (length equal
+within the object. If `bySample = TRUE` a `list` (length equal
 to the number of samples) with adjusted retention times grouped by
-sample. Returns \code{NULL} if no adjusted retention times are present.
+sample. Returns `NULL` if no adjusted retention times are present.
 
-For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
+For \code{featureDefinitions()}: a \code{DataFrame} with peak grouping
 information, each row corresponding to one mz-rt feature (grouped peaks
 within and across samples) and columns \code{"mzmed"} (median mz value),
 \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
@@ -323,25 +316,28 @@ within and across samples) and columns \code{"mzmed"} (median mz value),
 time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
 Column \code{"peakidx"} contains a \code{list} with indices of
 chromatographic peaks (rows) in the matrix returned by the
-\code{chromPeaks} method that belong to that feature group. The method
+\code{chromPeaks()} method that belong to that feature group. The method
 returns \code{NULL} if no feature definitions are present.
-\code{featureDefinitions} supports also parameters \code{mz}, \code{rt},
+\code{featureDefinitions()} supports also parameters \code{mz}, \code{rt},
 \code{ppm} and \code{type} to return only features within certain ranges (see
-description of \code{chromPeaks} for details).
+description of \code{\link[=chromPeaks]{chromPeaks()}} for details).
 
 For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
 being a chromatographic peak, rownames representing unique IDs of the peaks)
 with at least the following columns:
-\code{"mz"} (intensity-weighted mean of mz values of the peak across
+\itemize{
+\item \code{"mz"} (intensity-weighted mean of mz values of the peak across
 scans/retention times),
-\code{"mzmin"} (minimal mz value),
-\code{"mzmax"} (maximal mz value),
-\code{"rt"} (retention time of the peak apex),
-\code{"rtmin"} (minimal retention time),
-\code{"rtmax"} (maximal retention time),
-\code{"into"} (integrated, original, intensity of the peak),
-\code{"maxo"} (maximum intentity of the peak),
-\code{"sample"} (sample index in which the peak was identified) and
+\item \code{"mzmin"} (minimal mz value),
+\item \code{"mzmax"} (maximal mz value),
+\item \code{"rt"} (retention time of the peak apex),
+\item \code{"rtmin"} (minimal retention time),
+\item \code{"rtmax"} (maximal retention time),
+\item \code{"into"} (integrated, original, intensity of the peak),
+\item \code{"maxo"} (maximum intentity of the peak),
+\item \code{"sample"} (sample index in which the peak was identified) and
+}
+
 Depending on the employed peak detection algorithm and the
 \code{verboseColumns} parameter of it, additional columns might be
 returned. If parameter \code{isFilledColumn} was set to \code{TRUE} a column
@@ -351,103 +347,103 @@ returned as a \code{list} of matrices, each containing the
 chromatographic peaks of a specific sample. For samples in which no
 peaks were detected a matrix with 0 rows is returned.
 
-For \code{rtime}: if \code{bySample = FALSE} a numeric vector with
+For \code{rtime()}: if \code{bySample = FALSE} a numeric vector with
 the retention times of each scan, if \code{bySample = TRUE} a
 \code{list} of numeric vectors with the retention times per sample.
 
-For \code{mz}: if \code{bySample = FALSE} a \code{list} with the mz
+For \code{mz()}: if \code{bySample = FALSE} a \code{list} with the mz
 values (numeric vectors) of each scan. If \code{bySample = TRUE} a
 \code{list} with the mz values per sample.
 
-For \code{intensity}: if \code{bySample = FALSE} a \code{list} with
+For \code{intensity()}: if \code{bySample = FALSE} a \code{list} with
 the intensity values (numeric vectors) of each scan. If
 \code{bySample = TRUE} a \code{list} with the intensity values per
 sample.
 
-For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
-\code{\link{Spectrum}} objects. If \code{bySample = TRUE} the
-result is grouped by sample, i.e. as a \code{list} of \code{lists}, each
+For \code{spectra()}: if \code{bySample = FALSE} a \code{list} with
+\code{Spectrum} objects. If \code{bySample = TRUE} the
+result is grouped by sample, i.e. as a \code{list} of lists, each
 element in the \emph{outer} \code{list} being the \code{list} of spectra
 of the specific file.
 
-For \code{processHistory}: a \code{list} of
-\code{\link{ProcessHistory}} objects providing the details of the
+For \code{processHistory()}: a \code{list} of
+\code{\link[=ProcessHistory]{ProcessHistory()}} objects providing the details of the
 individual data processing steps that have been performed.
 }
 \description{
 The \code{XCMSnExp} object is a container for the results of a G/LC-MS
 data preprocessing that comprises chromatographic peak detection, alignment
-and correspondence. These results can be accessed with the \code{chromPeaks},
-\code{adjustedRtime} and \code{featureDefinitions} functions; see below
+and correspondence. These results can be accessed with the \code{\link[=chromPeaks]{chromPeaks()}},
+\code{\link[=adjustedRtime]{adjustedRtime()}} and \code{\link[=featureDefinitions]{featureDefinitions()}} functions; see below
 (after the Usage, Arguments, Value and Slots sections) for more details).
 Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
-can be extracted with the \code{\link{processHistory}} method.
+can be extracted with the \code{\link[=processHistory]{processHistory()}} function.
 \code{XCMSnExp} objects, by directly extending the
-\code{\link{OnDiskMSnExp}} object from the \code{MSnbase} package, inherit
+\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object from the \emph{MSnbase} package, inherit
 all of its functionality and allows thus an easy access to the full raw
 data at any stage of an analysis.
 To support interaction with packages requiring the \emph{old} objects,
-\code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
-objects using the \code{as} method (see examples below). All
+\code{XCMSnExp} objects can be coerced into \code{xcmsSet}
+objects using the \code{as()} method (see examples below). All
 preprocessing results will be passed along to the resulting
-\code{xcmsSet} object.
+object.
 
 General functions for \code{XCMSnExp} objects are (see further below for
 specific function to handle chromatographic peak data, alignment and
 correspondence results):
 
-\code{processHistoryTypes} returns the available \emph{types} of
-    process histories. These can be passed with argument \code{type} to the
-    \code{processHistory} method to extract specific process step(s).
+\code{processHistoryTypes()} returns the available \emph{types} of
+process histories. These can be passed with argument \code{type} to the
+\code{processHistory} method to extract specific process step(s).
 
-\code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
+\code{hasFilledChromPeaks()}: whether filled-in peaks are present or not.
 
-\code{profMat}: creates a \emph{profile matrix}, which
-    is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
-    and m (columns) the retention time of the corresponding scans. Each cell
-    contains the maximum intensity measured for the specific scan and m/z
-    values. See \code{\link{profMat}} for more details and description of
-    the various binning methods.
+\code{profMat()}: creates a \emph{profile matrix}, which
+is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
+and m (columns) the retention time of the corresponding scans. Each cell
+contains the maximum intensity measured for the specific scan and m/z
+values. See \code{\link[=profMat]{profMat()}} for more details and description of
+the various binning methods.
 
-\code{hasAdjustedRtime}: whether the object provides adjusted
+`hasAdjustedRtime()`: whether the object provides adjusted
 retention times.
 
-\code{hasFeatures}: whether the object contains correspondence
+`hasFeatures()`: whether the object contains correspondence
 results (i.e. features).
 
-\code{hasChromPeaks}: whether the object contains peak
+`hasChromPeaks()`: whether the object contains peak
 detection results.
 
-\code{hasFilledChromPeaks}: whether the object contains any filled-in
+`hasFilledChromPeaks()`: whether the object contains any filled-in
 chromatographic peaks.
 
-\code{adjustedRtime},\code{adjustedRtime<-}:
-extract/set adjusted retention times. \code{adjustedRtime<-} should not
+`adjustedRtime()`,`adjustedRtime<-`:
+extract/set adjusted retention times. `adjustedRtime<-` should not
 be called manually, it is called internally by the
-\code{\link{adjustRtime}} methods. For \code{XCMSnExp} objects,
-\code{adjustedRtime<-} does also apply retention time adjustments to
-eventually present chromatographic peaks. The \code{bySample} parameter
+[adjustRtime()] methods. For `XCMSnExp` objects,
+`adjustedRtime<-` does also apply retention time adjustments to
+eventually present chromatographic peaks. The `bySample` parameter
 allows to specify whether the adjusted retention time should be grouped
 by sample (file).
 
-\code{featureDefinitions}, \code{featureDefinitions<-}: extract
+\code{featureDefinitions()}, \verb{featureDefinitions<-}: extract
 or set the correspondence results, i.e. the mz-rt features (peak groups).
-Similar to the \code{chromPeaks} it is possible to extract features for
+Similar to the \code{chromPeaks()} it is possible to extract features for
 specified m/z and/or rt ranges. The function supports also the parameter
 \code{type} that allows to specify which features to be returned if any
 of \code{rt} or \code{mz} is specified. For details see help of
-\code{chromPeaks}.
-See also \code{\link{featureSummary}} for a function to calculate simple
+\code{\link[=chromPeaks]{chromPeaks()}}.
+See also \code{\link[=featureSummary]{featureSummary()}} for a function to calculate simple
 feature summaries.
 
-\code{chromPeaks}, \code{chromPeaks<-}: extract or set
+\code{chromPeaks()}, \verb{chromPeaks<-}: extract or set
 the matrix containing the information on identified chromatographic
 peaks. Rownames of the matrix represent unique IDs of the respective peaks
 within the experiment.
 Parameter \code{bySample} allows to specify whether peaks should
 be returned ungrouped (default \code{bySample = FALSE}) or grouped by
-sample (\code{bySample = TRUE}). The \code{chromPeaks<-} method for
+sample (\code{bySample = TRUE}). The \verb{chromPeaks<-} method for
 \code{XCMSnExp} objects removes also all correspondence (peak grouping)
 and retention time correction (alignment) results. The optional
 arguments \code{rt}, \code{mz}, \code{ppm} and \code{type} allow to extract
@@ -463,39 +459,39 @@ for \code{type == "apex_within"} the peak's apex position (highest signal
 of the peak) has to be within the region (i.e. the peak's or features m/z
 has to be within the m/z range).
 See description of the return value for details on the returned matrix.
-Users usually don't have to use the \code{chromPeaks<-} method directly
+Users usually don't have to use the \verb{chromPeaks<-} method directly
 as detected chromatographic peaks are added to the object by the
-\code{\link{findChromPeaks}} method. Also, \code{chromPeaks<-} will replace
+\code{\link[=findChromPeaks]{findChromPeaks()}} method. Also, \verb{chromPeaks<-} will replace
 any existing \code{chromPeakData}.
 
-\code{chromPeakData} and \code{chromPeakData<-} allow to get or set arbitrary
+\code{chromPeakData()} and \verb{chromPeakData<-} allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
 \code{DataFrame}. Note that the number of rows and the rownames of the
 \code{DataFrame} have to match those of \code{chromPeaks}.
 
-\code{rtime}: extracts the retention time for each
+\code{rtime()}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped
 by sample/file and \code{adjusted} whether adjusted or raw retention
 times should be returned. By default the method returns adjusted
 retention times, if they are available (i.e. if retention times were
-adjusted using the \code{\link{adjustRtime}} method).
+adjusted using the \code{\link[=adjustRtime]{adjustRtime()}} method).
 
-\code{mz}: extracts the mz values from each scan of
-all files within an \code{XCMSnExp} object. These values are extracted
+\code{mz()}: extracts the mz values from each scan of all files within an
+\code{XCMSnExp} object. These values are extracted
 from the original data files and eventual processing steps are applied
 \emph{on the fly}. Using the \code{bySample} parameter it is possible to
 switch from the default grouping of mz values by spectrum/scan to a
 grouping by sample/file.
 
-\code{intensity}: extracts the intensity values from
+\code{intensity()}: extracts the intensity values from
 each scan of all files within an \code{XCMSnExp} object. These values are
 extracted from the original data files and eventual processing steps are
 applied \emph{on the fly}. Using the \code{bySample} parameter it is
 possible to switch from the default grouping of intensity values by
 spectrum/scan to a grouping by sample/file.
 
-\code{spectra}: extracts the
-\code{\link{Spectrum}} objects containing all data from
+\code{spectra()}: extracts the
+\code{Spectrum} objects containing all data from
 \code{object}. The values are extracted from the original data files and
 eventual processing steps are applied \emph{on the fly}. By setting
 \code{bySample = TRUE}, the spectra are returned grouped by sample/file.
@@ -503,22 +499,22 @@ If the \code{XCMSnExp} object contains adjusted retention times, these
 are returned by default in the \code{Spectrum} objects (can be
 overwritten by setting \code{adjusted = FALSE}).
 
-\code{processHistory}: returns a \code{list} of
-\code{\link{ProcessHistory}} objects (or objects inheriting from this
+\code{processHistory()}: returns a \code{list} of
+\code{\link[=ProcessHistory]{ProcessHistory()}} objects (or objects inheriting from this
 base class) representing the individual processing steps that have been
 performed, eventually along with their settings (\code{Param} parameter
 class). Optional arguments \code{fileIndex}, \code{type} and
 \code{msLevel} allow to restrict to process steps of a certain type or
 performed on a certain file or MS level.
 
-\code{dropChromPeaks}: drops any identified chromatographic
+\code{dropChromPeaks()}: drops any identified chromatographic
 peaks and returns the object without that information. Note that for
 \code{XCMSnExp} objects the method drops by default also results from a
 correspondence (peak grouping) analysis. Adjusted retention times are
 removed if the alignment has been performed \emph{after} peak detection.
 This can be overruled with \code{keepAdjustedRtime = TRUE}.
 
-\code{dropFeatureDefinitions}: drops the results from a
+\code{dropFeatureDefinitions()}: drops the results from a
 correspondence (peak grouping) analysis, i.e. the definition of the mz-rt
 features and returns the object without that information. Note that for
 \code{XCMSnExp} objects the method will also by default drop retention
@@ -526,10 +522,10 @@ time adjustment results, if these were performed after the last peak
 grouping (i.e. which base on the results from the peak grouping that are
 going to be removed). All related process history steps are
 removed too as well as eventually filled in peaks
-(by \code{\link{fillChromPeaks}}). The parameter \code{keepAdjustedRtime}
+(by \code{\link[=fillChromPeaks]{fillChromPeaks()}}). The parameter \code{keepAdjustedRtime}
 can be used to avoid removal of adjusted retention times.
 
-\code{dropAdjustedRtime}: drops any retention time
+\code{dropAdjustedRtime()}: drops any retention time
 adjustment information and returns the object without adjusted retention
 time. For \code{XCMSnExp} objects, this also reverts the retention times
 reported for the chromatographic peaks in the peak matrix to the
@@ -538,9 +534,9 @@ for \code{XCMSnExp} objects the method drops also all peak grouping
 results if these were performed \emph{after} the retention time
 adjustment. All related process history steps are removed too.
 
-\code{findChromPeaks} performs chromatographic peak detection
+\code{findChromPeaks()} performs chromatographic peak detection
 on the provided \code{XCMSnExp} objects. For more details see the method
-for \code{\linkS4class{XCMSnExp}}.
+for \code{\link[=XCMSnExp]{XCMSnExp()}}.
 Note that by default (with parameter \code{add = FALSE}) previous peak
 detection results are removed. Use \code{add = TRUE} to perform a second
 round of peak detection and add the newly identified peaks to the previous
@@ -548,23 +544,23 @@ peak detection results. Correspondence results (features) are always removed
 prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
-aligned using e.g. obiwarp (\code{\link{adjustRtime}}).
+aligned using e.g. obiwarp (\code{\link[=adjustRtime]{adjustRtime()}}).
 
-\code{dropFilledChromPeaks}: drops any filled-in chromatographic
-peaks (filled in by the \code{\link{fillChromPeaks}} method) and all
+\code{dropFilledChromPeaks()}: drops any filled-in chromatographic
+peaks (filled in by the \code{\link[=fillChromPeaks]{fillChromPeaks()}} method) and all
 related process history steps.
 
-\code{spectrapply} applies the provided function to each
+\code{spectrapply()} applies the provided function to each
 \code{Spectrum} in the object and returns its
 results. If no function is specified the function simply returns the
 \code{list} of \code{Spectrum} objects.
 
-\code{XCMSnExp} objects can be combined with the \code{c} function. This
+\code{XCMSnExp} objects can be combined with the \code{c()} function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.
 
-\code{plot} plots the spectrum data (see \code{\link{plot}} for
-\code{\link{MSnExp}} objects in the \code{MSnbase} package for more details.
+\code{plot()} plots the spectrum data (see \code{\link[MSnbase:plot-methods]{MSnbase::plot()}} for
+\code{MSnExp} objects in the \emph{MSnbase} package for more details.
 For \code{type = "XIC"}, identified chromatographic peaks will be indicated
 as rectangles with border color \code{peakCol}.
 }
@@ -583,41 +579,30 @@ This object should not be manipulated directly.}
 
 \note{
 The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
-    equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
-    \code{"featureDefinitions"} contains information from the \code{@groups}
-    and \code{@groupidx} slots from an \code{xcmsSet} object.
+equivalent to the \verb{@peaks} slot of the \code{xcmsSet} object, the
+\code{"featureDefinitions"} contains information from the \verb{@groups}
+and \verb{@groupidx} slots from an \code{xcmsSet} object.
 }
 \section{Chromatographic peak data}{
 
 
 Chromatographic peak data is added to an \code{XCMSnExp} object by the
-\code{\link{findChromPeaks}} function. Functions to access chromatographic
+\code{\link[=findChromPeaks]{findChromPeaks()}} function. Functions to access chromatographic
 peak data are:
-
 \itemize{
-\item \code{hasChromPeaks} whether chromatographic peak data is available,
+\item \code{hasChromPeaks()} whether chromatographic peak data is available,
 see below for help of the function.
-
-\item \code{chromPeaks} access chromatographic peaks (see below for help).
-
-\item \code{dropChromPeaks} remove chromatographic peaks (see below for
+\item \code{chromPeaks()} access chromatographic peaks (see below for help).
+\item \code{dropChromPeaks()} remove chromatographic peaks (see below for
 help).
-
-\item \code{dropFilledChromPeaks} remove filled-in peaks (see below for
+\item \code{dropFilledChromPeaks()} remove filled-in peaks (see below for
 help).
-
-\item \code{\link{fillChromPeaks}} fill-in missing peaks (see respective
+\item \verb{[fillChromPeaks()]} fill-in missing peaks (see respective
 help page).
-
-\item \code{\link{plotChromPeaks}} plot identified peaks for a file (see
+\item \verb{[plotChromPeaks()]} plot identified peaks for a file (see
 respective help page).
-
-\item \code{\link{plotChromPeakImage}} plot distribution of peaks along the
+\item \verb{[plotChromPeakImage()]} plot distribution of peaks along the
 retention time axis (see respective help page).
-
-\item \code{\link{highlightChromPeaks}} add chromatographic peaks to an
-existing plot of a \code{\link{Chromatogram}} (see respective help page).
-
 }
 }
 
@@ -627,58 +612,44 @@ existing plot of a \code{\link{Chromatogram}} (see respective help page).
 Adjusted retention times are stored in an \code{XCMSnExp} object besides the
 original, raw, retention times, allowing to switch between raw and adjusted
 times. It is also possible to replace the raw retention times with the
-adjusted ones with the \code{\link{applyAdjustedRtime}}. The adjusted
+adjusted ones with the \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} function. The adjusted
 retention times are added to an \code{XCMSnExp} by the
-\code{\link{adjustRtime}} function. All functions related to the access of
- adjusted retention times are:
-
+\code{\link[=adjustRtime]{adjustRtime()}} function. All functions related to the access of
+adjusted retention times are:
 \itemize{
-
-\item \code{hasAdjustedRtime} whether adjusted retention times are available
+\item \code{hasAdjustedRtime()} whether adjusted retention times are available
 (see below for help).
-
-\item \code{dropAdjustedRtime} remove adjusted retention times (see below
+\item \code{dropAdjustedRtime()} remove adjusted retention times (see below
 for help).
-
-\item \code{\link{applyAdjustedRtime}} replace the raw retention times with
+\item \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} replace the raw retention times with
 the adjusted ones (see respective help page).
-
-\item \code{\link{plotAdjustedRtime}} plot differences between adjusted and
+\item \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} plot differences between adjusted and
 raw retention times (see respective help page).
-
 }
 }
 
 \section{Correspondence results, features}{
 
 
-The correspondence analysis (\code{\link{groupChromPeaks}}) adds the feature
-definitions to an \code{XCMSnExp} object. All functions related to these are
+The correspondence analysis \code{\link[=groupChromPeaks]{groupChromPeaks()}} adds the definition of
+LC-MS features to an \code{XCMSnExp} object. All functions related to these are
 listed below:
-
 \itemize{
-
-\item \code{hasFeatures} whether correspondence results are available (see
+\item \code{hasFeatures()} whether correspondence results are available (see
 below for help).
-
-\item \code{featureDefinitions} access the definitions of the features (see
+\item \code{featureDefinitions()} access the definitions of the features (see
 below for help).
-
-\item \code{dropFeatureDefinitions} remove correspondence results (see below
+\item \code{dropFeatureDefinitions()} remove correspondence results (see below
 for help).
-
-\item \code{\link{featureValues}} access values for features (see respective
+\item \code{\link[=featureValues]{featureValues()}} access values for features (see respective
 help page).
-
-\item \code{\link{featureSummary}} perform a simple summary of the defined
+\item \code{\link[=featureSummary]{featureSummary()}} perform a simple summary of the defined
 features (see respective help page).
-
-\item \code{\link{overlappingFeatures}} identify features that are
-overlapping or close in the m/z - rt space (see respective help page).
-
-\item \code{\link{quantify}} extract feature intensities and put them, along
+\item \code{\link[=overlappingFeatures]{overlappingFeatures()}} identify features that are overlapping or close
+in the m/z - rt space (see respective help page).
+\item \code{\link[=quantify]{quantify()}}: extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
-\code{\link{SummarizedExperiment}}. See help page for details.
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. See help page for details.
 }
 }
 
@@ -752,38 +723,30 @@ xs <- as(faahko_sub, "xcmsSet")
 head(peaks(xs))
 }
 \seealso{
-\code{\linkS4class{xcmsSet}} for the old implementation.
-    \code{\link{OnDiskMSnExp}}, \code{\link{MSnExp}}
-    and \code{\link{pSet}} for a complete list of inherited methods.
+\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp},
+and \link[MSnbase:pSet-class]{MSnbase::pSet} for a complete list of inherited methods.
 
-    \code{\link{findChromPeaks}} for available peak detection methods
-    returning a \code{XCMSnExp} object as a result.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{[findChromPeaks()] for available peak detection methods
+returning a `XCMSnExp` object as a result.
 
-    \code{\link{groupChromPeaks}} for available peak grouping
-    methods and \code{\link{featureDefinitions}} for the method to extract
-    the feature definitions representing the peak grouping results.
-    \code{\link{adjustRtime}} for retention time adjustment methods.
+[groupChromPeaks()] for available peak grouping
+methods and `featureDefinitions` for the method to extract
+the feature definitions representing the peak grouping results.
+[adjustRtime()] for retention time adjustment methods.
 
-    \code{\link{chromatogram}} to extract MS data as
-    \code{\link{Chromatogram}} objects.
+[chromatogram()] to extract chromatographic MS data.
 
-    \code{\link{as}} (\code{as(x, "data.frame")}) in the \code{MSnbase}
-    package for the method to extract MS data as \code{data.frame}s.
+[featureChromatograms()] to extract chromatograms for each
+feature.
 
-    \code{\link{featureSummary}} to calculate basic feature summaries.
+[chromPeakSpectra()] to extract MS1 or MS2 spectra for each
+chromatographic peak.
 
-    \code{\link{featureChromatograms}} to extract chromatograms for each
-    feature.
+[featureSpectra()] to extract MS1 or MS2 spectra for features.
+}\if{html}{\out{</div>}}
 
-    \code{\link{chromPeakSpectra}} to extract MS2 spectra with the m/z of
-    the precursor ion within the m/z range of a peak and a retention time
-    within its retention time range.
-
-    \code{\link{featureSpectra}} to extract MS2 spectra associated with
-    identified features.
-
-\code{\link{fillChromPeaks}} for the method to fill-in eventually
-    missing chromatographic peaks for a feature in some samples.
+\code{\link[=fillChromPeaks]{fillChromPeaks()}} for the method to fill-in eventually
+missing chromatographic peaks for a feature in some samples.
 }
 \author{
 Johannes Rainer

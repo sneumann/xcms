@@ -53,7 +53,7 @@ in seconds.}
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least \code{k} peaks with intensity
-\code{>= I}.}
+\verb{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
@@ -82,7 +82,7 @@ peak.}
 
 \item{noise}{\code{numeric(1)} allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity \code{< noise} are omitted from ROI detection).}
+intensity \verb{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{\code{logical(1)} whether additional peak meta data
 columns should be returned.}
@@ -108,68 +108,66 @@ defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
 \item{sleep}{\code{numeric(1)} defining the number of seconds to wait between
-iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
+iterations. Defaults to \code{sleep = 0}. If \verb{> 0} a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
 future.}
 
 \item{extendLengthMSW}{Option to force centWave to use all scales when
-running centWave rather than truncating with the EIC length. Uses the "open"
-method to extend the EIC to a integer base-2 length prior to being passed to
-\code{convolve} rather than the default "reflect" method. See
+running centWave rather than truncating with the EIC length. Uses the
+"open" method to extend the EIC to a integer base-2 length prior to
+being passed to \code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{verboseBetaColumns}{Option to calculate two additional metrics of peak
 quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
 \code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
-correlation coefficient to a bell curve with several degrees of skew as well
-as an estimate of signal-to-noise using the residuals from the best-fitting
-bell curve. See https://github.com/sneumann/xcms/pull/685 and
-https://doi.org/10.1186/s12859-023-05533-4 for more information.}
+correlation coefficient to a bell curve with several degrees of skew
+as well as an estimate of signal-to-noise using the residuals from the
+best-fitting bell curve. See https://github.com/sneumann/xcms/pull/685
+and https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
-    with columns:
-    \describe{
+with columns:
+\itemize{
+\item \code{"mz"}: Intensity weighted mean of m/z values of the peak across scans.
+\item \code{"mzmin"}: Minimum m/z of the peak.
+\item \code{"mzmax"}: Maximum m/z of the peak.
+\item \code{"rt"}: Retention time of the peak's midpoint.
+\item \code{"rtmin"}: Minimum retention time of the peak.
+\item `"rtmax: Maximum retention time of the peak.
+\item \code{"into"}: Integrated (original) intensity of the peak.
+\item \code{"intb"}: Per-peak baseline corrected integrated peak intensity.
+\item \code{"maxo"}: Maximum intensity of the peak.
+\item \code{"sn"}: Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+\code{sd} being the standard deviation of local chromatographic noise.
+\item \code{"egauss"}: RMSE of Gaussian fit.
+}
 
-    \item{mz}{Intensity weighted mean of m/z values of the peak across
-    scans.}
-    \item{mzmin}{Minimum m/z of the peak.}
-    \item{mzmax}{Maximum m/z of the peak.}
-    \item{rt}{Retention time of the peak's midpoint.}
-    \item{rtmin}{Minimum retention time of the peak.}
-    \item{rtmax}{Maximum retention time of the peak.}
-    \item{into}{Integrated (original) intensity of the peak.}
-    \item{intb}{Per-peak baseline corrected integrated peak intensity.}
-    \item{maxo}{Maximum intensity of the peak.}
-    \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-    \code{sd} being the standard deviation of local chromatographic noise.}
-    \item{egauss}{RMSE of Gaussian fit.}
-    }
-    Additional columns for \code{verboseColumns = TRUE}:
-    \describe{
+Additional columns for \code{verboseColumns = TRUE}:
+\itemize{
+\item \code{"mu"}: Gaussian parameter mu.
+\item \code{"sigma"}: Gaussian parameter sigma.
+\item \code{"h"}: Gaussian parameter h.
+\item \code{"f"}: Region number of the m/z ROI where the peak was localized.
+\item \code{"dppm"}: m/z deviation of mass trace across scans in ppm.
+\item \code{"scale"}: Scale on which the peak was localized.
+\item \code{"scpos"}: Peak position found by wavelet analysis (scan number).
+\item \code{"scmin"}: Left peak limit found by wavelet analysis (scan number).
+\item \code{"scmax"}: Right peak limit found by wavelet analysis (scan numer).
+}
 
-    \item{mu}{Gaussian parameter mu.}
-    \item{sigma}{Gaussian parameter sigma.}
-    \item{h}{Gaussian parameter h.}
-    \item{f}{Region number of the m/z ROI where the peak was localized.}
-    \item{dppm}{m/z deviation of mass trace across scans in ppm.}
-    \item{scale}{Scale on which the peak was localized.}
-    \item{scpos}{Peak position found by wavelet analysis (scan number).}
-    \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-    \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-    }
-    Additional columns for \code{verboseBetaColumns = TRUE}:
-    \describe{
-
-    \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
-    \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
-    }
+Additional columns for \code{verboseBetaColumns = TRUE}:
+\itemize{
+\item \code{"beta_cor"}: Correlation between an "ideal" bell curve and the raw data.
+\item \code{"beta_snr"}: Signal-to-noise residuals calculated from the beta_cor fit.
+}
 }
 \description{
 This function performs peak density and wavelet based
-    chromatographic peak detection for high resolution LC/MS data in centroid
-    mode [Tautenhahn 2008].
+chromatographic peak detection for high resolution LC/MS data in centroid
+mode \emph{Tautenhahn 2008}.
 }
 \details{
 This algorithm is most suitable for high resolution
@@ -189,12 +187,13 @@ the \code{roiList} parameter.
 }
 \note{
 The \emph{centWave} was designed to work on centroided mode, thus it
-    is expected that such data is presented to the function.
+is expected that such data is presented to the function.
 
-    This function exposes core chromatographic peak detection functionality
-    of the \emph{centWave} method. While this function can be called
-    directly, users will generally call the corresponding method for the
-    data object instead.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{This function exposes core chromatographic peak detection functionality
+of the *centWave* method. While this function can be called
+directly, users will generally call the corresponding method for the
+data object instead.
+}\if{html}{\out{</div>}}
 }
 \examples{
 ## Load the test file
@@ -220,12 +219,10 @@ head(res)
 }
 \references{
 Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
-    sensitive feature detection for high resolution LC/MS"
-    \emph{BMC Bioinformatics} 2008, 9:504
+sensitive feature detection for high resolution LC/MS"
+\emph{BMC Bioinformatics} 2008, 9:504
 }
 \seealso{
-\code{\link{centWave}} for the standard user interface method.
-
 Other core peak detection functions: 
 \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
 \code{\link{do_findChromPeaks_massifquant}()},

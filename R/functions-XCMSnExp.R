@@ -5,8 +5,10 @@
 #' Takes a XCMSnExp and drops ProcessHistory steps from the
 #' `@.processHistory` slot matching the provided type.
 #'
-#' @param num which should be dropped? If \code{-1} all matching will be dropped,
+#' @param num which should be dropped? If `-1` all matching will be dropped,
 #'     otherwise just the most recent num.
+#'
+#' @md
 #'
 #' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
 #'
@@ -133,7 +135,7 @@ dropGenericProcessHistory <- function(x, fun) {
 
 #' @description
 #'
-#' Extract a \code{data.frame} of retention time, mz and intensity
+#' Extract a `data.frame` of retention time, mz and intensity
 #' values from each file/sample in the provided rt-mz range.
 #'
 #' @note
@@ -717,57 +719,59 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @description
 #'
-#' The \code{highlightChromPeaks} function adds chromatographic
+#' The `highlightChromPeaks()` function adds chromatographic
 #' peak definitions to an existing plot, such as one created by the
-#' \code{plot} method on a \code{\link{Chromatogram}} or
-#' \code{\link{MChromatograms}} object.
+#' `plot()` method on a [MSnbase::Chromatogram()] or
+#' [MSnbase::MChromatograms()] object.
 #'
-#' @param x For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
+#' @param x For `highlightChromPeaks()`: `XCMSnExp` object with the
 #'     detected peaks.
 #'
-#' @param rt For \code{highlightChromPeaks}: \code{numeric(2)} with the
+#' @param rt For `highlightChromPeaks()`: `numeric(2)` with the
 #'     retention time range from which peaks should be extracted and plotted.
 #'
-#' @param mz \code{numeric(2)} with the mz range from which the peaks should
+#' @param mz `numeric(2)` with the mz range from which the peaks should
 #'     be extracted and plotted.
 #'
-#' @param peakIds \code{character} defining the IDs (i.e. rownames of the peak
-#'     in the \code{chromPeaks} table) of the chromatographic peaks to be
+#' @param peakIds `character` defining the IDs (i.e. rownames of the peak
+#'     in the `chromPeaks` table) of the chromatographic peaks to be
 #'     highlighted in a plot.
 #'
 #' @param border colors to be used to color the border of the rectangles/peaks.
-#'     Has to be equal to the number of samples in \code{x}.
+#'     Has to be equal to the number of samples in `x`.
 #'
-#' @param lwd \code{numeric(1)} defining the width of the line/border.
+#' @param lwd `numeric(1)` defining the width of the line/border.
 #'
-#' @param col For \code{highlightChromPeaks}: color to be used to fill the
-#'     rectangle (if \code{type = "rect"}) or the peak
-#'     (for \code{type = "polygon"}).
+#' @param col For `highlightChromPeaks()`: color to be used to fill the
+#'     rectangle (if `type = "rect"`) or the peak
+#'     (for `type = "polygon"`).
 #'
-#' @param type the plotting type. See \code{\link{plot}} in base grapics for
+#' @param type the plotting type. See `plot()` in base grapics for
 #'     more details.
-#'     For \code{highlightChromPeaks}: \code{character(1)} defining how the peak
-#'     should be highlighted: \code{type = "rect"} draws a rectangle
-#'     representing the peak definition, \code{type = "point"} indicates a
+#'     For `highlightChromPeaks()`: `character(1)` defining how the peak
+#'     should be highlighted: `type = "rect"` draws a rectangle
+#'     representing the peak definition, `type = "point"` indicates a
 #'     chromatographic peak with a single point at the position of the peak's
-#'     \code{"rt"} and \code{"maxo"} and \code{type = "polygon"} will highlight
-#'     the peak shape. For \code{type = "polygon"} the color of the border and
-#'     area can be defined with parameters \code{"border"} and \code{"col"},
+#'     `"rt"` and `"maxo"` and `type = "polygon"` will highlight
+#'     the peak shape. For `type = "polygon"` the color of the border and
+#'     area can be defined with parameters `"border"` and `"col"`,
 #'     respectively.
 #'
-#' @param whichPeaks \code{character(1)} specifying how peaks are called to be
-#'     located within the region defined by \code{mz} and \code{rt}. Can be
-#'     one of \code{"any"}, \code{"within"}, and \code{"apex_within"} for all
+#' @param whichPeaks `character(1)` specifying how peaks are called to be
+#'     located within the region defined by `mz` and `rt`. Can be
+#'     one of `"any"`, `"within"`, and `"apex_within"` for all
 #'     peaks that are even partially overlapping the region, peaks that are
 #'     completely within the region, and peaks for which the apex is within
-#'     the region. This parameter is passed to the \code{type} argument of the
-#'     \code{\link{chromPeaks}} function. See related documentation for more
+#'     the region. This parameter is passed to the `type` argument of the
+#'     [chromPeaks()] function. See related documentation for more
 #'     information and examples.
 #'
-#' @param ... additional parameters to the \code{\link{matplot}} or \code{plot}
+#' @param ... additional parameters to the `matplot()` or `plot()`
 #'     function.
 #'
 #' @author Johannes Rainer
+#'
+#' @md
 #'
 #' @examples
 #'
@@ -1584,7 +1588,9 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 
 #' @description
 #'
-#' \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
+#' `hasFilledChromPeaks()`: whether filled-in peaks are present or not.
+#'
+#' @md
 #'
 #' @rdname XCMSnExp-class
 setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {

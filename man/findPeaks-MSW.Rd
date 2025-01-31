@@ -154,27 +154,28 @@ estimation of the detected peaks.}
 \code{\link{identifyMajorPeaks}} functions from the
 \code{MassSpecWavelet} package.}
 
-\item{object}{For \code{findChromPeaks}: an
-    \code{\link{OnDiskMSnExp}} object containing the MS- and all
-    other experiment-relevant data.
+\item{object}{For \code{findChromPeaks()}: an
+\code{OnDiskMSnExp} object containing the MS- and all
+other experiment-relevant data.
 
-    For all other methods: a parameter object.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
+}\if{html}{\out{</div>}}}
 
 \item{param}{An \code{MSWParam} object containing all settings for
 the algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If
+should be performed. It defaults to [BiocParallel::bpparam()].
+See documentation of the *BiocParallel* package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-\code{"xcmsSet"}.}
+return. Can be either `"XCMSnExp"` (default), `"list"` or
+`"xcmsSet"`.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
+\item{msLevel}{`integer(1)` defining the MS level on which the peak
+detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{value}{The value for the slot.}
 }
@@ -183,29 +184,29 @@ The \code{MSWParam} function returns a \code{MSWParam}
     class instance with all of the settings specified for peak detection by
     the \emph{MSW} method.
 
-For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-    \code{\link{XCMSnExp}} object with the results of the peak detection.
-    If \code{return.type = "list"} a list of length equal to the number of
-    samples with matrices specifying the identified peaks.
-    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-    with the results of the detection.
+For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
+\code{XCMSnExp} object with the results of the peak detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified peaks.
+If \code{return.type = "xcmsSet"} an \code{xcmsSet} object
+with the results of the detection.
 }
 \description{
 Perform peak detection in mass spectrometry
-    direct injection spectrum using a wavelet based algorithm.
+direct injection spectrum using a wavelet based algorithm.
 
 The \code{MSWParam} class allows to specify all
-    settings for a peak detection using the MSW method. Instances should be
-    created with the \code{MSWParam} constructor.
+settings for a peak detection using the MSW method. Instances should be
+created with the \code{MSWParam} constructor.
 
-The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
-    method performs peak detection in single-spectrum non-chromatography MS
-    data using functionality from the \code{MassSpecWavelet} package on all
-    samples from an \code{\link{OnDiskMSnExp}} object.
-    \code{\link{OnDiskMSnExp}} objects encapsule all experiment
-    specific data and load the spectra data (mz and intensity values) on the
-    fly from the original files applying also all eventual data
-    manipulations.
+The \verb{findChromPeaks,OnDiskMSnExp,MSWParam()}
+method performs peak detection in single-spectrum non-chromatography MS
+data using functionality from the \emph{MassSpecWavelet} package on all
+samples from an \code{OnDiskMSnExp} object.
+\code{OnDiskMSnExp} objects encapsule all experiment
+specific data and load the spectra data (mz and intensity values) on the
+fly from the original files applying also all eventual data
+manipulations.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
     \code{snthresh} slot of the object.
@@ -246,16 +247,16 @@ The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
 }
 \details{
 This is a wrapper for the peak picker in Bioconductor's
-    \code{MassSpecWavelet} package calling
-    \code{\link{peakDetectionCWT}} and
-    \code{\link{tuneInPeakInfo}} functions. See the
-    \emph{xcmsDirect} vignette for more information.
+\emph{MassSpecWavelet} package calling
+\code{peakDetectionCWT} and
+\code{tuneInPeakInfo} functions. See the
+\emph{xcmsDirect} vignette for more information.
 
 Parallel processing (one process per sample) is supported and can
-    be configured either by the \code{BPPARAM} parameter or by globally
-    defining the parallel processing mode using the
-    \code{\link{register}} method from the \code{BiocParallel}
-    package.
+be configured either by the \code{BPPARAM} parameter or by globally
+defining the parallel processing mode using the
+\code{\link[BiocParallel:register]{BiocParallel::register()}} method from the \emph{BiocParallel}
+package.
 }
 \section{Slots}{
 
@@ -263,14 +264,6 @@ Parallel processing (one process per sample) is supported and can
 \item{\code{snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams}}{See corresponding parameter above.}
 }}
 
-\note{
-These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{findPeaks}} methods. It supports peak detection on
-    \code{\link{OnDiskMSnExp}}
-    objects (defined in the \code{MSnbase} package). All of the settings
-    to the algorithm can be passed with a \code{MSWParam} object.
-}
 \examples{
 
 library(MSnbase)
@@ -294,11 +287,11 @@ fticr <- findChromPeaks(fticr, param = p)
 head(chromPeaks(fticr))
 }
 \seealso{
-The \code{\link{do_findPeaks_MSW}} core API function
-    and \code{\link{findPeaks.MSW}} for the old user interface.
+The \code{\link[=do_findPeaks_MSW]{do_findPeaks_MSW()}} core API function
+and \code{\link[=findPeaks.MSW]{findPeaks.MSW()}} for the old user interface.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the peak detection.
+\code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
+the peak detection.
 
 Other peak detection methods: 
 \code{\link{findChromPeaks}()},

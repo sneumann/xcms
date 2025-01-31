@@ -123,7 +123,7 @@ bins/slices in m/z dimension.}
 value imputation. Allowed values are \code{"none"} (no linear
 interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
 (linear interpolation within a certain bin-neighborhood) and
-\code{"intlin"}. See \code{\link{imputeLinInterpol}} for more details.}
+\code{"intlin"}. See \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more details.}
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
@@ -157,27 +157,28 @@ in m/z for peaks with overlapping retention times}
 \item{index}{\code{logical(1)} specifying whether indicies should be
 returned instead of values for m/z and retention times.}
 
-\item{object}{For \code{findChromPeaks}: an
-    \code{\link{OnDiskMSnExp}} object containing the MS- and all
-    other experiment-relevant data.
+\item{object}{For \code{findChromPeaks()}: an
+\code{OnDiskMSnExp} object containing the MS- and all
+other experiment-relevant data.
 
-    For all other methods: a parameter object.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
+}\if{html}{\out{</div>}}}
 
 \item{param}{An \code{MatchedFilterParam} object containing all settings for
 the matchedFilter algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If
+should be performed. It defaults to [BiocParallel::bpparam()].
+See documentation of the *BiocParallel* package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-\code{"xcmsSet"}.}
+return. Can be either `"XCMSnExp"` (default), `"list"` or
+`"xcmsSet"`.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
+\item{msLevel}{`integer(1)` defining the MS level on which the peak
+detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{...}{ignored.}
 
@@ -191,38 +192,38 @@ The \code{MatchedFilterParam} function returns a
     specified for chromatographic detection by the \emph{matchedFilter}
     method.
 
-For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-    \code{\link{XCMSnExp}} object with the results of the peak detection.
-    If \code{return.type = "list"} a list of length equal to the number of
-    samples with matrices specifying the identified peaks.
-    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-    with the results of the peak detection.
+For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
+\code{\link[=XCMSnExp]{XCMSnExp()}} object with the results of the peak detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified peaks.
+If \code{return.type = "xcmsSet"} an \code{xcmsSet} object
+with the results of the peak detection.
 }
 \description{
 The \emph{matchedFilter} algorithm identifies peaks in the
-    chromatographic time domain as described in [Smith 2006]. The intensity
-    values are binned by cutting The LC/MS data into slices (bins) of a mass
-    unit (\code{binSize} m/z) wide. Within each bin the maximal intensity is
-    selected. The chromatographic peak detection is then performed in each
-    bin by extending it based on the \code{steps} parameter to generate
-    slices comprising bins \code{current_bin - steps +1} to
-    \code{current_bin + steps - 1}. Each of these slices is then filtered
-    with matched filtration using a second-derative Gaussian as the model
-    peak shape. After filtration peaks are detected using a signal-to-ratio
-    cut-off. For more details and illustrations see [Smith 2006].
+chromatographic time domain as described in \emph{Smith 2006}. The intensity
+values are binned by cutting The LC/MS data into slices (bins) of a mass
+unit (\code{binSize} m/z) wide. Within each bin the maximal intensity is
+selected. The chromatographic peak detection is then performed in each
+bin by extending it based on the \code{steps} parameter to generate
+slices comprising bins \code{current_bin - steps +1} to
+\code{current_bin + steps - 1}. Each of these slices is then filtered
+with matched filtration using a second-derative Gaussian as the model
+peak shape. After filtration peaks are detected using a signal-to-ratio
+cut-off. For more details and illustrations see \emph{Smith 2006}.
 
 The \code{MatchedFilterParam} class allows to specify all
-    settings for a chromatographic peak detection using the matchedFilter
-    method. Instances should be created with the \code{MatchedFilterParam}
-    constructor.
+settings for a chromatographic peak detection using the matchedFilter
+method. Instances should be created with the \code{MatchedFilterParam}
+constructor.
 
-The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
-    method performs peak detection using the \emph{matchedFilter} algorithm
-    on all samples from an \code{\link{OnDiskMSnExp}} object.
-    \code{\link{OnDiskMSnExp}} objects encapsule all experiment
-    specific data and load the spectra data (mz and intensity values) on the
-    fly from the original files applying also all eventual data
-    manipulations.
+The \verb{findChromPeaks,OnDiskMSnExp,MatchedFilterParam()}
+method performs peak detection using the \emph{matchedFilter} algorithm
+on all samples from an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}} object.
+\code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}} objects encapsule all experiment
+specific data and load the spectra data (mz and intensity values) on the
+fly from the original files applying also all eventual data
+manipulations.
 
 \code{binSize},\code{binSize<-}: getter and setter for the
     \code{binSize} slot of the object.
@@ -259,18 +260,19 @@ The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
 }
 \details{
 The intensities are binned by the provided m/z values within each
-    spectrum (scan). Binning is performed such that the bins are centered
-    around the m/z values (i.e. the first bin includes all m/z values between
-    \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+spectrum (scan). Binning is performed such that the bins are centered
+around the m/z values (i.e. the first bin includes all m/z values between
+\code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
 
-    For more details on binning and missing value imputation see
-    \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For more details on binning and missing value imputation see
+[binYonX()] and [imputeLinInterpol()] methods.
+}\if{html}{\out{</div>}}
 
 Parallel processing (one process per sample) is supported and can
-    be configured either by the \code{BPPARAM} parameter or by globally
-    defining the parallel processing mode using the
-    \code{\link{register}} method from the \code{BiocParallel}
-    package.
+be configured either by the \code{BPPARAM} parameter or by globally
+defining the parallel processing mode using the
+\code{\link[BiocParallel:register]{BiocParallel::register()}} method from the \emph{BiocParallel}
+package.
 }
 \section{Slots}{
 
@@ -280,15 +282,6 @@ be accessed \emph{via} the corresponding getter and setter methods listed
 above.}
 }}
 
-\note{
-These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{findPeaks}} methods. It supports chromatographic peak
-    detection on
-    \code{\link{OnDiskMSnExp}} objects (defined in the
-    \code{MSnbase} package). All of the settings to the matchedFilter
-    algorithm can be passed with a \code{MatchedFilterParam} object.
-}
 \examples{
 
 ## Create a MatchedFilterParam object. Note that we use a unnecessarily large
@@ -319,14 +312,14 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
 }
 \seealso{
-The \code{\link{do_findChromPeaks_matchedFilter}} core API function
-and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+The \code{\link[=do_findChromPeaks_matchedFilter]{do_findChromPeaks_matchedFilter()}} core API function
+and \code{\link[=findPeaks.matchedFilter]{findPeaks.matchedFilter()}} for the old user interface.
 
-\code{\link{peaksWithMatchedFilter}} for functions to perform matchedFilter
+\code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for functions to perform matchedFilter
 peak detection in purely chromatographic data.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the chromatographic peak detection.
+\code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
+the chromatographic peak detection.
 
 Other peak detection methods: 
 \code{\link{findChromPeaks}()},

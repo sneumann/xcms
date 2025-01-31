@@ -210,8 +210,8 @@ ObiwarpParam(
 \S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
-\item{object}{For \code{adjustRtime}: an \code{\link[=OnDiskMSnExp]{OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
-\code{\link[=MsExperiment]{MsExperiment()}} or \code{\link[=XcmsExperiment]{XcmsExperiment()}} object.}
+\item{object}{For \code{adjustRtime}: an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
+\code{\link[MsExperiment:MsExperiment]{MsExperiment::MsExperiment()}} or \code{\link[=XcmsExperiment]{XcmsExperiment()}} object.}
 
 \item{param}{The parameter object defining the alignment method (and its
 setting).}
@@ -232,7 +232,7 @@ the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.}
 
 \item{BPPARAM}{parallel processing setup. Defaults to \code{BPPARAM = bpparam()}.
-See \code{\link[=bpparam]{bpparam()}} for details.}
+See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details.}
 
 \item{msLevel}{For \code{adjustRtime}: \code{integer(1)} defining the MS level on
 which the alignment should be performed.}
@@ -262,11 +262,11 @@ Can be either \code{"loess"} or \code{"linear"}.}
 
 \item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining
 the degree of smoothing (if \code{smooth = "loess"}). This parameter is
-passed to the internal call to \code{\link[=loess]{loess()}}.}
+passed to the internal call to \code{\link[stats:loess]{stats::loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
-\code{\link[=loess]{loess()}} for more information.}
+\code{\link[stats:loess]{stats::loess()}} for more information.}
 
 \item{peakGroupsMatrix}{For \code{PeakGroupsParam}: optional \code{matrix} of (raw)
 retention times for the (marker) peak groups on which the alignment
@@ -287,7 +287,7 @@ See \emph{Subset-based alignment} section for details.}
 
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
 to be used for the \emph{profile matrix} generation. See \code{step}
-parameter in \code{\link{profile-matrix}} documentation for more details.}
+parameter in \link{profile-matrix} documentation for more details.}
 
 \item{centerSample}{\code{integer(1)} defining the index of the center sample
 in the experiment. It defaults to
@@ -380,7 +380,7 @@ Supported \code{param} objects are:
 rt data using the \emph{obiwarp} method (Prince (2006)). It is based on the
 \href{http://obi-warp.sourceforge.net}{original code} but supports in addition
 alignment of multiple samples by aligning each against a \emph{center} sample.
-The alignment is performed directly on the \link{profile-matrix} and can hence
+The alignment is performed directly on the \emph{profile-matrix} and can hence
 be performed independently of the peak detection or peak grouping.
 \item \code{PeakGroupsParam}: performs retention time correction based on the
 alignment of features defined in all/most samples (corresponding to

@@ -146,12 +146,12 @@ definition.}
 massifquant, which specifices the minimum peak length in time scans.
 For \code{withWave = TRUE} the second argument represents the maximum
 peak length subject to being greater than the mininum peak length
-(see also documentation of \code{\link{do_findChromPeaks_centWave}}).}
+(see also documentation of \code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}}).}
 
 \item{snthresh}{\code{numeric(1)} defining the signal to noise ratio cutoff.}
 
 \item{prefilter}{\code{numeric(2)}. The first argument is only used
-if (\code{withWave = TRUE}); see \code{\link{findChromPeaks-centWave}}
+if (\code{withWave = TRUE}); see \code{\link[=findChromPeaks-centWave]{findChromPeaks-centWave()}}
 for details. The second argument specifies the minimum threshold for the
 maximum intensity of a chromatographic peak that must be met.}
 
@@ -182,7 +182,7 @@ peak.}
 
 \item{noise}{\code{numeric(1)} allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity \code{< noise} are omitted from ROI detection).}
+intensity \verb{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{\code{logical(1)} whether additional peak meta data
 columns should be returned.}
@@ -197,7 +197,7 @@ reported by the Kalman Filter. If the peak in the XC-MS sample have
 a small mass deviance in ppm error, a smaller critical value might be
 better and vice versa.}
 
-\item{consecMissedLimit}{\code{integer(1)} Suggested values: (\code{1,2,3}).
+\item{consecMissedLimit}{\code{integer(1)} Suggested values: (\verb{1,2,3}).
 While a peak is in the proces of being detected by a Kalman Filter, the
 Kalman Filter may not find a predicted centroid in every scan. After 1
 or more consecutive failed predictions, this setting informs Massifquant
@@ -229,27 +229,28 @@ to being turned off.}
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.}
 
-\item{object}{For \code{findChromPeaks}: an
-    \code{\link{OnDiskMSnExp}} object containing the MS- and all
-    other experiment-relevant data.
+\item{object}{For \code{findChromPeaks()}: an
+\code{OnDiskMSnExp} object containing the MS- and all
+other experiment-relevant data.
 
-    For all other methods: a parameter object.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
+}\if{html}{\out{</div>}}}
 
 \item{param}{An \code{MassifquantParam} object containing all settings for
 the massifquant algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If
+should be performed. It defaults to [BiocParallel::bpparam()].
+See documentation of the *BiocParallel* package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-\code{"xcmsSet"}.}
+return. Can be either `"XCMSnExp"` (default), `"list"` or
+`"xcmsSet"`.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
+\item{msLevel}{`integer(1)` defining the MS level on which the peak
+detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{...}{ignored.}
 
@@ -263,33 +264,33 @@ The \code{MassifquantParam} function returns a
     specified for chromatographic peak detection by the \emph{massifquant}
     method.
 
-For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-    \code{\link{XCMSnExp}} object with the results of the peak detection.
-    If \code{return.type = "list"} a list of length equal to the number of
-    samples with matrices specifying the identified peaks.
-    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-    with the results of the peak detection.
+For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
+\code{XCMSnExp} object with the results of the peak detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified peaks.
+If \code{return.type = "xcmsSet"} an \code{xcmsSet} object
+with the results of the peak detection.
 }
 \description{
 Massifquant is a Kalman filter (KF)-based chromatographic peak
-    detection for XC-MS data in centroid mode. The identified peaks
-    can be further refined with the \emph{centWave} method (see
-    \code{\link{findChromPeaks-centWave}} for details on centWave)
-    by specifying \code{withWave = TRUE}.
+detection for XC-MS data in centroid mode. The identified peaks
+can be further refined with the \emph{centWave} method (see
+\code{\link[=findChromPeaks-centWave]{findChromPeaks-centWave()}} for details on centWave)
+by specifying \code{withWave = TRUE}.
 
 The \code{MassifquantParam} class allows to specify all
-    settings for a chromatographic peak detection using the massifquant
-    method eventually in combination with the centWave algorithm. Instances
-    should be created with the \code{MassifquantParam} constructor.
+settings for a chromatographic peak detection using the massifquant
+method eventually in combination with the centWave algorithm. Instances
+should be created with the \code{MassifquantParam} constructor.
 
-The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
-    method performs chromatographic peak detection using the
-    \emph{massifquant} algorithm on all samples from an
-    \code{\link{OnDiskMSnExp}} object.
-    \code{\link{OnDiskMSnExp}} objects encapsule all experiment
-    specific data and load the spectra data (mz and intensity values) on the
-    fly from the original files applying also all eventual data
-    manipulations.
+The \verb{findChromPeaks,OnDiskMSnExp,MassifquantParam()}
+method performs chromatographic peak detection using the
+\emph{massifquant} algorithm on all samples from an
+\code{OnDiskMSnExp} object.
+\code{OnDiskMSnExp} objects encapsule all experiment
+specific data and load the spectra data (mz and intensity values) on the
+fly from the original files applying also all eventual data
+manipulations.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
     slot of the object.
@@ -338,27 +339,27 @@ The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
 }
 \details{
 This algorithm's performance has been tested rigorously
-    on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
-    Simultaneous kalman filters identify chromatographic peaks and calculate
-    their area under the curve. The default parameters are set to operate on
-    a complex LC-MS Orbitrap sample. Users will find it useful to do some
-    simple exploratory data analysis to find out where to set a minimum
-    intensity, and identify how many scans an average peak spans. The
-    \code{consecMissedLimit} parameter has yielded good performance on
-    Orbitrap data when set to (\code{2}) and on TOF data it was found best
-    to be at (\code{1}). This may change as the algorithm has yet to be
-    tested on many samples. The \code{criticalValue} parameter is perhaps
-    most dificult to dial in appropriately and visual inspection of peak
-    identification is the best suggested tool for quick optimization.
-    The \code{ppm} and \code{checkBack} parameters have shown less influence
-    than the other parameters and exist to give users flexibility and
-    better accuracy.
+on high resolution LC/(OrbiTrap, TOF)-MS data in centroid mode.
+Simultaneous kalman filters identify chromatographic peaks and calculate
+their area under the curve. The default parameters are set to operate on
+a complex LC-MS Orbitrap sample. Users will find it useful to do some
+simple exploratory data analysis to find out where to set a minimum
+intensity, and identify how many scans an average peak spans. The
+\code{consecMissedLimit} parameter has yielded good performance on
+Orbitrap data when set to (\code{2}) and on TOF data it was found best
+to be at (\code{1}). This may change as the algorithm has yet to be
+tested on many samples. The \code{criticalValue} parameter is perhaps
+most dificult to dial in appropriately and visual inspection of peak
+identification is the best suggested tool for quick optimization.
+The \code{ppm} and \code{checkBack} parameters have shown less influence
+than the other parameters and exist to give users flexibility and
+better accuracy.
 
 Parallel processing (one process per sample) is supported and can
-    be configured either by the \code{BPPARAM} parameter or by globally
-    defining the parallel processing mode using the
-    \code{\link{register}} method from the \code{BiocParallel}
-    package.
+be configured either by the \code{BPPARAM} parameter or by globally
+defining the parallel processing mode using the
+\code{\link[BiocParallel:register]{BiocParallel::register()}} method from the \emph{BiocParallel}
+package.
 }
 \section{Slots}{
 
@@ -368,15 +369,6 @@ exclusively be accessed \emph{via} the corresponding getter and setter
 methods listed above.}
 }}
 
-\note{
-These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{findPeaks}} methods. It supports chromatographic peak
-    detection on
-    \code{\link{OnDiskMSnExp}} objects (defined in the
-    \code{MSnbase} package). All of the settings to the massifquant and
-    centWave algorithm can be passed with a \code{MassifquantParam} object.
-}
 \examples{
 
 ## Create a MassifquantParam object.
@@ -404,11 +396,11 @@ Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 }
 \seealso{
-The \code{\link{do_findChromPeaks_massifquant}} core API function
-    and \code{\link{findPeaks.massifquant}} for the old user interface.
+The \code{\link[=do_findChromPeaks_massifquant]{do_findChromPeaks_massifquant()}} core API function
+and \code{\link[=findPeaks.massifquant]{findPeaks.massifquant()}} for the old user interface.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the peak detection.
+\code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
+the peak detection.
 
 Other peak detection methods: 
 \code{\link{findChromPeaks}()},

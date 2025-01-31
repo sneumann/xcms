@@ -157,7 +157,7 @@ in seconds.}
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least \code{k} peaks with intensity
-\code{>= I}.}
+\verb{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
@@ -186,7 +186,7 @@ peak.}
 
 \item{noise}{\code{numeric(1)} allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity \code{< noise} are omitted from ROI detection).}
+intensity \verb{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{\code{logical(1)} whether additional peak meta data
 columns should be returned.}
@@ -212,40 +212,40 @@ defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
 \item{extendLengthMSW}{Option to force centWave to use all scales when
-running centWave rather than truncating with the EIC length. Uses the "open"
-method to extend the EIC to a integer base-2 length prior to being passed to
-\code{convolve} rather than the default "reflect" method. See
+running centWave rather than truncating with the EIC length. Uses the
+"open" method to extend the EIC to a integer base-2 length prior to
+being passed to \code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{verboseBetaColumns}{Option to calculate two additional metrics of peak
 quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
 \code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
-correlation coefficient to a bell curve with several degrees of skew as well
-as an estimate of signal-to-noise using the residuals from the best-fitting
-bell curve. See https://github.com/sneumann/xcms/pull/685 and
-https://doi.org/10.1186/s12859-023-05533-4 for more information.}
+correlation coefficient to a bell curve with several degrees of skew
+as well as an estimate of signal-to-noise using the residuals from the
+best-fitting bell curve. See https://github.com/sneumann/xcms/pull/685
+and https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 
-\item{object}{For \code{findChromPeaks}: an
-    \code{\link{OnDiskMSnExp}}  object containing the MS- and all
+\item{object}{For `findChromPeaks()`: an
+    [OnDiskMSnExp()]  object containing the MS- and all
     other experiment-relevant data.
 
     For all other methods: a parameter object.}
 
-\item{param}{An \code{CentWaveParam} object containing all settings for the
+\item{param}{An `CentWaveParam()` object containing all settings for the
 centWave algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If
+should be performed. It defaults to [BiocParallel::bpparam()].
+See documentation of the *BiocParallel* package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-\code{"xcmsSet"}.}
+return. Can be either `"XCMSnExp"` (default), `"list"` or
+`"xcmsSet"`.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
+\item{msLevel}{`integer(1)` defining the MS level on which the peak
+detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{...}{ignored.}
 
@@ -260,26 +260,26 @@ The \code{CentWaveParam} function returns a \code{CentWaveParam}
     class instance with all of the settings specified for chromatographic
     peak detection by the centWave method.
 
-For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-    \code{\link{XCMSnExp}} object with the results of the peak detection.
-    If \code{return.type = "list"} a list of length equal to the number of
+For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+    [XCMSnExp()] object with the results of the peak detection.
+    If `return.type = "list"` a list of length equal to the number of
     samples with matrices specifying the identified peaks.
-    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+    If `return.type = "xcmsSet"` an `xcmsSet` object
     with the results of the peak detection.
 }
 \description{
 The centWave algorithm perform peak density and wavelet based
-    chromatographic peak detection for high resolution LC/MS data in centroid
-    mode [Tautenhahn 2008].
+chromatographic peak detection for high resolution LC/MS data in centroid
+mode \emph{Tautenhahn 2008}.
 
 The \code{CentWaveParam} class allows to specify all settings
-    for a chromatographic peak detection using the centWave method. Instances
-    should be created with the \code{CentWaveParam} constructor.
+for a chromatographic peak detection using the centWave method. Instances
+should be created with the \code{CentWaveParam} constructor.
 
-The \code{findChromPeaks,OnDiskMSnExp,CentWaveParam} method
+The `findChromPeaks,OnDiskMSnExp,CentWaveParam()` method
     performs chromatographic peak detection using the \emph{centWave}
-    algorithm on all samples from an \code{\link{OnDiskMSnExp}}
-    object. \code{\link{OnDiskMSnExp}} objects encapsule all
+    algorithm on all samples from an `OnDiskMSnExp`
+    object. `OnDiskMSnExp` objects encapsule all
     experiment specific data and load the spectra data (mz and intensity
     values) on the fly from the original files applying also all eventual
     data manipulations.
@@ -340,9 +340,9 @@ The first analysis step is skipped, if regions of interest are passed
 \emph{via} the \code{param} parameter.
 
 Parallel processing (one process per sample) is supported and can
-    be configured either by the \code{BPPARAM} parameter or by globally
+    be configured either by the `BPPARAM` parameter or by globally
     defining the parallel processing mode using the
-    \code{\link{register}} method from the \code{BiocParallel}
+    [BiocParallel::register()] method from the *BiocParallel*
     package.
 }
 \section{Slots}{
@@ -354,11 +354,8 @@ Parallel processing (one process per sample) is supported and can
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{findPeaks}} methods. It supports peak detection on
-    \code{\link{OnDiskMSnExp}} objects (defined in the \code{MSnbase}
-    package). All of the settings to the centWave algorithm can be passed
-    with a \code{CentWaveParam} object.
+\emph{xcms} user interface which will eventually replace the
+\code{\link[=findPeaks]{findPeaks()}} methods.
 }
 \examples{
 
@@ -390,13 +387,13 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 2008, 9:504
 }
 \seealso{
-The \code{\link{do_findChromPeaks_centWave}} core API function and
-\code{\link{findPeaks.centWave}} for the old user interface.
+The \code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}} core API function and
+\code{\link[=findPeaks.centWave]{findPeaks.centWave()}} for the old user interface.
 
-\code{\link{peaksWithCentWave}} for functions to perform centWave peak
+\code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for functions to perform centWave peak
 detection in purely chromatographic data.
 
-\code{\link{XCMSnExp}} for the object containing the results of
+[XCMSnExp()] for the object containing the results of
     the peak detection.
 
 Other peak detection methods: 

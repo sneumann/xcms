@@ -51,7 +51,8 @@ loaded into memory and processed at a time. See \code{\link[=findChromPeaks]{fin
 more information.}
 
 \item{BPPARAM}{if \code{object} is an \code{MsExperiment} or \code{XcmsExperiment}:
-parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for more information.}
+parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more
+information.}
 }
 \value{
 An \code{XcmsExperiment} or \code{XCMSnExp} object with the chromatographic peaks

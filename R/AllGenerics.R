@@ -37,7 +37,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   rt data using the *obiwarp* method (Prince (2006)). It is based on the
 #'   [original code](http://obi-warp.sourceforge.net) but supports in addition
 #'   alignment of multiple samples by aligning each against a *center* sample.
-#'   The alignment is performed directly on the [profile-matrix] and can hence
+#'   The alignment is performed directly on the *profile-matrix* and can hence
 #'   be performed independently of the peak detection or peak grouping.
 #'
 #' - `PeakGroupsParam`: performs retention time correction based on the
@@ -93,17 +93,17 @@ setGeneric("addProcessHistory", function(object, ...)
 #' See also section *Alignment of experiments including blanks* in the
 #' *xcms* vignette for more details.
 #'
-#' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
-#'     to be used for the \emph{profile matrix} generation. See \code{step}
-#'     parameter in \code{\link{profile-matrix}} documentation for more details.
+#' @param binSize `numeric(1)` defining the bin size (in mz dimension)
+#'     to be used for the *profile matrix* generation. See `step`
+#'     parameter in [profile-matrix] documentation for more details.
 #'
 #' @param BPPARAM parallel processing setup. Defaults to `BPPARAM = bpparam()`.
-#'     See [bpparam()] for details.
+#'     See [BiocParallel::bpparam()] for details.
 #'
-#' @param centerSample \code{integer(1)} defining the index of the center sample
+#' @param centerSample `integer(1)` defining the index of the center sample
 #'     in the experiment. It defaults to
-#'     \code{floor(median(1:length(fileNames(object))))}. Note that if
-#'     \code{subset} is used, the index passed with \code{centerSample} is
+#'     `floor(median(1:length(fileNames(object))))`. Note that if
+#'     `subset` is used, the index passed with `centerSample` is
 #'     within these subset samples.
 #'
 #' @param chunkSize For `adjustRtime` if `object` is either an `MsExperiment` or
@@ -143,7 +143,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @param family For `PeakGroupsParam`: `character(1)` defining the method for
 #'     loess smoothing. Allowed values are `"gaussian"` and `"symmetric"`. See
-#'     [loess()] for more information.
+#'     [stats::loess()] for more information.
 #'
 #' @param gapExtend For `ObiwarpParam`: `numeric(1)` defining the penalty for
 #'     gap enlargement. The default value for `gapExtend` depends on the value
@@ -177,8 +177,8 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param msLevel For `adjustRtime`: `integer(1)` defining the MS level on
 #'     which the alignment should be performed.
 #'
-#' @param object For `adjustRtime`: an [OnDiskMSnExp()], [XCMSnExp()],
-#'     [MsExperiment()] or [XcmsExperiment()] object.
+#' @param object For `adjustRtime`: an [MSnbase::OnDiskMSnExp()], [XCMSnExp()],
+#'     [MsExperiment::MsExperiment()] or [XcmsExperiment()] object.
 #'
 #' @param param The parameter object defining the alignment method (and its
 #'     setting).
@@ -212,7 +212,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @param span For `PeakGroupsParam`: `numeric(1)` defining
 #'     the degree of smoothing (if `smooth = "loess"`). This parameter is
-#'     passed to the internal call to [loess()].
+#'     passed to the internal call to [stats::loess()].
 #'
 #' @param subset For `ObiwarpParam` and `PeakGroupsParam`: `integer` with the
 #'     indices of samples within the experiment on which the alignment models
@@ -230,6 +230,8 @@ setGeneric("addProcessHistory", function(object, ...)
 #' @param x An `ObiwarpParam`, `PeakGroupsParam` or `LamaParama` object.
 #'
 #' @param ... ignored.
+#'
+#' @md
 #'
 #' @return
 #'
@@ -414,9 +416,10 @@ setGeneric("chromPeakData<-", function(object, value)
 #'   signal (`"maxo"`); only supported for `msLevel = 2L`.
 #'
 #' Parameter `return.type` allows to specify the *type* of the result object.
-#' With `return.type = "Spectra"` (the default) a [Spectra] object with all
-#' matching spectra is returned. With `return.type = "Spectra"` a `List` of
-#' `Spectra` is returned. The length of the list is equal to the number of rows
+#' With `return.type = "Spectra"` (the default) a [Spectra::Spectra] object
+#' with all matching spectra is returned. With `return.type = "Spectra"` a
+#' `List` of `Spectra` is returned.
+#' The length of the list is equal to the number of rows
 #' of `chromPeaks`. Each element of the list contains thus a `Spectra` with all
 #' spectra for one chromatographic peak (or a `Spectra` of length 0 if no
 #' spectrum was found for the respective chromatographic peak).
@@ -467,7 +470,8 @@ setGeneric("chromPeakData<-", function(object, value)
 #'    The columns will be named as they are written in the `chromPeaks` object
 #'    with a prefix `"chrom_peak_"`. Defaults to `c("mz", "rt")`.
 #'
-#' @param BPPARAM parallel processing setup. Defaults to [bpparam()].
+#' @param BPPARAM parallel processing setup. Defaults to
+#'   [BiocParallel::bpparam()].
 #'
 #' @param ... ignored.
 #'
@@ -486,12 +490,12 @@ setGeneric("chromPeakData<-", function(object, value)
 #' For backward compatibility options `"MSpectra"` and `"list"` are also
 #' supported but are not suggested.
 #'
-#' - `return.type = "MSpectra"` (deprecated): a [MSpectra] object with elements being
-#'   [Spectrum-class] objects. The result objects contains all spectra
-#'   for all peaks. Metadata column `"peak_id"` provides the ID of the
+#' - `return.type = "MSpectra"` (deprecated): a [MSnbase::MSpectra] object
+#'   with elements being `Spectrum` objects. The result objects contains all
+#'   spectra for all peaks. Metadata column `"peak_id"` provides the ID of the
 #'   respective peak (i.e. its rowname in [chromPeaks()]).
 #' - `return.type = "list"`: `list` of `list`s that are either of length
-#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   0 or contain `Spectrum2` object(s) within the m/z-rt range. The
 #'   length of the list matches the number of peaks.
 #'
 #' @author Johannes Rainer
@@ -570,7 +574,8 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #'   (correlation) test of similarity to a bell curve and the signal-to-noise
 #'   ratio calculated on the residulas of this test.
 #'
-#' @param BPPARAM Parallel processing setup. See [bpparam()] for details.
+#' @param BPPARAM Parallel processing setup. See [BiocParallel::bpparam()]
+#'     for details.
 #'
 #' @param chunkSize `integer(1)` defining the number of samples from which data
 #'     should be loaded and processed at a time.
@@ -705,8 +710,8 @@ setGeneric("featureArea", function(object, ...) standardGeneric("featureArea"))
 #'     chromatogram.
 #'
 #' @param BPPARAM For `object` being an `XcmsExperiment`: parallel processing
-#'     setup. Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more
-#'     information.
+#'     setup. Defaults to `BPPARAM = bpparam()`. See [BiocParallel::bpparam()]
+#'     for more information.
 #'
 #' @param chunkSize For `object` being an `XcmsExperiment`: `integer(1)`
 #'     defining the number of files from which the data should be loaded at
@@ -873,7 +878,8 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' spectra per feature).
 #'
 #' The information from `featureDefinitions` for each feature can be included
-#' in the returned [Spectra()] object using the `featureColumns` parameter.
+#' in the returned [Spectra::Spectra()] object using the `featureColumns`
+#' parameter.
 #' This is useful for keeping details such as the median retention time (`rtmed`)
 #' or median m/z (`mzmed`). The columns will retain their names as specified
 #' in the `featureDefinitions` object, prefixed by `"feature_"`
@@ -884,7 +890,8 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' See also [chromPeakSpectra()], as it supports a similar parameter for
 #' including columns from the chromatographic peaks in the returned spectra object.
 #' These parameters can be used in combination to include information from both
-#' the chromatographic peaks and the features in the returned [Spectra()].
+#' the chromatographic peaks and the features in the returned
+#' [Spectra::Spectra()].
 #' The *peak ID* (i.e., the row name of the peak in the `chromPeaks` matrix)
 #' is added as a metadata column named `"chrom_peak_id"`.
 #'
@@ -906,11 +913,12 @@ setGeneric("featureDefinitions<-", function(object, value)
 #'     Defaults to `c("mzmed", "rtmed")`.
 #'
 #' @param ... additional arguments to be passed along to [chromPeakSpectra()],
-#'     such as `method`.
+#'     such as `method` or `chromPeakColumns`.
 #'
 #' @return
 #'
-#' The function returns either a [Spectra()] (for `return.type = "Spectra"`)
+#' The function returns either a [Spectra::Spectra()] (for
+#' `return.type = "Spectra"`)
 #' or a `List` of `Spectra` (for `return.type = "List"`). For the latter,
 #' the order and the length matches parameter `features` (or if no `features`
 #' is defined the order of the features in `featureDefinitions(object)`).
@@ -1209,7 +1217,7 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     object will remove previous results.
 #'
 #' @param BPPARAM Parallel processing setup. Uses by default the system-wide
-#'     default setup. See [bpparam()] for more details.
+#'     default setup. See [BiocParallel::bpparam()] for more details.
 #'
 #' @param chunkSize `integer(1)` for `object` being an `MsExperiment` or
 #'     [XcmsExperiment()]: defines the number of files (samples) for which the
@@ -1228,7 +1236,8 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     will thus in most settings cause an out-of-memory error.
 #'     By setting `chunkSize = -1` the peak detection will be performed
 #'     separately, and in parallel, for each sample. This will however not work
-#'     for all `Spectra` *backends* (see eventually [Spectra()] for details).
+#'     for all `Spectra` *backends* (see eventually [Spectra::Spectra()] for
+#'     details).
 #'
 #' @param hdf5File For `object` being an `MsExperiment`: `character(1)`
 #'     specifying the name (inclusive path) of a file that should be used for
@@ -1240,8 +1249,8 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     chromatographic peak detection should be performed.
 #'
 #' @param object The data object on which to perform the peak detection. Can be
-#'     an [OnDiskMSnExp()], [XCMSnExp()], [MChromatograms()] or [MsExperiment()]
-#'     object.
+#'     an [MSnbase::OnDiskMSnExp()], [XCMSnExp()], [MSnbase::MChromatograms()]
+#'     or [MsExperiment::MsExperiment()] object.
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
 #'
@@ -1311,7 +1320,8 @@ setGeneric("findChromPeaks", function(object, param, ...)
 #'     more information.
 #'
 #' @param BPPARAM if `object` is an `MsExperiment` or `XcmsExperiment`:
-#'     parallel processing setup. See [bpparam()] for more information.
+#'     parallel processing setup. See [BiocParallel::bpparam()] for more
+#'     information.
 #'
 #' @param ... currently not used.
 #'
@@ -1462,7 +1472,7 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param bw For `PeakDensityParam`: `numeric(1)` defining the bandwidth
 #'     (standard deviation ot the smoothing kernel) to be used. This argument
-#'     is passed to the [density() method.
+#'     is passed to the [stats::density() method.
 #'
 #' @param kNN For `NearestPeaksParam`: `integer(1)` representing the number of
 #'     nearest neighbors to check.
@@ -1606,7 +1616,8 @@ setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 #' chromatographic peaks into features by providing their index in the
 #' object's `chromPeaks` matrix.
 #'
-#' @param BPPARAM parallel processing settings (see [bpparam()] for details).
+#' @param BPPARAM parallel processing settings (see [BiocParallel::bpparam()]
+#'     for details).
 #'
 #' @param chromPeaks For `manualChromPeaks`: `matrix` defining the boundaries
 #'     of the chromatographic peaks with one row per chromatographic peak and
@@ -1631,7 +1642,7 @@ setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 #'     should be performed. Only a single MS level at a time is supported.
 #'     Defaults to `msLevel = 1L`.
 #'
-#' @param object [XcmsExperiment], [XCMSnExp] or [OnDiskMSnExp] object.
+#' @param object [XcmsExperiment], [XCMSnExp] or [MSnbase::OnDiskMSnExp] object.
 #'
 #' @param peakIdx For `manualFeatures`: `list` of `integer` vectors with the
 #'     indices of chromatographic peaks in the object's `chromPeaks` matrix
@@ -1814,9 +1825,9 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #'   Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 #'   one **mass peak** in the reconstructed spectrum.
 #'
-#' The resulting [Spectra()] object provides also the peak IDs of the MS2
-#' chromatographic peaks for each spectrum as well as their correlation value
-#' with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
+#' The resulting [Spectra::Spectra()] object provides also the peak IDs of the
+#' MS2 chromatographic peaks for each spectrum as well as their correlation
+#' value with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
 #'
 #' @param object `XCMSnExp` with identified chromatographic peaks.
 #'
@@ -1843,8 +1854,8 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #'     `chromPeaks`) of MS1 peaks for which MS2 spectra should be reconstructed.
 #'     By default they are reconstructed for all MS1 chromatographic peaks.
 #'
-#' @param BPPARAM parallel processing setup. See [bpparam()] for more
-#'     information.
+#' @param BPPARAM parallel processing setup. See [BiocParallel::bpparam()]
+#'     for more information.
 #'
 #' @param return.type `character(1)` defining the type of the returned object.
 #'     Only `return.type = "Spectra"` is supported, `return.type = "MSpectra"`
@@ -1854,14 +1865,14 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #'
 #' @return
 #'
-#' - [Spectra()] object (defined in the `Spectra` package) with the
+#' - [Spectra::Spectra()] object (defined in the `Spectra` package) with the
 #'   reconstructed MS2 spectra for all MS1 peaks in `object`. Contains
 #'   empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 #'   which reconstruction was not possible (either no MS2 signal was recorded
 #'   or the correlation of the MS2 chromatographic peaks with the MS1
 #'   chromatographic peak was below threshold `minCor`. Spectra variables
-#'   `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [CharacterList()]
-#'   and [NumericList()] with length equal to the number of peaks per
+#'   `"ms2_peak_id"` and `"ms2_peak_cor"` (of type [IRanges::CharacterList()]
+#'   and [IRanges::NumericList()] with length equal to the number of peaks per
 #'   reconstructed MS2 spectrum) providing the IDs and the correlation of the
 #'   MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 #'   As retention time the median retention times of all MS2 chromatographic
@@ -1957,7 +1968,7 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
 #'
 #' @param BPPARAM parameter object to set up parallel processing. Uses the
 #'     default parallel processing setup returned by `bpparam()`. See
-#'     [bpparam()] for details and examples.
+#'     [BiocParallel::bpparam()] for details and examples.
 #'
 #' @param chunkSize For `refineChromPeaks` if `object` is either an
 #'     `XcmsExperiment`: `integer(1)` defining the number of files (samples)

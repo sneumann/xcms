@@ -8,53 +8,55 @@
 ## The centWave peak detection method for OnDiskMSnExp:
 #' @title Chromatographic peak detection using the centWave method
 #'
-#' @description The \code{findChromPeaks,OnDiskMSnExp,CentWaveParam} method
+#' @description The `findChromPeaks,OnDiskMSnExp,CentWaveParam()` method
 #'     performs chromatographic peak detection using the \emph{centWave}
-#'     algorithm on all samples from an \code{\link{OnDiskMSnExp}}
-#'     object. \code{\link{OnDiskMSnExp}} objects encapsule all
+#'     algorithm on all samples from an `OnDiskMSnExp`
+#'     object. `OnDiskMSnExp` objects encapsule all
 #'     experiment specific data and load the spectra data (mz and intensity
 #'     values) on the fly from the original files applying also all eventual
 #'     data manipulations.
 #'
 #' @details Parallel processing (one process per sample) is supported and can
-#'     be configured either by the \code{BPPARAM} parameter or by globally
+#'     be configured either by the `BPPARAM` parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link{register}} method from the \code{BiocParallel}
+#'     [BiocParallel::register()] method from the *BiocParallel*
 #'     package.
 #'
-#' @param object For \code{findChromPeaks}: an
-#'     \code{\link{OnDiskMSnExp}}  object containing the MS- and all
+#' @param object For `findChromPeaks()`: an
+#'     [OnDiskMSnExp()]  object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
 #'
-#' @param param An \code{CentWaveParam} object containing all settings for the
+#' @param param An `CentWaveParam()` object containing all settings for the
 #'     centWave algorithm.
 #'
 #' @param BPPARAM A parameter class specifying if and how parallel processing
-#'     should be performed. It defaults to \code{\link{bpparam}}.
-#'     See documentation of the \code{BiocParallel} for more details. If
+#'     should be performed. It defaults to [BiocParallel::bpparam()].
+#'     See documentation of the *BiocParallel* package for more details. If
 #'     parallel processing is enabled, peak detection is performed in parallel
 #'     on several of the input samples.
 #'
 #' @param return.type Character specifying what type of object the method should
-#'     return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
-#'     \code{"xcmsSet"}.
+#'     return. Can be either `"XCMSnExp"` (default), `"list"` or
+#'     `"xcmsSet"`.
 #'
-#' @param msLevel \code{integer(1)} defining the MS level on which the peak
-#'     detection should be performed. Defaults to \code{msLevel = 1}.
+#' @param msLevel `integer(1)` defining the MS level on which the peak
+#'     detection should be performed. Defaults to `msLevel = 1`.
 #'
 #' @param ... ignored.
 #'
-#' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-#'     \code{\link{XCMSnExp}} object with the results of the peak detection.
-#'     If \code{return.type = "list"} a list of length equal to the number of
+#' @return For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+#'     [XCMSnExp()] object with the results of the peak detection.
+#'     If `return.type = "list"` a list of length equal to the number of
 #'     samples with matrices specifying the identified peaks.
-#'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+#'     If `return.type = "xcmsSet"` an `xcmsSet` object
 #'     with the results of the peak detection.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp()] for the object containing the results of
 #'     the peak detection.
+#'
+#' @rdname
 #'
 #' @rdname findChromPeaks-centWave
 setMethod("findChromPeaks",
@@ -100,39 +102,41 @@ setMethod("findChromPeaks",
 ## The matchedFilter peak detection method for OnDiskMSnExp:
 #' @title Peak detection in the chromatographic time domain
 #'
-#' @description The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
-#'     method performs peak detection using the \emph{matchedFilter} algorithm
-#'     on all samples from an \code{\link{OnDiskMSnExp}} object.
-#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
+#' @description The `findChromPeaks,OnDiskMSnExp,MatchedFilterParam()`
+#'     method performs peak detection using the *matchedFilter* algorithm
+#'     on all samples from an [MSnbase::OnDiskMSnExp()] object.
+#'     [MSnbase::OnDiskMSnExp()] objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
 #'
 #' @details Parallel processing (one process per sample) is supported and can
-#'     be configured either by the \code{BPPARAM} parameter or by globally
+#'     be configured either by the `BPPARAM` parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link{register}} method from the \code{BiocParallel}
+#'     [BiocParallel::register()] method from the *BiocParallel*
 #'     package.
 #'
-#' @param object For \code{findChromPeaks}: an
-#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
+#' @param object For `findChromPeaks()`: an
+#'     `OnDiskMSnExp` object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
 #'
-#' @param param An \code{MatchedFilterParam} object containing all settings for
+#' @param param An `MatchedFilterParam` object containing all settings for
 #'     the matchedFilter algorithm.
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
-#' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-#'     \code{\link{XCMSnExp}} object with the results of the peak detection.
-#'     If \code{return.type = "list"} a list of length equal to the number of
+#' @return For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+#'     [XCMSnExp()] object with the results of the peak detection.
+#'     If `return.type = "list"` a list of length equal to the number of
 #'     samples with matrices specifying the identified peaks.
-#'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+#'     If `return.type = "xcmsSet"` an `xcmsSet` object
 #'     with the results of the peak detection.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @md
+#'
+#' @seealso [XCMSnExp()] for the object containing the results of
 #'     the chromatographic peak detection.
 #'
 #' @rdname findChromPeaks-matchedFilter
@@ -192,41 +196,43 @@ setMethod("findChromPeaks",
 ## The massifquant peak detection method for OnDiskMSnExp:
 #' @title Chromatographic peak detection using the massifquant method
 #'
-#' @description The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
+#' @description The `findChromPeaks,OnDiskMSnExp,MassifquantParam()`
 #'     method performs chromatographic peak detection using the
-#'     \emph{massifquant} algorithm on all samples from an
-#'     \code{\link{OnDiskMSnExp}} object.
-#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
+#'     *massifquant* algorithm on all samples from an
+#'     `OnDiskMSnExp` object.
+#'     `OnDiskMSnExp` objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
 #'
 #' @details Parallel processing (one process per sample) is supported and can
-#'     be configured either by the \code{BPPARAM} parameter or by globally
+#'     be configured either by the `BPPARAM` parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link{register}} method from the \code{BiocParallel}
+#'     [BiocParallel::register()] method from the *BiocParallel*
 #'     package.
 #'
-#' @param object For \code{findChromPeaks}: an
-#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
+#' @param object For `findChromPeaks()`: an
+#'     `OnDiskMSnExp` object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
 #'
-#' @param param An \code{MassifquantParam} object containing all settings for
+#' @param param An `MassifquantParam` object containing all settings for
 #'     the massifquant algorithm.
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
-#' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-#'     \code{\link{XCMSnExp}} object with the results of the peak detection.
-#'     If \code{return.type = "list"} a list of length equal to the number of
+#' @return For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+#'     `XCMSnExp` object with the results of the peak detection.
+#'     If `return.type = "list"` a list of length equal to the number of
 #'     samples with matrices specifying the identified peaks.
-#'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+#'     If `return.type = "xcmsSet"` an `xcmsSet` object
 #'     with the results of the peak detection.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp()] for the object containing the results of
 #'     the peak detection.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-massifquant
 setMethod("findChromPeaks",
@@ -261,41 +267,43 @@ setMethod("findChromPeaks",
 ## The MSW peak detection method for OnDiskMSnExp:
 #' @title Single-spectrum non-chromatography MS data peak detection
 #'
-#' @description The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
+#' @description The `findChromPeaks,OnDiskMSnExp,MSWParam()`
 #'     method performs peak detection in single-spectrum non-chromatography MS
-#'     data using functionality from the \code{MassSpecWavelet} package on all
-#'     samples from an \code{\link{OnDiskMSnExp}} object.
-#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
+#'     data using functionality from the *MassSpecWavelet* package on all
+#'     samples from an `OnDiskMSnExp` object.
+#'     `OnDiskMSnExp` objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
 #'
 #' @details Parallel processing (one process per sample) is supported and can
-#'     be configured either by the \code{BPPARAM} parameter or by globally
+#'     be configured either by the `BPPARAM` parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link{register}} method from the \code{BiocParallel}
+#'     [BiocParallel::register()] method from the *BiocParallel*
 #'     package.
 #'
-#' @param object For \code{findChromPeaks}: an
-#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
+#' @param object For `findChromPeaks()`: an
+#'     `OnDiskMSnExp` object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
 #'
-#' @param param An \code{MSWParam} object containing all settings for
+#' @param param An `MSWParam` object containing all settings for
 #'     the algorithm.
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
-#' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-#'     \code{\link{XCMSnExp}} object with the results of the peak detection.
-#'     If \code{return.type = "list"} a list of length equal to the number of
+#' @return For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+#'     `XCMSnExp` object with the results of the peak detection.
+#'     If `return.type = "list"` a list of length equal to the number of
 #'     samples with matrices specifying the identified peaks.
-#'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+#'     If `return.type = "xcmsSet"` an `xcmsSet` object
 #'     with the results of the detection.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp()] for the object containing the results of
 #'     the peak detection.
+#'
+#' @md
 #'
 #' @rdname findPeaks-MSW
 setMethod("findChromPeaks",
@@ -339,34 +347,36 @@ setMethod("findChromPeaks",
 ## The centWave with predicted isotope peak detection method for OnDiskMSnExp:
 #' @title Two-step centWave peak detection considering also isotopes
 #'
-#' @description The \code{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam}
+#' @description The `findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam()`
 #'     method performs a two-step centWave-based chromatographic peak detection
-#'     on all samples from an \code{\link{OnDiskMSnExp}} object.
-#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
+#'     on all samples from an `OnDiskMSnExp` object.
+#'     `OnDiskMSnExp` objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
 #'
 #' @details Parallel processing (one process per sample) is supported and can
-#'     be configured either by the \code{BPPARAM} parameter or by globally
+#'     be configured either by the `BPPARAM` parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link{register}} method from the \code{BiocParallel}
+#'     [BiocParallel::register()] method from the *BiocParallel*
 #'     package.
 #'
-#' @param param An \code{CentWavePredIsoParam} object with the settings for the
+#' @param param An `CentWavePredIsoParam` object with the settings for the
 #'     chromatographic peak detection algorithm.
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
-#' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-#'     \code{\link{XCMSnExp}} object with the results of the peak detection.
-#'     If \code{return.type = "list"} a list of length equal to the number of
+#' @return For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
+#'     `XCMSnExp` object with the results of the peak detection.
+#'     If `return.type = "list"` a list of length equal to the number of
 #'     samples with matrices specifying the identified peaks.
-#'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+#'     If `return.type = "xcmsSet"` an `xcmsSet` object
 #'     with the results of the peak detection.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp()] for the object containing the results of
 #'     the peak detection.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("findChromPeaks",
@@ -410,21 +420,23 @@ setMethod("findChromPeaks",
           })
 
 ## profMat method for XCMSnExp/OnDiskMSnExp.
-#' @description \code{profMat}: creates a \emph{profile matrix}, which
+#' @description `profMat()`: creates a *profile matrix*, which
 #'     is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
 #'     and m (columns) the retention time of the corresponding scans. Each cell
 #'     contains the maximum intensity measured for the specific scan and m/z
-#'     values. See \code{\link{profMat}} for more details and description of
+#'     values. See [profMat()] for more details and description of
 #'     the various binning methods.
 #'
 #' @param ... Additional parameters.
 #'
-#' @return For \code{profMat}: a \code{list} with a the profile matrix
-#'     \code{matrix} (or matrices if \code{fileIndex} was not specified or if
-#'     \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for
+#' @return For `profMat()`: a `list` with a the profile matrix
+#'     `matrix` (or matrices if `fileIndex` was not specified or if
+#'     `length(fileIndex) > 1). See [profile-matrix] for
 #'     general help and information about the profile matrix.
 #'
 #' @inheritParams profMat-xcmsSet
+#'
+#' @md
 #'
 #' @rdname XCMSnExp-class
 setMethod("profMat", "OnDiskMSnExp", function(object,

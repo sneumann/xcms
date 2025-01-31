@@ -1853,7 +1853,7 @@ setMethod(
             sps <- List(split(sps, f = factor(sps$feature_id,
                                               levels = ufeatures)))
             sps[features]
-        } else sps
+        } else sps[to(findMatches(features, sps$feature_id))]
     })
 
 ################################################################################

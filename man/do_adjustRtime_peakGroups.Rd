@@ -54,11 +54,11 @@ Can be either \code{"loess"} or \code{"linear"}.}
 
 \item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining
 the degree of smoothing (if \code{smooth = "loess"}). This parameter is
-passed to the internal call to \code{\link[=loess]{loess()}}.}
+passed to the internal call to \code{\link[stats:loess]{stats::loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
-\code{\link[=loess]{loess()}} for more information.}
+\code{\link[stats:loess]{stats::loess()}} for more information.}
 
 \item{peakGroupsMatrix}{optional \code{matrix} of (raw) retention times for
 peak groups on which the alignment should be performed. Each column
@@ -80,7 +80,7 @@ See \emph{Subset-based alignment} section for details.}
 }
 \value{
 A \code{list} with \code{numeric} vectors with the adjusted
-    retention times grouped by sample.
+retention times grouped by sample.
 }
 \description{
 The function performs retention time correction by assessing
@@ -96,7 +96,7 @@ spectrum in each sample.
 The alignment bases on the presence of compounds that can be found
 in all/most samples of an experiment. The retention times of individual
 spectra are then adjusted based on the alignment of the features
-corresponding to these \emph{house keeping compounds}. The paraneters
+corresponding to these \emph{house keeping compounds}. The parameters
 \code{minFraction} and \code{extraPeaks} can be used to fine tune which
 features should be used for the alignment (i.e. which features
 most likely correspond to the above mentioned house keeping compounds).
@@ -110,7 +110,7 @@ results of the \emph{real} samples.
 }
 \note{
 The method ensures that returned adjusted retention times are
-    increasingly ordered, just as the raw retention times.
+increasingly ordered, just as the raw retention times.
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and

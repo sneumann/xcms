@@ -32,6 +32,7 @@
 \alias{featureValues,XcmsExperimentHdf5-method}
 \alias{chromatogram,XcmsExperimentHdf5-method}
 \alias{chromPeakSpectra,XcmsExperimentHdf5-method}
+\alias{featureSpectra,XcmsExperimentHdf5-method}
 \alias{adjustRtimePeakGroups,XcmsResult,PeakGroupsParam-method}
 \title{Internal page for hidden aliases}
 \usage{
@@ -165,7 +166,22 @@
   peaks = character(),
   chromPeakColumns = c("rt", "mz"),
   return.type = c("Spectra", "List"),
-  BPPARAM = bpparam()
+  ...
+)
+
+\S4method{featureSpectra}{XcmsExperimentHdf5}(
+  object,
+  msLevel = 2L,
+  expandRt = 0,
+  expandMz = 0,
+  ppm = 0,
+  skipFilled = FALSE,
+  return.type = c("Spectra", "List"),
+  features = character(),
+  method = c("all", "closest_rt", "closest_mz", "largest_tic", "largest_bpi"),
+  chromPeakColumns = c("rt", "mz"),
+  featureColumns = c("rtmed", "mzmed"),
+  ...
 )
 
 \S4method{adjustRtimePeakGroups}{XcmsResult,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)

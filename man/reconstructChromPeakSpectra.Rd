@@ -58,8 +58,8 @@ be used as \code{precursorIntensity} of the resulting spectra.}
 \code{chromPeaks}) of MS1 peaks for which MS2 spectra should be reconstructed.
 By default they are reconstructed for all MS1 chromatographic peaks.}
 
-\item{BPPARAM}{parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for more
-information.}
+\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+for more information.}
 
 \item{return.type}{\code{character(1)} defining the type of the returned object.
 Only \code{return.type = "Spectra"} is supported, \code{return.type = "MSpectra"}
@@ -67,14 +67,14 @@ is deprecated.}
 }
 \value{
 \itemize{
-\item \code{\link[=Spectra]{Spectra()}} object (defined in the \code{Spectra} package) with the
+\item \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object (defined in the \code{Spectra} package) with the
 reconstructed MS2 spectra for all MS1 peaks in \code{object}. Contains
 empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
 chromatographic peak was below threshold \code{minCor}. Spectra variables
-\code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=CharacterList]{CharacterList()}}
-and \code{\link[=NumericList]{NumericList()}} with length equal to the number of peaks per
+\code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[IRanges:AtomicList-class]{IRanges::CharacterList()}}
+and \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic
@@ -104,9 +104,9 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one \strong{mass peak} in the reconstructed spectrum.
 }
 
-The resulting \code{\link[=Spectra]{Spectra()}} object provides also the peak IDs of the MS2
-chromatographic peaks for each spectrum as well as their correlation value
-with spectra variables \emph{ms2_peak_id} and \emph{ms2_peak_cor}.
+The resulting \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object provides also the peak IDs of the
+MS2 chromatographic peaks for each spectrum as well as their correlation
+value with spectra variables \emph{ms2_peak_id} and \emph{ms2_peak_cor}.
 }
 \seealso{
 \code{\link[=findChromPeaksIsolationWindow]{findChromPeaksIsolationWindow()}} for the function to perform MS2

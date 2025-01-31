@@ -37,7 +37,7 @@ defined for signals (chrom peaks) present only in blank samples.}
 
 \item{bw}{For \code{PeakDensityParam}: \code{numeric(1)} defining the bandwidth
 (standard deviation ot the smoothing kernel) to be used. This argument
-is passed to the [density() method.}
+is passed to the [stats::density() method.}
 
 \item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
 fraction of samples in at least one sample group in which the peaks
