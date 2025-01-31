@@ -686,6 +686,95 @@ toXcmsExperiment <- function(object, ...) {
     mc
 }
 
+#' Get spectra for chromatographic peaks of a specified sample. This function
+#' is used by `chromPeakSpectra()` and `featureSpectra()`
+#'
+#' @param h5_file `character(1)` with the HDF5 file name
+#'
+#' @param id `character(1)` with the ID of the sample from which to process
+#'     the data.
+#'
+#' @param s `Spectra` of the **current** sample (`id`) only!
+#'
+#' @param method `character(1)` defining which spectra to extract.
+#'
+#' @param msLevel `integer(1)` with the MS level of the spectra to extract
+#'
+#' @param chromPeaksMsLevel `integer(1)` with the MS level of the chrom peaks
+#'     for which `Spectra` should be retrieved.
+#'
+#' @param expandRd, expandMz, ppm: expand ranges.
+#'
+#' @param skipFilled `logical(1)` whether to skip gap-filled peaks.
+#'
+#' @param peaks `integer()` with the index of the chrom peaks to extract.
+#'     Will process all chrom peaks if not provided. If `character()` is
+#'     provided it will be matched against the row names of the chrom peak
+#'     matrix. If provided as `integer` indices, these are expected to be
+#'     between 1 and `nrow()` of the chrom peaks for that particular sample. If
+#'     provided as `character` it can also be IDs of chrom peaks from another
+#'     sample.
+#'
+#' @param chromPeakColumns `character` with optional columns to add to the
+#'     `Spectra`.
+#'
+#' @return always a `Spectra` object - even if empty because either the
+#'     specified peaks are not available for that sample or because no
+#'     matching `Spectra` could be found.
+#'
+#' @noRd
+.h5_chrom_peak_spectra_sample <- function(h5_file, id, s, method, msLevel,
+                                          chromPeaksMsLevel = 1L,
+                                          expandRt = 0, expandMz = 0, ppm = 0,
+                                          skipFilled = FALSE,
+                                          peaks = integer(),
+                                          chromPeakColumns = c("rt", "mz")) {
+    p <- .h5_read_data(h5_file, id = id, name = "chrom_peaks",
+                       ms_level = chromPeaksMsLevel, read_colnames = TRUE,
+                       read_rownames = TRUE)[[1L]]
+    if (length(peaks)) {
+        if (is.character(peaks))
+            peaks <- which(rownames(p) %in% peaks)
+        p <- p[peaks, , drop = FALSE]
+    }
+    if (skipFilled && nrow(p)) {
+        pkd <- .h5_read_data(h5_file, id = id, name = "chrom_peak_data",
+                             ms_level = chromPeaksMsLevel,
+                             read_colnames = TRUE)[[1L]]
+        if (length(peaks))
+            pkd <- pkd[peaks, , drop = FALSE]
+        p <- p[!pkd$is_filled, , drop = FALSE]
+    }
+    if (nrow(p)) {
+        if (ppm != 0)
+            expandMz <- expandMz + p[, "mz"] * ppm / 1e6
+        if (expandMz[1L] != 0) {
+            p[, "mzmin"] <- p[, "mzmin"] - expandMz
+            p[, "mzmax"] <- p[, "mzmax"] + expandMz
+        }
+        if (expandRt != 0) {
+            p[, "rtmin"] <- p[, "rtmin"] - expandRt
+            p[, "rtmax"] <- p[, "rtmax"] + expandRt
+        }
+        s <- filterMsLevel(s, msLevel)
+        idx <- switch(
+            method,
+            all = .spectra_index_list(s, p, msLevel),
+            closest_rt = .spectra_index_list_closest_rt(s, p, msLevel),
+            closest_mz = .spectra_index_list_closest_mz(s, p, msLevel),
+            largest_tic = .spectra_index_list_largest_tic(s,p,msLevel),
+            largest_bpi = .spectra_index_list_largest_bpi(s,p,msLevel))
+        ids <- rep(rownames(p), lengths(idx))
+        s <- s[unlist(idx)]
+        pk_data <- as.data.frame(p[ids, chromPeakColumns, drop = FALSE])
+        pk_data$id <- ids
+        colnames(pk_data) <- paste0("chrom_peak_", colnames(pk_data))
+        s <- .add_spectra_data(s, pk_data)
+        s
+    } else
+        Spectra()
+}
+
 ################################################################################
 ##
 ##        FEATURES THINGS

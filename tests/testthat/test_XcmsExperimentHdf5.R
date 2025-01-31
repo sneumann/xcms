@@ -865,6 +865,52 @@ test_that("chromPeakSpectra,XcmsExperimentHdf5 works", {
     expect_false(all(rownames(cp) %in% s_all$chrom_peak_id))
 })
 
+test_that("featureSpectra,XcmsExperimentHdf5 works", {
+    ## errors
+    expect_error(featureSpectra(xmseg_full_h5, features = 1L), "character")
+    expect_error(featureSpectra(xmseg_full_h5, features = c("a", "b")),
+                 "not valid")
+    expect_error(featureSpectra(xmse_h5),  "No feature")
+    ## all features
+    fd <- featureDefinitions(xmseg_full_h5)
+    res <- featureSpectra(xmseg_full_h5, msLevel = 1L, method = "closest_rt")
+    expect_s4_class(res, "Spectra")
+    expect_true(all(rownames(fd) %in% res$feature_id))
+    ref <- featureSpectra(xmseg_full_ref, msLevel = 1L, method = "closest_rt")
+    expect_equal(res$rtime, ref$rtime)
+
+    ## selected features
+    idx <- c(4, 8, 14)
+    fts <- rownames(fd)[idx]
+    res <- featureSpectra(xmseg_full_h5, msLevel = 1L, method = "closest_rt",
+                          features = fts)
+    expect_s4_class(res, "Spectra")
+    expect_true(all(res$feature_id %in% fts))
+    fts_ref <- rownames(featureDefinitions(xmseg_full_ref))[idx]
+    ref <- featureSpectra(xmseg_full_ref, msLevel = 1L, method = "closest_rt",
+                          features = fts_ref)
+    expect_equal(res$rtime, ref$rtime)
+
+    ## different order
+    idx <- c(8, 14, 3, 12, 14)
+    fts <- rownames(fd)[idx]
+    res <- featureSpectra(xmseg_full_h5, msLevel = 1L, method = "closest_rt",
+                          features = fts)
+    expect_s4_class(res, "Spectra")
+    expect_true(all(res$feature_id %in% fts))
+    fts_ref <- rownames(featureDefinitions(xmseg_full_ref))[idx]
+    ref <- featureSpectra(xmseg_full_ref, msLevel = 1L, method = "closest_rt",
+                          features = fts_ref)
+    expect_equal(res$rtime, ref$rtime)
+
+    ## List result
+    res <- featureSpectra(xmseg_full_h5, msLevel = 1L, method = "closest_rt",
+                          features = fts, return.type = "List")
+    expect_s4_class(res, "List")
+    expect_equal(res[[2L]], res[[5L]])
+    expect_equal(names(res), fts)
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

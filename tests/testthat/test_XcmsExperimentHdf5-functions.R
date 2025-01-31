@@ -1009,4 +1009,41 @@ test_that(".h5_to_xcms_experiment works", {
     expect_equal(a, b)
 })
 
+test_that(".h5_chrom_peak_spectra_sample works", {
+    s <- spectra(xmse_h5[2L])
+    cp <- chromPeaks(xmse_h5)
+    cp2 <- cp[cp[, "sample"] == 2L, ]
+
+    all <- xcms:::.h5_chrom_peak_spectra_sample(xmse_h5@hdf5_file, "S2", s,
+                                                "all", msLevel = 1L, ppm = 10,
+                                                expandMz = 0.01, expandRt = 1,
+                                                skipFilled = TRUE)
+    expect_s4_class(all, "Spectra")
+    expect_true(all(rownames(cp)[cp[, "sample"] == 2] %in% all$chrom_peak_id))
+
+    ## peaks as character
+    peaks <- rownames(cp)[1:4]
+    sel <- xcms:::.h5_chrom_peak_spectra_sample(xmse_h5@hdf5_file, "S2", s,
+                                                "closest_rt", msLevel = 1L,
+                                                skipFilled = TRUE,
+                                                peaks = peaks)
+    expect_s4_class(sel, "Spectra")
+    expect_true(length(sel) == 0L)
+
+    ## peaks as integer
+    peaks <- c(6000, 60043) # should throw an error
+    expect_error(.h5_chrom_peak_spectra_sample(
+        xmse_h5@hdf5_file, "S2", s, "closest_rt", msLevel = 1L,
+        skipFilled = TRUE, peaks = peaks), "out of bounds")
+
+    peaks <- c(4, 2, 5, 2, 7)
+    sel <- xcms:::.h5_chrom_peak_spectra_sample(xmse_h5@hdf5_file, "S2", s,
+                                                "closest_rt", msLevel = 1L,
+                                                skipFilled = TRUE,
+                                                peaks = peaks)
+    expect_s4_class(sel, "Spectra")
+    expect_true(length(sel) == length(peaks))
+    expect_equal(sel$chrom_peak_id, rownames(cp2)[peaks])
+})
+
 rm(h5f_full_g)

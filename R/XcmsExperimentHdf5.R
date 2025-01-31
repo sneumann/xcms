@@ -984,7 +984,7 @@ setMethod(
              msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
              skipFilled = FALSE, peaks = character(),
              chromPeakColumns = c("rt", "mz"),
-             return.type = c("Spectra", "List"), BPPARAM = bpparam()) {
+             return.type = c("Spectra", "List"), ...) {
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
         if (!is.character(peaks))
@@ -997,39 +997,16 @@ setMethod(
                     " Changing to method = \"all\".")
             method <- "all"
         }
+        ids <- object@sample_id
+        h5f <- object@hdf5_file
+        object <- as(object, "MsExperiment") # need only a Spectra container
         ## Need to iterate through files/samples
         res <- lapply(seq_along(object), function(i) {
-            id <- object@sample_id[i]
-            p <- .h5_read_data(
-                object@hdf5_file, id = id, name = "chrom_peaks",
-                ms_level = 1L, read_colnames = TRUE,
-                read_rownames = TRUE)[[1L]]
-            if (skipFilled) {
-                pkd <- .h5_read_data(
-                    object@hdf5_file, id = id, name = "chrom_peak_data",
-                    ms_level = msLevel, read_colnames = TRUE)[[1L]]
-                p <- p[!pkd$is_filled, , drop = FALSE]
-            }
-            if (length(peaks))
-                p <- p[which(rownames(p) %in% peaks), , drop = FALSE]
-            if (nrow(p)) {
-                s <- filterMsLevel(spectra(object[i]), msLevel)
-                idx <- switch(
-                    method,
-                    all = .spectra_index_list(s, p, msLevel),
-                    closest_rt = .spectra_index_list_closest_rt(s, p, msLevel),
-                    closest_mz = .spectra_index_list_closest_mz(s, p, msLevel),
-                    largest_tic = .spectra_index_list_largest_tic(s,p,msLevel),
-                    largest_bpi = .spectra_index_list_largest_bpi(s,p,msLevel))
-                ids <- rep(rownames(p), lengths(idx))
-                s <- s[unlist(idx)]
-                pk_data <- as.data.frame(p[ids, chromPeakColumns, drop = FALSE])
-                pk_data$id <- ids
-                colnames(pk_data) <- paste0("chrom_peak_", colnames(pk_data))
-                s <- .add_spectra_data(s, pk_data)
-                s
-            } else
-                Spectra()
+            .h5_chrom_peak_spectra_sample(
+                h5f, ids[i], spectra(object[i]),
+                method = method, msLevel = msLevel, expandRt = expandRt,
+                expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
+                peaks = peaks, chromPeakColumns = chromPeakColumns)
         })
         res <- Spectra:::.concatenate_spectra(res)
         if (return.type == "Spectra") {
@@ -1043,12 +1020,86 @@ setMethod(
         }
     })
 
+#' @rdname hidden_aliases
+setMethod(
+    "featureSpectra", "XcmsExperimentHdf5",
+    function(object, msLevel = 2L, expandRt = 0, expandMz = 0, ppm = 0,
+             skipFilled = FALSE, return.type = c("Spectra", "List"),
+             features = character(),
+             method = c("all", "closest_rt", "closest_mz",
+                        "largest_tic", "largest_bpi"),
+             chromPeakColumns = c("rt", "mz"),
+             featureColumns = c("rtmed", "mzmed"),
+             ...) {
+        return.type <- match.arg(return.type)
+        method <- match.arg(method)
+        chromPeaksMsLevel <- 1L # consider only chrom peaks from that MS level;
+        ## manually restricting to MS1 for now.
+        if (!hasFeatures(object, msLevel = chromPeaksMsLevel))
+            stop("No feature definitions present. Please run ",
+                 "'groupChromPeaks' first.")
+        if (!is.character(features))
+            stop("'features' has to be a character vector with the IDs of",
+                 " the LC-MS features", call. = FALSE)
+        fd <- featureDefinitions(object, msLevel = chromPeaksMsLevel)
+        if (length(features)) {
+            fd_idx <- match(features, rownames(fd))
+            if (anyNA(fd_idx))
+                stop(paste0(features[is.na(fd_idx)], collapse = ", "),
+                     " are not valid feature IDs", call. = FALSE)
+            fd_idx <- unique(fd_idx)
+        }
+        else {
+            fd_idx <- seq_len(nrow(fd))
+            features <- rownames(fd)
+        }
+        h5f <- object@hdf5_file
+        ids <- object@sample_id
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        object <- as(object, "MsExperiment") # need only a Spectra container
+        ## Need to iterate through files/samples
+        res <- lapply(seq_along(object), function(i) {
+            id <- ids[i]
+            ## feature to chrom peak map.
+            fmap <- .h5_read_data(h5f, id, "feature_to_chrom_peaks",
+                                  chromPeaksMsLevel)[[1L]]
+            fmap <- fmap[fmap[, 1L] %in% fd_idx, , drop = FALSE]
+            if (nrow(fmap)) {
+                s <- .h5_chrom_peak_spectra_sample(
+                    h5f, id, spectra(object[i]), method = method,
+                    msLevel = msLevel, expandRt = expandRt, expandMz = expandMz,
+                    ppm = ppm, skipFilled = skipFilled, peaks=unique(fmap[,2L]),
+                    chromPeakColumns = chromPeakColumns)
+                ## map chrom peak id back to features.
+                cp_ids <- rhdf5::h5read(h5f, paste0("/", id, "/ms_",
+                                                    chromPeaksMsLevel,
+                                                    "/chrom_peaks_rownames"),
+                                        drop = TRUE)
+                fmapl <- data.frame(fid = rownames(fd)[fmap[, 1L]],
+                                    pid = cp_ids[fmap[, 2L]])
+                s$feature_id <- fmapl$fid[match(s$chrom_peak_id, fmapl$pid)]
+                s
+            } else Spectra()
+        })
+        res <- Spectra:::.concatenate_spectra(res)
+        ## add feature columns
+        fd <- fd[match(res$feature_id, rownames(fd)),
+                 featureColumns, drop = FALSE]
+        colnames(fd) <- paste0("feature_", colnames(fd))
+        res <- .add_spectra_data(res, fd)
+        if (return.type == "List") {
+            res <- List(split(res, f = factor(res$feature_id,
+                                              levels = unique(features))))
+            res[features]
+        } else
+            res[to(findMatches(features, res$feature_id))]
+    })
+
 
 #' TODO: LLLLLL
 #'
-#' - SWATH support: need to check if it's already available.
-#'   - `findChromPeaksIsolationWindow()`.
-#' - `featureSpectra()`
+#' - `[` with feature definitions present
 #' - `chromPeakChromatograms()`
 #' - `featureChromatograms()`
 #' - `filterChromPeaks()`
@@ -1059,6 +1110,8 @@ setMethod(
 #' - `manualFeatures()`
 #' - `chromPeakSummary()`
 #' - Vignette describing the functionality and some notes/properties.
+#' - SWATH support: need to check if it's already available.
+#'   - `findChromPeaksIsolationWindow()`.
 #'
 #' @noRd
 NULL
