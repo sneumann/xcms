@@ -19,7 +19,8 @@ feature are returned. With any other option for method, a single
 spectrum per chromatographic peak will be returned (hence multiple
 spectra per feature).
 The information from featureDefinitions for each feature can be included
-in the returned Spectra() object using the featureColumns parameter.
+in the returned Spectra::Spectra() object using the featureColumns
+parameter.
 This is useful for keeping details such as the median retention time (rtmed)
 or median m/z (mzmed). The columns will retain their names as specified
 in the featureDefinitions object, prefixed by "feature_"
@@ -27,9 +28,11 @@ in the featureDefinitions object, prefixed by "feature_"
 name of the feature in the featureDefinitions data.frame) is always added
 as a metadata column named "feature_id".
 See also chromPeakSpectra(), as it supports a similar parameter for
-including columns from the chromatographic peaks in the returned spectra object.
+including columns from the chromatographic peaks in the returned spectra
+object.
 These parameters can be used in combination to include information from both
-the chromatographic peaks and the features in the returned Spectra().
+the chromatographic peaks and the features in the returned
+Spectra::Spectra().
 The peak ID (i.e., the row name of the peak in the chromPeaks matrix)
 is added as a metadata column named "chrom_peak_id".'><meta property="og:description" content='This function returns spectra associated with the identified features in
 the input object. By default, spectra are returned for all features (from
@@ -51,7 +54,8 @@ feature are returned. With any other option for method, a single
 spectrum per chromatographic peak will be returned (hence multiple
 spectra per feature).
 The information from featureDefinitions for each feature can be included
-in the returned Spectra() object using the featureColumns parameter.
+in the returned Spectra::Spectra() object using the featureColumns
+parameter.
 This is useful for keeping details such as the median retention time (rtmed)
 or median m/z (mzmed). The columns will retain their names as specified
 in the featureDefinitions object, prefixed by "feature_"
@@ -59,9 +63,11 @@ in the featureDefinitions object, prefixed by "feature_"
 name of the feature in the featureDefinitions data.frame) is always added
 as a metadata column named "feature_id".
 See also chromPeakSpectra(), as it supports a similar parameter for
-including columns from the chromatographic peaks in the returned spectra object.
+including columns from the chromatographic peaks in the returned spectra
+object.
 These parameters can be used in combination to include information from both
-the chromatographic peaks and the features in the returned Spectra().
+the chromatographic peaks and the features in the returned
+Spectra::Spectra().
 The peak ID (i.e., the row name of the peak in the chromPeaks matrix)
 is added as a metadata column named "chrom_peak_id".'><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -71,7 +77,7 @@ is added as a metadata column named "chrom_peak_id".'><meta property="og:image" 
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,7 +130,8 @@ feature are returned. With any other option for <code>method</code>, a single
 spectrum <strong>per chromatographic peak</strong> will be returned (hence multiple
 spectra per feature).</p>
 <p>The information from <code>featureDefinitions</code> for each feature can be included
-in the returned <code>Spectra()</code> object using the <code>featureColumns</code> parameter.
+in the returned <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> object using the <code>featureColumns</code>
+parameter.
 This is useful for keeping details such as the median retention time (<code>rtmed</code>)
 or median m/z (<code>mzmed</code>). The columns will retain their names as specified
 in the <code>featureDefinitions</code> object, prefixed by <code>"feature_"</code>
@@ -132,9 +139,11 @@ in the <code>featureDefinitions</code> object, prefixed by <code>"feature_"</cod
 name of the feature in the <code>featureDefinitions</code> data.frame) is always added
 as a metadata column named <code>"feature_id"</code>.</p>
 <p>See also <code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code>, as it supports a similar parameter for
-including columns from the chromatographic peaks in the returned spectra object.
+including columns from the chromatographic peaks in the returned spectra
+object.
 These parameters can be used in combination to include information from both
-the chromatographic peaks and the features in the returned <code>Spectra()</code>.
+the chromatographic peaks and the features in the returned
+<code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code>.
 The <em>peak ID</em> (i.e., the row name of the peak in the <code>chromPeaks</code> matrix)
 is added as a metadata column named <code>"chrom_peak_id"</code>.</p>
     </div>
@@ -233,7 +242,8 @@ Defaults to <code>c("mzmed", "rtmed")</code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The function returns either a <code>Spectra()</code> (for <code>return.type = "Spectra"</code>)
+    <p>The function returns either a <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> (for
+<code>return.type = "Spectra"</code>)
 or a <code>List</code> of <code>Spectra</code> (for <code>return.type = "List"</code>). For the latter,
 the order and the length matches parameter <code>features</code> (or if no <code>features</code>
 is defined the order of the features in <code>featureDefinitions(object)</code>).</p>

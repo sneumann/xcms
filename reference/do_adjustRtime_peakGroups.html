@@ -21,7 +21,7 @@ spectrum in each sample.'><meta property="og:image" content="https://sneumann.gi
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,13 +132,13 @@ Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
 <dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
-passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
+passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code>.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
-<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
+<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code> for more information.</p></dd>
 
 
 <dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>

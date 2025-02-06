@@ -3,7 +3,7 @@
 matching certain conditions (depending on parameter which). The
 intensities are actually not removed but replaced with NA_real_. To
 actually remove the intensities (and the associated retention times)
-use clean() afterwards.
+use MSnbase::clean() afterwards.
 Parameter which allows to specify which intensities should be replaced by
 NA_real_. By default (which = "below_threshod" intensities below
 threshold are removed. If x is a XChromatogram or XChromatograms
@@ -16,7 +16,7 @@ chromatographic data.'><meta property="og:description" content='removeIntensitie
 matching certain conditions (depending on parameter which). The
 intensities are actually not removed but replaced with NA_real_. To
 actually remove the intensities (and the associated retention times)
-use clean() afterwards.
+use MSnbase::clean() afterwards.
 Parameter which allows to specify which intensities should be replaced by
 NA_real_. By default (which = "below_threshod" intensities below
 threshold are removed. If x is a XChromatogram or XChromatograms
@@ -33,7 +33,7 @@ chromatographic data.'><meta property="og:image" content="https://sneumann.githu
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ chromatographic data.'><meta property="og:image" content="https://sneumann.githu
 matching certain conditions (depending on parameter <code>which</code>). The
 intensities are actually not <em>removed</em> but replaced with <code>NA_real_</code>. To
 actually <strong>remove</strong> the intensities (and the associated retention times)
-use <code><a href="https://lgatto.github.io/MSnbase/reference/clean-methods.html" class="external-link">clean()</a></code> afterwards.</p>
+use <code><a href="https://lgatto.github.io/MSnbase/reference/clean-methods.html" class="external-link">MSnbase::clean()</a></code> afterwards.</p>
 <p>Parameter <code>which</code> allows to specify which intensities should be replaced by
 <code>NA_real_</code>. By default (<code>which = "below_threshod"</code> intensities below
 <code>threshold</code> are removed. If <code>x</code> is a <code>XChromatogram</code> or <code>XChromatograms</code>
@@ -104,8 +104,8 @@ chromatographic data.</p>
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>an object representing chromatographic data. Can be a
-<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code>, <code><a href="XChromatogram.html">XChromatogram()</a></code> or
-<code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
+<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code>,
+<code><a href="XChromatogram.html">XChromatogram()</a></code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> object.</p></dd>
 
 
 <dt id="arg-which">which<a class="anchor" aria-label="anchor" href="#arg-which"></a></dt>

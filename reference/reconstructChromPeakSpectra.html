@@ -11,7 +11,7 @@ LC-MS/MS analysis vignette for more details and examples."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,8 +123,8 @@ By default they are reconstructed for all MS1 chromatographic peaks.</p></dd>
 
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
-<dd><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more
-information.</p></dd>
+<dd><p>parallel processing setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code>
+for more information.</p></dd>
 
 
 <dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
@@ -136,14 +136,14 @@ is deprecated.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
 
-<ul><li><p><code>Spectra()</code> object (defined in the <code>Spectra</code> package) with the
+<ul><li><p><code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> object (defined in the <code>Spectra</code> package) with the
 reconstructed MS2 spectra for all MS1 peaks in <code>object</code>. Contains
 empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
 chromatographic peak was below threshold <code>minCor</code>. Spectra variables
-<code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code>CharacterList()</code>
-and <code>NumericList()</code> with length equal to the number of peaks per
+<code>"ms2_peak_id"</code> and <code>"ms2_peak_cor"</code> (of type <code><a href="https://rdrr.io/pkg/IRanges/man/AtomicList-class.html" class="external-link">IRanges::CharacterList()</a></code>
+and <code><a href="https://rdrr.io/pkg/IRanges/man/AtomicList-class.html" class="external-link">IRanges::NumericList()</a></code> with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic
@@ -164,9 +164,9 @@ for which the correlation is <code>&gt; minCor</code>.</p></li>
 chromatographic peaks and their intensity (either <code>"maxo"</code> or <code>"into"</code>).
 Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one <strong>mass peak</strong> in the reconstructed spectrum.</p></li>
-</ul><p>The resulting <code>Spectra()</code> object provides also the peak IDs of the MS2
-chromatographic peaks for each spectrum as well as their correlation value
-with spectra variables <em>ms2_peak_id</em> and <em>ms2_peak_cor</em>.</p>
+</ul><p>The resulting <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> object provides also the peak IDs of
+the MS2 chromatographic peaks for each spectrum as well as their
+correlation value with spectra variables <em>ms2_peak_id</em> and <em>ms2_peak_cor</em>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

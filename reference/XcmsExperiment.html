@@ -53,7 +53,7 @@ be reported. This can be performed using the fillChromPeaks() function.
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -170,6 +170,9 @@ be reported. This can be performed using the <code><a href="fillChromPeaks.html"
 <span></span>
 <span><span class="co"># S4 method for class 'MsExperiment,missing'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, peakCol <span class="op">=</span> <span class="st">"#ff000060"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'XcmsExperiment'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XcmsExperiment,ANY,ANY,ANY'</span></span>
 <span><span class="va">x</span><span class="op">[</span><span class="va">i</span>, <span class="va">j</span>, <span class="va">...</span>, drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">]</span></span>
@@ -397,7 +400,8 @@ type of the returned object. Currently only
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>For <code>chromatogram</code>: parallel processing setup. Defaults
-to <code>BPPARAM = bpparam()</code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more information.</p></dd>
+to <code>BPPARAM = bpparam()</code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code> for more
+information.</p></dd>
 
 
 <dt id="arg-mzmin">mzmin<a class="anchor" aria-label="anchor" href="#arg-mzmin"></a></dt>
@@ -576,7 +580,7 @@ be retained in the returned (filtered) object.</p></dd>
 
 </dl></div>
     <div class="section level2">
-    <h2 id="subsetting-and-filtering">Subsetting and filtering<a class="anchor" aria-label="anchor" href="#subsetting-and-filtering"></a></h2>
+    <h2 id="subset-filter-and-combine">Subset, filter and combine<a class="anchor" aria-label="anchor" href="#subset-filter-and-combine"></a></h2>
 
 
 <ul><li><p><code>[</code>: subset an <code>XcmsExperiment</code> by <strong>sample</strong> (parameter <code>i</code>). Subsetting
@@ -587,6 +591,17 @@ samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 <code>keepChromPeaks</code> (by default <code>TRUE</code>), <code>keepAdjustedRtime</code> (by default
 <code>FALSE</code>) and <code>keepFeatures</code> (by default <code>FALSE</code>).</p></li>
+<li><p><code>c</code>: multiple <code>XcmsExperiment</code> objects can be combined into one using the
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function. This requires however that all the <code>XcmsExperiments</code>'
+<code>Spectra</code> objects use the same type of <code>MsBackend</code> and that their
+processing queues are empty. Also, only combining of peak detection
+results is supported. Any eventually present alignment or correspondence
+results will be dropped before combining the <code>XcmsExperiment</code> objects.
+Finally, at present, only the MS data of the individual <code>XcmsExperiment</code>
+objects is combined and any data eventually present in the <code>@qdata</code>,
+<code>@otherData</code> and <code>@experimentFiles</code> slots is ignored.
+The function returns a <code>XcmsExperiment</code> objects with the combined MS data
+(<code>Spectra</code> objects) and chromatographic peak detection results.</p></li>
 <li><p><code>filterChromPeaks</code>: filter chromatographic peaks of an <code>XcmsExperiment</code>
 keeping only those specified with parameter <code>keep</code>. Returns the
 <code>XcmsExperiment</code> with the filtered data. Chromatographic peaks to
@@ -648,9 +663,9 @@ extract the data from (to e.g. for extracted ion chromatograms EICs).
 Both parameters are expected to be numerical two-column matrices with
 the first column defining the lower and the second the upper margin.
 Each row can define a separate m/z - retention time region. Currently
-the function returns a <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object for <code>object</code> being a
-<code>MsExperiment</code> or, for <code>object</code> being an <code>XcmsExperiment</code>, either a
-<code>MChromatograms</code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> depending on parameter
+the function returns a <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> object for <code>object</code>
+being a <code>MsExperiment</code> or, for <code>object</code> being an <code>XcmsExperiment</code>,
+either a <code>MChromatograms</code> or <code><a href="XChromatogram.html">XChromatograms()</a></code> depending on parameter
 <code>return.type</code> (can be either <code>"MChromatograms"</code> or <code>"XChromatograms"</code>).
 For the latter also chromatographic peaks detected within the provided
 m/z and retention times are returned. Parameter <code>chromPeaks</code> allows
@@ -783,9 +798,9 @@ Parameters <code>msLevel</code>, <code>mz</code>, <code>ppm</code> and <code>rt<
 feature definitions that should be returned with the parameter <code>type</code>
 defining how these parameters should be used to subset the returned
 <code>data.frame</code>. See parameter descriptions for details.</p></li>
-<li><p><code>featureSpectra</code>: returns a <code>Spectra()</code> or <code>List</code> of <code>Spectra</code> with
-(MS1 or MS2) spectra associated to each feature. See <code><a href="featureSpectra.html">featureSpectra()</a></code>
-for more details and available parameters.</p></li>
+<li><p><code>featureSpectra</code>: returns a <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> or <code>List</code> of <code>Spectra</code>
+with (MS1 or MS2) spectra associated to each feature. See
+<code><a href="featureSpectra.html">featureSpectra()</a></code> for more details and available parameters.</p></li>
 <li><p><code>featuresSummary</code>: calculate a simple summary on features. See
 <code><a href="featureSummary.html">featureSummary()</a></code> for details.</p></li>
 <li><p><code>groupChromPeaks</code>: performs the correspondence analysis (i.e., grouping
@@ -825,12 +840,12 @@ to define the column in <code>chromPeaks</code> that should be selected; default
 <code>intensity = "into"). </code>method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.</p></li>
 <li><p><code>quantify</code>: extract the correspondence analysis results as a
-<code>SummarizedExperiment()</code>. The feature <em>values</em> are used as <code>assay</code> in
-the returned <code>SummarizedExperiment</code>, <code>rowData</code> contains the
-<code>featureDefinitions</code> (without column <code>"peakidx"</code>) and <code>colData</code> the
-<code>sampleData</code> of <code>object</code>. Additional parameters to the <code>featureValues</code>
-function (that is used to extract the feature value matrix) can be
-passed <em>via</em> <code>...</code>.</p></li>
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment::SummarizedExperiment()</a></code>. The feature <em>values</em>
+are used as <code>assay</code> in the returned <code>SummarizedExperiment</code>, <code>rowData</code>
+contains the <code>featureDefinitions</code> (without column <code>"peakidx"</code>) and
+<code>colData</code> the <code>sampleData</code> of <code>object</code>. Additional parameters to the
+<code>featureValues</code> function (that is used to extract the feature value
+matrix) can be passed <em>via</em> <code>...</code>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a></h2>
@@ -859,7 +874,10 @@ sample in the RT-m/z space. See <code><a href="plotChromPeaks.html">plotChromPea
 
 <ul><li><p><code>uniqueMsLevels</code>: returns the unique MS levels of the spectra in <code>object</code>.</p></li>
 </ul><p>The functions listed below ensure compatibility with the <em>older</em>
-<code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> xcms result object.</p><ul><li><p><code>fileNames</code>: returns the original data file names for the spectra data.
+<code><a href="XCMSnExp-class.html">XCMSnExp()</a></code> xcms result object. Also, an <code>XcmsExperiment</code> can be coerced
+to the <em>older</em> <code>XCMSnExp</code> class using <code>as(object, "XCMSnExp")</code> same as a
+<code>XCMSnExp</code> class can be coerced to <code>XcmsExperiment</code> using
+<code>as(object, "XcmsExperiment")</code>.</p><ul><li><p><code>fileNames</code>: returns the original data file names for the spectra data.
 Ideally, the <code>dataOrigin</code> or <code>dataStorage</code> spectra variables from the
 object's <code>spectra</code> should be used instead.</p></li>
 <li><p><code>fromFile</code>: returns the file (sample) index for each spectrum within

@@ -19,7 +19,7 @@ on purely chromatographic data."><meta property="og:image" content="https://sneu
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,8 +88,10 @@ arguments used for peak detection.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>If called on a <code>Chromatogram</code> object, the method returns a <code>matrix</code> with
-the identified peaks. See <code><a href="peaksWithMatchedFilter.html">peaksWithMatchedFilter()</a></code> for details on the
-matrix content.</p>
+the identified peaks. Columns <code>"mz"</code>, <code>"mzmin"</code> and <code>"mzmax"</code> in
+the <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> peak matrix provide the mean m/z and the maximum and
+minimum m/z value of the <code>Chromatogram</code> object. See
+<code><a href="peaksWithMatchedFilter.html">peaksWithMatchedFilter()</a></code> for details on the remaining columns.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

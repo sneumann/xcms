@@ -25,7 +25,7 @@ detection artifacts."><meta property="og:image" content="https://sneumann.github
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,14 +103,16 @@ arguments used for peak detection.</p></dd>
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>a parameter class specifying if and how parallel processing
 should be performed (only for <code>XChromatograms</code> objects). It defaults to
-<code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more information.</p></dd>
+<code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code>. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code> for more information.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>If called on a <code>Chromatogram</code> object, the method returns an <a href="XChromatogram.html">XChromatogram</a>
-object with the identified peaks. See <code><a href="peaksWithCentWave.html">peaksWithCentWave()</a></code> for details on
-the peak matrix content.</p>
+object with the identified peaks. Columns <code>"mz"</code>, <code>"mzmin"</code> and <code>"mzmax"</code> in
+the <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> peak matrix provide the mean m/z and the maximum and
+minimum m/z value of the <code>Chromatogram</code> object. See <code><a href="peaksWithCentWave.html">peaksWithCentWave()</a></code>
+for details on the remaining columns.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -148,7 +150,7 @@ for details on the method.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rt range: [2501.378, 3698.567]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> MS level: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Identified chromatographic peaks (3):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  rt	rtmin	rtmax	into	maxo	sn (1 more column(s))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  rt	rtmin	rtmax	into	maxo	sn (4 more column(s))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2734.556	2709.517	2770.55	286653.221615386	8907	15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3117.97	3097.625	3139.879	372049.599925925	16496	33</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3487.299	3457.565	3509.208	93049.7314242425	2651	15</span>
@@ -187,12 +189,18 @@ for details on the method.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract the identified chromatographic peaks</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            rt    rtmin    rtmax      into      intb   maxo sn row column</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 2589.015 2571.801 2612.490  592297.3  554533.9  27600 14   1      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 2679.783 2646.919 2709.517 5210015.9 5071346.6 152320 30   1      1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 2593.710 2559.281 2637.529  722415.3  640838.6  30640 14   1      2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 2686.042 2648.483 2714.211 5700652.0 5587464.2 151744 45   1      2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28   1      3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        mz mzmin mzmax       rt    rtmin    rtmax      into      intb   maxo sn</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin 344   344   344 2589.015 2571.801 2612.490  592297.3  554533.9  27600 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin 344   344   344 2679.783 2646.919 2709.517 5210015.9 5071346.6 152320 30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin 344   344   344 2593.710 2559.281 2637.529  722415.3  640838.6  30640 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin 344   344   344 2686.042 2648.483 2714.211 5700652.0 5587464.2 151744 45</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin 344   344   344 2682.914 2643.790 2731.427 5255689.5 4983388.9 125632 28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       row column</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin   1      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin   1      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin   1      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin   1      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mzmin   1      3</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## plot the result</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchrs</span><span class="op">)</span></span></span>

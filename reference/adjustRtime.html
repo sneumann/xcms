@@ -99,7 +99,7 @@ information on the method.
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -352,8 +352,8 @@ information on the method.</p></li>
 
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
-<dd><p>For <code>adjustRtime</code>: an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>,
-<code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code> or <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
+<dd><p>For <code>adjustRtime</code>: an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">MSnbase::OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>,
+<code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment::MsExperiment()</a></code> or <code><a href="XcmsExperiment.html">XcmsExperiment()</a></code> object.</p></dd>
 
 
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
@@ -382,7 +382,7 @@ into memory and will thus in most settings cause an out-of-memory error.</p></dd
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>parallel processing setup. Defaults to <code>BPPARAM = bpparam()</code>.
-See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for details.</p></dd>
+See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code> for details.</p></dd>
 
 
 <dt id="arg-mslevel">msLevel<a class="anchor" aria-label="anchor" href="#arg-mslevel"></a></dt>
@@ -422,13 +422,13 @@ Can be either <code>"loess"</code> or <code>"linear"</code>.</p></dd>
 <dt id="arg-span">span<a class="anchor" aria-label="anchor" href="#arg-span"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining
 the degree of smoothing (if <code>smooth = "loess"</code>). This parameter is
-passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code>.</p></dd>
+passed to the internal call to <code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code>.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>character(1)</code> defining the method for
 loess smoothing. Allowed values are <code>"gaussian"</code> and <code>"symmetric"</code>. See
-<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">loess()</a></code> for more information.</p></dd>
+<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code> for more information.</p></dd>
 
 
 <dt id="arg-peakgroupsmatrix">peakGroupsMatrix<a class="anchor" aria-label="anchor" href="#arg-peakgroupsmatrix"></a></dt>

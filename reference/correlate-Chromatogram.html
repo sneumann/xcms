@@ -6,9 +6,9 @@ Chromatogram objects have different retention times they are first
 aligned to match data points in the first to data points in the second
 chromatogram. See help on alignRt in MSnbase::Chromatogram() for more
 details.
-If correlate is called on a single MChromatograms() object a pairwise
-correlation of each chromatogram with each other is performed and a matrix
-with the correlation coefficients is returned.
+If correlate is called on a single MSnbase::MChromatograms() object a
+pairwise correlation of each chromatogram with each other is performed and
+a matrix with the correlation coefficients is returned.
 Note that the correlation of two chromatograms depends also on their order,
 e.g. correlate(chr1, chr2) might not be identical to
 correlate(chr2, chr1). The lower and upper triangular part of the
@@ -19,9 +19,9 @@ Chromatogram objects have different retention times they are first
 aligned to match data points in the first to data points in the second
 chromatogram. See help on alignRt in MSnbase::Chromatogram() for more
 details.
-If correlate is called on a single MChromatograms() object a pairwise
-correlation of each chromatogram with each other is performed and a matrix
-with the correlation coefficients is returned.
+If correlate is called on a single MSnbase::MChromatograms() object a
+pairwise correlation of each chromatogram with each other is performed and
+a matrix with the correlation coefficients is returned.
 Note that the correlation of two chromatograms depends also on their order,
 e.g. correlate(chr1, chr2) might not be identical to
 correlate(chr2, chr1). The lower and upper triangular part of the
@@ -33,7 +33,7 @@ correlation matrix might thus be different."><meta property="og:image" content="
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,9 +73,9 @@ correlation matrix might thus be different."><meta property="og:image" content="
 <em>aligned</em> to match data points in the first to data points in the second
 chromatogram. See help on <code>alignRt</code> in <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> for more
 details.</p>
-<p>If <code>correlate</code> is called on a single <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object a pairwise
-correlation of each chromatogram with each other is performed and a <code>matrix</code>
-with the correlation coefficients is returned.</p>
+<p>If <code>correlate</code> is called on a single <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> object a
+pairwise correlation of each chromatogram with each other is performed and
+a <code>matrix</code> with the correlation coefficients is returned.</p>
 <p>Note that the correlation of two chromatograms depends also on their order,
 e.g. <code>correlate(chr1, chr2)</code> might not be identical to
 <code>correlate(chr2, chr1)</code>. The lower and upper triangular part of the
@@ -120,11 +120,11 @@ correlation matrix might thus be different.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object.</p></dd>
+<dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> object.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> object.</p></dd>
+<dd><p><code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> object.</p></dd>
 
 
 <dt id="arg-use">use<a class="anchor" aria-label="anchor" href="#arg-use"></a></dt>
@@ -133,8 +133,8 @@ details.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p><code>character(1)</code> passed to the <code>cor</code> function. See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> for
-details.</p></dd>
+<dd><p><code>character(1)</code> passed to the <code>cor</code> function. See
+<code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">stats::cor()</a></code> for details.</p></dd>
 
 
 <dt id="arg-align">align<a class="anchor" aria-label="anchor" href="#arg-align"></a></dt>

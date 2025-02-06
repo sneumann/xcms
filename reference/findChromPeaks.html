@@ -41,7 +41,7 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -123,8 +123,8 @@ listed above.</p>
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>The data object on which to perform the peak detection. Can be
-an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MChromatograms()</a></code> or <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment()</a></code>
-object.</p></dd>
+an <code><a href="https://lgatto.github.io/MSnbase/reference/OnDiskMSnExp-class.html" class="external-link">MSnbase::OnDiskMSnExp()</a></code>, <code><a href="XCMSnExp-class.html">XCMSnExp()</a></code>, <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code>
+or <code><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">MsExperiment::MsExperiment()</a></code> object.</p></dd>
 
 
 <dt id="arg-param">param<a class="anchor" aria-label="anchor" href="#arg-param"></a></dt>
@@ -151,12 +151,13 @@ the peak detection. Because parallel processing can only performed on
 the subset of data loaded currently into memory (in each iteration), the
 value for <code>chunkSize</code> should be match the defined  parallel setting
 setup. Using a parallel processing setup using 4 CPUs (separate
-processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize<code>to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting</code>chunkSize = -1<code>the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all</code>Spectra` <em>backends</em> (see eventually <code>Spectra()</code> for details).</p></dd>
+processes) but using <code>chunkSize = </code>1<code>will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting</code>chunkSize<code>to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting</code>chunkSize = -1<code>the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all</code>Spectra` <em>backends</em> (see eventually <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> for
+details).</p></dd>
 
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parallel processing setup. Uses by default the system-wide
-default setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam()</a></code> for more details.</p></dd>
+default setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code> for more details.</p></dd>
 
 
 <dt id="arg-add">add<a class="anchor" aria-label="anchor" href="#arg-add"></a></dt>
