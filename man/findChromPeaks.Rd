@@ -29,8 +29,8 @@ findChromPeaks(object, param, ...)
 }
 \arguments{
 \item{object}{The data object on which to perform the peak detection. Can be
-an \code{\link[=OnDiskMSnExp]{OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}}, \code{\link[=MChromatograms]{MChromatograms()}} or \code{\link[=MsExperiment]{MsExperiment()}}
-object.}
+an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}}, \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}}
+or \code{\link[MsExperiment:MsExperiment]{MsExperiment::MsExperiment()}} object.}
 
 \item{param}{The parameter object selecting and configuring the algorithm.}
 
@@ -49,10 +49,11 @@ the peak detection. Because parallel processing can only performed on
 the subset of data loaded currently into memory (in each iteration), the
 value for \code{chunkSize} should be match the defined  parallel setting
 setup. Using a parallel processing setup using 4 CPUs (separate
-processes) but using \verb{chunkSize = }1\verb{will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting}chunkSize\verb{to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting}chunkSize = -1\verb{the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all}Spectra` \emph{backends} (see eventually \code{\link[=Spectra]{Spectra()}} for details).}
+processes) but using \verb{chunkSize = }1\verb{will not perform any parallel processing, as only the data from one sample is loaded in memory at a time. On the other hand, setting}chunkSize\verb{to the total number of samples in an experiment will load the full MS data into memory and will thus in most settings cause an out-of-memory error. By setting}chunkSize = -1\verb{the peak detection will be performed separately, and in parallel, for each sample. This will however not work for all}Spectra` \emph{backends} (see eventually \code{\link[Spectra:Spectra]{Spectra::Spectra()}} for
+details).}
 
 \item{BPPARAM}{Parallel processing setup. Uses by default the system-wide
-default setup. See \code{\link[=bpparam]{bpparam()}} for more details.}
+default setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more details.}
 
 \item{add}{\code{logical(1)} (if \code{object} contains already chromatographic peaks,
 i.e. is either an \code{XCMSnExp} or \code{XcmsExperiment}) whether chromatographic

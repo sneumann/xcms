@@ -1002,3 +1002,9 @@ test_that("FilterIntensityParam works", {
     res@threshold <- c(10, 20)
     expect_error(validObject(res), "length 1")
 })
+
+
+test_that("BetaDistributionParam works", {
+  res <- BetaDistributionParam()
+  expect_true(is(res, "BetaDistributionParam"))
+})

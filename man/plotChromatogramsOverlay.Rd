@@ -39,7 +39,7 @@
 )
 }
 \arguments{
-\item{object}{\code{\link[=MChromatograms]{MChromatograms()}} or \code{\link[=XChromatograms]{XChromatograms()}} object.}
+\item{object}{\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} or \code{\link[=XChromatograms]{XChromatograms()}} object.}
 
 \item{col}{definition of the color in which the chromatograms should be
 drawn. Can be of length 1 or equal to \code{nrow(object)} to plot each
@@ -103,9 +103,10 @@ each EIC.
 \code{plotOverlay} draws chromatographic peak data from multiple (different)
 extracted ion chromatograms (EICs) into the same plot. This allows to
 directly compare the peak shape of these EICs in the same sample. In
-contrast to the \code{plot} function for \code{\link[=MChromatograms]{MChromatograms()}} object, which draws
-the data from the same EIC across multiple samples in the same plot, this
-function draws the different EICs from the same sample into the same plot.
+contrast to the \code{plot} function for \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object,
+which draws the data from the same EIC across multiple samples in the
+same plot, this function draws the different EICs from the same sample
+into the same plot.
 
 If \code{plotChromatogramsOverlay} is called on a \code{XChromatograms} object any
 present chromatographic peaks will also be highlighted/drawn depending on the

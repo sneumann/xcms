@@ -36,7 +36,7 @@
 #'   be reported. This can be performed using the [fillChromPeaks()] function.
 #'
 #'
-#' @section Subsetting and filtering:
+#' @section Subset, filter and combine:
 #'
 #' - `[`: subset an `XcmsExperiment` by **sample** (parameter `i`). Subsetting
 #'   will by default drop correspondence results (as subsetting by samples will
@@ -46,6 +46,18 @@
 #'   kept or dropped can also be configured with optional parameters
 #'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
 #'   `FALSE`) and `keepFeatures` (by default `FALSE`).
+#'
+#' - `c`: multiple `XcmsExperiment` objects can be combined into one using the
+#'   `c()` function. This requires however that all the `XcmsExperiments`'
+#'   `Spectra` objects use the same type of `MsBackend` and that their
+#'   processing queues are empty. Also, only combining of peak detection
+#'   results is supported. Any eventually present alignment or correspondence
+#'   results will be dropped before combining the `XcmsExperiment` objects.
+#'   Finally, at present, only the MS data of the individual `XcmsExperiment`
+#'   objects is combined and any data eventually present in the `@qdata`,
+#'   `@otherData` and `@experimentFiles` slots is ignored.
+#'   The function returns a `XcmsExperiment` objects with the combined MS data
+#'   (`Spectra` objects) and chromatographic peak detection results.
 #'
 #' - `filterChromPeaks`: filter chromatographic peaks of an `XcmsExperiment`
 #'   keeping only those specified with parameter `keep`. Returns the
@@ -112,9 +124,9 @@
 #'   Both parameters are expected to be numerical two-column matrices with
 #'   the first column defining the lower and the second the upper margin.
 #'   Each row can define a separate m/z - retention time region. Currently
-#'   the function returns a [MChromatograms()] object for `object` being a
-#'   `MsExperiment` or, for `object` being an `XcmsExperiment`, either a
-#'   `MChromatograms` or [XChromatograms()] depending on parameter
+#'   the function returns a [MSnbase::MChromatograms()] object for `object`
+#'   being a `MsExperiment` or, for `object` being an `XcmsExperiment`,
+#'   either a `MChromatograms` or [XChromatograms()] depending on parameter
 #'   `return.type` (can be either `"MChromatograms"` or `"XChromatograms"`).
 #'   For the latter also chromatographic peaks detected within the provided
 #'   m/z and retention times are returned. Parameter `chromPeaks` allows
@@ -266,9 +278,9 @@
 #'   defining how these parameters should be used to subset the returned
 #'   `data.frame`. See parameter descriptions for details.
 #'
-#' - `featureSpectra`: returns a [Spectra()] or `List` of `Spectra` with
-#'   (MS1 or MS2) spectra associated to each feature. See [featureSpectra()]
-#'   for more details and available parameters.
+#' - `featureSpectra`: returns a [Spectra::Spectra()] or `List` of `Spectra`
+#'   with (MS1 or MS2) spectra associated to each feature. See
+#'   [featureSpectra()] for more details and available parameters.
 #'
 #' - `featuresSummary`: calculate a simple summary on features. See
 #'   [featureSummary()] for details.
@@ -314,12 +326,12 @@
 #'   chromatographic peaks assigned to the feature in the same sample.
 #'
 #' - `quantify`: extract the correspondence analysis results as a
-#'   [SummarizedExperiment()]. The feature *values* are used as `assay` in
-#'   the returned `SummarizedExperiment`, `rowData` contains the
-#'   `featureDefinitions` (without column `"peakidx"`) and `colData` the
-#'   `sampleData` of `object`. Additional parameters to the `featureValues`
-#'   function (that is used to extract the feature value matrix) can be
-#'   passed *via* `...`.
+#'   [SummarizedExperiment::SummarizedExperiment()]. The feature *values*
+#'   are used as `assay` in the returned `SummarizedExperiment`, `rowData`
+#'   contains the `featureDefinitions` (without column `"peakidx"`) and
+#'   `colData` the `sampleData` of `object`. Additional parameters to the
+#'   `featureValues` function (that is used to extract the feature value
+#'   matrix) can be passed *via* `...`.
 #'
 #' @section Visualization:
 #'
@@ -348,7 +360,10 @@
 #' - `uniqueMsLevels`: returns the unique MS levels of the spectra in `object`.
 #'
 #' The functions listed below ensure compatibility with the *older*
-#' [XCMSnExp()] xcms result object.
+#' [XCMSnExp()] xcms result object. Also, an `XcmsExperiment` can be coerced
+#' to the *older* `XCMSnExp` class using `as(object, "XCMSnExp")` same as a
+#' `XCMSnExp` class can be coerced to `XcmsExperiment` using
+#' `as(object, "XcmsExperiment")`.
 #'
 #' - `fileNames`: returns the original data file names for the spectra data.
 #'   Ideally, the `dataOrigin` or `dataStorage` spectra variables from the
@@ -392,7 +407,8 @@
 #'     chromatogram (BPC).
 #'
 #' @param BPPARAM For `chromatogram`: parallel processing setup. Defaults
-#'     to `BPPARAM = bpparam()`. See [bpparam()] for more information.
+#'     to `BPPARAM = bpparam()`. See [BiocParallel::bpparam()] for more
+#'     information.
 #'
 #' @param chromPeaks For `chromatogram`: `character(1)` defining which
 #'     chromatographic peaks should be returned. Can be either
@@ -764,6 +780,14 @@ setMethod("show", "XcmsExperiment", function(object) {
             paste(unique(object@featureDefinitions$ms_level), collapse = ", "),
             "\n")
 })
+
+#' @rdname XcmsExperiment
+c.XcmsExperiment <- function(...) {
+    l <- list(...)
+    if (length(l) == 1L)
+        return(l[[1L]])
+    .xmse_combine(l)
+}
 
 ################################################################################
 ## Filtering and subsetting
@@ -2024,3 +2048,39 @@ setMethod(
         object[i = sort(unique(file)), keepAdjustedRtime = keepAdjustedRtime,
                keepFeatures = keepFeatures, ...]
     })
+
+#' @rdname chromPeakSummary
+setMethod(
+  "chromPeakSummary",
+  signature(object = "XcmsExperiment", param = "BetaDistributionParam"),
+  function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+    if (length(msLevel) != 1)
+      stop("Can only perform peak metrics for one MS level at a time.")
+    if (!hasChromPeaks(object, msLevel = msLevel))
+      stop("No ChromPeaks definitions for MS level ", msLevel, " present.")
+    ## Define region to calculate metrics from for each file
+    cp <- chromPeaks(object, msLevel = msLevel)
+    f <- factor(cp[,"sample"], seq_along(object))
+    pal <- split.data.frame(cp[, c("mzmin", "mzmax", "rtmin", "rtmax")], f)
+    names(pal) <- seq_along(pal)
+    ## Manual chunk processi ng because we have to split `object` and `pal`
+    idx <- seq_along(object)
+    chunks <- split(idx, ceiling(idx / chunkSize))
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = length(chunks) + 1L, clear = FALSE)
+    pb$tick(0)
+    # mzf <- "wMean"
+    res <- lapply(chunks, function(z, ...) {
+      pb$tick()
+      .xmse_integrate_chrom_peaks(
+        .subset_xcms_experiment(object, i = z, keepAdjustedRtime = TRUE,
+                                ignoreHistory = TRUE),
+        pal = pal[z], intFun = .chrom_peak_beta_metrics,
+        msLevel = msLevel, BPPARAM = BPPARAM)
+    })
+    res <- do.call(rbind, res)
+    pb$tick()
+    res
+  })

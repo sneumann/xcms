@@ -210,8 +210,8 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
 \S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
-\item{object}{For \code{adjustRtime}: an \code{\link[=OnDiskMSnExp]{OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
-\code{\link[=MsExperiment]{MsExperiment()}} or \code{\link[=XcmsExperiment]{XcmsExperiment()}} object.}
+\item{object}{For \code{adjustRtime}: an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
+\code{\link[MsExperiment:MsExperiment]{MsExperiment::MsExperiment()}} or \code{\link[=XcmsExperiment]{XcmsExperiment()}} object.}
 
 \item{param}{The parameter object defining the alignment method (and its
 setting).}
@@ -232,7 +232,7 @@ the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.}
 
 \item{BPPARAM}{parallel processing setup. Defaults to \code{BPPARAM = bpparam()}.
-See \code{\link[=bpparam]{bpparam()}} for details.}
+See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details.}
 
 \item{msLevel}{For \code{adjustRtime}: \code{integer(1)} defining the MS level on
 which the alignment should be performed.}
@@ -262,11 +262,11 @@ Can be either \code{"loess"} or \code{"linear"}.}
 
 \item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining
 the degree of smoothing (if \code{smooth = "loess"}). This parameter is
-passed to the internal call to \code{\link[=loess]{loess()}}.}
+passed to the internal call to \code{\link[stats:loess]{stats::loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
-\code{\link[=loess]{loess()}} for more information.}
+\code{\link[stats:loess]{stats::loess()}} for more information.}
 
 \item{peakGroupsMatrix}{For \code{PeakGroupsParam}: optional \code{matrix} of (raw)
 retention times for the (marker) peak groups on which the alignment

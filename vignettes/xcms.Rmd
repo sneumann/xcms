@@ -434,6 +434,56 @@ numeric).
 chromPeakData(faahko)
 ```
 
+### Chromatographic peak quality
+
+Based on the publication by Kumler et al. published in 2023 [@Kumler2023], new
+quality metrics (*beta_cor* and *beta_snr*) were added to *xcms*. *beta_cor*
+indicates how bell-shaped the chromatographic peak is and *beta_snr* is
+estimating the signal-to-noise ratio using the residuals from this fit. These
+metrics can be calculated during peak picking by setting `verboseBetaColumns =
+TRUE` in the `CentWaveParam` object, or they can be calculated afterwards by
+using the `chromPeakSummary()` function with the `XcmsExperiment` object and
+the `BetaDistributionParam` parameter object as input:
+
+```{r peak-detection-chromPeakSummary}
+beta_metrics <- chromPeakSummary(faahko, BetaDistributionParam())
+head(beta_metrics)
+
+```
+
+The result returned by `chromPeakSummary()` is thus a numeric matrix with the
+values for these quality estimates, one row for each chromatographic peak.
+Using summary statistics, one can explore the distribution of these metrics in
+the data.
+
+```{r beta-metrics}
+summary(beta_metrics)
+```
+
+Visual inspection gives a better idea of what these metrics represent in terms
+of peak quality in the data at hand. This information can be used to e.g.
+filter out peaks that don't meet a chosen quality metric threshold. In order to
+plot the detected peaks, their EIC can be extracted with the function
+`chromPeakChromatograms`. An example of a peak with a high *beta_cor* and for
+a peak  with a low *beta_cor* score is given below.
+
+```{r chromPeakChromatograms, message=FALSE}
+beta_metrics[c(4, 6), ]
+eics <- chromPeakChromatograms(
+    faahko, peaks = rownames(chromPeaks(faahko))[c(4, 6)])
+```
+
+```{r peak-quality-metrics, fig.width = 10, fig.height = 5, fig.cap = "Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor = 0.98, right: peak CP0006 with a beta_cor = 0.13."}
+peak_1 <- eics[1]
+peak_2 <- eics[2]
+par(mfrow = c(1, 2))
+plot(peak_1)
+plot(peak_2)
+```
+
+
+### Refining peak detection
+
 Peak detection will not always work perfectly for all types of peak shapes
 present in the data set leading to peak detection artifacts, such as (partially
 or completely) overlapping peaks or artificially split peaks (common issues
@@ -462,7 +512,7 @@ faahko_pp <- refineChromPeaks(faahko, mpp)
 
 An example for a merged peak is given below.
 
-```{r peak-postprocessing-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
+```{r peak-postprocessing-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
 mzr_1 <- 305.1 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
@@ -477,7 +527,7 @@ plot(chr_2)
 peaks into a single one (right panel in the figure above). Other close peaks,
 with a lower intensity between them, were however not merged (see below).
 
-```{r peak-postprocessing-not-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
+```{r peak-postprocessing-not-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
 mzr_1 <- 496.2 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)

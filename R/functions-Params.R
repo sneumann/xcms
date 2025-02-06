@@ -397,3 +397,8 @@ FilterIntensityParam <- function(threshold = 0, nValues = 1L, value = "maxo") {
     new("FilterIntensityParam", threshold = as.numeric(threshold),
         nValues = as.integer(nValues), value = value)
 }
+
+#' @rdname chromPeakSummary
+BetaDistributionParam <- function() {
+  new("BetaDistributionParam")
+}

@@ -95,7 +95,7 @@ S3method(plot, xcmsEIC)
 S3method(split, xcmsSet)
 S3method(c, xcmsSet)
 S3method(c, XCMSnExp)
-
+S3method(c, XcmsExperiment)
 S3method(split, xcmsRaw)
 
 exportClasses(
@@ -461,7 +461,8 @@ export("CentWaveParam",
        "CleanPeaksParam",
        "MergeNeighboringPeaksParam",
        "FilterIntensityParam",
-       "ChromPeakAreaParam")
+       "ChromPeakAreaParam",
+       "BetaDistributionParam")
 ## Param class methods.
 
 ## New Classes
@@ -530,7 +531,8 @@ exportMethods("hasChromPeaks",
               "featureSpectra",
               "chromPeakSpectra",
               "chromPeakChromatograms",
-              "featureChromatograms"
+              "featureChromatograms",
+              "chromPeakSummary"
               )
 
 ## feature grouping functions and methods.

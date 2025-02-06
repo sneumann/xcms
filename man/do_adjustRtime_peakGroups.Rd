@@ -54,11 +54,11 @@ Can be either \code{"loess"} or \code{"linear"}.}
 
 \item{span}{For \code{PeakGroupsParam}: \code{numeric(1)} defining
 the degree of smoothing (if \code{smooth = "loess"}). This parameter is
-passed to the internal call to \code{\link[=loess]{loess()}}.}
+passed to the internal call to \code{\link[stats:loess]{stats::loess()}}.}
 
 \item{family}{For \code{PeakGroupsParam}: \code{character(1)} defining the method for
 loess smoothing. Allowed values are \code{"gaussian"} and \code{"symmetric"}. See
-\code{\link[=loess]{loess()}} for more information.}
+\code{\link[stats:loess]{stats::loess()}} for more information.}
 
 \item{peakGroupsMatrix}{optional \code{matrix} of (raw) retention times for
 peak groups on which the alignment should be performed. Each column

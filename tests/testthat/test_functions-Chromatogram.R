@@ -52,13 +52,15 @@ test_that(".chrom_merge_neighboring_peaks works", {
     expect_equal(res$chromPeakData$index, 3L)
 
     ## Check "into" calculation.
-    pks <- rbind(pks[-c(1, 2), ],
-                 c(18, pks[2, "rtmin"], pks[2, "rtmin"] + 4, NA_real_,
-                   NA_real_, 3, 3),
-                 c(20, pks[2, "rtmax"] - 5, pks[2, "rtmax"], NA_real_,
-                   NA_real_, 9, 8))
+    pks2 <- rbind(pks[-c(1, 2), ],
+                  c(NA_real_, NA_real_, NA_real_, 18, pks[2, "rtmin"],
+                    pks[2, "rtmin"] + 4, NA_real_,
+                    NA_real_, 3, 3),
+                  c(NA_real_, NA_real_, NA_real_, 20, pks[2, "rtmax"] - 5,
+                    pks[2, "rtmax"], NA_real_,
+                    NA_real_, 9, 8))
     res <- .chrom_merge_neighboring_peaks(
-        chr, pks, pkd, diffRt = 5, minProp = 0.75)
+        chr, pks2, pkd, diffRt = 5, minProp = 0.75)
     expect_equal(unname(res$chromPeaks[1, "into"]),
                  unname(chromPeaks(xchr)[2, "into"]))
 })

@@ -17,8 +17,10 @@ arguments used for peak detection.}
 }
 \value{
 If called on a \code{Chromatogram} object, the method returns a \code{matrix} with
-the identified peaks. See \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for details on the
-matrix content.
+the identified peaks. Columns \code{"mz"}, \code{"mzmin"} and \code{"mzmax"} in
+the \code{chromPeaks()} peak matrix provide the mean m/z and the maximum and
+minimum m/z value of the \code{Chromatogram} object. See
+\code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for details on the remaining columns.
 }
 \description{
 \code{findChromPeaks} on a \link{Chromatogram} or \link{MChromatograms} object with a

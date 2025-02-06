@@ -2182,3 +2182,8 @@ setClass("FilterIntensityParam",
                  msg
              else TRUE
          })
+
+setClass("BetaDistributionParam",
+         contains = "Param"
+         )
+        

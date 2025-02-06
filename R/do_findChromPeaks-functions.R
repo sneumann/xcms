@@ -3720,14 +3720,20 @@ peaksWithCentWave <- function(int, rt,
 #' requires at least 5 scans or it will return NA for both parameters.
 #'
 #' @param intensity A numeric vector corresponding to the peak intensities
+#'
 #' @param rtime A numeric vector corresponding to the retention times of each
-#' intensity. If not provided, intensities will be assumed to be equally spaced.
+#'     intensity. Retention times are expected to be in increasing order
+#'     without duplicates. If not provided, intensities will be assumed to be
+#'     equally spaced.
+#'
 #' @param skews A numeric vector of the skews to try, corresponding to the
-#' shape1 of dbeta with a shape2 of 5. Values less than 5 will be increasingly
-#' right-skewed, while values greater than 5 will be left-skewed.
+#'     shape1 of dbeta with a shape2 of 5. Values less than 5 will be
+#'     increasingly right-skewed, while values greater than 5 will be
+#'     left-skewed.
+#'
 #' @param zero.rm Boolean value controlling whether "missing" scans are dropped
-#' prior to curve fitting. The default, TRUE, will remove intensities of zero
-#' or NA
+#'     prior to curve fitting. The default, TRUE, will remove intensities of
+#'     zero or NA
 #'
 #' @author William Kumler
 #'
@@ -3740,21 +3746,22 @@ peaksWithCentWave <- function(int, rt,
     rtime <- rtime[keep]
     intensity <- intensity[keep]
   }
-  if(length(intensity)<5){
+  if (length(intensity) < 5) {
     best_cor <- NA
     beta_snr <- NA
   } else {
-    beta_sequence <- rep(.scale_zero_one(rtime), each=length(skews))
+    beta_sequence <- rep(.scale_zero_one(rtime), each = length(skews))
     beta_vals <- t(matrix(dbeta(beta_sequence, shape1 = skews, shape2 = 5),
                           nrow = length(skews)))
     # matplot(beta_vals)
     beta_cors <- cor(intensity, beta_vals)
     best_cor <- max(beta_cors)
     best_curve <- beta_vals[, which.max(beta_cors)]
-    noise_level <- sd(diff(.scale_zero_one(best_curve)-.scale_zero_one(intensity)))
-    beta_snr <- log10(max(intensity)/noise_level)
+    noise_level <- sd(diff(.scale_zero_one(best_curve) -
+                           .scale_zero_one(intensity)))
+    beta_snr <- log10(max(intensity) / noise_level)
   }
-  c(best_cor=best_cor, beta_snr=beta_snr)
+  c(best_cor = best_cor, beta_snr = beta_snr)
 }
 
 
@@ -3769,5 +3776,5 @@ peaksWithCentWave <- function(int, rt,
 #'
 #' @noRd
 .scale_zero_one <- function(num_vec){
-  (num_vec-min(num_vec))/(max(num_vec)-min(num_vec))
+  (num_vec-min(num_vec)) / (max(num_vec) - min(num_vec))
 }

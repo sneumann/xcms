@@ -1445,6 +1445,12 @@ setAs(from = "XcmsExperiment", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 setAs(from = "XcmsExperiment", to = "XCMSnExp",
       def = .xcms_experiment_to_xcms_n_exp)
 
+#' @rdname XcmsExperiment
+#'
+#' @name XcmsExperiment
+setAs(from = "XCMSnExp", to = "XcmsExperiment",
+      def = .xcms_n_exp_to_xcms_experiment)
+
 #' @rdname XCMSnExp-peak-grouping-results
 setMethod("quantify", "XCMSnExp", function(object, ...) {
     .XCMSnExp2SummarizedExperiment(object, ...)
@@ -3059,7 +3065,7 @@ setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
 #'     See documentation of the `software_processing` parameter of
 #'     [mzR::writeMSData()].
 #'
-#' @param ... Additional parameters to pass down to the [writeMSData()]
+#' @param ... Additional parameters to pass down to the [MSnbase::writeMSData()]
 #'     function in the `MSnbase` package, such as `outformat` to specify the
 #'     output format (`"mzml"` or `"mzxml"`) or `copy` to specify whether
 #'     general information from the original MS data files (such as data
@@ -3069,7 +3075,7 @@ setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
 #'
 #' @md
 #'
-#' @seealso [writeMSData()] function in the `MSnbase` package.
+#' @seealso [MSnbase::writeMSData()] function in the `MSnbase` package.
 setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
           function(object, file, outformat = c("mzml", "mzxml"),
                    copy = FALSE, software_processing = NULL, ...) {

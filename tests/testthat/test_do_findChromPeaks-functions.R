@@ -46,29 +46,29 @@ test_that("beta calculation returns expected values", {
   expect_lt(.get_beta_values(1:10, zero.rm = FALSE)["beta_snr"], 2)
   expect_lt(.get_beta_values(1:10)["best_cor"], 0.0001)
   expect_lt(.get_beta_values(1:10)["beta_snr"], 2)
-  
+
   ideal_beta <- dbeta(seq(0, 1, length.out=10), 5, 5)
   expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["best_cor"], 1)
   expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["beta_snr"], 16)
   expect_gte(.get_beta_values(ideal_beta)["best_cor"], 0.97)
   expect_gte(.get_beta_values(ideal_beta)["beta_snr"], 1)
-    
+
   skew_beta <- dbeta(seq(0, 1, length.out=10), 3, 5)
   expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["best_cor"], 1)
   expect_gte(.get_beta_values(ideal_beta, zero.rm = FALSE)["beta_snr"], 16)
   expect_gte(.get_beta_values(ideal_beta)["best_cor"], 0.97)
   expect_gte(.get_beta_values(ideal_beta)["beta_snr"], 1)
-  
+
   rightskew_beta <- dbeta(seq(0, 1, length.out=10), 7, 5)
   expect_gt(.get_beta_values(rightskew_beta, skews = c(3,5,7))["best_cor"], 0.95)
-  
+
   noise_beta <- dbeta(seq(0, 1, length.out=21), 5, 5)*10+runif(21)
   expect_gt(.get_beta_values(noise_beta)["best_cor"], 0.9)
-  
+
   expect_no_error(.get_beta_values(runif(1)))
   expect_no_error(.get_beta_values(runif(10)))
   expect_no_error(.get_beta_values(runif(100)))
-  
+
   expect_length(.get_beta_values(1), 2)
   expect_true(is.na(.get_beta_values(1)["best_cor"]))
   expect_true(is.na(.get_beta_values(1)["beta_snr"]))
@@ -78,31 +78,31 @@ test_that("New beta columns perform as expected", {
   # faahko_xod comes from testthat.R
   # faahko_xod <- findChromPeaks(
   #   faahko_od, param = CentWaveParam(noise = 10000, snthresh = 40,
-  #                                    prefilter = c(3, 10000)))  
+  #                                    prefilter = c(3, 10000)))
   # Same params as before but with verboseBetaColumns = TRUE
-  beta_cwp <- CentWaveParam(noise = 10000, snthresh = 40, 
-                            prefilter = c(3, 10000), 
+  beta_cwp <- CentWaveParam(noise = 10000, snthresh = 40,
+                            prefilter = c(3, 10000),
                             verboseBetaColumns = TRUE)
   faahko_xod_beta <- findChromPeaks(faahko_od, beta_cwp)
-  
+
   # Unit test - check that the new object contains expected columns
-  expect_contains(colnames(chromPeaks(faahko_xod_beta)), 
+  expect_contains(colnames(chromPeaks(faahko_xod_beta)),
                   c("beta_cor", "beta_snr"))
-  
+
   # Unit test - check that everything else in the object is the same
   orig_chrompeaks <- chromPeaks(faahko_xod)
   beta_chrompeaks <- chromPeaks(faahko_xod_beta)
   expect_identical(orig_chrompeaks, beta_chrompeaks[,colnames(orig_chrompeaks)])
-  
+
   # Object will contain NAs because there are peaks <5 scans wide
   expect_true(any(is.na(beta_chrompeaks[,"beta_snr"])))
   beta_chrompeaks <- beta_chrompeaks[!is.na(beta_chrompeaks[,"beta_cor"]),]
-  
+
   # Unit test - check that beta values make sense
   expect_true(all(beta_chrompeaks[,"beta_cor"]<=1))
   expect_true(all(beta_chrompeaks[,"beta_cor"]>=-1))
   expect_true(all(beta_chrompeaks[,"beta_snr"]>=0))
-  
+
   # Unit test - finds a single good peak (beta_cor>0.8, beta_snr>7)
   # Skinny peak copied from below peaksWithCentWave tests
   skinny_peak <- c(9107, 3326, 9523, 3245, 3429, 9394, 1123, 935, 5128, 8576,
@@ -113,33 +113,33 @@ test_that("New beta columns perform as expected", {
                    8283, 3410, 5935, 3332, 7041, 3284, 7478, 76, 3739, 2158, 5507)
   skinny_peak_rt <- seq_along(skinny_peak)+100
   cw_output_beta <- .centWave_orig(int = skinny_peak, scantime = skinny_peak_rt,
-                                   mz=sort(rnorm(60)/1000+100), 
+                                   mz=sort(rnorm(60)/1000+100),
                                    valsPerSpect = rep(1, length(skinny_peak)),
-                                   peakwidth = c(20, 80), extendLengthMSW = TRUE, 
+                                   peakwidth = c(20, 80), extendLengthMSW = TRUE,
                                    verboseBetaColumns = TRUE, snthresh = 0)
   expect_equal(nrow(cw_output_beta), 1)
   # Known values to ensure performance doesn't degrade unexpectedly
   expect_gt(cw_output_beta[,"beta_cor"], 0.8)
   expect_gt(cw_output_beta[,"beta_snr"], 7)
-  
+
   # Unit test - finds a single noise peak (beta_cor < 0.5, beta_snr < 6)
   # set.seed(123)
   # noise_peak <- round(runif(100), 3)
-  noise_peak <- c(0.288, 0.788, 0.409, 0.883, 0.94, 0.046, 0.528, 0.892, 0.551, 
-                  0.457, 0.957, 0.453, 0.678, 0.573, 0.103, 0.9, 0.246, 0.042, 
-                  0.328, 0.955, 0.89, 0.693, 0.641, 0.994, 0.656, 0.709, 0.544, 
-                  0.594, 0.289, 0.147, 0.963, 0.902, 0.691, 0.795, 0.025, 0.478, 
-                  0.758, 0.216, 0.318, 0.232, 0.143, 0.415, 0.414, 0.369, 0.152, 
-                  0.139, 0.233, 0.466, 0.266, 0.858, 0.046, 0.442, 0.799, 0.122, 
-                  0.561, 0.207, 0.128, 0.753, 0.895, 0.374, 0.665, 0.095, 0.384, 
-                  0.274, 0.815, 0.449, 0.81, 0.812, 0.794, 0.44, 0.754, 0.629, 
-                  0.71, 0.001, 0.475, 0.22, 0.38, 0.613, 0.352, 0.111, 0.244, 
-                  0.668, 
-                  0.418, 0.788, 0.103, 0.435, 0.985, 0.893, 0.886, 0.175, 0.131, 
+  noise_peak <- c(0.288, 0.788, 0.409, 0.883, 0.94, 0.046, 0.528, 0.892, 0.551,
+                  0.457, 0.957, 0.453, 0.678, 0.573, 0.103, 0.9, 0.246, 0.042,
+                  0.328, 0.955, 0.89, 0.693, 0.641, 0.994, 0.656, 0.709, 0.544,
+                  0.594, 0.289, 0.147, 0.963, 0.902, 0.691, 0.795, 0.025, 0.478,
+                  0.758, 0.216, 0.318, 0.232, 0.143, 0.415, 0.414, 0.369, 0.152,
+                  0.139, 0.233, 0.466, 0.266, 0.858, 0.046, 0.442, 0.799, 0.122,
+                  0.561, 0.207, 0.128, 0.753, 0.895, 0.374, 0.665, 0.095, 0.384,
+                  0.274, 0.815, 0.449, 0.81, 0.812, 0.794, 0.44, 0.754, 0.629,
+                  0.71, 0.001, 0.475, 0.22, 0.38, 0.613, 0.352, 0.111, 0.244,
+                  0.668,
+                  0.418, 0.788, 0.103, 0.435, 0.985, 0.893, 0.886, 0.175, 0.131,
                   0.653, 0.344, 0.657, 0.32, 0.188, 0.782, 0.094, 0.467, 0.512)
-  cw_output_beta <- .centWave_orig(int = noise_peak*100000, 
+  cw_output_beta <- .centWave_orig(int = noise_peak*100000,
                                    scantime = seq_along(noise_peak),
-                                   mz=rep(530.1, length(noise_peak)), 
+                                   mz=rep(530.1, length(noise_peak)),
                                    valsPerSpect = rep(1, length(noise_peak)),
                                    peakwidth = c(20, 80), extendLengthMSW = TRUE,
                                    verboseBetaColumns = TRUE, snthresh = 0)
@@ -147,6 +147,21 @@ test_that("New beta columns perform as expected", {
   # Known values to ensure performance doesn't degrade unexpectedly
   expect_lt(cw_output_beta[,"beta_cor"], 0.2)
   expect_lt(cw_output_beta[,"beta_snr"], 6)
+})
+
+test_that(".get_beta_values works with chromatographic and MS data", {
+    vals <- c(2, 3, 4, 6, 8, 10, 7, 6, 4, 3, 2)
+    res <- .get_beta_values(vals)
+    ## intensity values with duplicated retention times
+    vals <- c(2, 3, 4, 6, 2, 8, 10, 7, 6, 4, 3, 2)
+    rts <- c(1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10)
+    res_a <- .get_beta_values(vals)
+    expect_true(res_a[1L] < res[1L])
+    ## WARNING: does not work if we have duplicated retentio times!
+    expect_warning(
+        res_b <- .get_beta_values(vals, rts)
+    )
+    expect_true(is.na(res_b[1L]))
 })
 
 test_that("do_findChromPeaks_centWaveWithPredIsoROIs works", {

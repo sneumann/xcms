@@ -279,6 +279,7 @@ dropGenericProcessHistory <- function(x, fun) {
                        valsPerSpect = valsPerSpect, rtrange = rtr,
                        mzrange = mzr)
         if (length(mtx)) {
+            ## mtx: time, mz, intensity
             if (any(!is.na(mtx[, 3]))) {
                 ## How to calculate the area: (1)sum of all intensities / (2)by
                 ## the number of data points (REAL ones, considering also NAs)
@@ -290,21 +291,20 @@ dropGenericProcessHistory <- function(x, fun) {
                 ## as e.g. centWave. Using max(1, ... to avoid getting Inf in
                 ## case the signal is based on a single data point.
                 ## (3) rtr[2] - rtr[1]
-                res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE) *
+                res[i, "into"] <- sum(mtx[, 3L], na.rm = TRUE) *
                     ((rtr[2] - rtr[1]) /
                      max(1, (sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1)))
-                maxi <- which.max(mtx[, 3])
+                maxi <- which.max(mtx[, 3L])
                 res[i, c("rt", "maxo")] <- mtx[maxi[1], c(1, 3)]
                 res[i, c("rtmin", "rtmax")] <- rtr
                 ## Calculate the intensity weighted mean mz
                 meanMz <- do.call(mzCenterFun, list(mtx[, 2], mtx[, 3]))
                 if (is.na(meanMz)) meanMz <- mtx[maxi[1], 2]
                 res[i, "mz"] <- meanMz
-
-                if ("beta_cor" %in% cn) {
+                if ("beta_cor" %in% cn)
                     res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
-                        mtx[, 3L], mtx[, 1L])
-                }
+                        vapply(split(mtx[, 3L], mtx[, 1L]), sum, NA_real_),
+                        unique(mtx[, 1L]))
             } else {
                 res[i, ] <- rep(NA_real_, ncols)
             }

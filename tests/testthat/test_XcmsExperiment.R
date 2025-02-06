@@ -825,6 +825,19 @@ test_that(".chrom_peak_intensity_centWave works", {
     ## pks[11, ].
 })
 
+
+## That's from XcmsExperiment-functions.R
+test_that(".chrom_peak_beta_metrics works", {
+  x <- Spectra::peaksData(spectra(xmse[2L]))
+  rt <- rtime(spectra(xmse[2L]))
+  pks <- chromPeaks(xmse)[chromPeaks(xmse)[, "sample"] == 2L, ]
+
+  res <- .chrom_peak_beta_metrics(x, rt, pks, sampleIndex = 2L,
+                                        cn = colnames(pks))
+  expect_equal(nrow(res), nrow(pks))
+
+})
+
 ## That's from XcmsExperiment-functions.R
 test_that(".chrom_peak_intensity_matchedFilter works", {
     x <- Spectra::peaksData(spectra(xmse[2L]))
@@ -1448,4 +1461,24 @@ test_that("fillChromPeaks,XcmsExperiment works with verboseBetaColumns", {
     pks_det <- chromPeaks(res)[!chromPeakData(res)$is_filled, ]
     pks_fil <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
     expect_true(sum(is.na(pks_fil[, "beta_cor"])) < 4)
+})
+
+test_that("chromPeakSummary,XcmsExperiment works", {
+  p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000),
+                     verboseBetaColumns = FALSE)
+  xmse <- findChromPeaks(mse, param = p)
+  mat <- chromPeakSummary(xmse,BetaDistributionParam())
+  expect_true(all(c("beta_cor", "beta_snr") %in% colnames(mat)))
+  expect_true(is.numeric(mat))
+})
+
+test_that("c,XcmsExperiment works", {
+    a <- loadXcmsData("faahko_sub2")
+    res <- c(a)
+    expect_equal(res, a)
+
+    res <- c(a, a)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(length(res) == length(a) * 2)
+    expect_true(nrow(chromPeaks(res)) == nrow(chromPeaks(a)) * 2)
 })

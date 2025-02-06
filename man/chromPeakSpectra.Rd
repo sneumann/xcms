@@ -74,7 +74,8 @@ with a prefix \code{"chrom_peak_"}. Defaults to \code{c("mz", "rt")}.}
 \item{return.type}{\code{character(1)} defining the type of result object that
 should be returned.}
 
-\item{BPPARAM}{parallel processing setup. Defaults to \code{\link[=bpparam]{bpparam()}}.}
+\item{BPPARAM}{parallel processing setup. Defaults to
+\code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.}
 }
 \value{
 parameter \code{return.type} allow to specify the type of the returned object:

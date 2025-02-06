@@ -29,7 +29,7 @@ original file names etc) should be copied from the original files.}
 See documentation of the \code{software_processing} parameter of
 \code{\link[mzR:writeMSData]{mzR::writeMSData()}}.}
 
-\item{...}{Additional parameters to pass down to the \code{\link[=writeMSData]{writeMSData()}}
+\item{...}{Additional parameters to pass down to the \code{\link[MSnbase:writeMSData]{MSnbase::writeMSData()}}
 function in the \code{MSnbase} package, such as \code{outformat} to specify the
 output format (\code{"mzml"} or \code{"mzxml"}) or \code{copy} to specify whether
 general information from the original MS data files (such as data
@@ -41,7 +41,7 @@ If adjusted retention times are present, these are used as retention time of
 the exported spectra.
 }
 \seealso{
-\code{\link[=writeMSData]{writeMSData()}} function in the \code{MSnbase} package.
+\code{\link[MSnbase:writeMSData]{MSnbase::writeMSData()}} function in the \code{MSnbase} package.
 }
 \author{
 Johannes Rainer

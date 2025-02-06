@@ -382,12 +382,12 @@ See help of the individual functions.
 \description{
 The \code{XChromatogram} object allows to store chromatographic data (e.g.
 an extracted ion chromatogram) along with identified chromatographic peaks
-within that data. The object inherits all functions from the \code{\link[=Chromatogram]{Chromatogram()}}
-object in the \code{MSnbase} package.
+within that data. The object inherits all functions from the
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} object in the \code{MSnbase} package.
 
 Multiple \code{XChromatogram} objects can be stored in a \code{XChromatograms} object.
-This class extends \code{\link[=MChromatograms]{MChromatograms()}} from the \code{MSnbase} package and allows
-thus to arrange chromatograms in a matrix-like structure, columns
+This class extends \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} from the \code{MSnbase} package
+and allows thus to arrange chromatograms in a matrix-like structure, columns
 representing samples and rows m/z-retention time ranges.
 
 All functions are described (grouped into topic-related sections) after the
@@ -407,7 +407,7 @@ used to extract the chromatogram was larger than the peak's m/z.
 
 Objects can be created with the contructor function \code{XChromatogram} and
 \code{XChromatograms}, respectively. Also, they can be coerced from
-\link{Chromatogram} or \code{\link[=MChromatograms]{MChromatograms()}} objects using
+\link{Chromatogram} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects using
 \code{as(object, "XChromatogram")} or \code{as(object, "XChromatograms")}.
 }
 
@@ -415,7 +415,7 @@ Objects can be created with the contructor function \code{XChromatogram} and
 
 
 Besides classical subsetting with \code{[} specific filter operations on
-\code{\link[=MChromatograms]{MChromatograms()}} and \code{XChromatograms} objects are available. See
+\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} and \code{XChromatograms} objects are available. See
 \code{\link[=filterColumnsIntensityAbove]{filterColumnsIntensityAbove()}} for more details.
 
 
@@ -451,17 +451,20 @@ chromatographic peak definitions. Parameter \code{rt} allows to specify a
 retention time range for which peaks should be returned along with
 parameter \code{type} that defines how \emph{overlapping} is defined (parameter
 description for details). For \code{XChromatogram} objects the function returns
-a \code{matrix} with columns \code{"rt"} (retention time of the peak apex),
-\code{"rtmin"} (the lower peak boundary), \code{"rtmax"} (the upper peak boundary),
-\code{"into"} (the ingegrated peak signal/area of the peak), \code{"maxo"} (the
-maximum instensity of the peak and \code{"sn"} (the signal to noise ratio).
+a \code{matrix} with columns \code{"mz"} (mean m/z value), \code{"mzmin"} (minimal m/z
+value) and \code{"mzmax"} (maximal m/z value), \code{"rt"} (retention time of the
+peak apex), \code{"rtmin"} (the lower peak boundary in retention time
+dimension), \code{"rtmax"} (the upper peak boundary in retention time
+dimension), \code{"into"} (the integrated peak signal/area of the peak),
+\code{"maxo"} (the maximum instensity of the peak and \code{"sn"} (the signal to
+noise ratio).
 Note that, depending on the peak detection algorithm, the matrix may
 contain additional columns.
 For \code{XChromatograms} objects the \code{matrix} contains also columns \code{"row"}
 and \code{"column"} specifying in which chromatogram of \code{object} the peak was
 identified. Chromatographic peaks are ordered by row.
-\item \code{chromPeakData}, \verb{chromPeakData<-}: extract or set the \code{\link[=DataFrame]{DataFrame()}} with
-optional chromatographic peak annotations.
+\item \code{chromPeakData}, \verb{chromPeakData<-}: extract or set the
+\code{\link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame()}} with optional chromatographic peak annotations.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
@@ -742,7 +745,7 @@ plot(xchr_sub)
 }
 \seealso{
 \link[=findChromPeaks-Chromatogram-CentWaveParam]{findChromPeaks-centWave} for peak
-detection on \code{\link[=MChromatograms]{MChromatograms()}} objects.
+detection on \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects.
 }
 \author{
 Johannes Rainer

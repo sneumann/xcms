@@ -231,3 +231,59 @@ test_that(".xcms_experiment_to_xcms_n_exp works", {
 
     expect_equal(mz(res[1:3]), mz(ref[1:3]))
 })
+
+test_that(".xcms_n_exp_to_xcms_experiment works", {
+    from <- loadXcmsData("xdata")
+    res <- .xcms_n_exp_to_xcms_experiment(from)
+    expect_s4_class(res, "XcmsExperiment")
+    expect_equal(unname(rtime(res)), unname(rtime(from)))
+    expect_true(hasChromPeaks(res))
+    expect_true(hasFeatures(res))
+    expect_true(hasAdjustedRtime(res))
+
+    from@featureData <- from@featureData[-(10:20), ]
+    expect_error(.xcms_n_exp_to_xcms_experiment(from), "don't match")
+
+    from <- loadXcmsData("faahko_sub")
+    res <- as(from, "XcmsExperiment")
+    expect_s4_class(res, "XcmsExperiment")
+    expect_equal(unname(rtime(res)), unname(rtime(from)))
+    expect_true(hasChromPeaks(res))
+    expect_false(hasFeatures(res))
+    expect_false(hasAdjustedRtime(res))
+
+    from@spectraProcessingQueue <- list("a")
+    expect_error(.xcms_n_exp_to_xcms_experiment(from), "not empty")
+    from@spectraProcessingQueue <- list()
+})
+
+test_that(".xmse_combine works", {
+    a <- loadXcmsData("xmse")
+    a_2 <- dropFeatureDefinitions(a)
+    a_2 <- dropAdjustedRtime(a_2)
+    b <- loadXcmsData("faahko_sub2")
+
+    res <- .xmse_combine(list(a, b))
+    expect_s4_class(res, "XcmsExperiment")
+    expect_true(hasChromPeaks(res))
+    expect_false(hasAdjustedRtime(res))
+    expect_false(hasFeatures(res))
+    expect_equal(nrow(chromPeaks(res)),
+                 nrow(chromPeaks(a_2)) + nrow(chromPeaks(b)))
+
+    cp_b <- chromPeaks(b)
+    cp_res <- chromPeaks(res[9:11])
+    rownames(cp_b) <- NULL
+    rownames(cp_res) <- NULL
+    expect_equal(cp_b, cp_res)
+
+    cpd_res <- chromPeakData(res)
+    cpd_a <- chromPeakData(a_2)
+    cpd_b <- chromPeakData(b)
+    rownames(cpd_res) <- NULL
+    rownames(cpd_a) <- NULL
+    rownames(cpd_b) <- NULL
+    expect_equal(cpd_res, MsCoreUtils::rbindFill(cpd_a, cpd_b))
+
+    expect_error(.xmse_combine(list(a, 3)), "objects accepted")
+})

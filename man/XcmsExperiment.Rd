@@ -22,6 +22,7 @@
 \alias{XcmsExperiment-class}
 \alias{show,XcmsExperiment-method}
 \alias{filterChromPeaks}
+\alias{c.XcmsExperiment}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{filterIsolationWindow,XcmsExperiment-method}
 \alias{filterRt,XcmsExperiment-method}
@@ -98,6 +99,8 @@ featureArea(
 )
 
 \S4method{plot}{MsExperiment,missing}(x, y, msLevel = 1L, peakCol = "#ff000060", ...)
+
+\method{c}{XcmsExperiment}(...)
 
 \S4method{[}{XcmsExperiment,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
@@ -270,7 +273,8 @@ type of the returned object. Currently only
 \code{return.type = "MChromatograms"} is supported.}
 
 \item{BPPARAM}{For \code{chromatogram}: parallel processing setup. Defaults
-to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
+to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more
+information.}
 
 \item{mzmin}{For \code{featureArea}: function to calculate the \code{"mzmin"} of
 a feature based on the \code{"mzmin"} values of the individual
@@ -426,7 +430,7 @@ no chromatographic peak was identified and hence a missing value would
 be reported. This can be performed using the \code{\link[=fillChromPeaks]{fillChromPeaks()}} function.
 }
 }
-\section{Subsetting and filtering}{
+\section{Subset, filter and combine}{
 
 \itemize{
 \item \code{[}: subset an \code{XcmsExperiment} by \strong{sample} (parameter \code{i}). Subsetting
@@ -437,6 +441,17 @@ samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 \code{keepChromPeaks} (by default \code{TRUE}), \code{keepAdjustedRtime} (by default
 \code{FALSE}) and \code{keepFeatures} (by default \code{FALSE}).
+\item \code{c}: multiple \code{XcmsExperiment} objects can be combined into one using the
+\code{c()} function. This requires however that all the \code{XcmsExperiments}'
+\code{Spectra} objects use the same type of \code{MsBackend} and that their
+processing queues are empty. Also, only combining of peak detection
+results is supported. Any eventually present alignment or correspondence
+results will be dropped before combining the \code{XcmsExperiment} objects.
+Finally, at present, only the MS data of the individual \code{XcmsExperiment}
+objects is combined and any data eventually present in the \verb{@qdata},
+\verb{@otherData} and \verb{@experimentFiles} slots is ignored.
+The function returns a \code{XcmsExperiment} objects with the combined MS data
+(\code{Spectra} objects) and chromatographic peak detection results.
 \item \code{filterChromPeaks}: filter chromatographic peaks of an \code{XcmsExperiment}
 keeping only those specified with parameter \code{keep}. Returns the
 \code{XcmsExperiment} with the filtered data. Chromatographic peaks to
@@ -499,9 +514,9 @@ extract the data from (to e.g. for extracted ion chromatograms EICs).
 Both parameters are expected to be numerical two-column matrices with
 the first column defining the lower and the second the upper margin.
 Each row can define a separate m/z - retention time region. Currently
-the function returns a \code{\link[=MChromatograms]{MChromatograms()}} object for \code{object} being a
-\code{MsExperiment} or, for \code{object} being an \code{XcmsExperiment}, either a
-\code{MChromatograms} or \code{\link[=XChromatograms]{XChromatograms()}} depending on parameter
+the function returns a \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object for \code{object}
+being a \code{MsExperiment} or, for \code{object} being an \code{XcmsExperiment},
+either a \code{MChromatograms} or \code{\link[=XChromatograms]{XChromatograms()}} depending on parameter
 \code{return.type} (can be either \code{"MChromatograms"} or \code{"XChromatograms"}).
 For the latter also chromatographic peaks detected within the provided
 m/z and retention times are returned. Parameter \code{chromPeaks} allows
@@ -636,9 +651,9 @@ Parameters \code{msLevel}, \code{mz}, \code{ppm} and \code{rt} allow to define s
 feature definitions that should be returned with the parameter \code{type}
 defining how these parameters should be used to subset the returned
 \code{data.frame}. See parameter descriptions for details.
-\item \code{featureSpectra}: returns a \code{\link[=Spectra]{Spectra()}} or \code{List} of \code{Spectra} with
-(MS1 or MS2) spectra associated to each feature. See \code{\link[=featureSpectra]{featureSpectra()}}
-for more details and available parameters.
+\item \code{featureSpectra}: returns a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} or \code{List} of \code{Spectra}
+with (MS1 or MS2) spectra associated to each feature. See
+\code{\link[=featureSpectra]{featureSpectra()}} for more details and available parameters.
 \item \code{featuresSummary}: calculate a simple summary on features. See
 \code{\link[=featureSummary]{featureSummary()}} for details.
 \item \code{groupChromPeaks}: performs the correspondence analysis (i.e., grouping
@@ -680,12 +695,12 @@ to define the column in \code{chromPeaks} that should be selected; defaults to
 \verb{intensity = "into"). }method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.
 \item \code{quantify}: extract the correspondence analysis results as a
-\code{\link[=SummarizedExperiment]{SummarizedExperiment()}}. The feature \emph{values} are used as \code{assay} in
-the returned \code{SummarizedExperiment}, \code{rowData} contains the
-\code{featureDefinitions} (without column \code{"peakidx"}) and \code{colData} the
-\code{sampleData} of \code{object}. Additional parameters to the \code{featureValues}
-function (that is used to extract the feature value matrix) can be
-passed \emph{via} \code{...}.
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
+are used as \code{assay} in the returned \code{SummarizedExperiment}, \code{rowData}
+contains the \code{featureDefinitions} (without column \code{"peakidx"}) and
+\code{colData} the \code{sampleData} of \code{object}. Additional parameters to the
+\code{featureValues} function (that is used to extract the feature value
+matrix) can be passed \emph{via} \code{...}.
 }
 }
 
@@ -718,7 +733,10 @@ sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} 
 }
 
 The functions listed below ensure compatibility with the \emph{older}
-\code{\link[=XCMSnExp]{XCMSnExp()}} xcms result object.
+\code{\link[=XCMSnExp]{XCMSnExp()}} xcms result object. Also, an \code{XcmsExperiment} can be coerced
+to the \emph{older} \code{XCMSnExp} class using \code{as(object, "XCMSnExp")} same as a
+\code{XCMSnExp} class can be coerced to \code{XcmsExperiment} using
+\code{as(object, "XcmsExperiment")}.
 \itemize{
 \item \code{fileNames}: returns the original data file names for the spectra data.
 Ideally, the \code{dataOrigin} or \code{dataStorage} spectra variables from the

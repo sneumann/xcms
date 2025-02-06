@@ -55,3 +55,22 @@ test_that("removeIntensity,Chromatogram works", {
     expect_equal(intensity(res), c(NA_real_, NA_real_, NA_real_, 22, 34,
                                    NA_real_, NA_real_))
 })
+
+test_that(".add_mz works", {
+    a <- matrix(nrow = 0, ncol = 3)
+    colnames(a) <- c("rt", "rtmin", "rtmax")
+    res <- .add_mz(a, c(1, 2))
+    expect_equal(ncol(res), 6)
+    expect_equal(colnames(res), c("mz", "mzmin", "mzmax",
+                                  "rt", "rtmin", "rtmax"))
+    expect_true(nrow(res) == 0)
+    a <- matrix(nrow = 2, ncol = 3)
+    colnames(a) <- c("rt", "rtmin", "rtmax")
+    res <- .add_mz(a, c(1, 2))
+    expect_equal(ncol(res), 6)
+    expect_equal(colnames(res), c("mz", "mzmin", "mzmax",
+                                  "rt", "rtmin", "rtmax"))
+    expect_equal(res[, "mzmin"], c(1, 1))
+    expect_equal(res[, "mzmax"], c(2, 2))
+    expect_equal(res[, "mz"], c(1.5, 1.5))
+})

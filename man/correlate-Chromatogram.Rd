@@ -36,15 +36,15 @@
 )
 }
 \arguments{
-\item{x}{\code{\link[=Chromatogram]{Chromatogram()}} or \code{\link[=MChromatograms]{MChromatograms()}} object.}
+\item{x}{\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object.}
 
-\item{y}{\code{\link[=Chromatogram]{Chromatogram()}} or \code{\link[=MChromatograms]{MChromatograms()}} object.}
+\item{y}{\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object.}
 
 \item{use}{\code{character(1)} passed to the \code{cor} function. See \code{\link[=cor]{cor()}} for
 details.}
 
-\item{method}{\code{character(1)} passed to the \code{cor} function. See \code{\link[=cor]{cor()}} for
-details.}
+\item{method}{\code{character(1)} passed to the \code{cor} function. See
+\code{\link[stats:cor]{stats::cor()}} for details.}
 
 \item{align}{\code{character(1)} defining the alignment method to be used. See
 help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for details. The value of
@@ -70,9 +70,9 @@ Correlate intensities of two chromatograms with each other. If the two
 chromatogram. See help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for more
 details.
 
-If \code{correlate} is called on a single \code{\link[=MChromatograms]{MChromatograms()}} object a pairwise
-correlation of each chromatogram with each other is performed and a \code{matrix}
-with the correlation coefficients is returned.
+If \code{correlate} is called on a single \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object a
+pairwise correlation of each chromatogram with each other is performed and
+a \code{matrix} with the correlation coefficients is returned.
 
 Note that the correlation of two chromatograms depends also on their order,
 e.g. \code{correlate(chr1, chr2)} might not be identical to
