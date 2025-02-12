@@ -104,9 +104,9 @@ Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 one \strong{mass peak} in the reconstructed spectrum.
 }
 
-The resulting \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object provides also the peak IDs of the
-MS2 chromatographic peaks for each spectrum as well as their correlation
-value with spectra variables \emph{ms2_peak_id} and \emph{ms2_peak_cor}.
+The resulting \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object provides also the peak IDs of
+the MS2 chromatographic peaks for each spectrum as well as their
+correlation value with spectra variables \emph{ms2_peak_id} and \emph{ms2_peak_cor}.
 }
 \seealso{
 \code{\link[=findChromPeaksIsolationWindow]{findChromPeaksIsolationWindow()}} for the function to perform MS2

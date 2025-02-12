@@ -25,7 +25,7 @@ arguments used for peak detection.}
 
 \item{BPPARAM}{a parameter class specifying if and how parallel processing
 should be performed (only for \code{XChromatograms} objects). It defaults to
-\code{bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
+\code{bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more information.}
 }
 \value{
 If called on a \code{Chromatogram} object, the method returns an \link{XChromatogram}

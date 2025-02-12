@@ -44,12 +44,12 @@
 #'
 #' The `XChromatogram` object allows to store chromatographic data (e.g.
 #' an extracted ion chromatogram) along with identified chromatographic peaks
-#' within that data. The object inherits all functions from the [Chromatogram()]
-#' object in the `MSnbase` package.
+#' within that data. The object inherits all functions from the
+#' [MSnbase::Chromatogram()] object in the `MSnbase` package.
 #'
 #' Multiple `XChromatogram` objects can be stored in a `XChromatograms` object.
-#' This class extends [MChromatograms()] from the `MSnbase` package and allows
-#' thus to arrange chromatograms in a matrix-like structure, columns
+#' This class extends [MSnbase::MChromatograms()] from the `MSnbase` package
+#' and allows thus to arrange chromatograms in a matrix-like structure, columns
 #' representing samples and rows m/z-retention time ranges.
 #'
 #' All functions are described (grouped into topic-related sections) after the
@@ -59,13 +59,13 @@
 #'
 #' Objects can be created with the contructor function `XChromatogram` and
 #' `XChromatograms`, respectively. Also, they can be coerced from
-#' [Chromatogram] or [MChromatograms()] objects using
+#' [Chromatogram] or [MSnbase::MChromatograms()] objects using
 #' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
 #'
 #' @section Filtering and subsetting:
 #'
 #' Besides classical subsetting with `[` specific filter operations on
-#' [MChromatograms()] and `XChromatograms` objects are available. See
+#' [MSnbase::MChromatograms()] and `XChromatograms` objects are available. See
 #' [filterColumnsIntensityAbove()] for more details.
 #'
 #' @param rtime For `XChromatogram`: `numeric` with the retention times

@@ -115,7 +115,8 @@ name of the feature in the \code{featureDefinitions} data.frame) is always added
 as a metadata column named \code{"feature_id"}.
 
 See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}}, as it supports a similar parameter for
-including columns from the chromatographic peaks in the returned spectra object.
+including columns from the chromatographic peaks in the returned spectra
+object.
 These parameters can be used in combination to include information from both
 the chromatographic peaks and the features in the returned
 \code{\link[Spectra:Spectra]{Spectra::Spectra()}}.

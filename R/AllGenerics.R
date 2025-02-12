@@ -471,7 +471,7 @@ setGeneric("chromPeakData<-", function(object, value)
 #'    with a prefix `"chrom_peak_"`. Defaults to `c("mz", "rt")`.
 #'
 #' @param BPPARAM parallel processing setup. Defaults to
-#'   [BiocParallel::bpparam()].
+#'    [BiocParallel::bpparam()].
 #'
 #' @param ... ignored.
 #'
@@ -559,20 +559,21 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #'
 #' @description
 #'
-#' The `chromPeakSummary()` method calculates summary statistic or other
-#' metrics for each of the identified chromatographic peaks in an *xcms*
-#' result object, such as the [XcmsExperiment()]. Different metrics can be
-#' calculated, depending (and configured) using dedicated *parameter* classes.
-#' As a result, the method returns a `matrix` or `data.frame` with one row
-#' per chromatographic peak. Each column contains calculated values, depending
-#' on the used method/parameter class.
+#' The `chromPeakSummary()` method calculates summary statistics or other
+#' metrics for each of the identified chromatographic peaks in an *xcms* result
+#' object, such as the [XcmsExperiment()]. Different metrics can be calculated,
+#' depending upon (and configured by) using dedicated *parameter* classes. As a
+#' result, the method returns a `matrix` or `data.frame` with one row per
+#' chromatographic peak. Each column contains calculated values, depending on
+#' the used method/parameter class.
 #'
 #' Currently implemented methods/parameter classes are:
 #'
 #' - `BetaDistributionParam`: calculates the *beta_cor* and *beta_snr* quality
-#'   metrics as described in (Kumler 2023) representing the result from a
-#'   (correlation) test of similarity to a bell curve and the signal-to-noise
-#'   ratio calculated on the residulas of this test.
+#'   metrics as described in Kumler 2023 representing the result from a
+#'   (correlation) test of similarity (using Pearson's correlation coefficient)
+#'   to a bell curve and the signal-to-noise ratio calculated on the residuals
+#'   of this test.
 #'
 #' @param BPPARAM Parallel processing setup. See [BiocParallel::bpparam()]
 #'     for details.
@@ -598,7 +599,7 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #' columns, their names and content depend on the used parameter object. See
 #' the respective documentation above for more details.
 #'
-#' @author Pablo Vangeenderhuysen, Johannes Rainer
+#' @author Pablo Vangeenderhuysen, Johannes Rainer, William Kumler
 #'
 #' @md
 #'
@@ -888,7 +889,8 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' as a metadata column named `"feature_id"`.
 #'
 #' See also [chromPeakSpectra()], as it supports a similar parameter for
-#' including columns from the chromatographic peaks in the returned spectra object.
+#' including columns from the chromatographic peaks in the returned spectra
+#' object.
 #' These parameters can be used in combination to include information from both
 #' the chromatographic peaks and the features in the returned
 #' [Spectra::Spectra()].
@@ -1825,9 +1827,9 @@ setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 #'   Each MS2 chromatographic peak selected for an MS1 peak will thus represent
 #'   one **mass peak** in the reconstructed spectrum.
 #'
-#' The resulting [Spectra::Spectra()] object provides also the peak IDs of the
-#' MS2 chromatographic peaks for each spectrum as well as their correlation
-#' value with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
+#' The resulting [Spectra::Spectra()] object provides also the peak IDs of
+#' the MS2 chromatographic peaks for each spectrum as well as their
+#' correlation value with spectra variables *ms2_peak_id* and *ms2_peak_cor*.
 #'
 #' @param object `XCMSnExp` with identified chromatographic peaks.
 #'

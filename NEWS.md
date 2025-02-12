@@ -6,6 +6,8 @@
   level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
   in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
   in MS level 2.
+- Add new `XcmsExperimentHdf5` result object keeping all data in a HDF5 file
+  on-disk.
 
 ## Changes in version 4.5.3
 
@@ -17,6 +19,8 @@
   chromatographic peak detection with parameter `verboseBetaColumns = TRUE`.
 - Add `chromPeakSummary` generic (issue #705).
 - Add `chromPeakSummary()` method to calculate the *beta* quality metrics.
+- Add `c()` method to combine multiple `XcmsExperiment` objects into one.
+- Add a method to coerce from `XCMSnExp` to `XcmsExperiment` objects.
 
 ## Changes in version 4.5.2
 

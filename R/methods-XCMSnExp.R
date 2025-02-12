@@ -1522,6 +1522,12 @@ setAs(from = "XcmsExperiment", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 setAs(from = "XcmsExperiment", to = "XCMSnExp",
       def = .xcms_experiment_to_xcms_n_exp)
 
+#' @rdname XcmsExperiment
+#'
+#' @name XcmsExperiment
+setAs(from = "XCMSnExp", to = "XcmsExperiment",
+      def = .xcms_n_exp_to_xcms_experiment)
+
 #' @rdname XCMSnExp-peak-grouping-results
 setMethod("quantify", "XCMSnExp", function(object, ...) {
     .XCMSnExp2SummarizedExperiment(object, ...)
