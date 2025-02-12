@@ -1,5 +1,10 @@
 # xcms 4.5
 
+## Changes in version 4.5.4
+
+- Fix a bug in `manualChromPeaks()` that caused an error when only a single
+  chrom peak was added.
+
 ## Changes in version 4.5.3
 
 - Address issue #765: peak detection on chromatographic data: report a
