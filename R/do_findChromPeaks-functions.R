@@ -2379,14 +2379,14 @@ do_findPeaks_MSW <- function(mz, int, snthresh = 3,
 ## }
 
 ## Tuned from the original code.
-#' @param peaks. \code{matrix} or \code{data.frame} with peaks for which
-#' isotopes should be predicted. Required columns are \code{"mz"},
-#' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
-#' \code{"intb"} and \code{"scale"}.
+#' @param peaks. `matrix` or `data.frame` with peaks for which
+#' isotopes should be predicted. Required columns are `"mz"`,
+#' `"mzmin"`, `"mzmax"`, `"scmin"`, `"scmax"`,
+#' `"intb"` and `"scale"`.
 #'
-#' @return a \code{matrix} with columns \code{"mz"}, \code{"mzmin"},
-#' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
-#' \code{"intensity"} (always -1) and \code{"scale"}.
+#' @return a `matrix` with columns `"mz"`, `"mzmin"`,
+#' `"mzmax"`, `"scmin"`, `"scmax"`, `"length"` (always -1),
+#' `"intensity"` (always -1) and `"scale"`.
 #' @noRd
 do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
                                mzIntervalExtension = TRUE) {
@@ -2430,8 +2430,8 @@ do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
 
 #' @param peaks. see do_define_isotopes
 #'
-#' @param polarity character(1) defining the polarity, either \code{"positive"}
-#'     or \code{"negative"}.
+#' @param polarity character(1) defining the polarity, either `"positive"`
+#'     or `"negative"`.
 #'
 #' @note
 #'

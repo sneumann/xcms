@@ -17,8 +17,8 @@ GenericParam(fun = character(), args = list())
 \item{args}{\code{list} (ideally named) with the arguments to the function.}
 }
 \value{
-The \code{GenericParam} function returns a \code{GenericParam}
-    object.
+The \code{GenericParam()} function returns a \code{GenericParam}
+object.
 }
 \description{
 The \code{GenericParam} class allows to store generic parameter

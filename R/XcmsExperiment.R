@@ -1,7 +1,7 @@
 #' @title Next Generation `xcms` Result Object
 #'
 #' @aliases XcmsExperiment-class show,XcmsExperiment-method filterChromPeaks
-#' @aliases featureArea
+#' @aliases featureArea quantify
 #'
 #' @description
 #'
@@ -1216,7 +1216,8 @@ setMethod(
                  colnames(chromPeaks)))
             stop("'chromPeaks' lacks one or more of the required colums ",
                  "\"mzmin\", \"mzmax\", \"rtmin\" and \"rtmax\".")
-        chromPeaks <- chromPeaks[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+        chromPeaks <- chromPeaks[, c("mzmin", "mzmax", "rtmin", "rtmax"),
+                                 drop = FALSE]
         if (!all(samples %in% seq_along(object)))
             stop("'samples' out of bounds")
         if (hasFeatures(object))

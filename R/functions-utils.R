@@ -125,8 +125,8 @@ useOriginalCode <- function(x) {
 #'     bins along the m/z dimension.
 #'
 #' @details This is somewhat the successor function for the deprecated
-#'     \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
-#'     \code{profBinLinBaseM} and \code{profIntLin}).
+#'     `profBin*` methods (`profBinM()`, `profBinLinM()`,
+#'     `profBinLinBaseM()` and `profIntLin()`).
 #'
 #' @param mz Numeric representing the m/z values across all scans/spectra.
 #'
@@ -137,8 +137,8 @@ useOriginalCode <- function(x) {
 #'     scan/spectrum.
 #'
 #' @param method A character string specifying the profile matrix generation
-#'     method. Allowed are \code{"bin"}, \code{"binlin"},
-#'     \code{"binlinbase"} and \code{"intlin"}.
+#'     method. Allowed are `"bin"`, `"binlin"`,
+#'     `"binlinbase"` and `"intlin"`.
 #'
 #' @param step Numeric specifying the size of the m/z bins.
 #'
@@ -146,16 +146,16 @@ useOriginalCode <- function(x) {
 #'
 #' @param basespace Numeric.
 #'
-#' @param mzrange. numeric(2) optionally specifying the mz value range
-#'     for binning. This is to adopt the old profStepPad<- method used for
+#' @param mzrange. `numeric(2)` optionally specifying the mz value range
+#'     for binning. This is to adopt the old `profStepPad<-` method used for
 #'     obiwarp retention time correction that did the binning from
 #'     whole-number limits.
 #'
-#' @param returnBreaks logical(1): hack to return the breaks of the bins.
-#'     Setting this to TRUE causes the function to return a \code{list} with
-#'     elements \code{"$profMat"} and \code{"breaks"}.
+#' @param returnBreaks `logical(1)`: hack to return the breaks of the bins.
+#'     Setting this to TRUE causes the function to return a `list` with
+#'     elements `"$profMat"` and `"breaks"`.
 #'
-#' @param baseValue numeric(1) defining the value to be returned if no signal
+#' @param baseValue `numeric(1)` defining the value to be returned if no signal
 #'     was found in the corresponding bin. Defaults to 0 for backward
 #'     compatibility.
 #'
@@ -272,15 +272,15 @@ useOriginalCode <- function(x) {
 #' @title Weighted mean around maximum
 #'
 #' @description Calculate a weighted mean of the values around the value with
-#'     the largest weight. \code{x} could e.g. be mz values and \code{w} the
+#'     the largest weight. `x` could e.g. be mz values and `w` the
 #'     corresponding intensity values.
 #'
-#' @param x \code{numeric} vector from which the weighted mean should be
+#' @param x `numeric` vector from which the weighted mean should be
 #'     calculated.
 #'
-#' @param w \code{numeric} of same length than \code{x} with the weights.
+#' @param w `numeric` of same length than `x` with the weights.
 #'
-#' @param i \code{integer(1)} defining the number of data points left and right
+#' @param i `integer(1)` defining the number of data points left and right
 #'     of the index with the largest weight that should be considered for the
 #'     weighted mean calculation.
 #'
@@ -289,6 +289,8 @@ useOriginalCode <- function(x) {
 #' @author Johannes Rainer
 #'
 #' @noRd
+#'
+#' @md
 #'
 #' @examples
 #'

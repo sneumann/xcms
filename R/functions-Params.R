@@ -3,7 +3,7 @@
 
 ##
 #' @description Extract all slot values and put them into a list, names being
-#'     the slot names. If a slot \code{addParams} exist its content will be
+#'     the slot names. If a slot `addParams` exist its content will be
 #'     appended to the returned list.
 #'
 #' @param x A Param class.
@@ -66,21 +66,25 @@
 
 ############################################################
 ## GenericParam
-#' @return The \code{GenericParam} function returns a \code{GenericParam}
+#' @return The `GenericParam()` function returns a `GenericParam`
 #'     object.
 #'
-#' @param fun \code{character} representing the name of the function.
+#' @param fun `character` representing the name of the function.
 #'
-#' @param args \code{list} (ideally named) with the arguments to the function.
+#' @param args `list` (ideally named) with the arguments to the function.
+#'
+#' @md
 #'
 #' @rdname GenericParam
 GenericParam <- function(fun = character(), args = list()) {
     return(new("GenericParam", fun = fun, args = args))
 }
 
-#' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
+#' @return The `CentWaveParam()` function returns a `CentWaveParam`
 #'     class instance with all of the settings specified for chromatographic
 #'     peak detection by the centWave method.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-centWave
 CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
@@ -99,10 +103,12 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                verboseBetaColumns=verboseBetaColumns))
 }
 
-#' @return The \code{MatchedFilterParam} function returns a
-#'     \code{MatchedFilterParam} class instance with all of the settings
-#'     specified for chromatographic detection by the \emph{matchedFilter}
+#' @return The `MatchedFilterParam()` function returns a
+#'     `MatchedFilterParam` class instance with all of the settings
+#'     specified for chromatographic detection by the *matchedFilter*
 #'     method.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-matchedFilter
 MatchedFilterParam <- function(binSize = 0.1, impute = "none",
@@ -129,10 +135,12 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
     return("intlin")
 }
 
-#' @return The \code{MassifquantParam} function returns a
-#'     \code{MassifquantParam} class instance with all of the settings
-#'     specified for chromatographic peak detection by the \emph{massifquant}
+#' @return The `MassifquantParam()` function returns a
+#'     `MassifquantParam` class instance with all of the settings
+#'     specified for chromatographic peak detection by the *massifquant*
 #'     method.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-massifquant
 MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
@@ -156,37 +164,39 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 #' @param scales Numeric defining the scales of the continuous wavelet
 #'     transform (CWT).
 #'
-#' @param nearbyPeak logical(1) whether to include nearby peaks of
+#' @param nearbyPeak `logical(1)` whether to include nearby peaks of
 #'     major peaks.
 #'
-#' @param peakScaleRange numeric(1) defining the scale range of the
+#' @param peakScaleRange `numeric(1)` defining the scale range of the
 #'     peak (larger than 5 by default).
 #'
-#' @param ampTh numeric(1) defining the minimum required relative
+#' @param ampTh `numeric(1)` defining the minimum required relative
 #'     amplitude of the peak (ratio of the maximum of CWT coefficients).
 #'
-#' @param minNoiseLevel numeric(1) defining the minimum noise level
+#' @param minNoiseLevel `numeric(1)` defining the minimum noise level
 #'     used in computing the SNR.
 #'
-#' @param ridgeLength numeric(1) defining the minimum highest scale
+#' @param ridgeLength `numeric(1)` defining the minimum highest scale
 #'     of the peak in 2-D CWT coefficient matrix.
 #'
-#' @param peakThr numeric(1) with the minimum absolute intensity
+#' @param peakThr `numeric(1)` with the minimum absolute intensity
 #'     (above baseline) of peaks to be picked. If provided, the smoothing
-#'     Savitzky-Golay filter is used (in the \code{MassSpecWavelet})
+#'     Savitzky-Golay filter is used (in the *MassSpecWavelet*)
 #'     package to estimate the local intensity.
 #'
-#' @param tuneIn logical(1) whther to tune in the parameter
+#' @param tuneIn `logical(1)` whther to tune in the parameter
 #'     estimation of the detected peaks.
 #'
 #' @param ... Additional parameters to be passed to the
-#'     \code{\link{peakDetectionCWT}} and
-#'     \code{\link{identifyMajorPeaks}} functions from the
-#'     \code{MassSpecWavelet} package.
+#'     `peakDetectionCWT()` and
+#'     `identifyMajorPeaks()` functions from the
+#'     *MassSpecWavelet* package.
 #'
-#' @return The \code{MSWParam} function returns a \code{MSWParam}
+#' @return The `MSWParam()` function returns a `MSWParam`
 #'     class instance with all of the settings specified for peak detection by
-#'     the \emph{MSW} method.
+#'     the *MSW* method.
+#'
+#' @md
 #'
 #' @rdname findPeaks-MSW
 MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
@@ -205,10 +215,12 @@ MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
                peakThr = peakThr, tuneIn = tuneIn, addParams = addParams))
 }
 
-#' @return The \code{CentWavePredIsoParam} function returns a
-#'     \code{CentWavePredIsoParam} class instance with all of the settings
+#' @return The `CentWavePredIsoParam()` function returns a
+#'     `CentWavePredIsoParam` class instance with all of the settings
 #'     specified for the two-step centWave-based peak detection considering also
 #'     isotopes.
+#'
+#' @md
 #'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
@@ -323,8 +335,10 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
         rtimeDifferenceThreshold = rtimeDifferenceThreshold[1L])
 }
 
-#' @return The \code{FillChromPeaksParam} function returns a
-#'     \code{FillChromPeaksParam} object.
+#' @return The `FillChromPeaksParam()` function returns a
+#'     `FillChromPeaksParam` object.
+#'
+#' @md
 #'
 #' @rdname fillChromPeaks
 FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0,
@@ -339,7 +353,7 @@ fixedRt <- function(object) object@fixedRt
 #' @rdname fillChromPeaks
 fixedMz <- function(object) object@fixedMz
 
-#' @return The `CalibrantMassParam` function returns an instance of
+#' @return The `CalibrantMassParam()` function returns an instance of
 #'     the `CalibrantMassParam` class with all settings and properties set.
 #'
 #' @md

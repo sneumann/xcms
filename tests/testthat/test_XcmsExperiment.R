@@ -1029,7 +1029,9 @@ test_that("manualChromPeaks,XcmsExperiment works", {
     res2 <- manualChromPeaks(tmp, pks, samples = 2)
     expect_equal(unname(chromPeaks(res2)), unname(pks_2))
 
-
+    ## Add single chrom peak.
+    tmp <- mse
+    res <- manualChromPeaks(tmp, pks[1, , drop = FALSE])
 })
 
 test_that("filterChromPeaks,XcmsExperiment works", {

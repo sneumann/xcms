@@ -251,14 +251,14 @@ detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{value}{The value for the slot.}
 
-\item{f}{For \code{integrate}: a \code{CentWaveParam} object.}
+\item{f}{For \code{integrate()}: a \code{CentWaveParam} object.}
 
 \item{x}{The parameter object.}
 }
 \value{
-The \code{CentWaveParam} function returns a \code{CentWaveParam}
-    class instance with all of the settings specified for chromatographic
-    peak detection by the centWave method.
+The \code{CentWaveParam()} function returns a \code{CentWaveParam}
+class instance with all of the settings specified for chromatographic
+peak detection by the centWave method.
 
 For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
     [XCMSnExp()] object with the results of the peak detection.
@@ -284,44 +284,44 @@ The `findChromPeaks,OnDiskMSnExp,CentWaveParam()` method
     values) on the fly from the original files applying also all eventual
     data manipulations.
 
-\code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
-    slot of the object.
+\code{ppm()},\verb{ppm<-}: getter and setter for the \code{ppm}
+slot of the object.
 
-\code{peakwidth},\code{peakwidth<-}: getter and setter for the
-    \code{peakwidth} slot of the object.
+\code{peakwidth()},\verb{peakwidth<-}: getter and setter for the
+\code{peakwidth} slot of the object.
 
-\code{snthresh},\code{snthresh<-}: getter and setter for the
-    \code{snthresh} slot of the object.
+\code{snthresh()},\verb{snthresh<-}: getter and setter for the
+\code{snthresh} slot of the object.
 
-\code{prefilter},\code{prefilter<-}: getter and setter for the
-    \code{prefilter} slot of the object.
+\code{prefilter()},\verb{prefilter<-}: getter and setter for the
+\code{prefilter} slot of the object.
 
-\code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
-    \code{mzCenterFun} slot of the object.
+\code{mzCenterFun()},\verb{mzCenterFun<-}: getter and setter for the
+\code{mzCenterFun} slot of the object.
 
-\code{integrate},\code{integrate<-}: getter and setter for the
-    \code{integrate} slot of the object.
+\code{integrate()},\verb{integrate<-}: getter and setter for the
+\code{integrate} slot of the object.
 
-\code{mzdiff},\code{mzdiff<-}: getter and setter for the
-    \code{mzdiff} slot of the object.
+\code{mzdiff()},\verb{mzdiff<-}: getter and setter for the
+\code{mzdiff} slot of the object.
 
-\code{fitgauss},\code{fitgauss<-}: getter and setter for the
-    \code{fitgauss} slot of the object.
+\code{fitgauss()},\verb{fitgauss<-}: getter and setter for the
+\code{fitgauss} slot of the object.
 
-\code{noise},\code{noise<-}: getter and setter for the
-    \code{noise} slot of the object.
+\code{noise()},\verb{noise<-}: getter and setter for the
+\code{noise} slot of the object.
 
-\code{verboseColumns},\code{verboseColumns<-}: getter and
-    setter for the \code{verboseColumns} slot of the object.
+\code{verboseColumns()},\verb{verboseColumns<-}: getter and
+setter for the \code{verboseColumns} slot of the object.
 
-\code{roiList},\code{roiList<-}: getter and setter for the
-    \code{roiList} slot of the object.
+\code{roiList()},\verb{roiList<-}: getter and setter for the
+\code{roiList} slot of the object.
 
-\code{fistBaselineCheck},\code{firstBaselineCheck<-}: getter
-    and setter for the \code{firstBaselineCheck} slot of the object.
+\code{fistBaselineCheck()},\verb{firstBaselineCheck<-}: getter
+and setter for the \code{firstBaselineCheck} slot of the object.
 
-\code{roiScales},\code{roiScales<-}: getter and setter for the
-    \code{roiScales} slot of the object.
+\code{roiScales()},\verb{roiScales<-}: getter and setter for the
+\code{roiScales} slot of the object.
 }
 \details{
 The centWave algorithm is most suitable for high resolution

@@ -7,11 +7,11 @@
 breaks_on_binSize(fromX, toX, binSize)
 }
 \arguments{
-\item{fromX}{numeric(1) specifying the lowest value for the bins.}
+\item{fromX}{\code{numeric(1)} specifying the lowest value for the bins.}
 
-\item{toX}{numeric(1) specifying the largest value for the bins.}
+\item{toX}{\code{numeric(1)} specifying the largest value for the bins.}
 
-\item{binSize}{numeric(1) defining the size of a bin.}
+\item{binSize}{\code{numeric(1)} defining the size of a bin.}
 }
 \value{
 A numeric vector defining the lower and upper bounds of the bins.
@@ -26,7 +26,8 @@ function ensures that the full data range is included in the bins, i.e. the
 last value (upper boundary of the last bin) is always equal \code{toX}. This
 however means that the size of the last bin will not always be equal to the
 desired bin size.
-See examples for more details and a comparisom to R's \code{seq} function.
+
+See examples for more details and a comparisom to R's \code{seq()} function.
 }
 \examples{
 ## Define breaks with a size of 0.13 for a data range from 1 to 10:
@@ -46,7 +47,7 @@ seq(1, 10, by = 0.51)
 ## Thus it defines one bin (break) less.
 }
 \seealso{
-\code{\link{binYonX}} for a binning function.
+\code{\link[=binYonX]{binYonX()}} for a binning function.
 
 Other functions to define bins: 
 \code{\link{breaks_on_nBins}()}

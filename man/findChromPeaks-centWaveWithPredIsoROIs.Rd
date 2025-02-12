@@ -208,10 +208,10 @@ detection should be performed. Defaults to `msLevel = 1`.}
 \item{value}{The value for the slot.}
 }
 \value{
-The \code{CentWavePredIsoParam} function returns a
-    \code{CentWavePredIsoParam} class instance with all of the settings
-    specified for the two-step centWave-based peak detection considering also
-    isotopes.
+The \code{CentWavePredIsoParam()} function returns a
+\code{CentWavePredIsoParam} class instance with all of the settings
+specified for the two-step centWave-based peak detection considering also
+isotopes.
 
 For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
 \code{XCMSnExp} object with the results of the peak detection.
@@ -244,20 +244,20 @@ specific data and load the spectra data (mz and intensity values) on the
 fly from the original files applying also all eventual data
 manipulations.
 
-\code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
-    setter for the \code{snthreshIsoROIs} slot of the object.
+\code{snthreshIsoROIs()},\verb{snthreshIsoROIs<-}: getter and
+setter for the \code{snthreshIsoROIs} slot of the object.
 
-\code{maxCharge},\code{maxCharge<-}: getter and
-    setter for the \code{maxCharge} slot of the object.
+\code{maxCharge()},\verb{maxCharge<-}: getter and
+setter for the \code{maxCharge} slot of the object.
 
-\code{maxIso},\code{maxIso<-}: getter and
-    setter for the \code{maxIso} slot of the object.
+\code{maxIso()},\verb{maxIso<-}: getter and
+setter for the \code{maxIso} slot of the object.
 
-\code{mzIntervalExtension},\code{mzIntervalExtension<-}: getter
-    and setter for the \code{mzIntervalExtension} slot of the object.
+\code{mzIntervalExtension()},\verb{mzIntervalExtension<-}: getter
+and setter for the \code{mzIntervalExtension} slot of the object.
 
-\code{polarity},\code{polarity<-}: getter and
-    setter for the \code{polarity} slot of the object.
+\code{polarity()},\verb{polarity<-}: getter and
+setter for the \code{polarity} slot of the object.
 }
 \details{
 See \code{\link[=centWave]{centWave()}} for details on the centWave method.

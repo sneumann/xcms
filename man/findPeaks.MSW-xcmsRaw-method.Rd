@@ -17,9 +17,9 @@ detection should be performed.}
 should be returned.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link{peakDetectionCWT}} and
-\code{\link{identifyMajorPeaks}} functions from the
-\code{MassSpecWavelet} package.}
+\code{peakDetectionCWT()} and
+\code{identifyMajorPeaks()} functions from the
+\emph{MassSpecWavelet} package.}
 }
 \value{
 A matrix, each row representing an intentified peak, with columns:

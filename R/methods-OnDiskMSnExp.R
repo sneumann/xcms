@@ -56,8 +56,6 @@
 #' @seealso [XCMSnExp()] for the object containing the results of
 #'     the peak detection.
 #'
-#' @rdname
-#'
 #' @rdname findChromPeaks-centWave
 setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "CentWaveParam"),

@@ -140,26 +140,26 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @note
 #'
-#' Ideally, \code{x} should be an \code{OnDiskMSnExp} object as subsetting
-#' of a \code{XCMSnExp} object is more costly (removing of preprocessing
+#' Ideally, `x` should be an `OnDiskMSnExp` object as subsetting
+#' of a `XCMSnExp` object is more costly (removing of preprocessing
 #' results, restoring data etc). If retention times reported in the
 #' featureData are replaced by adjusted retention times, these are set
 #' in the Spectrum objects as retention time.
 #'
-#' @param x An \code{OnDiskMSnExp} object.
+#' @param x An `OnDiskMSnExp` object.
 #'
-#' @param rt \code{numeric(2)} with the retention time range from which the
+#' @param rt `numeric(2)` with the retention time range from which the
 #'     data should be extracted.
 #'
-#' @param mz \code{numeric(2)} with the mz range.
+#' @param mz `numeric(2)` with the mz range.
 #'
-#' @param msLevel \code{integer} defining the MS level(s) to which the data
+#' @param msLevel `integer` defining the MS level(s) to which the data
 #'     should be restricted prior to data extraction.
 #'
 #' @return
 #'
-#' A \code{list} with length equal to the number of files and
-#' each element being a \code{data.frame} with the extracted values.
+#' A `list` with length equal to the number of files and
+#' each element being a `data.frame` with the extracted values.
 #'
 #' @noRd
 #'
@@ -212,23 +212,23 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @note This reads the full data first and does the subsetting later in R.
 #'
-#' @param object An \code{XCMSnExp} object representing a single sample.
+#' @param object An `XCMSnExp` object representing a single sample.
 #'
-#' @param peakArea A \code{matrix} with the peak definition, i.e.
-#'     \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' @param peakArea A `matrix` with the peak definition, i.e.
+#'     "rtmin", "rtmax", "mzmin" and "mzmax".
 #'
-#' @param sample_idx \code{integer(1)} with the index of the sample in the
+#' @param sample_idx integer(1) with the index of the sample in the
 #'     object.
 #'
 #' @param mzCenterFun Name of the function to be used to calculate the mz value.
-#'     Defaults to \code{weighted.mean}, i.e. the intensity weighted mean mz.
+#'     Defaults to weighted.mean, i.e. the intensity weighted mean mz.
 #'
-#' @param cn \code{character} with the names of the result matrix.
+#' @param cn character with the names of the result matrix.
 #'
 #' @return
 #'
-#' A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
-#' \code{"into"} and \code{"maxo"} with the by intensity weighted mean of
+#' A matrix with at least columns `"mz"`, `"rt"`,
+#' `"into"` and `"maxo"` with the by intensity weighted mean of
 #' mz, rt or the maximal intensity in the area, the integrated signal in
 #' the area and the maximal signal in the area.
 #'

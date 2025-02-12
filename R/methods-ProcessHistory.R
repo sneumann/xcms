@@ -22,15 +22,17 @@ setMethod("show", "XProcessHistory", function(object) {
 
 #' @aliases processParam
 #'
-#' @description \code{processParam}, \code{processParam<-}: get or set the
-#'     parameter class from an \code{XProcessHistory} object.
+#' @description `processParam()`, `processParam<-`: get or set the
+#'     parameter class from an `XProcessHistory` object.
 #'
-#' @param object A \code{ProcessHistory} or \code{XProcessHistory} object.
+#' @param object A `ProcessHistory` or `XProcessHistory` object.
 #'
-#' @return For \code{processParam}: a parameter object extending the
-#'     \code{Param} class.
+#' @return For `processParam`: a parameter object extending the
+#'     `Param` class.
 #'
 #' @author Johannes Rainer
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("processParam", "XProcessHistory", function(object) {
@@ -38,7 +40,9 @@ setMethod("processParam", "XProcessHistory", function(object) {
 })
 #' @aliases processParam<-
 #'
-#' @param value An object extending the \code{Param} class.
+#' @param value An object extending the `Param` class.
+#'
+#' @md
 #'
 #' @noRd
 setReplaceMethod("processParam", "XProcessHistory", function(object, value) {
@@ -46,8 +50,10 @@ setReplaceMethod("processParam", "XProcessHistory", function(object, value) {
     if (validObject(object))
         return(object)
 })
-#' @description \code{msLevel}: returns the MS level on which a certain analysis
-#'     has been performed, or \code{NA} if not defined.
+#' @description `msLevel()`: returns the MS level on which a certain analysis
+#'     has been performed, or `NA` if not defined.
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("msLevel", "XProcessHistory", function(object) {
@@ -60,11 +66,13 @@ setMethod("msLevel", "XProcessHistory", function(object) {
 ## Methods:
 #' @aliases processType
 #'
-#' @description The \code{processType} method returns a character specifying the
-#'     processing step \emph{type}.
+#' @description The `processType()` method returns a character specifying the
+#'     processing step *type*.
 #'
-#' @return The \code{processType} method returns a character string with the
+#' @return The `processType()` method returns a character string with the
 #'     processing step type.
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("processType", "ProcessHistory", function(object) {
@@ -79,11 +87,13 @@ setReplaceMethod("processType", "ProcessHistory", function(object, value) {
 
 #' @aliases processDate
 #'
-#' @description The \code{processDate} extracts the start date of the processing
+#' @description The `processDate()` extracts the start date of the processing
 #'     step.
 #'
-#' @return The \code{processDate} method returns a character string with the
+#' @return The `processDate()` method returns a character string with the
 #'     time stamp of the processing step start.
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("processDate", "ProcessHistory", function(object) {
@@ -98,11 +108,13 @@ setReplaceMethod("processDate", "ProcessHistory", function(object, value) {
 
 #' @aliases processInfo
 #'
-#' @description The \code{processInfo} extracts optional additional information
+#' @description The `processInfo()` extracts optional additional information
 #'     on the processing step.
 #'
-#' @return The \code{processInfo} method returns a character string with
+#' @return The `processInfo()` method returns a character string with
 #'     optional additional informations.
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("processInfo", "ProcessHistory", function(object) {
@@ -117,11 +129,13 @@ setReplaceMethod("processInfo", "ProcessHistory", function(object, value) {
 
 #' @aliases fileIndex
 #'
-#' @description The \code{fileIndex} extracts the indices of the files on which
+#' @description The `fileIndex()` extracts the indices of the files on which
 #'     the processing step was applied.
 #'
-#' @return The \code{fileIndex} method returns a integer vector with the index
+#' @return The `fileIndex()` method returns a integer vector with the index
 #'     of the files/samples on which the processing step was applied.
+#'
+#' @md
 #'
 #' @rdname ProcessHistory-class
 setMethod("fileIndex", "ProcessHistory", function(object) {

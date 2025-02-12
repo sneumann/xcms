@@ -126,33 +126,33 @@ columns should be returned.}
 \item{scales}{Numeric defining the scales of the continuous wavelet
 transform (CWT).}
 
-\item{nearbyPeak}{logical(1) whether to include nearby peaks of
+\item{nearbyPeak}{\code{logical(1)} whether to include nearby peaks of
 major peaks.}
 
-\item{peakScaleRange}{numeric(1) defining the scale range of the
+\item{peakScaleRange}{\code{numeric(1)} defining the scale range of the
 peak (larger than 5 by default).}
 
-\item{ampTh}{numeric(1) defining the minimum required relative
+\item{ampTh}{\code{numeric(1)} defining the minimum required relative
 amplitude of the peak (ratio of the maximum of CWT coefficients).}
 
-\item{minNoiseLevel}{numeric(1) defining the minimum noise level
+\item{minNoiseLevel}{\code{numeric(1)} defining the minimum noise level
 used in computing the SNR.}
 
-\item{ridgeLength}{numeric(1) defining the minimum highest scale
+\item{ridgeLength}{\code{numeric(1)} defining the minimum highest scale
 of the peak in 2-D CWT coefficient matrix.}
 
-\item{peakThr}{numeric(1) with the minimum absolute intensity
+\item{peakThr}{\code{numeric(1)} with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
-Savitzky-Golay filter is used (in the \code{MassSpecWavelet})
+Savitzky-Golay filter is used (in the \emph{MassSpecWavelet})
 package to estimate the local intensity.}
 
-\item{tuneIn}{logical(1) whther to tune in the parameter
+\item{tuneIn}{\code{logical(1)} whther to tune in the parameter
 estimation of the detected peaks.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link{peakDetectionCWT}} and
-\code{\link{identifyMajorPeaks}} functions from the
-\code{MassSpecWavelet} package.}
+\code{peakDetectionCWT()} and
+\code{identifyMajorPeaks()} functions from the
+\emph{MassSpecWavelet} package.}
 
 \item{object}{For \code{findChromPeaks()}: an
 \code{OnDiskMSnExp} object containing the MS- and all
@@ -180,9 +180,9 @@ detection should be performed. Defaults to `msLevel = 1`.}
 \item{value}{The value for the slot.}
 }
 \value{
-The \code{MSWParam} function returns a \code{MSWParam}
-    class instance with all of the settings specified for peak detection by
-    the \emph{MSW} method.
+The \code{MSWParam()} function returns a \code{MSWParam}
+class instance with all of the settings specified for peak detection by
+the \emph{MSW} method.
 
 For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
 \code{XCMSnExp} object with the results of the peak detection.
@@ -208,42 +208,42 @@ specific data and load the spectra data (mz and intensity values) on the
 fly from the original files applying also all eventual data
 manipulations.
 
-\code{snthresh},\code{snthresh<-}: getter and setter for the
-    \code{snthresh} slot of the object.
+\code{snthresh()},\verb{snthresh<-}: getter and setter for the
+\code{snthresh} slot of the object.
 
-\code{verboseColumns},\code{verboseColumns<-}: getter and setter
-    for the \code{verboseColumns} slot of the object.
+\code{verboseColumns()},\verb{verboseColumns<-}: getter and setter
+for the \code{verboseColumns} slot of the object.
 
-\code{scales},\code{scales<-}: getter and setter for the
-    \code{scales} slot of the object.
+\code{scales()},\verb{scales<-}: getter and setter for the
+\code{scales} slot of the object.
 
-\code{nearbyPeak},\code{nearbyPeak<-}: getter and setter for the
-    \code{nearbyPeak} slot of the object.
+\code{nearbyPeak()},\verb{nearbyPeak<-}: getter and setter for the
+\code{nearbyPeak} slot of the object.
 
-\code{peakScaleRange},\code{peakScaleRange<-}: getter and setter
-    for the \code{peakScaleRange} slot of the object.
+\code{peakScaleRange()},\verb{peakScaleRange<-}: getter and setter
+for the \code{peakScaleRange} slot of the object.
 
-\code{ampTh},\code{ampTh<-}: getter and setter for the
-    \code{ampTh} slot of the object.
+\code{ampTh()},\verb{ampTh<-}: getter and setter for the
+\code{ampTh} slot of the object.
 
-\code{minNoiseLevel},\code{minNoiseLevel<-}: getter and setter
-    for the \code{minNoiseLevel} slot of the object.
+\code{minNoiseLevel()},\verb{minNoiseLevel<-}: getter and setter
+for the \code{minNoiseLevel} slot of the object.
 
-\code{ridgeLength},\code{ridgeLength<-}: getter and setter for
-    the \code{ridgeLength} slot of the object.
+\code{ridgeLength()},\verb{ridgeLength<-}: getter and setter for
+the \code{ridgeLength} slot of the object.
 
-\code{peakThr},\code{peakThr<-}: getter and setter for the
-    \code{peakThr} slot of the object.
+\code{peakThr()},\verb{peakThr<-}: getter and setter for the
+\code{peakThr} slot of the object.
 
-\code{tuneIn},\code{tuneIn<-}: getter and setter for the
-    \code{tuneIn} slot of the object.
+\code{tuneIn()},\verb{tuneIn<-}: getter and setter for the
+\code{tuneIn} slot of the object.
 
-\code{addParams},\code{addParams<-}: getter and setter for the
-    \code{addParams} slot of the object. This slot stores optional additional
-    parameters to be passed to the
-    \code{\link{identifyMajorPeaks}} and
-    \code{\link{peakDetectionCWT}} functions from the
-    \code{MassSpecWavelet} package.
+\code{addParams()},\verb{addParams<-}: getter and setter for the
+\code{addParams} slot of the object. This slot stores optional additional
+parameters to be passed to the
+\code{identifyMajorPeaks()} and
+\code{peakDetectionCWT()} functions from the
+\emph{MassSpecWavelet} package.
 }
 \details{
 This is a wrapper for the peak picker in Bioconductor's

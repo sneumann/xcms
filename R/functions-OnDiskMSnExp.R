@@ -10,8 +10,8 @@
 #' @param param A class extending Param containing all parameters for the
 #'     peak detection method.
 #'
-#' @return a list of length 2, \code{peaks} containing a matrix with the
-#'     identified peaks and \code{date} the time stamp when the peak detection
+#' @return a list of length 2, `peaks` containing a matrix with the
+#'     identified peaks and `date` the time stamp when the peak detection
 #'     was started.
 #'
 #' @noRd
@@ -42,8 +42,8 @@ findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
 #' @param rt Numeric with the retention times for the spectra. If not provided
 #'     it is extracted from the spectra.
 #'
-#' @return a list of length 2, \code{peaks} containing a matrix with the
-#'     identified peaks and \code{date} the time stamp when the peak detection
+#' @return a list of length 2, `peaks` containing a matrix with the
+#'     identified peaks and `date` the time stamp when the peak detection
 #'     was started.
 #'
 #' @author Johannes Rainer
@@ -314,9 +314,9 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 
 #' @description Processes the result list returned by an lapply/bplapply to
 #'     findChromPeaks_Spectrum_list or findChromPeaks_OnDiskMSnExp and returns a
-#'     list with two elements: \code{$peaks} the peaks matrix of identified
-#'     peaks and \code{$procHist} a list of ProcessHistory objects (empty if
-#'     \code{getProcHist = FALSE}).
+#'     list with two elements: `$peaks` the peaks matrix of identified
+#'     peaks and `$procHist` a list of ProcessHistory objects (empty if
+#'     `getProcHist = FALSE`).
 #'
 #' @param x See description above.
 #'
@@ -363,14 +363,14 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #' @note Adjustment should be performed only on spectra from the same MS level!
 #'     It's up to the calling function to ensure that.
 #'
-#' @param object An \code{OnDiskMSnExp}.
+#' @param object An `OnDiskMSnExp`.
 #'
-#' @param param An \code{ObiwarpParam}.
+#' @param param An `ObiwarpParam`.
 #'
-#' @param msLevel \code{integer} defining the MS level on which the adjustment
+#' @param msLevel `integer` defining the MS level on which the adjustment
 #'     should be performed.
 #'
-#' @return The function returns a \code{list} of adjusted retention times
+#' @return The function returns a `list` of adjusted retention times
 #'     grouped by file.
 #'
 #' @noRd

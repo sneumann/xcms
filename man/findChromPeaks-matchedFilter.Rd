@@ -127,7 +127,7 @@ interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
-\code{profBinLinBase}'s \code{baselevel} argument.}
+\code{profBinLinBase()}'s \code{baselevel} argument.}
 
 \item{distance}{For \code{method = "linbase"}: number of non-empty
 neighboring element of an empty element that should be considered for
@@ -184,13 +184,13 @@ detection should be performed. Defaults to `msLevel = 1`.}
 
 \item{value}{The value for the slot.}
 
-\item{x}{For \code{max}: a \code{MatchedFilterParam} object.}
+\item{x}{For \code{max()}: a \code{MatchedFilterParam} object.}
 }
 \value{
-The \code{MatchedFilterParam} function returns a
-    \code{MatchedFilterParam} class instance with all of the settings
-    specified for chromatographic detection by the \emph{matchedFilter}
-    method.
+The \code{MatchedFilterParam()} function returns a
+\code{MatchedFilterParam} class instance with all of the settings
+specified for chromatographic detection by the \emph{matchedFilter}
+method.
 
 For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
 \code{\link[=XCMSnExp]{XCMSnExp()}} object with the results of the peak detection.
@@ -225,38 +225,38 @@ specific data and load the spectra data (mz and intensity values) on the
 fly from the original files applying also all eventual data
 manipulations.
 
-\code{binSize},\code{binSize<-}: getter and setter for the
-    \code{binSize} slot of the object.
+\code{binSize()},\verb{binSize<-}: getter and setter for the
+\code{binSize} slot of the object.
 
-\code{impute},\code{impute<-}: getter and setter for the
-    \code{impute} slot of the object.
+\code{impute()},\verb{impute<-}: getter and setter for the
+\code{impute} slot of the object.
 
-\code{baseValue},\code{baseValue<-}: getter and setter for the
-    \code{baseValue} slot of the object.
+\code{baseValue()},\verb{baseValue<-}: getter and setter for the
+\code{baseValue} slot of the object.
 
-\code{distance},\code{distance<-}: getter and setter for the
-    \code{distance} slot of the object.
+\code{distance()},\verb{distance<-}: getter and setter for the
+\code{distance} slot of the object.
 
-\code{fwhm},\code{fwhm<-}: getter and setter for the
-    \code{fwhm} slot of the object.
+\code{fwhm()},\verb{fwhm<-}: getter and setter for the
+\code{fwhm} slot of the object.
 
-\code{sigma},\code{sigma<-}: getter and setter for the
-    \code{sigma} slot of the object.
+\code{sigma()},\verb{sigma<-}: getter and setter for the
+\code{sigma} slot of the object.
 
-\code{max},\code{max<-}: getter and setter for the
-     \code{max} slot of the object.
+\code{max()},\verb{max<-}: getter and setter for the
+\code{max} slot of the object.
 
-\code{snthresh},\code{snthresh<-}: getter and setter for the
-    \code{snthresh} slot of the object.
+\code{snthresh()},\verb{snthresh<-}: getter and setter for the
+\code{snthresh} slot of the object.
 
-\code{steps},\code{steps<-}: getter and setter for the
-    \code{steps} slot of the object.
+\code{steps()},\verb{steps<-}: getter and setter for the
+\code{steps} slot of the object.
 
-\code{mzdiff},\code{mzdiff<-}: getter and setter for the
-     \code{mzdiff} slot of the object.
+\code{mzdiff()},\verb{mzdiff<-}: getter and setter for the
+\code{mzdiff} slot of the object.
 
-\code{index},\code{index<-}: getter and setter for the
-    \code{index} slot of the object.
+\code{index()},\verb{index<-}: getter and setter for the
+\code{index} slot of the object.
 }
 \details{
 The intensities are binned by the provided m/z values within each

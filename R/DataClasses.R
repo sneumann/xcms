@@ -1738,7 +1738,7 @@ setClass("MsFeatureData", contains = c("environment"),
 #' - [overlappingFeatures()] identify features that are overlapping or close
 #'   in the m/z - rt space (see respective help page).
 #'
-#' - [quantify()]: extract feature intensities and put them, along
+#' - [xcms::quantify()]: extract feature intensities and put them, along
 #'   with feature definitions and phenodata information, into a
 #'   [SummarizedExperiment::SummarizedExperiment()]. See help page for details.
 #'

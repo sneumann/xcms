@@ -170,8 +170,8 @@ hence using the 75\% quantile of all values.}
 An \link{XcmsExperiment} or  \code{XCMSnExp} object with previously missing
 chromatographic peaks for features filled into its \code{\link[=chromPeaks]{chromPeaks()}} matrix.
 
-The \code{FillChromPeaksParam} function returns a
-    \code{FillChromPeaksParam} object.
+The \code{FillChromPeaksParam()} function returns a
+\code{FillChromPeaksParam} object.
 }
 \description{
 Gap filling integrate signal in the m/z-rt area of a feature (i.e., a
@@ -205,14 +205,14 @@ identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.
 }
 
-\code{expandMz},\code{expandMz<-}: getter and setter
-    for the \code{expandMz} slot of the object.
+\code{expandMz()},\verb{expandMz<-}: getter and setter
+for the \code{expandMz} slot of the object.
 
-\code{expandRt},\code{expandRt<-}: getter and setter
-    for the \code{expandRt} slot of the object.
+\code{expandRt()},\verb{expandRt<-}: getter and setter
+for the \code{expandRt} slot of the object.
 
-\code{ppm},\code{ppm<-}: getter and setter
-    for the \code{ppm} slot of the object.
+\code{ppm()},\verb{ppm<-}: getter and setter
+for the \code{ppm} slot of the object.
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across

@@ -42,19 +42,19 @@
 }
 \value{
 For \code{processParam}: a parameter object extending the
-    \code{Param} class.
+\code{Param} class.
 
-The \code{processType} method returns a character string with the
-    processing step type.
+The \code{processType()} method returns a character string with the
+processing step type.
 
-The \code{processDate} method returns a character string with the
-    time stamp of the processing step start.
+The \code{processDate()} method returns a character string with the
+time stamp of the processing step start.
 
-The \code{processInfo} method returns a character string with
-    optional additional informations.
+The \code{processInfo()} method returns a character string with
+optional additional informations.
 
-The \code{fileIndex} method returns a integer vector with the index
-    of the files/samples on which the processing step was applied.
+The \code{fileIndex()} method returns a integer vector with the index
+of the files/samples on which the processing step was applied.
 }
 \description{
 Objects of the type \link{ProcessHistory} allow to keep track
@@ -67,23 +67,23 @@ The \code{XProcessHistory} extends the \code{ProcessHistory} by
 adding a slot \code{param} that allows to store the actual parameter
 class of the processing step.
 
-\code{processParam}, \code{processParam<-}: get or set the
-    parameter class from an \code{XProcessHistory} object.
+\code{processParam()}, \verb{processParam<-}: get or set the
+parameter class from an \code{XProcessHistory} object.
 
-\code{msLevel}: returns the MS level on which a certain analysis
-    has been performed, or \code{NA} if not defined.
+\code{msLevel()}: returns the MS level on which a certain analysis
+has been performed, or \code{NA} if not defined.
 
-The \code{processType} method returns a character specifying the
-    processing step \emph{type}.
+The \code{processType()} method returns a character specifying the
+processing step \emph{type}.
 
-The \code{processDate} extracts the start date of the processing
-    step.
+The \code{processDate()} extracts the start date of the processing
+step.
 
-The \code{processInfo} extracts optional additional information
-    on the processing step.
+The \code{processInfo()} extracts optional additional information
+on the processing step.
 
-The \code{fileIndex} extracts the indices of the files on which
-    the processing step was applied.
+The \code{fileIndex()} extracts the indices of the files on which
+the processing step was applied.
 }
 \section{Slots}{
 

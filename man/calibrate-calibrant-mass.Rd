@@ -53,7 +53,7 @@ For \code{calibrate}: an \link{XCMSnExp} object with chromatographic peaks being
 calibrated. \strong{Be aware} that the actual raw mz values are not (yet)
 calibrated, but \strong{only} the identified chromatographic peaks.
 
-The \code{CalibrantMassParam} function returns an instance of
+The \code{CalibrantMassParam()} function returns an instance of
 the \code{CalibrantMassParam} class with all settings and properties set.
 
 The \code{calibrate} method returns an \link{XCMSnExp} object with the
