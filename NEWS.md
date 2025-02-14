@@ -1,6 +1,6 @@
 # xcms 4.5
 
-## Changes in version 4.5.4
+## Changes in version 4.5.x
 
 - Change the naming convention of chromatographic peaks to include also the MS
   level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
@@ -8,6 +8,11 @@
   in MS level 2.
 - Add new `XcmsExperimentHdf5` result object keeping all data in a HDF5 file
   on-disk.
+
+## Changes in version 4.5.4
+
+- Fix a bug in `manualChromPeaks()` that caused an error when only a single
+  chrom peak was added.
 
 ## Changes in version 4.5.3
 
