@@ -848,7 +848,7 @@ groupOverlaps <- function(xmin, xmax) {
             slot(res[[i]], "intensity", check = FALSE) <-
                 vapply(pd[keep], function(z) {
                     FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
-            }, numeric(1L))
+            }, NA_real_)
             slot(res[[i]], "rtime", check = FALSE) <- rt[keep]
         }
     }

@@ -911,6 +911,74 @@ test_that("featureSpectra,XcmsExperimentHdf5 works", {
     expect_equal(names(res), fts)
 })
 
+test_that("chromPeakChromatograms,XcmsExperimentHdf5 works", {
+    res <- chromPeakChromatograms(xmse_h5)
+    expect_s4_class(res, "XChromatograms")
+    expect_equal(ncol(res), 1L)
+    expect_equal(nrow(res), nrow(chromPeaks(xmse_h5)))
+
+    res <- chromPeakChromatograms(xmse_h5, return.type = "MChromatograms")
+    ref <- chromPeakChromatograms(loadXcmsData("faahko_sub2"),
+                                  return.type = "MChromatograms")
+    expect_equal(res, res)
+})
+
+test_that("featureChromatograms,XcmsExperimentHdf5 works", {
+    res <- featureChromatograms(xmseg_full_h5, expandRt = -0.1, expandMz = 0.01)
+    expect_s4_class(res, "XChromatograms")
+    fd <- featureDefinitions(xmseg_full_h5)
+    expect_equal(nrow(res), nrow(fd))
+    expect_equal(as.data.frame(featureDefinitions(res))[, colnames(fd)], fd)
+    expect_true(all(rownames(chromPeaks(res)) %in%
+                rownames(chromPeaks(xmseg_full_h5))))
+
+    ## Compare results to reference implementation for XcmsExperiment
+    ref <- featureChromatograms(xmseg_full_ref, expandRt = -0.1,expandMz = 0.01)
+    expect_equal(dim(res), dim(ref))
+    res_npks <- vapply(res, function(z) nrow(chromPeaks(z)), NA_integer_)
+    ref_npks <- vapply(ref, function(z) nrow(chromPeaks(z)), NA_integer_)
+    expect_equal(res_npks, ref_npks)
+    res_cp <- chromPeaks(res)
+    ref_cp <- chromPeaks(ref)
+    expect_equal(unname(res_cp), unname(ref_cp[, colnames(res_cp)]))
+    res_fd <- featureDefinitions(res)
+    ref_fd <- featureDefinitions(ref)
+    rownames(res_fd) <- NULL
+    rownames(ref_fd) <- NULL
+    expect_equal(res_fd, ref_fd[, colnames(res_fd)])
+})
+
+## load("/home/jo/Projects/git/sneumann/xcms_local_data/local_data/XcmsExperimentHdf5/large_xcms_im/05-chris_im.RData")
+
+bla <- chris_im[1:40, keepFeatures = TRUE]
+bla@spectra$msLevel <- bla@spectra$msLevel
+bla@spectra$rtime <- bla@spectra$rtime
+fa <- featureArea(chris_im)[1:100, ]
+register(SerialParam())
+system.time(
+    a <- chromatogram(bla, mz = fa[, c("mzmin", "mzmax")],
+                      rt = fa[, c("rtmin", "rtmax")])
+) # 19.5sec
+system.time(
+    b <- featureChromatograms(bla, features = rownames(fa))
+) # 10sec
+
+system.time(
+    a <- filterRt(bla, c(200, 300))
+) # 0.4sec ; 3.2sec.
+
+filty <- function(x, rt, msLevel.) {
+    x$rtime <- x$rtime
+    x$msLevel <- x$msLevel
+    filterRt(x, rt, msLevel.)
+}
+system.time(
+    a <- filty(be, c(200, 300), integer())
+)
+
+## Check with the full data... also using peakRAM for memory usage...
+## should we define a min length when db operation makes sense?
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

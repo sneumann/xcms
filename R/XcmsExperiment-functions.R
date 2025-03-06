@@ -362,7 +362,7 @@
     res <- bpmapply(
         .merge_neighboring_peaks2,
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
-                        f = factor()), f),
+                        f = factor(), return.type = "list"), f),
         split.data.frame(chromPeaks(x, msLevel = msLevel), f = f_peaks),
         split.data.frame(.chromPeakData(x, msLevel = msLevel), f = f_peaks),
         split(rt, f),
@@ -404,7 +404,7 @@
             }, NA)
         },
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
-                        f = factor()), f),
+                        f = factor(), return.type = "list"), f),
         split(rt, f),
         split.data.frame(.chromPeaks(x), f = f_peaks),
         split(.chromPeakData(x)$ms_level, f = f_peaks),
@@ -483,7 +483,7 @@
     else rt <- rtime(spectra(x))[keep]
     cn <- colnames(.chromPeaks(x))
     res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel),
-                                    f = factor()), f),
+                                    f = factor(), return.type = "list"), f),
                     split(rt, f),
                     pal,
                     as.integer(names(pal)),
@@ -968,21 +968,25 @@
                                            "total (:percent) in ",
                                            ":elapsed"),
                            total = nrow(chrs) + 1L, clear = FALSE)
+    mat <- chrs@.Data
+    slot(chrs, ".Data", check = FALSE) <- matrix(ncol = ncol(chrs),
+                                                 nrow = nrow(chrs))
     for (i in seq_len(nrow(chrs))) {
         idx <- .index_chrom_peaks(
             object, rt = fd[i, rtc], mz = fd[i, mzc],
-            msLevel = chrs[i, 1]@msLevel, type = chromPeaks)
+            msLevel = mat[i, 1][[1L]]@msLevel, type = chromPeaks)
         f_s <- factor(.chromPeaks(object)[idx, "sample"], levels = js)
         pkl <- split.data.frame(.chromPeaks(object)[idx, , drop = FALSE], f_s)
         cpl <- split.data.frame(cpd[idx, , drop = FALSE], f_s)
         pb$tick()
         for (j in js) {
-            tmp <- chrs@.Data[i, j][[1L]]
+            tmp <- mat[i, j][[1L]]
             slot(tmp, "chromPeaks", check = FALSE) <- pkl[[j]]
             slot(tmp, "chromPeakData", check = FALSE) <- as(cpl[[j]], "DataFrame")
-            chrs@.Data[i, j][[1L]] <- tmp
+            mat[i, j][[1L]] <- tmp
         }
     }
+    slot(chrs, ".Data", check = FALSE) <- mat
     pb$tick()
     ## Process features - that is not perfect: features are selected based on
     ## mz and rt, not based on the selected chrom peaks.
@@ -1002,10 +1006,11 @@
                     fdev, .chromPeaks(object), pks_sub)
             } else data.frame()
         })
-        chrs@featureDefinitions <- DataFrame(do.call(rbind, fts))
+        slot(chrs, "featureDefinitions", check = FALSE) <-
+            DataFrame(do.call(rbind, fts))
         pb$tick()
     }
-    chrs@.processHistory <- object@processHistory
+    slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
     chrs
 }
 
@@ -1079,7 +1084,7 @@
         ## Get EICs for all chrom peaks (all MS levels)
         object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
         chrs <- .chromatograms_for_peaks(
-            peaksData(object@spectra, f = factor()),
+            peaksData(object@spectra, f = factor(), return.type = "list"),
             rt = rtime(object@spectra),
             msl = msLevel(object@spectra), file_idx = fromFile,
             tmz = isolationWindowTargetMz(object@spectra), pks = pks,
@@ -1191,6 +1196,9 @@
 #'
 #' @noRd
 .chromPeakData <- function(object, msLevel = integer()) {
+    if (is(object, "XcmsExperimentHdf5"))
+        return(chromPeakData(object, msLevel = msLevel,
+                             return.type = "data.frame"))
     if (length(msLevel))
         object@chromPeakData[object@chromPeakData$ms_level %in% msLevel, ]
     else object@chromPeakData
@@ -1201,8 +1209,12 @@
 #'
 #' @noRd
 .chromPeaks <- function(object) {
-    if (inherits(object, "XcmsExperiment"))
-        object@chromPeaks
+    if (inherits(object, "XcmsExperiment")) {
+        if (is(object, "XcmsExperimentHdf5"))
+            chromPeaks(object)
+        else
+            object@chromPeaks
+    }
     else chromPeaks(object@msFeatureData)
 }
 

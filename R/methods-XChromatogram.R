@@ -71,12 +71,12 @@ setMethod("show", "XChromatogram", function(object) {
 #' - `featureDefinitions`: for `XChromatograms` objects only. Extract the
 #'   results from the correspondence analysis (performed with
 #'   `groupChromPeaks`). Returns a `DataFrame` with the properties of the
-#'   defined m/z-rt features: their m/z and retention time range. Columns
-#'   `peakidx` and `row` contain the index of the chromatographic peaks in the
-#'   `chromPeaks` matrix associated with the feature and the row in the
-#'   `XChromatograms` object in which the feature was defined. Similar to the
-#'   `chromPeaks` method it is possible to filter the returned feature matrix
-#'   with the `mz`, `rt` and `ppm` parameters.
+#'   defined m/z-rt features: their m/z and retention time range. Column
+#'   `peakidx` contains the index of the chromatographic peaks in the
+#'   `chromPeaks` matrix associated with the feature. Column `"row"` contains
+#'   the row in the `XChromatograms` object in which the feature was defined.
+#'   Similar to the `chromPeaks` method it is possible to filter the returned
+#'   feature matrix with the `mz`, `rt` and `ppm` parameters.
 #'
 #' - `featureValues`: for `XChromatograms` objects only. Extract the abundance
 #'   estimates for the individuals features. Note that by default (with

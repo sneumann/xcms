@@ -245,6 +245,9 @@ test_that(".h5_chrom_peak_ms_levels works", {
 })
 
 test_that(".h5_subset_xcms_experiment works", {
+    expect_error(.h5_subset_xcms_experiment(
+        xmseg_full_h5 , c(2, 4, -1, 3, -4)), "Mixing positive")
+
     a <- new("XcmsExperimentHdf5")
     res <- .h5_subset_xcms_experiment(a)
     expect_equal(a, res)
@@ -267,6 +270,28 @@ test_that(".h5_subset_xcms_experiment works", {
     expect_equal(sampleData(res), sampleData(a)[c(1, 3), ])
     expect_false(hasChromPeaks(res))
     expect_equal(res@processHistory, a@processHistory)
+
+    res <- .h5_subset_xcms_experiment(xmseg_full_h5, c(3, 1),
+                                      keepFeatures = TRUE)
+    expect_true(hasFeatures(res))
+    expect_true(length(res) == 2)
+    expect_equal(featureDefinitions(res), featureDefinitions(xmseg_full_h5))
+    a <- chromPeaks(res)
+    b <- chromPeaks(xmseg_full_h5)
+    expect_equal(a[a[, "sample"] == 1, 1:10], b[b[, "sample"] == 3, 1:10])
+    expect_equal(a[a[, "sample"] == 2, 1:10], b[b[, "sample"] == 1, 1:10])
+
+    res <- .h5_subset_xcms_experiment(xmseg_full_h5, c(3, 1),
+                                      keepFeatures = FALSE)
+    expect_false(hasFeatures(res))
+    expect_true(length(res) == 2)
+
+    res <- .h5_subset_xcms_experiment(xmseg_full_h5, c(3, 1),
+                                      keepFeatures = TRUE,
+                                      keepChromPeaks = FALSE)
+    expect_false(hasFeatures(res))
+    expect_false(hasChromPeaks(res))
+    expect_true(length(res) == 2)
 })
 
 test_that(".h5_xmse_merge_neighboring_peaks works", {
@@ -1044,6 +1069,15 @@ test_that(".h5_chrom_peak_spectra_sample works", {
     expect_s4_class(sel, "Spectra")
     expect_true(length(sel) == length(peaks))
     expect_equal(sel$chrom_peak_id, rownames(cp2)[peaks])
+})
+
+test_that("chromPeaks helpers work", {
+    ## These are implemented in XcmsExperiment-functions.R
+    res <- .chromPeaks(xmse_h5)
+    expect_equal(res, chromPeaks(xmse_h5))
+    res <- .chromPeakData(xmse_h5)
+    expect_true(is.data.frame(res))
+    expect_equal(res, chromPeakData(xmse_h5, return.type = "data.frame"))
 })
 
 rm(h5f_full_g)

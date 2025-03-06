@@ -487,12 +487,12 @@ correspondence analysis results (and related process history).
 \item \code{featureDefinitions}: for \code{XChromatograms} objects only. Extract the
 results from the correspondence analysis (performed with
 \code{groupChromPeaks}). Returns a \code{DataFrame} with the properties of the
-defined m/z-rt features: their m/z and retention time range. Columns
-\code{peakidx} and \code{row} contain the index of the chromatographic peaks in the
-\code{chromPeaks} matrix associated with the feature and the row in the
-\code{XChromatograms} object in which the feature was defined. Similar to the
-\code{chromPeaks} method it is possible to filter the returned feature matrix
-with the \code{mz}, \code{rt} and \code{ppm} parameters.
+defined m/z-rt features: their m/z and retention time range. Column
+\code{peakidx} contains the index of the chromatographic peaks in the
+\code{chromPeaks} matrix associated with the feature. Column \code{"row"} contains
+the row in the \code{XChromatograms} object in which the feature was defined.
+Similar to the \code{chromPeaks} method it is possible to filter the returned
+feature matrix with the \code{mz}, \code{rt} and \code{ppm} parameters.
 \item \code{featureValues}: for \code{XChromatograms} objects only. Extract the abundance
 estimates for the individuals features. Note that by default (with
 parameter \code{value = "index"} a \code{matrix} of indices of the peaks in the

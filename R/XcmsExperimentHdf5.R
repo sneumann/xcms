@@ -50,6 +50,17 @@
 #' [XcmsExperiment] object to `XcmsExperimentHdf5`. The results are stored
 #' in the file specified with parameter `hdf5File`.
 #'
+#' @section Subset:
+#'
+#' - `[`: subset the `XcmsExperimentHdf5` object to the specified samples.
+#'   Parameters `keepChromPeaks` (default `TRUE`), `keepAdjustedRtime`
+#'   (default `FALSE`) and `keepFeatures` (default `FALSE`) allow to configure
+#'   whether present chromatographic peaks, alignment or correspondence results
+#'   should be retained. This will only change information in the object (i.e.,
+#'   the reference to the respective entries in the HDF5 file), but will not
+#'   change the content of the HDF5 file. Note that with
+#'   `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
+#'
 #' @section Functionality related to chromatographic peaks:
 #'
 #' - `chromPeaks()` gains parameter `bySample = FALSE` that, if set to `TRUE`
@@ -134,10 +145,7 @@ setMethod("show", "XcmsExperimentHdf5", function(object) {
                 paste0(object@chrom_peaks_ms_level, collapse = ", "), "\n")
         }
     if (hasAdjustedRtime(object))
-        cat("  - adjusted retention times: mean absolute difference",
-            format(mean(abs(rtime(spectra(object)) -
-                           spectra(object)$rtime_adjusted)),
-                   digits = 3), "seconds\n")
+        cat("  - adjusted retention times\n")
     }
     if (hasFeatures(object))
         cat("  - correspondence results in MS level(s):",
@@ -496,7 +504,8 @@ setMethod(
                     rt <- s$rtime_adjusted
                 else
                     rt <- rtime(s)
-                p_data <- peaksData(s, c("mz", "intensity"))
+                p_data <- peaksData(s, c("mz", "intensity"),
+                                    return.type = "list")
                 keep <- vapply(seq_len(nrow(pks)), function(z) {
                     rt_idx <- between(rt, pks[z, rtc])
                     vals <- vapply(p_data[rt_idx], .aggregate_intensities,
@@ -848,7 +857,7 @@ setMethod(
         object@hdf5_mod_count <- mc
         xph <- XProcessHistory(param = param, type. = .PROCSTEP.PEAK.GROUPING,
                                fileIndex = seq_along(object), msLevel = msLevel)
-        object <- xcms:::addProcessHistory(object, xph)
+        object <- addProcessHistory(object, xph)
         validObject(object)
         object
     })
@@ -1096,12 +1105,91 @@ setMethod(
             res[to(findMatches(features, res$feature_id))]
     })
 
+setMethod(
+    "featureChromatograms", "XcmsExperimentHdf5",
+    function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
+             features = character(), return.type = "XChromatograms",
+             chunkSize = 2L, mzmin = min, mzmax = max, rtmin = min,
+             rtmax = max, ..., progressbar = TRUE, BPPARAM = bpparam()) {
+        return.type <- match.arg(return.type)
+        if (hasAdjustedRtime(object))
+            object <- applyAdjustedRtime(object)
+        area <- featureArea(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                            rtmax = rtmax, features = features)
+        if (expandRt != 0) {
+            area[, "rtmin"] <- area[, "rtmin"] - expandRt
+            area[, "rtmax"] <- area[, "rtmax"] + expandRt
+        }
+        if (expandMz != 0) {
+            area[, "mzmin"] <- area[, "mzmin"] - expandMz
+            area[, "mzmax"] <- area[, "mzmax"] + expandMz
+        }
+        fts <- featureDefinitions(object)[rownames(area), ]
+        chrs <- as(.mse_chromatogram(
+            as(object, "MsExperiment"),
+            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
+            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
+            aggregationFun = aggregationFun, msLevel = fts$ms_level,
+            chunkSize = chunkSize, progressbar = progressbar,
+            BPPARAM = BPPARAM), "XChromatograms")
+        ## Populate with chrom peaks.
+        nf <- nrow(fts)
+        js <- seq_len(ncol(chrs))
+        msl <- unique(fts$ms_level)
+        chr_mat <- chrs@.Data
+        slot(chrs, ".Data") <- matrix(
+            nrow = nrow(chr_mat), ncol = ncol(chr_mat)) # clean memory
+        if (progressbar) {
+            message("Processing chromatographic peaks for features")
+            pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                                   "total (:percent) in ",
+                                                   ":elapsed"),
+                                   total = length(js) + 1L, clear = FALSE)
+        }
+        for (j in js) {
+            for (ms in msl) {
+                fmap <- .h5_read_data(
+                    object@hdf5_file, object@sample_id[j],
+                    "feature_to_chrom_peaks", ms)[[1L]]
+                cp <- .h5_read_data(
+                    object@hdf5_file, object@sample_id[j], "chrom_peaks",
+                    ms, read_colnames = TRUE, read_rownames = TRUE)[[1L]]
+                cpd <- .h5_read_data(
+                    object@hdf5_file, object@sample_id[j], "chrom_peak_data",
+                    ms, read_colnames = TRUE, read_rownames = TRUE)[[1L]]
+                cpd$ms_level <- ms
+                cp_idx <- split(fmap[, 2L], fmap[, 1L])
+                ft_idx <- which(fts$ms_level == ms)
+                for (i in seq_along(ft_idx)) {
+                    slot(chr_mat[ft_idx[i], j][[1L]],
+                         "chromPeaks", check = FALSE) <-
+                        cp[cp_idx[[as.character(i)]], , drop = FALSE]
+                    slot(chr_mat[ft_idx[i], j][[1L]],
+                         "chromPeakData", check = FALSE) <-
+                        as(cpd[cp_idx[[as.character(i)]], , drop = FALSE],
+                           "DataFrame")
+                }
+            }
+            if (progressbar)
+                pb$tick()
+        }
+        slot(chrs, ".Data", check = FALSE) <- chr_mat
+        ## Each row is a SINGLE feature, thus we can use the "row" column to
+        ## match chrom peaks to features.
+        fts$row <- seq_len(nf)
+        pkrow <- unname(chromPeaks(chrs)[, c("row")])
+        fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
+        colnames(chrs) <- basename(fileNames(object))
+        rownames(chrs@phenoData) <- colnames(chrs)
+        slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
+        slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
+        if (progressbar)
+            pb$tick()
+        chrs
+    })
 
 #' TODO: LLLLLL
 #'
-#' - `[` with feature definitions present
-#' - `chromPeakChromatograms()`
-#' - `featureChromatograms()`
 #' - `filterChromPeaks()`
 #' - `filterFeatureDefinitions()`
 #' - `manualChromPeaks()`
@@ -1112,6 +1200,16 @@ setMethod(
 #' - Vignette describing the functionality and some notes/properties.
 #' - SWATH support: need to check if it's already available.
 #'   - `findChromPeaksIsolationWindow()`.
+#'
+#' @noRd
+NULL
+
+#' Implementation notes
+#'
+#' - `chromPeakChromatograms()`: uses the `XcmsExperiment` method. This loads
+#'   first the full chrom peaks and chromPeakData. With the current result
+#'   object (i.e. the `XChromatograms`) there is not much alternative, since we
+#'   need to get that anyway.
 #'
 #' @noRd
 NULL

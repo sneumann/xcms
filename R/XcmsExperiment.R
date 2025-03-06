@@ -776,10 +776,7 @@ setMethod("show", "XcmsExperiment", function(object) {
             "in MS level(s):",
             paste(unique(object@chromPeakData$ms_level), collapse = ", "), "\n")
     if (hasAdjustedRtime(object))
-        cat("  - adjusted retention times: mean absolute difference",
-            format(mean(abs(rtime(spectra(object)) -
-                           spectra(object)$rtime_adjusted)),
-                  digits = 3), "seconds\n")
+        cat("  - adjusted retention times\n")
     if (hasFeatures(object))
         cat("  - correspondence results:", nrow(object@featureDefinitions),
             "features in MS level(s):",
@@ -1682,7 +1679,7 @@ setMethod(
                           "chromatographic peaks.")
             if (!is.character(peaks))
                 stop(msg)
-            if (!all(peaks %in% rownames(.chromPeaks(object))))
+            if (!all(peaks %in% rownames(pks)))
                 stop("'peaks' don't match row names of 'chromPeaks'. ", msg)
             pks <- pks[peaks, , drop = FALSE]
             pkd <- pkd[peaks, ]
@@ -1735,14 +1732,18 @@ setMethod(
             idx <- seq_along(res)
             pks <- split.data.frame(pks, idx)
             pkd <- split.data.frame(pkd, idx)
+            mat <- res@.Data
+            slot(res, ".Data", check = FALSE) <- matrix(ncol = ncol(res),
+                                                        nrow = nrow(res))
             for (i in seq_along(res)) {
-                tmp <- res@.Data[i, 1L][[1L]]
+                tmp <- mat[i, 1L][[1L]]
                 slot(tmp, "chromPeaks", check = FALSE) <- pks[[i]]
                 slot(tmp, "chromPeakData", check = FALSE) <-
                     as(pkd[[i]], "DataFrame")
-                res@.Data[i, 1L][[1L]] <- tmp
+                mat[i, 1L][[1L]] <- tmp
             }
-            res@.processHistory <- ph
+            slot(res, ".Data", check = FALSE) <- mat
+            slot(res, ".processHistory", check = FALSE) <- ph
         }
         pb$tick()
         res
@@ -1779,9 +1780,18 @@ setMethod(
         ## Populate with chrom peaks.
         nf <- nrow(fts)
         js <- seq_len(ncol(chrs))
-        pks_empty <- .chromPeaks(object)[integer(), ]
-        pkd_empty <- as(.chromPeakData(object)[integer(), ], "DataFrame")
+        pks_empty <- .chromPeaks(object)[integer(), , drop = FALSE]
+        pkd_empty <- as(.chromPeakData(object)[integer(), , drop = FALSE],
+                        "DataFrame")
         tmp <- chrs@.Data
+        slot(chrs, ".Data") <- matrix(nrow = nrow(tmp), ncol = ncol(tmp))
+        if (progressbar) {
+            message("Processing chromatographic peaks for features")
+            pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                                   "total (:percent) in ",
+                                                   ":elapsed"),
+                                   total = nf + 1L, clear = FALSE)
+        }
         for (i in seq_len(nf)) {
             idx <- fts$peakidx[[i]]
             smpl <- .chromPeaks(object)[idx, "sample"]
@@ -1793,28 +1803,29 @@ setMethod(
                         .chromPeaks(object)[idx[keep], , drop = FALSE]
                     slot(tmp_i, "chromPeakData",
                          check = FALSE) <- as(
-                        object@chromPeakData[idx[keep], ], "DataFrame")
+                        object@chromPeakData[idx[keep], , drop = FALSE],
+                        "DataFrame")
                 } else {
                     slot(tmp_i, "chromPeaks", check = FALSE) <- pks_empty
                     slot(tmp_i, "chromPeakData", check = FALSE) <- pkd_empty
                 }
                 tmp[i, j][[1L]] <- tmp_i
             }
+            if (progressbar)
+                pb$tick()
         }
-        chrs@.Data <- tmp
-        ## Update peakidx in feature definitions.
+        slot(chrs, ".Data", check = FALSE) <- tmp
+        ## Each row is a SINGLE feature, thus we can use the "row" column to
+        ## match chrom peaks to features.
         fts$row <- seq_len(nf)
-        pkid_all <- rownames(.chromPeaks(object))
-        pkid <- chromPeaks(chrs)[, c("row", "column")]
-        pkid <- cbind(pkid, index = seq_len(nrow(pkid)))
-        pkidl <- split.data.frame(pkid, pkid[, "row"])
-        fts$peakidx <- lapply(fts$row, function(z) {
-            unname(pkidl[[z]][pkid_all[fts$peakidx[[z]]], "index"])
-        })
+        pkrow <- unname(chromPeaks(chrs)[, c("row")])
+        fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
         colnames(chrs) <- basename(fileNames(object))
         rownames(chrs@phenoData) <- colnames(chrs)
-        chrs@featureDefinitions <- DataFrame(fts)
-        chrs@.processHistory <- object@processHistory
+        slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
+        slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
+        if (progressbar)
+            pb$tick()
         chrs
     })
 

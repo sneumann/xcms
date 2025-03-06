@@ -68,6 +68,19 @@ hence use the on-disk data storage mode described on this page. The
 in the file specified with parameter `hdf5File`.
 }
 
+\section{Subset}{
+
+
+- `[`: subset the `XcmsExperimentHdf5` object to the specified samples.
+  Parameters `keepChromPeaks` (default `TRUE`), `keepAdjustedRtime`
+  (default `FALSE`) and `keepFeatures` (default `FALSE`) allow to configure
+  whether present chromatographic peaks, alignment or correspondence results
+  should be retained. This will only change information in the object (i.e.,
+  the reference to the respective entries in the HDF5 file), but will not
+  change the content of the HDF5 file. Note that with
+  `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
+}
+
 \section{Functionality related to chromatographic peaks}{
 
 

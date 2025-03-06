@@ -190,15 +190,16 @@ toXcmsExperiment <- function(object, ...) {
             x@spectra, svs[svs != "rtime_adjusted"])
         drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
     }
-    if (!keepFeatures && hasFeatures(x)) {
-        stop("Subsetting with features present needs to be implemented")
-        drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
-    }
     if (!keepChromPeaks && hasChromPeaks(x)) {
         x@chrom_peaks_ms_level <- integer()
         x@gap_peaks_ms_level <- integer()
         drop <- c(drop, .PROCSTEP.PEAK.DETECTION, .PROCSTEP.PEAK.FILLING,
                   .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
+        keepFeatures <- FALSE
+    }
+    if (!keepFeatures && hasFeatures(x)) {
+        x@features_ms_level <- integer()
+        drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
     }
     if (!ignoreHistory && length(drop))
         x@processHistory <- dropProcessHistoriesList(
@@ -212,13 +213,6 @@ toXcmsExperiment <- function(object, ...) {
 ##        CHROM PEAK RELATED THINGS
 ##
 ################################################################################
-
-## findChromPeaks ->
-## .mse_find_chrom_peaks_chunks ->
-## .mse_spectrapply_chunks -> .mse_find_chrom_peaks_chunk (performs peak
-## detection with Spectra as input)
-## .mse_spectrapply_chunks: needs to get a function that also saves the
-## results to hdf5.
 
 #' This is equivalent to .mse_find_chrom_peaks_chunk, but instead of returning
 #' the detected peaks saves them to the specified `hdf5_file`
@@ -317,7 +311,8 @@ toXcmsExperiment <- function(object, ...) {
     res <- bpmapply(
         .merge_neighboring_peaks2,
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
-                        f = factor()), f), pksl, pkdl, split(rt, f),
+                        f = factor(), return.type = "list"), f),
+        pksl, pkdl, split(rt, f),
         MoreArgs = list(expandRt = expandRt, expandMz = expandMz,
                         ppm = ppm, minProp = minProp),
         SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
@@ -386,7 +381,8 @@ toXcmsExperiment <- function(object, ...) {
         else rt <- rtime(spectra(x))[keep]
         cn <- c(.h5_chrom_peaks_colnames(x, msLevel = msLevel), "sample")
         res <- bpmapply(
-            split(peaksData(filterMsLevel(spectra(x), msLevel),f =factor()),f),
+            split(peaksData(filterMsLevel(spectra(x), msLevel),f =factor(),
+                            return.type = "list"),f),
             split(rt, f),
             pal,
             as.integer(names(pal)),
@@ -1055,6 +1051,9 @@ toXcmsExperiment <- function(object, ...) {
         f2p <- vector("list", 1000) # initialize with an educated guess;
         cnt <- 1L
     }
+    mat <- chr@.Data
+    slot(chr, ".Data", check = FALSE) <- matrix(ncol = ncol(chr),
+                                                nrow = nrow(chr))
     for (i in seq_along(x)) { # iterate over samples
         cp <- .h5_read_data(x@hdf5_file, x@sample_id[i], "chrom_peaks",
                             ms_level = ms_level, read_colnames = TRUE,
@@ -1074,10 +1073,10 @@ toXcmsExperiment <- function(object, ...) {
             b <- extractROWS(cd, idx)
             b$ms_level <- rep(ms_level, li)
             attr(b, "row.names") <- rownames(a)
-            tmp <- chr@.Data[j, i][[1L]]
+            tmp <- mat[j, i][[1L]]
             slot(tmp, "chromPeaks", check = FALSE) <- a
             slot(tmp, "chromPeakData", check = FALSE) <- as(b, "DataFrame")
-            chr@.Data[j, i][[1L]] <- tmp # this does not seem to cause copying
+            mat[j, i][[1L]] <- tmp # this does not seem to cause copying
             ## Add mapping of features and chrom peaks for that sample/EIC
             if (li && has_features) {
                 is_feature <- fidx[, 2L] %in% idx
@@ -1091,6 +1090,7 @@ toXcmsExperiment <- function(object, ...) {
         }
         pb$tick()
     }
+    slot(chr, ".Data", check = FALSE) <- mat
     if (has_features) {
         message("Processing features")
         ## Define the featureDefinitions and assign chrom peaks to each,

@@ -576,6 +576,7 @@ importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "backendBpparam")
 importMethodsFrom("Spectra", "estimatePrecursorIntensity")
+importMethodsFrom("Spectra", "filterRanges")
 importFrom("Spectra", "MsBackendMemory", "filterEmptySpectra")
 
 ## MsExperiment things

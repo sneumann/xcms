@@ -63,7 +63,8 @@
 .mse_find_chrom_peaks_sample <- function(x, msLevel = 1L, param, ...) {
     x <- filterMsLevel(x, msLevel)
     pkd <- Spectra::peaksData(x, columns = c("mz", "intensity"),
-                              f = factor(), BPPARAM = SerialParam())
+                              f = factor(), return.type = "list",
+                              BPPARAM = SerialParam())
     vals_per_spect <- vapply(pkd, nrow, integer(1), USE.NAMES = FALSE)
     ## Open questions:
     ## - What to do with empty spectra? Remove them? MatchFilter does not like
@@ -232,7 +233,7 @@
     }
     bpmapply(
         split(peaksData(x, columns = c("mz", "intensity"), f = factor(),
-                        BPPARAM = SerialParam()), f),
+                        return.type = "list", BPPARAM = SerialParam()), f),
         split(rtime(x), f),
         FUN = function(p, rt, prm, msl) {
             vals_per_spect <- vapply(p, nrow, integer(1), USE.NAMES = FALSE)
@@ -282,7 +283,7 @@
     else f <- factor(integer(), levels = sidx)
     bplapply(
         split(Spectra::peaksData(x, columns = c("mz", "intensity"),
-                                 f = factor(),
+                                 f = factor(), return.type = "list",
                                  BPPARAM = SerialParam()), f),
         FUN = .peaksdata_profmat, method = method, step = step,
         baselevel = baselevel, basespace = basespace, mzrange. = mzrange.,
@@ -347,7 +348,8 @@
     if (!(ref_idx %in% seq_along(x)))
         stop("'centerSample' needs to be an integer between 1 and ", length(x))
     ref_sps <- filterMsLevel(spectra(x[ref_idx]), msLevel = msLevel)
-    ref_pm <- .peaksdata_profmat(peaksData(ref_sps, f = factor()),
+    ref_pm <- .peaksdata_profmat(peaksData(ref_sps, f = factor(),
+                                           return.type = "list"),
                                  method = "bin", step = binSize(param),
                                  returnBreaks = TRUE)
     res <- unlist(.mse_spectrapply_chunks(
@@ -390,11 +392,13 @@
     if (!(length(ref) & length(other)))
         stop("No spectra with MS level ", msLevel, " present")
     if (!length(ref_pm))
-        ref_pm <- .peaksdata_profmat(peaksData(ref, f = factor()),
+        ref_pm <- .peaksdata_profmat(peaksData(ref, f = factor(),
+                                               return.type = "list"),
                                      method = "bin",
                                      step = binSize(param),
                                      returnBreaks = TRUE)
-    other_pm <- .peaksdata_profmat(peaksData(other, f = factor()),
+    other_pm <- .peaksdata_profmat(peaksData(other, f = factor(),
+                                             return.type = "list"),
                                    method = "bin",
                                    step = binSize(param),
                                    returnBreaks = TRUE)
@@ -469,20 +473,22 @@
         stop("Length of 'isolationWindow' (if provided) should match the ",
              "number of chromatograms to extract.")
     colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
+    rtr <- as.vector(t(.reduce(rt[, 1L], rt[, 2L])))
     res <- .mse_spectrapply_chunks(
-        x, FUN = function(z, pks, msl, afun, BPPARAM) {
+        x, FUN = function(z, pks, msl, afun, rtr, BPPARAM) {
             sidx <- unique(z$.SAMPLE_IDX)
             z <- filterMsLevel(z, msLevel = msLevel)
-            rtr <- range(pks[, c("rtmin", "rtmax")], na.rm = TRUE)
-            if (all(is.finite(rtr)))
-                z <- filterRt(z, rt = rtr)
+            if (length(rtr)) # for lower memory footprint
+                z <- filterRanges(
+                    z, ranges = rtr, match = "any",
+                    spectraVariables = rep("rtime", length(rtr) / 2))
             lz <- length(z)
             if (lz)
                 f <- factor(z$.SAMPLE_IDX, levels = sidx)
             else f <- factor(integer(), levels = sidx)
             bpmapply(
                 split(Spectra::peaksData(z, columns = c("mz", "intensity"),
-                                         f = factor(),
+                                         f = factor(), return.type = "list",
                                          BPPARAM = SerialParam()), f),
                 split(rtime(z), f),
                 split(msLevel(z), f),
@@ -493,19 +499,20 @@
                                 pks_tmz = isolationWindow,
                                 aggregationFun = afun),
                 SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
-        }, pks = pks, msl = msLevel, afun = aggregationFun,
+        }, pks = pks, msl = msLevel, afun = aggregationFun, rtr = rtr,
         chunkSize = chunkSize, progressbar = progressbar, BPPARAM = BPPARAM)
-    res <- as(do.call(cbind, unlist(res, recursive = FALSE, use.names = FALSE)),
-              "MChromatograms")
+    res <- do.call(cbind, unlist(res, recursive = FALSE, use.names = FALSE))
     fd <- annotatedDataFrameFrom(res, byrow = TRUE)
     fd$mzmin <- mz[, 1]
     fd$mzmax <- mz[, 2]
     fd$rtmin <- rt[, 1]
     fd$rtmax <- rt[, 2]
-    res@featureData <- fd
-    rownames(res@.Data) <- rownames(fd)
-    res@phenoData <- AnnotatedDataFrame(as.data.frame(sampleData(x)))
-    colnames(res@.Data) <- rownames(pData(res))
+    pd <- AnnotatedDataFrame(as.data.frame(sampleData(x)))
+    rownames(res) <- rownames(fd)
+    colnames(res) <- rownames(pd)
+    res <- as(res, "MChromatograms")
+    slot(res, "featureData", check = FALSE) <- fd
+    slot(res, "phenoData", check = FALSE) <- pd
     res
 }
 
