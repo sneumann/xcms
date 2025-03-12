@@ -634,6 +634,7 @@ toXcmsExperiment <- function(object, ...) {
     keep_features <- vector("list", length(x))
     names(keep_features) <- x@sample_id
     h5f <- x@hdf5_file
+    data_changed <- FALSE # keep track if there was any change in data
     for (msl in msLevel) {
         handle_features <- any(x@features_ms_level %in% msl)
         for (id in x@sample_id) {
@@ -643,8 +644,15 @@ toXcmsExperiment <- function(object, ...) {
                                  read_colnames = TRUE)[[1L]]
             if (chrom_peak_data) idx <- FUN(pkd, ...)
             else idx <- FUN(pks, ...)
-            if (.is_equal(idx, 1:nrow(pks))) next
+            if (handle_features) {
+                fmap <- .h5_read_data(
+                    h5f, id, "feature_to_chrom_peaks", msl)[[1L]]
+                fmap <- fmap[fmap[, 2L] %in% idx, , drop = FALSE]
+                keep_features[[id]] <- cbind(fmap[, 1L], match(fmap[, 2L], idx))
+            }
+            if (.is_equal(idx, 1:nrow(pks))) next # skip export
             ## Subset and export
+            data_changed <- TRUE
             l <- list(pks[idx, , drop = FALSE])
             names(l) <- id
             .h5_write_data(h5f, l, "chrom_peaks", msl, replace = TRUE,
@@ -653,14 +661,8 @@ toXcmsExperiment <- function(object, ...) {
             names(l) <- id
             mc <- .h5_write_data(h5f, l, "chrom_peak_data", msl,
                                  replace = TRUE, write_rownames = FALSE)
-            if (handle_features) {
-                fmap <- .h5_read_data(
-                    h5f, id, "feature_to_chrom_peaks", msl)[[1L]]
-                fmap <- fmap[fmap[, 2L] %in% idx, , drop = FALSE]
-                keep_features[[id]] <- cbind(fmap[, 1L], match(fmap[, 2L], idx))
-            }
         }
-        if (handle_features) {
+        if (handle_features && data_changed) {
             fd <- .h5_read_data(h5f, "features", "feature_definitions",
                                 read_rownames = TRUE, ms_level = msl)[[1L]]
             keep <- sort(unique(unlist(

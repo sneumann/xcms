@@ -448,20 +448,20 @@
 #' @param i For `[`: `integer` or `logical` defining the samples/files to
 #'     subset.
 #'
-#' @param include For `chromatogram`: deprecated; use parameter `chromPeaks`
+#' @param include For `chromatogram()`: deprecated; use parameter `chromPeaks`
 #'      instead.
 #'
-#' @param intensity For `featureValues`: `character(1)` specifying the name
+#' @param intensity For `featureValues()`: `character(1)` specifying the name
 #'     of the column in the `chromPeaks(objects)` matrix containing the
 #'     intensity value of the peak that should be used for the conflict
 #'     resolution if `method = "maxint"`.
 #'
-#' @param isFilledColumn For `chromPeaks`: `logical(1)` whether a column
+#' @param isFilledColumn For `chromPeaks()`: `logical(1)` whether a column
 #'     `"is_filled"` should be included in the returned `matrix` with the
 #'     information whether a peak was detected or *only* filled-in. Note that
 #'     this information is also provided in the `chromPeakData` data frame.
 #'
-#' @param isolationWindowTargetMz For `chromatogram`: `numeric` (of length
+#' @param isolationWindowTargetMz For `chromatogram()`: `numeric` (of length
 #'     equal to the number of rows of `rt` and `mz`) with the isolation window
 #'     target m/z of the MS2 spectra from which the chromatgrom should be
 #'     generated. For MS1 data (`msLevel = 1L`, the default), this parameter
@@ -470,7 +470,7 @@
 #'
 #' @param j For `[`: not supported.
 #'
-#' @param keep For `filterChromPeaks`: `logical`, `integer` or `character`
+#' @param keep For `filterChromPeaks()`: `logical`, `integer` or `character`
 #'     specifying which chromatographic peaks to keep. If `logical` the
 #'     length of `keep` needs to match the number of rows of `chromPeaks`.
 #'     Alternatively, `keep` allows to specify the `index` (row) of peaks

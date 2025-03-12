@@ -78,6 +78,13 @@
 #'   peaks needs to be extracted. Also, `chromPeakData()` supports the
 #'   `bySample` parameter described for `chromPeaks()` above.
 #'
+#' - `filterChromPeaks()` allows to filter the chromatographic peaks specifying
+#'   which should be retainend using the `keep` parameter. This can be either
+#'   a `logical`, `character` or `integer` vector. Duplicated or unsorted
+#'   indices are **not** supported. Eventually present feature definitions
+#'   will be updated as well. The function returns the object with the
+#'   filtered chromatographic peaks.
+#'
 #' @section Retention time alignment:
 #'
 #' - `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
@@ -1188,9 +1195,35 @@ setMethod(
         chrs
     })
 
+#' @rdname XcmsExperimentHdf5
+setMethod(
+    "filterChromPeaks", "XcmsExperimentHdf5",
+    function(object, keep = rep(TRUE, nrow(chromPeaks(object))),
+             method = "keep", ...) {
+        method <- match.arg(method)
+        object <- switch(
+            method,
+            keep = {
+                p <- unlist(.h5_chrom_peaks_rownames(object), use.names = FALSE)
+                idx <- .i2index(keep, ids = p, name = "keep")
+                if (anyDuplicated(idx) || is.unsorted(idx))
+                    stop("Filtering with duplicated or unsorted indices",
+                         " is not supported", call. = FALSE)
+                mc <- .h5_filter_chrom_peaks(
+                    object, msLevel = object@chrom_peaks_ms_level,
+                    FUN = function(x, peak_id) {
+                        which(rownames(x) %in% peak_id)
+                    }, peak_id = p[idx])
+                object@hdf5_mod_count <- mc
+                object
+            }
+        )
+        object
+    })
+
+
 #' TODO: LLLLLL
 #'
-#' - `filterChromPeaks()`
 #' - `filterFeatureDefinitions()`
 #' - `manualChromPeaks()`
 #' - `reconstructChromPeakSpectra()`

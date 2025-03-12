@@ -948,36 +948,30 @@ test_that("featureChromatograms,XcmsExperimentHdf5 works", {
     expect_equal(res_fd, ref_fd[, colnames(res_fd)])
 })
 
-## load("/home/jo/Projects/git/sneumann/xcms_local_data/local_data/XcmsExperimentHdf5/large_xcms_im/05-chris_im.RData")
+test_that("filterChromPeaks,XcmsExperimentHdf5 works", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    pks <- chromPeaks(x)
+    fts <- featureDefinitions(x)
+    mc <- x@hdf5_mod_count
+    x <- filterChromPeaks(x)
+    expect_equal(mc, x@hdf5_mod_count)
+    expect_equal(chromPeaks(x), pks)
 
-bla <- chris_im[1:40, keepFeatures = TRUE]
-bla@spectra$msLevel <- bla@spectra$msLevel
-bla@spectra$rtime <- bla@spectra$rtime
-fa <- featureArea(chris_im)[1:100, ]
-register(SerialParam())
-system.time(
-    a <- chromatogram(bla, mz = fa[, c("mzmin", "mzmax")],
-                      rt = fa[, c("rtmin", "rtmax")])
-) # 19.5sec
-system.time(
-    b <- featureChromatograms(bla, features = rownames(fa))
-) # 10sec
+    ## errors
+    expect_error(filterChromPeaks(x, "not exist"), "out of bounds")
+    expect_error(filterChromPeaks(x, c(3, 1, 6, 2)), "unsorted")
+    expect_error(filterChromPeaks(x, c(1, 1, 2, 2, 3, 3)), "duplicated")
 
-system.time(
-    a <- filterRt(bla, c(200, 300))
-) # 0.4sec ; 3.2sec.
-
-filty <- function(x, rt, msLevel.) {
-    x$rtime <- x$rtime
-    x$msLevel <- x$msLevel
-    filterRt(x, rt, msLevel.)
-}
-system.time(
-    a <- filty(be, c(200, 300), integer())
-)
-
-## Check with the full data... also using peakRAM for memory usage...
-## should we define a min length when db operation makes sense?
+    x <- filterChromPeaks(x, 4:24)
+    expect_true(mc < x@hdf5_mod_count)
+    expect_equal(chromPeaks(x), pks[4:24, ])
+    expect_true(nrow(featureDefinitions(x)) < nrow(fts))
+    vals <- featureValues(x)
+    expect_true(all(is.na(vals[, -1L])))
+    expect_true(all(!is.na(vals[, 1L])))
+    rm(tmp)
+})
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
