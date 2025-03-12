@@ -629,8 +629,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     pdata <- do.call(rbind, lapply(x, pData))
     res <- new(
         "OnDiskMSnExp",
-        phenoData = new("NAnnotatedDataFrame", data = pdata),
-        featureData = new("AnnotatedDataFrame", featd),
+        phenoData = AnnotatedDataFrame(pdata),
+        featureData = AnnotatedDataFrame(featd),
         processingData = new("MSnProcess",
                              processing = paste0("Concatenated [", date(), "]"),
                              files = unlist(fls), smoothed = NA),

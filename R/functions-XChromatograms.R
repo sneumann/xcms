@@ -29,7 +29,7 @@
 #'     `XChromatogram` objects.
 #'
 #' @param phenoData For `XChromatograms`: either a `data.frame`,
-#'     `AnnotatedDataFrame` or `NAnnotatedDataFrame` describing the
+#'     `AnnotatedDataFrame` describing the
 #'     phenotypical information of the samples.
 #'
 #' @param featureData For `XChromatograms`: either a `data.frame` or

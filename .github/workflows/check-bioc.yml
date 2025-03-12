@@ -40,7 +40,7 @@ env:
   run_pkgdown: 'true'
   has_RUnit: 'false'
   has_BiocCheck: 'false'
-  cache-version: 'cache-v1'
+  cache-version: 'cache-v4'
 
 jobs:
   build-check:
@@ -100,7 +100,7 @@ jobs:
 
       - name: Cache R packages
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os != 'Linux'"
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-${{ hashFiles('.github/depends.Rds') }}
@@ -108,7 +108,7 @@ jobs:
 
       - name: Cache R packages on Linux
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /home/runner/work/_temp/Library
           key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-devel-${{ hashFiles('.github/depends.Rds') }}

@@ -1,5 +1,10 @@
 # xcms 4.5
 
+## Changes in version 4.5.4
+
+- Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
+  `AnnotatedDataFrame`.
+
 ## Changes in version 4.5.3
 
 - Address issue #765: peak detection on chromatographic data: report a
