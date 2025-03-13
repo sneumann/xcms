@@ -1314,7 +1314,7 @@ XcmsExperiment <- function() {
                             processing = paste0("Data converted [", date(),"]"),
                             files = fileNames(from),
                             smoothed = NA)
-    n@phenoData <- new("NAnnotatedDataFrame", as.data.frame(sampleData(from)))
+    n@phenoData <- AnnotatedDataFrame(as.data.frame(sampleData(from)))
     fd <- as.data.frame(from@spectra@backend@spectraData)
     fnames <- unique(fd$dataStorage)
     fd$fileIdx <- match(fd$dataStorage, fnames)

@@ -195,7 +195,7 @@ XChromatogram(
 \code{XChromatogram} objects.}
 
 \item{phenoData}{For \code{XChromatograms}: either a \code{data.frame},
-\code{AnnotatedDataFrame} or \code{NAnnotatedDataFrame} describing the
+\code{AnnotatedDataFrame} describing the
 phenotypical information of the samples.}
 
 \item{featureData}{For \code{XChromatograms}: either a \code{data.frame} or

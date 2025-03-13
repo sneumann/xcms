@@ -1,6 +1,6 @@
 # xcms 4.5
 
-## Changes in version 4.5.x
+## Changes in version 4.5.6
 
 - Change the naming convention of chromatographic peaks to include also the MS
   level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
@@ -11,10 +11,15 @@
 - Optimization and performance improvements for extraction of chromatographic
   data.
 
-## Changes in version 4.5.4
+## Changes in version 4.5.5
 
 - Fix a bug in `manualChromPeaks()` that caused an error when only a single
   chrom peak was added.
+
+## Changes in version 4.5.4
+
+- Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
+  `AnnotatedDataFrame`.
 
 ## Changes in version 4.5.3
 
