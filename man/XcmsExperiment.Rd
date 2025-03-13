@@ -213,37 +213,39 @@ filterFeatureDefinitions(object, ...)
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
 
-\item{...}{Additional optional parameters. For \code{quantify}: any parameter
+\item{...}{Additional optional parameters. For \code{quantify()}: any parameter
 for the \code{featureValues} call used to extract the feature value matrix.}
 
-\item{rt}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining
-the retention time range for which chromatographic peaks or features
-should be returned. The full range is used by default.
-For \code{chromatogram}: two column numerical \code{matrix} with each row
+\item{rt}{For \code{chromPeaks()} and \code{featureDefinitions()}: \code{numeric(2)}
+defining the retention time range for which chromatographic peaks
+or features should be returned. The full range is used by default.
+For \code{chromatogram()}: two column numerical \code{matrix} with each row
 representing the lower and upper retention time window(s) for the
 chromatograms. If not provided the full retention time range is used.}
 
-\item{mz}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} optionally
-defining the m/z range for which chromatographic peaks or feature
-definitions should be returned. The full m/z range is used by default.
-For \code{chromatogram}: two-column numerical \code{matrix} with each row
+\item{mz}{For \code{chromPeaks()} and \code{featureDefinitions()}: \code{numeric(2)}
+optionally defining the m/z range for which chromatographic peaks
+or feature definitions should be returned. The full m/z range is
+used by default.
+For \code{chromatogram()}: two-column numerical \code{matrix} with each row
 representing m/z range that should be aggregated into a chromatogram.
 If not provided the full m/z range of the data will be used (and hence
 a total ion chromatogram will be returned if \code{aggregationFun = "sum"}
-is used). For \code{filterIsolationWindow}: \code{numeric(1)} defining the m/z
+is used).
+For \code{filterIsolationWindow()}: \code{numeric(1)} defining the m/z
 that should be contained within the spectra's isolation window.}
 
-\item{msLevel.}{For \code{filterRt}: ignored. \code{filterRt} will always filter
+\item{msLevel.}{For \code{filterRt()}: ignored. \code{filterRt()} will always filter
 by retention times on all MS levels regardless of this parameter.
-For \code{chromatogram}: \code{integer} with the MS level from which the
+For \code{chromatogram()}: \code{integer} with the MS level from which the
 chromatogram(s) should be extracted. Has to be either of length 1 or
 length equal to the numer of rows of the parameters \code{mz} and \code{rt}
 defining the m/z and rt regions from which the chromatograms should
 be created. Defaults to \code{msLevel = 1L}.
-for \code{filterMsLevel}: \code{integer} defining the MS level(s) to which the
+for \code{filterMsLevel()}: \code{integer} defining the MS level(s) to which the
 data should be subset.}
 
-\item{file}{For \code{filterFile}: \code{integer} with the indices of the samples
+\item{file}{For \code{filterFile()}: \code{integer} with the indices of the samples
 (files) to which the data should be subsetted.}
 
 \item{aggregationFun}{For \code{chromatogram()}: \code{character(1)} defining the
@@ -257,32 +259,32 @@ chromatogram (BPC).}
 \item{msLevel}{\code{integer} defining the MS level (or multiple MS level if the
 function supports it).}
 
-\item{isolationWindowTargetMz}{For \code{chromatogram}: \code{numeric} (of length
+\item{isolationWindowTargetMz}{For \code{chromatogram()}: \code{numeric} (of length
 equal to the number of rows of \code{rt} and \code{mz}) with the isolation window
 target m/z of the MS2 spectra from which the chromatgrom should be
 generated. For MS1 data (\code{msLevel = 1L}, the default), this parameter
-is ignored. See examples on \code{chromatogram} below for further
+is ignored. See examples on \code{chromatogram()} below for further
 information.}
 
 \item{chunkSize}{For \code{chromatogram()}: \code{integer(1)} defining the number of
 files from which the data should be loaded at a time into memory.
 Defaults to \code{chunkSize = 2L}.}
 
-\item{return.type}{For \code{chromPeakData}: \code{character(1)} defining the
+\item{return.type}{For \code{chromPeakData()}: \code{character(1)} defining the
 class of the returned object. Can be either \code{"DataFrame"} (the default)
-or \code{"data.frame"}. For \code{chromatogram}: \code{character(1)} defining the
+or \code{"data.frame"}. For \code{chromatogram()}: \code{character(1)} defining the
 type of the returned object. Currently only
 \code{return.type = "MChromatograms"} is supported.}
 
-\item{BPPARAM}{For \code{chromatogram}: parallel processing setup. Defaults
+\item{BPPARAM}{For \code{chromatogram()}: parallel processing setup. Defaults
 to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more
 information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
 
-\item{y}{For \code{plot}: should not be defined as it is not supported.}
+\item{y}{For \code{plot()}: should not be defined as it is not supported.}
 
-\item{peakCol}{For \code{plot}: defines the border color of the rectangles
+\item{peakCol}{For \code{plot()}: defines the border color of the rectangles
 indicating the identified chromatographic peaks. Only a single color
 is supported. Defaults to `peakCol = "#ff000060".}
 
@@ -296,18 +298,18 @@ subset.}
 \item{keepAdjustedRtime}{\code{logical(1)}: whether adjusted retention times (if
 present) should be retained.}
 
-\item{value}{For \code{featureValues}: \code{character(1)} defining which value should
-be reported for each feature in each sample. Can be any column of the
-\code{chromPeaks} matrix or \code{"index"} if simply the index of the assigned
-peak should be returned. Defaults to \code{value = "into"} thus the
-integrated peak area is reported.}
+\item{value}{For \code{featureValues()}: \code{character(1)} defining which value
+should be reported for each feature in each sample. Can be any column
+of the \code{chromPeaks()} matrix or \code{"index"} if simply the index of
+the assigned peak should be returned. Defaults to \code{value = "into"}
+thus the integrated peak area is reported.}
 
-\item{ppm}{For \code{chromPeaks} and \code{featureDefinitions}: optional \code{numeric(1)}
-specifying the ppm by which the m/z range (defined by \code{mz} should be
-extended. For a value of \code{ppm = 10}, all peaks within \code{mz[1] - ppm / 1e6}
-and \code{mz[2] + ppm / 1e6} are returned.}
+\item{ppm}{For \code{chromPeaks()} and \code{featureDefinitions()}: optional
+\code{numeric(1)} specifying the ppm by which the m/z range (defined by
+\code{mz} should be extended. For a value of \code{ppm = 10}, all peaks
+within \code{mz[1] - ppm / 1e6} and \code{mz[2] + ppm / 1e6} are returned.}
 
-\item{type}{For \code{chromPeaks} and \code{featureDefinitions} and only if either
+\item{type}{For \code{chromPeaks()} and \code{featureDefinitions()} and only if either
 \code{mz} and \code{rt} are defined too: \code{character(1)}: defining which peaks
 (or features) should be returned. For \code{type = "any"}: returns all
 chromatographic peaks or features also only partially overlapping any of
@@ -316,10 +318,10 @@ features completely within the region defined by \code{mz} and/or \code{rt}.
 For \code{type = "apex_within"}: returns peaks or features for which the m/z
 and retention time of the peak's apex is within the region defined by
 \code{mz} and/or \code{rt}.
-For \code{processHistory}: restrict returned processing steps to specific
+For \code{processHistory()}: restrict returned processing steps to specific
 types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all supported values.}
 
-\item{isFilledColumn}{For \code{chromPeaks}: \code{logical(1)} whether a column
+\item{isFilledColumn}{For \code{chromPeaks()}: \code{logical(1)} whether a column
 \code{"is_filled"} should be included in the returned \code{matrix} with the
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
@@ -328,13 +330,13 @@ this information is also provided in the \code{chromPeakData} data frame.}
 names of the columns that should be returned. By default (with
 \code{columns = character()} all columns are returned.}
 
-\item{keep}{For \code{filterChromPeaks}: \code{logical}, \code{integer} or \code{character}
+\item{keep}{For \code{filterChromPeaks()}: \code{logical}, \code{integer} or \code{character}
 specifying which chromatographic peaks to keep. If \code{logical} the
-length of \code{keep} needs to match the number of rows of \code{chromPeaks}.
+length of \code{keep} needs to match the number of rows of \code{chromPeaks()}.
 Alternatively, \code{keep} allows to specify the \code{index} (row) of peaks
-to keep or their ID (i.e. row name in \code{chromPeaks}).}
+to keep or their ID (i.e. row name in \code{chromPeaks()}).}
 
-\item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
+\item{method}{For \code{featureValues()}: \code{character(1)} specifying the method to
 resolve multi-peak mappings within the same sample (correspondence
 analysis can assign more than one chromatographic peak within a sample
 to the same feature, e.g. if they are close in retention time). Options:
@@ -345,28 +347,28 @@ with the largest signal (parameter \code{intensity} allows to select the
 column in \code{chromPeaks} that should be used for \emph{signal}).
 \code{method = "sum"}: sum the value for all chromatographic peaks in a
 sample assigned to the same feature. The default is \code{method = "medret"}.
-For \code{filterChromPeaks}: currently only \code{method = "keep"} is supported.}
+For \code{filterChromPeaks()}: currently only \code{method = "keep"} is supported.}
 
 \item{adjusted}{For \verb{rtime,XcmsExperiment}: whether adjusted or \emph{raw}
 retention times should be returned. The default is to return adjusted
 retention times, if available.}
 
-\item{mzmin}{For \code{featureArea}: function to calculate the \code{"mzmin"} of
+\item{mzmin}{For \code{featureArea()}: function to calculate the \code{"mzmin"} of
 a feature based on the \code{"mzmin"} values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 \code{mzmin = min}.}
 
-\item{mzmax}{For \code{featureArea}: function to calculate the \code{"mzmax"} of
+\item{mzmax}{For \code{featureArea()}: function to calculate the \code{"mzmax"} of
 a feature based on the \code{"mzmax"} values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 \code{mzmax = max}.}
 
-\item{rtmin}{For \code{featureArea}: function to calculate the \code{"rtmin"} of
+\item{rtmin}{For \code{featureArea()}: function to calculate the \code{"rtmin"} of
 a feature based on the \code{"rtmin"} values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 \code{rtmin = min}.}
 
-\item{rtmax}{For \code{featureArea}: function to calculate the \code{"rtmax"} of
+\item{rtmax}{For \code{featureArea()}: function to calculate the \code{"rtmax"} of
 a feature based on the \code{"rtmax"} values of the individual
 chromatographic peaks assigned to that feature. Defaults to
 \code{rtmax = max}.}
@@ -376,22 +378,22 @@ chromatographic peaks assigned to that feature. Defaults to
 from which to extract the feature area, respectively. See function
 description for more information.}
 
-\item{intensity}{For \code{featureValues}: \code{character(1)} specifying the name
+\item{intensity}{For \code{featureValues()}: \code{character(1)} specifying the name
 of the column in the \code{chromPeaks(objects)} matrix containing the
 intensity value of the peak that should be used for the conflict
 resolution if \code{method = "maxint"}.}
 
-\item{filled}{For \code{featureValues}: \code{logical(1)} specifying whether values
+\item{filled}{For \code{featureValues()}: \code{logical(1)} specifying whether values
 for filled-in peaks should be reported. For \code{filled = TRUE} (the
 default) filled peak values are returned, otherwise \code{NA} is reported
 for the respective features in the samples in which no peak was
 detected.}
 
-\item{missing}{For \code{featureValues}: default value for missing values.
+\item{missing}{For \code{featureValues()}: default value for missing values.
 Allows to define the value that should be reported for a missing peak
 intensity. Defaults to \code{missing = NA_real_}.}
 
-\item{include}{For \code{chromatogram}: deprecated; use parameter \code{chromPeaks}
+\item{include}{For \code{chromatogram()}: deprecated; use parameter \code{chromPeaks}
 instead.}
 
 \item{chromPeaks}{For \code{chromatogram()}: \code{character(1)} defining which
@@ -403,19 +405,20 @@ are overlapping with the m/z - retention time window or
 \code{chromPeaks = "none"} to not include any chromatographic peaks. See
 also parameter \code{type} below for additional information.}
 
-\item{keepFeatures}{for most subsetting functions (\code{[}, \code{filterFile}):
+\item{keepFeatures}{for most subsetting functions (\code{[}, \code{filterFile()}):
 \code{logical(1)}: wheter eventually present feature definitions should
 be retained in the returned (filtered) object.}
 }
 \description{
-The \code{XcmsExperiment} is a data container for \code{xcms} preprocessing results
+The \code{XcmsExperiment} is a data container for \emph{xcms} preprocessing results
 (i.e. results from chromatographic peak detection, alignment and
-correspondence analysis).
+correspondence analysis). It is the preferred and default result object
+since version 4 of \emph{xcms}.
 
 It provides the same functionality than the \link{XCMSnExp} object, but uses the
-more advanced and modern MS infrastructure provided by the \code{MsExperiment}
-and \code{Spectra} Bioconductor packages. With this comes a higher flexibility on
-how and where to store the data.
+more advanced and modern MS infrastructure provided by the \emph{MsExperiment}
+and \emph{Spectra} Bioconductor packages. This provides a much higher flexibility
+of data representation and storage and ensures future expandability.
 
 Documentation of the various functions for \code{XcmsExperiment} objects are
 grouped by topic and provided in the sections below.
@@ -447,7 +450,7 @@ samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 \code{keepChromPeaks} (by default \code{TRUE}), \code{keepAdjustedRtime} (by default
 \code{FALSE}) and \code{keepFeatures} (by default \code{FALSE}).
-\item \code{c}: multiple \code{XcmsExperiment} objects can be combined into one using the
+\item \code{c()}: multiple \code{XcmsExperiment} objects can be combined into one using the
 \code{c()} function. This requires however that all the \code{XcmsExperiments}'
 \code{Spectra} objects use the same type of \code{MsBackend} and that their
 processing queues are empty. Also, only combining of peak detection
@@ -458,41 +461,42 @@ objects is combined and any data eventually present in the \verb{@qdata},
 \verb{@otherData} and \verb{@experimentFiles} slots is ignored.
 The function returns a \code{XcmsExperiment} objects with the combined MS data
 (\code{Spectra} objects) and chromatographic peak detection results.
-\item \code{filterChromPeaks}: filter chromatographic peaks of an \code{XcmsExperiment}
+\item \code{filterChromPeaks()}: filter chromatographic peaks of an \code{XcmsExperiment}
 keeping only those specified with parameter \code{keep}. Returns the
 \code{XcmsExperiment} with the filtered data. Chromatographic peaks to
 retain can be specified either by providing their index in the
-\code{chromPeaks} matrix, their ID (rowname in \code{chromPeaks}) or with a
+\code{chromPeaks()} matrix, their ID (rowname in \code{chromPeaks()}) or with a
 \code{logical} vector with the same length than number of rows of
-\code{chromPeaks}. Assignment of chromatographic peaks are updated to
+\code{chromPeaks()}. Assignment of chromatographic peaks are updated to
 eventually present feature definitions after filtering.
-\item \code{filterFeatureDefinitions}: filter feature definitions of an
+\item \code{filterFeatureDefinitions()}: filter feature definitions of an
 \code{XcmsExperiment} keeping only those defined with parameter \code{features},
 which can be a \code{logical} of length equal to the number of features,
 an \code{integer} with the index of the features in
 \code{featureDefinitions(object)} to keep or a \code{character} with the feature
 IDs (i.e. row names in \code{featureDefinitions(object)}).
-\item \code{filterFile}: filter an \code{XcmsExperiment} (or \code{MsExperiment}) by \emph{file}
+\item \code{filterFile()}: filter an \code{XcmsExperiment} (or \code{MsExperiment}) by \emph{file}
 (sample). The index of the samples to which the data should be subsetted
 can be specified with parameter \code{file}. The sole purpose of this function
 is to provide backward compatibility with the \code{MSnbase} package. Wherever
 possible, the \code{[} function should be used instead for any sample-based
 subsetting. Parameters \code{keepChromPeaks}, \code{keepAdjustedRtime} and
 \code{keepChromPeaks} can be passed using \code{...}.
-Note also that in contrast to \code{[}, \code{filterFile} does not support subsetting
-in arbitrary order.
-\item \code{filterIsolationWindow}: filter the \strong{spectra} within an \code{MsExperiment}
+Note also that in contrast to \code{[}, \code{filterFile()} does not support
+subsetting in arbitrary order.
+\item \code{filterIsolationWindow()}: filter the \strong{spectra} within an \code{MsExperiment}
 or \code{XcmsExperiment} object keeping only those with an isolation window
 containing the specified m/z (i.e., keeping spectra with an
 \code{"isolationWindowLowerMz"} smaller than the user-provided \code{mz} and an
 \code{"isolationWindowUpperMz"} larger than \code{mz}). For an \code{XcmsExperiment} also
 all chromatographic peaks (and subsequently also features) are removed for
 which the range of their \code{"isolationWindowLowerMz"} and
-\code{"isolationWindowUpperMz"} (columns in \code{chromPeakData}) do not contain
+\code{"isolationWindowUpperMz"} (columns in \code{chromPeakData()}) do not contain
 the user provided \code{mz}.
-\item \code{filterMsLevel}: filter the data of the \code{XcmsExperiment} or \code{MsExperiment}
-to keep only data of the MS level(s) specified with parameter \code{msLevel.}.
-\item \code{filterMz}, \code{filterMzRange}: filter the spectra within an
+\item \code{filterMsLevel()}: filter the data of the \code{XcmsExperiment} or
+\code{MsExperiment} to keep only data of the MS level(s) specified with
+parameter \code{msLevel.}.
+\item \code{filterMz()}, \code{filterMzRange()}: filter the spectra within an
 \code{XcmsExperiment} or \code{MsExperiment} to the specified m/z range (parameter
 \code{mz}). For \code{XcmsExperiment} also identified chromatographic peaks and
 features are filtered keeping only those that are within the specified
@@ -500,7 +504,7 @@ m/z range (i.e. for which the m/z of the peak apex is within the m/z
 range). Parameter \code{msLevels.} allows to restrict the filtering to
 only specified MS levels. By default data from all MS levels are
 filtered.
-\item \code{filterRt}: filter an \code{XcmsExperiment} keeping only data within the
+\item \code{filterRt()}: filter an \code{XcmsExperiment} keeping only data within the
 specified retention time range (parameter \code{rt}). This function will keep
 all preprocessing results present within the retention time range: all
 identified chromatographic peaks with the retention time of the apex
@@ -514,7 +518,7 @@ performed on \strong{all} MS levels of the object.
 \section{Functionality related to chromatographic peaks}{
 
 \itemize{
-\item \code{chromatogram}: extract chromatographic data from a data set. Parameters
+\item \code{chromatogram()}: extract chromatographic data from a data set. Parameters
 \code{mz} and \code{rt} allow to define specific m/z - retention time regions to
 extract the data from (to e.g. for extracted ion chromatograms EICs).
 Both parameters are expected to be numerical two-column matrices with
@@ -542,7 +546,7 @@ from the respective isolation window. The \code{isolationWindowTargetMz()}
 function on the \code{Spectra} object can be used to inspect/list available
 isolation windows of a data set. See also the xcms \emph{LC-MS/MS vignette} for
 examples and details.
-\item \code{chromPeaks}: returns a \code{numeric} matrix with the identified
+\item \code{chromPeaks()}: returns a \code{numeric} matrix with the identified
 chromatographic peaks. Each row represents a chromatographic peak
 identified in one sample (file). The number of columns depends on the
 peak detection algorithm (see \code{\link[=findChromPeaks]{findChromPeaks()}}) but most methods return
@@ -560,14 +564,14 @@ in \code{object} in which the peak was identified). Parameters \code{rt}, \code{
 chromatographic peaks from the \code{object}. Parameter \code{columns} allows to
 optionally define which columns to extract. See parameter description
 below for details.
-\item \code{chromPeakData}: returns a \code{DataFrame} with potential additional
+\item \code{chromPeakData()}: returns a \code{DataFrame} with potential additional
 \emph{annotations} for the identified chromatographic peaks. Each row in this
 \code{DataFrame} corresponds to a row (same index and row name) in the
-\code{chromPeaks} matrix. The default \emph{annotations} are \code{"ms_level"} (the MS
+\code{chromPeaks()} matrix. The default \emph{annotations} are \code{"ms_level"} (the MS
 level in which the peak was identified) and \code{"is_filled"} (whether the
-chromatographic peak was \emph{detected} (by \code{findChromPeaks}) or \emph{filled-in}
-(by \code{fillChromPeaks}).
-\item \code{chromPeakSpectra}: extract MS spectra for identified chromatographic
+chromatographic peak was \emph{detected} (by \code{\link[=findChromPeaks]{findChromPeaks()}}) or
+\emph{filled-in} (by \code{\link[=fillChromPeaks]{fillChromPeaks()}}).
+\item \code{chromPeakSpectra()}: extract MS spectra for identified chromatographic
 peaks. This can be either all (full scan) MS1 spectra with retention
 times between the retention time range of a chromatographic peak, all
 MS2 spectra (if present) with a retention time within the retention
@@ -577,71 +581,72 @@ depending on their total signal or highest signal. Parameter \code{msLevel}
 allows to define from which MS level spectra should be extracted,
 parameter \code{method} allows to define if all or selected spectra should
 be returned. See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} for details.
-\item \code{dropChromPeaks}: removes (all) chromatographic peak detection results
+\item \code{dropChromPeaks()}: removes (all) chromatographic peak detection results
 from \code{object}. This will also remove any correspondence results (i.e.
 features) and eventually present adjusted retention times from the object
 if the alignment was performed \strong{after} the peak detection.
 Alignment results (adjusted retention times) can be retained if parameter
 \code{keepAdjustedRtime} is set to \code{TRUE}.
-\item \code{dropFilledChromPeaks}: removes chromatographic peaks added by gap filling
-with \code{fillChromPeaks}.
-\item \code{fillChromPeaks}: perform \emph{gap filling} to integrate signal missing
+\item \code{dropFilledChromPeaks()}: removes chromatographic peaks added by gap
+filling with \code{\link[=fillChromPeaks]{fillChromPeaks()}}.
+\item \code{fillChromPeaks()}: perform \emph{gap filling} to integrate signal missing
 values in samples in which no chromatographic peak was found. This
-depends on correspondence results, hence \code{groupChromPeaks} needs to be
+depends on correspondence results, hence \code{groupChromPeaks()} needs to be
 called first. For details and options see \code{\link[=fillChromPeaks]{fillChromPeaks()}}.
 \item \code{findChromPeaks}: perform chromatographic peak detection. See
 \code{\link[=findChromPeaks]{findChromPeaks()}} for details.
-\item \code{hasChromPeaks}: whether the object contains peak detection results.
+\item \code{hasChromPeaks()}: whether the object contains peak detection results.
 Parameter \code{msLevel} allows to check whether peak detection results are
 available for the specified MS level(s).
-\item \code{hasFilledChromPeaks}: whether gap-filling results (i.e., filled-in
+\item \code{hasFilledChromPeaks()}: whether gap-filling results (i.e., filled-in
 chromatographic peaks) are present.
-\item \code{manualChromPeaks}: \emph{manually} add chromatographic peaks by defining
+\item \code{manualChromPeaks()}: \emph{manually} add chromatographic peaks by defining
 their m/z and retention time ranges. See \code{\link[=manualChromPeaks]{manualChromPeaks()}} for
 details and examples.
-\item \code{plotChromPeakImage}: show the \emph{density} of identified chromatographic
+\item \code{plotChromPeakImage()}: show the \emph{density} of identified chromatographic
 peaks per file along the retention time. See \code{\link[=plotChromPeakImage]{plotChromPeakImage()}} for
 details.
-\item \code{plotChromPeaks}: indicate identified chromatographic peaks from one
+\item \code{plotChromPeaks()}: indicate identified chromatographic peaks from one
 sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} for details.
-\item \code{plotPrecursorIons}: general visualization of precursor ions of
+\item \code{plotPrecursorIons()}: general visualization of precursor ions of
 LC-MS/MS data. See \code{\link[=plotPrecursorIons]{plotPrecursorIons()}} for details.
-\item \code{refineChromPeaks}: \emph{refines} identified chromatographic peaks in \code{object}.
-See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
+\item \code{refineChromPeaks()}: \emph{refines} identified chromatographic peaks in
+\code{object}. See \code{\link[=refineChromPeaks]{refineChromPeaks()}} for details.
 }
 }
 
 \section{Functionality related to alignment}{
 
 \itemize{
-\item \code{adjustedRtime}: extract adjusted retention times. This is just an
+\item \code{adjustedRtime()}: extract adjusted retention times. This is just an
 alias for \code{rtime(object, adjusted = TRUE)}.
-\item \code{adjustRtime}: performs retention time adjustment (alignment) of the data.
-See \code{\link[=adjustRtime]{adjustRtime()}} for details.
-\item \code{applyAdjustedRtime}: replaces the original (raw) retention times with the
-adjusted ones. See \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} for more information.
-\item \code{dropAdjustedRtime}: drops alignment results (adjusted retention time) from
-the result object. This also reverts the retention times of identified
-chromatographic peaks if present in the result object. Note that any
-results from a correspondence analysis (i.e. feature definitions) will be
-dropped too (if the correspondence analysis was performed \strong{after} the
-alignment). This can be overruled with \code{keepAdjustedRtime = TRUE}.
-\item \code{hasAdjustedRtime}: whether alignment was performed on the object (i.e.,
+\item \code{adjustRtime()}: performs retention time adjustment (alignment) of the
+data. See \code{\link[=adjustRtime]{adjustRtime()}} for details.
+\item \code{applyAdjustedRtime()}: replaces the original (raw) retention times with
+the adjusted ones. See \code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} for more information.
+\item \code{dropAdjustedRtime()}: drops alignment results (adjusted retention time)
+from the result object. This also reverts the retention times of
+identified chromatographic peaks if present in the result object. Note
+that any results from a correspondence analysis (i.e. feature definitions)
+will be dropped too (if the correspondence analysis was performed
+\strong{after} the alignment). This can be overruled with
+\code{keepAdjustedRtime = TRUE}.
+\item \code{hasAdjustedRtime()}: whether alignment was performed on the object (i.e.,
 the object contains alignment results).
-\item \code{plotAdjustedRtime}: plot the alignment results; see \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}}
-for more information.
+\item \code{plotAdjustedRtime()}: plot the alignment results; see
+\code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for more information.
 }
 }
 
 \section{Functionality related to correspondence analysis}{
 
 \itemize{
-\item \code{dropFeatureDefinitions}: removes any correspondence analysis results from
-\code{object} as well as any filled-in chromatographic peaks. By default
+\item \code{dropFeatureDefinitions()}: removes any correspondence analysis results
+from \code{object} as well as any filled-in chromatographic peaks. By default
 (with parameter \code{keepAdjustedRtime = FALSE}) also all alignment results
 will be removed if alignment was performed \strong{after} the correspondence
 analysis. This can be overruled with \code{keepAdjustedRtime = TRUE}.
-\item \code{featureArea}: returns a \code{matrix} with columns \code{"mzmin"}, \code{"mzmax"},
+\item \code{featureArea()}: returns a \code{matrix} with columns \code{"mzmin"}, \code{"mzmax"},
 \code{"rtmin"} and \code{"rtmax"} with the m/z and retention time range for each
 feature (row) in \code{object}. By default these represent the minimal m/z
 and retention times as well as maximal m/z and retention times for
@@ -650,27 +655,27 @@ all chromatographic peaks assigned to that feature. Parameter
 Parameters \code{mzmin}, \code{mzmax}, \code{rtmin} and \code{rtmax} allow to define
 the function to calculate the reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}
 and \code{"rtmax"} values.
-\item \code{featureChromatograms}: extract ion chromatograms (EICs) for each
+\item \code{featureChromatograms()}: extract ion chromatograms (EICs) for each
 feature in \code{object}. See \code{\link[=featureChromatograms]{featureChromatograms()}} for more details.
-\item \code{featureDefinitions}: returns a \code{data.frame} with feature definitions or
+\item \code{featureDefinitions()}: returns a \code{data.frame} with feature definitions or
 an empty \code{data.frame} if no correspondence analysis results are present.
 Parameters \code{msLevel}, \code{mz}, \code{ppm} and \code{rt} allow to define subsets of
 feature definitions that should be returned with the parameter \code{type}
 defining how these parameters should be used to subset the returned
 \code{data.frame}. See parameter descriptions for details.
-\item \code{featureSpectra}: returns a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} or \code{List} of \code{Spectra}
+\item \code{featureSpectra()}: returns a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} or \code{List} of \code{Spectra}
 with (MS1 or MS2) spectra associated to each feature. See
 \code{\link[=featureSpectra]{featureSpectra()}} for more details and available parameters.
-\item \code{featuresSummary}: calculate a simple summary on features. See
+\item \code{featuresSummary()}: calculate a simple summary on features. See
 \code{\link[=featureSummary]{featureSummary()}} for details.
-\item \code{groupChromPeaks}: performs the correspondence analysis (i.e., grouping
+\item \code{groupChromPeaks()}: performs the correspondence analysis (i.e., grouping
 of chromatographic peaks into LC-MS \emph{features}). See \code{\link[=groupChromPeaks]{groupChromPeaks()}}
 for details.
-\item \code{hasFeatures}: whether correspondence analysis results are presentin in
+\item \code{hasFeatures()}: whether correspondence analysis results are presentin in
 \code{object}. The optional parameter \code{msLevel} allows to define the  MS
 level(s) for which it should be determined if feature definitions are
 available.
-\item \code{overlappingFeatures}: identify features that overlapping or close in
+\item \code{overlappingFeatures()}: identify features that overlapping or close in
 m/z - rt dimension. See \code{\link[=overlappingFeatures]{overlappingFeatures()}} for more information.
 }
 }
@@ -680,15 +685,15 @@ m/z - rt dimension. See \code{\link[=overlappingFeatures]{overlappingFeatures()}
 
 Preprocessing results can be extracted using the following functions:
 \itemize{
-\item \code{chromPeaks}: extract identified chromatographic peaks. See section on
+\item \code{chromPeaks()}: extract identified chromatographic peaks. See section on
 chromatographic peak detection for details.
-\item \code{featureDefinitions}: extract the definition of \emph{features} (chromatographic
-peaks grouped across samples). See section on correspondence analysis for
-details.
-\item \code{featureValues}: extract a \code{matrix} of \emph{values} for features from each
+\item \code{featureDefinitions()}: extract the definition of \emph{features}
+(chromatographic peaks grouped across samples). See section on
+correspondence analysis for details.
+\item \code{featureValues()}: extract a \code{matrix} of \emph{values} for features from each
 sample (file). Rows are features, columns samples. Which \emph{value} should be
 returned can be defined with parameter \code{value}, which can be any column of
-the \code{chromPeaks} matrix. By default (\code{value = "into"}) the integrated
+the \code{chromPeaks()} matrix. By default (\code{value = "into"}) the integrated
 chromatographic peak intensities are returned. With parameter \code{msLevel} it
 is possible to extract values for features from certain MS levels.
 During correspondence analysis, more than one chromatographic peak per
@@ -701,7 +706,7 @@ chromatographic peak with the largest signal (parameter \code{intensity} allows
 to define the column in \code{chromPeaks} that should be selected; defaults to
 \verb{intensity = "into"). }method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.
-\item \code{quantify}: extract the correspondence analysis results as a
+\item \code{quantify()}: extract the correspondence analysis results as a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
 are used as \code{assay} in the returned \code{SummarizedExperiment}, \code{rowData}
 contains the \code{featureDefinitions} (without column \code{"peakidx"}) and
@@ -714,21 +719,21 @@ matrix) can be passed \emph{via} \code{...}.
 \section{Visualization}{
 
 \itemize{
-\item \code{plot}: plot for each file the position of individual peaks in the m/z -
+\item \code{plot()}: plot for each file the position of individual peaks in the m/z -
 retention time space (with color-coded intensity) and a base peak
 chromatogram. This function should ideally be called only on a data subset
-(i.e. after using \code{filterRt} and \code{filterMz} to restrict to a region of
+(i.e. after using \code{filterRt()} and \code{filterMz()} to restrict to a region of
 interest). Parameter \code{msLevel} allows to define from which MS level the
 plot should be created. If \code{x} is a \code{XcmsExperiment} with available
 identified chromatographic peaks, also the region defining the peaks
 are indicated with a rectangle. Parameter \code{peakCol} allows to define the
 color of the border for these rectangles.
-\item \code{plotAdjustedRtime}: plot the alignment results; see \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}}
-for more information.
-\item \code{plotChromPeakImage}: show the \emph{density} of identified chromatographic
+\item \code{plotAdjustedRtime()}: plot the alignment results; see
+\code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for more information.
+\item \code{plotChromPeakImage()}: show the \emph{density} of identified chromatographic
 peaks per file along the retention time. See \code{\link[=plotChromPeakImage]{plotChromPeakImage()}} for
 details.
-\item \code{plotChromPeaks}: indicate identified chromatographic peaks from one
+\item \code{plotChromPeaks()}: indicate identified chromatographic peaks from one
 sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} for details.
 }
 }
@@ -736,7 +741,8 @@ sample in the RT-m/z space. See \code{\link[=plotChromPeaks]{plotChromPeaks()}} 
 \section{General functionality and functions for backward compatibility}{
 
 \itemize{
-\item \code{uniqueMsLevels}: returns the unique MS levels of the spectra in \code{object}.
+\item \code{uniqueMsLevels()}: returns the unique MS levels of the spectra in
+\code{object}.
 }
 
 The functions listed below ensure compatibility with the \emph{older}
@@ -745,22 +751,22 @@ to the \emph{older} \code{XCMSnExp} class using \code{as(object, "XCMSnExp")} sa
 \code{XCMSnExp} class can be coerced to \code{XcmsExperiment} using
 \code{as(object, "XcmsExperiment")}.
 \itemize{
-\item \code{fileNames}: returns the original data file names for the spectra data.
+\item \code{fileNames()}: returns the original data file names for the spectra data.
 Ideally, the \code{dataOrigin} or \code{dataStorage} spectra variables from the
-object's \code{spectra} should be used instead.
-\item \code{fromFile}: returns the file (sample) index for each spectrum within
+object's \code{spectra()} should be used instead.
+\item \code{fromFile()}: returns the file (sample) index for each spectrum within
 \code{object}. Generally, subsetting by sample using the \code{[} is the preferred
 way to get spectra from a specific sample.
-\item \code{polarity}: returns the polarity information for each spectrum in
+\item \code{polarity()}: returns the polarity information for each spectrum in
 \code{object}.
-\item \code{processHistory}: returns a \code{list} with \link{ProcessHistory} \emph{process history}
-objects that contain also the parameter object used for the different
-processings. Optional parameter \code{type} allows to query for specific
-processing steps.
-\item \code{rtime}: extract retention times of the \strong{spectra} from the
+\item \code{processHistory()}: returns a \code{list} with \link{ProcessHistory}
+\emph{process history} objects that contain also the parameter object used
+for the different processings. Optional parameter \code{type} allows to
+query for specific processing steps.
+\item \code{rtime()}: extract retention times of the \strong{spectra} from the
 \code{MsExperiment} or \code{XcmsExperiment} object. It is thus a shortcut for
 \code{rtime(spectra(object))} which would be the preferred way to extract
-retention times from an \code{MsExperiment}. The \code{rtime} method for
+retention times from an \code{MsExperiment}. The \code{rtime()} method for
 \code{XcmsExperiment} has an additional parameter \code{adjusted} which allows to
 define whether adjusted retention times (if present - \code{adjusted = TRUE})
 or \emph{raw} retention times (\code{adjusted = FALSE}) should be returned. By

@@ -973,6 +973,35 @@ test_that("filterChromPeaks,XcmsExperimentHdf5 works", {
     rm(tmp)
 })
 
+test_that("filterFeatureDefinitions,XcmsExperimentHdf5 works", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    fts <- featureDefinitions(x)
+    fvals <- featureValues(x)
+    mc <- x@hdf5_mod_count
+    x <- filterFeatureDefinitions(x)
+    expect_equal(mc, x@hdf5_mod_count)
+    expect_equal(featureDefinitions(x), fts)
+
+    ## errors
+    expect_error(filterFeatureDefinitions(x, "not exist"), "out of bounds")
+    expect_error(filterFeatureDefinitions(x, c(3, 1, 6, 2)), "unsorted")
+    expect_error(filterFeatureDefinitions(x, c(1, 1, 2, 2, 3, 3)), "duplicated")
+
+    x <- filterFeatureDefinitions(x, rownames(fts)[4:24])
+    expect_true(mc < x@hdf5_mod_count)
+    expect_equal(featureDefinitions(x), fts[4:24, ])
+    expect_true(nrow(featureDefinitions(x)) < nrow(fts))
+    vals <- featureValues(x)
+    expect_equal(vals, fvals[4:24, ])
+    rm(tmp)
+
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    expect_error(filterFeatureDefinitions(x, 1:3), "No feature definitions")
+    rm(tmp)
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

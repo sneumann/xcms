@@ -8,6 +8,8 @@
 \alias{XcmsExperimentHdf5-class}
 \alias{chromPeakData,XcmsExperimentHdf5-method}
 \alias{adjustRtimePeakGroups,XcmsExperimentHdf5,PeakGroupsParam-method}
+\alias{filterChromPeaks,XcmsExperimentHdf5-method}
+\alias{filterFeatureDefinitions,XcmsExperimentHdf5-method}
 \title{xcms result object for very large data sets}
 \usage{
 toXcmsExperimentHdf5(object, hdf5File = tempfile())
@@ -23,6 +25,15 @@ toXcmsExperiment(object, ...)
 )
 
 \S4method{adjustRtimePeakGroups}{XcmsExperimentHdf5,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)
+
+\S4method{filterChromPeaks}{XcmsExperimentHdf5}(
+  object,
+  keep = rep(TRUE, nrow(chromPeaks(object))),
+  method = "keep",
+  ...
+)
+
+\S4method{filterFeatureDefinitions}{XcmsExperimentHdf5}(object, features = integer())
 }
 \description{
 The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] keep all
@@ -33,8 +44,8 @@ footprint allowing thus also to represent and analyze very large data sets
 on regular computer systems. With some exceptions, including additional
 parameters, the functionality and usability of this object is identical to
 the one of `XcmsExperiment` objects. This help page lists only functions
-that have additional or different parameters than the *default* ones for
-[XcmsExperiment()] objects.
+that have additional or different parameters or properties than the
+respective methods for [XcmsExperiment()] objects.
 }
 \details{
 The `XcmsExperimentHdf5` object stores all preprocessing results (except
@@ -79,6 +90,11 @@ in the file specified with parameter `hdf5File`.
   the reference to the respective entries in the HDF5 file), but will not
   change the content of the HDF5 file. Note that with
   `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
+
+- `filterChromPeaks()` and `filterFeatureDefinitions()` to filter the
+  chromatographic peak and correspondence results, respectively. See
+  documentation below for details. Subset using unsorted or duplicated
+  indices is not supported.
 }
 
 \section{Functionality related to chromatographic peaks}{
@@ -98,6 +114,13 @@ in the file specified with parameter `hdf5File`.
   requirement for cases in which only data of some selected chromatographic
   peaks needs to be extracted. Also, `chromPeakData()` supports the
   `bySample` parameter described for `chromPeaks()` above.
+
+- `filterChromPeaks()` allows to filter the chromatographic peaks specifying
+  which should be retainend using the `keep` parameter. This can be either
+  a `logical`, `character` or `integer` vector. Duplicated or unsorted
+  indices are **not** supported. Eventually present feature definitions
+  will be updated as well. The function returns the object with the
+  filtered chromatographic peaks.
 }
 
 \section{Retention time alignment}{
@@ -122,6 +145,13 @@ in the file specified with parameter `hdf5File`.
 - `featureValues()`: for parameter `value`, the option `value = "index"`
   (i.e. returning the index of the chromatographic peaks within the
   `chromPeaks()` matrix per feature) is **not** supported.
+
+- `filterFeatureDefinitions()`: filter the feature definitions keeping only
+  the specified features. Parameter `features` can be used to define the
+  features to retain. It supports a `logical`, `integer` indices or
+  `character` with the IDs of the features (i.e., their row names in
+  `featureDefinitions()`). The function returns the input
+  `XcmsExperimentHdf5` with the filtered content.
 }
 
 \author{

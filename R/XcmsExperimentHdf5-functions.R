@@ -684,6 +684,44 @@ toXcmsExperiment <- function(object, ...) {
     mc
 }
 
+#' filter feature definitions. The function replaces the feature definitions
+#' entry in the HDF5 file and iterates over all samples to update the feature
+#' to chrom peak assignments.
+#'
+#' @param x `XcmsExperimentHdf5`
+#'
+#' @param msLevel `integer` with the MS level(s) in which to subset the
+#'     features
+#'
+#' @param feature_id `character` with the IDs (rownames) of the features that
+#'     should be retained. All other features are removed.
+#'
+#' @noRd
+.h5_filter_feature_definitions <- function(x, msLevel, feature_id) {
+    mc <- x@hdf5_mod_count
+    h5f <- x@hdf5_file
+    for (msl in msLevel) {
+        fd <- .h5_read_data(h5f, "features", "feature_definitions",
+                            read_rownames = TRUE, ms_level = msl)[[1L]]
+        keep <- which(rownames(fd) %in% feature_id)
+        fd <- extractROWS(fd, keep)
+        mc <- .h5_write_data(h5f, list(features = fd), "feature_definitions",
+                             msl, replace = TRUE, write_rownames = TRUE)
+        for (id in x@sample_id) {
+            fmap <- .h5_read_data(
+                h5f, id, "feature_to_chrom_peaks", msl)[[1L]]
+            fmap <- fmap[fmap[, 1L] %in% keep, , drop = FALSE]
+            fmap[, 1L] <- match(fmap[, 1L], keep)
+            fmap <- list(fmap)
+            names(fmap) <- id
+            mc <- .h5_write_data(h5f, fmap, "feature_to_chrom_peaks",
+                                 msl, write_colnames = FALSE,
+                                 write_rownames = FALSE)
+        }
+    }
+    mc
+}
+
 #' Get spectra for chromatographic peaks of a specified sample. This function
 #' is used by `chromPeakSpectra()` and `featureSpectra()`
 #'

@@ -16,8 +16,8 @@
 #' on regular computer systems. With some exceptions, including additional
 #' parameters, the functionality and usability of this object is identical to
 #' the one of `XcmsExperiment` objects. This help page lists only functions
-#' that have additional or different parameters than the *default* ones for
-#' [XcmsExperiment()] objects.
+#' that have additional or different parameters or properties than the
+#' respective methods for [XcmsExperiment()] objects.
 #'
 #' @details
 #'
@@ -60,6 +60,11 @@
 #'   the reference to the respective entries in the HDF5 file), but will not
 #'   change the content of the HDF5 file. Note that with
 #'   `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
+#'
+#' - `filterChromPeaks()` and `filterFeatureDefinitions()` to filter the
+#'   chromatographic peak and correspondence results, respectively. See
+#'   documentation below for details. Subset using unsorted or duplicated
+#'   indices is not supported.
 #'
 #' @section Functionality related to chromatographic peaks:
 #'
@@ -104,6 +109,13 @@
 #' - `featureValues()`: for parameter `value`, the option `value = "index"`
 #'   (i.e. returning the index of the chromatographic peaks within the
 #'   `chromPeaks()` matrix per feature) is **not** supported.
+#'
+#' - `filterFeatureDefinitions()`: filter the feature definitions keeping only
+#'   the specified features. Parameter `features` can be used to define the
+#'   features to retain. It supports a `logical`, `integer` indices or
+#'   `character` with the IDs of the features (i.e., their row names in
+#'   `featureDefinitions()`). The function returns the input
+#'   `XcmsExperimentHdf5` with the filtered content.
 #'
 #' @author Johannes Rainerr, Philippine Louail
 NULL
@@ -1221,10 +1233,29 @@ setMethod(
         object
     })
 
+#' @rdname XcmsExperimentHdf5
+setMethod(
+    "filterFeatureDefinitions", "XcmsExperimentHdf5",
+    function(object, features = integer()) {
+        if (!length(features))
+            return(object)
+        if (!hasFeatures(object))
+            stop("No feature definitions present! Please run ",
+                 "'groupChromPeaks' first.")
+        fid <- rownames(featureDefinitions(object))
+        idx <- .i2index(features, ids = fid, name = "features")
+        if (anyDuplicated(idx) || is.unsorted(idx))
+            stop("Filtering with duplicated or unsorted indices",
+                 " is not supported", call. = FALSE)
+        ## filter the feature definitions and all feature mappings.
+        mc <- .h5_filter_feature_definitions(
+            object, msLevel = object@features_ms_level, feature_id = fid[idx])
+        object@hdf5_mod_count <- mc
+        object
+    })
 
 #' TODO: LLLLLL
 #'
-#' - `filterFeatureDefinitions()`
 #' - `manualChromPeaks()`
 #' - `reconstructChromPeakSpectra()`
 #' - `adjustRtime,LamaParama()`
