@@ -4,6 +4,8 @@
 
 - Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
   `AnnotatedDataFrame`.
+- Fix a bug in `manualChromPeaks()` that caused an error when only a single
+  chrom peak was added. 
 
 ## Changes in version 4.5.3
 
