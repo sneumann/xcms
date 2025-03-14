@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,12 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.5" id="xcms-45">xcms 4.5<a class="anchor" aria-label="anchor" href="#xcms-45"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-version-4-5">Changes in version 4.5.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5"></a></h3>
+<h3 id="changes-in-version-4-5">Changes in version 4.5.4<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5"></a></h3>
+<ul><li>Replace usage of deprecated (and removed) class <code>NAnnotatedDataFrame</code> with <code>AnnotatedDataFrame</code>.</li>
+<li>Fix a bug in <code><a href="../reference/manualChromPeaks.html">manualChromPeaks()</a></code> that caused an error when only a single chrom peak was added.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-5-1">Changes in version 4.5.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-1"></a></h3>
 <ul><li>Address issue <a href="https://github.com/sneumann/xcms/issues/765" class="external-link">#765</a>: peak detection on chromatographic data: report a chromatogram’s <code>"mz"</code>, <code>"mzmin"</code> and <code>"mzmax"</code> as the mean m/z and lower and upper m/z in the <code><a href="../reference/XCMSnExp-class.html">chromPeaks()</a></code> matrix.</li>
 <li>Fix calculation of the correlation coefficient for peak shape similarity with an idealized bell shape (<em>beta</em>) during gap filling for centWave-based chromatographic peak detection with parameter <code>verboseBetaColumns = TRUE</code>.</li>
 <li>Add <code>chromPeakSummary</code> generic (issue <a href="https://github.com/sneumann/xcms/issues/705" class="external-link">#705</a>).</li>
@@ -50,12 +55,12 @@
 <li>Add a method to coerce from <code>XCMSnExp</code> to <code>XcmsExperiment</code> objects.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-5-1">Changes in version 4.5.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-1"></a></h3>
+<h3 id="changes-in-version-4-5-2">Changes in version 4.5.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-2"></a></h3>
 <ul><li>Small update to <code><a href="../reference/featureSpectra.html">featureSpectra()</a></code> and <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> to allow addition of <code><a href="../reference/XCMSnExp-class.html">chromPeaks()</a></code> and <code>featuresDefinitions()</code> columns to be added to the <code>Spectra</code> output.</li>
 <li>Tidied the <code>xcms</code> vignette, to order the filtering of features and remove the outdated normalisation paragraph.In depth discussion on this subject can be found on <code>metabonaut</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-5-2">Changes in version 4.5.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-2"></a></h3>
+<h3 id="changes-in-version-4-5-3">Changes in version 4.5.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-3"></a></h3>
 <ul><li>Fix compile errors with R-4.5</li>
 </ul></div>
 </div>
