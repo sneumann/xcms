@@ -164,17 +164,17 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
 ## issue #74
 ##' @title Extract an EIC from the profile matrix
 ##'
-##' @description The \code{profEIC} does extract the EIC not from the raw data,
+##' @description The `profEIC` does extract the EIC not from the raw data,
 ##' but from the profile matrix. To get the EIC from the raw data use the
-##' \code{\link{rawEIC}} method. The \code{profEIC} is a replacement of the
-##' old \code{getEIC} method implementation (both of functions \code{getEICold}
-##' and \code{getEICnew}) supporting the same input arguments and returning the
+##' `rawEIC` method. The `profEIC` is a replacement of the
+##' old getEIC method implementation (both of functions getEICold
+##' and getEICnew) supporting the same input arguments and returning the
 ##' same result object, but with more sanity checks and using the newer binning
 ##' and interpolation functions.
 ##'
 ##' @note This method uses the new binning and linear interpolation functionality
-##' i.e. the \code{\link{binYonX}} and \code{\link{imputeLinInterpol}}. In
-##' contrast to the old \code{getEIC} implementation (pre xcms 1.51.1), this
+##' i.e. the binYonX and imputeLinInterpol. In
+##' contrast to the old getEIC implementation (pre xcms 1.51.1), this
 ##' method performs also considerably more input parameter validations.
 ##' @noRd
 profEIC <- function(object, mzrange, rtrange = NULL, step = 0.1) {
@@ -541,16 +541,16 @@ remakeTIC<-function(object){
 ############################################################
 ## getPeaks
 #' @description Replacement function for the original getPeaks method/function
-#'     that does no longer use the deprecated \code{profFun} functions. This
-#'     function uses the \code{binYonX} and \code{imputeLinInterpol} to perform
+#'     that does no longer use the deprecated profFun functions. This
+#'     function uses the binYonX and imputeLinInterpol to perform
 #'     the binning (and missing value imputation).
 #'
-#' @param object An \code{xcmsRaw} object.
+#' @param object An xcmsRaw object.
 #'
-#' @param peakrange \code{matrix} with 4 required columns \code{"mzmin"},
-#'     \code{"mzmax"}, \code{"rtmin"} and \code{"rtmax"}.
+#' @param peakrange matrix with 4 required columns "mzmin",
+#'     "mzmax", "rtmin" and "rtmax".
 #'
-#' @param step \code{numeric(1)} defining the bin size for the profile matrix
+#' @param step numeric(1) defining the bin size for the profile matrix
 #'     generation.
 #'
 #' @author Johannes Rainer

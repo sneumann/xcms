@@ -8,7 +8,7 @@
 \S4method{findPeaks.MSW}{xcmsRaw}(object, snthresh = 3, verbose.columns = FALSE, ...)
 }
 \arguments{
-\item{object}{The \code{\linkS4class{xcmsRaw}} object on which peak
+\item{object}{The \code{xcmsRaw} object on which peak
 detection should be performed.}
 
 \item{snthresh}{\code{numeric(1)} defining the signal to noise ratio cutoff.}
@@ -22,37 +22,18 @@ should be returned.}
 \emph{MassSpecWavelet} package.}
 }
 \value{
-A matrix, each row representing an intentified peak, with columns:
-    \describe{
-    \item{mz}{m/z value of the peak at the centroid position.}
-    \item{mzmin}{Minimum m/z of the peak.}
-    \item{mzmax}{Maximum m/z of the peak.}
-    \item{rt}{Always \code{-1}.}
-    \item{rtmin}{Always \code{-1}.}
-    \item{rtmax}{Always \code{-1}.}
-    \item{into}{Integrated (original) intensity of the peak.}
-    \item{maxo}{Maximum intensity of the peak.}
-    \item{intf}{Always \code{NA}.}
-    \item{maxf}{Maximum MSW-filter response of the peak.}
-    \item{sn}{Signal to noise ratio.}
-    }
+\if{html}{\out{<div class="sourceCode">}}\preformatted{A matrix, each row representing an intentified peak.
+}\if{html}{\out{</div>}}
 }
 \description{
 This method performs peak detection in mass spectrometry
-    direct injection spectrum using a wavelet based algorithm.
+direct injection spectrum using a wavelet based algorithm.
 }
 \details{
 This is a wrapper around the peak picker in Bioconductor's
-    \code{MassSpecWavelet} package calling
-    \code{\link{peakDetectionCWT}} and
-    \code{\link{tuneInPeakInfo}} functions.
-}
-\seealso{
-\code{\link{MSW}} for the new user interface,
-    \code{\link{do_findPeaks_MSW}} for the downstream analysis
-    function or \code{\link{peakDetectionCWT}} from the
-    \code{MassSpecWavelet} for details on the algorithm and additionally
-    supported parameters.
+\emph{MassSpecWavelet} package calling
+\code{peakDetectionCWT} and
+\code{tuneInPeakInfo} functions.
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

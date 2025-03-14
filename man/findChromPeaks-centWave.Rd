@@ -225,27 +225,28 @@ as well as an estimate of signal-to-noise using the residuals from the
 best-fitting bell curve. See https://github.com/sneumann/xcms/pull/685
 and https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 
-\item{object}{For `findChromPeaks()`: an
-    [OnDiskMSnExp()]  object containing the MS- and all
-    other experiment-relevant data.
+\item{object}{For \code{findChromPeaks()}: an
+\code{\link[=OnDiskMSnExp]{OnDiskMSnExp()}}  object containing the MS- and all
+other experiment-relevant data.
 
-    For all other methods: a parameter object.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
+}\if{html}{\out{</div>}}}
 
-\item{param}{An `CentWaveParam()` object containing all settings for the
+\item{param}{An \code{CentWaveParam()} object containing all settings for the
 centWave algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to [BiocParallel::bpparam()].
-See documentation of the *BiocParallel* package for more details. If
+should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either `"XCMSnExp"` (default), `"list"` or
-`"xcmsSet"`.}
+return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
+\code{"xcmsSet"}.}
 
-\item{msLevel}{`integer(1)` defining the MS level on which the peak
-detection should be performed. Defaults to `msLevel = 1`.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{...}{ignored.}
 
@@ -260,12 +261,12 @@ The \code{CentWaveParam()} function returns a \code{CentWaveParam}
 class instance with all of the settings specified for chromatographic
 peak detection by the centWave method.
 
-For `findChromPeaks()`: if `return.type = "XCMSnExp"` an
-    [XCMSnExp()] object with the results of the peak detection.
-    If `return.type = "list"` a list of length equal to the number of
-    samples with matrices specifying the identified peaks.
-    If `return.type = "xcmsSet"` an `xcmsSet` object
-    with the results of the peak detection.
+For \code{findChromPeaks()}: if \code{return.type = "XCMSnExp"} an
+\code{\link[=XCMSnExp]{XCMSnExp()}} object with the results of the peak detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified peaks.
+If \code{return.type = "xcmsSet"} an \code{xcmsSet} object
+with the results of the peak detection.
 }
 \description{
 The centWave algorithm perform peak density and wavelet based
@@ -276,13 +277,13 @@ The \code{CentWaveParam} class allows to specify all settings
 for a chromatographic peak detection using the centWave method. Instances
 should be created with the \code{CentWaveParam} constructor.
 
-The `findChromPeaks,OnDiskMSnExp,CentWaveParam()` method
-    performs chromatographic peak detection using the \emph{centWave}
-    algorithm on all samples from an `OnDiskMSnExp`
-    object. `OnDiskMSnExp` objects encapsule all
-    experiment specific data and load the spectra data (mz and intensity
-    values) on the fly from the original files applying also all eventual
-    data manipulations.
+The \verb{findChromPeaks,OnDiskMSnExp,CentWaveParam()} method
+performs chromatographic peak detection using the \emph{centWave}
+algorithm on all samples from an \code{OnDiskMSnExp}
+object. \code{OnDiskMSnExp} objects encapsule all
+experiment specific data and load the spectra data (mz and intensity
+values) on the fly from the original files applying also all eventual
+data manipulations.
 
 \code{ppm()},\verb{ppm<-}: getter and setter for the \code{ppm}
 slot of the object.
@@ -340,10 +341,10 @@ The first analysis step is skipped, if regions of interest are passed
 \emph{via} the \code{param} parameter.
 
 Parallel processing (one process per sample) is supported and can
-    be configured either by the `BPPARAM` parameter or by globally
-    defining the parallel processing mode using the
-    [BiocParallel::register()] method from the *BiocParallel*
-    package.
+be configured either by the \code{BPPARAM} parameter or by globally
+defining the parallel processing mode using the
+\code{\link[BiocParallel:register]{BiocParallel::register()}} method from the \emph{BiocParallel}
+package.
 }
 \section{Slots}{
 
@@ -393,8 +394,8 @@ The \code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}} core
 \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for functions to perform centWave peak
 detection in purely chromatographic data.
 
-[XCMSnExp()] for the object containing the results of
-    the peak detection.
+\code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
+the peak detection.
 
 Other peak detection methods: 
 \code{\link{findChromPeaks}()},

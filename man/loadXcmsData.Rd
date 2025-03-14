@@ -11,35 +11,33 @@
 loadXcmsData(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2"))
 }
 \arguments{
-\item{x}{For `loadXcmsData`: `character(1)` with the name of the data file
+\item{x}{For \code{loadXcmsData}: \code{character(1)} with the name of the data file
 (object) to load.}
 }
 \description{
-Data sets with `xcms` preprocessing results are provided within the `xcms`
-package and can be loaded with the `loadXcmsData` function. The available
+Data sets with \code{xcms} preprocessing results are provided within the \code{xcms}
+package and can be loaded with the \code{loadXcmsData} function. The available
 Test data sets are:
+\itemize{
+\item \code{xdata}: an \code{\link[=XCMSnExp]{XCMSnExp()}} object with the results from a \code{xcms}-based
+pre-processing of an LC-MS untargeted metabolomics data set. The raw data
+files are provided in the \code{faahKO} R package.
+\item \code{xmse}: an \code{\link[=XcmsExperiment]{XcmsExperiment()}} object with the results from an \code{xcms}-based
+pre-processing of an LC-MS untargeted metabolomics data set (same original
+data set and pre-processing settings as for the \code{xdata} data set).
+The pre-processing of this data set is described in detail in the \emph{xcms}
+vignette of the \code{xcms} package.
+\item \code{faahko_sub}: an \code{\link[=XCMSnExp]{XCMSnExp()}} object with identified
+chromatographic peaks in 3 samples from the data files in the \code{faahKO}
+R package.
+\item \code{faahko_sub2}: an \code{\link[=XcmsExperiment]{XcmsExperiment()}} object with identified
+chromatographic peaks in 3 samples from the data files in the \code{faahKO}
+R package.
+}
 
-- `xdata`: an [XCMSnExp()] object with the results from a `xcms`-based
-  pre-processing of an LC-MS untargeted metabolomics data set. The raw data
-  files are provided in the `faahKO` R package.
-
-- `xmse`: an [XcmsExperiment()] object with the results from an `xcms`-based
-  pre-processing of an LC-MS untargeted metabolomics data set (same original
-  data set and pre-processing settings as for the `xdata` data set).
-  The pre-processing of this data set is described in detail in the *xcms*
-  vignette of the `xcms` package.
-
-- `faahko_sub`: an [XCMSnExp()] object with identified
-  chromatographic peaks in 3 samples from the data files in the `faahKO`
-  R package.
-
-- `faahko_sub2`: an [XcmsExperiment()] object with identified
-  chromatographic peaks in 3 samples from the data files in the `faahKO`
-  R package.
-
-Data sets can also be loaded using `data`, which would however require to
+Data sets can also be loaded using \code{data}, which would however require to
 update objects to point to the location of the raw data files. The
-`loadXcmsData` loads the data and ensures that all paths are updated
+\code{loadXcmsData} loads the data and ensures that all paths are updated
 accordingly.
 }
 \examples{

@@ -1,5 +1,5 @@
-##' @description Return the file name from an \code{xcmsFileSource} object.
-##' @param object The \code{xcmsFileSource} object from which the file name
+##' @description Return the file name from an xcmsFileSource object.
+##' @param object The xcmsFileSource object from which the file name
 ##' should be returned.
 ##' @param ... Not used.
 ##' @return A character representing the file name.
@@ -9,9 +9,9 @@ setMethod("fileName", "xcmsFileSource", function(object, ...) {
 })
 
 ##' Reads the MS1 and/or MSn data from an netCDF or mzML file.
-##' @param object The \code{xcmsFileSource} object representing the file name.
+##' @param object The xcmsFileSource object representing the file name.
 ##' @param includeMSn Whether MSn data should be imported too.
-##' @return Returns a \code{list} with rt, tic, scanindex, mz and intensity.
+##' @return Returns a list with rt, tic, scanindex, mz and intensity.
 ##' @noRd
 setMethod("loadRaw", "xcmsFileSource", function(object, includeMSn = FALSE) {
     return(readRawData(fileName(object), includeMSn = includeMSn))

@@ -181,27 +181,28 @@ intensity peaks.}
 Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
 
-\item{object}{For `findChromPeaks()`: an
-    [OnDiskMSnExp()]  object containing the MS- and all
-    other experiment-relevant data.
+\item{object}{For \code{findChromPeaks()}: an
+\code{\link[=OnDiskMSnExp]{OnDiskMSnExp()}}  object containing the MS- and all
+other experiment-relevant data.
 
-    For all other methods: a parameter object.}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
+}\if{html}{\out{</div>}}}
 
 \item{param}{An \code{CentWavePredIsoParam} object with the settings for the
 chromatographic peak detection algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to [BiocParallel::bpparam()].
-See documentation of the *BiocParallel* package for more details. If
+should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either `"XCMSnExp"` (default), `"list"` or
-`"xcmsSet"`.}
+return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
+\code{"xcmsSet"}.}
 
-\item{msLevel}{`integer(1)` defining the MS level on which the peak
-detection should be performed. Defaults to `msLevel = 1`.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{...}{ignored.}
 

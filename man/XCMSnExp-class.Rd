@@ -277,8 +277,8 @@ recent peak grouping related process history step.}
 chromatographic peak detection algorithm.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either `"XCMSnExp"` (default), `"list"` or
-`"xcmsSet"`.}
+return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
+\code{"xcmsSet"}.}
 
 \item{add}{For \code{\link[=findChromPeaks]{findChromPeaks()}}: if newly identified chromatographic
 peaks should be added to the peak matrix with the already identified
@@ -302,11 +302,11 @@ For \code{profMat()}: a \code{list} with a the profile matrix
 `length(fileIndex) > 1). See \link{profile-matrix} for
 general help and information about the profile matrix.
 
-For `adjustedRtime()`: if `bySample = FALSE` a `numeric`
+For \code{adjustedRtime()}: if \code{bySample = FALSE} a \code{numeric}
 vector with the adjusted retention for each spectrum of all files/samples
-within the object. If `bySample = TRUE` a `list` (length equal
+within the object. If \code{bySample = TRUE} a \code{list} (length equal
 to the number of samples) with adjusted retention times grouped by
-sample. Returns `NULL` if no adjusted retention times are present.
+sample. Returns \code{NULL} if no adjusted retention times are present.
 
 For \code{featureDefinitions()}: a \code{DataFrame} with peak grouping
 information, each row corresponding to one mz-rt feature (grouped peaks
@@ -406,24 +406,24 @@ contains the maximum intensity measured for the specific scan and m/z
 values. See \code{\link[=profMat]{profMat()}} for more details and description of
 the various binning methods.
 
-`hasAdjustedRtime()`: whether the object provides adjusted
+\code{hasAdjustedRtime()}: whether the object provides adjusted
 retention times.
 
-`hasFeatures()`: whether the object contains correspondence
+\code{hasFeatures()}: whether the object contains correspondence
 results (i.e. features).
 
-`hasChromPeaks()`: whether the object contains peak
+\code{hasChromPeaks()}: whether the object contains peak
 detection results.
 
-`hasFilledChromPeaks()`: whether the object contains any filled-in
+\code{hasFilledChromPeaks()}: whether the object contains any filled-in
 chromatographic peaks.
 
-`adjustedRtime()`,`adjustedRtime<-`:
-extract/set adjusted retention times. `adjustedRtime<-` should not
+\code{adjustedRtime()},\verb{adjustedRtime<-}:
+extract/set adjusted retention times. \verb{adjustedRtime<-} should not
 be called manually, it is called internally by the
-[adjustRtime()] methods. For `XCMSnExp` objects,
-`adjustedRtime<-` does also apply retention time adjustments to
-eventually present chromatographic peaks. The `bySample` parameter
+\code{\link[=adjustRtime]{adjustRtime()}} methods. For \code{XCMSnExp} objects,
+\verb{adjustedRtime<-} does also apply retention time adjustments to
+eventually present chromatographic peaks. The \code{bySample} parameter
 allows to specify whether the adjusted retention time should be grouped
 by sample (file).
 

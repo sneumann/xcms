@@ -315,9 +315,9 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 #'
 #' @description Find peaks in the chromatographic time domain of the
 #'     profile matrix. For more details see
-#'     \code{\link{do_findChromPeaks_matchedFilter}}.
+#'     [do_findChromPeaks_matchedFilter()].
 #'
-#' @param object The \code{\linkS4class{xcmsRaw}} object on which peak detection
+#' @param object The `xcmsRaw` object on which peak detection
 #'     should be performed.
 #'
 #' @inheritParams findChromPeaks-matchedFilter
@@ -329,39 +329,20 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 #'     as it could cause problems in parallel processing mode.
 #'
 #' @param scanrange Numeric vector defining the range of scans to which the
-#'     original \code{object} should be sub-setted before peak detection.
+#'     original `object` should be sub-setted before peak detection.
 #'
 #' @author Colin A. Smith
 #'
-#' @return A matrix, each row representing an intentified chromatographic peak,
-#'     with columns:
-#'     \describe{
-#'     \item{mz}{Intensity weighted mean of m/z values of the peak across
-#'     scans.}
-#'     \item{mzmin}{Minimum m/z of the peak.}
-#'     \item{mzmax}{Maximum m/z of the peak.}
-#'     \item{rt}{Retention time of the peak's midpoint.}
-#'     \item{rtmin}{Minimum retention time of the peak.}
-#'     \item{rtmax}{Maximum retention time of the peak.}
-#'     \item{into}{Integrated (original) intensity of the peak.}
-#'     \item{intf}{Integrated intensity of the filtered peak.}
-#'     \item{maxo}{Maximum intensity of the peak.}
-#'     \item{maxf}{Maximum intensity of the filtered peak.}
-#'     \item{i}{Rank of peak in merged EIC (\code{<= max}).}
-#'     \item{sn}{Signal to noise ratio of the peak.}
-#'     }
+#' @return A matrix, each row representing an intentified chromatographic peak.
 #'
 #' @references
 #'     Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #'     Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #'     Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-#'     \emph{Anal. Chem.} 2006, 78:779-787.
+#'     *Anal. Chem.* 2006, 78:779-787.
 #'     @family Old peak detection methods
 #'
-#' @seealso \code{\link{matchedFilter}} for the new user interface.
-#'     \code{\linkS4class{xcmsRaw}},
-#'     \code{\link{do_findChromPeaks_matchedFilter}} for the core function
-#'     performing the peak detection.
+#' @md
 setMethod("findPeaks.matchedFilter", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
@@ -629,41 +610,24 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #'     direct injection spectrum using a wavelet based algorithm.
 #'
 #' @details This is a wrapper around the peak picker in Bioconductor's
-#'     \code{MassSpecWavelet} package calling
-#'     \code{\link{peakDetectionCWT}} and
-#'     \code{\link{tuneInPeakInfo}} functions.
+#'     *MassSpecWavelet* package calling
+#'     `peakDetectionCWT` and
+#'     `tuneInPeakInfo` functions.
 #'
 #' @inheritParams findPeaks-MSW
 #'
 #' @inheritParams findChromPeaks-centWave
 #'
-#' @param object The \code{\linkS4class{xcmsRaw}} object on which peak
+#' @param object The `xcmsRaw` object on which peak
 #'     detection should be performed.
 #'
 #' @param verbose.columns Logical whether additional peak meta data columns
 #'     should be returned.
 #'
 #' @return
-#'     A matrix, each row representing an intentified peak, with columns:
-#'     \describe{
-#'     \item{mz}{m/z value of the peak at the centroid position.}
-#'     \item{mzmin}{Minimum m/z of the peak.}
-#'     \item{mzmax}{Maximum m/z of the peak.}
-#'     \item{rt}{Always \code{-1}.}
-#'     \item{rtmin}{Always \code{-1}.}
-#'     \item{rtmax}{Always \code{-1}.}
-#'     \item{into}{Integrated (original) intensity of the peak.}
-#'     \item{maxo}{Maximum intensity of the peak.}
-#'     \item{intf}{Always \code{NA}.}
-#'     \item{maxf}{Maximum MSW-filter response of the peak.}
-#'     \item{sn}{Signal to noise ratio.}
-#'     }
+#'     A matrix, each row representing an intentified peak.
 #'
-#' @seealso \code{\link{MSW}} for the new user interface,
-#'     \code{\link{do_findPeaks_MSW}} for the downstream analysis
-#'     function or \code{\link{peakDetectionCWT}} from the
-#'     \code{MassSpecWavelet} for details on the algorithm and additionally
-#'     supported parameters.
+#' @md
 #'
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 setMethod("findPeaks.MSW", "xcmsRaw",
@@ -2052,31 +2016,31 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 #'
 #' @aliases subset-xcmsRaw
 #'
-#' @description Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
-#'     returned \code{\linkS4class{xcmsRaw}} object contains values for all
-#'     scans specified with argument \code{i}. Note that the \code{scanrange}
-#'     slot of the returned \code{xcmsRaw} will be
-#'     \code{c(1, length(object@scantime))} and hence not \code{range(i)}.
+#' @description Subset an `xcmsRaw` object by scans. The
+#'     returned `xcmsRaw` object contains values for all
+#'     scans specified with argument `i`. Note that the `scanrange`
+#'     slot of the returned `xcmsRaw` will be
+#'     `c(1, length(object@scantime))` and hence not `range(i)`.
 #'
 #' @details Only subsetting by scan index in increasing order or by a logical
-#'     vector are supported. If not ordered, argument \code{i} is sorted
+#'     vector are supported. If not ordered, argument `i` is sorted
 #'     automatically. Indices which are larger than the total number of scans
 #'     are discarded.
 #'
-#' @param x The \code{\linkS4class{xcmsRaw}} object that should be sub-setted.
+#' @param x The `xcmsRaw` object that should be sub-setted.
 #'
 #' @param i Integer or logical vector specifying the scans/spectra to which
-#'     \code{x} should be sub-setted.
+#'     `x` should be sub-setted.
 #'
 #' @param j Not supported.
 #'
 #' @param drop Not supported.
 #'
-#' @return The sub-setted \code{\linkS4class{xcmsRaw}} object.
+#' @return The sub-setted `xcmsRaw` object.
 #'
 #' @author Johannes Rainer
 #'
-#' @seealso \code{\link{split.xcmsRaw}}
+#' @md
 #'
 #' @examples
 #' ## Load a test file

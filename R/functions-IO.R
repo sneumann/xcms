@@ -13,17 +13,17 @@
 ##' @param includeMSn logical(1) indicating whether MS level > 1 should be loaded
 ##' too. Only supported for mzML files.
 ##' @param dropEmptyScans Scans/spectra without peaks are not returned if
-##' \code{dropEmptyScans = TRUE}. If \code{FALSE} all spectra from the input
+##' `dropEmptyScans = TRUE`. If `FALSE` all spectra from the input
 ##' file are returned. This is to be consistent with the code before
 ##' xcms version 1.51.1 (see issue #67
 ##' https://github.com/sneumann/xcms/issues/67).
 ##'
-##' @param backend \code{character} allowing to manually specify the mzR
-##'     backend. If \code{NULL}, it uses the automatic backend determination
+##' @param backend `character` allowing to manually specify the mzR
+##'     backend. If `NULL`, it uses the automatic backend determination
 ##'     from mzR.
-##' 
-##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
-##' 
+##'
+##' @return A `list` with rt, tic, scanindex, mz and intensity.
+##'
 ##' @noRd
 readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
                         backend = NULL) {

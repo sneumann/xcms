@@ -19,20 +19,20 @@ DratioFilter(
 \S4method{filterFeatures}{SummarizedExperiment,DratioFilter}(object, filter, assay = 1)
 }
 \arguments{
-\item{threshold}{`numeric` value representing the threshold. Features with a
-D-ratio *strictly higher* (`>`) than this will be removed from the entire
+\item{threshold}{\code{numeric} value representing the threshold. Features with a
+D-ratio \emph{strictly higher} (\code{>}) than this will be removed from the entire
 dataset.}
 
-\item{qcIndex}{`integer` (or `logical`) vector corresponding to the indices
+\item{qcIndex}{\code{integer} (or \code{logical}) vector corresponding to the indices
 of QC samples.}
 
-\item{studyIndex}{`integer` (or `logical`) vector corresponding of the
+\item{studyIndex}{\code{integer} (or \code{logical}) vector corresponding of the
 indices of study samples.}
 
-\item{na.rm}{`logical` Indicates whether missing values (`NA`) should be
+\item{na.rm}{\code{logical} Indicates whether missing values (\code{NA}) should be
 removed prior to the calculations.}
 
-\item{mad}{`logical` Indicates whether the *Median Absolute Deviation*
+\item{mad}{\code{logical} Indicates whether the \emph{Median Absolute Deviation}
 (MAD) should be used instead of the standard deviation. This is suggested
 for non-gaussian distributed data.}
 
@@ -55,18 +55,18 @@ assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
-For `DratioFilter`: a `DratioFilter` class. `filterFeatures` return
+For \code{DratioFilter}: a \code{DratioFilter} class. \code{filterFeatures} return
 the input object minus the features that did not met the user input threshold
 }
 \description{
-The `DratioFilter` class and method enable users to filter features from an
-`XcmsExperiment` or `SummarizedExperiment` object based on the D-ratio or
-*dispersion ratio*. This is defined as the standard deviation for QC
+The \code{DratioFilter} class and method enable users to filter features from an
+\code{XcmsExperiment} or \code{SummarizedExperiment} object based on the D-ratio or
+\emph{dispersion ratio}. This is defined as the standard deviation for QC
 samples divided by the standard deviation for biological test samples, for
 each feature of the object (Broadhurst et al.).
 
-This `filter` is part of the possible dispatch of the generic function
-`filterFeatures`.  Features *above* (`>`) the user-input threshold will be
+This \code{filter} is part of the possible dispatch of the generic function
+\code{filterFeatures}.  Features \emph{above} (\code{>}) the user-input threshold will be
 removed from the entire dataset.
 }
 \references{

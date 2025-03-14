@@ -168,17 +168,17 @@ other experiment-relevant data.
 the matchedFilter algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to [BiocParallel::bpparam()].
-See documentation of the *BiocParallel* package for more details. If
+should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either `"XCMSnExp"` (default), `"list"` or
-`"xcmsSet"`.}
+return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
+\code{"xcmsSet"}.}
 
-\item{msLevel}{`integer(1)` defining the MS level on which the peak
-detection should be performed. Defaults to `msLevel = 1`.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{...}{ignored.}
 

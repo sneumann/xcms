@@ -57,19 +57,21 @@ setMethod("show", "xcmsSet", function(object) {
 
 
 
-#' @description This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
+#' @description This method updates an old `xcmsSet`
 #'     object to the latest definition.
 #'
-#' @title Update an \code{\linkS4class{xcmsSet}} object
+#' @title Update an `xcmsSet` object
 #'
-#' @param object The \code{\linkS4class{xcmsSet}} object to update.
+#' @param object The `xcmsSet` object to update.
 #'
 #' @param ... Optional additional arguments. Currently ignored.
 #'
 #' @param verbose Currently ignored.
 #'
-#' @return An updated \code{\linkS4class{xcmsSet}} containing all data from
+#' @return An updated `xcmsSet` containing all data from
 #' the input object.
+#'
+#' @md
 #'
 #' @author Johannes Rainer
 setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
@@ -2186,21 +2188,23 @@ setMethod("specDist", signature(object="xcmsSet"),
 #'
 #' @aliases showError
 #'
-#' @description If peak detection is performed with \code{\link{findPeaks}}
-#'     setting argument \code{stopOnError = FALSE} eventual errors during the
+#' @description If peak detection is performed with `findPeaks`
+#'     setting argument `stopOnError = FALSE` eventual errors during the
 #'     process do not cause to stop the processing but are recorded inside of
-#'     the resulting \code{\linkS4class{xcmsSet}} object. These errors can be
-#'     accessed with the \code{showError} method.
+#'     the resulting `xcmsSet` object. These errors can be
+#'     accessed with the `showError` method.
 #'
-#' @param object An \code{\linkS4class{xcmsSet}} object.
+#' @param object An `xcmsSet` object.
 #'
 #' @param message. Logical indicating whether only the error message, or the
 #'     error itself should be returned.
 #'
 #' @param ... Additional arguments.
 #'
-#' @return A list of error messages (if \code{message. = TRUE}) or errors or an
+#' @return A list of error messages (if `message. = TRUE`) or errors or an
 #'     empty list if no errors are present.
+#'
+#' @md
 #'
 #' @author Johannes Rainer
 setMethod("showError", signature(object = "xcmsSet"),

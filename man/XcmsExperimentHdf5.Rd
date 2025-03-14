@@ -36,122 +36,121 @@ toXcmsExperiment(object, ...)
 \S4method{filterFeatureDefinitions}{XcmsExperimentHdf5}(object, features = integer())
 }
 \description{
-The *xcms* result objects [XcmsExperiment()] and [XCMSnExp()] keep all
+The \emph{xcms} result objects \code{\link[=XcmsExperiment]{XcmsExperiment()}} and \code{\link[=XCMSnExp]{XCMSnExp()}} keep all
 preprocessing results in memory and can thus (depending on the size of the
-data set) require a large amount of memory. The `XcmsExperimentHdf5` class,
+data set) require a large amount of memory. The \code{XcmsExperimentHdf5} class,
 by using an on-disk data storage mechanism, has a much lower memory
 footprint allowing thus also to represent and analyze very large data sets
 on regular computer systems. With some exceptions, including additional
 parameters, the functionality and usability of this object is identical to
-the one of `XcmsExperiment` objects. This help page lists only functions
+the one of \code{XcmsExperiment} objects. This help page lists only functions
 that have additional or different parameters or properties than the
-respective methods for [XcmsExperiment()] objects.
+respective methods for \code{\link[=XcmsExperiment]{XcmsExperiment()}} objects.
 }
 \details{
-The `XcmsExperimentHdf5` object stores all preprocessing results (except
+The \code{XcmsExperimentHdf5} object stores all preprocessing results (except
 adjusted retention times, which are stored as an additional spectra variable
-in the object's [Spectra()] object), in a file in HDF5 format.
+in the object's \code{\link[=Spectra]{Spectra()}} object), in a file in HDF5 format.
 
-`XcmsExperimentHdf5` uses a different naming scheme for chromatographic
+\code{XcmsExperimentHdf5} uses a different naming scheme for chromatographic
 peaks: for efficiency reasons, chromatographic peak data is organized by
 sample and MS level. The chrom peak IDs are hence in the format
-*CP<MS level>S<sample id><chrom peak index>* with <MS level> being the MS
-level in which the chromatographic peaks were detected and <sample id>
+\emph{CP\if{html}{\out{<MS level>}}S\if{html}{\out{<sample id>}}\if{html}{\out{<chrom peak index>}}} with \if{html}{\out{<MS level>}} being the MS
+level in which the chromatographic peaks were detected and \if{html}{\out{<sample id>}}
 the ID of the sample (usually related to the index in the original
-`MsExperiment` object) and the <chrom peak index> the index of the
-chromatographic peak in the chrom peak matrix **of that sample** and
+\code{MsExperiment} object) and the \if{html}{\out{<chrom peak index>}} the index of the
+chromatographic peak in the chrom peak matrix \strong{of that sample} and
 MS level.
 
 HDF5 does not support parallel processing, thus preprocessing results need
 to be loaded sequentially.
 
-All functionality for `XcmsExperimentHdf5` objects is optimized to reduce
+All functionality for \code{XcmsExperimentHdf5} objects is optimized to reduce
 memory demand at the cost of eventually lower performance.
 }
 \section{Using the HDF5 file-based on-disk data storage}{
 
 
-Calling [findChromPeaks()] on an `MsExperiment` using the parameter
-`hdf5File` will return an instance of the `XcmsExperimentHdf5` class and
+Calling \code{\link[=findChromPeaks]{findChromPeaks()}} on an \code{MsExperiment} using the parameter
+\code{hdf5File} will return an instance of the \code{XcmsExperimentHdf5} class and
 hence use the on-disk data storage mode described on this page. The
-`toXcmsExperimentHdf5()` function can be used to convert from an
-[XcmsExperiment] object to `XcmsExperimentHdf5`. The results are stored
-in the file specified with parameter `hdf5File`.
+\code{toXcmsExperimentHdf5()} function can be used to convert from an
+\link{XcmsExperiment} object to \code{XcmsExperimentHdf5}. The results are stored
+in the file specified with parameter \code{hdf5File}.
 }
 
 \section{Subset}{
 
-
-- `[`: subset the `XcmsExperimentHdf5` object to the specified samples.
-  Parameters `keepChromPeaks` (default `TRUE`), `keepAdjustedRtime`
-  (default `FALSE`) and `keepFeatures` (default `FALSE`) allow to configure
-  whether present chromatographic peaks, alignment or correspondence results
-  should be retained. This will only change information in the object (i.e.,
-  the reference to the respective entries in the HDF5 file), but will not
-  change the content of the HDF5 file. Note that with
-  `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
-
-- `filterChromPeaks()` and `filterFeatureDefinitions()` to filter the
-  chromatographic peak and correspondence results, respectively. See
-  documentation below for details. Subset using unsorted or duplicated
-  indices is not supported.
+\itemize{
+\item \code{[}: subset the \code{XcmsExperimentHdf5} object to the specified samples.
+Parameters \code{keepChromPeaks} (default \code{TRUE}), \code{keepAdjustedRtime}
+(default \code{FALSE}) and \code{keepFeatures} (default \code{FALSE}) allow to configure
+whether present chromatographic peaks, alignment or correspondence results
+should be retained. This will only change information in the object (i.e.,
+the reference to the respective entries in the HDF5 file), but will not
+change the content of the HDF5 file. Note that with
+\code{keepChromPeaks = FALSE} also \code{keepFeatures} is set to \code{FALSE}.
+\item \code{filterChromPeaks()} and \code{filterFeatureDefinitions()} to filter the
+chromatographic peak and correspondence results, respectively. See
+documentation below for details. Subset using unsorted or duplicated
+indices is not supported.
+}
 }
 
 \section{Functionality related to chromatographic peaks}{
 
-
-- `chromPeaks()` gains parameter `bySample = FALSE` that, if set to `TRUE`
-  returns a `list` of `chromPeaks` matrices, one for each sample. Due to
-  the way data is organized in `XcmsExperimentHdf5` objects this is more
-  efficient than `bySample = FALSE`. Thus, in cases where chrom peak data
-  is subsequently evaluated or processed by sample, it is suggested to
-  use `bySample = TRUE`.
-
-- `chromPeakData()` gains a new parameter `peaks = character()` which allows
-  to specify from which chromatographic peaks data should be returned.
-  For these chromatographic peaks the ID (row name in `chromPeaks()`)
-  should be provided with the `peaks` parameter. This can reduce the memory
-  requirement for cases in which only data of some selected chromatographic
-  peaks needs to be extracted. Also, `chromPeakData()` supports the
-  `bySample` parameter described for `chromPeaks()` above.
-
-- `filterChromPeaks()` allows to filter the chromatographic peaks specifying
-  which should be retainend using the `keep` parameter. This can be either
-  a `logical`, `character` or `integer` vector. Duplicated or unsorted
-  indices are **not** supported. Eventually present feature definitions
-  will be updated as well. The function returns the object with the
-  filtered chromatographic peaks.
+\itemize{
+\item \code{chromPeaks()} gains parameter \code{bySample = FALSE} that, if set to \code{TRUE}
+returns a \code{list} of \code{chromPeaks} matrices, one for each sample. Due to
+the way data is organized in \code{XcmsExperimentHdf5} objects this is more
+efficient than \code{bySample = FALSE}. Thus, in cases where chrom peak data
+is subsequently evaluated or processed by sample, it is suggested to
+use \code{bySample = TRUE}.
+\item \code{chromPeakData()} gains a new parameter \code{peaks = character()} which allows
+to specify from which chromatographic peaks data should be returned.
+For these chromatographic peaks the ID (row name in \code{chromPeaks()})
+should be provided with the \code{peaks} parameter. This can reduce the memory
+requirement for cases in which only data of some selected chromatographic
+peaks needs to be extracted. Also, \code{chromPeakData()} supports the
+\code{bySample} parameter described for \code{chromPeaks()} above.
+\item \code{filterChromPeaks()} allows to filter the chromatographic peaks specifying
+which should be retainend using the \code{keep} parameter. This can be either
+a \code{logical}, \code{character} or \code{integer} vector. Duplicated or unsorted
+indices are \strong{not} supported. Eventually present feature definitions
+will be updated as well. The function returns the object with the
+filtered chromatographic peaks.
+}
 }
 
 \section{Retention time alignment}{
 
-
-- `adjustRtimePeakGroups()` and `adjustRtime()` with `PeakGroupsParam`:
-  parameter `extraPeaks` of `PeakGroupsParam` is **ignored**. Anchor peaks
-  are thus only defined using the `minFraction` and the optional `subset`
-  parameter.
+\itemize{
+\item \code{adjustRtimePeakGroups()} and \code{adjustRtime()} with \code{PeakGroupsParam}:
+parameter \code{extraPeaks} of \code{PeakGroupsParam} is \strong{ignored}. Anchor peaks
+are thus only defined using the \code{minFraction} and the optional \code{subset}
+parameter.
+}
 }
 
 \section{Correspondence analysis results}{
 
-
-- `featureDefinitions()`: similarly to `featureDefinitions()` for
-  [XcmsExperiment] objects, this method returns a `data.frame` with the
-  characteristics for the defined LC-MS features. The function for
-  `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
-  with the indices of the chromatographic peaks per feature. Also, the
-  columns are returned in alphabetic order.
-
-- `featureValues()`: for parameter `value`, the option `value = "index"`
-  (i.e. returning the index of the chromatographic peaks within the
-  `chromPeaks()` matrix per feature) is **not** supported.
-
-- `filterFeatureDefinitions()`: filter the feature definitions keeping only
-  the specified features. Parameter `features` can be used to define the
-  features to retain. It supports a `logical`, `integer` indices or
-  `character` with the IDs of the features (i.e., their row names in
-  `featureDefinitions()`). The function returns the input
-  `XcmsExperimentHdf5` with the filtered content.
+\itemize{
+\item \code{featureDefinitions()}: similarly to \code{featureDefinitions()} for
+\link{XcmsExperiment} objects, this method returns a \code{data.frame} with the
+characteristics for the defined LC-MS features. The function for
+\code{XcmsExperimentHdf5} does however \strong{not} return the \code{"peakidx"} column
+with the indices of the chromatographic peaks per feature. Also, the
+columns are returned in alphabetic order.
+\item \code{featureValues()}: for parameter \code{value}, the option \code{value = "index"}
+(i.e. returning the index of the chromatographic peaks within the
+\code{chromPeaks()} matrix per feature) is \strong{not} supported.
+\item \code{filterFeatureDefinitions()}: filter the feature definitions keeping only
+the specified features. Parameter \code{features} can be used to define the
+features to retain. It supports a \code{logical}, \code{integer} indices or
+\code{character} with the IDs of the features (i.e., their row names in
+\code{featureDefinitions()}). The function returns the input
+\code{XcmsExperimentHdf5} with the filtered content.
+}
 }
 
 \author{

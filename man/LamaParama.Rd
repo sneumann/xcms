@@ -43,86 +43,84 @@ LamaParama(
 )
 }
 \arguments{
-\item{object}{An object of class `XcmsExperiment` with defined ChromPeaks.}
+\item{object}{An object of class \code{XcmsExperiment} with defined ChromPeaks.}
 
-\item{param}{An object of class `LamaParama` that will later be used for
-adjustment using the `[adjustRtime()]` function.}
+\item{param}{An object of class \code{LamaParama} that will later be used for
+adjustment using the \verb{[adjustRtime()]} function.}
 
-\item{BPPARAM}{For `matchLamasChromPeaks()`: parallel processing setup.
-Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more information.}
+\item{BPPARAM}{For \code{matchLamasChromPeaks()}: parallel processing setup.
+Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
 
-\item{...}{For `plot()`: extra parameters to be passed to the function.}
+\item{...}{For \code{plot()}: extra parameters to be passed to the function.}
 
-\item{lamas}{For `LamaParama`: `matrix` or `data.frame` with the m/z and
+\item{lamas}{For \code{LamaParama}: \code{matrix} or \code{data.frame} with the m/z and
 retention times values of features (as first and second column) from the
 external dataset on which the alignment will be based on.}
 
-\item{method}{For `LamaParama`:`character(1)` with the type of warping.
-Either `method = "gam"` or `method = "loess"` (default).}
+\item{method}{For \code{LamaParama}:\code{character(1)} with the type of warping.
+Either \code{method = "gam"} or \code{method = "loess"} (default).}
 
-\item{span}{For `LamaParama`: `numeric(1)` defining
-the degree of smoothing (`method = "loess"`). This parameter is passed
-to the internal call to [loess()].}
+\item{span}{For \code{LamaParama}: \code{numeric(1)} defining
+the degree of smoothing (\code{method = "loess"}). This parameter is passed
+to the internal call to \code{\link[=loess]{loess()}}.}
 
-\item{outlierTolerance}{For `LamaParama`: `numeric(1)` defining the settings
+\item{outlierTolerance}{For \code{LamaParama}: \code{numeric(1)} defining the settings
 for outlier removal during the fitting. By default
-(with `outlierTolerance = 3`), all data points with absolute residuals
+(with \code{outlierTolerance = 3}), all data points with absolute residuals
 larger than 3 times the mean absolute residual of all data points from
 the first, initial fit, are removed from the final model fit.}
 
-\item{zeroWeight}{For `LamaParama`: `numeric(1)`: defines the weight of the
+\item{zeroWeight}{For \code{LamaParama}: \code{numeric(1)}: defines the weight of the
 first data point (i.e. retention times of the first lama-chromatographic
 peak pair). Values larger than 1 reduce warping problems in the early RT
 range.}
 
-\item{ppm}{For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
-allowed difference in m/z between `lamas` and chromatographic peaks. Used
+\item{ppm}{For \code{LamaParama}: \code{numeric(1)} defining the m/z-relative maximal
+allowed difference in m/z between \code{lamas} and chromatographic peaks. Used
 for the mapping of identified chromatographic peaks and lamas.}
 
-\item{tolerance}{For `LamaParama`: `numeric(1)` defining the absolute
+\item{tolerance}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
 acceptable difference in m/z between lamas and chromatographic peaks.
-Used for the mapping of identified chromatographic peaks and `lamas`.}
+Used for the mapping of identified chromatographic peaks and \code{lamas}.}
 
-\item{toleranceRt}{For `LamaParama`: `numeric(1)` defining the absolute
+\item{toleranceRt}{For \code{LamaParama}: \code{numeric(1)} defining the absolute
 acceptable difference in retention time between lamas and
 chromatographic peaks. Used for the mapping of identified chromatographic
-peaks and `lamas`.}
+peaks and \code{lamas}.}
 
-\item{bs}{For `LamaParama()`: `character(1)` defining the GAM smoothing method.
-(defaults to thin plate, `bs = "tp"`)}
+\item{bs}{For \code{LamaParama()}: \code{character(1)} defining the GAM smoothing method.
+(defaults to thin plate, \code{bs = "tp"})}
 
-\item{x}{For `plot()`: object of class `LamaParama` to be plotted.}
+\item{x}{For \code{plot()}: object of class \code{LamaParama} to be plotted.}
 
-\item{index}{For `plot()`: `numeric(1)` index of the file that should be
+\item{index}{For \code{plot()}: \code{numeric(1)} index of the file that should be
 plotted.}
 
-\item{colPoints}{For `plot()`: color for the plotting of the datapoint.}
+\item{colPoints}{For \code{plot()}: color for the plotting of the datapoint.}
 
-\item{colFit}{For `plot()`: color of the fitting line.}
+\item{colFit}{For \code{plot()}: color of the fitting line.}
 
-\item{xlab, ylab}{For `plot()`: x- and y-axis labels.}
+\item{xlab, ylab}{For \code{plot()}: x- and y-axis labels.}
 }
 \value{
-For `matchLamasChromPeaks()`: A `LamaParama` object with new slot `rtMap`
+For \code{matchLamasChromPeaks()}: A \code{LamaParama} object with new slot \code{rtMap}
 composed of a list of matrices representing the 1:1 matches between Lamas
-(ref) and ChromPeaks (obs). To access this, `matchedRtimes()` can be used.
+(ref) and ChromPeaks (obs). To access this, \code{matchedRtimes()} can be used.
 
-For `matchedRtimes()`: A list of `data.frame` representing matches
-between chromPeaks and `lamas` for each files.
+For \code{matchedRtimes()}: A list of \code{data.frame} representing matches
+between chromPeaks and \code{lamas} for each files.
 
-For `summarizeLamaMatch()`:A `data.frame` with:
-
-- "Total_peaks": total number of chromatographic peaks in the file.
-
-- "Matched_peak": The number of matched peaks to Lamas.
-
-- "Total_Lamas": Total number of Lamas.
-
-- "Model_summary": `summary.loess` or `summary.gam` object for each file.
+For \code{summarizeLamaMatch()}:A \code{data.frame} with:
+\itemize{
+\item "Total_peaks": total number of chromatographic peaks in the file.
+\item "Matched_peak": The number of matched peaks to Lamas.
+\item "Total_Lamas": Total number of Lamas.
+\item "Model_summary": \code{summary.loess} or \code{summary.gam} object for each file.
+}
 }
 \description{
-Alignment is achieved using the ['adjustRtime()'] method with a `param` of
-class `LamaParama`. This method corrects retention time by aligning
+Alignment is achieved using the \link{'adjustRtime()'} method with a \code{param} of
+class \code{LamaParama}. This method corrects retention time by aligning
 chromatographic data with an external reference dataset.
 
 Chromatographic peaks in the experimental data are first matched to
@@ -131,48 +129,45 @@ and retention time and subsequently the data is aligned by minimizing the
 differences in retention times between the matched chromatographic peaks and
 lamas. This adjustment is performed file by file.
 
-Adjustable parameters such as `ppm`, `tolerance`, and `toleranceRt` define
+Adjustable parameters such as \code{ppm}, \code{tolerance}, and \code{toleranceRt} define
 acceptable deviations during the matching process. It's crucial to note that
 only lamas and chromatographic peaks exhibiting a one-to-one mapping are
 considered when estimating retention time shifts. If a file has no peaks
 matching with lamas, no adjustment will be performed, and the the retention
 times will be returned as-is. Users can evaluate this matching, for example,
 by checking the number of matches and ranges of the matching peaks, by first
-running `[matchLamasChromPeaks()]`.
+running \verb{[matchLamasChromPeaks()]}.
 
-Different warping methods are available; users can choose to fit a *loess*
-(`method = "loess"`, the default) or a *gam* (`method = "gam"`) between the
+Different warping methods are available; users can choose to fit a \emph{loess}
+(\code{method = "loess"}, the default) or a \emph{gam} (\code{method = "gam"}) between the
 reference data points and observed matching ChromPeaks. Additional
-parameters such as `span`, `weight`, `outlierTolerance`, `zeroWeight`,
-and `bs` are specific to these models. These parameters offer flexibility
+parameters such as \code{span}, \code{weight}, \code{outlierTolerance}, \code{zeroWeight},
+and \code{bs} are specific to these models. These parameters offer flexibility
 in fine-tuning how the matching chromatographic peaks are fitted to the
 lamas, thereby generating a model to align the overall retention time for
 a single file.
 
 Other functions related to this method:
-
- - `LamaParama()`: return the respective parameter object for alignment
-   using `adjustRtime()` function. It is also the input for the functions
-   listed below.
-
- - `matchLamasChromPeaks()`: quickly matches each file's ChromPeaks
-   to Lamas, allowing the user to evaluate the matches for each file.
-
- - `summarizeLamaMatch()`: generates a summary of the `LamaParama` method.
-   See below for the details of the return object.
-
- - `matchedRtimes()`: Access the list of `data.frame` saved in the
-   `LamaParama` object, generated by the `matchLamasChromPeaks()` function.
-
- - `plot()`:plot the chromatographic peaks versus the reference lamas as
-    well as the fitting line for the chosen model type. The user can decide
-    what file to inspect by specifying the assay number with the parameter
-    `assay`
+\itemize{
+\item \code{LamaParama()}: return the respective parameter object for alignment
+using \code{adjustRtime()} function. It is also the input for the functions
+listed below.
+\item \code{matchLamasChromPeaks()}: quickly matches each file's ChromPeaks
+to Lamas, allowing the user to evaluate the matches for each file.
+\item \code{summarizeLamaMatch()}: generates a summary of the \code{LamaParama} method.
+See below for the details of the return object.
+\item \code{matchedRtimes()}: Access the list of \code{data.frame} saved in the
+\code{LamaParama} object, generated by the \code{matchLamasChromPeaks()} function.
+\item \code{plot()}:plot the chromatographic peaks versus the reference lamas as
+well as the fitting line for the chosen model type. The user can decide
+what file to inspect by specifying the assay number with the parameter
+\code{assay}
+}
 }
 \note{
-If there are no matches when using `matchLamasChromPeaks()`, the file
-retention will not be adjusted when calling [adjustRtime()] with the same
-`LamaParama` and `XcmsExperiment` object.
+If there are no matches when using \code{matchLamasChromPeaks()}, the file
+retention will not be adjusted when calling \code{\link[=adjustRtime]{adjustRtime()}} with the same
+\code{LamaParama} and \code{XcmsExperiment} object.
 
 To see examples on how to utilize this methods and its functionality,
 see the vignette.

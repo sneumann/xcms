@@ -18,20 +18,20 @@ BlankFlag(
 \S4method{filterFeatures}{SummarizedExperiment,BlankFlag}(object, filter, assay = 1)
 }
 \arguments{
-\item{threshold}{`numeric` indicates the minimum difference
+\item{threshold}{\code{numeric} indicates the minimum difference
 required between the mean abundance of a feature in samples compared to the
 mean abundance of the same feature in blanks for it to not be considered a
 possible contaminant. For example, the default threshold of 2 signifies that
 the mean abundance of the features in samples has to be at least twice the
 mean abundance in blanks for it to not be flagged as a possible contaminant.}
 
-\item{blankIndex}{`integer` (or `logical`) vector corresponding to the
+\item{blankIndex}{\code{integer} (or \code{logical}) vector corresponding to the
 indices of blank samples.}
 
-\item{qcIndex}{`integer` (or `logical`) vector corresponding to the
+\item{qcIndex}{\code{integer} (or \code{logical}) vector corresponding to the
 indices of quality control (QC) samples.}
 
-\item{na.rm}{`logical` indicates whether missing values (`NA`) should be
+\item{na.rm}{\code{logical} indicates whether missing values (\code{NA}) should be
 removed prior to the calculations.}
 
 \item{object}{\code{XcmsExperiment} or \code{SummarizedExperiment}. For an
@@ -53,23 +53,23 @@ assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
-For `BlankFlag`: a `BlankFlag` class. `filterFeatures` returns
+For \code{BlankFlag}: a \code{BlankFlag} class. \code{filterFeatures} returns
 the input object with an added column in the features metadata called
-`possible_contaminants` with a logical value for each feature. This is added
-to `featureDefinitions` for `XcmsExperiment` objects and `rowData` for
-`SummarizedExperiment` objects.
+\code{possible_contaminants} with a logical value for each feature. This is added
+to \code{featureDefinitions} for \code{XcmsExperiment} objects and \code{rowData} for
+\code{SummarizedExperiment} objects.
 }
 \description{
-The `BlankFlag` class and method enable users to flag features of an
-`XcmsExperiment` or `SummarizedExperiment` object based on the relationship
+The \code{BlankFlag} class and method enable users to flag features of an
+\code{XcmsExperiment} or \code{SummarizedExperiment} object based on the relationship
 between the intensity of a feature in blanks compared to the intensity in the
 samples.
 
 This class and method are part of the possible dispatch of the
-generic function `filterFeatures`. Features *below* (`<`) the user-input
-threshold will be flagged by calling the `filterFeatures` function. This
-means that an extra column will be created in `featureDefinitions` or
-`rowData` called `possible_contaminants` with a logical value for each
+generic function \code{filterFeatures}. Features \emph{below} (\code{<}) the user-input
+threshold will be flagged by calling the \code{filterFeatures} function. This
+means that an extra column will be created in \code{featureDefinitions} or
+\code{rowData} called \code{possible_contaminants} with a logical value for each
 feature.
 }
 \seealso{
