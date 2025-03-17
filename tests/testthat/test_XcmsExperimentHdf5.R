@@ -1002,6 +1002,32 @@ test_that("filterFeatureDefinitions,XcmsExperimentHdf5 works", {
     rm(tmp)
 })
 
+test_that("manualChromPeaks,XcmsExperimentHdf5", {
+    tmp <- tempfile()
+    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    cpks <- chromPeaks(x)
+
+    ## errors
+    expect_error(manualChromPeaks(x, msLevel = 1:3), "one MS level")
+    res <- manualChromPeaks(x)
+    expect_equal(res@hdf5_mod_count, x@hdf5_mod_count)
+    cps <- cbind(mzmin = 423.2, mzmax = 424.1)
+    expect_error(manualChromPeaks(x, chromPeaks = cps), "lacks one or more")
+    cps <- cbind(cps, rtmin = 3000, rtmax = 3100)
+    expect_error(manualChromPeaks(x, chromPeaks = cps, samples = 1:10),
+                 "out of bounds")
+
+    res <- manualChromPeaks(x, chromPeaks = cps)
+    expect_true(res@hdf5_mod_count > x@hdf5_mod_count)
+    expect_true(validObject(res))
+    res_cpks <- chromPeaks(res)
+    expect_equal(nrow(res_cpks), nrow(cpks) + 3L)
+    expect_true(anyDuplicated(rownames(res_cpks)) == 0L)
+    expect_equal(unname(res_cpks[is.na(res_cpks[, "sn"]), "sample"]), 1:3)
+
+    rm(tmp)
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

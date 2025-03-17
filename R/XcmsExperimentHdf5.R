@@ -1254,13 +1254,55 @@ setMethod(
         object
     })
 
+setMethod(
+    "manualChromPeaks", "XcmsExperimentHdf5",
+    function(object, chromPeaks = matrix(numeric()),
+             samples = seq_along(object), msLevel = 1L,
+             chunkSize = 2L, BPPARAM = bpparam()) {
+        if (length(msLevel) > 1L)
+            stop("Can only add peaks from one MS level at a time.")
+        if (is.data.frame(chromPeaks)) chromPeaks <- as.matrix(chromPeaks)
+        if (!nrow(chromPeaks)) return(object)
+        if (!all(c("mzmin", "mzmax", "rtmin", "rtmax") %in%
+                 colnames(chromPeaks)))
+            stop("'chromPeaks' lacks one or more of the required colums ",
+                 "\"mzmin\", \"mzmax\", \"rtmin\" and \"rtmax\".")
+        chromPeaks <- chromPeaks[, c("mzmin", "mzmax", "rtmin", "rtmax"),
+                                 drop = FALSE]
+        if (!all(samples %in% seq_along(object)))
+            stop("'samples' out of bounds")
+        if (hasFeatures(object))
+            object <- dropFeatureDefinitions(object)
+        pal <- lapply(samples, function(z) chromPeaks)
+        names(pal) <- samples
+        chunks <- split(samples, ceiling(seq_along(samples) / chunkSize))
+        message("Integrating signal from raw data files")
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks) + 1L, clear = FALSE)
+        res <- lapply(chunks, function(z, ...) {
+            pb$tick()
+            .h5_xmse_integrate_chrom_peaks(
+                .h5_subset_xcms_experiment(
+                    object, i = z, keepChromPeaks = TRUE,
+                    keepAdjustedRtime = TRUE, ignoreHistory = TRUE),
+                pal = pal[z], param = CentWaveParam(), msLevel = msLevel,
+                is_filled = FALSE, BPPARAM = BPPARAM)
+        })
+        pb$tick()
+        object@hdf5_mod_count <- max(unlist(res, use.names = FALSE))
+        object@chrom_peaks_ms_level <- union(
+            object@chrom_peaks_ms_level, msLevel)
+        object
+    })
+
 #' TODO: LLLLLL
 #'
-#' - `manualChromPeaks()`
+#' - `chromPeakSummary()`
 #' - `reconstructChromPeakSpectra()`
 #' - `adjustRtime,LamaParama()`
 #' - `manualFeatures()`
-#' - `chromPeakSummary()`
 #' - Vignette describing the functionality and some notes/properties.
 #' - SWATH support: need to check if it's already available.
 #'   - `findChromPeaksIsolationWindow()`.

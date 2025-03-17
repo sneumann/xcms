@@ -353,8 +353,9 @@ toXcmsExperiment <- function(object, ...) {
 #' @param x `XcmsExperimentHdf5` with data from potentially multiple files.
 #'
 #' @param pal `list` of peak area matrices defining (for each individual sample
-#'     in `x`) the MS area from which the signal should be integrated. Names
-#'     should represent the file/sample index!
+#'     in `x`) the MS area from which the signal should be integrated.
+#'     `lengh(pal)` must be equal to `length(x)`. Names should represent the
+#'     file/sample **index**!
 #'
 #' @param msLevel `integer(1)` with the MS level on which to integrate the data.
 #'
@@ -367,6 +368,10 @@ toXcmsExperiment <- function(object, ...) {
 #'     `fillChromPeaks()`) the rownames of the individual peak area definitions
 #'     in `pal` need to correspond to feature IDs.
 #'
+#' @param is_filled `logical(1)` with the value to be used in the
+#'     `chromPeakData`'s `"is_filled"` column. Should be `TRUE` for gap-filling
+#'     and `FALSE` for *manual chrom peaks*.
+#'
 #' @return `integer(1)` being the hdf5 counter that keeps track of the number
 #'     of writing operations to the HDF5 file.
 #'
@@ -374,15 +379,16 @@ toXcmsExperiment <- function(object, ...) {
 .h5_xmse_integrate_chrom_peaks <-
     function(x, pal, msLevel = 1L, intFun = .chrom_peak_intensity_centWave,
              mzCenterFun = "mzCenter.wMean", param = MatchedFilterParam(),
-             BPPARAM = bpparam(), update_features = FALSE, ...) {
+             BPPARAM = bpparam(), update_features = FALSE, is_filled = TRUE,
+             ...) {
         keep <- which(msLevel(spectra(x)) == msLevel)
         f <- as.factor(fromFile(x)[keep])
         if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
         else rt <- rtime(spectra(x))[keep]
         cn <- c(.h5_chrom_peaks_colnames(x, msLevel = msLevel), "sample")
         res <- bpmapply(
-            split(peaksData(filterMsLevel(spectra(x), msLevel),f =factor(),
-                            return.type = "list"),f),
+            split(peaksData(filterMsLevel(spectra(x), msLevel), f = factor(),
+                            return.type = "list"), f),
             split(rt, f),
             pal,
             as.integer(names(pal)),
@@ -405,10 +411,11 @@ toXcmsExperiment <- function(object, ...) {
             max_index <- max(as.integer(sub(prefix, "", rownames(pks))))
             rownames(res[[i]]) <- .featureIDs(
                 nrow(res[[i]]), prefix, max_index + 1L, min_len = 6)
-            l <- list(rbindFill(pks, res[[i]][, colnames(res[[i]]) !="sample"]))
+            l <- list(rbindFill(pks, res[[i]][, colnames(res[[i]]) !="sample",
+                                              drop = FALSE]))
             names(l) <- x@sample_id[i]
             rm(pks)
-            .h5_write_data(
+            mc <- .h5_write_data(
                 x@hdf5_file, l, name = "chrom_peaks", ms_level = msLevel,
                 replace = TRUE, write_colnames = TRUE, write_rownames = TRUE)
             ## chrom peak data
@@ -416,8 +423,8 @@ toXcmsExperiment <- function(object, ...) {
                 x@hdf5_file, id = x@sample_id[i], ms_level = msLevel,
                 name = "chrom_peak_data", read_colnames = TRUE)[[1L]]
             l <- list(rbindFill(
-                pkd, data.frame(is_filled = rep(TRUE, nrow(res[[i]])),
-                                merged = FALSE)))
+                pkd, data.frame(is_filled = rep(is_filled, nrow(res[[i]])),
+                                merged = rep(FALSE, nrow(res[[i]])))))
             names(l) <- x@sample_id[i]
             mc <- .h5_write_data(
                 x@hdf5_file, l, name = "chrom_peak_data", ms_level = msLevel,
