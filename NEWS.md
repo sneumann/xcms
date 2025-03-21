@@ -9,7 +9,7 @@
 - Add new `XcmsExperimentHdf5` result object keeping all data in a HDF5 file
   on-disk.
 - Optimization and performance improvements for extraction of chromatographic
-  data.
+  data. This includes using `MsCoreUtils::reduce()`.
 
 ## Changes in version 4.5.4
 

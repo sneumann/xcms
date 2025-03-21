@@ -1156,7 +1156,7 @@ setMethod(
         js <- seq_len(ncol(chrs))
         msl <- unique(fts$ms_level)
         chr_mat <- chrs@.Data
-        slot(chrs, ".Data") <- matrix(
+        slot(chrs, ".Data", check = FALSE) <- matrix(
             nrow = nrow(chr_mat), ncol = ncol(chr_mat)) # clean memory
         if (progressbar) {
             message("Processing chromatographic peaks for features")

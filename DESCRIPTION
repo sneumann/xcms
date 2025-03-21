@@ -60,7 +60,7 @@ Imports:
     S4Vectors,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils (>= 1.15.5),
+    MsCoreUtils (>= 1.19.2),
     MsFeatures,
     MsExperiment (>= 1.5.4),
     Spectra (>= 1.16.1),

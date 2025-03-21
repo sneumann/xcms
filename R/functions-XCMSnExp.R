@@ -1758,7 +1758,7 @@ setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
                                      expand = 0, ppm = 0) {
     x[, min_col] <- x[, min_col] - expand - x[, min_col] * ppm / 1e6
     x[, max_col] <- x[, max_col] + expand + x[, max_col] * ppm / 1e6
-    reduced_ranges <- .reduce(x[, min_col], x[, max_col])
+    reduced_ranges <- do.call(cbind, reduce(x[, min_col], x[, max_col]))
     res <- vector("list", nrow(reduced_ranges))
     tolerance <- sqrt(.Machine$double.eps)
     for (i in seq_along(res)) {

@@ -473,7 +473,7 @@
         stop("Length of 'isolationWindow' (if provided) should match the ",
              "number of chromatograms to extract.")
     colnames(pks) <- c("mzmin", "mzmax", "rtmin", "rtmax")
-    rtr <- as.vector(t(.reduce(rt[, 1L], rt[, 2L])))
+    rtr <- as.vector(do.call(rbind, reduce(rt[, 1L], rt[, 2L])))
     res <- .mse_spectrapply_chunks(
         x, FUN = function(z, pks, msl, afun, rtr, BPPARAM) {
             sidx <- unique(z$.SAMPLE_IDX)
