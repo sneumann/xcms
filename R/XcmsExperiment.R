@@ -1962,6 +1962,14 @@ setMethod(
                 param = prm, BPPARAM = BPPARAM)
         })
         res <- do.call(rbind, res)
+        ph <- XProcessHistory(param = param,
+                              date. = date(),
+                              type. = .PROCSTEP.PEAK.FILLING,
+                              fileIndex = seq_along(object),
+                              msLevel = msLevel)
+        object <- addProcessHistory(object, ph)
+        if (!nrow(res))
+            return(object)
         ## Update feature definitions
         i_res <- seq((nrow(.chromPeaks(object)) + 1L), length.out = nrow(res))
         i_res <- split(i_res, rownames(res))
@@ -1979,13 +1987,6 @@ setMethod(
         object@chromPeaks <- rbind(object@chromPeaks, res)
         object@chromPeakData <- rbindFill(object@chromPeakData, cpd)
         pb$tick()
-        ## Need to update the index in the featureDefinitions
-        ph <- XProcessHistory(param = param,
-                              date. = date(),
-                              type. = .PROCSTEP.PEAK.FILLING,
-                              fileIndex = seq_along(object),
-                              msLevel = msLevel)
-        object <- addProcessHistory(object, ph)
         validObject(object)
         object
     })

@@ -56,7 +56,7 @@ details).}
 \item{hdf5File}{For \code{object} being an \code{MsExperiment}: \code{character(1)}
 specifying the name (inclusive path) of a file that should be used for
 on-disk storage of preprocessing results. This option is suggested for
-very large data sets since it drastically reduces the memory footprint.
+very large data sets since it significantly reduces the memory demand.
 See \link{XcmsExperimentHdf5} for more information,}
 
 \item{BPPARAM}{Parallel processing setup. Uses by default the system-wide

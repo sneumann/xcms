@@ -402,6 +402,8 @@ toXcmsExperiment <- function(object, ...) {
         ## Update HDF5 file content per sample
         mc <- x@hdf5_mod_count
         for (i in seq_along(res)) {
+            if (!nrow(res[[i]]))
+                next
             ## chrom peaks
             pks <- .h5_read_data(
                 x@hdf5_file, id = x@sample_id[i], ms_level = msLevel,

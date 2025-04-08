@@ -1244,7 +1244,7 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #' @param hdf5File For `object` being an `MsExperiment`: `character(1)`
 #'     specifying the name (inclusive path) of a file that should be used for
 #'     on-disk storage of preprocessing results. This option is suggested for
-#'     very large data sets since it drastically reduces the memory footprint.
+#'     very large data sets since it significantly reduces the memory demand.
 #'     See [XcmsExperimentHdf5] for more information,
 #'
 #' @param msLevel `integer(1)` defining the MS level on which the
