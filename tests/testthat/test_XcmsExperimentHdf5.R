@@ -1028,6 +1028,26 @@ test_that("manualChromPeaks,XcmsExperimentHdf5", {
     rm(tmp)
 })
 
+test_that("chromPeakSummary,XcmsExperimentHdf5 works", {
+    bdp <- BetaDistributionParam()
+    expect_error(chromPeakSummary(xmse_h5, param = bdp, msLevel = 1:2),
+                 "one MS level")
+    expect_error(chromPeakSummary(xmse_h5, param = bdp, msLevel = 2),
+                 "for MS level")
+    res <- chromPeakSummary(xmse_h5, param = bdp, chunkSize = 2,
+                            BPPARAM = SerialParam())
+    expect_true(is.matrix(res))
+    expect_equal(colnames(res), c("beta_cor", "beta_snr"))
+    pks <- chromPeaks(xmse_h5)
+    expect_equal(nrow(pks), nrow(res))
+    expect_equal(rownames(pks), rownames(res))
+
+    ref <- chromPeakSummary(
+        loadXcmsData("faahko_sub2"), param = bdp, BPPARAM = SerialParam())
+    expect_equal(unname(res[, 1L]), unname(ref[, 1L]))
+    expect_equal(unname(res[, 2L]), unname(ref[, 2L]))
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

@@ -2125,7 +2125,7 @@ setMethod(
     f <- factor(cp[,"sample"], seq_along(object))
     pal <- split.data.frame(cp[, c("mzmin", "mzmax", "rtmin", "rtmax")], f)
     names(pal) <- seq_along(pal)
-    ## Manual chunk processi ng because we have to split `object` and `pal`
+    ## Manual chunk processing because we have to split `object` and `pal`
     idx <- seq_along(object)
     chunks <- split(idx, ceiling(idx / chunkSize))
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",

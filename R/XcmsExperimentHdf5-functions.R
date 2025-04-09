@@ -341,7 +341,11 @@ toXcmsExperiment <- function(object, ...) {
 }
 
 #' Perform peak integration on provided m/z - RT regions. Can be called for
-#' gap filling or manual definition of chrom peaks.
+#' gap filling or manual definition of chrom peaks. By default, with
+#' `storeToHdf5 = TRUE`, the results are written to the HDF5 file. With
+#' `storeToHdf5 = FALSE` the results of `intFun` are returned without updating
+#' the HDF5 file. The latter can for example be used to calculate and return
+#' chromatographic peak summaries (e.g. using `chromPeakSummary()`).
 #'
 #' The newly defined chrom peaks will be appended to eventually existing chrom
 #' peak array in the HDF5 file. Also, content to the chrom peak data of the
@@ -372,15 +376,21 @@ toXcmsExperiment <- function(object, ...) {
 #'     `chromPeakData`'s `"is_filled"` column. Should be `TRUE` for gap-filling
 #'     and `FALSE` for *manual chrom peaks*.
 #'
-#' @return `integer(1)` being the hdf5 counter that keeps track of the number
-#'     of writing operations to the HDF5 file.
+#' @param storeToHdf5 `logical(1)` whether the result of `intFun` should be
+#'     written back to the HDF5 file (with `storeToHdf5 = TRUE`, the default),
+#'     or returned as result of the function call.
+#'
+#' @return For `storeToHdf5 = TRUE`: `integer(1)` with the hdf5 counter that
+#'     keeps track of the number of writing operations to the HDF5 file. For
+#'     `storeToHdf5 = FALSE`: the results of `intFun`. The HDF5 file is not
+#'     updated or changed.
 #'
 #' @noRd
 .h5_xmse_integrate_chrom_peaks <-
     function(x, pal, msLevel = 1L, intFun = .chrom_peak_intensity_centWave,
              mzCenterFun = "mzCenter.wMean", param = MatchedFilterParam(),
              BPPARAM = bpparam(), update_features = FALSE, is_filled = TRUE,
-             ...) {
+             storeToHdf5 = TRUE, ...) {
         keep <- which(msLevel(spectra(x)) == msLevel)
         f <- as.factor(fromFile(x)[keep])
         if (hasAdjustedRtime(x)) rt <- spectra(x)$rtime_adjusted[keep]
@@ -395,6 +405,8 @@ toXcmsExperiment <- function(object, ...) {
             FUN = intFun,
             MoreArgs = list(mzCenterFun = mzCenterFun, cn = cn, param = param),
             SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
+        if (!storeToHdf5) # Immediately return the results.
+            return(res)
         if (update_features) {
             fids <- .h5_feature_definitions_rownames(x, msLevel)[[1L]]
             feature_idx <- lapply(res, function(z) match(rownames(z), fids))

@@ -1297,9 +1297,41 @@ setMethod(
         object
     })
 
+setMethod(
+    "chromPeakSummary",
+    signature(object = "XcmsExperimentHdf5", param = "BetaDistributionParam"),
+    function(object, param, msLevel = 1L, chunkSize = 2L, BPPARAM = bpparam()) {
+        if (length(msLevel) != 1)
+            stop("Can only perform peak metrics for one MS level at a time.")
+        if (!hasChromPeaks(object, msLevel = msLevel))
+            stop("No ChromPeaks definitions for MS level ",
+                 msLevel, " present.")
+        chunks <- split(seq_along(object),
+                        ceiling(seq_along(object) / chunkSize))
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = length(chunks) + 1L, clear = FALSE)
+        pb$tick(0)
+        res <- lapply(chunks, function(z) {
+            pb$tick()
+            x <- .h5_subset_xcms_experiment(
+                object, i = z, keepChromPeaks = TRUE, keepAdjustedRtime = TRUE,
+                keepFeatures = TRUE, ignoreHistory = TRUE)
+            pal <- chromPeaks(x, msLevel = msLevel, bySample = TRUE,
+                              columns = c("mzmin", "mzmax", "rtmin", "rtmax"))
+            names(pal) <- z
+            .h5_xmse_integrate_chrom_peaks(
+                x, pal, intFun = .chrom_peak_beta_metrics, msLevel = msLevel,
+                BPPARAM = BPPARAM, storeToHdf5 = FALSE)
+        })
+        res <- do.call(rbind, unlist(res, recursive = FALSE))
+        pb$tick()
+        res
+    })
+
 #' TODO: LLLLLL
 #'
-#' - `chromPeakSummary()`
 #' - `reconstructChromPeakSpectra()`
 #' - `adjustRtime,LamaParama()`
 #' - `manualFeatures()`
