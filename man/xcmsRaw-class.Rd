@@ -8,7 +8,6 @@
 \alias{revMz,xcmsRaw-method}
 \alias{revMz}
 \alias{scanrange,xcmsRaw-method}
-\alias{show,xcmsRaw-method}
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
 \alias{levelplot}
@@ -132,11 +131,11 @@
       \code{signature(object = "xcmsRaw")}: get average m/z and
       intensity values for multiple mass scans
     }
-    \item{\link[xcms:image.xcmsRaw]{image}}{
+    \item{image}{
       \code{signature(x = "xcmsRaw")}: get data for peaks in
       specified m/z and time ranges
     }
-    \item{\link[xcms:levelplot.xcmsRaw]{levelplot}}{
+    \item{levelplot}{
       Create an image of the raw (profile) data m/z against retention
   time, with the intensity color coded.
     }

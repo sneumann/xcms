@@ -70,7 +70,7 @@ that should be used.}
 the MS level from which the profile matrix should be generated.}
 
 \item{BPPARAM}{For \code{MsExperiment} or \code{XcmsExperiment}: parallel processing
-setup. See \code{\link[=bpparam]{bpparam()}} for more details. Defaults to
+setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more details. Defaults to
 \code{BPPARAM = bpparam()}.}
 
 \item{...}{ignored.}

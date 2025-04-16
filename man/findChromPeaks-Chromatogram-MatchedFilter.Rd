@@ -7,7 +7,8 @@
 \S4method{findChromPeaks}{Chromatogram,MatchedFilterParam}(object, param, ...)
 }
 \arguments{
-\item{object}{a \link{Chromatogram} or \link{MChromatograms} object.}
+\item{object}{a \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}}
+object.}
 
 \item{param}{a \link{MatchedFilterParam} object specifying the settings for the
 peak detection. See \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for the description of
@@ -23,7 +24,8 @@ minimum m/z value of the \code{Chromatogram} object. See
 \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for details on the remaining columns.
 }
 \description{
-\code{findChromPeaks} on a \link{Chromatogram} or \link{MChromatograms} object with a
+\code{findChromPeaks} on a \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or
+\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object with a
 \link{MatchedFilterParam} parameter object performs matchedFilter-based peak
 detection on purely chromatographic data. See \link{matchedFilter} for details
 on the method and \link{MatchedFilterParam} for details on the parameter class.

@@ -18,7 +18,6 @@
 \alias{plot,MsExperiment,missing-method}
 \alias{XcmsExperiment}
 \alias{XcmsExperiment-class}
-\alias{show,XcmsExperiment-method}
 \alias{filterChromPeaks}
 \alias{featureArea}
 \alias{quantify}
@@ -410,34 +409,38 @@ also parameter \code{type} below for additional information.}
 be retained in the returned (filtered) object.}
 }
 \description{
-The \code{XcmsExperiment} is a data container for \emph{xcms} preprocessing results
-(i.e. results from chromatographic peak detection, alignment and
+The \code{XcmsExperiment} is a data container for \emph{xcms} preprocessing
+results (i.e. results from chromatographic peak detection, alignment and
 correspondence analysis). It is the preferred and default result object
 since version 4 of \emph{xcms}.
 
 It provides the same functionality than the \link{XCMSnExp} object, but uses the
 more advanced and modern MS infrastructure provided by the \emph{MsExperiment}
-and \emph{Spectra} Bioconductor packages. This provides a much higher flexibility
+and \emph{Spectra} Bioconductor packages. This enables a much higher flexibility
 of data representation and storage and ensures future expandability.
 
 Documentation of the various functions for \code{XcmsExperiment} objects are
 grouped by topic and provided in the sections below.
 
-The default \code{xcms} workflow is to perform
+The default \emph{xcms} data analysis workflow is to perform:
 \itemize{
 \item chromatographic peak detection using \code{\link[=findChromPeaks]{findChromPeaks()}}
-\item optionally refine identified chromatographic peaks using
-\code{\link[=refineChromPeaks]{refineChromPeaks()}}
-\item perform an alignment (retention time adjustment) using \code{\link[=adjustRtime]{adjustRtime()}}.
-Depending on the method used this requires to run a correspondence
+\item optionally \emph{refine} identified chromatographic peaks using
+\code{\link[=refineChromPeaks]{refineChromPeaks()}} (this is highly suggested for \emph{centWave}-based
+chromatographic peak detection)
+\item retention time alignment (retention time adjustment) using \code{\link[=adjustRtime]{adjustRtime()}}.
+Depending on the method used, this may require to run a correspondence
 analysis first
-\item perform a correspondence analysis using the \code{\link[=groupChromPeaks]{groupChromPeaks()}} function
-to group chromatographic peaks across samples to define the LC-MS
-features.
-\item optionally perform a gap-filling to \emph{rescue} signal in samples in which
-no chromatographic peak was identified and hence a missing value would
-be reported. This can be performed using the \code{\link[=fillChromPeaks]{fillChromPeaks()}} function.
+\item correspondence analysis to group chromatographic peaks across samples
+to define the LC-MS features using the \code{\link[=groupChromPeaks]{groupChromPeaks()}} function
+\item gap-filling to \emph{rescue} signal in samples in which no chromatographic
+peak was identified and hence a missing value would be reported. This
+can be performed using the \code{\link[=fillChromPeaks]{fillChromPeaks()}} function.
 }
+
+For very large LC-MS experiments (either with a very large number of samples
+or very large data files, or both), the \code{\link[=XcmsExperimentHdf5]{XcmsExperimentHdf5()}} object can
+be used instead. See the respective help page for more information.
 }
 \section{Subset, filter and combine}{
 
@@ -783,19 +786,19 @@ default adjusted retention times are returned if available.
 
 \examples{
 
-## Creating a MsExperiment object representing the data from an LC-MS
+## Create a MsExperiment object representing the data from an LC-MS
 ## experiment.
 library(MsExperiment)
 
-## Defining the raw data files
+## Define the raw data files
 fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-## Defining a data frame with the sample characterization
+## Define a data frame with the sample characterization
 df <- data.frame(mzML_file = basename(fls),
                 sample = c("ko15", "ko16", "ko18"))
-## Importing the data. This will initialize a `Spectra` object representing
+## Importe the data. This will initialize a `Spectra` object representing
 ## the raw data and assign these to the individual samples.
 mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
 

@@ -1,7 +1,7 @@
 ## Methods for ProcessHistory and XProcessHistory.
 #' @include functions-ProcessHistory.R
 
-#' @rdname ProcessHistory-class
+#' @rdname hidden_aliases
 setMethod("show", "ProcessHistory", function(object) {
     cat("Object of class \"", class(object), "\"\n", sep = "")
     cat(" type:", object@type, "\n")
@@ -9,7 +9,7 @@ setMethod("show", "ProcessHistory", function(object) {
     cat(" info:", object@info, "\n")
     cat(" fileIndex:", paste0(object@fileIndex, collapse = ","), "\n")
 })
-#' @rdname ProcessHistory-class
+#' @rdname hidden_aliases
 setMethod("show", "XProcessHistory", function(object) {
     callNextMethod()
     pcLabel <- "-none-"

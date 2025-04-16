@@ -3,64 +3,10 @@
 %   R/functions-Params.R, R/methods-Params.R, R/methods-XCMSnExp.R
 \name{groupChromPeaks}
 \alias{groupChromPeaks}
-\alias{PeakDensityParam-class}
-\alias{NearestPeaksParam-class}
-\alias{MzClustParam-class}
 \alias{groupChromPeaks,XcmsExperiment,Param-method}
 \alias{PeakDensityParam}
 \alias{MzClustParam}
 \alias{NearestPeaksParam}
-\alias{sampleGroups,PeakDensityParam-method}
-\alias{sampleGroups}
-\alias{sampleGroups<-,PeakDensityParam-method}
-\alias{sampleGroups<-}
-\alias{bw,PeakDensityParam-method}
-\alias{bw}
-\alias{bw<-,PeakDensityParam-method}
-\alias{bw<-}
-\alias{minFraction,PeakDensityParam-method}
-\alias{minFraction}
-\alias{minFraction<-,PeakDensityParam-method}
-\alias{minFraction<-}
-\alias{minSamples,PeakDensityParam-method}
-\alias{minSamples}
-\alias{minSamples<-,PeakDensityParam-method}
-\alias{minSamples<-}
-\alias{binSize,PeakDensityParam-method}
-\alias{binSize<-,PeakDensityParam-method}
-\alias{maxFeatures,PeakDensityParam-method}
-\alias{maxFeatures}
-\alias{maxFeatures<-,PeakDensityParam-method}
-\alias{maxFeatures<-}
-\alias{ppm,PeakDensityParam-method}
-\alias{sampleGroups,MzClustParam-method}
-\alias{sampleGroups<-,MzClustParam-method}
-\alias{ppm,MzClustParam-method}
-\alias{ppm<-,MzClustParam-method}
-\alias{absMz,MzClustParam-method}
-\alias{absMz}
-\alias{absMz<-,MzClustParam-method}
-\alias{absMz<-}
-\alias{minFraction,MzClustParam-method}
-\alias{minFraction<-,MzClustParam-method}
-\alias{minSamples,MzClustParam-method}
-\alias{minSamples<-,MzClustParam-method}
-\alias{sampleGroups,NearestPeaksParam-method}
-\alias{sampleGroups<-,NearestPeaksParam-method}
-\alias{mzVsRtBalance,NearestPeaksParam-method}
-\alias{mzVsRtBalance}
-\alias{mzVsRtBalance<-,NearestPeaksParam-method}
-\alias{mzVsRtBalance<-}
-\alias{absMz,NearestPeaksParam-method}
-\alias{absMz<-,NearestPeaksParam-method}
-\alias{absRt,NearestPeaksParam-method}
-\alias{absRt}
-\alias{absRt<-,NearestPeaksParam-method}
-\alias{absRt<-}
-\alias{kNN,NearestPeaksParam-method}
-\alias{kNN}
-\alias{kNN<-,NearestPeaksParam-method}
-\alias{kNN<-}
 \alias{as.list,PeakDensityParam-method}
 \alias{groupChromPeaks,XCMSnExp,PeakDensityParam-method}
 \alias{groupChromPeaks,XCMSnExp,MzClustParam-method}
@@ -96,72 +42,6 @@ NearestPeaksParam(
   absRt = 15,
   kNN = 10
 )
-
-\S4method{sampleGroups}{PeakDensityParam}(object)
-
-\S4method{sampleGroups}{PeakDensityParam}(object) <- value
-
-\S4method{bw}{PeakDensityParam}(object)
-
-\S4method{bw}{PeakDensityParam}(object) <- value
-
-\S4method{minFraction}{PeakDensityParam}(object)
-
-\S4method{minFraction}{PeakDensityParam}(object) <- value
-
-\S4method{minSamples}{PeakDensityParam}(object)
-
-\S4method{minSamples}{PeakDensityParam}(object) <- value
-
-\S4method{binSize}{PeakDensityParam}(object)
-
-\S4method{binSize}{PeakDensityParam}(object) <- value
-
-\S4method{maxFeatures}{PeakDensityParam}(object)
-
-\S4method{maxFeatures}{PeakDensityParam}(object) <- value
-
-\S4method{ppm}{PeakDensityParam}(object)
-
-\S4method{sampleGroups}{MzClustParam}(object)
-
-\S4method{sampleGroups}{MzClustParam}(object) <- value
-
-\S4method{ppm}{MzClustParam}(object)
-
-\S4method{ppm}{MzClustParam}(object) <- value
-
-\S4method{absMz}{MzClustParam}(object)
-
-\S4method{absMz}{MzClustParam}(object) <- value
-
-\S4method{minFraction}{MzClustParam}(object)
-
-\S4method{minFraction}{MzClustParam}(object) <- value
-
-\S4method{minSamples}{MzClustParam}(object)
-
-\S4method{minSamples}{MzClustParam}(object) <- value
-
-\S4method{sampleGroups}{NearestPeaksParam}(object)
-
-\S4method{sampleGroups}{NearestPeaksParam}(object) <- value
-
-\S4method{mzVsRtBalance}{NearestPeaksParam}(object)
-
-\S4method{mzVsRtBalance}{NearestPeaksParam}(object) <- value
-
-\S4method{absMz}{NearestPeaksParam}(object)
-
-\S4method{absMz}{NearestPeaksParam}(object) <- value
-
-\S4method{absRt}{NearestPeaksParam}(object)
-
-\S4method{absRt}{NearestPeaksParam}(object) <- value
-
-\S4method{kNN}{NearestPeaksParam}(object)
-
-\S4method{kNN}{NearestPeaksParam}(object) <- value
 
 \S4method{as.list}{PeakDensityParam}(x, ...)
 
@@ -239,8 +119,6 @@ distance for retention times.}
 
 \item{kNN}{For \code{NearestPeaksParam}: \code{integer(1)} representing the number of
 nearest neighbors to check.}
-
-\item{value}{The value for the slot.}
 
 \item{x}{The parameter object.}
 }

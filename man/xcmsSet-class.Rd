@@ -46,7 +46,6 @@
 \alias{sampnames<-}
 \alias{scanrange,xcmsSet-method}
 \alias{scanrange}
-\alias{show,xcmsSet-method}
 
 \title{Class xcmsSet, a class for preprocessing peak data}
 \description{

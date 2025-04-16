@@ -4,86 +4,13 @@
 %   R/methods-XCMSnExp.R
 \name{adjustRtime}
 \alias{adjustRtime}
-\alias{ObiwarpParam-class}
-\alias{PeakGroupsParam-class}
 \alias{adjustRtimePeakGroups}
 \alias{adjustRtime,MsExperiment,ObiwarpParam-method}
 \alias{adjustRtime,MsExperiment,PeakGroupsParam-method}
 \alias{PeakGroupsParam}
 \alias{ObiwarpParam}
 \alias{adjustRtime,OnDiskMSnExp,ObiwarpParam-method}
-\alias{minFraction,PeakGroupsParam-method}
-\alias{minFraction<-,PeakGroupsParam-method}
-\alias{extraPeaks,PeakGroupsParam-method}
-\alias{extraPeaks}
-\alias{extraPeaks<-,PeakGroupsParam-method}
-\alias{extraPeaks<-}
-\alias{smooth,PeakGroupsParam-method}
-\alias{smooth}
-\alias{smooth<-,PeakGroupsParam-method}
-\alias{smooth<-}
-\alias{span,PeakGroupsParam-method}
-\alias{span}
-\alias{span<-,PeakGroupsParam-method}
-\alias{span<-}
-\alias{family,PeakGroupsParam-method}
-\alias{family}
-\alias{family<-,PeakGroupsParam-method}
-\alias{family<-}
-\alias{peakGroupsMatrix,PeakGroupsParam-method}
-\alias{peakGroupsMatrix}
-\alias{peakGroupsMatrix<-,PeakGroupsParam-method}
-\alias{peakGroupsMatrix<-}
-\alias{subset,PeakGroupsParam-method}
-\alias{subset}
-\alias{subset<-,PeakGroupsParam-method}
-\alias{subset<-}
-\alias{subsetAdjust,PeakGroupsParam-method}
-\alias{subsetAdjust}
-\alias{subsetAdjust<-,PeakGroupsParam-method}
-\alias{subsetAdjust<-}
-\alias{binSize,ObiwarpParam-method}
 \alias{binSize<-,ObiwarpParam-method}
-\alias{centerSample,ObiwarpParam-method}
-\alias{centerSample}
-\alias{centerSample<-,ObiwarpParam-method}
-\alias{centerSample<-}
-\alias{response,ObiwarpParam-method}
-\alias{response}
-\alias{response<-,ObiwarpParam-method}
-\alias{response<-}
-\alias{distFun,ObiwarpParam-method}
-\alias{distFun}
-\alias{distFun<-,ObiwarpParam-method}
-\alias{distFun<-}
-\alias{gapInit,ObiwarpParam-method}
-\alias{gapInit}
-\alias{gapInit<-,ObiwarpParam-method}
-\alias{gapInit<-}
-\alias{gapExtend,ObiwarpParam-method}
-\alias{gapExtend}
-\alias{gapExtend<-,ObiwarpParam-method}
-\alias{gapExtend<-}
-\alias{factorDiag,ObiwarpParam-method}
-\alias{factorDiag}
-\alias{factorDiag<-,ObiwarpParam-method}
-\alias{factorDiag<-}
-\alias{factorGap,ObiwarpParam-method}
-\alias{factorGap}
-\alias{factorGap<-,ObiwarpParam-method}
-\alias{factorGap<-}
-\alias{localAlignment,ObiwarpParam-method}
-\alias{localAlignment}
-\alias{localAlignment<-,ObiwarpParam-method}
-\alias{localAlignment<-}
-\alias{initPenalty,ObiwarpParam-method}
-\alias{initPenalty}
-\alias{initPenalty<-,ObiwarpParam-method}
-\alias{initPenalty<-}
-\alias{subset,ObiwarpParam-method}
-\alias{subset<-,ObiwarpParam-method}
-\alias{subsetAdjust,ObiwarpParam-method}
-\alias{subsetAdjust<-,ObiwarpParam-method}
 \alias{adjustRtime,XCMSnExp,PeakGroupsParam-method}
 \alias{adjustRtime,XCMSnExp,ObiwarpParam-method}
 \title{Alignment: Retention time correction methods.}
@@ -125,85 +52,7 @@ ObiwarpParam(
 
 \S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 
-\S4method{minFraction}{PeakGroupsParam}(object)
-
-\S4method{minFraction}{PeakGroupsParam}(object) <- value
-
-\S4method{extraPeaks}{PeakGroupsParam}(object)
-
-\S4method{extraPeaks}{PeakGroupsParam}(object) <- value
-
-\S4method{smooth}{PeakGroupsParam}(x)
-
-\S4method{smooth}{PeakGroupsParam}(object) <- value
-
-\S4method{span}{PeakGroupsParam}(object)
-
-\S4method{span}{PeakGroupsParam}(object) <- value
-
-\S4method{family}{PeakGroupsParam}(object)
-
-\S4method{family}{PeakGroupsParam}(object) <- value
-
-\S4method{peakGroupsMatrix}{PeakGroupsParam}(object)
-
-\S4method{peakGroupsMatrix}{PeakGroupsParam}(object) <- value
-
-\S4method{subset}{PeakGroupsParam}(x)
-
-\S4method{subset}{PeakGroupsParam}(object) <- value
-
-\S4method{subsetAdjust}{PeakGroupsParam}(object)
-
-\S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
-
-\S4method{binSize}{ObiwarpParam}(object)
-
 \S4method{binSize}{ObiwarpParam}(object) <- value
-
-\S4method{centerSample}{ObiwarpParam}(object)
-
-\S4method{centerSample}{ObiwarpParam}(object) <- value
-
-\S4method{response}{ObiwarpParam}(object)
-
-\S4method{response}{ObiwarpParam}(object) <- value
-
-\S4method{distFun}{ObiwarpParam}(object)
-
-\S4method{distFun}{ObiwarpParam}(object) <- value
-
-\S4method{gapInit}{ObiwarpParam}(object)
-
-\S4method{gapInit}{ObiwarpParam}(object) <- value
-
-\S4method{gapExtend}{ObiwarpParam}(object)
-
-\S4method{gapExtend}{ObiwarpParam}(object) <- value
-
-\S4method{factorDiag}{ObiwarpParam}(object)
-
-\S4method{factorDiag}{ObiwarpParam}(object) <- value
-
-\S4method{factorGap}{ObiwarpParam}(object)
-
-\S4method{factorGap}{ObiwarpParam}(object) <- value
-
-\S4method{localAlignment}{ObiwarpParam}(object)
-
-\S4method{localAlignment}{ObiwarpParam}(object) <- value
-
-\S4method{initPenalty}{ObiwarpParam}(object)
-
-\S4method{initPenalty}{ObiwarpParam}(object) <- value
-
-\S4method{subset}{ObiwarpParam}(x)
-
-\S4method{subset}{ObiwarpParam}(object) <- value
-
-\S4method{subsetAdjust}{ObiwarpParam}(object)
-
-\S4method{subsetAdjust}{ObiwarpParam}(object) <- value
 
 \S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param, msLevel = 1L)
 
@@ -249,12 +98,14 @@ the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).}
 
 \item{extraPeaks}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the maximal
-number of additional peaks for all samples to be assigned to a peak
-group (feature) for retention time correction. For a data set with 6
-samples, \code{extraPeaks = 1} uses all peak groups with a total peak count
-\verb{<= 6 + 1}. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a
-sample that are assigned to the group.}
+number of additional peaks for all
+samples to be assigned to a peak group (feature) for retention time
+correction. For a data set with 6 samples, \code{extraPeaks = 1} uses all
+peak groups with a total peak count \verb{<= 6 + 1}. The total peak count
+is the total number of peaks being assigned to a peak group and
+considers also multiple peaks within a sample that are assigned to
+the group. This parameter is ignored for \code{adjustRtime()} on an
+\code{\link[=XcmsExperimentHdf5]{XcmsExperimentHdf5()}}.}
 
 \item{smooth}{For \code{PeakGroupsParam}: \code{character(1)} defining the function to
 be used to interpolate corrected retention times for all peak groups.
@@ -342,9 +193,7 @@ or LC-MS/MS data this might however be a too low threshold and it should
 be increased. See also
 \href{https://github.com/sneumann/xcms/issues/739}{issue #739}.}
 
-\item{value}{The value for the slot.}
-
-\item{x}{An \code{ObiwarpParam}, \code{PeakGroupsParam} or \code{LamaParama} object.}
+\item{value}{For all assignment methods: the value to set/replace.}
 }
 \value{
 \code{adjustRtime} on an \code{OnDiskMSnExp} or \code{XCMSnExp} object will return an

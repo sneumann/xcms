@@ -649,9 +649,9 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #' @description
 #'
 #' `dirname` allows to get and set the path to the directory containing the
-#' source files of the [OnDiskMSnExp-class] (or [XCMSnExp-class]) object.
+#' source files of the `OnDiskMSnExp` (or [XCMSnExp-class]) object.
 #'
-#' @param path [OnDiskMSnExp-class].
+#' @param path `OnDiskMSnExp`.
 #'
 #' @param value `character` of length 1 or length equal to the number of files
 #'     defining the new path to the files.

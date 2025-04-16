@@ -32,7 +32,7 @@ columns should be returned.}
 \item{valsPerSpect}{ignored.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link[=peakDetectionCWT]{peakDetectionCWT()}} function.}
+\code{peakDetectionCWT} function.}
 }
 \value{
 A matrix, each row representing an identified peak, with columns:
@@ -57,9 +57,8 @@ direct injection spectrum using a wavelet based algorithm.
 \details{
 This is a wrapper around the peak picker in Bioconductor's
 \emph{MassSpecWavelet} package calling
-\code{peakDetectionCWT()} and
-\code{tuneInPeakInfo()} functions. See the \emph{xcmsDirect} vignette for more
-information.
+\code{peakDetectionCWT()} and \code{tuneInPeakInfo()} functions. See the
+\emph{xcmsDirect} vignette for more information.
 }
 \seealso{
 Other core peak detection functions: 

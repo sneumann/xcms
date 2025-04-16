@@ -13,7 +13,7 @@ setAs("MChromatograms", "XChromatograms", function(from) {
     res
 })
 
-#' @rdname XChromatogram
+#' @rdname hidden_aliases
 setMethod("show", "XChromatograms", function(object) {
     nr <- nrow(object)
     nc <- ncol(object)

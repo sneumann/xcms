@@ -67,8 +67,8 @@ object by file.}
 \item{method}{For \code{normalize()}: \code{character(1)} specifying the
 normalization method. See \code{\link[MSnbase:normalise-methods]{MSnbase::normalize()}} in the \emph{MSnbase}
 package for details.
-For \code{pickPeaks()}: \code{character(1)} defining the method. See
-\code{\link[MSnbase:pickPeaks-method]{MSnbase::pickPeaks()}} for options. For \code{smooth()}:
+For \code{pickPeaks()}: \code{character(1)} defining the method. See help for
+\code{pickPeaks()} in the \emph{MSnbase} package for options. For \code{smooth()}:
 \code{character(1)} defining the method. See
 \code{\link[MSnbase:smooth-methods]{MSnbase::smooth()}} in the \emph{MSnbase} package for options and
 details.}
@@ -77,12 +77,12 @@ details.}
 
 \item{halfWindowSize}{For \code{pickPeaks()} and \code{smooth()}:
 \code{integer(1)} defining the window size for the peak picking. See
-\code{\link[MSnbase:pickPeaks-method]{MSnbase::pickPeaks()}} and [MSnbase::smooth()` in the \emph{MSnbase}
+help for \code{pickPeaks} and [MSnbase::smooth()` in the \emph{MSnbase}
 package for details and options.}
 
 \item{SNR}{For \code{pickPeaks()}: \code{numeric(1)} defining the signal to
-noise ratio to be considered. See \code{\link[MSnbase:pickPeaks-method]{MSnbase::pickPeaks()}}
-documentation for details.}
+noise ratio to be considered. See the documentation for \code{pickPeaks()}
+in the \emph{MSnbase} package for details.}
 
 \item{t}{For \code{removePeaks()}: either a \code{numeric(1)} or \code{"min"}
 defining the threshold (method) to be used. See
@@ -109,15 +109,15 @@ points. See \code{\link[MSnbase:clean-methods]{MSnbase::clean()}} documentation 
 for details and examples.
 
 \code{filterAcquisitionNum()}: filters the \code{\link[=XCMSnExp]{XCMSnExp()}} object keeping only
-spectra with the provided acquisition numbers. See \code{\link[=filterAcquisitionNum]{filterAcquisitionNum()}}
-for details and examples.
+spectra with the provided acquisition numbers. See
+\code{\link[MSnbase:MSnExp-class]{MSnbase::filterAcquisitionNum()}} for details and examples.
 
 The \code{normalize()} method performs basic normalization of
 spectra intensities. See \code{\link[MSnbase:normalise-methods]{MSnbase::normalize()}} documentation
 in the \emph{MSnbase} package for details and examples.
 
-The \code{pickPeaks()} method performs peak picking. See
-\code{\link[MSnbase:pickPeaks-method]{MSnbase::pickPeaks()}} documentation for details and examples.
+The \code{pickPeaks()} method performs peak picking. See documentation for
+that function in the \emph{MSnbase} package for details and examples.
 
 The \code{removePeaks()} method removes mass peaks (intensities)
 lower than a threshold. Note that these peaks refer to \emph{mass}

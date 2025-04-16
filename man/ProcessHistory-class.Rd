@@ -6,8 +6,6 @@
 \alias{ProcessHistory}
 \alias{XProcessHistory-class}
 \alias{XProcessHistory}
-\alias{show,ProcessHistory-method}
-\alias{show,XProcessHistory-method}
 \alias{processParam,XProcessHistory-method}
 \alias{processParam}
 \alias{msLevel,XProcessHistory-method}
@@ -21,10 +19,6 @@
 \alias{fileIndex}
 \title{Tracking data processing}
 \usage{
-\S4method{show}{ProcessHistory}(object)
-
-\S4method{show}{XProcessHistory}(object)
-
 \S4method{processParam}{XProcessHistory}(object)
 
 \S4method{msLevel}{XProcessHistory}(object)

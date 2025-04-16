@@ -1,248 +1,129 @@
 ## Methods for the Param class and sub-classes
 #' @include functions-Params.R
 
-#' @aliases ppm
-#'
-#' @description `ppm()`,`ppm<-`: getter and setter for the `ppm`
-#'     slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("ppm", "CentWaveParam", function(object){ return(object@ppm)})
-#' @aliases ppm<-
-#'
-#' @param value The value for the slot.
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases peakwidth
-#'
-#' @description `peakwidth()`,`peakwidth<-`: getter and setter for the
-#'     `peakwidth` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("peakwidth", "CentWaveParam", function(object)
     return(object@peakwidth))
-#' @aliases peakwidth<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
     object@peakwidth <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases snthresh
-#'
-#' @description `snthresh()`,`snthresh<-`: getter and setter for the
-#'     `snthresh` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("snthresh", "CentWaveParam", function(object)
     return(object@snthresh))
-#' @aliases snthresh<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases prefilter
-#'
-#' @description `prefilter()`,`prefilter<-`: getter and setter for the
-#'     `prefilter` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("prefilter", "CentWaveParam", function(object)
     return(object@prefilter))
-#' @aliases prefilter<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
     object@prefilter <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases mzCenterFun
-#'
-#' @description `mzCenterFun()`,`mzCenterFun<-`: getter and setter for the
-#'     `mzCenterFun` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("mzCenterFun", "CentWaveParam", function(object)
     return(object@mzCenterFun))
-#' @aliases mzCenterFun<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
     object@mzCenterFun <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `integrate()`,`integrate<-`: getter and setter for the
-#'     `integrate` slot of the object.
-#'
-#' @param f For `integrate()`: a `CentWaveParam` object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("integrate", signature(f = "CentWaveParam"), function(f)
     return(f@integrate))
-#' @aliases integrate<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
     object@integrate <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases mzdiff
-#'
-#' @description `mzdiff()`,`mzdiff<-`: getter and setter for the
-#'     `mzdiff` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("mzdiff", "CentWaveParam", function(object)
     return(object@mzdiff))
-#' @aliases mzdiff<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases fitgauss
-#'
-#' @description `fitgauss()`,`fitgauss<-`: getter and setter for the
-#'     `fitgauss` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("fitgauss", "CentWaveParam", function(object)
     return(object@fitgauss))
-#' @aliases fitgauss<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
     object@fitgauss <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases noise
-#'
-#' @description `noise()`,`noise<-`: getter and setter for the
-#'     `noise` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("noise", "CentWaveParam", function(object)
     return(object@noise))
-#' @aliases noise<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("noise", "CentWaveParam", function(object, value) {
     object@noise <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases verboseColumns
-#'
-#' @description `verboseColumns()`,`verboseColumns<-`: getter and
-#'     setter for the `verboseColumns` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("verboseColumns", "CentWaveParam", function(object)
     return(object@verboseColumns))
-#' @aliases verboseColumns<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases roiList
-#'
-#' @description `roiList()`,`roiList<-`: getter and setter for the
-#'     `roiList` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("roiList", "CentWaveParam", function(object)
     return(object@roiList))
-#' @aliases roiList<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
     object@roiList <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases firstBaselineCheck
-#'
-#' @description `fistBaselineCheck()`,`firstBaselineCheck<-`: getter
-#'     and setter for the `firstBaselineCheck` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("firstBaselineCheck", "CentWaveParam", function(object)
     return(object@firstBaselineCheck))
-#' @aliases firstBaselineCheck<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) {
     object@firstBaselineCheck <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases roiScales
-#'
-#' @description `roiScales()`,`roiScales<-`: getter and setter for the
-#'     `roiScales` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setMethod("roiScales", "CentWaveParam", function(object)
     return(object@roiScales))
-#' @aliases roiScales<-
-#'
-#' @rdname findChromPeaks-centWave
+#' @rdname hidden_aliases
 setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
     object@roiScales <- value
     if (validObject(object))
@@ -253,201 +134,110 @@ setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
 ############################################################
 ## MatchedFilterParam
 
-#' @aliases binSize
-#'
-#' @description `binSize()`,`binSize<-`: getter and setter for the
-#'     `binSize` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("binSize", "MatchedFilterParam", function(object)
     return(object@binSize))
-#' @aliases binSize<-
-#'
-#' @param value The value for the slot.
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `impute()`,`impute<-`: getter and setter for the
-#'     `impute` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("impute", "MatchedFilterParam", function(object)
     return(object@impute))
-#' @aliases impute<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
     object@impute <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases baseValue
-#'
-#' @description `baseValue()`,`baseValue<-`: getter and setter for the
-#'     `baseValue` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("baseValue", "MatchedFilterParam", function(object)
     return(object@baseValue))
-#' @aliases baseValue<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
     object@baseValue <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases distance
-#'
-#' @description `distance()`,`distance<-`: getter and setter for the
-#'     `distance` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("distance", "MatchedFilterParam", function(object)
     return(object@distance))
-#' @aliases distance<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
     object@distance <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases fwhm
-#'
-#' @description `fwhm()`,`fwhm<-`: getter and setter for the
-#'     `fwhm` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("fwhm", "MatchedFilterParam", function(object)
     return(object@fwhm))
-#' @aliases fwhm<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
     object@fwhm <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases sigma
-#'
-#' @description `sigma()`,`sigma<-`: getter and setter for the
-#'     `sigma` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("sigma", "MatchedFilterParam", function(object)
     return(object@sigma))
-#' @aliases sigma<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
     object@sigma <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `max()`,`max<-`: getter and setter for the
-#'      `max` slot of the object.
-#'
-#' @param x For `max()`: a `MatchedFilterParam` object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("max", signature(x="MatchedFilterParam"),
           function(x) return(x@max))
-#' @aliases max<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
     object@max <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `snthresh()`,`snthresh<-`: getter and setter for the
-#'     `snthresh` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("snthresh", "MatchedFilterParam", function(object)
     return(object@snthresh))
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases steps
-#'
-#' @description `steps()`,`steps<-`: getter and setter for the
-#'     `steps` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("steps", "MatchedFilterParam", function(object)
     return(object@steps))
-#' @aliases steps<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
     object@steps <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `mzdiff()`,`mzdiff<-`: getter and setter for the
-#'      `mzdiff` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("mzdiff", "MatchedFilterParam", function(object)
     return(object@mzdiff))
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases index
-#'
-#' @description `index()`,`index<-`: getter and setter for the
-#'     `index` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setMethod("index", "MatchedFilterParam", function(object)
     return(object@index))
-#' @aliases index<-
-#'
-#' @rdname findChromPeaks-matchedFilter
+#' @rdname hidden_aliases
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value
     if (validObject(object))
@@ -458,191 +248,119 @@ setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
 ## MassifquantParam
 ###
 
-#' @description `ppm()`,`ppm<-`: getter and setter for the `ppm`
-#'     slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("ppm", "MassifquantParam", function(object){ return(object@ppm)})
-#' @param value The value for the slot.
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `peakwidth()`,`peakwidth<-`: getter and setter for the
-#'     `peakwidth` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("peakwidth", "MassifquantParam", function(object)
     return(object@peakwidth))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
     object@peakwidth <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `snthresh()`,`snthresh<-`: getter and setter for the
-#'     `snthresh` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("snthresh", "MassifquantParam", function(object)
     return(object@snthresh))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `prefilter()`,`prefilter<-`: getter and setter for the
-#'     `prefilter` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("prefilter", "MassifquantParam", function(object)
     return(object@prefilter))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
     object@prefilter <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `mzCenterFun()`,`mzCenterFun<-`: getter and setter for the
-#'     `mzCenterFun` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("mzCenterFun", "MassifquantParam", function(object)
     return(object@mzCenterFun))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
     object@mzCenterFun <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `integrate()`,`integrate<-`: getter and setter for the
-#'     `integrate` slot of the object.
-#'
-#' @md
-#'
-#' @param f For `integrate()`: a `MassifquantParam` object.
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("integrate", signature(f = "MassifquantParam"), function(f)
     return(f@integrate))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
     object@integrate <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @description `mzdiff()`,`mzdiff<-`: getter and setter for the
-#'     `mzdiff` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("mzdiff", "MassifquantParam", function(object)
     return(object@mzdiff))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `fitgauss()`,`fitgauss<-`: getter and setter for the
-#'     `fitgauss` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("fitgauss", "MassifquantParam", function(object)
     return(object@fitgauss))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
     object@fitgauss <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `noise()`,`noise<-`: getter and setter for the
-#'     `noise` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("noise", "MassifquantParam", function(object)
     return(object@noise))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("noise", "MassifquantParam", function(object, value) {
     object@noise <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `verboseColumns()`,`verboseColumns<-`: getter and
-#'     setter for the `verboseColumns` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("verboseColumns", "MassifquantParam", function(object)
     return(object@verboseColumns))
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases criticalValue
-#'
-#' @description `criticalValue()`,`criticalValue<-`: getter and
-#'     setter for the `criticalValue` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("criticalValue", "MassifquantParam", function(object)
     return(object@criticalValue))
-#' @aliases criticalValue<-
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
     object@criticalValue <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases consecMissedLimit
-#'
-#' @description `consecMissedLimit()`,`consecMissedLimit<-`: getter and
-#'     setter for the `consecMissedLimit` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("consecMissedLimit", "MassifquantParam", function(object)
     return(object@consecMissedLimit))
-#' @aliases consecMissedLimit<-
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  function(object, value) {
                      object@consecMissedLimit <- as.integer(value)
@@ -650,57 +368,30 @@ setReplaceMethod("consecMissedLimit", "MassifquantParam",
                          return(object)
                  })
 
-#' @aliases unions
-#'
-#' @description `unions()`,`unions<-`: getter and
-#'     setter for the `unions` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("unions", "MassifquantParam", function(object)
     return(object@unions))
-#' @aliases unions<-
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("unions", "MassifquantParam", function(object, value) {
     object@unions <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases checkBack
-#'
-#' @description `checkBack()`,`checkBack<-`: getter and
-#'     setter for the `checkBack` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("checkBack", "MassifquantParam", function(object)
     return(object@checkBack))
-#' @aliases checkBack<-
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
     object@checkBack <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases withWave
-#'
-#' @description `withWave()`,`withWave<-`: getter and
-#'     setter for the `withWave` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setMethod("withWave", "MassifquantParam", function(object)
     return(object@withWave))
-#' @aliases withWave<-
-#'
-#' @rdname findChromPeaks-massifquant
+#' @rdname hidden_aliases
 setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
     object@withWave <- value
     if (validObject(object))
@@ -712,200 +403,103 @@ setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
 ## MSWParam
 ###
 
-#' @description `snthresh()`,`snthresh<-`: getter and setter for the
-#'     `snthresh` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("snthresh", "MSWParam", function(object){ return(object@snthresh)})
-#' @param value The value for the slot.
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("snthresh", "MSWParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `verboseColumns()`,`verboseColumns<-`: getter and setter
-#'     for the `verboseColumns` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("verboseColumns", "MSWParam", function(object){
     return(object@verboseColumns)})
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases scales
-#'
-#' @description `scales()`,`scales<-`: getter and setter for the
-#'     `scales` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("scales", "MSWParam", function(object){ return(object@scales)})
-#' @aliases scales<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("scales", "MSWParam", function(object, value) {
     object@scales <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases nearbyPeak
-#'
-#' @description `nearbyPeak()`,`nearbyPeak<-`: getter and setter for the
-#'     `nearbyPeak` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)})
-#' @aliases nearbyPeak<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
     object@nearbyPeak <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases peakScaleRange
-#'
-#' @description `peakScaleRange()`,`peakScaleRange<-`: getter and setter
-#'     for the `peakScaleRange` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("peakScaleRange", "MSWParam", function(object){
     return(object@peakScaleRange)})
-#' @aliases peakScaleRange<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
     object@peakScaleRange <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases ampTh
-#'
-#' @description `ampTh()`,`ampTh<-`: getter and setter for the
-#'     `ampTh` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
-#' @aliases ampTh<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("ampTh", "MSWParam", function(object, value) {
     object@ampTh <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases minNoiseLevel
-#'
-#' @description `minNoiseLevel()`,`minNoiseLevel<-`: getter and setter
-#'     for the `minNoiseLevel` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("minNoiseLevel", "MSWParam", function(object){
     return(object@minNoiseLevel)})
-#' @aliases minNoiseLevel<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
     object@minNoiseLevel <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases ridgeLength
-#'
-#' @description `ridgeLength()`,`ridgeLength<-`: getter and setter for
-#'     the `ridgeLength` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("ridgeLength", "MSWParam", function(object){
     return(object@ridgeLength)})
-#' @aliases ridgeLength<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
     object@ridgeLength <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases peakThr
-#'
-#' @description `peakThr()`,`peakThr<-`: getter and setter for the
-#'     `peakThr` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
-#' @aliases peakThr<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("peakThr", "MSWParam", function(object, value) {
     object@peakThr <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases tuneIn
-#'
-#' @description `tuneIn()`,`tuneIn<-`: getter and setter for the
-#'     `tuneIn` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
-#' @aliases tuneIn<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
     object@tuneIn <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases addParams
-#'
-#' @description `addParams()`,`addParams<-`: getter and setter for the
-#'     `addParams` slot of the object. This slot stores optional additional
-#'     parameters to be passed to the
-#'     `identifyMajorPeaks()` and
-#'     `peakDetectionCWT()` functions from the
-#'     *MassSpecWavelet* package.
-#'
-#' @md
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
-#' @aliases addParams<-
-#'
-#' @rdname findPeaks-MSW
+#' @rdname hidden_aliases
 setReplaceMethod("addParams", "MSWParam", function(object, value) {
     object@addParams <- value
     if (validObject(object))
@@ -931,76 +525,40 @@ setMethod("as.list", signature(x = "MSWParam"), function(x, ...) {
 ## CentWavePredIsoParam
 ###
 
-#' @aliases snthreshIsoROIs
-#'
-#' @description `snthreshIsoROIs()`,`snthreshIsoROIs<-`: getter and
-#'     setter for the `snthreshIsoROIs` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object){
     return(object@snthreshIsoROIs)})
-#' @aliases snthreshIsoROIs<-
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, value) {
     object@snthreshIsoROIs <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases maxCharge
-#'
-#' @description `maxCharge()`,`maxCharge<-`: getter and
-#'     setter for the `maxCharge` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setMethod("maxCharge", "CentWavePredIsoParam", function(object){
     return(object@maxCharge)})
-#' @aliases maxCharge<-
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
     object@maxCharge <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases maxIso
-#'
-#' @description `maxIso()`,`maxIso<-`: getter and
-#'     setter for the `maxIso` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setMethod("maxIso", "CentWavePredIsoParam", function(object){
     return(object@maxIso)})
-#' @aliases maxIso<-
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
     object@maxIso <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases mzIntervalExtension
-#'
-#' @description `mzIntervalExtension()`,`mzIntervalExtension<-`: getter
-#'     and setter for the `mzIntervalExtension` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setMethod("mzIntervalExtension", "CentWavePredIsoParam", function(object){
     return(object@mzIntervalExtension)})
-#' @aliases mzIntervalExtension<-
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
                  function(object, value) {
                      object@mzIntervalExtension <- value
@@ -1008,17 +566,10 @@ setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
                          return(object)
                  })
 
-#' @description `polarity()`,`polarity<-`: getter and
-#'     setter for the `polarity` slot of the object.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setMethod("polarity", "CentWavePredIsoParam", function(object){
     return(object@polarity)})
-#' @aliases polarity<-
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
+#' @rdname hidden_aliases
 setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
     object@polarity <- value
     if (validObject(object))
@@ -1029,14 +580,10 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
 ############################################################
 ## PeakDensityParam
 
-#' @aliases sampleGroups
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("sampleGroups", "PeakDensityParam", function(object){
     return(object@sampleGroups)})
-#' @aliases sampleGroups<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
     if (length(value) == 0 | any(is.na(value)))
         stop("'sampleGroups' should not contain any NAs and its length has ",
@@ -1046,73 +593,57 @@ setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
         return(object)
 })
 
-#' @aliases bw
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("bw", "PeakDensityParam", function(object){
     return(object@bw)})
-#' @aliases bw<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
     object@bw <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases minFraction
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("minFraction", "PeakDensityParam", function(object){
     return(object@minFraction)})
-#' @aliases minFraction<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases minSamples
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("minSamples", "PeakDensityParam", function(object){
     return(object@minSamples)})
-#' @aliases minSamples<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("binSize", "PeakDensityParam", function(object){
     return(object@binSize)})
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases maxFeatures
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("maxFeatures", "PeakDensityParam", function(object){
     return(object@maxFeatures)})
-#' @aliases maxFeatures<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
     object@maxFeatures <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("ppm", "PeakDensityParam", function(object) {
     if (.hasSlot(object, "ppm"))
         object@ppm
@@ -1123,56 +654,50 @@ setMethod("ppm", "PeakDensityParam", function(object) {
 ############################################################
 ## MzClustParam
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("sampleGroups", "MzClustParam", function(object){
     return(object@sampleGroups)})
-#' @param value The value for the slot.
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("ppm", "MzClustParam", function(object){
     return(object@ppm)})
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("ppm", "MzClustParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases absMz
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("absMz", "MzClustParam", function(object){
     return(object@absMz)})
-#' @aliases absMz<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("absMz", "MzClustParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("minFraction", "MzClustParam", function(object){
     return(object@minFraction)})
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("minSamples", "MzClustParam", function(object){
     return(object@minSamples)})
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
@@ -1183,64 +708,50 @@ setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
 ############################################################
 ## NearestPeaksParam
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("sampleGroups", "NearestPeaksParam", function(object){
     return(object@sampleGroups)})
-#' @param value The value for the slot.
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases mzVsRtBalance
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("mzVsRtBalance", "NearestPeaksParam", function(object){
     return(object@mzVsRtBalance)})
-#' @aliases mzVsRtBalance<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
     object@mzVsRtBalance <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("absMz", "NearestPeaksParam", function(object){
     return(object@absMz)})
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases absRt
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("absRt", "NearestPeaksParam", function(object){
     return(object@absRt)})
-#' @aliases absRt<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
     object@absRt <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases kNN
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setMethod("kNN", "NearestPeaksParam", function(object){
     return(object@kNN)})
-#' @aliases kNN<-
-#'
-#' @rdname groupChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
     object@kNN <- value
     if (validObject(object))
@@ -1251,108 +762,78 @@ setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
 ############################################################
 ## PeakGroupsParam
 
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("minFraction", "PeakGroupsParam", function(object){
     return(object@minFraction)})
-#' @param value The value for the slot.
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases extraPeaks
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("extraPeaks", "PeakGroupsParam", function(object){
     return(object@extraPeaks)})
-#' @aliases extraPeaks<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
     object@extraPeaks <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases smooth
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("smooth", "PeakGroupsParam", function(x){
     return(x@smooth)})
-#' @aliases smooth<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
     object@smooth <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases span
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("span", "PeakGroupsParam", function(object){
     return(object@span)})
-#' @aliases span<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
     object@span <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases family
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("family", "PeakGroupsParam", function(object){
     return(object@family)})
-#' @aliases family<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
     object@family <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases peakGroupsMatrix
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("peakGroupsMatrix", "PeakGroupsParam", function(object){
     return(object@peakGroupsMatrix)})
-#' @aliases peakGroupsMatrix<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) {
     object@peakGroupsMatrix <- value
     if (validObject(object))
         return(object)
 })
-#' @aliases subset
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases<
 setMethod("subset", "PeakGroupsParam", function(x){
     return(x@subset)})
-#' @aliases subset<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("subset", "PeakGroupsParam", function(object, value) {
     object@subset <- value
     if (validObject(object))
         return(object)
 })
-#' @aliases subsetAdjust
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("subsetAdjust", "PeakGroupsParam", function(object){
     return(object@subsetAdjust)})
-#' @aliases subsetAdjust<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
     object@subsetAdjust <- value
     if (validObject(object))
@@ -1384,7 +865,7 @@ setMethod("plot", signature(x = "LamaParama"),
 ############################################################
 ## ObiwarpParam
 
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("binSize", "ObiwarpParam", function(object){
     return(object@binSize)})
 #' @rdname adjustRtime
@@ -1394,51 +875,37 @@ setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
         return(object)
 })
 
-#' @aliases centerSample
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("centerSample", "ObiwarpParam", function(object){
     return(object@centerSample)})
-#' @aliases centerSample<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
     object@centerSample <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases response
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("response", "ObiwarpParam", function(object){
     return(object@response)})
-#' @aliases response<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("response", "ObiwarpParam", function(object, value) {
     object@response <- as.integer(value)
     if (validObject(object))
         return(object)
 })
 
-#' @aliases distFun
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("distFun", "ObiwarpParam", function(object){
     return(object@distFun)})
-#' @aliases distFun<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
     object@distFun <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases gapInit
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("gapInit", "ObiwarpParam", function(object){
     if (length(object@gapInit) == 0) {
         if (object@distFun == "cor" | object@distFun == "cor_opt")
@@ -1449,18 +916,14 @@ setMethod("gapInit", "ObiwarpParam", function(object){
             return(0.9)
     }
     return(object@gapInit)})
-#' @aliases gapInit<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
     object@gapInit <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases gapExtend
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("gapExtend", "ObiwarpParam", function(object){
     if (length(object@gapExtend) == 0) {
         if (object@distFun == "cor" | object@distFun == "cor_opt")
@@ -1473,84 +936,66 @@ setMethod("gapExtend", "ObiwarpParam", function(object){
             return(7.8)
     }
     return(object@gapExtend)})
-#' @aliases gapExtend<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
     object@gapExtend <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases factorDiag
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("factorDiag", "ObiwarpParam", function(object){
     return(object@factorDiag)})
-#' @aliases factorDiag<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
     object@factorDiag <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases factorGap
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("factorGap", "ObiwarpParam", function(object){
     return(object@factorGap)})
-#' @aliases factorGap<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
     object@factorGap <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases localAlignment
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("localAlignment", "ObiwarpParam", function(object){
     return(object@localAlignment)})
-#' @aliases localAlignment<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
     object@localAlignment <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases initPenalty
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("initPenalty", "ObiwarpParam", function(object){
     return(object@initPenalty)})
-#' @aliases initPenalty<-
-#'
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
     object@initPenalty <- value
     if (validObject(object))
         return(object)
 })
 
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("subset", "ObiwarpParam", function(x){
     return(x@subset)})
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("subset", "ObiwarpParam", function(object, value) {
     object@subset <- value
     if (validObject(object))
         return(object)
 })
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setMethod("subsetAdjust", "ObiwarpParam", function(object){
     return(object@subsetAdjust)})
-#' @rdname adjustRtime
+#' @rdname hidden_aliases
 setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
     object@subsetAdjust <- value
     if (validObject(object))
@@ -1561,55 +1006,30 @@ setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
 ## FillChromPeaksParam
 ###
 
-#' @aliases expandMz
-#'
-#' @description `expandMz()`,`expandMz<-`: getter and setter
-#'     for the `expandMz` slot of the object.
-#'
-#' @param value The value for the slot.
-#'
-#' @md
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setMethod("expandMz", "FillChromPeaksParam", function(object){
     return(object@expandMz)})
-#' @aliases expandMz<-
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("expandMz", "FillChromPeaksParam", function(object, value) {
     object@expandMz <- value
     if (validObject(object))
         return(object)
 })
 
-#' @aliases expandRt
-#'
-#' @description `expandRt()`,`expandRt<-`: getter and setter
-#'     for the `expandRt` slot of the object.
-#'
-#' @md
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setMethod("expandRt", "FillChromPeaksParam", function(object){
     return(object@expandRt)})
-#' @aliases expandRt<-
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("expandRt", "FillChromPeaksParam", function(object, value) {
     object@expandRt <- value
     if (validObject(object))
         return(object)
 })
 
-#' @description `ppm()`,`ppm<-`: getter and setter
-#'     for the `ppm` slot of the object.
-#'
-#' @md
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setMethod("ppm", "FillChromPeaksParam", function(object){
     return(object@ppm)})
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))

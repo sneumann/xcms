@@ -9,9 +9,7 @@ setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     return(.Object)
 })
 
-#' @aliases show,MsFeatureData-method
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("show", "XCMSnExp", function(object) {
     callNextMethod()
     cat("- - - xcms preprocessing - - -\n")
@@ -60,7 +58,7 @@ setMethod("show", "XCMSnExp", function(object) {
     }
 })
 
-#' @aliases hasAdjustedRtime hasAdjustedRtime,MsFeatureData-method hasAdjustedRtime,OnDiskMSnExp-method
+#' @aliases hasAdjustedRtime
 #'
 #' @description
 #'
@@ -72,7 +70,7 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
     hasAdjustedRtime(object@msFeatureData)
 })
 
-#' @aliases hasFeatures hasFeatures,MsFeatureData-method
+#' @aliases hasFeatures
 #'
 #' @description
 #'
@@ -84,7 +82,7 @@ setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = integer()) {
     hasFeatures(object@msFeatureData, msLevel = msLevel)
 })
 
-#' @aliases hasChromPeaks hasChromPeaks,MsFeatureData-method
+#' @aliases hasChromPeaks
 #'
 #' @description
 #'
@@ -109,7 +107,7 @@ setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
 })
 
 
-#' @aliases adjustedRtime adjustedRtime,MsFeatureData-method
+#' @aliases adjustedRtime
 #'
 #' @description
 #'
@@ -148,7 +146,7 @@ setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
     }
     return(res)
 })
-#' @aliases adjustedRtime<- adjustedRtime<-,MsFeatureData-method
+#' @aliases adjustedRtime<-
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
@@ -215,7 +213,7 @@ setMethod(
         pkGrp
     })
 
-#' @aliases featureDefinitions featureDefinitions,MsFeatureData-method
+#' @aliases featureDefinitions
 #'
 #' @description
 #'
@@ -258,7 +256,7 @@ setMethod("featureDefinitions", "XCMSnExp",
               .subset_feature_definitions(feat_def, mz = mz, rt = rt,
                                           ppm = ppm, type = type)
           })
-#' @aliases featureDefinitions<- featureDefinitions<-,MsFeatureData-method
+#' @aliases featureDefinitions<-
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
@@ -273,7 +271,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
     object
 })
 
-#' @aliases chromPeaks chromPeaks,MsFeatureData-method chromPeakData,MsFeatureData-method chromPeakData
+#' @aliases chromPeaks chromPeakData
 #'
 #' @description
 #'
@@ -402,7 +400,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     } else
         pks
 })
-#' @aliases chromPeaks<- chromPeaks<-,MsFeatureData-method chromPeakData<-,MsFeatureData-method chromPeakData<-
+#' @aliases chromPeaks<- chromPeakData<-
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
@@ -665,7 +663,7 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
         return(object)
 })
 
-#' @aliases dropChromPeaks dropChromPeaks,MsFeatureData-method
+#' @aliases dropChromPeaks
 #'
 #' @description
 #'
@@ -708,7 +706,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
         return(object)
 })
 
-#' @aliases dropFeatureDefinitions dropFeatureDefinitions,MsFeatureData-method
+#' @aliases dropFeatureDefinitions
 #'
 #' @description
 #'
@@ -779,7 +777,7 @@ setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
         return(object)
 })
 
-#' @aliases dropAdjustedRtime dropAdjustedRtime,MsFeatureData-method
+#' @aliases dropAdjustedRtime
 #'
 #' @description
 #'
@@ -1253,8 +1251,8 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
 #' @description
 #'
 #' `filterAcquisitionNum()`: filters the [XCMSnExp()] object keeping only
-#' spectra with the provided acquisition numbers. See [filterAcquisitionNum()]
-#' for details and examples.
+#' spectra with the provided acquisition numbers. See
+#' [MSnbase::filterAcquisitionNum()] for details and examples.
 #'
 #' @param n For `filterAcquisitionNum()`: `integer` defining the
 #'     acquisition numbers of the spectra to which the data set should be
@@ -1404,8 +1402,8 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
 #' @param method For `normalize()`: `character(1)` specifying the
 #'     normalization method. See [MSnbase::normalize()] in the *MSnbase*
 #'     package for details.
-#'     For `pickPeaks()`: `character(1)` defining the method. See
-#'     [MSnbase::pickPeaks()] for options. For `smooth()`:
+#'     For `pickPeaks()`: `character(1)` defining the method. See help for
+#'     `pickPeaks()` in the *MSnbase* package for options. For `smooth()`:
 #'     `character(1)` defining the method. See
 #'     [MSnbase::smooth()] in the *MSnbase* package for options and
 #'     details.
@@ -1426,17 +1424,17 @@ setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
 
 #' @description
 #'
-#' The `pickPeaks()` method performs peak picking. See
-#' [MSnbase::pickPeaks()] documentation for details and examples.
+#' The `pickPeaks()` method performs peak picking. See documentation for
+#' that function in the *MSnbase* package for details and examples.
 #'
 #' @param halfWindowSize For `pickPeaks()` and `smooth()`:
 #'     `integer(1)` defining the window size for the peak picking. See
-#'     [MSnbase::pickPeaks()] and [MSnbase::smooth()` in the *MSnbase*
+#'     help for `pickPeaks` and [MSnbase::smooth()` in the *MSnbase*
 #'     package for details and options.
 #'
 #' @param SNR For `pickPeaks()`: `numeric(1)` defining the signal to
-#'     noise ratio to be considered. See [MSnbase::pickPeaks()]
-#'     documentation for details.
+#'     noise ratio to be considered. See the documentation for `pickPeaks()`
+#'     in the *MSnbase* package for details.
 #'
 #' @param ... Optional additional arguments.
 #'
@@ -2151,7 +2149,8 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #' @author Johannes Rainer
 #'
 #' @seealso [XCMSnExp] for the data object.
-#'     [Chromatogram] for the object representing chromatographic data.
+#'     [MSnbase::Chromatogram()] for the object representing chromatographic
+#'     data.
 #'
 #'     [XChromatograms] for the object allowing to arrange
 #'     multiple [XChromatogram] objects.

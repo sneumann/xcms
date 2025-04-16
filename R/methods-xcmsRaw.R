@@ -2,7 +2,7 @@
 #' @include functions-xcmsRaw.R functions-utils.R
 
 ############################################################
-## show
+#' @rdname hidden_aliases
 setMethod("show", "xcmsRaw", function(object) {
 
     cat("An \"xcmsRaw\" object with", length(object@scantime),
@@ -2207,7 +2207,7 @@ setMethod("[", signature(x = "xcmsRaw",
 #'     the MS level from which the profile matrix should be generated.
 #'
 #' @param BPPARAM For `MsExperiment` or `XcmsExperiment`: parallel processing
-#'     setup. See [bpparam()] for more details. Defaults to
+#'     setup. See [BiocParallel::bpparam()] for more details. Defaults to
 #'     `BPPARAM = bpparam()`.
 #'
 #' @param ... ignored.

@@ -7,8 +7,8 @@
 \alias{XcmsExperimentHdf5}
 \alias{XcmsExperimentHdf5-class}
 \alias{chromPeakData,XcmsExperimentHdf5-method}
-\alias{adjustRtimePeakGroups,XcmsExperimentHdf5,PeakGroupsParam-method}
 \alias{filterChromPeaks,XcmsExperimentHdf5-method}
+\alias{adjustRtimePeakGroups,XcmsExperimentHdf5,PeakGroupsParam-method}
 \alias{filterFeatureDefinitions,XcmsExperimentHdf5-method}
 \title{xcms result object for very large data sets}
 \usage{
@@ -24,8 +24,6 @@ toXcmsExperiment(object, ...)
   bySample = FALSE
 )
 
-\S4method{adjustRtimePeakGroups}{XcmsExperimentHdf5,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)
-
 \S4method{filterChromPeaks}{XcmsExperimentHdf5}(
   object,
   keep = rep(TRUE, nrow(chromPeaks(object))),
@@ -33,24 +31,80 @@ toXcmsExperiment(object, ...)
   ...
 )
 
+\S4method{adjustRtimePeakGroups}{XcmsExperimentHdf5,PeakGroupsParam}(object, param = PeakGroupsParam(), msLevel = 1L)
+
 \S4method{filterFeatureDefinitions}{XcmsExperimentHdf5}(object, features = integer())
+}
+\arguments{
+\item{object}{\code{XcmsExperimentHdf5} object.}
+
+\item{hdf5File}{For \code{toXcmsExperimentHdf5()}: \code{character(1)} with the path
+and name of the (not yet existing) file where the preprocessing results
+should be stored to.}
+
+\item{...}{additional parameters eventually passed to downstream functions.}
+
+\item{msLevel}{For \code{chromPeaks()} and \code{chromPeakData()}: optional \code{integer}
+with the MS level(s) from which the data should be returned. By default
+\code{msLevel = integer()} results from all MS levels are returned (if
+present).
+For \code{refineChromPeaks()}: \code{integer(1)} with the MS level from which
+chromatographic peaks should be refined.}
+
+\item{peaks}{For \code{chromPeakData()}: optional \code{character} with the ID of
+chromatographic peaks (row name in \code{chromPeaks()}) for which the data
+should be returned. By default (\code{peaks = character()}) the data for all
+chromatographic peaks is returned.}
+
+\item{return.type}{For \code{chromPeakData()}: \code{character(1)} specifying the type
+of object that should be returned. Can be either
+\code{return.type = "DataFrame"} (the default) to return a \code{DataFrame}, or
+\code{return.type = "data.frame"} to return the results as a \code{data.frame}.}
+
+\item{bySample}{For \code{chromPeaks()} and \code{chromPeakData()}: \code{logical(1)}
+whether the data should be returned \emph{by sample}, i.e. as a \code{list} of
+\code{matrix} or \code{data.frame} objects, one for each sample.}
+
+\item{keep}{For \code{filterChromPeaks()}: defining the chromatographic peaks to
+keep: either a \code{logical} with the same length than the number of
+chromatographic peaks, an \code{integer} with the indices or a \code{character}
+with the IDs of the chromatographic peaks to keep.}
+
+\item{method}{For \code{filterChromPeaks()}: \code{character(1)}; currently
+only \code{method = "keep"} is supported.}
+
+\item{param}{\emph{parameter} object defining and configuring the algorithm to
+be used.}
+
+\item{features}{For \code{filterFeatureDefinitions()}: defining the features to
+keep: either a \code{logical} with the same length than the number of features,
+an \code{integer} with the indices or a \code{character} with the ID of the
+features to keep.}
+}
+\value{
+See description of the individual methods for information.
 }
 \description{
 The \emph{xcms} result objects \code{\link[=XcmsExperiment]{XcmsExperiment()}} and \code{\link[=XCMSnExp]{XCMSnExp()}} keep all
 preprocessing results in memory and can thus (depending on the size of the
-data set) require a large amount of memory. The \code{XcmsExperimentHdf5} class,
-by using an on-disk data storage mechanism, has a much lower memory
-footprint allowing thus also to represent and analyze very large data sets
-on regular computer systems. With some exceptions, including additional
-parameters, the functionality and usability of this object is identical to
-the one of \code{XcmsExperiment} objects. This help page lists only functions
-that have additional or different parameters or properties than the
-respective methods for \code{\link[=XcmsExperiment]{XcmsExperiment()}} objects.
+data set) require a large amount of memory. In contrast, the
+\code{XcmsExperimentHdf5} class, by using an on-disk data storage mechanism,
+has a much lower memory footprint allowing also to analyze very large data
+sets on regular computer systems such as desktop or laptop computers. With
+some exceptions, including additional parameters, the functionality and
+usability of this object is identical to the default \code{XcmsExperiment}
+object.
+
+This help page lists functions that have additional or different parameters
+or properties than the respective methods for \code{\link[=XcmsExperiment]{XcmsExperiment()}} objects.
+For all other functions not listed here the usability is identical to those
+for the \code{\link[=XcmsExperiment]{XcmsExperiment()}} object (see the respective help page for
+information).
 }
 \details{
 The \code{XcmsExperimentHdf5} object stores all preprocessing results (except
 adjusted retention times, which are stored as an additional spectra variable
-in the object's \code{\link[=Spectra]{Spectra()}} object), in a file in HDF5 format.
+in the object's \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object), in a file in HDF5 format.
 
 \code{XcmsExperimentHdf5} uses a different naming scheme for chromatographic
 peaks: for efficiency reasons, chromatographic peak data is organized by
@@ -62,21 +116,33 @@ the ID of the sample (usually related to the index in the original
 chromatographic peak in the chrom peak matrix \strong{of that sample} and
 MS level.
 
-HDF5 does not support parallel processing, thus preprocessing results need
-to be loaded sequentially.
+HDF5 files do not support parallel processing, thus preprocessing results
+need to be stored or loaded sequentially.
 
 All functionality for \code{XcmsExperimentHdf5} objects is optimized to reduce
 memory demand at the cost of eventually lower performance.
 }
+\section{Conversion between \code{XcmsExperiment} and \code{XcmsExperimentHdf5}}{
+
+
+To use the \code{XcmsExperimentHdf5} class for preprocessing results, the
+\code{hdf5File} parameter of the \code{\link[=findChromPeaks]{findChromPeaks()}} function needs to be defined,
+specifying the path and name of the HDF5 file to store the results. In
+addition it is possible to convert a \code{XcmsExperiment} object to a
+\code{XcmsExperimentHdf5} object with the \code{toXcmsExperimentHdf5()} function. All
+present preprocessing results will be stored to the specified HDF5 file.
+To load all preprocessing results into memory and hence change from a
+\code{XcmsExperimentHdf5} to a \code{XcmsExperiment} object, the \code{toXcmsExperument()}
+function can be used.
+}
+
 \section{Using the HDF5 file-based on-disk data storage}{
 
 
 Calling \code{\link[=findChromPeaks]{findChromPeaks()}} on an \code{MsExperiment} using the parameter
 \code{hdf5File} will return an instance of the \code{XcmsExperimentHdf5} class and
-hence use the on-disk data storage mode described on this page. The
-\code{toXcmsExperimentHdf5()} function can be used to convert from an
-\link{XcmsExperiment} object to \code{XcmsExperimentHdf5}. The results are stored
-in the file specified with parameter \code{hdf5File}.
+hence use the on-disk data storage mode described on this page. The results
+are stored in the file specified with parameter \code{hdf5File}.
 }
 
 \section{Subset}{
@@ -87,8 +153,8 @@ Parameters \code{keepChromPeaks} (default \code{TRUE}), \code{keepAdjustedRtime}
 (default \code{FALSE}) and \code{keepFeatures} (default \code{FALSE}) allow to configure
 whether present chromatographic peaks, alignment or correspondence results
 should be retained. This will only change information in the object (i.e.,
-the reference to the respective entries in the HDF5 file), but will not
-change the content of the HDF5 file. Note that with
+the reference to the respective entries in the HDF5 file), but will
+\strong{not} change the content of the HDF5 file. Note that with
 \code{keepChromPeaks = FALSE} also \code{keepFeatures} is set to \code{FALSE}.
 \item \code{filterChromPeaks()} and \code{filterFeatureDefinitions()} to filter the
 chromatographic peak and correspondence results, respectively. See
@@ -153,6 +219,47 @@ features to retain. It supports a \code{logical}, \code{integer} indices or
 }
 }
 
+\examples{
+
+## Create a MsExperiment object representing the data from an LC-MS
+## experiment.
+library(MsExperiment)
+
+## Define the raw data files
+fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+
+## Define a data frame with the sample characterization
+df <- data.frame(mzML_file = basename(fls),
+                sample = c("ko15", "ko16", "ko18"))
+## Importe the data. This will initialize a `Spectra` object representing
+## the raw data and assign these to the individual samples.
+mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
+
+## Perform chromatographic peak detection storing the data in an HDF5 file
+## Parameter `hdf5File` has to be provided and needs to be the path and
+## name of a (not yet existing) file to which results are going to be
+## stored. For the example below we use a temporary file.
+xmse <- findChromPeaks(mse, param = CentWaveParam(prefilter = c(4, 100000)),
+    hdf5File = tempfile())
+xmse
+
+## Extract selected columnds from the chromatographic peak detection
+## results
+chromPeaks(xmse, columns = c("rt", "mz", "into")) |> head()
+
+## Extract the results per sample
+res <- chromPeaks(xmse, columns = c("rt", "mz", "into"), bySample = TRUE)
+
+## The chromatographic peaks of the second sample:
+res[[2]] |> head()
+
+## Convert the result object to the in-memory representation:
+xmse_mem <- toXcmsExperiment(xmse)
+xmse_mem
+
+}
 \author{
 Johannes Rainerr, Philippine Louail
 }

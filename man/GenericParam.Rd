@@ -5,8 +5,6 @@
 \alias{GenericParam-class}
 \alias{GenericParam}
 \alias{Param}
-\alias{class:Param}
-\alias{Param-class}
 \title{Generic parameter class}
 \usage{
 GenericParam(fun = character(), args = list())

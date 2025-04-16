@@ -2,7 +2,7 @@
 #' @include functions-xcmsSet.R
 
 ############################################################
-## show
+#' @rdname hidden_aliases
 setMethod("show", "xcmsSet", function(object) {
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
     if (nrow(object@peaks)) {

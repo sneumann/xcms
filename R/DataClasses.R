@@ -268,7 +268,7 @@ setClass("ProcessHistory",
 ## CentWaveParam
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
-#' @aliases GenericParam Param class:Param Param-class
+#' @aliases GenericParam Param
 #'
 #' @title Generic parameter class
 #'
@@ -495,27 +495,13 @@ setClass("XProcessHistory",
 #' @md
 #'
 #' @author Ralf Tautenhahn, Johannes Rainer
-NULL
-
-#' @description The `CentWaveParam` class allows to specify all settings
-#'     for a chromatographic peak detection using the centWave method. Instances
-#'     should be created with the `CentWaveParam` constructor.
-#'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns See corresponding parameter above. Slots values should exclusively be accessed
-#' *via* the corresponding getter and setter methods listed above.
-#'
-#' @rdname findChromPeaks-centWave
-#'
-#' @md
 #'
 #' @examples
 #'
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
-#' cwp <- CentWaveParam(ppm = 20, noise = 10000, prefilter = c(3, 10000))
-#' ## Change snthresh parameter
-#' snthresh(cwp) <- 25
+#' cwp <- CentWaveParam(ppm = 25, noise = 10000, prefilter = c(3, 10000))
 #' cwp
 #'
 #' ## Perform the peak detection using centWave on some of the files from the
@@ -531,6 +517,9 @@ NULL
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
 #' head(chromPeaks(res))
+NULL
+
+#' @rdname hidden_aliases
 setClass("CentWaveParam",
          slots = c(
              ppm = "numeric",
@@ -716,29 +705,12 @@ setClass("CentWaveParam",
 #' @author Colin A Smith, Johannes Rainer
 #'
 #' @name findChromPeaks-matchedFilter
-NULL
-
-#' @description The `MatchedFilterParam` class allows to specify all
-#'     settings for a chromatographic peak detection using the matchedFilter
-#'     method. Instances should be created with the `MatchedFilterParam`
-#'     constructor.
-#'
-#' @slot binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index
-#'     See corresponding parameter above. Slots values should exclusively
-#'     be accessed *via* the corresponding getter and setter methods listed
-#'     above.
-#'
-#' @md
-#'
-#' @rdname findChromPeaks-matchedFilter
 #'
 #' @examples
 #'
 #' ## Create a MatchedFilterParam object. Note that we use a unnecessarily large
 #' ## binSize parameter to reduce the run-time of the example.
-#' mfp <- MatchedFilterParam(binSize = 5)
-#' ## Change snthresh parameter
-#' snthresh(mfp) <- 15
+#' mfp <- MatchedFilterParam(binSize = 5, snthresh = 15)
 #' mfp
 #'
 #' ## Perform the peak detection using matchecFilter on the files from the
@@ -754,6 +726,9 @@ NULL
 #' ## example by registering a "SerialParam"
 #' res <- findChromPeaks(raw_data, param = mfp)
 #' head(chromPeaks(res))
+NULL
+
+#' @rdname hidden_aliases
 setClass("MatchedFilterParam",
          slots = c(
              binSize = "numeric",
@@ -923,29 +898,11 @@ setClass("MatchedFilterParam",
 #' @author Christopher Conley, Johannes Rainer
 #'
 #' @name findChromPeaks-massifquant
-NULL
-
-#' @description The `MassifquantParam` class allows to specify all
-#'     settings for a chromatographic peak detection using the massifquant
-#'     method eventually in combination with the centWave algorithm. Instances
-#'     should be created with the `MassifquantParam` constructor.
-#'
-#' @md
-#'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave
-#'      See corresponding parameter above. Slots values should
-#'      exclusively be accessed *via* the corresponding getter and setter
-#'      methods listed above.
-#'
-#' @rdname findChromPeaks-massifquant
 #'
 #' @examples
 #'
 #' ## Create a MassifquantParam object.
-#' mqp <- MassifquantParam()
-#' ## Change snthresh prefilter parameters
-#' snthresh(mqp) <- 30
-#' prefilter(mqp) <- c(6, 10000)
+#' mqp <- MassifquantParam(snthresh = 30, prefilter = c(6, 10000))
 #' mqp
 #'
 #' ## Perform the peak detection using massifquant on the files from the
@@ -959,6 +916,9 @@ NULL
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = mqp)
 #' head(chromPeaks(res))
+NULL
+
+#' @rdname hidden_aliases
 setClass("MassifquantParam",
          slots = c(
              ppm = "numeric",
@@ -1082,26 +1042,12 @@ setClass("MassifquantParam",
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 #'
 #' @name findPeaks-MSW
-NULL
-
-#' @description The `MSWParam` class allows to specify all
-#'     settings for a peak detection using the MSW method. Instances should be
-#'     created with the `MSWParam` constructor.
-#'
-#' @md
-#'
-#' @slot snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams
-#'      See corresponding parameter above.
-#'
-#' @rdname findPeaks-MSW
 #'
 #' @examples
 #'
 #' library(MSnbase)
 #' ## Create a MSWParam object
-#' mp <- MSWParam()
-#' ## Change snthresh parameter
-#' snthresh(mp) <- 15
+#' mp <- MSWParam(snthresh = 15)
 #' mp
 #'
 #' ## Loading a small subset of direct injection, single spectrum files
@@ -1116,6 +1062,9 @@ NULL
 #' fticr <- findChromPeaks(fticr, param = p)
 #'
 #' head(chromPeaks(fticr))
+NULL
+
+#' @rdname hidden_aliases
 setClass("MSWParam",
          slots = c(
              snthresh = "numeric",
@@ -1225,32 +1174,16 @@ setClass("MSWParam",
 #' @name findChromPeaks-centWaveWithPredIsoROIs
 #'
 #' @author Hendrik Treutler, Johannes Rainer
-NULL
-#> NULL
-
-#' @description The `CentWavePredIsoParam` class allows to specify all
-#'     settings for the two-step centWave-based peak detection considering also
-#'     predicted isotopes of peaks identified in the first centWave run.
-#'     Instances should be created with the `CentWavePredIsoParam`
-#'     constructor. See also the documentation of the
-#'     [CentWaveParam()] for all methods and arguments this class
-#'     inherits.
-#'
-#' @md
-#'
-#' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW,verboseBetaColumns,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity
-#'      See corresponding parameter above.
-#'
-#' @rdname findChromPeaks-centWaveWithPredIsoROIs
 #'
 #' @examples
 #'
 #' ## Create a param object
-#' p <- CentWavePredIsoParam(maxCharge = 4)
-#' ## Change snthresh parameter
-#' snthresh(p) <- 25
+#' p <- CentWavePredIsoParam(maxCharge = 4, snthresh = 25)
 #' p
-#'
+NULL
+#> NULL
+
+#' @rdname hidden_aliases
 setClass("CentWavePredIsoParam",
          slots = c(
              snthreshIsoROIs = "numeric",
@@ -1294,6 +1227,7 @@ setClass("CentWavePredIsoParam",
              else TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("PeakDensityParam",
          slots = c(sampleGroups = "ANY",
                    bw = "numeric",
@@ -1336,6 +1270,7 @@ setClass("PeakDensityParam",
                  return(TRUE)
          })
 
+#' @rdname hidden_aliases
 setClass("MzClustParam",
          slots = c(sampleGroups = "ANY",
                    ppm = "numeric",
@@ -1371,6 +1306,7 @@ setClass("MzClustParam",
                  TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("NearestPeaksParam",
          slots = c(sampleGroups = "ANY",
                    mzVsRtBalance = "numeric",
@@ -1404,6 +1340,7 @@ setClass("NearestPeaksParam",
              else TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("PeakGroupsParam",
          slots = c(minFraction = "numeric",
                    extraPeaks = "numeric",
@@ -1490,6 +1427,7 @@ setClass("LamaParama",
          })
 
 
+#' @rdname hidden_aliases
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",
@@ -1563,10 +1501,7 @@ setClass("ObiwarpParam",
              else TRUE
          })
 
-#' @slot expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter
-#'      above.
-#'
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 setClass("FillChromPeaksParam",
          slots = c(expandMz = "numeric",
                    expandRt = "numeric",
@@ -1600,9 +1535,7 @@ setClass("FillChromPeaksParam",
          }
          )
 
-#' @rdname fillChromPeaks
-#'
-#' @slot rtmin,rtmax,mzmin,mzmax See corresponding parameter above.
+#' @rdname hidden_aliases
 setClass("ChromPeakAreaParam",
          slots = c(rtmin = "function",
                    rtmax = "function",
@@ -2072,6 +2005,7 @@ setClass("CalibrantMassParam",
                  TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("CleanPeaksParam",
          slots = c(maxPeakwidth = "numeric"),
          contains = "Param",
@@ -2087,6 +2021,7 @@ setClass("CleanPeaksParam",
              else TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("MergeNeighboringPeaksParam",
          slots = c(expandRt = "numeric",
                    expandMz = "numeric",
@@ -2119,6 +2054,7 @@ setClass("MergeNeighboringPeaksParam",
              else TRUE
          })
 
+#' @rdname hidden_aliases
 setClass("FilterIntensityParam",
          slots = c(threshold = "numeric",
                    nValues = "integer",

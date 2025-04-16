@@ -23,7 +23,7 @@
 #'     package.
 #'
 #' @param object For `findChromPeaks()`: an
-#'     [OnDiskMSnExp()]  object containing the MS- and all
+#'     [MSnbase::OnDiskMSnExp()]  object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
@@ -569,6 +569,7 @@ setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
               .extractMsData(object, rt = rt, mz = mz, msLevel = msLevel)
           })
 
+#' @rdname hidden_aliases
 setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
           function(object)
               FALSE
@@ -583,7 +584,7 @@ setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
 #' `isolationWindowTargetMz` extracts the isolation window target m/z definition
 #' for each spectrum in `object`.
 #'
-#' @param object [OnDiskMSnExp-class] object.
+#' @param object [MSnbase::OnDiskMSnExp-class] object.
 #'
 #' @return a `numeric` of length equal to the number of spectra in `object` with
 #'     the isolation window target m/z or `NA` if not specified/available.
@@ -666,7 +667,8 @@ setMethod(
 #'     should be determined (see description above for details). Defaults to
 #'     `method = "previous"`.
 #'
-#' @param BPPARAM parallel processing setup. See [bpparam()] for details.
+#' @param BPPARAM parallel processing setup. See [BiocParallel::bpparam()] for
+#'     details.
 #'
 #' @return `numeric` with length equal to the number of spectra in `x`. `NA` is
 #'     returned for MS 1 spectra or if no matching peak in a MS 1 scan can be

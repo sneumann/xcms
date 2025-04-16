@@ -3,12 +3,6 @@
 %   R/XcmsExperimentHdf5.R, R/functions-Params.R, R/methods-XCMSnExp.R
 \name{refineChromPeaks}
 \alias{refineChromPeaks}
-\alias{FilterIntensityParam-class}
-\alias{show,FilterIntensityParam-method}
-\alias{CleanPeaksParam-class}
-\alias{show,CleanPeaksParam-method}
-\alias{MergeNeighboringPeaksParam-class}
-\alias{show,MergeNeighboringPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,CleanPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,MergeNeighboringPeaksParam-method}
 \alias{refineChromPeaks,XcmsExperiment,FilterIntensityParam-method}

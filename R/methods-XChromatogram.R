@@ -1,6 +1,4 @@
-#' @rdname XChromatogram
-#'
-#' @md
+#' @rdname hidden_aliases
 setMethod("show", "XChromatogram", function(object) {
     callNextMethod()
     cat("Identified chromatographic peaks (", nrow(object@chromPeaks),"):\n",
@@ -19,8 +17,8 @@ setMethod("show", "XChromatogram", function(object) {
 #'
 #' @section Accessing data:
 #'
-#' See also help of [Chromatogram] in the `MSnbase` package for general
-#' information and data access. The methods listed here are specific for
+#' See also help of [MSnbase::Chromatogram()] in the *MSnbase* package for
+#' general information and data access. The methods listed here are specific for
 #' `XChromatogram` and `XChromatograms` objects.
 #'
 #' - `chromPeaks`, `chromPeaks<-`: extract or set the matrix with the
@@ -105,10 +103,10 @@ setMethod("show", "XChromatogram", function(object) {
 #' @section Manipulating data:
 #'
 #' - `transformIntensity`: transforms the intensity values of the chromatograms
-#'   with provided function `FUN`. See [transformIntensity()] in the `MSnbase`
-#'   package for details. For `XChromatogram` and `XChromatograms` in addition
-#'   to the intensity values also columns `"into"` and `"maxo"` in the object's
-#'   `chromPeaks` matrix are transformed by the same function.
+#'   with provided function `FUN`. See [MSnbase::transformIntensity()] in the
+#'   *MSnbase* package for details. For `XChromatogram` and `XChromatograms`
+#'   in addition to the intensity values also columns `"into"` and `"maxo"`
+#'   in the object's `chromPeaks` matrix are transformed by the same function.
 #'
 #' @param i For `[`: `integer` with the row indices to subset the
 #'     `XChromatograms` object.

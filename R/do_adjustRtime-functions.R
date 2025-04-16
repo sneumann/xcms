@@ -1,5 +1,5 @@
 ## Retention time correction methods.
-#' @include DataClasses.R functions-MsFeatureData.R
+#' @include DataClasses.R functions-MsFeatureData.R AllGenerics.R
 
 #' @title Align spectrum retention times across samples using peak groups
 #' found in most samples
@@ -594,7 +594,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @aliases LamaParama-class
 #'
 #' @description
-#' Alignment is achieved using the ['adjustRtime()'] method with a `param` of
+#'
+#' Alignment is achieved using the [adjustRtime()] method with a `param` of
 #' class `LamaParama`. This method corrects retention time by aligning
 #' chromatographic data with an external reference dataset.
 #'
@@ -644,7 +645,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'
 #'
 #' @param BPPARAM For `matchLamasChromPeaks()`: parallel processing setup.
-#' Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more information.
+#'     Defaults to `BPPARAM = bpparam()`. See [BiocParallel::bpparam()] for
+#'     more information.
 #'
 #' @param bs For `LamaParama()`: `character(1)` defining the GAM smoothing method.
 #'     (defaults to thin plate, `bs = "tp"`)
@@ -654,7 +656,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @param colFit For `plot()`: color of the fitting line.
 #'
 #' @param index For `plot()`: `numeric(1)` index of the file that should be
-#'  plotted.
+#'      plotted.
 #'
 #' @param lamas For `LamaParama`: `matrix` or `data.frame` with the m/z and
 #'     retention times values of features (as first and second column) from the
@@ -673,7 +675,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'     the first, initial fit, are removed from the final model fit.
 #'
 #' @param param An object of class `LamaParama` that will later be used for
-#' adjustment using the `[adjustRtime()]` function.
+#'     adjustment using the [adjustRtime()] function.
 #'
 #' @param ppm For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
 #'     allowed difference in m/z between `lamas` and chromatographic peaks. Used

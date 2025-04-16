@@ -145,7 +145,8 @@ plot(chrs[1, , drop = FALSE])
 }
 \seealso{
 \link{XCMSnExp} for the data object.
-\link{Chromatogram} for the object representing chromatographic data.
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for the object representing chromatographic
+data.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{[XChromatograms] for the object allowing to arrange
 multiple [XChromatogram] objects.

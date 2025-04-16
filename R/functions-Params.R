@@ -347,10 +347,10 @@ FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0,
         ppm = ppm, fixedMz = fixedMz, fixedRt = fixedRt)
 }
 
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 fixedRt <- function(object) object@fixedRt
 
-#' @rdname fillChromPeaks
+#' @rdname hidden_aliases
 fixedMz <- function(object) object@fixedMz
 
 #' @return The `CalibrantMassParam()` function returns an instance of

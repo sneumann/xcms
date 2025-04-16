@@ -1,42 +1,45 @@
 #' @title Next Generation `xcms` Result Object
 #'
-#' @aliases XcmsExperiment-class show,XcmsExperiment-method filterChromPeaks
+#' @aliases XcmsExperiment-class filterChromPeaks
 #' @aliases featureArea quantify
 #'
 #' @description
 #'
-#' The `XcmsExperiment` is a data container for *xcms* preprocessing results
-#' (i.e. results from chromatographic peak detection, alignment and
+#' The `XcmsExperiment` is a data container for *xcms* preprocessing
+#' results (i.e. results from chromatographic peak detection, alignment and
 #' correspondence analysis). It is the preferred and default result object
 #' since version 4 of *xcms*.
 #'
 #' It provides the same functionality than the [XCMSnExp] object, but uses the
 #' more advanced and modern MS infrastructure provided by the *MsExperiment*
-#' and *Spectra* Bioconductor packages. This provides a much higher flexibility
+#' and *Spectra* Bioconductor packages. This enables a much higher flexibility
 #' of data representation and storage and ensures future expandability.
 #'
 #' Documentation of the various functions for `XcmsExperiment` objects are
 #' grouped by topic and provided in the sections below.
 #'
-#' The default `xcms` workflow is to perform
+#' The default *xcms* data analysis workflow is to perform:
 #'
 #' - chromatographic peak detection using [findChromPeaks()]
 #'
-#' - optionally refine identified chromatographic peaks using
-#'   [refineChromPeaks()]
+#' - optionally *refine* identified chromatographic peaks using
+#'   [refineChromPeaks()] (this is highly suggested for *centWave*-based
+#'   chromatographic peak detection)
 #'
-#' - perform an alignment (retention time adjustment) using [adjustRtime()].
-#'   Depending on the method used this requires to run a correspondence
+#' - retention time alignment (retention time adjustment) using [adjustRtime()].
+#'   Depending on the method used, this may require to run a correspondence
 #'   analysis first
 #'
-#' - perform a correspondence analysis using the [groupChromPeaks()] function
-#'   to group chromatographic peaks across samples to define the LC-MS
-#'   features.
+#' - correspondence analysis to group chromatographic peaks across samples
+#'   to define the LC-MS features using the [groupChromPeaks()] function
 #'
-#' - optionally perform a gap-filling to *rescue* signal in samples in which
-#'   no chromatographic peak was identified and hence a missing value would
-#'   be reported. This can be performed using the [fillChromPeaks()] function.
+#' - gap-filling to *rescue* signal in samples in which no chromatographic
+#'   peak was identified and hence a missing value would be reported. This
+#'   can be performed using the [fillChromPeaks()] function.
 #'
+#' For very large LC-MS experiments (either with a very large number of samples
+#' or very large data files, or both), the [XcmsExperimentHdf5()] object can
+#' be used instead. See the respective help page for more information.
 #'
 #' @section Subset, filter and combine:
 #'
@@ -612,19 +615,19 @@
 #'
 #' @examples
 #'
-#' ## Creating a MsExperiment object representing the data from an LC-MS
+#' ## Create a MsExperiment object representing the data from an LC-MS
 #' ## experiment.
 #' library(MsExperiment)
 #'
-#' ## Defining the raw data files
+#' ## Define the raw data files
 #' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' ## Defining a data frame with the sample characterization
+#' ## Define a data frame with the sample characterization
 #' df <- data.frame(mzML_file = basename(fls),
 #'                 sample = c("ko15", "ko16", "ko18"))
-#' ## Importing the data. This will initialize a `Spectra` object representing
+#' ## Importe the data. This will initialize a `Spectra` object representing
 #' ## the raw data and assign these to the individual samples.
 #' mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
 #'
@@ -778,6 +781,7 @@ setValidity("XcmsExperiment", function(object) {
     else msg
 })
 
+#' @rdname hidden_aliases
 setMethod("show", "XcmsExperiment", function(object) {
     callNextMethod()
     cat(" xcms results:\n")
@@ -1360,9 +1364,8 @@ setMethod(
             object <- as(object, "XcmsExperiment")
         if (hasChromPeaks(object)) {
             fidx <- as.factor(fromFile(object))
-            object@chromPeaks <- .applyRtAdjToChromPeaks(
-                .chromPeaks(object),
-                rtraw = split(rtime(object, adjusted = FALSE), fidx),
+            object <- updateChromPeaksRtime(
+                object, rtraw = split(rtime(object, adjusted = FALSE), fidx),
                 rtadj = split(rt_adj, fidx))
         }
         ph <- XProcessHistory(param = param,
@@ -1379,7 +1382,8 @@ setMethod(
     "adjustRtime", signature(object = "MsExperiment",
                              param = "PeakGroupsParam"),
     function(object, param, msLevel = 1L, ...) {
-        if (!inherits(object, "XcmsExperiment"))
+        if (!is(object, "XcmsExperimentHdf5") &&
+            !inherits(object, "XcmsExperiment"))
             object <- as(object, "XcmsExperiment")
         if (hasAdjustedRtime(object))
             stop("Alignment results already present. Please either remove ",
@@ -1390,12 +1394,11 @@ setMethod(
         if (any(msLevel != 1L))
             stop("Alignment is currently only supported for MS level 1")
         if (!nrow(peakGroupsMatrix(param))) {
-            if (!hasFeatures(object))
+            if (!hasFeatures(object, msLevel = msLevel))
                 stop("No feature definitions present in 'object'. Please ",
                      "perform first a correspondence analysis using ",
                      "'groupChromPeaks'")
-            peakGroupsMatrix(param) <- adjustRtimePeakGroups(
-                object, param = param)
+            peakGroupsMatrix(param) <- adjustRtimePeakGroups(object, param)
         }
         fidx <- as.factor(fromFile(object))
         rt_raw <- split(rtime(object), fidx)
@@ -1410,8 +1413,7 @@ setMethod(
         else ph <- list()
         object <- dropFeatureDefinitions(object)
         object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
-        object@chromPeaks <- .applyRtAdjToChromPeaks(
-            .chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        object <- updateChromPeaksRtime(object, rtraw = rt_raw, rtadj = rt_adj)
         xph <- XProcessHistory(
             param = param, type. = .PROCSTEP.RTIME.CORRECTION,
             fileIndex = seq_along(object), msLevel = msLevel)
@@ -1437,7 +1439,7 @@ setMethod(
         rt_raw <- split(rtime(object), fidx)
         idx <- seq_along(object)
 
-        # Check if user as ran matching lama vs chrompeaks beforehand
+        ## Check if user has ran matching lama vs chrompeaks beforehand
         if (length(param@rtMap) == 0)
             param <- matchLamasChromPeaks(object, param)
         rtMap <- param@rtMap
@@ -1445,18 +1447,20 @@ setMethod(
             stop("Mismatch between the number of files matched to lamas: ",
                  length(rtMap), " and files in the object: ", length(object))
 
-        # Make model and adjust retention for each file
+        ## Make model and adjust retention for each file
         rt_adj <- bpmapply(rtMap, rt_raw, idx, FUN = function(x, y, i, param) {
-            if (nrow(x) >= 10) { # too strict ? Gam always throws error when less than that and loess does not work that well either.
-                .adjust_rt_model(y, method = param@method,
-                                 rt_map = x[, c("ref","obs")], span = param@span,
-                                 resid_ratio = param@outlierTolerance,
-                                 zero_weight = param@zeroWeight,
-                                 bs = param@bs)
+            ## Why >= 10 below: Gam always throws error when less than that
+            ## and loess does not work that well either.
+            if (nrow(x) >= 10) {
+                .adjust_rt_model(
+                    y, method = param@method, rt_map = x[, c("ref","obs")],
+                    span = param@span, resid_ratio = param@outlierTolerance,
+                    zero_weight = param@zeroWeight, bs = param@bs)
             } else {
                 warning("Too few chrompeaks could be assigned to external",
                         " reference peaks (lamas) for sample ", i,
-                        ". Skipping alignment for this sample.")
+                        ". Skipping alignment for this sample.",
+                        call. = TRUE, immediate. = TRUE)
                 y
             }
         }, SIMPLIFY = FALSE, BPPARAM = BPPARAM, MoreArgs = list(param = param))
@@ -1470,8 +1474,7 @@ setMethod(
         else ph <- list()
         object <- dropFeatureDefinitions(object)
         object@spectra$rtime_adjusted <- unlist(rt_adj, use.names = FALSE)
-        object@chromPeaks <-.applyRtAdjToChromPeaks(
-            .chromPeaks(object), rtraw = rt_raw, rtadj = rt_adj)
+        object <- updateChromPeaksRtime(object, rt_raw, rt_adj)
         xph <- XProcessHistory(
             param = param, type. = .PROCSTEP.RTIME.CORRECTION,
             fileIndex = seq_along(object))
@@ -1479,6 +1482,16 @@ setMethod(
         validObject(object)
         object
     })
+
+#' Helper method to update the retention times of the chrom peaks matrix
+#'
+#' @noRd
+setMethod("updateChromPeaksRtime", "XcmsExperiment",
+          function(object, rtraw, rtadj) {
+              object@chromPeaks <- .applyRtAdjToChromPeaks(
+                  .chromPeaks(object), rtraw = rtraw, rtadj = rtadj)
+              object
+          })
 
 #' @rdname XcmsExperiment
 setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
@@ -1490,9 +1503,8 @@ setMethod("dropAdjustedRtime", "XcmsExperiment", function(object) {
     idx_co <- .match_last(.PROCSTEP.PEAK.GROUPING, ptype, nomatch = nom)
     if (hasChromPeaks(object)) {
         fidx <- as.factor(fromFile(object))
-        object@chromPeaks <- .applyRtAdjToChromPeaks(
-            object@chromPeaks,
-            rtraw = split(rtime(object, adjusted = TRUE), fidx),
+        object <- updateChromPeaksRtime(
+            object, rtraw = split(rtime(object, adjusted = TRUE), fidx),
             rtadj = split(rtime(object, adjusted = FALSE), fidx))
     }
     svs <- unique(c(spectraVariables(object@spectra), "mz", "intensity"))

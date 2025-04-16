@@ -17,7 +17,7 @@ correspondence results.}
 \item{msLevel}{\code{integer(1)} defining the MS level on which the features
 should be grouped.}
 
-\item{...}{passed to the \code{groupFeatures} function on numeric values.}
+\item{...}{passed to the \code{groupFeatures()} function on numeric values.}
 }
 \value{
 the input object with feature groups added (i.e. in column

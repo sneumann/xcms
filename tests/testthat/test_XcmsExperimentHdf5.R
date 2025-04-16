@@ -1048,6 +1048,130 @@ test_that("chromPeakSummary,XcmsExperimentHdf5 works", {
     expect_equal(unname(res[, 2L]), unname(ref[, 2L]))
 })
 
+test_that("adjustRtime,LamaParam works for XcmsExperimentHdf5", {
+    ## We're using adjustRtime,XcmsExperiment.
+    pks <- chromPeaks(xmse_h5)[1:200, c("mz", "rt")]
+
+    lp <- LamaParama(lamas = cbind(pks[, 1], pks[, 2] + 4),
+                     toleranceRt = 10, tolerance = 0.2)
+
+    tf <- tempfile()
+    file.copy(xmse_h5@hdf5_file, tf)
+    x <- xmse_h5
+    x@hdf5_file <- tf
+
+    res <- matchLamasChromPeaks(xmse_h5, lp)
+    expect_s4_class(res, "LamaParama")
+    expect_equal(length(res@rtMap), length(xmse_h5))
+
+    res <- adjustRtime(x, lp, BPPARAM = SerialParam())
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    expect_true(hasAdjustedRtime(res))
+    expect_true(res@hdf5_mod_count > xmse_h5@hdf5_mod_count)
+    expect_equal(median(rtime(res) - rtime(xmse_h5)), 4)
+
+    a <- chromPeaks(xmse_h5)
+    b <- chromPeaks(res)
+    expect_equal(median(b[, "rt"] - a[, "rt"]), 4)
+
+    expect_error(adjustRtime(res, lp), "Alignment results already present")
+    file.remove(tf)
+})
+
+test_that("manualFeatures,XcmsExperimentHdf5 works", {
+    ## Input tests and errors
+    res <- manualFeatures(xmse_h5)
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    expect_equal(res@hdf5_mod_count, xmse_h5@hdf5_mod_count)
+    expect_error(manualFeatures(xmse_h5, peakIdx = list(c(1:3)), msLevel = 1:2),
+                 "one MS level at a time")
+    tmp <- xmse_h5
+    tmp@chrom_peaks_ms_level <- integer()
+    expect_error(manualFeatures(tmp, peakIdx = list(1:3), msLevel = 1L),
+                 "No chromatographic peaks present")
+    expect_error(manualFeatures(xmse_h5, peakIdx = list(1:3, "b")),
+                 "integer indices")
+    expect_error(manualFeatures(xmse_h5, peakIdx = list(1:3, c(13, 20004))),
+                 "out of bounds")
+
+    tf <- tempfile()
+    file.copy(xmse_h5@hdf5_file, tf)
+    x <- xmse_h5
+    x@hdf5_file <- tf
+
+    cpks <- chromPeaks(x, msLevel = 1L)
+    cpks <- cbind(cpks, index = seq_len(nrow(cpks)))
+    ## peakIdx sample 2 does not have any peak for a feature:
+    peakIdx <- list(
+        c(33, 9, 245),
+        c(246, 20)
+    )
+    res <- manualFeatures(x, peakIdx = peakIdx)
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    expect_true(res@hdf5_mod_count > xmse_h5@hdf5_mod_count)
+    expect_true(hasFeatures(res))
+    fdef <- featureDefinitions(res)
+    expect_true(nrow(fdef) == 2L)
+    expect_equal(fdef$ms_level, rep(1L, nrow(fdef)))
+    expect_equal(fdef$npeaks, lengths(peakIdx))
+    expect_equal(fdef$mzmax,
+                 vapply(peakIdx, function(z) max(cpks[z, "mz"]), NA_real_))
+    expect_equal(fdef$mzmin,
+                 vapply(peakIdx, function(z) min(cpks[z, "mz"]), NA_real_))
+    expect_equal(fdef$mzmed,
+                 vapply(peakIdx, function(z) median(cpks[z, "mz"]), NA_real_))
+    expect_equal(fdef$rtmax,
+                 vapply(peakIdx, function(z) max(cpks[z, "rt"]), NA_real_))
+    expect_equal(fdef$rtmin,
+                 vapply(peakIdx, function(z) min(cpks[z, "rt"]), NA_real_))
+    expect_equal(fdef$rtmed,
+                 vapply(peakIdx, function(z) median(cpks[z, "rt"]), NA_real_))
+    vals <- featureValues(res, method = "sum")
+    expect_equal(unname(vals[, 1]),
+                 c(sum(cpks[c(33, 9), "into"]), cpks[20, "into"]))
+    expect_true(all(is.na(vals[, 2])))
+    expect_equal(unname(vals[, 3]),
+                 c(cpks[c(245), "into"], cpks[246, "into"]))
+    file.remove(tf)
+
+    ## With available feature definitions before.
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+
+    cpks <- chromPeaks(x, msLevel  = 1L)
+    cpks <- cbind(cpks, index = seq_len(nrow(cpks)))
+
+    ## - not more than 1 chrom peak per sample
+    ## - no chrom peak for feature 2 in sample 2
+    ## - no chrom peak for any feature for sample 4
+    peakIdx <- list(
+        c(10, 410, 1091, 1424, 1809, 2235, 2390),
+        c(4, 1101, 1435, 1800, 2243, 2380)
+    )
+    res <- manualFeatures(x, peakIdx = peakIdx)
+    expect_s4_class(res, "XcmsExperimentHdf5")
+    expect_true(res@hdf5_mod_count > xmseg_full_h5@hdf5_mod_count)
+    fdef <- featureDefinitions(res)
+    expect_equal(nrow(fdef), nrow(featureDefinitions(xmseg_full_h5)) + 2L)
+    expect_equal(length(unique(rownames(fdef))), nrow(fdef))
+    fvals <- featureValues(res)
+    fvals_ref <- featureValues(xmseg_full_h5)
+    expect_equal(fvals[rownames(fvals_ref), ], fvals_ref)
+    fvals <- fvals[!rownames(fvals) %in% rownames(fvals_ref), ]
+    expect_true(all(is.na(fvals[, 4])))
+    expect_true(is.na(fvals[2, 2]))
+    expect_equal(unname(fvals[, 1]), unname(cpks[c(10, 4), "into"]))
+    expect_equal(unname(fvals[, 3]), unname(cpks[c(1091, 1101), "into"]))
+    expect_equal(unname(fvals[, 5]), unname(cpks[c(1424, 1435), "into"]))
+    expect_equal(unname(fvals[, 6]), unname(cpks[c(1809, 1800), "into"]))
+    expect_equal(unname(fvals[, 7]), unname(cpks[c(2235, 2243), "into"]))
+    expect_equal(unname(fvals[, 8]), unname(cpks[c(2390, 2380), "into"]))
+
+    file.remove(tf)
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

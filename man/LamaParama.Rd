@@ -46,10 +46,11 @@ LamaParama(
 \item{object}{An object of class \code{XcmsExperiment} with defined ChromPeaks.}
 
 \item{param}{An object of class \code{LamaParama} that will later be used for
-adjustment using the \verb{[adjustRtime()]} function.}
+adjustment using the \code{\link[=adjustRtime]{adjustRtime()}} function.}
 
 \item{BPPARAM}{For \code{matchLamasChromPeaks()}: parallel processing setup.
-Defaults to \code{BPPARAM = bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
+Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for
+more information.}
 
 \item{...}{For \code{plot()}: extra parameters to be passed to the function.}
 
@@ -119,7 +120,7 @@ For \code{summarizeLamaMatch()}:A \code{data.frame} with:
 }
 }
 \description{
-Alignment is achieved using the \link{'adjustRtime()'} method with a \code{param} of
+Alignment is achieved using the \code{\link[=adjustRtime]{adjustRtime()}} method with a \code{param} of
 class \code{LamaParama}. This method corrects retention time by aligning
 chromatographic data with an external reference dataset.
 

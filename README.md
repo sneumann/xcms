@@ -7,11 +7,28 @@
 [![Bioconductor devel build status](http://www.bioconductor.org/shields/build/devel/bioc/xcms.svg)](http://www.bioconductor.org/checkResults/devel/bioc-LATEST/xcms.html)
 
 
-# The `xcms` package: pre-processing GC/LC-MS/MS data
+# Welcome to the home of *xcms*!
 
-Please see the [package documentation](https://sneumann.github.io/xcms/) for
-more information and examples and [news](inst/NEWS) for the latest changes.
+The *xcms* R package provides functionality to efficiently preprocess LC-MS (as
+well as GC-MS and LC-MS/MS) data. Please see the [package
+documentation](https://sneumann.github.io/xcms/) for more information and
+examples and [news](inst/NEWS) for the latest changes. An example preprocessing
+workflow is shown in the [main package vignette](). See also the excellent
+[Metabonaut] resource for a more detailed and complete *end-to-end* data
+analysis workflow for LC-MS data.
 
+
+## Installation
+
+*xcms* is part of [Bioconductor](https://bioconductor.org) and relies and
+integrates with various Bioconductor packages. The preferred way to install
+*xcms* is using the *BiocManager* package, that will install the latest
+**stable** version of *xcms* and ensures all required packages from the **same**
+Bioconductor release are installed and available as well:
+
+```r
+install.packages()
+```
 
 ## Version 4
 

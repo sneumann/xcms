@@ -12,7 +12,7 @@ setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-")
 setGeneric("addProcessHistory", function(object, ...)
     standardGeneric("addProcessHistory"))
 
-#' @aliases adjustRtime ObiwarpParam-class PeakGroupsParam-class
+#' @aliases adjustRtime
 #'
 #' @title Alignment: Retention time correction methods.
 #'
@@ -128,12 +128,14 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     (Euclidian distance). The default value is `distFun = "cor_opt"`.
 #'
 #' @param extraPeaks For `PeakGroupsParam`: `numeric(1)` defining the maximal
-#'     number of additional peaks for all samples to be assigned to a peak
-#'     group (feature) for retention time correction. For a data set with 6
-#'     samples, `extraPeaks = 1` uses all peak groups with a total peak count
-#'     `<= 6 + 1`. The total peak count is the total number of peaks being
-#'     assigned to a peak group and considers also multiple peaks within a
-#'     sample that are assigned to the group.
+#'     number of additional peaks for all
+#'     samples to be assigned to a peak group (feature) for retention time
+#'     correction. For a data set with 6 samples, `extraPeaks = 1` uses all
+#'     peak groups with a total peak count `<= 6 + 1`. The total peak count
+#'     is the total number of peaks being assigned to a peak group and
+#'     considers also multiple peaks within a sample that are assigned to
+#'     the group. This parameter is ignored for `adjustRtime()` on an
+#'     [XcmsExperimentHdf5()].
 #'
 #' @param factorDiag For `ObiwarpParam`: `numeric(1)` defining the local weight
 #'     applied to diagonal moves in the alignment.
@@ -226,8 +228,6 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     See *Subset-based alignment* section for details.
 #'
 #' @param value For all assignment methods: the value to set/replace.
-#'
-#' @param x An `ObiwarpParam`, `PeakGroupsParam` or `LamaParama` object.
 #'
 #' @param ... ignored.
 #'
@@ -1395,9 +1395,7 @@ setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
 
-#' @aliases groupChromPeaks PeakDensityParam-class
-#'
-#' @aliases NearestPeaksParam-class MzClustParam-class
+#' @aliases groupChromPeaks
 #'
 #' @title Correspondence: group chromatographic peaks across samples
 #'
@@ -1522,8 +1520,6 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     not be considered in the feature definitions step. Providing `NA` for
 #'     all blanks in an experiment will for example avoid features to be
 #'     defined for signals (chrom peaks) present only in blank samples.
-#'
-#' @param value Replacement value for `<-` methods.
 #'
 #' @param x The parameter object.
 #'
@@ -1895,12 +1891,6 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
 
 #' @title Refine Identified Chromatographic Peaks
 #'
-#' @aliases FilterIntensityParam-class show,FilterIntensityParam-method
-#'
-#' @aliases CleanPeaksParam-class show,CleanPeaksParam-method
-#'
-#' @aliases MergeNeighboringPeaksParam-class show,MergeNeighboringPeaksParam-method
-#'
 #' @description
 #'
 #' The `refineChromPeaks` method performs a post-processing of the
@@ -2171,6 +2161,8 @@ setGeneric("tuneIn<-", function(object, value) standardGeneric("tuneIn<-"))
 ## U
 setGeneric("unions", function(object, ...) standardGeneric("unions"))
 setGeneric("unions<-", function(object, value) standardGeneric("unions<-"))
+setGeneric("updateChromPeaksRtime", function(object, ...)
+    standardGeneric("updateChromPeaksRtime"))
 
 ## V
 setGeneric("verboseColumns", function(object, ...) standardGeneric("verboseColumns"))

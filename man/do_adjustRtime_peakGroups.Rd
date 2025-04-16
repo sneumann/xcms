@@ -41,12 +41,14 @@ the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).}
 
 \item{extraPeaks}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the maximal
-number of additional peaks for all samples to be assigned to a peak
-group (feature) for retention time correction. For a data set with 6
-samples, \code{extraPeaks = 1} uses all peak groups with a total peak count
-\verb{<= 6 + 1}. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a
-sample that are assigned to the group.}
+number of additional peaks for all
+samples to be assigned to a peak group (feature) for retention time
+correction. For a data set with 6 samples, \code{extraPeaks = 1} uses all
+peak groups with a total peak count \verb{<= 6 + 1}. The total peak count
+is the total number of peaks being assigned to a peak group and
+considers also multiple peaks within a sample that are assigned to
+the group. This parameter is ignored for \code{adjustRtime()} on an
+\code{\link[=XcmsExperimentHdf5]{XcmsExperimentHdf5()}}.}
 
 \item{smooth}{For \code{PeakGroupsParam}: \code{character(1)} defining the function to
 be used to interpolate corrected retention times for all peak groups.

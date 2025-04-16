@@ -2040,9 +2040,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'
 #' @details This is a wrapper around the peak picker in Bioconductor's
 #'     *MassSpecWavelet* package calling
-#'     `peakDetectionCWT()` and
-#'     `tuneInPeakInfo()` functions. See the *xcmsDirect* vignette for more
-#'     information.
+#'     `peakDetectionCWT()` and `tuneInPeakInfo()` functions. See the
+#'     *xcmsDirect* vignette for more information.
 #'
 #' @inheritParams do_findChromPeaks_centWave
 #'
@@ -2055,7 +2054,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #' @param valsPerSpect ignored.
 #'
 #' @param ... Additional parameters to be passed to the
-#'     [peakDetectionCWT()] function.
+#'     `peakDetectionCWT` function.
 #'
 #' @return
 #'

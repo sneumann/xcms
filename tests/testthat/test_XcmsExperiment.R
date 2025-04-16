@@ -1506,3 +1506,34 @@ test_that("c,XcmsExperiment works", {
     expect_true(length(res) == length(a) * 2)
     expect_true(nrow(chromPeaks(res)) == nrow(chromPeaks(a)) * 2)
 })
+
+test_that("adjustRtime,XcmsExperiment,LamaParama works", {
+    pks <- chromPeaks(xmse)[1:100, c("mz", "rt")]
+    lp <- LamaParama(lamas = cbind(pks[, 1], pks[, 2] + 4),
+                     toleranceRt = 10, tolerance = 0.2)
+
+    expect_error(adjustRtime(as(mse, "XcmsExperiment"), lp),
+                 "detected chromPeaks")
+    lp <- matchLamasChromPeaks(xmse, lp)
+    lp@rtMap <- lp@rtMap[1:2]
+    expect_error(adjustRtime(xmse, lp), "Mismatch between the number")
+
+    lp <- matchLamasChromPeaks(xmse, lp)
+    lp@rtMap[[2L]] <- lp@rtMap[[2]][1:6, ]
+
+    expect_warning(res <- adjustRtime(xmse, lp, BPPARAM = SerialParam()),
+                   "for sample 2")
+    expect_s4_class(res, "XcmsExperiment")
+    ## No adjustment for 2nd sample
+    pks <- chromPeaks(xmse)
+    res_pks <- chromPeaks(res)
+    expect_equal(res_pks[res_pks[, "sample"] == 2, "rt"],
+                 pks[pks[, "sample"] == 2, "rt"])
+    expect_true(all(res_pks[res_pks[, "sample"] != 2, "rt"] !=
+                    pks[pks[, "sample"] != 2, "rt"]))
+    res_rt <- split(rtime(res), fromFile(res))
+    rt <- split(rtime(xmse), fromFile(xmse))
+    expect_equal(res_rt[[2]], rt[[2]])
+    expect_true(all(res_rt[[1]] != rt[[1]]))
+    expect_true(all(res_rt[[3]] != rt[[3]]))
+})
