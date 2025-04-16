@@ -62,10 +62,10 @@ be applied to the older *MSnbase*-based workflows (xcms version 3). Additional
 documents and tutorials covering also other topics of untargeted metabolomics
 analysis are listed at the end of this document. There is also a [xcms
 tutorial](https://jorainer.github.io/xcmsTutorials) available with more examples
-and details. 
+and details.
 To get a complete overview of LCMS-MS analysis, an end-to-end workflow
-[Metabonaut website](https://rformassspectrometry.github.io/metabonaut/), which 
-integrate the *xcms* preprocessing steps with the downstream analysis, is available. 
+[Metabonaut website](https://rformassspectrometry.github.io/metabonaut/), which
+integrate the *xcms* preprocessing steps with the downstream analysis, is available.
 
 
 # Preprocessing of LC-MS data
@@ -209,7 +209,7 @@ anymore. Thus, we filter below the full data set to a retention time range from
 will only subset the spectra within the `MsExperiment`. Subsequently we
 re-create also the BPC.
 
-```{r}
+```{r, message = FALSE}
 faahko <- filterRt(faahko, rt = c(2550, 4250))
 ## creating the BPC on the subsetted data
 bpis <- chromatogram(faahko, aggregationFun = "max")
@@ -392,7 +392,7 @@ experiment). Note that below we set the argument `prefilter` to `c(6, 5000)` and
 consider only ROIs with at least 6 centroids with an intensity larger than 5000
 for the *centWave* chromatographic peak detection.
 
-```{r peak-detection-centwave, message = FALSE, results = "hide" }
+```{r peak-detection-centwave, message = FALSE}
 cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
                      prefilter = c(6, 5000))
 faahko <- findChromPeaks(faahko, param = cwp)
@@ -445,7 +445,7 @@ TRUE` in the `CentWaveParam` object, or they can be calculated afterwards by
 using the `chromPeakSummary()` function with the `XcmsExperiment` object and
 the `BetaDistributionParam` parameter object as input:
 
-```{r peak-detection-chromPeakSummary}
+```{r peak-detection-chromPeakSummary, message = FALSE}
 beta_metrics <- chromPeakSummary(faahko, BetaDistributionParam())
 head(beta_metrics)
 
@@ -512,7 +512,7 @@ faahko_pp <- refineChromPeaks(faahko, mpp)
 
 An example for a merged peak is given below.
 
-```{r peak-postprocessing-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
+```{r peak-postprocessing-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one.", message = FALSE}
 mzr_1 <- 305.1 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
@@ -527,7 +527,7 @@ plot(chr_2)
 peaks into a single one (right panel in the figure above). Other close peaks,
 with a lower intensity between them, were however not merged (see below).
 
-```{r peak-postprocessing-not-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
+```{r peak-postprocessing-not-merged, fig.width = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged.", message = FALSE}
 mzr_1 <- 496.2 + c(-0.01, 0.01)
 chr_1 <- chromatogram(faahko[1], mz = mzr_1)
 chr_2 <- chromatogram(faahko_pp[1], mz = mzr_1)
@@ -687,7 +687,7 @@ samples. We use a `binSize = 0.6` which creates warping functions in m/z bins of
 0.6. Also here it is advisable to modify and adapt the settings for each
 experiment.
 
-```{r alignment-obiwarp, message = FALSE, results = "hide" }
+```{r alignment-obiwarp, message = FALSE}
 faahko <- adjustRtime(faahko, param = ObiwarpParam(binSize = 0.6))
 ```
 
@@ -832,7 +832,7 @@ samples to the sample groups in the experiment) is mandatory for the
 `sampleGroups` should be set to a single value for each file (e.g. `rep(1,
 length(fileNames(faahko))`).
 
-```{r alignment-subset, message = FALSE, warning = FALSE}
+```{r alignment-subset, message = FALSE, warning = FALSE, results = "hide"}
 ## Initial peak grouping. Use sample_type as grouping variable
 pdp_subs <- PeakDensityParam(sampleGroups = sampleData(faahko)$sample_type,
                              minFraction = 0.9)
@@ -947,7 +947,7 @@ faahko <- groupChromPeaks(faahko, param = pdp)
 
 As an alternative we perform the correspondence using m/z relative bin sizes.
 
-```{r}
+```{r, message = FALSE}
 ## Drop feature definitions and re-perform the correspondence
 ## using m/z-relative bin sizes.
 faahko_ppm <- groupChromPeaks(
@@ -1267,13 +1267,8 @@ of `NA` values in at least one of the sample type.
 
 Although not directly relevant to this experiment, the `BlankFlag` filter can be
 used to flag features based on the intensity relationship between blank and QC
-samples. More information can be found in the documentation of the filter:
-
-```{r}
-# Retrieve documentation for the main function and the specific filter.
-?filterFeatures
-?BlankFlag
-```
+samples. More information can be found in the documentation of the filter,
+i.e. using `?filterFeatures` or `?BlankFlag`.
 
 The `RsdFilter` enable users to filter features based on their relative
 standard deviation (coefficient of variation) for a specified `threshold`. It
@@ -1282,15 +1277,18 @@ as demonstrated below:
 
 ```{r}
 # Set up parameters for RsdFilter
-rsd_filter <- RsdFilter(threshold = 0.3,
-                        qcIndex = sampleData(filtered_faahko)$sample_type == "QC")
+rsd_filter <- RsdFilter(
+    threshold = 0.3,
+    qcIndex = sampleData(filtered_faahko)$sample_type == "QC")
 
 # Apply the filter to faakho object
 filtered_faahko <- filterFeatures(object = filtered_faahko, filter = rsd_filter)
 
 # Now apply the same strategy to the res object
-rsd_filter <- RsdFilter(threshold = 0.3, qcIndex = filtered_res$sample_type == "QC")
-filtered_res <- filterFeatures(object = filtered_res, filter = rsd_filter, assay = "raw")
+rsd_filter <- RsdFilter(
+    threshold = 0.3, qcIndex = filtered_res$sample_type == "QC")
+filtered_res <- filterFeatures(
+    object = filtered_res, filter = rsd_filter, assay = "raw")
 ```
 
 All features with an RSD (CV) strictly larger than 0.3 in QC samples were thus
@@ -1389,7 +1387,7 @@ tst_adjusted <- applyAdjustedRtime(tst_adjusted)
 We extract the base peak chromatogram (BPC) to visualize and evaluate the
 alignment:
 
-```{r fig.height=12, fig.width=5}
+```{r fig.height=12, fig.width=5, message = FALSE}
 #' evaluate the results with BPC
 bpc <- chromatogram(ref, chromPeaks = "none")
 bpc_tst_raw <- chromatogram(tst, chromPeaks = "none")

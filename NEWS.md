@@ -11,6 +11,8 @@
   stores all preprocessing results in an HDF5 file.
 - Optimization and performance improvements for extraction of chromatographic
   data. This includes using `MsCoreUtils::reduce()`.
+- Restructure and clean-up of documentation.
+- Don't export unnecessary get/set methods for `Param` classes.
 
 ## Changes in version 4.5.4
 
