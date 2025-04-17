@@ -22,7 +22,7 @@ BiocStyle::markdown()
 ```
 
 **Package**: `r Biocpkg("xcms")`<br />
-**Authors**: Johannes Rainer<br />
+**Authors**: Philippine Louail, Johannes Rainer<br />
 **Modified**: `r file.info("xcms.Rmd")$mtime`<br />
 **Compiled**: `r date()`
 
@@ -60,12 +60,11 @@ This document describes data import, exploration and preprocessing of a simple
 test LC-MS data set with the *xcms* package version >= 4. The same functions can
 be applied to the older *MSnbase*-based workflows (xcms version 3). Additional
 documents and tutorials covering also other topics of untargeted metabolomics
-analysis are listed at the end of this document. There is also a [xcms
-tutorial](https://jorainer.github.io/xcmsTutorials) available with more examples
-and details.
-To get a complete overview of LCMS-MS analysis, an end-to-end workflow
-[Metabonaut website](https://rformassspectrometry.github.io/metabonaut/), which
-integrate the *xcms* preprocessing steps with the downstream analysis, is available.
+analysis are listed at the end of this document. An extensive collection of
+metabolomics data analysis tutorials, also including a complete end-to-end data
+analysis workflow as well as an example analysis of a very large-scale
+experiment using the new *on-disk* *xcms* result object is available at the
+[Metabonaut website](https://rformassspectrometry.github.io/Metabonaut/).
 
 
 # Preprocessing of LC-MS data
@@ -1361,15 +1360,15 @@ head(ref_mz_rt)
 nrow(ref_mz_rt)
 ```
 
-This is what the `lamas` input should look like for alignment. In terms of
+This is what the *lamas* input should look like for alignment. In terms of
 how this method works, the alignment algorithm matches chromatographic peaks
-from the experimental data to the lamas, fitting a model based on this
+from the experimental data to the *lamas*, fitting a model based on this
 match to adjust their retention times and minimize differences between
 the two datasets.
 
 Now we can define our `param` object `LamaParama` to prepare for the
 alignment. Parameters such as `tolerance`, `toleranceRt`, and `ppm` relate
-to the matching between chromatographic peaks and lamas. Other parameters
+to the matching between chromatographic peaks and *lamas*. Other parameters
 are related to the type of fitting generated between these data points.
 More details on each parameter and the overall method can be found by
 searching `?adjustRtime`. Below is an example using default parameters.
@@ -1415,7 +1414,7 @@ It appears that certain time intervals (2500 to 3000 and 3500 to 4500 seconds)
 exhibit better alignment than others. This variance can be elucidated by
 examining the distribution of matched peaks, as illustrated below. The
 `matchLamaChromPeaks()` function facilitates the assessment of how well the
-`lamas` correspond with the chromatographic peaks in each file. This analysis
+*lamas* correspond with the chromatographic peaks in each file. This analysis
 can be conducted prior to any adjustments.
 
 ```{r}
@@ -1433,7 +1432,7 @@ abline(v = mtch[[1]]$obs)
 
 The overlay of BPC above provides insight into the correlation between accurate
 alignment and the presence of peaks matching with `lamas`. For this particular
-sample no chromatographic peaks were matched to the `lamas`  between 2500 and
+sample no chromatographic peaks were matched to the *lamas*  between 2500 and
 3000 seconds and hence the alignment in that region was not good. For the second
 file, chrom peaks could also be matched in that region resulting in a better
 alignment.
@@ -1489,16 +1488,25 @@ removal.
 ## Parallel processing
 
 Most functions in *xcms* support parallel processing, which is enabled by
-default and is performed, for most operations, on a per-file basis. Parallel
+default and is performed, for most operations, on a per-sample basis. Parallel
 processing is handled and configured by the `BiocParallel` Bioconductor package
 and can be globally defined for an R session. Note that, while all data objects
-are designed to have a low memory footprint by loading only peak data into
+are designed to have a low memory footprint by loading only MS peak data into
 memory when needed, parallel processing will increase this demand: in general,
-the full data for as many files as there are parallel processes are loaded into
-memory. This needs also to be considered, when the number of parallel processes
-is defined.
+the full MS data for as many files as there are parallel processes are loaded
+into memory at a time. This needs also to be considered, when the number of
+parallel processes is defined. Also, the newer *xcms* data analysis functions
+support the `chunkSize` parameter that allows to define the number of data files
+from which the MS data should be loaded into memory at a time. This data chunk
+is then distributed across the parallel processes. Therefore, the number of
+parallel processes should not be larger than `chunkSize`. Finally, for very
+large experiments, the `XcmsExperimentHdf5` object should be used which stores
+all preprocessing results *on-disk* in a file in HDF5 format hence further
+reducing the memory demand during preprocessing. See the respective example
+workflow on [Metabonaut](https://rformassspectrometry.github.io/Metabonaut) or
+refer to the `?XcmsExperimentHdf5` help page.
 
-Unix-based systems (Linux, macOS) support `multicore`-based parallel
+Unix-based systems (Linux, macOS) support *multicore*-based parallel
 processing. To configure it globally we `register()` the parameter class. Note
 also that `bpstart()` is used below to initialize the parallel processes.
 
@@ -1513,11 +1521,15 @@ register(bpstart(SnowParam(2)))
 ```
 
 
-## Main differences to the `MSnbase`-based xcms version 3
+## Main differences to the `MSnbase`-based *xcms* version 3
 
 - `Spectra` is used as the main container for the (raw) MS data. Thus changing
   backends is supported at any stage of the analysis (e.g. to load all data into
   memory or to load data from remote databases).
+- Support for memory-safe analysis of very large experiments through the new
+  `XcmsExperimentHdf5` object: use parameter `hdf5File` in the
+  `findChromPeaks()` call to enable this. See also `?XcmsExperimentHdf5` for
+  more information.
 
 
 # Additional documentation resources
@@ -1525,6 +1537,8 @@ register(bpstart(SnowParam(2)))
 Some of the documentations listed here are still based on xcms version 3 but
 will be subsequently updated.
 
+- [Metabonaut](https://rformassspectrometry.github.io/Metabonaut): collection of
+  tutorials and playbooks for metabolomics data analysis in R and beyond.
 - [Exploring and analyzing LC-MS data with Spectra and
   xcms](https://jorainer.github.io/xcmsTutorials/): tutorial explaining general
   data handling using the *Spectra* package and LC-MS data preprocessing with

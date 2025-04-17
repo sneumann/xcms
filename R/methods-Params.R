@@ -821,7 +821,7 @@ setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) 
     if (validObject(object))
         return(object)
 })
-#' @rdname hidden_aliases<
+#' @rdname hidden_aliases
 setMethod("subset", "PeakGroupsParam", function(x){
     return(x@subset)})
 #' @rdname hidden_aliases

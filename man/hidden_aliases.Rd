@@ -231,6 +231,7 @@
 \alias{family<-,PeakGroupsParam-method}
 \alias{peakGroupsMatrix,PeakGroupsParam-method}
 \alias{peakGroupsMatrix<-,PeakGroupsParam-method}
+\alias{subset,PeakGroupsParam-method}
 \alias{subset<-,PeakGroupsParam-method}
 \alias{subsetAdjust,PeakGroupsParam-method}
 \alias{subsetAdjust<-,PeakGroupsParam-method}
@@ -805,6 +806,8 @@ fixedMz(object)
 \S4method{peakGroupsMatrix}{PeakGroupsParam}(object)
 
 \S4method{peakGroupsMatrix}{PeakGroupsParam}(object) <- value
+
+\S4method{subset}{PeakGroupsParam}(x)
 
 \S4method{subset}{PeakGroupsParam}(object) <- value
 

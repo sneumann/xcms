@@ -65,9 +65,14 @@ defined windows (i.e. ranges of m/z values) are used and scanned. This reduces
 the overlap of fragment spectra while still keeping a high coverage.
 
 This document showcases the analysis of two small LC-MS/MS data sets using
-`r Biocpkg("xcms")`. The data files used are reversed-phase LC-MS/MS runs from the
-Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH
-acquisition mode. For comparison a DDA file from the same sample is included.
+`r Biocpkg("xcms")`. The data files used are reversed-phase LC-MS/MS runs from
+the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in
+SWATH acquisition mode. For comparison a DDA file from the same sample is
+included.
+
+See also the [Metabonaut
+resource](https://rformassspectrometry.github.io/Metabonaut) for other examples
+of LC-MS/MS analysis workflows with *xcms*.
 
 
 # Analysis of DDA data
@@ -199,15 +204,15 @@ signal at the peak's apex position).
 The returned `Spectra` contains also the reference to the respective
 chromatographic peak as additional *spectra variable* `"chrom_peak_id"` that contains
 the identifier for the chromatographic peak (i.e. its row name in the
-`chromPeaks` matrix). 
+`chromPeaks` matrix).
 
 ```{r chrom_peak_id}
 dda_spectra$chrom_peak_id
 ```
 
-Some information about the chromatographic peak can also be added to the 
-returned `Spectra` object using the `chrompeakColumns` parameter in 
-`chromPeakSpectra()`. By default, the m/z and retention time of the 
+Some information about the chromatographic peak can also be added to the
+returned `Spectra` object using the `chrompeakColumns` parameter in
+`chromPeakSpectra()`. By default, the m/z and retention time of the
 chromatographic peak are added to the spectra metadata.
 
 ```{r chrom_peak_mz}
@@ -896,8 +901,9 @@ the workflow described here will be changed (improved) in future.
 Along with these developments, improved matching strategies for larger data sets
 will be implemented as well as functionality to compare `Spectra` directly to
 reference MS2 spectra from public annotation resources (e.g. Massbank or
-HMDB). See for example [here](https://jorainer.github.io/SpectraTutorials) for
-more information.
+HMDB). Visit [Metabonaut](https://rformassspectrometry.github.io/Metabonaut) or
+[SpectraTutorials](https://jorainer.github.io/SpectraTutorials) for more
+examples and information.
 
 Regarding SWATH data analysis, future development will involve improved
 selection of the correct MS2 chromatographic peaks considering also correlation
