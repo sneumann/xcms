@@ -1526,7 +1526,7 @@ register(bpstart(SnowParam(2)))
 - `Spectra` is used as the main container for the (raw) MS data. Thus changing
   backends is supported at any stage of the analysis (e.g. to load all data into
   memory or to load data from remote databases).
-- Support for memory-safe analysis of very large experiments through the new
+- Support for memory-saving analysis of very large experiments through the new
   `XcmsExperimentHdf5` object: use parameter `hdf5File` in the
   `findChromPeaks()` call to enable this. See also `?XcmsExperimentHdf5` for
   more information.
