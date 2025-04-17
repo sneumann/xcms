@@ -41,7 +41,7 @@
   `Spectra` output.
 - Tidied the `xcms` vignette, to order the filtering of features and remove
   the outdated normalisation paragraph.In depth discussion on this subject can
-  be found on `metabonaut`.
+  be found on *Metabonaut*.
 
 ## Changes in version 4.5.1
 
