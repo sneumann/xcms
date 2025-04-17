@@ -1,6 +1,6 @@
-# xcms 4.5
+# xcms 4.7
 
-## Changes in version 4.5.6
+## Changes in version 4.7.1
 
 - Change the naming convention of chromatographic peaks to include also the MS
   level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
@@ -13,6 +13,8 @@
   data. This includes using `MsCoreUtils::reduce()`.
 - Restructure and clean-up of documentation.
 - Don't export unnecessary get/set methods for `Param` classes.
+
+# xcms 4.5
 
 ## Changes in version 4.5.4
 
