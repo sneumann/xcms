@@ -464,6 +464,9 @@
     if (is.matrix(mz) && ncol(mz) != 2)
         stop("'mz' is expected to be a two-column matrix", call. = FALSE)
     pks <- cbind(mz, rt)
+    if (anyNA(pks))
+        stop("Missing values (`NA`) in 'rt' or 'mz' are not allowed.",
+             call. = FALSE)
     npks <- nrow(pks)
     if (length(msLevel) != npks)
         msLevel <- rep(msLevel[1L], npks)

@@ -13,6 +13,8 @@
   data. This includes using `MsCoreUtils::reduce()`.
 - Restructure and clean-up of documentation.
 - Don't export unnecessary get/set methods for `Param` classes.
+- Throw an error if parameters `mz` or `rt` for `chromatogram()` contain
+  missing values.
 
 # xcms 4.5
 
