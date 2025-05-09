@@ -124,7 +124,7 @@ jobs:
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
         run: |
-        shell: Rscript {0}
+          brew install gettext
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
