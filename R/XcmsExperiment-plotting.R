@@ -123,7 +123,8 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
     peak_group_adj <- peak_group
     for (i in seq_len(ncol(peak_group)))
         peak_group_adj[, i] <- .applyRtAdjustment(peak_group[, i],
-                                                  rt[[i]], rtadj[[i]])
+                                                  rt[[i]], rtadj[[i]],
+                                                  method = "approxfun")
     diff_rt <- peak_group_adj - peak_group
     if (adjustedRtime)
         xrt <- peak_group_adj

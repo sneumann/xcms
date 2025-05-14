@@ -1619,7 +1619,6 @@ test_that("calibrate,XCMSnExp works", {
 })
 
 test_that("adjustRtime,peakGroups works", {
-    skip_on_os(os = "windows", arch = "i386")
 
     xod <- faahko_xod
     xodg <- groupChromPeaks(
@@ -1694,19 +1693,24 @@ test_that("adjustRtime,peakGroups works", {
                     rtime(xodg, bySample = TRUE)[[2]]))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[3]] !=
                     rtime(xodg, bySample = TRUE)[[3]]))
-    expect_equal(unname(rtime(res_sub, bySample = TRUE)[[1]]),
-                 unname(rtime(res_sub, bySample = TRUE)[[2]]))
+    ## With `adjFun = "approxfun"` it's no longer **identical** but highly
+    ## similar!
+    expect_true(max(abs(rtime(res_sub, bySample = TRUE)[[1L]] -
+                        rtime(res_sub, bySample = TRUE)[[2L]])) < 0.0015)
+    ## expect_equal(unname(rtime(res_sub, bySample = TRUE)[[1]]),
+    ##              unname(rtime(res_sub, bySample = TRUE)[[2]]))
     expect_equal(rtime(res_sub, bySample = TRUE)[[2]],
                  .applyRtAdjustment(rtime(xodg, bySample = TRUE)[[2]],
-                                           rtime(xodg, bySample = TRUE)[[1]],
-                                           rtime(res_sub, bySample = TRUE)[[1]]))
+                                    rtime(xodg, bySample = TRUE)[[1]],
+                                    rtime(res_sub, bySample = TRUE)[[1]],
+                                    method = "approxfun"))
     res_sub <- adjustRtime(
         xodg, param = PeakGroupsParam(subset = c(1, 3),
                                       subsetAdjust = "average"))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[1]] !=
                     rtime(xodg, bySample = TRUE)[[1]]))
-    expect_true(all(rtime(res_sub, bySample = TRUE)[[2]] !=
-                    rtime(xodg, bySample = TRUE)[[2]]))
+    expect_false(all(rtime(res_sub, bySample = TRUE)[[2]] ==
+                     rtime(xodg, bySample = TRUE)[[2]]))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[3]] !=
                     rtime(xodg, bySample = TRUE)[[3]]))
     expect_true(any(rtime(res_sub, bySample = TRUE)[[1]] !=

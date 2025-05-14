@@ -1,3 +1,9 @@
+# xcms 4.7
+
+## Changes in version 4.7.1
+
+- Fix retention time deviation estimation for subset-based alignment.
+
 # xcms 4.5
 
 ## Changes in version 4.5.4
@@ -5,7 +11,7 @@
 - Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
   `AnnotatedDataFrame`.
 - Fix a bug in `manualChromPeaks()` that caused an error when only a single
-  chrom peak was added. 
+  chrom peak was added.
 
 ## Changes in version 4.5.3
 

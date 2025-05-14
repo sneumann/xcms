@@ -322,6 +322,9 @@ do_adjustRtime_peakGroups <-
 #'
 #' @param rtadj `numeric` with adjusted retention times.
 #'
+#' @param method `character(1)` either `"stepfun"` (the default) or
+#'     `"approxfun"` to avoid the artifacts observed in issue #
+#'
 #' @noRd
 #'
 #' @author Johannes Rainer
@@ -338,14 +341,19 @@ do_adjustRtime_peakGroups <-
 #' ## adjFts[, c("rt", "rtmin", "rtmax")] <- .applyRtAdjustment(feats[, c("rt", "rtmin", "rtmax")], rtr, rtc)
 #'
 #' ## To revert the adjustment: just switch the order of rtr and rtc
-.applyRtAdjustment <- function(x, rtraw, rtadj) {
+.applyRtAdjustment <- function(x, rtraw, rtadj,
+                               method = c("stepfun", "approxfun")) {
+    method <- match.arg(method)
     ## re-order everything if rtraw is not sorted; issue #146
     if (is.unsorted(rtraw)) {
         idx <- order(rtraw)
         rtraw <- rtraw[idx]
         rtadj <- rtadj[idx]
     }
-    adjFun <- stepfun(rtraw[-1] - diff(rtraw) / 2, rtadj)
+    if (method == "approxfun")
+        adjFun <- approxfun(rtraw, rtadj)
+    else
+        adjFun <- stepfun(rtraw[-1] - diff(rtraw) / 2, rtadj)
     res <- adjFun(x)
     ## Fix margins.
     idx_low <- which(x < rtraw[1])
@@ -375,12 +383,16 @@ do_adjustRtime_peakGroups <-
         stop("'rtraw' and 'rtadj' have to have the same length!")
     ## Going to adjust the columns rt, rtmin and rtmax in x.
     ## Using a for loop here.
+    ## Note: we are using `"stepfun"` here on purpose, to be consistent with
+    ## the original code, and as it will adjust retention times to the actual
+    ## adjusted retention times, not mean or interpolated ones.
     for (i in seq_along(rtraw)) {
         whichSample <- which(x[, "sample"] == i)
         if (length(whichSample) && any(rtraw[[i]] != rtadj[[i]])) {
             x[whichSample, c("rt", "rtmin", "rtmax")] <-
                 .applyRtAdjustment(x[whichSample, c("rt", "rtmin", "rtmax")],
-                                   rtraw = rtraw[[i]], rtadj = rtadj[[i]])
+                                   rtraw = rtraw[[i]], rtadj = rtadj[[i]],
+                                   method = "stepfun")
         }
     }
     x
@@ -535,6 +547,11 @@ do_adjustRtime_peakGroups <-
 #' @param method `character` specifying the method with which the non-subset
 #'     samples are adjusted: either `"previous"` or `"average"`. See details.
 #'
+#' @param adjFun `character(1)` defining the function that should be used to
+#'     estimate the retention time deviation. Can be either
+#'     `adjFun = "approxfun"` (default) or `adjFun = "stepfun"` (which was the
+#'     default).
+#'
 #' @return `list` of adjusted retention times.
 #'
 #' @author Johannes Rainer
@@ -543,26 +560,28 @@ do_adjustRtime_peakGroups <-
 #'
 #' @md
 adjustRtimeSubset <- function(rtraw, rtadj, subset,
-                              method = c("average", "previous")) {
+                              method = c("average", "previous"),
+                              adjFun = c("approxfun", "stepfun")) {
     method <- match.arg(method)
+    adjFun <- match.arg(adjFun)
     if (length(rtraw) != length(rtadj))
         stop("Lengths of 'rtraw' and 'rtadj' have to match.")
     if (missing(subset))
         subset <- seq_along(rtraw)
     if (!all(subset %in% seq_along(rtraw)))
         stop("'subset' is out of bounds.")
-    ## if (length(subset) == length(rtraw)) {
-    ##     cat("return rtadj\n")
-    ##     return(rtadj)
-    ## }
     no_subset <- seq_len(length(rtraw))[-subset]
+    message("Aligning samples against subset")
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = (length(no_subset)), clear = FALSE)
     for (i in no_subset) {
-        message("Aligning sample number ", i, " against subset ... ",
-                appendLF = FALSE)
         if (method == "previous") {
             i_adj <- .get_closest_index(i, subset, method = "previous")
             rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rtraw[[i_adj]],
-                                                 rtadj[[i_adj]])
+                                             rtadj[[i_adj]],
+                                             method = adjFun)
         }
         if (method == "average") {
             i_ref <- c(.get_closest_index(i, subset, method = "previous"),
@@ -576,9 +595,9 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
             rt_raw_ref <- apply(rt_raw_ref, 1, weighted.mean, w = wghts)
             rt_adj_ref <- apply(rt_adj_ref, 1, weighted.mean, w = wghts)
             rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rt_raw_ref,
-                                             rt_adj_ref)
+                                             rt_adj_ref, method = adjFun)
         }
-        message("OK")
+        pb$tick()
     }
     rtadj
 }

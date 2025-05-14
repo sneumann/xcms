@@ -45,13 +45,6 @@ test_that("do_adjustRtime_peakGroups works", {
 })
 
 test_that("applyRtAdjustment works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    xs <- faahko
-    ## group em.
-    ## xsg <- group(xs)
-    ## ## align em.
-    ## xsa <- retcor(xsg, method = "peakgroups")
     pksAdj <- .applyRtAdjToChromPeaks(chromPeaks(xod_xg),
                                       rtraw = rtime(xod_xg, bySample = TRUE),
                                       rtadj = rtime(xod_xgr, bySample = TRUE))
@@ -73,16 +66,86 @@ test_that("applyRtAdjustment works", {
     ## Artificial examples.
     a_raw <- c(1, 2, 3, 5, 6, 7, 8, 10, 12, 13, 14, 16)
     a_adj <- a_raw + 2 # shift by 2
-    b <- .applyRtAdjustment(a_raw, a_raw, a_adj)
+    b <- .applyRtAdjustment(a_raw, a_raw, a_adj, method = "approxfun")
     expect_equal(a_adj, b)
     b_2 <- .applyRtAdjustment(a_raw, a_raw[4:8], a_adj[4:8])
     expect_equal(b, b_2)
+    x <- c(2, 3, 5, 6, 8)
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(res, x + 2)
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    expect_equal(res, x + 2)
 
     a_adj <- a_raw - 2
     b <- .applyRtAdjustment(a_raw, a_raw, a_adj)
     expect_equal(a_adj, b)
     b_2 <- .applyRtAdjustment(a_raw, a_raw[4:8], a_adj[4:8])
     expect_equal(b, b_2)
+
+    ## Difference between stepfun (old default) and approxfun.
+    a_raw <- seq(1, 100, by = 0.3)
+    a_adj <- a_raw + 0.2
+    x <- seq(4, 20, by = 0.3)
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    expect_equal(res, x + 0.2)
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(res, x + 0.2)
+
+    x <- seq(1.4, 20, by = 0.3)
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    ## expect_equal(res, x + 0.2) # error!
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(res, x + 0.2)
+
+    a_adj <- a_raw + 1.3
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    ## expect_equal(res, x + 1.3) # error!
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(res, x + 1.3)
+
+    ## small increments
+    a_raw <- seq(0.1, 100, by = 0.03)
+    a_adj <- sort(a_raw + 0.2)
+
+    res <- .applyRtAdjustment(a_raw, a_raw, a_adj, method = "stepfun")
+    expect_equal(a_adj, res)
+    expect_equal(quantile(diff(a_adj)), quantile(diff(res)))
+
+    set.seed(123)
+    x <- seq(2.02, 90.02, by = 0.03)
+    x <- sort(x + rnorm(length(x), 0, 0.001))
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    ## expect_equal(res, x + 0.2)
+    ## plot(res, res - x, type = "l")
+
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(quantile(diff(res)), quantile(diff(x)))
+    expect_equal(res, x + 0.2)
+    ## plot(res, res - x, type = "l")
+
+    ## deviation is smaller than diff
+    a_raw <- seq(0.1, 100, by = 1.2)
+    a_adj <- sort(a_raw + 0.2)
+
+    res <- .applyRtAdjustment(a_raw, a_raw, a_adj, method = "stepfun")
+    expect_equal(a_adj, res)
+    expect_equal(diff(a_adj), diff(res))
+
+    ## Now, that's an issue.
+    ## we should! have a constant shift by 0.2
+    x <- seq(2, 90, by = 1.2)
+    x <- sort(x + rnorm(length(x), mean = 0, sd = 0.001))
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "stepfun")
+    ## plot(res, res - x, type = "l")
+    ## For a constant shift we expect the difference between consecutive values
+    ## to stay the same, but the test below fails.
+    ## expect_equal(diff(x), diff(res))
+
+    res <- .applyRtAdjustment(x, a_raw, a_adj, method = "approxfun")
+    expect_equal(diff(x), diff(res))
+    expect_equal(mean(res - x), 0.2)
+    expect_equal(res, x + 0.2)
+    ## plot(res, res - x, type = "l")
 })
 
 test_that(".get_closest_index works", {
@@ -136,42 +199,65 @@ test_that(".match_trim_vectors and index works", {
 })
 
 test_that("adjustRtimeSubset works", {
-    skip_on_os(os = "windows", arch = "i386")
-
     rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)
     rt_adj <- rtime(xod_xgr, adjusted = TRUE, bySample = TRUE)
 
-    res <- adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
-                             method = "previous")
+    res <- xcms:::adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "previous", adjFun = "stepfun")
     expect_equal(res[[1]], rt_adj[[1]])
     expect_equal(res[[3]], rt_adj[[3]])
     expect_true(all(res[[2]] != rt_adj[[2]]))
     expect_equal(names(res[[2]]), names(rt_adj[[2]]))
     expect_equal(unname(res[[2]]), unname(rt_adj[[1]]))
 
-    a <- res[[1]] - rt_raw[[1]]
-    b <- res[[2]] - rt_raw[[2]]
-    c <- res[[3]] - rt_raw[[3]]
-    plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
-         ylim = range(a, b, c))
-    points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
-    points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+    res <- xcms:::adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "previous", adjFun = "approxfun")
+    expect_equal(res[[1]], rt_adj[[1]])
+    expect_equal(res[[3]], rt_adj[[3]])
+    expect_true(all(res[[2]] != rt_adj[[2]]))
+    ## Values are no longer IDENTICAL, but highly similar:
+    expect_true(median(res[[2]] - rt_adj[[1]]) == 0)
+    expect_true(max(abs(res[[2]] - rt_adj[[1]])) < 0.002)
 
-    res <- adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
-                             method = "average")
+    ## a <- res[[1]] - rt_raw[[1]]
+    ## b <- res[[2]] - rt_raw[[2]]
+    ## c <- res[[3]] - rt_raw[[3]]
+    ## plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
+    ##      ylim = range(a, b, c))
+    ## points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
+    ## points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+
+    res <- xcms:::adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "average", adjFun = "stepfun")
     expect_equal(res[[1]], rt_adj[[1]])
     expect_equal(res[[3]], rt_adj[[3]])
     expect_true(all(res[[2]] != rt_adj[[2]]))
     expect_true(all(res[[2]] != rt_adj[[1]]))
     expect_true(all(res[[2]] != rt_adj[[3]]))
 
-    a <- res[[1]] - rt_raw[[1]]
-    b <- res[[2]] - rt_raw[[2]]
-    c <- res[[3]] - rt_raw[[3]]
-    plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
-         ylim = range(a, b, c))
-    points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
-    points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+    ## a <- res[[1]] - rt_raw[[1]]
+    ## b <- res[[2]] - rt_raw[[2]]
+    ## c <- res[[3]] - rt_raw[[3]]
+    ## plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
+    ##      ylim = range(a, b, c))
+    ## points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
+    ## points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+
+    res <- xcms:::adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "average", adjFun = "approxfun")
+    expect_equal(res[[1]], rt_adj[[1]])
+    expect_equal(res[[3]], rt_adj[[3]])
+    expect_true(all(res[[2]] != rt_adj[[2]]))
+    expect_true(all(res[[2]] != rt_adj[[1]]))
+    expect_true(all(res[[2]] != rt_adj[[3]]))
+
+    ## a <- res[[1]] - rt_raw[[1]]
+    ## b <- res[[2]] - rt_raw[[2]]
+    ## c <- res[[3]] - rt_raw[[3]]
+    ## plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
+    ##      ylim = range(a, b, c))
+    ## points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
+    ## points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
 })
 
 test_that(".adjustRtime_peakGroupsMatrix works", {
