@@ -1158,10 +1158,10 @@
         keep <- keep &
             chromPeakData(
                 object, return.type = "data.frame")$ms_level %in% msLevel
-    which(keep & .is_chrom_peaks_within_mz_rt(pks, rt, mz, ppm, type))
+    which(keep & .is_chrom_peak_within_mz_rt(pks, rt, mz, ppm, type))
 }
 
-.is_chrom_peaks_within_mz_rt <- function(x, rt = numeric(), mz = numeric(),
+.is_chrom_peak_within_mz_rt <- function(x, rt = numeric(), mz = numeric(),
                                          ppm = 0, type) {
     ## Select peaks within rt range.
     keep <- rep(TRUE, nrow(x))

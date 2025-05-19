@@ -65,13 +65,13 @@ profile matrix. For more details see
 \code{\link[=do_findChromPeaks_matchedFilter]{do_findChromPeaks_matchedFilter()}}.
 }
 \references{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-*Anal. Chem.* 2006, 78:779-787.
-@family Old peak detection methods
-}\if{html}{\out{</div>}}
+\emph{Anal. Chem.} 2006, 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \author{
 Colin A. Smith
 }
+\concept{Old peak detection methods}

@@ -155,6 +155,7 @@ Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \seealso{
 \code{\link[=binYonX]{binYonX()}} for a binning function,

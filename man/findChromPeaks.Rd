@@ -14,6 +14,7 @@ findChromPeaks(object, param, ...)
   msLevel = 1L,
   chunkSize = 2L,
   hdf5File = character(),
+  force.overwrite = FALSE,
   ...,
   BPPARAM = bpparam()
 )
@@ -57,7 +58,13 @@ details).}
 specifying the name (inclusive path) of a file that should be used for
 on-disk storage of preprocessing results. This option is suggested for
 very large data sets since it significantly reduces the memory demand.
-See \link{XcmsExperimentHdf5} for more information,}
+See \link{XcmsExperimentHdf5} for more information. Note that an error is
+thrown if the file already exists. Overwriting an existing result file
+can be forced using \code{force.overwrite = TRUE}.}
+
+\item{force.overwrite}{For \code{object} being an \code{MsExperiment} and parameter
+\code{hdf5File} being defined (see below): \code{logical(1)} whether an eventually
+existing result file should be overwritten.}
 
 \item{BPPARAM}{Parallel processing setup. Uses by default the system-wide
 default setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more details.}

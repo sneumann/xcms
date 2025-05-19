@@ -290,11 +290,13 @@ See also section \emph{Alignment of experiments including blanks} in the
 Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
 ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 \emph{Anal. Chem.}, 78 (17), 6140-6152.
+doi: \href{https://doi.org/10.1021/ac0605344}{10.1021/ac0605344}
 
 Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
 "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 Nonlinear Peak Alignment, Matching, and Identification" \emph{Anal. Chem.}
 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \seealso{
 \code{\link[=plotAdjustedRtime]{plotAdjustedRtime()}} for visualization of alignment results.

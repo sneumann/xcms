@@ -227,6 +227,7 @@ head(chromPeaks(res))
 Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
 detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
+doi: \href{https://doi.org/10.1093/bioinformatics/btu359}{10.1093/bioinformatics/btu359}
 }
 \seealso{
 The \code{\link[=do_findChromPeaks_massifquant]{do_findChromPeaks_massifquant()}} core API function

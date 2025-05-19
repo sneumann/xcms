@@ -888,15 +888,20 @@ setMethod(
     "findChromPeaks",
     signature(object = "MsExperiment", param = "Param"),
     function(object, param, msLevel = 1L, chunkSize = 2L,
-             hdf5File = character(), ..., BPPARAM = bpparam()) {
+             hdf5File = character(), force.overwrite = FALSE, ...,
+             BPPARAM = bpparam()) {
         if (length(msLevel) > 1)
             stop("Currently only peak detection in a single MS level is ",
                  "supported", call. = FALSE)
         if (length(hdf5File)) {
-            if (file.exists(hdf5File))
-                stop("File ", hdf5File, " already exists. Replacing results ",
-                     "is not supported. Please remove the file and try again",
-                     call. = FALSE)
+            if (file.exists(hdf5File)) {
+                if (force.overwrite)
+                    file.remove(hdf5File)
+                else stop("File ", hdf5File, " already exists. Replacing ",
+                          "results is not supported. Please remove the file ",
+                          "or use 'force.overwrite = TRUE'.",
+                          call. = FALSE)
+            }
             .h5_require_rhdf5()
             .h5_initialize_file(hdf5File)
             object <- as(object, "XcmsExperimentHdf5")

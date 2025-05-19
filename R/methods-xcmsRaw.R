@@ -336,11 +336,14 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 #' @return A matrix, each row representing an intentified chromatographic peak.
 #'
 #' @references
-#'     Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-#'     Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-#'     Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-#'     *Anal. Chem.* 2006, 78:779-787.
-#'     @family Old peak detection methods
+#'
+#' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+#' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+#' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+#' *Anal. Chem.* 2006, 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
+#'
+#' @family Old peak detection methods
 #'
 #' @md
 setMethod("findPeaks.matchedFilter", "xcmsRaw",

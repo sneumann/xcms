@@ -1127,7 +1127,7 @@ toXcmsExperiment <- function(object, ...) {
                                   "feature_to_chrom_peaks",
                                   ms_level = ms_level)[[1L]]
         for (j in js) { # iterate over ranges/EICs
-            idx <- which(.is_chrom_peaks_within_mz_rt(
+            idx <- which(.is_chrom_peak_within_mz_rt(
                 cp, rt[j, ], mz[j, ], type = chromPeaks), useNames = FALSE)
             li <- length(idx)
             a <- cbind(cp[idx, , drop = FALSE], sample = rep(i, li))
@@ -1266,7 +1266,7 @@ toXcmsExperiment <- function(object, ...) {
     d <- .h5_read_matrix2(
         name, h5, index, read_colnames, read_rownames, rownames)
     if (length(rt) | length(mz))
-        d <- d[.is_chrom_peaks_within_mz_rt(d, rt = rt, mz = mz,
+        d <- d[.is_chrom_peak_within_mz_rt(d, rt = rt, mz = mz,
                                             ppm = ppm, type = type), ,
                drop = FALSE]
     ## If sample_index is provided add a column "sample" with the index.

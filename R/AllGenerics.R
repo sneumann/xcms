@@ -261,11 +261,13 @@ setGeneric("addProcessHistory", function(object, ...)
 #' Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
 #' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 #' *Anal. Chem.*, 78 (17), 6140-6152.
+#' doi: [10.1021/ac0605344](https://doi.org/10.1021/ac0605344)
 #'
 #' Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
 #' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 #' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
 #' 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' @md
 setGeneric("adjustRtime", function(object, param, ...)
@@ -607,7 +609,8 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #'
 #' Kumler W, Hazelton B J and Ingalls A E (2023) "Picky with peakpicking:
 #' assessing chromatographic peak quality with simple metrics in metabolomics"
-#' *BMC Bioinformatics* 24(1):404. doi: 10.1186/s12859-023-05533-4
+#' *BMC Bioinformatics* 24(1):404.
+#' doi: [10.1186/s12859-023-05533-4](https://doi.org/10.1186/s12859-023-05533-4)
 #'
 #' @export
 setGeneric("chromPeakSummary", function(object, param, ...)
@@ -1241,11 +1244,17 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     for all `Spectra` *backends* (see eventually [Spectra::Spectra()] for
 #'     details).
 #'
+#' @param force.overwrite For `object` being an `MsExperiment` and parameter
+#'     `hdf5File` being defined (see below): `logical(1)` whether an eventually
+#'     existing result file should be overwritten.
+#'
 #' @param hdf5File For `object` being an `MsExperiment`: `character(1)`
 #'     specifying the name (inclusive path) of a file that should be used for
 #'     on-disk storage of preprocessing results. This option is suggested for
 #'     very large data sets since it significantly reduces the memory demand.
-#'     See [XcmsExperimentHdf5] for more information,
+#'     See [XcmsExperimentHdf5] for more information. Note that an error is
+#'     thrown if the file already exists. Overwriting an existing result file
+#'     can be forced using `force.overwrite = TRUE`.
 #'
 #' @param msLevel `integer(1)` defining the MS level on which the
 #'     chromatographic peak detection should be performed.
@@ -1540,10 +1549,12 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 #' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
 #' 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' Katajamaa, M., Miettinen, J., Oresic, M. (2006) "MZmine: Toolbox for
 #' processing and visualization of mass spectrometry based molecular profile
 #' data". *Bioinformatics*, 22:634-636.
+#' doi: [10.1093/bioinformatics/btk039](https://doi.org/10.1093/bioinformatics/btk039)
 #'
 #' Kazmi S. A., Ghosh, S., Shin, D., Hill, D.W., and Grant, D.F. (2006)
 #' "Alignment of high resolution mass spectra: development of a

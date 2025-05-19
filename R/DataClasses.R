@@ -489,6 +489,7 @@ setClass("XProcessHistory",
 #' Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
 #' sensitive feature detection for high resolution LC/MS" *BMC Bioinformatics*
 #' 2008, 9:504
+#' doi: [10.1186/1471-2105-9-504](https://doi.org/10.1186/1471-2105-9-504)
 #'
 #' @name findChromPeaks-centWave
 #'
@@ -697,10 +698,12 @@ setClass("CentWaveParam",
 #' peak detection in purely chromatographic data.
 #'
 #' @references
+#'
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #' *Anal. Chem.* 2006, 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' @author Colin A Smith, Johannes Rainer
 #'
@@ -894,6 +897,7 @@ setClass("MatchedFilterParam",
 #' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 #' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
 #' detection" *Bioinformatics* 2014, 30(18):2636-43.
+#' doi: [10.1093/bioinformatics/btu359](https://doi.org/10.1093/bioinformatics/btu359)
 #'
 #' @author Christopher Conley, Johannes Rainer
 #'

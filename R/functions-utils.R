@@ -409,6 +409,7 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 #' De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
 #' McConville M, Speed TP. Normalizing and integrating metabolomics data.
 #' *Anal Chem* 2012 Dec 18;84(24):10768-76.
+#' doi: [10.1021/ac302748b](https://doi.org/10.1021/ac302748b)
 #'
 #' @examples
 #'

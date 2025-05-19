@@ -221,6 +221,7 @@ head(res)
 Ralf Tautenhahn, Christoph Böttcher, and Steffen Neumann "Highly
 sensitive feature detection for high resolution LC/MS"
 \emph{BMC Bioinformatics} 2008, 9:504
+doi: \href{https://doi.org/10.1186/1471-2105-9-504}{10.1186/1471-2105-9-504}
 }
 \seealso{
 Other core peak detection functions: 

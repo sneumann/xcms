@@ -64,7 +64,8 @@ of this test.
 \references{
 Kumler W, Hazelton B J and Ingalls A E (2023) "Picky with peakpicking:
 assessing chromatographic peak quality with simple metrics in metabolomics"
-\emph{BMC Bioinformatics} 24(1):404. doi: 10.1186/s12859-023-05533-4
+\emph{BMC Bioinformatics} 24(1):404.
+doi: \href{https://doi.org/10.1186/s12859-023-05533-4}{10.1186/s12859-023-05533-4}
 }
 \author{
 Pablo Vangeenderhuysen, Johannes Rainer, William Kumler

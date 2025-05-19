@@ -185,10 +185,12 @@ Smith, C.A., Want E.J., O'Maille G., Abagyan R., and Siuzdak G. (2006)
 "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 Nonlinear Peak Alignment, Matching, and Identification" \emph{Anal. Chem.}
 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 
 Katajamaa, M., Miettinen, J., Oresic, M. (2006) "MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
 data". \emph{Bioinformatics}, 22:634-636.
+doi: \href{https://doi.org/10.1093/bioinformatics/btk039}{10.1093/bioinformatics/btk039}
 
 Kazmi S. A., Ghosh, S., Shin, D., Hill, D.W., and Grant, D.F. (2006)
 "Alignment of high resolution mass spectra: development of a
