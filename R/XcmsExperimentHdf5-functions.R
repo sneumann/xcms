@@ -954,7 +954,8 @@ toXcmsExperiment <- function(object, ...) {
     if (!all(col %in% cn))
         stop("Not all requested columns available. Please make sure 'value' ",
              "and 'intensity' (if defined) are available columns in the ",
-             "chrom peak matrix.", call. = FALSE)
+             "chrom peak matrix. Supported columns are ",
+             paste0("\"", cn, "\"", collapse = ", "), call. = FALSE)
     col_idx <- match(col, cn)
     rtmed <- rhdf5::h5read(x@hdf5_file,
                            paste0("/features/ms_", ms_level,
@@ -1372,7 +1373,8 @@ toXcmsExperiment <- function(object, ...) {
 #'
 #' Setting row and column names requires additional read steps and is hence
 #' considerably slower than *just* importing the data. Also, if possible,
-#' consider importing only the required column(s) using parameter `column`.
+#' consider importing only the required column(s) using optional parameter
+#' `columns`.
 #'
 #' @param h5_file `character(1)` with the HDF5 file name
 #'
@@ -1398,7 +1400,7 @@ toXcmsExperiment <- function(object, ...) {
 #'     select a **single** column to read. For `name = "chrom_peaks"`: `integer`
 #'     with the indices of the column(s) that should be imported.
 #'
-#' @param ... additional parameters passed to `FUN`
+#' @param ... additional parameters passed to `FUN`, such as `columns`.
 #'
 #' @return `list()` with the read datasets. Will be a `list` of `numeric`
 #'     matrices for `name = "chrom_peaks"` or a `list` with `data.frame`s for
@@ -1408,8 +1410,8 @@ toXcmsExperiment <- function(object, ...) {
 .h5_read_data <- function(h5_file = character(),
                           id = character(),
                           name = c("chrom_peaks", "chrom_peak_data",
-                                   "feature_definitions",
-                                   "feature_to_chrom_peaks"),
+                                    "feature_definitions",
+                                    "feature_to_chrom_peaks"),
                           ms_level = integer(),
                           read_colnames = FALSE,
                           read_rownames = FALSE,
