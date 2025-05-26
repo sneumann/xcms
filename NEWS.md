@@ -1,3 +1,10 @@
+# xcms 4.6
+
+## Changes in version 4.6.1
+
+- Fix issue in `chromPeakSpectra` for `XcmsExperiment` with duplicated chrom
+  peak IDs (issue #796).
+
 # xcms 4.5
 
 ## Changes in version 4.5.4
@@ -5,7 +12,7 @@
 - Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
   `AnnotatedDataFrame`.
 - Fix a bug in `manualChromPeaks()` that caused an error when only a single
-  chrom peak was added. 
+  chrom peak was added.
 
 ## Changes in version 4.5.3
 

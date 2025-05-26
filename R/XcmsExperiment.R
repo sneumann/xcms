@@ -1269,7 +1269,7 @@ setMethod(
             pkidx <- .i2index(peaks, rownames(.chromPeaks(object)), "peaks")
         else pkidx <- integer()
         res <- .mse_spectra_for_peaks(object, method, msLevel, expandRt,
-                                      expandMz, ppm, skipFilled, pkidx,
+                                      expandMz, ppm, skipFilled, unique(pkidx),
                                       chromPeakColumns,
                                       BPPARAM)
         if (!length(pkidx))
@@ -1278,7 +1278,7 @@ setMethod(
         if (return.type == "Spectra")
             res <- res[as.matrix(findMatches(peaks, res$chrom_peak_id))[, 2L]]
         else
-            as(split(res, factor(res$chrom_peak_id, levels = peaks)), "List")
+            as(split(res, factor(res$chrom_peak_id))[peaks], "List")
     })
 
 #' @rdname reconstructChromPeakSpectra
