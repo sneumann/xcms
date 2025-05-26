@@ -221,7 +221,6 @@ test_that("exportMetaboAnalyst works", {
 })
 
 test_that("chromPeakSpectra works", {
-    skip_on_os(os = "windows", arch = "i386")
 
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
     expect_error(ms2_mspectrum_for_all_peaks(xod_x, method = "other"))
@@ -273,6 +272,24 @@ test_that("chromPeakSpectra works", {
         res <- chromPeakSpectra(pest_dda, msLevel = 2L, return.type = "List")
         expect_true(is(res, "List"))
         expect_true(length(res) == nrow(chromPeaks(pest_dda)))
+
+        ## chrom peak IDs in any order
+        a <- chromPeakSpectra(
+            pest_dda, msLevel = 1L, return.type = "Spectra",
+            method = "closest_rt", peaks = c("CP01", "CP02"))
+        expect_equal(a$peak_id, c("CP01", "CP02"))
+        b <- chromPeakSpectra(
+            pest_dda, msLevel = 1L, return.type = "Spectra",
+            method = "closest_rt", peaks = c("CP02", "CP01"))
+        expect_equal(b$peak_id, c("CP02", "CP01"))
+        expect_equal(a$rtime, b$rtime[2:1])
+        ## duplicated chrom peak IDs
+        d <- chromPeakSpectra(
+            pest_dda, msLevel = 1L, return.type = "Spectra",
+            method = "closest_rt", peaks = c("CP01", "CP02", "CP01"))
+        expect_equal(length(d), 3)
+        expect_equal(d$peak_id, c("CP01", "CP02", "CP01"))
+        expect_equal(d$scanIndex, c(a$scanIndex, a$scanIndex[1L]))
     }
 })
 
