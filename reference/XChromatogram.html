@@ -25,7 +25,7 @@ Arguments section."><meta property="og:image" content="https://sneumann.github.i
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,9 +89,6 @@ representing samples and rows m/z-retention time ranges.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XChromatogram'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'XChromatogram'</span></span>
 <span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  rt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -146,9 +143,6 @@ representing samples and rows m/z-retention time ranges.</p>
 <span></span>
 <span><span class="co"># S4 method for class 'XChromatogram'</span></span>
 <span><span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">transformIntensity</a></span><span class="op">(</span><span class="va">object</span>, FUN <span class="op">=</span> <span class="va">identity</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'XChromatograms'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/methods/show.html" class="external-link">show</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XChromatograms'</span></span>
 <span><span class="fu"><a href="XCMSnExp-class.html">hasChromPeaks</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
@@ -535,7 +529,7 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
 
 <p>Objects can be created with the contructor function <code>XChromatogram</code> and
 <code>XChromatograms</code>, respectively. Also, they can be coerced from
-<a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> objects using
+<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> or <code><a href="https://lgatto.github.io/MSnbase/reference/MChromatograms-class.html" class="external-link">MSnbase::MChromatograms()</a></code> objects using
 <code>as(object, "XChromatogram")</code> or <code>as(object, "XChromatograms")</code>.</p>
     </div>
     <div class="section level2">
@@ -569,8 +563,8 @@ returns a filtered <code>XChromatogram</code> or <code>XChromatograms</code> obj
 
 
 
-<p>See also help of <a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">Chromatogram</a> in the <code>MSnbase</code> package for general
-information and data access. The methods listed here are specific for
+<p>See also help of <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> in the <em>MSnbase</em> package for
+general information and data access. The methods listed here are specific for
 <code>XChromatogram</code> and <code>XChromatograms</code> objects.</p><ul><li><p><code>chromPeaks</code>, <code>chromPeaks&lt;-</code>: extract or set the matrix with the
 chromatographic peak definitions. Parameter <code>rt</code> allows to specify a
 retention time range for which peaks should be returned along with
@@ -612,12 +606,12 @@ correspondence analysis results (and related process history).</p></li>
 <li><p><code>featureDefinitions</code>: for <code>XChromatograms</code> objects only. Extract the
 results from the correspondence analysis (performed with
 <code>groupChromPeaks</code>). Returns a <code>DataFrame</code> with the properties of the
-defined m/z-rt features: their m/z and retention time range. Columns
-<code>peakidx</code> and <code>row</code> contain the index of the chromatographic peaks in the
-<code>chromPeaks</code> matrix associated with the feature and the row in the
-<code>XChromatograms</code> object in which the feature was defined. Similar to the
-<code>chromPeaks</code> method it is possible to filter the returned feature matrix
-with the <code>mz</code>, <code>rt</code> and <code>ppm</code> parameters.</p></li>
+defined m/z-rt features: their m/z and retention time range. Column
+<code>peakidx</code> contains the index of the chromatographic peaks in the
+<code>chromPeaks</code> matrix associated with the feature. Column <code>"row"</code> contains
+the row in the <code>XChromatograms</code> object in which the feature was defined.
+Similar to the <code>chromPeaks</code> method it is possible to filter the returned
+feature matrix with the <code>mz</code>, <code>rt</code> and <code>ppm</code> parameters.</p></li>
 <li><p><code>featureValues</code>: for <code>XChromatograms</code> objects only. Extract the abundance
 estimates for the individuals features. Note that by default (with
 parameter <code>value = "index"</code> a <code>matrix</code> of indices of the peaks in the
@@ -645,10 +639,10 @@ the individual performed processing steps. Optional parameters <code>type</code>
 
 
 <ul><li><p><code>transformIntensity</code>: transforms the intensity values of the chromatograms
-with provided function <code>FUN</code>. See <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">transformIntensity()</a></code> in the <code>MSnbase</code>
-package for details. For <code>XChromatogram</code> and <code>XChromatograms</code> in addition
-to the intensity values also columns <code>"into"</code> and <code>"maxo"</code> in the object's
-<code>chromPeaks</code> matrix are transformed by the same function.</p></li>
+with provided function <code>FUN</code>. See <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::transformIntensity()</a></code> in the
+<em>MSnbase</em> package for details. For <code>XChromatogram</code> and <code>XChromatograms</code>
+in addition to the intensity values also columns <code>"into"</code> and <code>"maxo"</code>
+in the object's <code>chromPeaks</code> matrix are transformed by the same function.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="plotting-and-visualizing">Plotting and visualizing<a class="anchor" aria-label="anchor" href="#plotting-and-visualizing"></a></h2>
@@ -798,7 +792,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Peak detection </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Fri Mar 14 14:10:23 2025 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon May 26 14:36:56 2025 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: CentWaveParam </span>
@@ -970,7 +964,7 @@ detection on <code><a href="https://lgatto.github.io/MSnbase/reference/MChromato
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

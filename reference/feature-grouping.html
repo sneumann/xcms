@@ -17,7 +17,7 @@ The available options for groupFeatures on xcms preprocessing results
 analysis with groupChromPeaks()) are:
 Grouping by similar retention times: groupFeatures-similar-rtime().
 Grouping by similar feature values across samples:
-AbundanceSimilarityParam().
+MsFeatures::AbundanceSimilarityParam().
 Grouping by similar peak shape of extracted ion chromatograms:
 EicSimilarityParam().
 
@@ -42,7 +42,7 @@ The available options for groupFeatures on xcms preprocessing results
 analysis with groupChromPeaks()) are:
 Grouping by similar retention times: groupFeatures-similar-rtime().
 Grouping by similar feature values across samples:
-AbundanceSimilarityParam().
+MsFeatures::AbundanceSimilarityParam().
 Grouping by similar peak shape of extracted ion chromatograms:
 EicSimilarityParam().
 
@@ -57,7 +57,7 @@ Compounded feature groups can be accessed with the featureGroups function."><met
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@ parameters.</p>
 (i.e. on <code>XcmsExperiment</code> or <code>XCMSnExp</code> objects after correspondence
 analysis with <code><a href="groupChromPeaks.html">groupChromPeaks()</a></code>) are:</p><ul><li><p>Grouping by similar retention times: <code><a href="groupFeatures-similar-rtime.html">groupFeatures-similar-rtime()</a></code>.</p></li>
 <li><p>Grouping by similar feature values across samples:
-<code>AbundanceSimilarityParam()</code>.</p></li>
+<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-abundance.html" class="external-link">MsFeatures::AbundanceSimilarityParam()</a></code>.</p></li>
 <li><p>Grouping by similar peak shape of extracted ion chromatograms:
 <code><a href="groupFeatures-eic-similarity.html">EicSimilarityParam()</a></code>.</p></li>
 </ul><p>An ideal workflow grouping features should sequentially perform the above
@@ -157,7 +157,7 @@ in <code>object</code>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

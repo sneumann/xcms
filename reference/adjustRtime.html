@@ -99,7 +99,7 @@ information on the method.
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,7 +127,7 @@ information on the method.
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Alignment: Retention time correction methods.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 4 more</small>
+      <small class="dont-index">Source: <a href="https://github.com/sneumann/xcms/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/XcmsExperiment.R" class="external-link"><code>R/XcmsExperiment.R</code></a>, <a href="https://github.com/sneumann/xcms/blob/devel/R/functions-Params.R" class="external-link"><code>R/functions-Params.R</code></a>, and 3 more</small>
       <div class="d-none name"><code>adjustRtime.Rd</code></div>
     </div>
 
@@ -147,7 +147,7 @@ ones using the <code><a href="applyAdjustedRtime.html">applyAdjustedRtime()</a><
 rt data using the <em>obiwarp</em> method (Prince (2006)). It is based on the
 <a href="http://obi-warp.sourceforge.net" class="external-link">original code</a> but supports in addition
 alignment of multiple samples by aligning each against a <em>center</em> sample.
-The alignment is performed directly on the <a href="profMat-xcmsSet.html">profile-matrix</a> and can hence
+The alignment is performed directly on the <em>profile-matrix</em> and can hence
 be performed independently of the peak detection or peak grouping.</p></li>
 <li><p><code>PeakGroupsParam</code>: performs retention time correction based on the
 alignment of features defined in all/most samples (corresponding to
@@ -182,6 +182,8 @@ information on the method.</p></li>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">adjustRtimePeakGroups</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for class 'MsExperiment,ObiwarpParam'</span></span>
 <span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, chunkSize <span class="op">=</span> <span class="fl">2L</span>, BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -215,130 +217,11 @@ information on the method.</p></li>
 <span>  rtimeDifferenceThreshold <span class="op">=</span> <span class="fl">5</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">adjustRtimePeakGroups</span><span class="op">(</span><span class="va">object</span>, param <span class="op">=</span> <span class="fu">PeakGroupsParam</span><span class="op">(</span><span class="op">)</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># S4 method for class 'OnDiskMSnExp,ObiwarpParam'</span></span>
 <span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu"><a href="groupChromPeaks.html">minFraction</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu"><a href="groupChromPeaks.html">minFraction</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">extraPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">extraPeaks</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">smooth</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">smooth</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">span</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">span</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">family</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">family</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">peakGroupsMatrix</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">peakGroupsMatrix</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">subset</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">subset</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'PeakGroupsParam'</span></span>
-<span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
 <span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu"><a href="findChromPeaks-matchedFilter.html">binSize</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu"><a href="findChromPeaks-matchedFilter.html">binSize</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">centerSample</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">centerSample</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">response</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">response</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">distFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">distFun</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">gapInit</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">gapInit</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">gapExtend</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">gapExtend</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">factorDiag</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">factorDiag</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">factorGap</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">factorGap</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">localAlignment</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">localAlignment</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">initPenalty</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">initPenalty</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">subset</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">subset</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S4 method for class 'ObiwarpParam'</span></span>
-<span><span class="fu">subsetAdjust</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu">binSize</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp,PeakGroupsParam'</span></span>
 <span><span class="fu">adjustRtime</span><span class="op">(</span><span class="va">object</span>, <span class="va">param</span>, msLevel <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
@@ -405,12 +288,14 @@ proportion of subset samples).</p></dd>
 
 <dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
-number of additional peaks for all samples to be assigned to a peak
-group (feature) for retention time correction. For a data set with 6
-samples, <code>extraPeaks = 1</code> uses all peak groups with a total peak count
-<code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a
-sample that are assigned to the group.</p></dd>
+number of additional peaks for all
+samples to be assigned to a peak group (feature) for retention time
+correction. For a data set with 6 samples, <code>extraPeaks = 1</code> uses all
+peak groups with a total peak count <code>&lt;= 6 + 1</code>. The total peak count
+is the total number of peaks being assigned to a peak group and
+considers also multiple peaks within a sample that are assigned to
+the group. This parameter is ignored for <code>adjustRtime()</code> on an
+<code><a href="XcmsExperimentHdf5.html">XcmsExperimentHdf5()</a></code>.</p></dd>
 
 
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
@@ -457,7 +342,7 @@ See <em>Subset-based alignment</em> section for details.</p></dd>
 <dt id="arg-binsize">binSize<a class="anchor" aria-label="anchor" href="#arg-binsize"></a></dt>
 <dd><p><code>numeric(1)</code> defining the bin size (in mz dimension)
 to be used for the <em>profile matrix</em> generation. See <code>step</code>
-parameter in <code><a href="profMat-xcmsSet.html">profile-matrix</a></code> documentation for more details.</p></dd>
+parameter in <a href="profMat-xcmsSet.html">profile-matrix</a> documentation for more details.</p></dd>
 
 
 <dt id="arg-centersample">centerSample<a class="anchor" aria-label="anchor" href="#arg-centersample"></a></dt>
@@ -534,11 +419,7 @@ be increased. See also
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
-<dd><p>The value for the slot.</p></dd>
-
-
-<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An <code>ObiwarpParam</code>, <code>PeakGroupsParam</code> or <code>LamaParama</code> object.</p></dd>
+<dd><p>For all assignment methods: the value to set/replace.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -582,11 +463,13 @@ the non-subset sample to the subset samples used for alignment.</p>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
 ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
-<em>Anal. Chem.</em>, 78 (17), 6140-6152.</p>
+<em>Anal. Chem.</em>, 78 (17), 6140-6152.
+doi: <a href="https://doi.org/10.1021/ac0605344" class="external-link">10.1021/ac0605344</a></p>
 <p>Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
 "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 Nonlinear Peak Alignment, Matching, and Identification" <em>Anal. Chem.</em>
-78:779-787.</p>
+78:779-787.
+doi: <a href="https://doi.org/10.1021/ac051437y" class="external-link">10.1021/ac051437y</a></p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -606,7 +489,7 @@ Nonlinear Peak Alignment, Matching, and Identification" <em>Anal. Chem.</em>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

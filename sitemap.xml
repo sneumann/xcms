@@ -24,6 +24,7 @@
 <url><loc>https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/XChromatogram.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/XcmsExperiment.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/absent-methods.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/adjustRtime.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/applyAdjustedRtime.html</loc></url>
@@ -105,11 +106,13 @@
 <url><loc>https://sneumann.github.io/xcms/reference/groupnames-XCMSnExp.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/groupnames-methods.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/groupval-methods.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/hidden_aliases.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/highlightChromPeaks.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/image.xcmsRaw.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/imputeLinInterpol.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/imputeRowMin.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/imputeRowMinRand.html</loc></url>
+<url><loc>https://sneumann.github.io/xcms/reference/index.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/isolationWindowTargetMz-OnDiskMSnExp-method.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/levelplot.xcmsRaw.html</loc></url>
 <url><loc>https://sneumann.github.io/xcms/reference/loadRaw-methods.html</loc></url>

@@ -21,7 +21,7 @@ spectrum in each sample.'><meta property="og:image" content="https://sneumann.gi
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,12 +115,14 @@ proportion of subset samples).</p></dd>
 
 <dt id="arg-extrapeaks">extraPeaks<a class="anchor" aria-label="anchor" href="#arg-extrapeaks"></a></dt>
 <dd><p>For <code>PeakGroupsParam</code>: <code>numeric(1)</code> defining the maximal
-number of additional peaks for all samples to be assigned to a peak
-group (feature) for retention time correction. For a data set with 6
-samples, <code>extraPeaks = 1</code> uses all peak groups with a total peak count
-<code>&lt;= 6 + 1</code>. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a
-sample that are assigned to the group.</p></dd>
+number of additional peaks for all
+samples to be assigned to a peak group (feature) for retention time
+correction. For a data set with 6 samples, <code>extraPeaks = 1</code> uses all
+peak groups with a total peak count <code>&lt;= 6 + 1</code>. The total peak count
+is the total number of peaks being assigned to a peak group and
+considers also multiple peaks within a sample that are assigned to
+the group. This parameter is ignored for <code><a href="adjustRtime.html">adjustRtime()</a></code> on an
+<code><a href="XcmsExperimentHdf5.html">XcmsExperimentHdf5()</a></code>.</p></dd>
 
 
 <dt id="arg-smooth">smooth<a class="anchor" aria-label="anchor" href="#arg-smooth"></a></dt>
@@ -168,14 +170,14 @@ See <em>Subset-based alignment</em> section for details.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <code>list</code> with <code>numeric</code> vectors with the adjusted
-    retention times grouped by sample.</p>
+retention times grouped by sample.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The alignment bases on the presence of compounds that can be found
 in all/most samples of an experiment. The retention times of individual
 spectra are then adjusted based on the alignment of the features
-corresponding to these <em>house keeping compounds</em>. The paraneters
+corresponding to these <em>house keeping compounds</em>. The parameters
 <code>minFraction</code> and <code>extraPeaks</code> can be used to fine tune which
 features should be used for the alignment (i.e. which features
 most likely correspond to the above mentioned house keeping compounds).</p>
@@ -189,7 +191,7 @@ results of the <em>real</em> samples.</p>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>The method ensures that returned adjusted retention times are
-    increasingly ordered, just as the raw retention times.</p>
+increasingly ordered, just as the raw retention times.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -212,7 +214,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

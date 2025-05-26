@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="4.7" id="xcms-47">xcms 4.7<a class="anchor" aria-label="anchor" href="#xcms-47"></a></h2>
+<div class="section level3">
+<h3 id="changes-in-version-4-7">Changes in version 4.7.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7"></a></h3>
+<ul><li>Change the naming convention of chromatographic peaks to include also the MS level after <code>"CP"</code>: <code>"CP1001"</code> instead of <code>"CP001"</code> for a chromatographic peak in MS level 1 or <code>"CP2001"</code> instead of <code>"CP001"</code> for a chromatographic peak in MS level 2.</li>
+<li>Massively reduce main memory demand of <em>xcms</em> with the new on-disk storage mode of the preprocessing results: the new <code>XcmsExperimentHdf5</code> result object stores all preprocessing results in an HDF5 file.</li>
+<li>Optimization and performance improvements for extraction of chromatographic data. This includes using <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/reduce.html" class="external-link">MsCoreUtils::reduce()</a></code>.</li>
+<li>Restructure and clean-up of documentation.</li>
+<li>Don’t export unnecessary get/set methods for <code>Param</code> classes.</li>
+<li>Throw an error if parameters <code>mz</code> or <code>rt</code> for <code><a href="../reference/chromatogram-method.html">chromatogram()</a></code> contain missing values.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.5" id="xcms-45">xcms 4.5<a class="anchor" aria-label="anchor" href="#xcms-45"></a></h2>
 <div class="section level3">
 <h3 id="changes-in-version-4-5">Changes in version 4.5.4<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5"></a></h3>
@@ -57,7 +69,7 @@
 <div class="section level3">
 <h3 id="changes-in-version-4-5-2">Changes in version 4.5.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-2"></a></h3>
 <ul><li>Small update to <code><a href="../reference/featureSpectra.html">featureSpectra()</a></code> and <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> to allow addition of <code><a href="../reference/XCMSnExp-class.html">chromPeaks()</a></code> and <code>featuresDefinitions()</code> columns to be added to the <code>Spectra</code> output.</li>
-<li>Tidied the <code>xcms</code> vignette, to order the filtering of features and remove the outdated normalisation paragraph.In depth discussion on this subject can be found on <code>metabonaut</code>.</li>
+<li>Tidied the <code>xcms</code> vignette, to order the filtering of features and remove the outdated normalisation paragraph.In depth discussion on this subject can be found on <em>Metabonaut</em>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-in-version-4-5-3">Changes in version 4.5.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-5-3"></a></h3>
@@ -1082,7 +1094,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

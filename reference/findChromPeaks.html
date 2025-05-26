@@ -41,7 +41,7 @@ listed above."><meta property="og:image" content="https://sneumann.github.io/xcm
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,6 +101,8 @@ listed above.</p>
 <span>  <span class="va">param</span>,</span>
 <span>  msLevel <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  chunkSize <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  hdf5File <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  force.overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -155,6 +157,22 @@ processes) but using <code>chunkSize = </code>1<code>will not perform any parall
 details).</p></dd>
 
 
+<dt id="arg-hdf-file">hdf5File<a class="anchor" aria-label="anchor" href="#arg-hdf-file"></a></dt>
+<dd><p>For <code>object</code> being an <code>MsExperiment</code>: <code>character(1)</code>
+specifying the name (inclusive path) of a file that should be used for
+on-disk storage of preprocessing results. This option is suggested for
+very large data sets since it significantly reduces the memory demand.
+See <a href="XcmsExperimentHdf5.html">XcmsExperimentHdf5</a> for more information. Note that an error is
+thrown if the file already exists. Overwriting an existing result file
+can be forced using <code>force.overwrite = TRUE</code>.</p></dd>
+
+
+<dt id="arg-force-overwrite">force.overwrite<a class="anchor" aria-label="anchor" href="#arg-force-overwrite"></a></dt>
+<dd><p>For <code>object</code> being an <code>MsExperiment</code> and parameter
+<code>hdf5File</code> being defined (see below): <code>logical(1)</code> whether an eventually
+existing result file should be overwritten.</p></dd>
+
+
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Parallel processing setup. Uses by default the system-wide
 default setup. See <code><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">BiocParallel::bpparam()</a></code> for more details.</p></dd>
@@ -195,7 +213,7 @@ chromatographic peaks.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

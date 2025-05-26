@@ -39,7 +39,7 @@ the m/z and retention time range (include = &quot;any&quot;)."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -346,6 +346,7 @@ chromatographic peak.</p></div>
 <span class="r-in"><span><span class="co">## `features` can be either the feature IDs or feature indices.</span></span></span>
 <span class="r-in"><span><span class="va">chrs</span> <span class="op">&lt;-</span> <span class="fu">featureChromatograms</span><span class="op">(</span><span class="va">xdata</span>,</span></span>
 <span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">featureDefinitions</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing chromatographic peaks for features</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plot the EIC for the first feature using different colors for each file.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chrs</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -386,7 +387,7 @@ chromatographic peak.</p></div>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

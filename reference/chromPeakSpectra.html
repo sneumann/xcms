@@ -26,9 +26,10 @@ signal (&quot;maxo&quot;); only supported for msLevel = 2L.
 
 
 Parameter return.type allows to specify the type of the result object.
-With return.type = &quot;Spectra&quot; (the default) a Spectra object with all
-matching spectra is returned. With return.type = &quot;Spectra&quot; a List of
-Spectra is returned. The length of the list is equal to the number of rows
+With return.type = &quot;Spectra&quot; (the default) a Spectra::Spectra object
+with all matching spectra is returned. With return.type = &quot;Spectra&quot; a
+List of Spectra is returned.
+The length of the list is equal to the number of rows
 of chromPeaks. Each element of the list contains thus a Spectra with all
 spectra for one chromatographic peak (or a Spectra of length 0 if no
 spectrum was found for the respective chromatographic peak).
@@ -66,9 +67,10 @@ signal (&quot;maxo&quot;); only supported for msLevel = 2L.
 
 
 Parameter return.type allows to specify the type of the result object.
-With return.type = &quot;Spectra&quot; (the default) a Spectra object with all
-matching spectra is returned. With return.type = &quot;Spectra&quot; a List of
-Spectra is returned. The length of the list is equal to the number of rows
+With return.type = &quot;Spectra&quot; (the default) a Spectra::Spectra object
+with all matching spectra is returned. With return.type = &quot;Spectra&quot; a
+List of Spectra is returned.
+The length of the list is equal to the number of rows
 of chromPeaks. Each element of the list contains thus a Spectra with all
 spectra for one chromatographic peak (or a Spectra of length 0 if no
 spectrum was found for the respective chromatographic peak).
@@ -87,7 +89,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><me
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -144,9 +146,10 @@ intensity (maximal peak intensity).</p></li>
 spectrum with the sum of intensities most similar to the peak's apex
 signal (<code>"maxo"</code>); only supported for <code>msLevel = 2L</code>.</p></li>
 </ul><p>Parameter <code>return.type</code> allows to specify the <em>type</em> of the result object.
-With <code>return.type = "Spectra"</code> (the default) a Spectra object with all
-matching spectra is returned. With <code>return.type = "Spectra"</code> a <code>List</code> of
-<code>Spectra</code> is returned. The length of the list is equal to the number of rows
+With <code>return.type = "Spectra"</code> (the default) a <a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra</a> object
+with all matching spectra is returned. With <code>return.type = "Spectra"</code> a
+<code>List</code> of <code>Spectra</code> is returned.
+The length of the list is equal to the number of rows
 of <code>chromPeaks</code>. Each element of the list contains thus a <code>Spectra</code> with all
 spectra for one chromatographic peak (or a <code>Spectra</code> of length 0 if no
 spectrum was found for the respective chromatographic peak).</p>
@@ -272,12 +275,12 @@ Metadata column <code>"peak_id"</code> provides the ID of the respective peak
 chromatographic peaks is returned, each element being a <code>Spectra</code> with
 the spectra for one chromatographic peak.</p></li>
 </ul><p>For backward compatibility options <code>"MSpectra"</code> and <code>"list"</code> are also
-supported but are not suggested.</p><ul><li><p><code>return.type = "MSpectra"</code> (deprecated): a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSpectra</a> object with elements being
-<a href="https://lgatto.github.io/MSnbase/reference/Spectrum-class.html" class="external-link">Spectrum</a> objects. The result objects contains all spectra
-for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
+supported but are not suggested.</p><ul><li><p><code>return.type = "MSpectra"</code> (deprecated): a <a href="https://lgatto.github.io/MSnbase/reference/MSpectra.html" class="external-link">MSnbase::MSpectra</a> object
+with elements being <code>Spectrum</code> objects. The result objects contains all
+spectra for all peaks. Metadata column <code>"peak_id"</code> provides the ID of the
 respective peak (i.e. its rowname in <code><a href="XCMSnExp-class.html">chromPeaks()</a></code>).</p></li>
 <li><p><code>return.type = "list"</code>: <code>list</code> of <code>list</code>s that are either of length
-0 or contain <a href="https://lgatto.github.io/MSnbase/reference/Spectrum2-class.html" class="external-link">Spectrum2</a> object(s) within the m/z-rt range. The
+0 or contain <code>Spectrum2</code> object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.</p></li>
 </ul></div>
     <div class="section level2">
@@ -320,8 +323,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Fri Mar 14 14:10:43 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Fri Mar 14 14:10:43 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon May 26 14:37:18 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:18 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## spectra variable *chrom_peak_id* contain the row names of the peaks in the</span></span></span>
 <span class="r-in"><span><span class="co">## chromPeak matrix and allow thus to map chromatographic peaks to the</span></span></span>
@@ -420,8 +423,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Fri Mar 14 14:10:43 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Fri Mar 14 14:10:44 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon May 26 14:37:18 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:18 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter `msLevel` allows to define from which MS level spectra should</span></span></span>
 <span class="r-in"><span><span class="co">## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all</span></span></span>
@@ -454,14 +457,26 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Fri Mar 14 14:10:44 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Fri Mar 14 14:10:44 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon May 26 14:37:18 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:19 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter peaks would allow to extract spectra for specific peaks only.</span></span></span>
 <span class="r-in"><span><span class="co">## Peaks can be defined with parameter `peaks` which can be either an</span></span></span>
 <span class="r-in"><span><span class="co">## `integer` with the index of the peak in the `chromPeaks` matrix or a</span></span></span>
 <span class="r-in"><span><span class="co">## `character` with its rowname in `chromPeaks`.</span></span></span>
 <span class="r-in"><span><span class="fu">chromPeakSpectra</span><span class="op">(</span><span class="va">dda</span>, msLevel <span class="op">=</span> <span class="fl">1L</span>, method <span class="op">=</span> <span class="st">"closest_rt"</span>, peaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> MSn data (Spectra) with 2 spectra in a MsBackendMzR backend:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     msLevel     rtime scanIndex</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         1   358.349      2813</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         1   366.568      2924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ... 37 more variables/columns.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon May 26 14:37:19 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:19 2025] </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -473,7 +488,7 @@ length of the list matches the number of peaks.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>

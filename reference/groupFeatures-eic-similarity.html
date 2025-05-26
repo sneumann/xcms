@@ -6,12 +6,15 @@ extracted ion chromatograms (EICs). The similarity calculation is performed
 separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter threshold) will be performed.
-The compareChromatograms() function is used for similarity calculation
-which by default calculates the Pearson's correlation coefficient. The
-settings for compareChromatograms can be specified with parameters
+The MSnbase::compareChromatograms() function is used for similarity
+calculation which by default calculates the Pearson's correlation
+coefficient. The
+settings for compareChromatograms() can be specified with parameters
 ALIGNFUN, ALIGNFUNARGS, FUN and FUNARGS. ALIGNFUN defaults to
-alignRt() and is the function used to align the chromatograms before
-comparison. ALIGNFUNARGS allows to specify additional arguments for the
+alignRt and is the function used to align the chromatograms
+before comparison. For information and parameters of alignRt() see the
+documentation for MSnbase::Chromatogram().
+ALIGNFUNARGS allows to specify additional arguments for the
 ALIGNFUN function. It defaults to
 ALIGNFUNARGS = list(tolerance = 0, method = &quot;closest&quot;) which ensures that
 data points from the same spectrum (scan, i.e. with the same retention time)
@@ -19,18 +22,19 @@ are compared between the EICs from the same sample. Parameter FUN defines
 the function to calculate the similarity score and defaults to FUN = cor
 and FUNARGS allows to pass additional arguments to this function (defaults
 to FUNARGS = list(use = &quot;pairwise.complete.obs&quot;). See also
-compareChromatograms() for more information.
+MSnbase::compareChromatograms() for more information.
 The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter groupFun which defaults to
 groupFun = groupSimilarityMatrix which groups all rows (features) in the
 similarity matrix with a similarity score larger than threshold into the
 same cluster. This creates clusters of features in which all features
 have a similarity score &amp;gt;= threshold with any other feature in that
-cluster. See groupSimilarityMatrix() for details. Additional parameters to
-that function can be passed with the ... argument.
+cluster. See MsFeatures::groupSimilarityMatrix() for details.
+Additional parameters to that function can be passed with the ... argument.
 This feature grouping should be called after an initial feature
-grouping by retention time (see SimilarRtimeParam()). The feature groups
-defined in columns &quot;feature_group&quot; of featureDefinitions(object) (for
+grouping by retention time (see MsFeatures::SimilarRtimeParam()).
+The feature groups defined in columns &quot;feature_group&quot; of
+featureDefinitions(object) (for
 features matching msLevel) will be used and refined by this method.
 Features with a value of NA in featureDefinitions(object)$feature_group
 will be skipped/not considered for feature grouping."><meta property="og:description" content="Features from the same originating compound are expected to share their
@@ -40,12 +44,15 @@ extracted ion chromatograms (EICs). The similarity calculation is performed
 separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter threshold) will be performed.
-The compareChromatograms() function is used for similarity calculation
-which by default calculates the Pearson's correlation coefficient. The
-settings for compareChromatograms can be specified with parameters
+The MSnbase::compareChromatograms() function is used for similarity
+calculation which by default calculates the Pearson's correlation
+coefficient. The
+settings for compareChromatograms() can be specified with parameters
 ALIGNFUN, ALIGNFUNARGS, FUN and FUNARGS. ALIGNFUN defaults to
-alignRt() and is the function used to align the chromatograms before
-comparison. ALIGNFUNARGS allows to specify additional arguments for the
+alignRt and is the function used to align the chromatograms
+before comparison. For information and parameters of alignRt() see the
+documentation for MSnbase::Chromatogram().
+ALIGNFUNARGS allows to specify additional arguments for the
 ALIGNFUN function. It defaults to
 ALIGNFUNARGS = list(tolerance = 0, method = &quot;closest&quot;) which ensures that
 data points from the same spectrum (scan, i.e. with the same retention time)
@@ -53,18 +60,19 @@ are compared between the EICs from the same sample. Parameter FUN defines
 the function to calculate the similarity score and defaults to FUN = cor
 and FUNARGS allows to pass additional arguments to this function (defaults
 to FUNARGS = list(use = &quot;pairwise.complete.obs&quot;). See also
-compareChromatograms() for more information.
+MSnbase::compareChromatograms() for more information.
 The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter groupFun which defaults to
 groupFun = groupSimilarityMatrix which groups all rows (features) in the
 similarity matrix with a similarity score larger than threshold into the
 same cluster. This creates clusters of features in which all features
 have a similarity score &amp;gt;= threshold with any other feature in that
-cluster. See groupSimilarityMatrix() for details. Additional parameters to
-that function can be passed with the ... argument.
+cluster. See MsFeatures::groupSimilarityMatrix() for details.
+Additional parameters to that function can be passed with the ... argument.
 This feature grouping should be called after an initial feature
-grouping by retention time (see SimilarRtimeParam()). The feature groups
-defined in columns &quot;feature_group&quot; of featureDefinitions(object) (for
+grouping by retention time (see MsFeatures::SimilarRtimeParam()).
+The feature groups defined in columns &quot;feature_group&quot; of
+featureDefinitions(object) (for
 features matching msLevel) will be used and refined by this method.
 Features with a value of NA in featureDefinitions(object)$feature_group
 will be skipped/not considered for feature grouping."><meta property="og:image" content="https://sneumann.github.io/xcms/logo.png"></head><body>
@@ -75,7 +83,7 @@ will be skipped/not considered for feature grouping."><meta property="og:image" 
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,12 +123,15 @@ extracted ion chromatograms (EICs). The similarity calculation is performed
 separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter <code>threshold</code>) will be performed.</p>
-<p>The <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> function is used for similarity calculation
-which by default calculates the Pearson's correlation coefficient. The
-settings for <code>compareChromatograms</code> can be specified with parameters
+<p>The <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::compareChromatograms()</a></code> function is used for similarity
+calculation which by default calculates the Pearson's correlation
+coefficient. The
+settings for <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> can be specified with parameters
 <code>ALIGNFUN</code>, <code>ALIGNFUNARGS</code>, <code>FUN</code> and <code>FUNARGS</code>. <code>ALIGNFUN</code> defaults to
-<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and is the function used to <em>align</em> the chromatograms before
-comparison. <code>ALIGNFUNARGS</code> allows to specify additional arguments for the
+<code>alignRt</code> and is the function used to <em>align</em> the chromatograms
+before comparison. For information and parameters of <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> see the
+documentation for <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code>.
+<code>ALIGNFUNARGS</code> allows to specify additional arguments for the
 <code>ALIGNFUN</code> function. It defaults to
 <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code> which ensures that
 data points from the same spectrum (scan, i.e. with the same retention time)
@@ -128,18 +139,19 @@ are compared between the EICs from the same sample. Parameter <code>FUN</code> d
 the function to calculate the similarity score and defaults to <code>FUN = cor</code>
 and <code>FUNARGS</code> allows to pass additional arguments to this function (defaults
 to <code>FUNARGS = list(use = "pairwise.complete.obs")</code>. See also
-<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> for more information.</p>
+<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::compareChromatograms()</a></code> for more information.</p>
 <p>The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter <code>groupFun</code> which defaults to
 <code>groupFun = groupSimilarityMatrix</code> which groups all rows (features) in the
 similarity matrix with a similarity score larger than <code>threshold</code> into the
 same cluster. This creates clusters of features in which <strong>all</strong> features
 have a similarity score <code>&gt;= threshold</code> with <strong>any</strong> other feature in that
-cluster. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code> for details. Additional parameters to
-that function can be passed with the <code>...</code> argument.</p>
+cluster. See <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">MsFeatures::groupSimilarityMatrix()</a></code> for details.
+Additional parameters to that function can be passed with the <code>...</code> argument.</p>
 <p>This feature grouping should be called <strong>after</strong> an initial feature
-grouping by retention time (see <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">SimilarRtimeParam()</a></code>). The feature groups
-defined in columns <code>"feature_group"</code> of <code>featureDefinitions(object)</code> (for
+grouping by retention time (see <code><a href="https://rdrr.io/pkg/MsFeatures/man/groupFeatures-similar-rtime.html" class="external-link">MsFeatures::SimilarRtimeParam()</a></code>).
+The feature groups defined in columns <code>"feature_group"</code> of
+<code>featureDefinitions(object)</code> (for
 features matching <code>msLevel</code>) will be used and refined by this method.
 Features with a value of <code>NA</code> in <code>featureDefinitions(object)$feature_group</code>
 will be skipped/not considered for feature grouping.</p>
@@ -195,14 +207,14 @@ or the integrated peak area (<code>value = "into"</code>) for a feature.</p></dd
 <dt id="arg-groupfun">groupFun<a class="anchor" aria-label="anchor" href="#arg-groupfun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to group rows
 based on a pairwise similarity matrix. Defaults to
-<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">groupSimilarityMatrix()</a></code>.</p></dd>
+<code><a href="https://rdrr.io/pkg/MsFeatures/man/groupSimilarityMatrix.html" class="external-link">MsFeatures::groupSimilarityMatrix()</a></code>.</p></dd>
 
 
 <dt id="arg-alignfun">ALIGNFUN<a class="anchor" aria-label="anchor" href="#arg-alignfun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to <em>align</em>
 chromatograms prior similarity calculation. Defaults to
-<code>ALIGNFUN = alignRt</code>. See <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">alignRt()</a></code> and <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> for
-more information.</p></dd>
+<code>ALIGNFUN = alignRt</code>. See documentation of <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::Chromatogram()</a></code> and
+<code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::compareChromatograms()</a></code> for more information.</p></dd>
 
 
 <dt id="arg-alignfunargs">ALIGNFUNARGS<a class="anchor" aria-label="anchor" href="#arg-alignfunargs"></a></dt>
@@ -213,7 +225,7 @@ Defaults to <code>ALIGNFUNARGS = list(tolerance = 0, method = "closest")</code>.
 <dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p><code>function</code> defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to <code>FUN = cor</code>.
-See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">compareChromatograms()</a></code> for more information.</p></dd>
+See <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor()</a></code> and <code><a href="https://lgatto.github.io/MSnbase/reference/Chromatogram-class.html" class="external-link">MSnbase::compareChromatograms()</a></code> for more information.</p></dd>
 
 
 <dt id="arg-funargs">FUNARGS<a class="anchor" aria-label="anchor" href="#arg-funargs"></a></dt>
@@ -342,7 +354,7 @@ is excluded from the correlation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>
