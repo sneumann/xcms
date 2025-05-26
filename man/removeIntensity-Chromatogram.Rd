@@ -47,8 +47,8 @@ object) \code{which = "outside_chromPeak"} can be selected which removes any
 intensity which is outside the boundaries of identified chromatographic
 peak(s) in the chromatographic data.
 
-Note that \code{\link[=filterIntensity]{filterIntensity()}} might be a better approach to subset/filter
-chromatographic data.
+Note that \code{filterIntensity()} might be a better approach to
+subset/filter chromatographic data.
 }
 \examples{
 

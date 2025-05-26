@@ -5,8 +5,6 @@
 \alias{GenericParam-class}
 \alias{GenericParam}
 \alias{Param}
-\alias{class:Param}
-\alias{Param-class}
 \title{Generic parameter class}
 \usage{
 GenericParam(fun = character(), args = list())
@@ -17,17 +15,17 @@ GenericParam(fun = character(), args = list())
 \item{args}{\code{list} (ideally named) with the arguments to the function.}
 }
 \value{
-The \code{GenericParam} function returns a \code{GenericParam}
-    object.
+The \code{GenericParam()} function returns a \code{GenericParam}
+object.
 }
 \description{
 The \code{GenericParam} class allows to store generic parameter
-    information such as the name of the function that was/has to be called
-    (slot \code{fun}) and its arguments (slot \code{args}). This object is
-    used to track the process history of the data processings of an
-    \code{\link{XCMSnExp}} object. This is in contrast to e.g. the
-    \code{\link{CentWaveParam}} object that is passed to the actual
-    processing method.
+information such as the name of the function that was/has to be called
+(slot \code{fun}) and its arguments (slot \code{args}). This object is
+used to track the process history of the data processings of an
+\link{XCMSnExp} object. This is in contrast to e.g. the
+\code{\link[=CentWaveParam]{CentWaveParam()}} object that is passed to the actual
+processing method.
 }
 \section{Slots}{
 
@@ -44,8 +42,8 @@ prm <- GenericParam(fun = "mean")
 prm <- GenericParam(fun = "mean", args = list(na.rm = TRUE))
 }
 \seealso{
-\code{\link{processHistory}} for how to access the process history
-    of an \code{\link{XCMSnExp}} object.
+\code{\link[=processHistory]{processHistory()}} for how to access the process history
+of an \link{XCMSnExp} object.
 }
 \author{
 Johannes Rainer

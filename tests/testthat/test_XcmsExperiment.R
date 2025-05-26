@@ -1412,6 +1412,26 @@ test_that("findChromPeaksIsolationWindow, etc, MsExperiment works", {
     expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(a)))
     expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
     expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
+
+    ## With an XcmsExperimentHdf5
+    tf <- tempfile()
+    a_h5 <- .xcms_experiment_to_hdf5(a, tf)
+    expect_true(hasChromPeaks(a_h5, 1L))
+    expect_true(hasChromPeaks(a_h5, 2L))
+
+    res <- filterIsolationWindow(a_h5)
+    expect_equal(chromPeaks(res), chromPeaks(a_h5))
+
+    res <- filterIsolationWindow(a_h5, mz = 301)
+    expect_true(length(spectra(res)) < length(spectra(mse_dia)))
+    expect_true(all(isolationWindowLowerMz(res@spectra) < 301))
+    expect_true(all(isolationWindowUpperMz(res@spectra) > 301))
+
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(a)))
+    expect_true(all(chromPeakData(res)$isolationWindowLowerMz < 301))
+    expect_true(all(chromPeakData(res)$isolationWindowUpperMz > 301))
+
+    rm(tf)
 })
 
 test_that("chromPeaksChromatograms,XcmsExperiment works", {
@@ -1485,4 +1505,35 @@ test_that("c,XcmsExperiment works", {
     expect_s4_class(res, "XcmsExperiment")
     expect_true(length(res) == length(a) * 2)
     expect_true(nrow(chromPeaks(res)) == nrow(chromPeaks(a)) * 2)
+})
+
+test_that("adjustRtime,XcmsExperiment,LamaParama works", {
+    pks <- chromPeaks(xmse)[1:100, c("mz", "rt")]
+    lp <- LamaParama(lamas = cbind(pks[, 1], pks[, 2] + 4),
+                     toleranceRt = 10, tolerance = 0.2)
+
+    expect_error(adjustRtime(as(mse, "XcmsExperiment"), lp),
+                 "detected chromPeaks")
+    lp <- matchLamasChromPeaks(xmse, lp)
+    lp@rtMap <- lp@rtMap[1:2]
+    expect_error(adjustRtime(xmse, lp), "Mismatch between the number")
+
+    lp <- matchLamasChromPeaks(xmse, lp)
+    lp@rtMap[[2L]] <- lp@rtMap[[2]][1:6, ]
+
+    expect_warning(res <- adjustRtime(xmse, lp, BPPARAM = SerialParam()),
+                   "for sample 2")
+    expect_s4_class(res, "XcmsExperiment")
+    ## No adjustment for 2nd sample
+    pks <- chromPeaks(xmse)
+    res_pks <- chromPeaks(res)
+    expect_equal(res_pks[res_pks[, "sample"] == 2, "rt"],
+                 pks[pks[, "sample"] == 2, "rt"])
+    expect_true(all(res_pks[res_pks[, "sample"] != 2, "rt"] !=
+                    pks[pks[, "sample"] != 2, "rt"]))
+    res_rt <- split(rtime(res), fromFile(res))
+    rt <- split(rtime(xmse), fromFile(xmse))
+    expect_equal(res_rt[[2]], rt[[2]])
+    expect_true(all(res_rt[[1]] != rt[[1]]))
+    expect_true(all(res_rt[[3]] != rt[[3]]))
 })

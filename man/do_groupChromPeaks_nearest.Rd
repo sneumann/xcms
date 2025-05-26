@@ -71,6 +71,7 @@ correspondence algorithm of mzMine (Katajamaa 2006).
 Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
 data. Bioinformatics 2006, 22:634-636.
+doi: \href{https://doi.org/10.1093/bioinformatics/btk039}{10.1093/bioinformatics/btk039}
 }
 \seealso{
 Other core peak grouping algorithms: 

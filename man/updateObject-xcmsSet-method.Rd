@@ -2,24 +2,24 @@
 % Please edit documentation in R/methods-xcmsSet.R
 \name{updateObject,xcmsSet-method}
 \alias{updateObject,xcmsSet-method}
-\title{Update an \code{\linkS4class{xcmsSet}} object}
+\title{Update an \code{xcmsSet} object}
 \usage{
 \S4method{updateObject}{xcmsSet}(object, ..., verbose = FALSE)
 }
 \arguments{
-\item{object}{The \code{\linkS4class{xcmsSet}} object to update.}
+\item{object}{The \code{xcmsSet} object to update.}
 
 \item{...}{Optional additional arguments. Currently ignored.}
 
 \item{verbose}{Currently ignored.}
 }
 \value{
-An updated \code{\linkS4class{xcmsSet}} containing all data from
+An updated \code{xcmsSet} containing all data from
 the input object.
 }
 \description{
-This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
-    object to the latest definition.
+This method updates an old \code{xcmsSet}
+object to the latest definition.
 }
 \author{
 Johannes Rainer

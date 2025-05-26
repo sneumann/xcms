@@ -109,9 +109,9 @@ All methods return an \link{XCMSnExp} object.
 }
 \description{
 The methods listed on this page allow to filter and subset \link{XCMSnExp}
-objects. Most of them are inherited from the \link{OnDiskMSnExp} object defined
-in the \code{MSnbase} package and have been adapted for \code{XCMSnExp} to enable
-correct subsetting of preprocessing results.
+objects. Most of them are inherited from the \link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object
+defined in the \emph{MSnbase} package and have been adapted for \code{XCMSnExp} to
+enable correct subsetting of preprocessing results.
 \itemize{
 \item \code{[}: subset a \code{XCMSnExp} object by spectra. Be aware that this removes
 \strong{all} preprocessing results, except adjusted retention times if

@@ -38,7 +38,7 @@ featureSpectra(object, ...)
 \item{object}{\link{XcmsExperiment} or \link{XCMSnExp} object with feature defitions.}
 
 \item{...}{additional arguments to be passed along to \code{\link[=chromPeakSpectra]{chromPeakSpectra()}},
-such as \code{method}.}
+such as \code{method} or \code{chromPeakColumns}.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level of the spectra that
 should be returned.}

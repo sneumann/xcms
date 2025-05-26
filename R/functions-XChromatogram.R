@@ -59,7 +59,7 @@
 #'
 #' Objects can be created with the contructor function `XChromatogram` and
 #' `XChromatograms`, respectively. Also, they can be coerced from
-#' [Chromatogram] or [MSnbase::MChromatograms()] objects using
+#' [MSnbase::Chromatogram()] or [MSnbase::MChromatograms()] objects using
 #' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
 #'
 #' @section Filtering and subsetting:

@@ -41,19 +41,19 @@ or the integrated peak area (\code{value = "into"}) for a feature.}
 
 \item{groupFun}{\code{function} defining the function to be used to group rows
 based on a pairwise similarity matrix. Defaults to
-\code{\link[=groupSimilarityMatrix]{groupSimilarityMatrix()}}.}
+\code{\link[MsFeatures:groupSimilarityMatrix]{MsFeatures::groupSimilarityMatrix()}}.}
 
 \item{ALIGNFUN}{\code{function} defining the function to be used to \emph{align}
 chromatograms prior similarity calculation. Defaults to
-\code{ALIGNFUN = alignRt}. See \code{\link[=alignRt]{alignRt()}} and \code{\link[=compareChromatograms]{compareChromatograms()}} for
-more information.}
+\code{ALIGNFUN = alignRt}. See documentation of \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} and
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.}
 
 \item{ALIGNFUNARGS}{\strong{named} \code{list} with arguments for \code{ALIGNFUN}.
 Defaults to \code{ALIGNFUNARGS = list(tolerance = 0, method = "closest")}.}
 
 \item{FUN}{\code{function} defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to \code{FUN = cor}.
-See \code{\link[=cor]{cor()}} and \code{\link[=compareChromatograms]{compareChromatograms()}} for more information.}
+See \code{\link[=cor]{cor()}} and \code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.}
 
 \item{FUNARGS}{\strong{named} \code{list} with arguments for \code{FUN}. Defaults to
 \code{FUN = list(use = "pairwise.complete.obs")}.}
@@ -83,12 +83,15 @@ separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter \code{threshold}) will be performed.
 
-The \code{\link[=compareChromatograms]{compareChromatograms()}} function is used for similarity calculation
-which by default calculates the Pearson's correlation coefficient. The
-settings for \code{compareChromatograms} can be specified with parameters
+The \code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} function is used for similarity
+calculation which by default calculates the Pearson's correlation
+coefficient. The
+settings for \code{compareChromatograms()} can be specified with parameters
 \code{ALIGNFUN}, \code{ALIGNFUNARGS}, \code{FUN} and \code{FUNARGS}. \code{ALIGNFUN} defaults to
-\code{\link[=alignRt]{alignRt()}} and is the function used to \emph{align} the chromatograms before
-comparison. \code{ALIGNFUNARGS} allows to specify additional arguments for the
+\code{alignRt} and is the function used to \emph{align} the chromatograms
+before comparison. For information and parameters of \code{alignRt()} see the
+documentation for \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}}.
+\code{ALIGNFUNARGS} allows to specify additional arguments for the
 \code{ALIGNFUN} function. It defaults to
 \code{ALIGNFUNARGS = list(tolerance = 0, method = "closest")} which ensures that
 data points from the same spectrum (scan, i.e. with the same retention time)
@@ -96,7 +99,7 @@ are compared between the EICs from the same sample. Parameter \code{FUN} defines
 the function to calculate the similarity score and defaults to \code{FUN = cor}
 and \code{FUNARGS} allows to pass additional arguments to this function (defaults
 to \code{FUNARGS = list(use = "pairwise.complete.obs")}. See also
-\code{\link[=compareChromatograms]{compareChromatograms()}} for more information.
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.
 
 The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter \code{groupFun} which defaults to
@@ -104,12 +107,13 @@ with the function specified with parameter \code{groupFun} which defaults to
 similarity matrix with a similarity score larger than \code{threshold} into the
 same cluster. This creates clusters of features in which \strong{all} features
 have a similarity score \verb{>= threshold} with \strong{any} other feature in that
-cluster. See \code{\link[=groupSimilarityMatrix]{groupSimilarityMatrix()}} for details. Additional parameters to
-that function can be passed with the \code{...} argument.
+cluster. See \code{\link[MsFeatures:groupSimilarityMatrix]{MsFeatures::groupSimilarityMatrix()}} for details.
+Additional parameters to that function can be passed with the \code{...} argument.
 
 This feature grouping should be called \strong{after} an initial feature
-grouping by retention time (see \code{\link[=SimilarRtimeParam]{SimilarRtimeParam()}}). The feature groups
-defined in columns \code{"feature_group"} of \code{featureDefinitions(object)} (for
+grouping by retention time (see \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}}).
+The feature groups defined in columns \code{"feature_group"} of
+\code{featureDefinitions(object)} (for
 features matching \code{msLevel}) will be used and refined by this method.
 Features with a value of \code{NA} in \code{featureDefinitions(object)$feature_group}
 will be skipped/not considered for feature grouping.

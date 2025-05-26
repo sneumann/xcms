@@ -13,17 +13,17 @@ RsdFilter(threshold = 0.3, qcIndex = integer(), na.rm = TRUE, mad = FALSE)
 \S4method{filterFeatures}{SummarizedExperiment,RsdFilter}(object, filter, assay = 1)
 }
 \arguments{
-\item{threshold}{`numeric` value representing the threshold. Features with a
-coefficient of variation *strictly higher* (`>`) than this will be removed
+\item{threshold}{\code{numeric} value representing the threshold. Features with a
+coefficient of variation \emph{strictly higher} (\code{>}) than this will be removed
 from the entire dataset.}
 
-\item{qcIndex}{`integer` (or `logical`) vector corresponding to the indices
+\item{qcIndex}{\code{integer} (or \code{logical}) vector corresponding to the indices
 of QC samples.}
 
-\item{na.rm}{`logical` indicates whether missing values (`NA`) should be
+\item{na.rm}{\code{logical} indicates whether missing values (\code{NA}) should be
 removed prior to the calculations.}
 
-\item{mad}{`logical` indicates whether the *Median Absolute Deviation* (MAD)
+\item{mad}{\code{logical} indicates whether the \emph{Median Absolute Deviation} (MAD)
 should be used instead of the standard deviation. This is suggested for
 non-gaussian distributed data.}
 
@@ -46,16 +46,16 @@ assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
-For `RsdFilter`: a `RsdFilter` class. `filterFeatures` return the
+For \code{RsdFilter}: a \code{RsdFilter} class. \code{filterFeatures} return the
 input object minus the features that did not met the user input threshold.
 }
 \description{
-The `RsdFilter` class and methods enable users to filter features from an
-`XcmsExperiment` or `SummarizedExperiment` object based on their relative
+The \code{RsdFilter} class and methods enable users to filter features from an
+\code{XcmsExperiment} or \code{SummarizedExperiment} object based on their relative
 standard deviation (coefficient of variation) for a specified threshold.
 
-This `filter` is part of the possible dispatch of the generic function
-`filterFeatures`. Features *above* (`>`) the user-input threshold will be
+This \code{filter} is part of the possible dispatch of the generic function
+\code{filterFeatures}. Features \emph{above} (\code{>}) the user-input threshold will be
 removed from the entire dataset.
 }
 \note{

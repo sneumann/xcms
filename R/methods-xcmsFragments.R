@@ -3,6 +3,7 @@
 
 ############################################################
 ## show
+#' @rdname hidden_aliases
 setMethod("show", "xcmsFragments", .xcmsFragments.show)
 
 ############################################################
@@ -76,4 +77,3 @@ setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=25, print=TRUE)
     }
     return(foundFrag)
 })
-

@@ -55,7 +55,7 @@ manualFeatures(object, ...)
 \S4method{manualFeatures}{XCMSnExp}(object, peakIdx = list(), msLevel = 1L)
 }
 \arguments{
-\item{object}{\link{XcmsExperiment}, \link{XCMSnExp} or \link{OnDiskMSnExp} object.}
+\item{object}{\link{XcmsExperiment}, \link{XCMSnExp} or \link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object.}
 
 \item{...}{ignored.}
 

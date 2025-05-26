@@ -13,14 +13,14 @@ PercentMissingFilter(threshold = 30, f = factor())
 \S4method{filterFeatures}{SummarizedExperiment,PercentMissingFilter}(object, filter, assay = 1)
 }
 \arguments{
-\item{threshold}{`numeric` percentage (between 0 and 100) of accepted missing
+\item{threshold}{\code{numeric} percentage (between 0 and 100) of accepted missing
 values for a feature in one sample group.}
 
-\item{f}{`vector` of the same length as the `object`, specifying the sample
+\item{f}{\code{vector} of the same length as the \code{object}, specifying the sample
 type for each sample in the dataset. The percentage of missing values per
-feature will be computed within each of these sample groups. Parameter `f`,
-if not already a `factor`, will be converted to one using the factor function.
-Samples with an `NA` as their value in `f` will be excluded from calculation.}
+feature will be computed within each of these sample groups. Parameter \code{f},
+if not already a \code{factor}, will be converted to one using the factor function.
+Samples with an \code{NA} as their value in \code{f} will be excluded from calculation.}
 
 \item{object}{\code{XcmsExperiment} or \code{SummarizedExperiment}. For an
 \code{XcmsExperiment} object, the \code{featureValues(object)} will be evaluated, and
@@ -41,20 +41,20 @@ assay. Default is 1, which means the first assay of the \code{object} will
 be evaluated.}
 }
 \value{
-For `PercentMissingFilter`: a `PercentMissingFilter` class.
-`filterFeatures` return the input object minus the features that did not met
+For \code{PercentMissingFilter}: a \code{PercentMissingFilter} class.
+\code{filterFeatures} return the input object minus the features that did not met
 the user input threshold
 }
 \description{
-The `PercentMissingFilter` class and method enable users to filter features
-from an `XcmsExperiment` or `SummarizedExperiment` object based on the
+The \code{PercentMissingFilter} class and method enable users to filter features
+from an \code{XcmsExperiment} or \code{SummarizedExperiment} object based on the
 percentage (values from 1 to 100) of missing values for each features in
 different sample groups and filters them according to a provided threshold.
 
-This `filter` is part of the possible dispatch of the generic function
-`filterFeatures`. Features with a percentage of missing values *higher* (`>`)
+This \code{filter} is part of the possible dispatch of the generic function
+\code{filterFeatures}. Features with a percentage of missing values \emph{higher} (\code{>})
 than the user input threshold in all sample groups will be removed (i.e.
-features for which the proportion of missing values is below (`<=`) the
+features for which the proportion of missing values is below (\code{<=}) the
 threshold in at least one sample group will be retained).
 }
 \seealso{

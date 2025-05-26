@@ -2,7 +2,7 @@
 #' @include functions-xcmsEIC.R
 
 ############################################################
-## show
+#' @rdname hidden_aliases
 setMethod("show", "xcmsEIC", function(object) {
 
     cat("An \"xcmsEIC\" object with", length(object@eic), "samples\n\n")

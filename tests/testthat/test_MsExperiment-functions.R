@@ -258,6 +258,10 @@ test_that(".mse_chromatogram works", {
     expect_equal(nrow(res), 2)
     expect_true(validObject(res))
 
+    expect_error(.mse_chromatogram(
+        mse, mz = mzr, rt = cbind(c(300, 310), c(123, NA))),
+        "Missing values")
+
     ref <- chromatogram(faahko_od, mz = mzr, rt = rtr)
     expect_equal(unname(intensity(ref[1, 2])), intensity(res[1, 2]))
     expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))

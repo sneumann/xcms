@@ -228,7 +228,7 @@ Before performing the grouping we could also evaluate the correlation of
 features based on their (log2 transformed) abundances across samples with a
 heatmap.
 
-```{r abundance-correlation-heatmap, fig.cap = "Correlation of features based on feature abundances.", fig.width = 6, fig.height = 16}
+```{r abundance-correlation-heatmap, fig.cap = "Heatmap representing pairwise correlation of features based on abundances across samples. Features are grouped on rows and columns."}
 library(pheatmap)
 fvals <- log2(featureValues(xmse, filled = TRUE))
 
@@ -237,7 +237,8 @@ ann <- data.frame(fgroup = featureGroups(xmse))
 rownames(ann) <- rownames(cormat)
 
 res <- pheatmap(cormat, annotation_row = ann, cluster_rows = TRUE,
-                cluster_cols = TRUE)
+                cluster_cols = TRUE, show_rownames = FALSE,
+                show_colnames = FALSE)
 ```
 
 Some large correlations can be observed for several groups of features, but many

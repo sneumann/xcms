@@ -3,7 +3,7 @@
 \name{highlightChromPeaks}
 \alias{highlightChromPeaks}
 \title{Add definition of chromatographic peaks to an extracted chromatogram
-    plot}
+plot}
 \usage{
 highlightChromPeaks(
   x,
@@ -19,10 +19,10 @@ highlightChromPeaks(
 )
 }
 \arguments{
-\item{x}{For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
+\item{x}{For \code{highlightChromPeaks()}: \code{XCMSnExp} object with the
 detected peaks.}
 
-\item{rt}{For \code{highlightChromPeaks}: \code{numeric(2)} with the
+\item{rt}{For \code{highlightChromPeaks()}: \code{numeric(2)} with the
 retention time range from which peaks should be extracted and plotted.}
 
 \item{mz}{\code{numeric(2)} with the mz range from which the peaks should
@@ -37,13 +37,13 @@ Has to be equal to the number of samples in \code{x}.}
 
 \item{lwd}{\code{numeric(1)} defining the width of the line/border.}
 
-\item{col}{For \code{highlightChromPeaks}: color to be used to fill the
+\item{col}{For \code{highlightChromPeaks()}: color to be used to fill the
 rectangle (if \code{type = "rect"}) or the peak
 (for \code{type = "polygon"}).}
 
-\item{type}{the plotting type. See \code{\link{plot}} in base grapics for
+\item{type}{the plotting type. See \code{plot()} in base grapics for
 more details.
-For \code{highlightChromPeaks}: \code{character(1)} defining how the peak
+For \code{highlightChromPeaks()}: \code{character(1)} defining how the peak
 should be highlighted: \code{type = "rect"} draws a rectangle
 representing the peak definition, \code{type = "point"} indicates a
 chromatographic peak with a single point at the position of the peak's
@@ -58,17 +58,17 @@ one of \code{"any"}, \code{"within"}, and \code{"apex_within"} for all
 peaks that are even partially overlapping the region, peaks that are
 completely within the region, and peaks for which the apex is within
 the region. This parameter is passed to the \code{type} argument of the
-\code{\link{chromPeaks}} function. See related documentation for more
+\code{\link[=chromPeaks]{chromPeaks()}} function. See related documentation for more
 information and examples.}
 
-\item{...}{additional parameters to the \code{\link{matplot}} or \code{plot}
+\item{...}{additional parameters to the \code{matplot()} or \code{plot()}
 function.}
 }
 \description{
-The \code{highlightChromPeaks} function adds chromatographic
+The \code{highlightChromPeaks()} function adds chromatographic
 peak definitions to an existing plot, such as one created by the
-\code{plot} method on a \code{\link{Chromatogram}} or
-\code{\link{MChromatograms}} object.
+\code{plot()} method on a \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or
+\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object.
 }
 \examples{
 

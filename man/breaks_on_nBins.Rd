@@ -7,15 +7,15 @@
 breaks_on_nBins(fromX, toX, nBins, shiftByHalfBinSize = FALSE)
 }
 \arguments{
-\item{fromX}{numeric(1) specifying the lowest value for the bins.}
+\item{fromX}{\code{numeric(1)} specifying the lowest value for the bins.}
 
-\item{toX}{numeric(1) specifying the largest value for the bins.}
+\item{toX}{\code{numeric(1)} specifying the largest value for the bins.}
 
-\item{nBins}{numeric(1) defining the number of bins.}
+\item{nBins}{\code{numeric(1)} defining the number of bins.}
 
-\item{shiftByHalfBinSize}{Logical indicating whether the bins should be shifted
-left by half bin size. This results centered bins, i.e. the first bin being
-centered at \code{fromX} and the last around \code{toX}.}
+\item{shiftByHalfBinSize}{Logical indicating whether the bins should be
+shifted left by half bin size. This results centered bins, i.e. the
+first bin being centered at \code{fromX} and the last around \code{toX}.}
 }
 \value{
 A numeric vector of length \code{nBins + 1} defining the lower and
@@ -38,7 +38,7 @@ breaks_on_nBins(3, 20, nBins = 20)
 breaks_on_nBins(3, 20, nBins = 20, shiftByHalfBinSize = TRUE)
 }
 \seealso{
-\code{\link{binYonX}} for a binning function.
+\code{\link[=binYonX]{binYonX()}} for a binning function.
 
 Other functions to define bins: 
 \code{\link{breaks_on_binSize}()}

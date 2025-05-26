@@ -15,7 +15,7 @@
 \S4method{findChromPeaks}{MChromatograms,MatchedFilterParam}(object, param, BPPARAM = BPPARAM, ...)
 }
 \arguments{
-\item{object}{a \link{Chromatogram} or \link{MChromatograms} object.}
+\item{object}{a \link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram} or \link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms} object.}
 
 \item{param}{a \link{CentWaveParam} object specifying the settings for the
 peak detection. See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for the description of
@@ -35,10 +35,10 @@ minimum m/z value of the \code{Chromatogram} object. See \code{\link[=peaksWithC
 for details on the remaining columns.
 }
 \description{
-\code{findChromPeaks} on a \link{Chromatogram} or \link{MChromatograms} object with a
-\link{CentWaveParam} parameter object performs centWave-based peak detection
-on purely chromatographic data. See \link{centWave} for details on the method
-and \link{CentWaveParam} for details on the parameter class.
+\code{findChromPeaks} on a \link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram} or \link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms}
+object with a \link{CentWaveParam} parameter object performs centWave-based
+peak detection on purely chromatographic data. See \link{centWave} for details
+on the method and \link{CentWaveParam} for details on the parameter class.
 Note that not all settings from the \code{CentWaveParam} will be used.
 See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for the arguments used for peak detection
 on purely chromatographic data.

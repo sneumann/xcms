@@ -92,12 +92,12 @@ the spectra for one chromatographic peak.
 For backward compatibility options \code{"MSpectra"} and \code{"list"} are also
 supported but are not suggested.
 \itemize{
-\item \code{return.type = "MSpectra"} (deprecated): a \link{MSpectra} object with elements being
-\linkS4class{Spectrum} objects. The result objects contains all spectra
-for all peaks. Metadata column \code{"peak_id"} provides the ID of the
+\item \code{return.type = "MSpectra"} (deprecated): a \link[MSnbase:MSpectra]{MSnbase::MSpectra} object
+with elements being \code{Spectrum} objects. The result objects contains all
+spectra for all peaks. Metadata column \code{"peak_id"} provides the ID of the
 respective peak (i.e. its rowname in \code{\link[=chromPeaks]{chromPeaks()}}).
 \item \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
-0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
+0 or contain \code{Spectrum2} object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.
 }
 }
@@ -130,9 +130,10 @@ signal (\code{"maxo"}); only supported for \code{msLevel = 2L}.
 }
 
 Parameter \code{return.type} allows to specify the \emph{type} of the result object.
-With \code{return.type = "Spectra"} (the default) a \link{Spectra} object with all
-matching spectra is returned. With \code{return.type = "Spectra"} a \code{List} of
-\code{Spectra} is returned. The length of the list is equal to the number of rows
+With \code{return.type = "Spectra"} (the default) a \link[Spectra:Spectra]{Spectra::Spectra} object
+with all matching spectra is returned. With \code{return.type = "Spectra"} a
+\code{List} of \code{Spectra} is returned.
+The length of the list is equal to the number of rows
 of \code{chromPeaks}. Each element of the list contains thus a \code{Spectra} with all
 spectra for one chromatographic peak (or a \code{Spectra} of length 0 if no
 spectrum was found for the respective chromatographic peak).

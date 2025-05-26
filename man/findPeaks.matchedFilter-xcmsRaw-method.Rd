@@ -20,7 +20,7 @@
 )
 }
 \arguments{
-\item{object}{The \code{\linkS4class{xcmsRaw}} object on which peak detection
+\item{object}{The \code{xcmsRaw} object on which peak detection
 should be performed.}
 
 \item{fwhm}{\code{numeric(1)} specifying the full width at half maximum
@@ -57,42 +57,21 @@ as it could cause problems in parallel processing mode.}
 original \code{object} should be sub-setted before peak detection.}
 }
 \value{
-A matrix, each row representing an intentified chromatographic peak,
-    with columns:
-    \describe{
-    \item{mz}{Intensity weighted mean of m/z values of the peak across
-    scans.}
-    \item{mzmin}{Minimum m/z of the peak.}
-    \item{mzmax}{Maximum m/z of the peak.}
-    \item{rt}{Retention time of the peak's midpoint.}
-    \item{rtmin}{Minimum retention time of the peak.}
-    \item{rtmax}{Maximum retention time of the peak.}
-    \item{into}{Integrated (original) intensity of the peak.}
-    \item{intf}{Integrated intensity of the filtered peak.}
-    \item{maxo}{Maximum intensity of the peak.}
-    \item{maxf}{Maximum intensity of the filtered peak.}
-    \item{i}{Rank of peak in merged EIC (\code{<= max}).}
-    \item{sn}{Signal to noise ratio of the peak.}
-    }
+A matrix, each row representing an intentified chromatographic peak.
 }
 \description{
 Find peaks in the chromatographic time domain of the
-    profile matrix. For more details see
-    \code{\link{do_findChromPeaks_matchedFilter}}.
+profile matrix. For more details see
+\code{\link[=do_findChromPeaks_matchedFilter]{do_findChromPeaks_matchedFilter()}}.
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-    Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-    Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-    \emph{Anal. Chem.} 2006, 78:779-787.
-    @family Old peak detection methods
-}
-\seealso{
-\code{\link{matchedFilter}} for the new user interface.
-    \code{\linkS4class{xcmsRaw}},
-    \code{\link{do_findChromPeaks_matchedFilter}} for the core function
-    performing the peak detection.
+Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+\emph{Anal. Chem.} 2006, 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \author{
 Colin A. Smith
 }
+\concept{Old peak detection methods}

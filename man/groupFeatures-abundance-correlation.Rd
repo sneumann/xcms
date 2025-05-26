@@ -21,25 +21,25 @@
 pre-processing results.}
 
 \item{param}{\code{AbudanceSimilarityParam} object with the settings for the
-method. See \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for details on the grouping
-method and its parameters.}
+method. See \code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} for details on
+the grouping method and its parameters.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the features
 should be grouped.}
 
-\item{method}{\code{character(1)} passed to the \code{featureValues} call. See
+\item{method}{\code{character(1)} passed to the \code{featureValues()} call. See
 \code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{method = "medret"}.}
 
-\item{value}{\code{character(1)} passed to the \code{featureValues} call. See
+\item{value}{\code{character(1)} passed to the \code{featureValues()} call. See
 \code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{value = "into"}.}
 
-\item{intensity}{\code{character(1)} passed to the \code{featureValues} call. See
+\item{intensity}{\code{character(1)} passed to the \code{featureValues()} call. See
 \code{\link[=featureValues]{featureValues()}} for details. Defaults to \code{intensity = "into"}.}
 
 \item{filled}{\code{logical(1)} whether filled-in values should be included in
 the correlation analysis. Defaults to \code{filled = TRUE}.}
 
-\item{...}{additional parameters passed to the \code{groupFeatures} method for
+\item{...}{additional parameters passed to the \code{groupFeatures()} method for
 \code{matrix}.}
 }
 \value{
@@ -51,13 +51,14 @@ Features from the same originating compound are expected to have similar
 intensities across samples. This method thus groups features based on
 similarity of abundances (i.e. \emph{feature values}) across samples in a
 data set.
-See also \code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} for additional information and
-details.
+See also \code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} for additional
+information and details.
 
 This help page lists parameters specific for \code{xcms} result objects (i.e.
 \code{\link[=XcmsExperiment]{XcmsExperiment()}} and \code{\link[=XCMSnExp]{XCMSnExp()}} objects). Documentation of the
 parameters for the similarity calculation is available in the
-\code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}} help page in the \code{MsFeatures} package.
+\code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} help page in the \emph{MsFeatures}
+package.
 }
 \examples{
 

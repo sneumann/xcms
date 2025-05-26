@@ -4,10 +4,10 @@
 #'
 #' @description
 #'
-#' `findChromPeaks` on a [Chromatogram] or [MChromatograms] object with a
-#' [CentWaveParam] parameter object performs centWave-based peak detection
-#' on purely chromatographic data. See [centWave] for details on the method
-#' and [CentWaveParam] for details on the parameter class.
+#' `findChromPeaks` on a [MSnbase::Chromatogram] or [MSnbase::MChromatograms]
+#' object with a [CentWaveParam] parameter object performs centWave-based
+#' peak detection on purely chromatographic data. See [centWave] for details
+#' on the method and [CentWaveParam] for details on the parameter class.
 #' Note that not all settings from the `CentWaveParam` will be used.
 #' See [peaksWithCentWave()] for the arguments used for peak detection
 #' on purely chromatographic data.
@@ -16,7 +16,7 @@
 #' with the [refineChromPeaks()] method, which can help to reduce peak
 #' detection artifacts.
 #'
-#' @param object a [Chromatogram] or [MChromatograms] object.
+#' @param object a [MSnbase::Chromatogram] or [MSnbase::MChromatograms] object.
 #'
 #' @param param a [CentWaveParam] object specifying the settings for the
 #'     peak detection. See [peaksWithCentWave()] for the description of
@@ -88,7 +88,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
-#' `findChromPeaks` on a [Chromatogram] or [MChromatograms] object with a
+#' `findChromPeaks` on a [MSnbase::Chromatogram()] or
+#' [MSnbase::MChromatograms()] object with a
 #' [MatchedFilterParam] parameter object performs matchedFilter-based peak
 #' detection on purely chromatographic data. See [matchedFilter] for details
 #' on the method and [MatchedFilterParam] for details on the parameter class.
@@ -96,7 +97,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' See [peaksWithMatchedFilter()] for the arguments used for peak detection
 #' on purely chromatographic data.
 #'
-#' @param object a [Chromatogram] or [MChromatograms] object.
+#' @param object a [MSnbase::Chromatogram()] or [MSnbase::MChromatograms()]
+#'     object.
 #'
 #' @param param a [MatchedFilterParam] object specifying the settings for the
 #'     peak detection. See [peaksWithMatchedFilter()] for the description of
@@ -158,8 +160,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'
 #' @description
 #'
-#' **For `xcms` >= 3.15.3 please use [compareChromatograms()] instead of
-#' `correlate`**
+#' **For `xcms` >= 3.15.3 please use [MSnbase::compareChromatograms()] instead
+#' of `correlate`**
 #'
 #' Correlate intensities of two chromatograms with each other. If the two
 #' `Chromatogram` objects have different retention times they are first
@@ -254,8 +256,8 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' intensity which is outside the boundaries of identified chromatographic
 #' peak(s) in the chromatographic data.
 #'
-#' Note that [filterIntensity()] might be a better approach to subset/filter
-#' chromatographic data.
+#' Note that `filterIntensity()` might be a better approach to
+#' subset/filter chromatographic data.
 #'
 #' @param object an object representing chromatographic data. Can be a
 #'     [MSnbase::Chromatogram()], [MSnbase::MChromatograms()],

@@ -8,7 +8,6 @@
 \alias{XChromatogram-class}
 \alias{XChromatograms-class}
 \alias{coerce,MChromatograms,XChromatograms-method}
-\alias{show,XChromatogram-method}
 \alias{chromPeaks,XChromatogram-method}
 \alias{chromPeaks<-,XChromatogram-method}
 \alias{plot,XChromatogram,ANY-method}
@@ -21,7 +20,6 @@
 \alias{refineChromPeaks,XChromatogram,MergeNeighboringPeaksParam-method}
 \alias{filterChromPeaks,XChromatogram-method}
 \alias{transformIntensity,XChromatogram-method}
-\alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{hasFilledChromPeaks,XChromatograms-method}
 \alias{chromPeaks,XChromatograms-method}
@@ -58,8 +56,6 @@ XChromatogram(
   chromPeaks,
   chromPeakData
 )
-
-\S4method{show}{XChromatogram}(object)
 
 \S4method{chromPeaks}{XChromatogram}(
   object,
@@ -104,8 +100,6 @@ XChromatogram(
 \S4method{filterChromPeaks}{XChromatogram}(object, method = c("keepTop"), ...)
 
 \S4method{transformIntensity}{XChromatogram}(object, FUN = identity)
-
-\S4method{show}{XChromatograms}(object)
 
 \S4method{hasChromPeaks}{XChromatograms}(object)
 
@@ -407,7 +401,7 @@ used to extract the chromatogram was larger than the peak's m/z.
 
 Objects can be created with the contructor function \code{XChromatogram} and
 \code{XChromatograms}, respectively. Also, they can be coerced from
-\link{Chromatogram} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects using
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects using
 \code{as(object, "XChromatogram")} or \code{as(object, "XChromatograms")}.
 }
 
@@ -442,8 +436,8 @@ returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 \section{Accessing data}{
 
 
-See also help of \link{Chromatogram} in the \code{MSnbase} package for general
-information and data access. The methods listed here are specific for
+See also help of \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} in the \emph{MSnbase} package for
+general information and data access. The methods listed here are specific for
 \code{XChromatogram} and \code{XChromatograms} objects.
 \itemize{
 \item \code{chromPeaks}, \verb{chromPeaks<-}: extract or set the matrix with the
@@ -487,12 +481,12 @@ correspondence analysis results (and related process history).
 \item \code{featureDefinitions}: for \code{XChromatograms} objects only. Extract the
 results from the correspondence analysis (performed with
 \code{groupChromPeaks}). Returns a \code{DataFrame} with the properties of the
-defined m/z-rt features: their m/z and retention time range. Columns
-\code{peakidx} and \code{row} contain the index of the chromatographic peaks in the
-\code{chromPeaks} matrix associated with the feature and the row in the
-\code{XChromatograms} object in which the feature was defined. Similar to the
-\code{chromPeaks} method it is possible to filter the returned feature matrix
-with the \code{mz}, \code{rt} and \code{ppm} parameters.
+defined m/z-rt features: their m/z and retention time range. Column
+\code{peakidx} contains the index of the chromatographic peaks in the
+\code{chromPeaks} matrix associated with the feature. Column \code{"row"} contains
+the row in the \code{XChromatograms} object in which the feature was defined.
+Similar to the \code{chromPeaks} method it is possible to filter the returned
+feature matrix with the \code{mz}, \code{rt} and \code{ppm} parameters.
 \item \code{featureValues}: for \code{XChromatograms} objects only. Extract the abundance
 estimates for the individuals features. Note that by default (with
 parameter \code{value = "index"} a \code{matrix} of indices of the peaks in the
@@ -523,10 +517,10 @@ the individual performed processing steps. Optional parameters \code{type} and
 
 \itemize{
 \item \code{transformIntensity}: transforms the intensity values of the chromatograms
-with provided function \code{FUN}. See \code{\link[=transformIntensity]{transformIntensity()}} in the \code{MSnbase}
-package for details. For \code{XChromatogram} and \code{XChromatograms} in addition
-to the intensity values also columns \code{"into"} and \code{"maxo"} in the object's
-\code{chromPeaks} matrix are transformed by the same function.
+with provided function \code{FUN}. See \code{\link[MSnbase:Chromatogram-class]{MSnbase::transformIntensity()}} in the
+\emph{MSnbase} package for details. For \code{XChromatogram} and \code{XChromatograms}
+in addition to the intensity values also columns \code{"into"} and \code{"maxo"}
+in the object's \code{chromPeaks} matrix are transformed by the same function.
 }
 }
 

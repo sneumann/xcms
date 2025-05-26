@@ -3,7 +3,6 @@
 \alias{xcmsFragments-class}
 \alias{plotTree}
 \alias{plotTree,xcmsFragments-method}
-\alias{show,xcmsFragments-method}
 
 \title{Class xcmsFragments, a class for handling Tandem MS and MS$^n$ data}
 \description{

@@ -1,3 +1,21 @@
+# xcms 4.7
+
+## Changes in version 4.7.1
+
+- Change the naming convention of chromatographic peaks to include also the MS
+  level after `"CP"`: `"CP1001"` instead of `"CP001"` for a chromatographic peak
+  in MS level 1  or `"CP2001"` instead of `"CP001"` for a chromatographic peak
+  in MS level 2.
+- Massively reduce main memory demand of *xcms* with the new on-disk storage
+  mode of the preprocessing results: the new `XcmsExperimentHdf5` result object
+  stores all preprocessing results in an HDF5 file.
+- Optimization and performance improvements for extraction of chromatographic
+  data. This includes using `MsCoreUtils::reduce()`.
+- Restructure and clean-up of documentation.
+- Don't export unnecessary get/set methods for `Param` classes.
+- Throw an error if parameters `mz` or `rt` for `chromatogram()` contain
+  missing values.
+
 # xcms 4.5
 
 ## Changes in version 4.5.4
@@ -5,7 +23,7 @@
 - Replace usage of deprecated (and removed) class `NAnnotatedDataFrame` with
   `AnnotatedDataFrame`.
 - Fix a bug in `manualChromPeaks()` that caused an error when only a single
-  chrom peak was added. 
+  chrom peak was added.
 
 ## Changes in version 4.5.3
 
@@ -27,7 +45,7 @@
   `Spectra` output.
 - Tidied the `xcms` vignette, to order the filtering of features and remove
   the outdated normalisation paragraph.In depth discussion on this subject can
-  be found on `metabonaut`.
+  be found on *Metabonaut*.
 
 ## Changes in version 4.5.1
 

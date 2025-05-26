@@ -11,14 +11,14 @@
 \S4method{dirname}{OnDiskMSnExp}(path) <- value
 }
 \arguments{
-\item{path}{\linkS4class{OnDiskMSnExp}.}
+\item{path}{\code{OnDiskMSnExp}.}
 
 \item{value}{\code{character} of length 1 or length equal to the number of files
 defining the new path to the files.}
 }
 \description{
 \code{dirname} allows to get and set the path to the directory containing the
-source files of the \linkS4class{OnDiskMSnExp} (or \linkS4class{XCMSnExp}) object.
+source files of the \code{OnDiskMSnExp} (or \linkS4class{XCMSnExp}) object.
 }
 \author{
 Johannes Rainer

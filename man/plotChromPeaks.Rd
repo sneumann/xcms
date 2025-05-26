@@ -33,73 +33,73 @@ plotChromPeakImage(
 )
 }
 \arguments{
-\item{x}{A [XcmsExperiment()] or [XCMSnExp()] object.}
+\item{x}{A \code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object.}
 
-\item{file}{For `plotChromPeaks`: `integer(1)` specifying the
-index of the file within `x` for which the plot should be created.
-Defaults to `file = 1`.}
+\item{file}{For \code{plotChromPeaks}: \code{integer(1)} specifying the
+index of the file within \code{x} for which the plot should be created.
+Defaults to \code{file = 1}.}
 
-\item{xlim}{`numeric(2)` specifying the x-axis limits (retention time
-dimension). Defaults to `xlim = NULL` in which case the full retention
+\item{xlim}{\code{numeric(2)} specifying the x-axis limits (retention time
+dimension). Defaults to \code{xlim = NULL} in which case the full retention
 time range of the file is used.}
 
-\item{ylim}{For `plotChromPeaks`: `numeric(2)` specifying the
-y-axis limits (m/z dimension). Defaults to `ylim = NULL` in which
+\item{ylim}{For \code{plotChromPeaks}: \code{numeric(2)} specifying the
+y-axis limits (m/z dimension). Defaults to \code{ylim = NULL} in which
 case the full m/z range of the file is used.}
 
-\item{add}{For `plotChromPeaks`: `logical(1)` whether the plot
+\item{add}{For \code{plotChromPeaks}: \code{logical(1)} whether the plot
 should be added to an existing plot or if a new plot should be created.}
 
-\item{border}{For `plotChromPeaks`: the color for the rectangles'
+\item{border}{For \code{plotChromPeaks}: the color for the rectangles'
 border.}
 
-\item{col}{For `plotChromPeaks`: the color to be used to fill the
+\item{col}{For \code{plotChromPeaks}: the color to be used to fill the
 rectangles.}
 
-\item{xlab}{`character(1)` defining the x-axis label.}
+\item{xlab}{\code{character(1)} defining the x-axis label.}
 
-\item{ylab}{For `plotChromPeaks`: `character(1)` defining the
+\item{ylab}{For \code{plotChromPeaks}: \code{character(1)} defining the
 y-axis label.}
 
-\item{main}{`character(1)` defining the plot title. By default (i.e.
-`main = NULL`) the name of the file will be used as title.}
+\item{main}{\code{character(1)} defining the plot title. By default (i.e.
+\code{main = NULL}) the name of the file will be used as title.}
 
-\item{msLevel}{`integer(1)` defining the MS level from which the peaks
+\item{msLevel}{\code{integer(1)} defining the MS level from which the peaks
 should be visualized.}
 
-\item{...}{Additional arguments passed to the `plot` (for
-`plotChromPeaks`) and `image` (for
-`plotChromPeakImage`) functions. Ignored for `add = TRUE`.}
+\item{...}{Additional arguments passed to the \code{plot} (for
+\code{plotChromPeaks}) and \code{image} (for
+\code{plotChromPeakImage}) functions. Ignored for \code{add = TRUE}.}
 
-\item{binSize}{For `plotChromPeakImage`: `numeric(1)` defining the
+\item{binSize}{For \code{plotChromPeakImage}: \code{numeric(1)} defining the
 size of the bins along the x-axis (retention time). Defaults to
-`binSize = 30`, peaks within each 30 seconds will thus counted and
+\code{binSize = 30}, peaks within each 30 seconds will thus counted and
 plotted.}
 
-\item{log}{For `plotChromPeakImage`: `logical(1)` whether the peak
+\item{log}{For \code{plotChromPeakImage}: \code{logical(1)} whether the peak
 counts should be log2 transformed before plotting.}
 
-\item{yaxt}{For `plotChromPeakImage`: `character(1)` defining
+\item{yaxt}{For \code{plotChromPeakImage}: \code{character(1)} defining
 whether y-axis labels should be added. To disable the y-axis use
-`yaxt = "n"`. For any other value of `yaxt` the axis will be
-drawn. See [par()] help page for more details.}
+\code{yaxt = "n"}. For any other value of \code{yaxt} the axis will be
+drawn. See \code{\link[=par]{par()}} help page for more details.}
 }
 \description{
-`plotChromPeaks` plots the identified chromatographic
+\code{plotChromPeaks} plots the identified chromatographic
 peaks from one file into the plane spanned by the retention time (x-axis)
 and m/z (y-axis) dimension. Each chromatographic peak is plotted as a
 rectangle representing its width in RT and m/z dimension.
 
-`plotChromPeakImage` plots the number of detected peaks for
-each sample along the retention time axis as an *image* plot, i.e.
+\code{plotChromPeakImage} plots the number of detected peaks for
+each sample along the retention time axis as an \emph{image} plot, i.e.
 with the number of peaks detected in each bin along the retention time
 represented with the color of the respective cell.
 }
 \details{
 The width and line type of the rectangles indicating the detected
-chromatographic peaks for the `plotChromPeaks` function can be
-specified using the `par` function, i.e. with `par(lwd = 3)`
-and `par(lty = 2)`, respectively.
+chromatographic peaks for the \code{plotChromPeaks} function can be
+specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
+and \code{par(lty = 2)}, respectively.
 }
 \examples{
 

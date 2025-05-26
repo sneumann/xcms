@@ -66,6 +66,7 @@
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #' Anal. Chem. 2006, 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' @author Colin Smith, Johannes Rainer
 #'
@@ -307,9 +308,12 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
 #'
 #' @md
 #'
-#' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
+#' @references
+#'
+#' Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 #' processing and visualization of mass spectrometry based molecular profile
 #' data. Bioinformatics 2006, 22:634-636.
+#' doi: [10.1093/bioinformatics/btk039](https://doi.org/10.1093/bioinformatics/btk039)
 do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
                                        absMz = 0.2, absRt = 15, kNN = 10) {
     if (missing(sampleGroups))

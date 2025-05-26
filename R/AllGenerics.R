@@ -12,7 +12,7 @@ setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-")
 setGeneric("addProcessHistory", function(object, ...)
     standardGeneric("addProcessHistory"))
 
-#' @aliases adjustRtime ObiwarpParam-class PeakGroupsParam-class
+#' @aliases adjustRtime
 #'
 #' @title Alignment: Retention time correction methods.
 #'
@@ -37,7 +37,7 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   rt data using the *obiwarp* method (Prince (2006)). It is based on the
 #'   [original code](http://obi-warp.sourceforge.net) but supports in addition
 #'   alignment of multiple samples by aligning each against a *center* sample.
-#'   The alignment is performed directly on the [profile-matrix] and can hence
+#'   The alignment is performed directly on the *profile-matrix* and can hence
 #'   be performed independently of the peak detection or peak grouping.
 #'
 #' - `PeakGroupsParam`: performs retention time correction based on the
@@ -93,17 +93,17 @@ setGeneric("addProcessHistory", function(object, ...)
 #' See also section *Alignment of experiments including blanks* in the
 #' *xcms* vignette for more details.
 #'
-#' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
-#'     to be used for the \emph{profile matrix} generation. See \code{step}
-#'     parameter in \code{\link{profile-matrix}} documentation for more details.
+#' @param binSize `numeric(1)` defining the bin size (in mz dimension)
+#'     to be used for the *profile matrix* generation. See `step`
+#'     parameter in [profile-matrix] documentation for more details.
 #'
 #' @param BPPARAM parallel processing setup. Defaults to `BPPARAM = bpparam()`.
 #'     See [BiocParallel::bpparam()] for details.
 #'
-#' @param centerSample \code{integer(1)} defining the index of the center sample
+#' @param centerSample `integer(1)` defining the index of the center sample
 #'     in the experiment. It defaults to
-#'     \code{floor(median(1:length(fileNames(object))))}. Note that if
-#'     \code{subset} is used, the index passed with \code{centerSample} is
+#'     `floor(median(1:length(fileNames(object))))`. Note that if
+#'     `subset` is used, the index passed with `centerSample` is
 #'     within these subset samples.
 #'
 #' @param chunkSize For `adjustRtime` if `object` is either an `MsExperiment` or
@@ -128,12 +128,14 @@ setGeneric("addProcessHistory", function(object, ...)
 #'     (Euclidian distance). The default value is `distFun = "cor_opt"`.
 #'
 #' @param extraPeaks For `PeakGroupsParam`: `numeric(1)` defining the maximal
-#'     number of additional peaks for all samples to be assigned to a peak
-#'     group (feature) for retention time correction. For a data set with 6
-#'     samples, `extraPeaks = 1` uses all peak groups with a total peak count
-#'     `<= 6 + 1`. The total peak count is the total number of peaks being
-#'     assigned to a peak group and considers also multiple peaks within a
-#'     sample that are assigned to the group.
+#'     number of additional peaks for all
+#'     samples to be assigned to a peak group (feature) for retention time
+#'     correction. For a data set with 6 samples, `extraPeaks = 1` uses all
+#'     peak groups with a total peak count `<= 6 + 1`. The total peak count
+#'     is the total number of peaks being assigned to a peak group and
+#'     considers also multiple peaks within a sample that are assigned to
+#'     the group. This parameter is ignored for `adjustRtime()` on an
+#'     [XcmsExperimentHdf5()].
 #'
 #' @param factorDiag For `ObiwarpParam`: `numeric(1)` defining the local weight
 #'     applied to diagonal moves in the alignment.
@@ -227,9 +229,9 @@ setGeneric("addProcessHistory", function(object, ...)
 #'
 #' @param value For all assignment methods: the value to set/replace.
 #'
-#' @param x An `ObiwarpParam`, `PeakGroupsParam` or `LamaParama` object.
-#'
 #' @param ... ignored.
+#'
+#' @md
 #'
 #' @return
 #'
@@ -259,17 +261,23 @@ setGeneric("addProcessHistory", function(object, ...)
 #' Prince, J. T., and Marcotte, E. M. (2006) "Chromatographic Alignment of
 #' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 #' *Anal. Chem.*, 78 (17), 6140-6152.
+#' doi: [10.1021/ac0605344](https://doi.org/10.1021/ac0605344)
 #'
 #' Smith, C.A., Want, E.J., O'Maille, G., Abagyan, R. and Siuzdak, G. (2006).
 #' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 #' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
 #' 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' @md
 setGeneric("adjustRtime", function(object, param, ...)
     standardGeneric("adjustRtime"))
 
-setGeneric("adjustedRtime", function(object, ...) standardGeneric("adjustedRtime"))
+#' @rdname adjustRtime
+setGeneric("adjustRtimePeakGroups", function(object, param, ...)
+           standardGeneric("adjustRtimePeakGroups"))
+setGeneric("adjustedRtime", function(object, ...)
+    standardGeneric("adjustedRtime"))
 setGeneric("adjustedRtime<-", function(object, value)
     standardGeneric("adjustedRtime<-"))
 setGeneric("ampTh", function(object, ...) standardGeneric("ampTh"))
@@ -410,9 +418,10 @@ setGeneric("chromPeakData<-", function(object, value)
 #'   signal (`"maxo"`); only supported for `msLevel = 2L`.
 #'
 #' Parameter `return.type` allows to specify the *type* of the result object.
-#' With `return.type = "Spectra"` (the default) a [Spectra] object with all
-#' matching spectra is returned. With `return.type = "Spectra"` a `List` of
-#' `Spectra` is returned. The length of the list is equal to the number of rows
+#' With `return.type = "Spectra"` (the default) a [Spectra::Spectra] object
+#' with all matching spectra is returned. With `return.type = "Spectra"` a
+#' `List` of `Spectra` is returned.
+#' The length of the list is equal to the number of rows
 #' of `chromPeaks`. Each element of the list contains thus a `Spectra` with all
 #' spectra for one chromatographic peak (or a `Spectra` of length 0 if no
 #' spectrum was found for the respective chromatographic peak).
@@ -483,12 +492,12 @@ setGeneric("chromPeakData<-", function(object, value)
 #' For backward compatibility options `"MSpectra"` and `"list"` are also
 #' supported but are not suggested.
 #'
-#' - `return.type = "MSpectra"` (deprecated): a [MSpectra] object with elements being
-#'   [Spectrum-class] objects. The result objects contains all spectra
-#'   for all peaks. Metadata column `"peak_id"` provides the ID of the
+#' - `return.type = "MSpectra"` (deprecated): a [MSnbase::MSpectra] object
+#'   with elements being `Spectrum` objects. The result objects contains all
+#'   spectra for all peaks. Metadata column `"peak_id"` provides the ID of the
 #'   respective peak (i.e. its rowname in [chromPeaks()]).
 #' - `return.type = "list"`: `list` of `list`s that are either of length
-#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   0 or contain `Spectrum2` object(s) within the m/z-rt range. The
 #'   length of the list matches the number of peaks.
 #'
 #' @author Johannes Rainer
@@ -568,8 +577,8 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #'   to a bell curve and the signal-to-noise ratio calculated on the residuals
 #'   of this test.
 #'
-#' @param BPPARAM Parallel processing setup. See
-#'     [BiocParallel::bpparam()] for details.
+#' @param BPPARAM Parallel processing setup. See [BiocParallel::bpparam()]
+#'     for details.
 #'
 #' @param chunkSize `integer(1)` defining the number of samples from which data
 #'     should be loaded and processed at a time.
@@ -600,7 +609,8 @@ setGeneric("chromPeakSpectra", function(object, ...)
 #'
 #' Kumler W, Hazelton B J and Ingalls A E (2023) "Picky with peakpicking:
 #' assessing chromatographic peak quality with simple metrics in metabolomics"
-#' *BMC Bioinformatics* 24(1):404. doi: 10.1186/s12859-023-05533-4
+#' *BMC Bioinformatics* 24(1):404.
+#' doi: [10.1186/s12859-023-05533-4](https://doi.org/10.1186/s12859-023-05533-4)
 #'
 #' @export
 setGeneric("chromPeakSummary", function(object, param, ...)
@@ -656,6 +666,7 @@ setGeneric("factorGap", function(object) standardGeneric("factorGap"))
 setGeneric("factorGap<-", function(object, value) standardGeneric("factorGap<-"))
 setGeneric("family", function(object, ...) standardGeneric("family"))
 setGeneric("family<-", function(object, value) standardGeneric("family<-"))
+setGeneric("featureArea", function(object, ...) standardGeneric("featureArea"))
 
 #' @title Extract ion chromatograms for each feature
 #'
@@ -907,7 +918,7 @@ setGeneric("featureDefinitions<-", function(object, value)
 #'     Defaults to `c("mzmed", "rtmed")`.
 #'
 #' @param ... additional arguments to be passed along to [chromPeakSpectra()],
-#'     such as `method`.
+#'     such as `method` or `chromPeakColumns`.
 #'
 #' @return
 #'
@@ -1233,6 +1244,18 @@ setGeneric("filterFeatureDefinitions", function(object, ...)
 #'     for all `Spectra` *backends* (see eventually [Spectra::Spectra()] for
 #'     details).
 #'
+#' @param force.overwrite For `object` being an `MsExperiment` and parameter
+#'     `hdf5File` being defined (see below): `logical(1)` whether an eventually
+#'     existing result file should be overwritten.
+#'
+#' @param hdf5File For `object` being an `MsExperiment`: `character(1)`
+#'     specifying the name (inclusive path) of a file that should be used for
+#'     on-disk storage of preprocessing results. This option is suggested for
+#'     very large data sets since it significantly reduces the memory demand.
+#'     See [XcmsExperimentHdf5] for more information. Note that an error is
+#'     thrown if the file already exists. Overwriting an existing result file
+#'     can be forced using `force.overwrite = TRUE`.
+#'
 #' @param msLevel `integer(1)` defining the MS level on which the
 #'     chromatographic peak detection should be performed.
 #'
@@ -1381,9 +1404,7 @@ setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
 
-#' @aliases groupChromPeaks PeakDensityParam-class
-#'
-#' @aliases NearestPeaksParam-class MzClustParam-class
+#' @aliases groupChromPeaks
 #'
 #' @title Correspondence: group chromatographic peaks across samples
 #'
@@ -1460,7 +1481,7 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'
 #' @param bw For `PeakDensityParam`: `numeric(1)` defining the bandwidth
 #'     (standard deviation ot the smoothing kernel) to be used. This argument
-#'     is passed to the [density() method.
+#'     is passed to the [stats::density() method.
 #'
 #' @param kNN For `NearestPeaksParam`: `integer(1)` representing the number of
 #'     nearest neighbors to check.
@@ -1509,8 +1530,6 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     all blanks in an experiment will for example avoid features to be
 #'     defined for signals (chrom peaks) present only in blank samples.
 #'
-#' @param value Replacement value for `<-` methods.
-#'
 #' @param x The parameter object.
 #'
 #' @param ... Optional parameters.
@@ -1530,10 +1549,12 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #' "XCMS: Processing Mass Spectrometry Data for Metabolite Profiling Using
 #' Nonlinear Peak Alignment, Matching, and Identification" *Anal. Chem.*
 #' 78:779-787.
+#' doi: [10.1021/ac051437y](https://doi.org/10.1021/ac051437y)
 #'
 #' Katajamaa, M., Miettinen, J., Oresic, M. (2006) "MZmine: Toolbox for
 #' processing and visualization of mass spectrometry based molecular profile
 #' data". *Bioinformatics*, 22:634-636.
+#' doi: [10.1093/bioinformatics/btk039](https://doi.org/10.1093/bioinformatics/btk039)
 #'
 #' Kazmi S. A., Ghosh, S., Shin, D., Hill, D.W., and Grant, D.F. (2006)
 #' "Alignment of high resolution mass spectra: development of a
@@ -1630,7 +1651,7 @@ setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 #'     should be performed. Only a single MS level at a time is supported.
 #'     Defaults to `msLevel = 1L`.
 #'
-#' @param object [XcmsExperiment], [XCMSnExp] or [OnDiskMSnExp] object.
+#' @param object [XcmsExperiment], [XCMSnExp] or [MSnbase::OnDiskMSnExp] object.
 #'
 #' @param peakIdx For `manualFeatures`: `list` of `integer` vectors with the
 #'     indices of chromatographic peaks in the object's `chromPeaks` matrix
@@ -1880,12 +1901,6 @@ setGeneric("reconstructChromPeakSpectra", function(object, ...)
     standardGeneric("reconstructChromPeakSpectra"))
 
 #' @title Refine Identified Chromatographic Peaks
-#'
-#' @aliases FilterIntensityParam-class show,FilterIntensityParam-method
-#'
-#' @aliases CleanPeaksParam-class show,CleanPeaksParam-method
-#'
-#' @aliases MergeNeighboringPeaksParam-class show,MergeNeighboringPeaksParam-method
 #'
 #' @description
 #'
@@ -2157,6 +2172,8 @@ setGeneric("tuneIn<-", function(object, value) standardGeneric("tuneIn<-"))
 ## U
 setGeneric("unions", function(object, ...) standardGeneric("unions"))
 setGeneric("unions<-", function(object, value) standardGeneric("unions<-"))
+setGeneric("updateChromPeaksRtime", function(object, ...)
+    standardGeneric("updateChromPeaksRtime"))
 
 ## V
 setGeneric("verboseColumns", function(object, ...) standardGeneric("verboseColumns"))

@@ -5,9 +5,7 @@ setValidity("MsFeatureData", function(object) {
     validateMsFeatureData(object)
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("show", "MsFeatureData", function(object) {
     cat("Object of class: ", class(object), "\n")
     ks <- ls(object)
@@ -22,16 +20,12 @@ setMethod("show", "MsFeatureData", function(object) {
 ## (featureDefinitions) featureDefinitions: getter and setter for the features DataFrame.
 ## adjustedRtime: getter and setter for the adjustedRtime list.
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
     !is.null(object$adjustedRtime)
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("hasFeatures", "MsFeatureData", function(object,
                                                    msLevel = integer()) {
     if (length(msLevel) && !is.null(object$featureDefinitions) &&
@@ -40,9 +34,7 @@ setMethod("hasFeatures", "MsFeatureData", function(object,
     else !is.null(object$featureDefinitions)
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("hasChromPeaks", "MsFeatureData", function(object,
                                                      msLevel = integer()) {
     if (length(msLevel) && !is.null(object$chromPeaks) &&
@@ -51,25 +43,19 @@ setMethod("hasChromPeaks", "MsFeatureData", function(object,
     else !is.null(object$chromPeaks)
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("adjustedRtime", "MsFeatureData", function(object) {
     if (hasAdjustedRtime(object))
         return(object$adjustedRtime)
     warning("No adjusted retention times available.")
     return(NULL)
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
     object$adjustedRtime <- value
     object
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("dropAdjustedRtime", "MsFeatureData", function(object, rtraw) {
     if (hasAdjustedRtime(object)) {
         if (hasChromPeaks(object)) {
@@ -86,9 +72,7 @@ setMethod("dropAdjustedRtime", "MsFeatureData", function(object, rtraw) {
     return(object)
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("featureDefinitions", "MsFeatureData", function(object,
                                                           msLevel = integer()) {
     if (length(object$featureDefinitions)) {
@@ -102,16 +86,12 @@ setMethod("featureDefinitions", "MsFeatureData", function(object,
         DataFrame()
     }
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) {
     object$featureDefinitions <- value
     object
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("dropFeatureDefinitions", "MsFeatureData",
           function(object, dropAdjustedRtime = FALSE) {
               if (hasFeatures(object)) {
@@ -132,22 +112,16 @@ setMethod("dropFeatureDefinitions", "MsFeatureData",
               object
 })
 
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("chromPeaks", "MsFeatureData", function(object) {
     object$chromPeaks
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setReplaceMethod("chromPeaks", "MsFeatureData", function(object, value) {
     object$chromPeaks <- value
     object
 })
-#' @noRd
-#'
-#' @rdname XCMSnExp-class
+#' @rdname hidden_aliases
 setMethod("dropChromPeaks", "MsFeatureData", function(object) {
     if (hasChromPeaks(object))
         rm(list = "chromPeaks", envir = object)
@@ -156,9 +130,11 @@ setMethod("dropChromPeaks", "MsFeatureData", function(object) {
     object
 })
 
+#' @rdname hidden_aliases
 setMethod("chromPeakData", "MsFeatureData", function(object) {
     .chrom_peak_data(object)
 })
+#' @rdname hidden_aliases
 setReplaceMethod("chromPeakData", "MsFeatureData", function(object, value) {
     object$chromPeakData <- value
     object

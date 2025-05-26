@@ -8,7 +8,7 @@
 \S4method{isolationWindowTargetMz}{OnDiskMSnExp}(object)
 }
 \arguments{
-\item{object}{\linkS4class{OnDiskMSnExp} object.}
+\item{object}{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object.}
 }
 \value{
 a \code{numeric} of length equal to the number of spectra in \code{object} with

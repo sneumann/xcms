@@ -30,7 +30,8 @@ matchedFilter settings with a very small bin size.
 }
 }
 \note{
-For parallel processing using the SOCKS method (e.g. by \code{\link[=SnowParam]{SnowParam()}} on
+For parallel processing using the SOCKS method (e.g. by
+\code{\link[BiocParallel:SnowParam-class]{BiocParallel::SnowParam()}} on
 Windows computers) this option might not be passed to the individual R
 processes performing the calculations. In such cases it is suggested to
 specify the option manually and system-wide by adding the line

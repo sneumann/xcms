@@ -41,12 +41,14 @@ the experiment (i.e., a peak has to be present in the specified
 proportion of subset samples).}
 
 \item{extraPeaks}{For \code{PeakGroupsParam}: \code{numeric(1)} defining the maximal
-number of additional peaks for all samples to be assigned to a peak
-group (feature) for retention time correction. For a data set with 6
-samples, \code{extraPeaks = 1} uses all peak groups with a total peak count
-\verb{<= 6 + 1}. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a
-sample that are assigned to the group.}
+number of additional peaks for all
+samples to be assigned to a peak group (feature) for retention time
+correction. For a data set with 6 samples, \code{extraPeaks = 1} uses all
+peak groups with a total peak count \verb{<= 6 + 1}. The total peak count
+is the total number of peaks being assigned to a peak group and
+considers also multiple peaks within a sample that are assigned to
+the group. This parameter is ignored for \code{adjustRtime()} on an
+\code{\link[=XcmsExperimentHdf5]{XcmsExperimentHdf5()}}.}
 
 \item{smooth}{For \code{PeakGroupsParam}: \code{character(1)} defining the function to
 be used to interpolate corrected retention times for all peak groups.
@@ -80,7 +82,7 @@ See \emph{Subset-based alignment} section for details.}
 }
 \value{
 A \code{list} with \code{numeric} vectors with the adjusted
-    retention times grouped by sample.
+retention times grouped by sample.
 }
 \description{
 The function performs retention time correction by assessing
@@ -96,7 +98,7 @@ spectrum in each sample.
 The alignment bases on the presence of compounds that can be found
 in all/most samples of an experiment. The retention times of individual
 spectra are then adjusted based on the alignment of the features
-corresponding to these \emph{house keeping compounds}. The paraneters
+corresponding to these \emph{house keeping compounds}. The parameters
 \code{minFraction} and \code{extraPeaks} can be used to fine tune which
 features should be used for the alignment (i.e. which features
 most likely correspond to the above mentioned house keeping compounds).
@@ -110,7 +112,7 @@ results of the \emph{real} samples.
 }
 \note{
 The method ensures that returned adjusted retention times are
-    increasingly ordered, just as the raw retention times.
+increasingly ordered, just as the raw retention times.
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and

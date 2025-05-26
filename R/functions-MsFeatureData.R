@@ -4,7 +4,7 @@
 #' Validates a 'chromPeaks' matrix or data.frame and ensures that it contains all
 #' required columns and that all columns are of numeric data type.
 #'
-#' @return \code{TRUE} or a \code{character} with the error message.
+#' @return `TRUE` or a `character` with the error message.
 #'
 #' @noRd
 .validChromPeaksMatrix <- function(x) {
@@ -62,7 +62,7 @@
 #'
 #' @author Johannes Rainer
 #'
-#' @return \code{TRUE} if object is valid, or a message with the error message.
+#' @return `TRUE` if object is valid, or a message with the error message.
 #'
 #' @noRd
 validateMsFeatureData <- function(x) {
@@ -157,12 +157,12 @@ validateMsFeatureData <- function(x) {
 #' @description Filter chromPeaks and sync them with with the present
 #'     featureDefinitions, i.e. update their peakidx column or remove them.
 #'
-#' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
+#' @param x A `MsFeatureData` or an `XCMSnExp` object.
 #'
-#' @param idx \code{numeric} with the indices of the chromatographic peaks to
+#' @param idx `numeric` with the indices of the chromatographic peaks to
 #'     keep.
 #'
-#' @return A \code{MsFeatureData}.
+#' @return A `MsFeatureData`.
 #'
 #' @author Johannes Rainer
 #'

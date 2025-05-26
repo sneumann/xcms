@@ -43,11 +43,11 @@ bins/slices in m/z dimension.}
 value imputation. Allowed values are \code{"none"} (no linear
 interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
 (linear interpolation within a certain bin-neighborhood) and
-\code{"intlin"}. See \code{\link{imputeLinInterpol}} for more details.}
+\code{"intlin"}. See \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for more details.}
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
-\code{profBinLinBase}'s \code{baselevel} argument.}
+\code{profBinLinBase()}'s \code{baselevel} argument.}
 
 \item{distance}{For \code{method = "linbase"}: number of non-empty
 neighboring element of an empty element that should be considered for
@@ -80,58 +80,56 @@ signal.}
 returned instead of values for m/z and retention times.}
 
 \item{sleep}{\code{numeric(1)} defining the number of seconds to wait between
-iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
+iterations. Defaults to \code{sleep = 0}. If \verb{> 0} a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
 future.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
-    with columns:
-    \describe{
-    \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
-    \item{mzmin}{Minimum m/z of the peak.}
-    \item{mzmax}{Maximum m/z of the peak.}
-    \item{rt}{Retention time of the peak's midpoint.}
-    \item{rtmin}{Minimum retention time of the peak.}
-    \item{rtmax}{Maximum retention time of the peak.}
-    \item{into}{Integrated (original) intensity of the peak.}
-    \item{intf}{Integrated intensity of the filtered peak.}
-    \item{maxo}{Maximum intensity of the peak.}
-    \item{maxf}{Maximum intensity of the filtered peak.}
-    \item{i}{Rank of peak in merged EIC (\code{<= max}).}
-    \item{sn}{Signal to noise ratio of the peak}
-    }
+with columns:
+\itemize{
+\item \code{"mz"}: Intensity weighted mean of m/z values of the peak across scans.
+\item \code{"mzmin"}: Minimum m/z of the peak.
+\item \code{"mzmax"}: Maximum m/z of the peak.
+\item \code{"rt"}: Retention time of the peak's midpoint.
+\item \code{"rtmin"}: Minimum retention time of the peak.
+\item \code{"rtmax"}: Maximum retention time of the peak.
+\item \code{"into"}: Integrated (original) intensity of the peak.
+\item \code{"intf"}: Integrated intensity of the filtered peak.
+\item \code{"maxo"}: Maximum intensity of the peak.
+\item \code{"maxf"}: Maximum intensity of the filtered peak.
+\item \code{"i"}: Rank of peak in merged EIC (\verb{<= max}).
+\item \code{"sn"}: Signal to noise ratio of the peak.
+}
 }
 \description{
 This function identifies peaks in the chromatographic
-    time domain as described in [Smith 2006]. The intensity values are
-    binned by cutting The LC/MS data into slices (bins) of a mass unit
-    (\code{binSize} m/z) wide. Within each bin the maximal intensity is
-    selected. The peak detection is then performed in each bin by
-    extending it based on the \code{steps} parameter to generate slices
-    comprising bins \code{current_bin - steps +1} to
-    \code{current_bin + steps - 1}.
-    Each of these slices is then filtered with matched filtration using
-    a second-derative Gaussian as the model peak shape. After filtration
-    peaks are detected using a signal-to-ration cut-off. For more details
-    and illustrations see [Smith 2006].
+time domain as described in \emph{Smith 2006}. The intensity values are
+binned by cutting The LC/MS data into slices (bins) of a mass unit
+(\code{binSize} m/z) wide. Within each bin the maximal intensity is
+selected. The peak detection is then performed in each bin by
+extending it based on the \code{steps} parameter to generate slices
+comprising bins \code{current_bin - steps +1} to
+\code{current_bin + steps - 1}.
+Each of these slices is then filtered with matched filtration using
+a second-derative Gaussian as the model peak shape. After filtration
+peaks are detected using a signal-to-ration cut-off. For more details
+and illustrations see \emph{Smith 2006}.
 }
 \details{
 The intensities are binned by the provided m/z values within each
-    spectrum (scan). Binning is performed such that the bins are centered
-    around the m/z values (i.e. the first bin includes all m/z values between
-    \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+spectrum (scan). Binning is performed such that the bins are centered
+around the m/z values (i.e. the first bin includes all m/z values between
+\code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
 
-    For more details on binning and missing value imputation see
-    \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+\if{html}{\out{<div class="sourceCode">}}\preformatted{For more details on binning and missing value imputation see
+[binYonX()] and [imputeLinInterpol()] functions.
+}\if{html}{\out{</div>}}
 }
 \note{
 This function exposes core peak detection functionality of
-    the \emph{matchedFilter} method. While this function can be called
-    directly, users will generally call the corresponding method for the
-    data object instead (e.g. the \code{link{findPeaks.matchedFilter}}
-    method).
+the \emph{matchedFilter} method.
 }
 \examples{
 
@@ -157,11 +155,11 @@ Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \seealso{
-\code{\link{binYonX}} for a binning function,
-    \code{\link{imputeLinInterpol}} for the interpolation of missing values.
-    \code{\link{matchedFilter}} for the standard user interface method.
+\code{\link[=binYonX]{binYonX()}} for a binning function,
+\code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for the interpolation of missing values.
 
 Other core peak detection functions: 
 \code{\link{do_findChromPeaks_centWave}()},

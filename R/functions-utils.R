@@ -42,7 +42,8 @@ valueCount2ScanIndex <- function(valCount){
 #'
 #' @note
 #'
-#' For parallel processing using the SOCKS method (e.g. by [SnowParam()] on
+#' For parallel processing using the SOCKS method (e.g. by
+#' [BiocParallel::SnowParam()] on
 #' Windows computers) this option might not be passed to the individual R
 #' processes performing the calculations. In such cases it is suggested to
 #' specify the option manually and system-wide by adding the line
@@ -125,8 +126,8 @@ useOriginalCode <- function(x) {
 #'     bins along the m/z dimension.
 #'
 #' @details This is somewhat the successor function for the deprecated
-#'     \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
-#'     \code{profBinLinBaseM} and \code{profIntLin}).
+#'     `profBin*` methods (`profBinM()`, `profBinLinM()`,
+#'     `profBinLinBaseM()` and `profIntLin()`).
 #'
 #' @param mz Numeric representing the m/z values across all scans/spectra.
 #'
@@ -137,8 +138,8 @@ useOriginalCode <- function(x) {
 #'     scan/spectrum.
 #'
 #' @param method A character string specifying the profile matrix generation
-#'     method. Allowed are \code{"bin"}, \code{"binlin"},
-#'     \code{"binlinbase"} and \code{"intlin"}.
+#'     method. Allowed are `"bin"`, `"binlin"`,
+#'     `"binlinbase"` and `"intlin"`.
 #'
 #' @param step Numeric specifying the size of the m/z bins.
 #'
@@ -146,16 +147,16 @@ useOriginalCode <- function(x) {
 #'
 #' @param basespace Numeric.
 #'
-#' @param mzrange. numeric(2) optionally specifying the mz value range
-#'     for binning. This is to adopt the old profStepPad<- method used for
+#' @param mzrange. `numeric(2)` optionally specifying the mz value range
+#'     for binning. This is to adopt the old `profStepPad<-` method used for
 #'     obiwarp retention time correction that did the binning from
 #'     whole-number limits.
 #'
-#' @param returnBreaks logical(1): hack to return the breaks of the bins.
-#'     Setting this to TRUE causes the function to return a \code{list} with
-#'     elements \code{"$profMat"} and \code{"breaks"}.
+#' @param returnBreaks `logical(1)`: hack to return the breaks of the bins.
+#'     Setting this to TRUE causes the function to return a `list` with
+#'     elements `"$profMat"` and `"breaks"`.
 #'
-#' @param baseValue numeric(1) defining the value to be returned if no signal
+#' @param baseValue `numeric(1)` defining the value to be returned if no signal
 #'     was found in the corresponding bin. Defaults to 0 for backward
 #'     compatibility.
 #'
@@ -257,24 +258,30 @@ useOriginalCode <- function(x) {
 #'
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
+#' @param min_len integer(1) defining the minimum length of the numeric part
+#'     of the string. A value of 2 ensures that, independently of `x` and
+#'     `from` the length of the numbers is at least 2, thus resulting in
+#'     numbers 01, 02, etc.
+#'
 #' @noRd
-.featureIDs <- function(x, prefix = "FT", from = 1L) {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + from)), "d"),
+.featureIDs <- function(x, prefix = "FT", from = 1L, min_len = 1) {
+    n <- max(ceiling(log10(x + from)), min_len)
+    sprintf(paste0(prefix, "%0", n, "d"),
             seq(from = from, length.out = x))
 }
 
 #' @title Weighted mean around maximum
 #'
 #' @description Calculate a weighted mean of the values around the value with
-#'     the largest weight. \code{x} could e.g. be mz values and \code{w} the
+#'     the largest weight. `x` could e.g. be mz values and `w` the
 #'     corresponding intensity values.
 #'
-#' @param x \code{numeric} vector from which the weighted mean should be
+#' @param x `numeric` vector from which the weighted mean should be
 #'     calculated.
 #'
-#' @param w \code{numeric} of same length than \code{x} with the weights.
+#' @param w `numeric` of same length than `x` with the weights.
 #'
-#' @param i \code{integer(1)} defining the number of data points left and right
+#' @param i `integer(1)` defining the number of data points left and right
 #'     of the index with the largest weight that should be considered for the
 #'     weighted mean calculation.
 #'
@@ -283,6 +290,8 @@ useOriginalCode <- function(x) {
 #' @author Johannes Rainer
 #'
 #' @noRd
+#'
+#' @md
 #'
 #' @examples
 #'
@@ -400,6 +409,7 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 #' De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
 #' McConville M, Speed TP. Normalizing and integrating metabolomics data.
 #' *Anal Chem* 2012 Dec 18;84(24):10768-76.
+#' doi: [10.1021/ac302748b](https://doi.org/10.1021/ac302748b)
 #'
 #' @examples
 #'
@@ -628,60 +638,6 @@ rowRla <- function(x, group, log.transform = TRUE) {
     rbind(x, y[, colnames(x)])
 }
 
-#' @description
-#'
-#' Similar to the `IRanges::reduce` method, this function *joins* overlapping
-#' ranges (e.g. m/z ranges or retention time ranges) to create unique and
-#' disjoined (i.e. not overlapping) ranges.
-#'
-#' @param start `numeric` with start positions.
-#'
-#' @param end `numeric` with end positions.
-#'
-#' @return `matrix` with two columns containing the start and end values for
-#'     the disjoined ranges. Note that the ranges are increasingly ordered.
-#'
-#' @author Johannes Rainer
-#'
-#' @md
-#'
-#' @noRd
-#'
-#' @examples
-#'
-#' mzmin <- c(2, 3, 4, 7)
-#' mzmax <- c(2.5, 3.5, 4.2, 7.6)
-#' .reduce(mzmin, mzmax)
-#' .reduce(mzmin - 0.1, mzmax + 0.1)
-#' .reduce(mzmin - 0.5, mzmax + 0.5)
-.reduce <- function(start, end) {
-    if (!length(start))
-        return(matrix(ncol = 2, nrow = 0,
-                      dimnames = list(NULL, c("start", "end"))))
-    if (length(start) == 1) {
-        return(cbind(start, end))
-    }
-    idx <- order(start, end)
-    start <- start[idx]
-    end <- end[idx]
-    new_start <- new_end <- numeric(length(start))
-    current_slice <- 1
-    new_start[current_slice] <- start[1]
-    new_end[current_slice] <- end[1]
-    for (i in 2:length(start)) {
-        if (start[i] <= new_end[current_slice]) {
-            if (end[i] > new_end[current_slice])
-                new_end[current_slice] <- end[i]
-        } else {
-            current_slice <- current_slice + 1
-            new_start[current_slice] <- start[i]
-            new_end[current_slice] <- end[i]
-        }
-    }
-    idx <- 1:current_slice
-    cbind(start = new_start[idx], end = new_end[idx])
-}
-
 #' @title Group overlapping ranges
 #'
 #' @description
@@ -709,7 +665,7 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' groupOverlaps(x, y)
 groupOverlaps <- function(xmin, xmax) {
     tolerance <- sqrt(.Machine$double.eps)
-    reduced_ranges <- .reduce(xmin, xmax)
+    reduced_ranges <- do.call(cbind, reduce(xmin, xmax))
     res <- vector("list", nrow(reduced_ranges))
     for (i in seq_along(res)) {
         res[[i]] <- which(xmin >= reduced_ranges[i, 1] - tolerance &
@@ -840,7 +796,7 @@ groupOverlaps <- function(xmin, xmax) {
             slot(res[[i]], "intensity", check = FALSE) <-
                 vapply(pd[keep], function(z) {
                     FUN(z[between(z[, "mz"], pks[i, mzc]), "intensity"])
-            }, numeric(1L))
+            }, NA_real_)
             slot(res[[i]], "rtime", check = FALSE) <- rt[keep]
         }
     }
@@ -916,4 +872,18 @@ groupOverlaps <- function(xmin, xmax) {
                  PACKAGE = "xcms")
     cbind(rtime = scantime[scns],
           intensity = res$intensity)
+}
+
+.which_in_range <- function(x, range = c(-Inf, Inf),
+                            column = "rt") {
+    base::which(between(x[, column], range))
+}
+
+.which_isolation_window <- function(x, mz) {
+    base::which(x$isolationWindowLowerMz < mz &
+                x$isolationWindowUpperMz > mz)
+}
+
+.is_equal <- function(a, b) {
+    length(a) == length(b) && all(a == b)
 }
