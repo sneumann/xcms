@@ -73,8 +73,11 @@
 #'   whether present chromatographic peaks, alignment or correspondence results
 #'   should be retained. This will only change information in the object (i.e.,
 #'   the reference to the respective entries in the HDF5 file), but will
-#'   **not** change the content of the HDF5 file. Note that with
-#'   `keepChromPeaks = FALSE` also `keepFeatures` is set to `FALSE`.
+#'   **not** change the content of the HDF5 file. Thus, *reverting* the
+#'   retention times of detected chromatographic peaks is **not** supported and
+#'   `keepChromPeaks = TRUE` with `keepAdjustedRtime = FALSE` will throw an
+#'   error. Note that with `keepChromPeaks = FALSE` also `keepFeatures` is set
+#'   to `FALSE`.
 #'
 #' - `filterChromPeaks()` and `filterFeatureDefinitions()` to filter the
 #'   chromatographic peak and correspondence results, respectively. See

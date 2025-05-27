@@ -154,8 +154,11 @@ Parameters \code{keepChromPeaks} (default \code{TRUE}), \code{keepAdjustedRtime}
 whether present chromatographic peaks, alignment or correspondence results
 should be retained. This will only change information in the object (i.e.,
 the reference to the respective entries in the HDF5 file), but will
-\strong{not} change the content of the HDF5 file. Note that with
-\code{keepChromPeaks = FALSE} also \code{keepFeatures} is set to \code{FALSE}.
+\strong{not} change the content of the HDF5 file. Thus, \emph{reverting} the
+retention times of detected chromatographic peaks is \strong{not} supported and
+\code{keepChromPeaks = TRUE} with \code{keepAdjustedRtime = FALSE} will throw an
+error. Note that with \code{keepChromPeaks = FALSE} also \code{keepFeatures} is set
+to \code{FALSE}.
 \item \code{filterChromPeaks()} and \code{filterFeatureDefinitions()} to filter the
 chromatographic peak and correspondence results, respectively. See
 documentation below for details. Subset using unsorted or duplicated

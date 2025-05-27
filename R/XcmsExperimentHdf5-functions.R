@@ -185,6 +185,9 @@ toXcmsExperiment <- function(object, ...) {
     }
     drop <- character()
     if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
+        if (hasChromPeaks(x) && keepChromPeaks)
+            stop("Reverting retention times of detected chromatographic peaks ",
+                 "is not supported. Please use 'keepAdjustedRtime = TRUE'.")
         svs <- unique(c(spectraVariables(x@spectra), "mz", "intensity"))
         x@spectra <- selectSpectraVariables(
             x@spectra, svs[svs != "rtime_adjusted"])

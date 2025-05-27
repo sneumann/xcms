@@ -1,5 +1,11 @@
 # xcms 4.7
 
+## Changes in version 4.7.2
+
+- Fix issue in `[,XcmsExperiment`: the subset operation did not revert the
+  retention times of chromatographic peaks with parameter `keepAdjustedRtime =
+  FALSE` (issue #801).
+
 ## Changes in version 4.7.1
 
 - Change the naming convention of chromatographic peaks to include also the MS
