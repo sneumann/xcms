@@ -113,8 +113,8 @@ Broadhurst D, Goodacre R, Reinke SN, Kuligowski J, Wilson ID, Lewis MR,
 Dunn WB. Guidelines and considerations for the use of system suitability
 and quality control samples in mass spectrometry assays applied in
 untargeted clinical metabolomic studies. Metabolomics. 2018;14(6):72.
-doi: 10.1007/s11306-018-1367-3. Epub 2018 May 18. PMID: 29805336;
-PMCID: PMC5960010.
+doi: \href{https://doi.org/10.1007/s11306-018-1367-3}{10.1007/s11306-018-1367-3}.
+Epub 2018 May 18. PMID: 29805336; PMCID: PMC5960010.
 }
 \author{
 Philippine Louail

@@ -1,127 +1,129 @@
 ## Functions to bin vectors.
 
 #' @title Aggregate values in y for bins defined on x
-#' 
-#' @description This functions takes two same-sized numeric vectors \code{x}
-#'     and \code{y}, bins/cuts \code{x} into bins (either a pre-defined number
+#'
+#' @description This functions takes two same-sized numeric vectors `x`
+#'     and `y`, bins/cuts `x` into bins (either a pre-defined number
 #'     of equal-sized bins or bins of a pre-defined size) and aggregates values
-#'     in \code{y} corresponding to \code{x} values falling within each bin. By
-#'     default (i.e. \code{method = "max"}) the maximal \code{y} value for the
-#'     corresponding \code{x} values is identified. \code{x} is expected to be
+#'     in `y` corresponding to `x` values falling within each bin. By
+#'     default (i.e. `method = "max"`) the maximal `y` value for the
+#'     corresponding `x` values is identified. `x` is expected to be
 #'     incrementally sorted and, if not, it will be internally sorted (in which
-#'     case also \code{y} will be ordered according to the order of \code{x}).
+#'     case also `y` will be ordered according to the order of `x`).
 #'
 #' @details The breaks defining the boundary of each bin can be either passed
-#'     directly to the function with the argument \code{breaks}, or are
-#'     calculated on the data based on arguments \code{nBins} or \code{binSize}
-#'     along with \code{fromIdx}, \code{toIdx} and optionally \code{binFromX}
-#'     and \code{binToX}.
-#'     Arguments \code{fromIdx} and \code{toIdx} allow to specify subset(s) of
-#'     the input vector \code{x} on which bins should be calculated. The
-#'     default the full \code{x} vector is considered. Also, if not specified
-#'     otherwise with arguments \code{binFromX} and \code{binToX }, the range
-#'     of the bins within each of the sub-sets will be from \code{x[fromIdx]}
-#'     to \code{x[toIdx]}. Arguments \code{binFromX} and \code{binToX} allow to
+#'     directly to the function with the argument `breaks`, or are
+#'     calculated on the data based on arguments `nBins` or `binSize`
+#'     along with `fromIdx`, `toIdx` and optionally `binFromX`
+#'     and `binToX`.
+#'     Arguments `fromIdx` and `toIdx` allow to specify subset(s) of
+#'     the input vector `x` on which bins should be calculated. The
+#'     default the full `x` vector is considered. Also, if not specified
+#'     otherwise with arguments `binFromX` and `binToX`, the range
+#'     of the bins within each of the sub-sets will be from `x[fromIdx]`
+#'     to `x[toIdx]`. Arguments `binFromX` and `binToX` allow to
 #'     overwrite this by manually defining the a range on which the breaks
 #'     should be calculated. See examples below for more details.
 #'
-#'     Calculation of breaks: for \code{nBins} the breaks correspond to
-#'     \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
-#'     For \code{binSize} the breaks correspond to
-#'     \code{seq(min(x[fromIdx]), max(x[toIdx]), by = binSize)} with the
+#'     Calculation of breaks: for `nBins` the breaks correspond to
+#'     `seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))`.
+#'     For `binSize` the breaks correspond to
+#'     `seq(min(x[fromIdx]), max(x[toIdx]), by = binSize)` with the
 #'     exception that the last break value is forced to be equal to
-#'     \code{max(x[toIdx])}. This ensures that all values from the specified
+#'     `max(x[toIdx])`. This ensures that all values from the specified
 #'     range are covered by the breaks defining the bins. The last bin could
-#'     however in some instances be slightly larger than \code{binSize}. See
-#'     \code{\link{breaks_on_binSize}} and \code{\link{breaks_on_nBins}} for
+#'     however in some instances be slightly larger than `binSize`. See
+#'     [breaks_on_binSize()] and [breaks_on_nBins()] for
 #'     more details.
 #'
 #' @note The function ensures that all values within the range used to define
 #'     the breaks are considered in the binning (and assigned to a bin). This
-#'     means that for all bins except the last one values in \code{x} have to be
-#'     \code{>= xlower} and \code{< xupper} (with \code{xlower}
-#'     and \code{xupper} being the lower and upper boundary, respectively). For
-#'     the last bin the condition is \code{x >= xlower & x <= xupper}.
-#'     Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of
-#'     values that is used for binning is expanded by \code{binSize} (i.e. the
-#'     lower boundary will be \code{fromX - binSize/2}, the upper
-#'     \code{toX + binSize/2}). Setting this argument to \code{TRUE} resembles
-#'     the binning that is/was used in \code{profBin} function from
-#'     \code{xcms} < 1.51.
+#'     means that for all bins except the last one values in `x` have to be
+#'     `>= xlower` and `< xupper` (with `xlower`
+#'     and `xupper` being the lower and upper boundary, respectively). For
+#'     the last bin the condition is `x >= xlower & x <= xupper`.
+#'     Note also that if `shiftByHalfBinSize` is `TRUE` the range of
+#'     values that is used for binning is expanded by `binSize` (i.e. the
+#'     lower boundary will be `fromX - binSize/2`, the upper
+#'     `toX + binSize/2`). Setting this argument to `TRUE` resembles
+#'     the binning that is/was used in `profBin` function from
+#'     *xcms* < 1.51.
 #'
-#'     \code{NA} handling: by default the function ignores \code{NA} values in
-#'     \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA}
-#'     values are allowed in \code{x}.
+#'     `NA` handling: by default the function ignores `NA` values in
+#'     `y` (thus inherently assumes `na.rm = TRUE`). No `NA`
+#'     values are allowed in `x`.
 #'
 #' @param x Numeric vector to be used for binning.
-#' 
-#' @param y Numeric vector (same length than \code{x}) from which the maximum
-#'     values for each bin should be defined. If not provided, \code{x} will
+#'
+#' @param y Numeric vector (same length than `x`) from which the maximum
+#'     values for each bin should be defined. If not provided, `x` will
 #'     be used.
-#' 
+#'
 #' @param breaks Numeric vector defining the breaks for the bins, i.e. the
 #'     lower and upper values for each bin. See examples below.
-#' 
-#' @param nBins integer(1) defining the number of desired bins.
-#' 
-#' @param binSize numeric(1) defining the desired bin size.
-#' 
-#' @param binFromX Optional numeric(1) allowing to manually specify
+#'
+#' @param nBins `integer(1)` defining the number of desired bins.
+#'
+#' @param binSize `numeric(1)` defining the desired bin size.
+#'
+#' @param binFromX Optional `numeric(1)` allowing to manually specify
 #'     the range of x-values to be used for binning.
 #'     This will affect only the calculation of the breaks for the bins
-#'     (i.e. if \code{nBins} or \code{binSize} is provided).
+#'     (i.e. if `nBins` or `binSize` is provided).
 #'     If not provided the minimal value in the sub-set
-#'     \code{fromIdx}-\code{toIdx} in input vector \code{x} will be used.
-#' 
-#' @param binToX Same as \code{binFromX}, but defining the maximum x-value to be
+#'     `fromIdx`-`toIdx` in input vector `x` will be used.
+#'
+#' @param binToX Same as `binFromX`, but defining the maximum x-value to be
 #'     used for binning.
-#' 
+#'
 #' @param fromIdx Integer vector defining the start position of one or multiple
-#'     sub-sets of input vector \code{x} that should be used for binning.
-#' 
-#' @param toIdx Same as \code{toIdx}, but defining the maximum index (or indices)
+#'     sub-sets of input vector `x` that should be used for binning.
+#'
+#' @param toIdx Same as `toIdx`, but defining the maximum index (or indices)
 #'     in x to be used for binning.
-#' 
+#'
 #' @param method A character string specifying the method that should be used to
-#'     aggregate values in \code{y}. Allowed are \code{"max"}, \code{"min"},
-#'     \code{"sum"} and \code{"mean"} to identify the maximal or minimal value
+#'     aggregate values in `y`. Allowed are `"max"`, `"min"`,
+#'     `"sum"` and `"mean"` to identify the maximal or minimal value
 #'     or to sum all values within a bin or calculate their mean value.
 #'
-#' @param sortedX Whether \code{x} is sorted.
-#' 
+#' @param sortedX Whether `x` is sorted.
+#'
 #' @param shiftByHalfBinSize Logical specifying whether the bins should be
 #'     shifted by half the bin size to the left. Thus, the first bin will have
-#'     its center at \code{fromX} and its lower and upper boundary are
-#'     \code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
-#'     ignored if \code{breaks} are provided.
-#' 
-#' @param baseValue The base value for empty bins (i.e. bins into which either
-#'     no values in \code{x} did fall, or to which only \code{NA} values in
-#'     \code{y} were assigned). By default (i.e. if not specified), \code{NA}
-#'     is assigned to such bins.
-#' 
-#' @param returnIndex Logical indicating whether the index of the max (if
-#'     \code{method = "max"}) or min (if \code{method = "min"}) value within
-#'     each bin in input vector \code{x} should also be reported. For methods
-#'     other than \code{"max"} or \code{"min"} this argument is ignored.
+#'     its center at `fromX` and its lower and upper boundary are
+#'     `fromX - binSize/2` and `fromX + binSize/2`. This argument is
+#'     ignored if `breaks` are provided.
 #'
-#' @param returnX \code{logical} allowing to avoid returning \code{$x}, i.e. the
-#'     mid-points of the bins. \code{returnX = FALSE} might be useful in cases
-#'     where \code{breaks} are pre-defined as it considerably reduces the memory
+#' @param baseValue The base value for empty bins (i.e. bins into which either
+#'     no values in `x` did fall, or to which only `NA` values in
+#'     `y` were assigned). By default (i.e. if not specified), `NA`
+#'     is assigned to such bins.
+#'
+#' @param returnIndex Logical indicating whether the index of the max (if
+#'     `method = "max"`) or min (if `method = "min"`) value within
+#'     each bin in input vector `x` should also be reported. For methods
+#'     other than `"max"` or `"min"` this argument is ignored.
+#'
+#' @param returnX `logical` allowing to avoid returning `$x`, i.e. the
+#'     mid-points of the bins. `returnX = FALSE` might be useful in cases
+#'     where `breaks` are pre-defined as it considerably reduces the memory
 #'     demand.
-#' 
-#' @return Returns a list of length 2, the first element (named \code{"x"})
-#'     contains the bin mid-points, the second element (named \code{"y"}) the
-#'     aggregated values from input vector \code{y} within each bin. For
-#'     \code{returnIndex = TRUE} the list contains an additional element
-#'     \code{"index"} with the index of the max or min (depending on whether
-#'     \code{method = "max"} or \code{method = "min"}) value within each bin in
-#'     input vector \code{x}.
-#' 
+#'
+#' @return Returns a list of length 2, the first element (named `"x"`)
+#'     contains the bin mid-points, the second element (named `"y"`) the
+#'     aggregated values from input vector `y` within each bin. For
+#'     `returnIndex = TRUE` the list contains an additional element
+#'     `"index"` with the index of the max or min (depending on whether
+#'     `method = "max"` or `method = "min"`) value within each bin in
+#'     input vector `x`.
+#'
 #' @author Johannes Rainer
-#' 
-#' @seealso \code{\link{imputeLinInterpol}}
-#' 
+#'
+#' @seealso [imputeLinInterpol()]
+#'
+#' @md
+#'
 #' @examples
 #' ########
 #' ## Simple example illustrating the breaks and the binning.
@@ -284,64 +286,67 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
 ## imputeLinInterpol
 ##
 #' @title Impute values for empty elements in a vector using linear interpolation
-#' 
+#'
 #' @description This function provides missing value imputation based on linear
 #'     interpolation and resembles some of the functionality of the
-#'     \code{profBinLin} and \code{profBinLinBase} functions deprecated from
+#'     `profBinLin()` and `profBinLinBase()` functions deprecated from
 #'     version 1.51 on.
 #'
-#' @details Values for NAs in input vector \code{x} can be imputed using methods
-#'     \code{"lin"} and \code{"linbase"}:
+#' @details Values for NAs in input vector `x` can be imputed using methods
+#'     `"lin"` and `"linbase"`:
 #'
-#'     \code{impute = "lin"} uses simple linear imputation to derive a value
-#'     for an empty element in input vector \code{x} from its neighboring
+#'     `impute = "lin"` uses simple linear imputation to derive a value
+#'     for an empty element in input vector `x` from its neighboring
 #'     non-empty elements. This method is equivalent to the linear
-#'     interpolation in the \code{profBinLin} method. Whether interpolation is
+#'     interpolation in the `profBinLin` method. Whether interpolation is
 #'     performed if missing values are present at the beginning and end of
-#'     \code{x} can be set with argument \code{noInterpolAtEnds}. By default
-#'     interpolation is also performed at the ends interpolating from \code{0}
-#'     at the beginning and towards \code{0} at the end. For
-#'     \code{noInterpolAtEnds = TRUE} no interpolation is performed at both
+#'     `x` can be set with argument `noInterpolAtEnds`. By default
+#'     interpolation is also performed at the ends interpolating from `0`
+#'     at the beginning and towards `0` at the end. For
+#'     `noInterpolAtEnds = TRUE` no interpolation is performed at both
 #'     ends replacing the missing values at the beginning and/or the end of
-#'     \code{x} with \code{0}.
+#'     `x` with `0`.
 #'
-#'     \code{impute = "linbase"} uses linear interpolation to impute values for
+#'     `impute = "linbase"` uses linear interpolation to impute values for
 #'     empty elements within a user-definable proximity to non-empty elements
-#'     and setting the element's value to the \code{baseValue} otherwise. The
-#'     default for the \code{baseValue} is half of the smallest value in
-#'     \code{x} (\code{NA}s being removed). Whether linear interpolation based
+#'     and setting the element's value to the `baseValue` otherwise. The
+#'     default for the `baseValue` is half of the smallest value in
+#'     `x` (`NA`s being removed). Whether linear interpolation based
 #'     imputation is performed for a missing value depends on the
-#'     \code{distance} argument. Interpolation is only performed if one of the
-#'     next \code{distance} closest neighbors to the current empty element has
-#'     a value other than \code{NA}. No interpolation takes place for
-#'     \code{distance = 0}, while \code{distance = 1} means that the value for
+#'     `distance` argument. Interpolation is only performed if one of the
+#'     next `distance` closest neighbors to the current empty element has
+#'     a value other than `NA`. No interpolation takes place for
+#'     `distance = 0`, while `distance = 1` means that the value for
 #'     an empty element is interpolated from directly adjacent non-empty
 #'     elements while, if the next neighbors of the current empty element are
-#'     also \code{NA}, it's vale is set to \code{baseValue}.
+#'     also `NA`, it's vale is set to `baseValue`.
 #'     This corresponds to the linear interpolation performed by the
-#'     \code{profBinLinBase} method. For more details see examples below.
+#'     `profBinLinBase` method. For more details see examples below.
 #'
-#' @param x A numeric vector with eventual missing (\code{NA}) values.
+#' @param x A numeric vector with eventual missing (`NA`) values.
 #'
 #' @param baseValue The base value to which empty elements should be set. This
-#'     is only considered for \code{method = "linbase"} and corresponds to the
-#'     \code{profBinLinBase}'s \code{baselevel} argument.
-#' 
-#' @param method One of \code{"none"}, \code{"lin"} or \code{"linbase"}.
+#'     is only considered for `method = "linbase"` and corresponds to the
+#'     `profBinLinBase()`'s `baselevel` argument.
 #'
-#' @param distance For \code{method = "linbase"}: number of non-empty
+#' @param method One of `"none"`, `"lin"` or `"linbase"`.
+#'
+#' @param distance For `method = "linbase"`: number of non-empty
 #'     neighboring element of an empty element that should be considered for
 #'     linear interpolation. See details section for more information.
-#' @param noInterpolAtEnds For \code{method = "lin"}: Logical indicating
+#'
+#' @param noInterpolAtEnds For `method = "lin"`: Logical indicating
 #'     whether linear interpolation should also be performed at the ends of the
 #'     data vector (i.e. if missing values are present at the beginning or the
 #'     end of the vector).
-#' 
+#'
 #' @return A numeric vector with empty values imputed based on the selected
-#'     \code{method}.
-#' 
+#'     `method`.
+#'
+#' @md
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @examples
 #' #######
 #' ## Impute missing values by linearly interpolating from neighboring
@@ -413,24 +418,36 @@ imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L,
 }
 
 #' @description Calculate breaks for same-sized bins for data values
-#' from \code{fromX} to \code{toX}.
+#' from `fromX` to `toX`.
 #'
 #' @details This generates bins such as a call to
-#' \code{seq(fromX, toX, length.out = nBins)} would. The first and second element
+#' `seq(fromX, toX, length.out = nBins)` would. The first and second element
 #' in the result vector thus defines the lower and upper boundary for the first
 #' bin, the second and third value for the second bin and so on.
+#'
 #' @title Generate breaks for binning
-#' @param fromX numeric(1) specifying the lowest value for the bins.
-#' @param toX numeric(1) specifying the largest value for the bins.
-#' @param nBins numeric(1) defining the number of bins.
-#' @param shiftByHalfBinSize Logical indicating whether the bins should be shifted
-#' left by half bin size. This results centered bins, i.e. the first bin being
-#' centered at \code{fromX} and the last around \code{toX}.
-#' @return A numeric vector of length \code{nBins + 1} defining the lower and
-#' upper bounds of the bins.
+#'
+#' @param fromX `numeric(1)` specifying the lowest value for the bins.
+#'
+#' @param toX `numeric(1)` specifying the largest value for the bins.
+#'
+#' @param nBins `numeric(1)` defining the number of bins.
+#'
+#' @param shiftByHalfBinSize Logical indicating whether the bins should be
+#'     shifted left by half bin size. This results centered bins, i.e. the
+#'     first bin being centered at `fromX` and the last around `toX`.
+#'
+#' @return A numeric vector of length `nBins + 1` defining the lower and
+#'     upper bounds of the bins.
+#'
 #' @author Johannes Rainer
+#'
 #' @family functions to define bins
-#' @seealso \code{\link{binYonX}} for a binning function.
+#'
+#' @seealso [binYonX()] for a binning function.
+#'
+#' @md
+#'
 #' @examples
 #' ## Create breaks to bin values from 3 to 20 into 20 bins
 #' breaks_on_nBins(3, 20, nBins = 20)
@@ -449,23 +466,39 @@ breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
                  PACKAGE = "xcms"))
 }
 
-#' @description Defines breaks for \code{binSize} sized bins for values ranging
-#' from \code{fromX} to \code{toX}.
+#' @description
 #'
-#' @details This function creates breaks for bins of size \code{binSize}. The
+#' Defines breaks for `binSize` sized bins for values ranging
+#' from `fromX` to `toX`.
+#'
+#' @details
+#'
+#' This function creates breaks for bins of size `binSize`. The
 #' function ensures that the full data range is included in the bins, i.e. the
-#' last value (upper boundary of the last bin) is always equal \code{toX}. This
+#' last value (upper boundary of the last bin) is always equal `toX`. This
 #' however means that the size of the last bin will not always be equal to the
 #' desired bin size.
-#' See examples for more details and a comparisom to R's \code{seq} function.
+#'
+#' See examples for more details and a comparisom to R's `seq()` function.
+#'
 #' @title Generate breaks for binning using a defined bin size.
-#' @param fromX numeric(1) specifying the lowest value for the bins.
-#' @param toX numeric(1) specifying the largest value for the bins.
-#' @param binSize numeric(1) defining the size of a bin.
+#'
+#' @param fromX `numeric(1)` specifying the lowest value for the bins.
+#'
+#' @param toX `numeric(1)` specifying the largest value for the bins.
+#'
+#' @param binSize `numeric(1)` defining the size of a bin.
+#'
 #' @return A numeric vector defining the lower and upper bounds of the bins.
+#'
 #' @author Johannes Rainer
+#'
 #' @family functions to define bins
-#' @seealso \code{\link{binYonX}} for a binning function.
+#'
+#' @seealso [binYonX()] for a binning function.
+#'
+#' @md
+#'
 #' @examples
 #' ## Define breaks with a size of 0.13 for a data range from 1 to 10:
 #' breaks_on_binSize(1, 10, 0.13)
@@ -499,22 +532,22 @@ breaks_on_binSize <- function(fromX, toX, binSize) {
 ## @description This function is a reference implementation in R for the profBin
 ## C-function.
 ##
-## @details Same as the \code{profBin} method, this function calculates
+## @details Same as the `profBin` method, this function calculates
 ## centered breaks (i.e. shifted by half the bin-size, thus the center for the
-## first bin is the value of \code{fromX}) and bins the input vector \code{x}
-## into the bins defined by these breaks. The maximum \code{y} value corresponding
-## to the \code{x} values per bin is then returned.
-## Either \code{nBins} or \code{step} has to be defined.
+## first bin is the value of `fromX`) and bins the input vector `x`
+## into the bins defined by these breaks. The maximum `y` value corresponding
+## to the `x` values per bin is then returned.
+## Either `nBins` or `step` has to be defined.
 ## @title Reference implementation of the profBin C-function in R
 ## @param x Numeric vector of values used for binning.
 ## @param y Numeric vector of values to be binned.
 ## @param nBins Number of bins.
 ## @param step Bin size.
-## @param fromX X value from which binning should start. Default to \code{min(x)}.
-## @param toX Maximum \code{x} value that should be included in the binning.
-## @param FUN Function to aggregate \code{y} values for \code{x} values falling
+## @param fromX X value from which binning should start. Default to `min(x)`.
+## @param toX Maximum `x` value that should be included in the binning.
+## @param FUN Function to aggregate `y` values for `x` values falling
 ## within a bin.
-## @return A numeric vector of the maximum \code{y} values for each bin.
+## @return A numeric vector of the maximum `y` values for each bin.
 ## @author Johannes Rainer
 profBinR <- function(x, y, nBins, step, fromX = min(x), toX = max(x),
                      FUN = max, shiftByHalfBinSize = TRUE) {
@@ -588,4 +621,3 @@ names(.aggregateMethods) <- c("max", "min", "sum", "mean")
 }
 .imputeMethods <- c(0, 1, 2)
 names(.imputeMethods) <- c("no", "lin", "linbase")
-

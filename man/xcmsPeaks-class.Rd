@@ -1,7 +1,6 @@
 \name{xcmsPeaks-class}
 \docType{class}
 \alias{xcmsPeaks-class}
-\alias{show,xcmsPeaks-method}
 
 \title{A matrix of peaks}
 \description{A matrix of peak information. The actual columns depend on

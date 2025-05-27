@@ -20,7 +20,7 @@ plotFeatureGroups(
 }
 \arguments{
 \item{x}{\link{XcmsExperiment} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with grouped features
-(i.e. after calling \code{\link[=groupFeatures]{groupFeatures()}}.}
+(i.e. after calling \code{\link[MsFeatures:groupFeatures]{MsFeatures::groupFeatures()}}.}
 
 \item{xlim}{\code{numeric(2)} with the lower and upper limit for the x-axis.}
 
@@ -49,10 +49,11 @@ drawn.}
 \item{...}{additional parameters to be passed to the \code{lines} function.}
 }
 \description{
-\code{plotFeatureGroups} visualizes defined feature groups in the m/z by
+\code{plotFeatureGroups()} visualizes defined feature groups in the m/z by
 retention time space. Features are indicated by points with features from
-the same feature group being connected by a line. See \code{\link[=featureGroups]{featureGroups()}}
-for details on and options for feature grouping.
+the same feature group being connected by a line. See
+\code{\link[MsFeatures:featureGroups]{MsFeatures::featureGroups()}} for details on and options for
+feature grouping.
 }
 \author{
 Johannes Rainer

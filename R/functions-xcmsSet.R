@@ -217,6 +217,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
 }
 
 ############################################################
+#' @export
 c.xcmsSet <- function(...) {
     lcsets <- list(...)
     object <- new("xcmsSet")

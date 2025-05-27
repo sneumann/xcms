@@ -44,6 +44,7 @@ rla(x, grp)
 De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
 McConville M, Speed TP. Normalizing and integrating metabolomics data.
 \emph{Anal Chem} 2012 Dec 18;84(24):10768-76.
+doi: \href{https://doi.org/10.1021/ac302748b}{10.1021/ac302748b}
 }
 \author{
 Johannes Rainer

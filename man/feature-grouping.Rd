@@ -40,7 +40,7 @@ analysis with \code{\link[=groupChromPeaks]{groupChromPeaks()}}) are:
 \itemize{
 \item Grouping by similar retention times: \code{\link[=groupFeatures-similar-rtime]{groupFeatures-similar-rtime()}}.
 \item Grouping by similar feature values across samples:
-\code{\link[=AbundanceSimilarityParam]{AbundanceSimilarityParam()}}.
+\code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}}.
 \item Grouping by similar peak shape of extracted ion chromatograms:
 \code{\link[=EicSimilarityParam]{EicSimilarityParam()}}.
 }

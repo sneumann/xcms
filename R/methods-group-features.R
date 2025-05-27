@@ -26,7 +26,7 @@
 #' - Grouping by similar retention times: [groupFeatures-similar-rtime()].
 #'
 #' - Grouping by similar feature values across samples:
-#'   [AbundanceSimilarityParam()].
+#'   [MsFeatures::AbundanceSimilarityParam()].
 #'
 #' - Grouping by similar peak shape of extracted ion chromatograms:
 #'   [EicSimilarityParam()].
@@ -102,7 +102,7 @@ setReplaceMethod("featureGroups", "XcmsResult", function(object, value) {
 #' @param param `SimilarRtimeParam` object with the settings for the method. See
 #'     [MsFeatures::SimilarRtimeParam()] for details and options.
 #'
-#' @param ... passed to the `groupFeatures` function on numeric values.
+#' @param ... passed to the `groupFeatures()` function on numeric values.
 #'
 #' @return the input object with feature groups added (i.e. in column
 #'     `"feature_group"` of its `featureDefinitions` data frame.
@@ -201,21 +201,22 @@ setMethod(
 #' intensities across samples. This method thus groups features based on
 #' similarity of abundances (i.e. *feature values*) across samples in a
 #' data set.
-#' See also [AbundanceSimilarityParam()] for additional information and
-#' details.
+#' See also [MsFeatures::AbundanceSimilarityParam()] for additional
+#' information and details.
 #'
 #' This help page lists parameters specific for `xcms` result objects (i.e.
 #' [XcmsExperiment()] and [XCMSnExp()] objects). Documentation of the
 #' parameters for the similarity calculation is available in the
-#' [AbundanceSimilarityParam()] help page in the `MsFeatures` package.
+#' [MsFeatures::AbundanceSimilarityParam()] help page in the *MsFeatures*
+#' package.
 #'
 #' @param filled `logical(1)` whether filled-in values should be included in
 #'     the correlation analysis. Defaults to `filled = TRUE`.
 #'
-#' @param intensity `character(1)` passed to the `featureValues` call. See
+#' @param intensity `character(1)` passed to the `featureValues()` call. See
 #'     [featureValues()] for details. Defaults to `intensity = "into"`.
 #'
-#' @param method `character(1)` passed to the `featureValues` call. See
+#' @param method `character(1)` passed to the `featureValues()` call. See
 #'     [featureValues()] for details. Defaults to `method = "medret"`.
 #'
 #' @param msLevel `integer(1)` defining the MS level on which the features
@@ -225,13 +226,13 @@ setMethod(
 #'     pre-processing results.
 #'
 #' @param param `AbudanceSimilarityParam` object with the settings for the
-#'     method. See [AbundanceSimilarityParam()] for details on the grouping
-#'     method and its parameters.
+#'     method. See [MsFeatures::AbundanceSimilarityParam()] for details on
+#'     the grouping method and its parameters.
 #'
-#' @param value `character(1)` passed to the `featureValues` call. See
+#' @param value `character(1)` passed to the `featureValues()` call. See
 #'     [featureValues()] for details. Defaults to `value = "into"`.
 #'
-#' @param ... additional parameters passed to the `groupFeatures` method for
+#' @param ... additional parameters passed to the `groupFeatures()` method for
 #'     `matrix`.
 #'
 #' @return input object with feature group definitions added to (or updated
@@ -326,13 +327,14 @@ setMethod(
 #'
 #' @description
 #'
-#' `plotFeatureGroups` visualizes defined feature groups in the m/z by
+#' `plotFeatureGroups()` visualizes defined feature groups in the m/z by
 #' retention time space. Features are indicated by points with features from
-#' the same feature group being connected by a line. See [featureGroups()]
-#' for details on and options for feature grouping.
+#' the same feature group being connected by a line. See
+#' [MsFeatures::featureGroups()] for details on and options for
+#' feature grouping.
 #'
 #' @param x [XcmsExperiment] or [XCMSnExp()] object with grouped features
-#'     (i.e. after calling [groupFeatures()].
+#'     (i.e. after calling [MsFeatures::groupFeatures()].
 #'
 #' @param xlim `numeric(2)` with the lower and upper limit for the x-axis.
 #'
@@ -666,12 +668,15 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #' samples for the final generation of the similarity matrix on which the
 #' grouping (considering parameter `threshold`) will be performed.
 #'
-#' The [compareChromatograms()] function is used for similarity calculation
-#' which by default calculates the Pearson's correlation coefficient. The
-#' settings for `compareChromatograms` can be specified with parameters
+#' The [MSnbase::compareChromatograms()] function is used for similarity
+#' calculation which by default calculates the Pearson's correlation
+#' coefficient. The
+#' settings for `compareChromatograms()` can be specified with parameters
 #' `ALIGNFUN`, `ALIGNFUNARGS`, `FUN` and `FUNARGS`. `ALIGNFUN` defaults to
-#' [alignRt()] and is the function used to *align* the chromatograms before
-#' comparison. `ALIGNFUNARGS` allows to specify additional arguments for the
+#' `alignRt` and is the function used to *align* the chromatograms
+#' before comparison. For information and parameters of `alignRt()` see the
+#' documentation for [MSnbase::Chromatogram()].
+#' `ALIGNFUNARGS` allows to specify additional arguments for the
 #' `ALIGNFUN` function. It defaults to
 #' `ALIGNFUNARGS = list(tolerance = 0, method = "closest")` which ensures that
 #' data points from the same spectrum (scan, i.e. with the same retention time)
@@ -679,7 +684,7 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #' the function to calculate the similarity score and defaults to `FUN = cor`
 #' and `FUNARGS` allows to pass additional arguments to this function (defaults
 #' to `FUNARGS = list(use = "pairwise.complete.obs")`. See also
-#' [compareChromatograms()] for more information.
+#' [MSnbase::compareChromatograms()] for more information.
 #'
 #' The grouping of features based on the EIC similarity matrix is performed
 #' with the function specified with parameter `groupFun` which defaults to
@@ -687,12 +692,13 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #' similarity matrix with a similarity score larger than `threshold` into the
 #' same cluster. This creates clusters of features in which **all** features
 #' have a similarity score `>= threshold` with **any** other feature in that
-#' cluster. See [groupSimilarityMatrix()] for details. Additional parameters to
-#' that function can be passed with the `...` argument.
+#' cluster. See [MsFeatures::groupSimilarityMatrix()] for details.
+#' Additional parameters to that function can be passed with the `...` argument.
 #'
 #' This feature grouping should be called **after** an initial feature
-#' grouping by retention time (see [SimilarRtimeParam()]). The feature groups
-#' defined in columns `"feature_group"` of `featureDefinitions(object)` (for
+#' grouping by retention time (see [MsFeatures::SimilarRtimeParam()]).
+#' The feature groups defined in columns `"feature_group"` of
+#' `featureDefinitions(object)` (for
 #' features matching `msLevel`) will be used and refined by this method.
 #' Features with a value of `NA` in `featureDefinitions(object)$feature_group`
 #' will be skipped/not considered for feature grouping.
@@ -727,22 +733,22 @@ plotFeatureGroups <- function(x, xlim = numeric(), ylim = numeric(),
 #'
 #' @param ALIGNFUN `function` defining the function to be used to *align*
 #'     chromatograms prior similarity calculation. Defaults to
-#'     `ALIGNFUN = alignRt`. See [alignRt()] and [compareChromatograms()] for
-#'     more information.
+#'     `ALIGNFUN = alignRt`. See documentation of [MSnbase::Chromatogram()] and
+#'     [MSnbase::compareChromatograms()] for more information.
 #'
 #' @param ALIGNFUNARGS **named** `list` with arguments for `ALIGNFUN`.
 #'     Defaults to `ALIGNFUNARGS = list(tolerance = 0, method = "closest")`.
 #'
 #' @param FUN `function` defining the function to be used to calculate a
 #'     similarity between (aligned) chromatograms. Defaults to `FUN = cor`.
-#'     See [cor()] and [compareChromatograms()] for more information.
+#'     See [cor()] and [MSnbase::compareChromatograms()] for more information.
 #'
 #' @param FUNARGS **named** `list` with arguments for `FUN`. Defaults to
 #'     `FUN = list(use = "pairwise.complete.obs")`.
 #'
 #' @param groupFun `function` defining the function to be used to group rows
 #'     based on a pairwise similarity matrix. Defaults to
-#'     [groupSimilarityMatrix()].
+#'     [MsFeatures::groupSimilarityMatrix()].
 #'
 #' @param msLevel `integer(1)` defining the MS level on which the features
 #'     should be grouped.

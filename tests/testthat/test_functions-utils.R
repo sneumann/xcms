@@ -309,50 +309,6 @@ test_that(".rbind_fill works", {
     expect_equal(res$b, rep(c(FALSE, TRUE), each = 4))
 })
 
-test_that(".reduce works", {
-    skip_on_os(os = "windows", arch = "i386")
-
-    a <- c(1.23, 1.431, 2.43, 5.44, 6)
-    b <- c(1.33, 2.43, 5, 6, 7)
-    res <- .reduce(a, b)
-    expect_true(nrow(res) == 3)
-    expect_equal(res[, 1], c(1.23, 1.431, 5.44))
-    expect_equal(res[, 2], c(1.33, 5, 7))
-
-    idx <- sample(1:length(a))
-    res_2 <- .reduce(a[idx], b[idx])
-    expect_identical(res, res_2)
-
-    res <- .reduce(a[1], b[1])
-    expect_equal(res, cbind(start = a[1], end = b[1]))
-
-    res <- .reduce(numeric(), numeric())
-    expect_equal(nrow(res), 0)
-
-    res <- .reduce(a - 0.1, b + 0.1)
-    expect_equal(res[, 1], c(1.13, 5.34))
-    expect_equal(res[, 2], c(5.1, 7.1))
-
-    a <- c(4, 4)
-    b <- c(5, 5)
-    res <- .reduce(a, b)
-    expect_true(nrow(res) == 1)
-    expect_equal(res[1, 1], c(start = 4))
-    expect_equal(res[1, 2], c(end = 5))
-
-    a <- c(3, 4, 8)
-    b <- c(7, 5, 10)
-    res <- .reduce(a, b)
-    expect_equal(res[, 1], c(3, 8))
-    expect_equal(res[, 2], c(7, 10))
-
-    a <- c(3, 4, 6)
-    b <- c(7, 5, 10)
-    res <- .reduce(a, b)
-    expect_equal(unname(res[, 1]), 3)
-    expect_equal(unname(res[, 2]), 10)
-})
-
 test_that("groupOverlaps works", {
     skip_on_os(os = "windows", arch = "i386")
 
@@ -363,7 +319,7 @@ test_that("groupOverlaps works", {
     expect_equal(length(res), 2)
     expect_equal(res, list(3, 1:2))
 
-    expect_error(groupOverlaps(x, 1:2), "lengths differ")
+    expect_error(groupOverlaps(x, 1:2), "same length")
 })
 
 test_that(".require_spectra works", {
@@ -504,4 +460,31 @@ test_that(".match_last works", {
 
     res <- .match_last(c("c", "a", "d"), a)
     expect_equal(res, c(3L, 4L, NA_integer_))
+})
+
+test_that(".which_in_range works", {
+    a <- cbind(rtmin = c(1, 2, 3, 4, 5, 6),
+               rt = c(3, 4, 3.4, 5, 8, 12.2))
+    res <- .which_in_range(a)
+    expect_equal(res, 1:6)
+    res <- .which_in_range(a, c(20, 30), "rt")
+    expect_equal(res, integer())
+    res <- .which_in_range(a, c(3, 6), "rt")
+    expect_equal(res, 1:4)
+})
+
+test_that(".is_equal works", {
+    expect_false(.is_equal(1:3, 1:4))
+    expect_true(.is_equal("a", "a"))
+    expect_true(.is_equal(c(1:3), 1:3))
+    expect_true(.is_equal(as.character(1:3), 1:3))
+})
+
+test_that(".which_isolation_window works", {
+    x <- data.frame(isolationWindowLowerMz = c(3, 3, 4, 4, 5, 5),
+                    isolationWindowUpperMz = c(5, 5, 6, 6, 7, 7))
+    res <- .which_isolation_window(x, mz = 4)
+    expect_equal(res, c(1L, 2L))
+    res <- .which_isolation_window(x, mz = 2)
+    expect_equal(res, integer())
 })

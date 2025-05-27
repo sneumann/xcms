@@ -7,7 +7,7 @@
 plotQC(object, sampNames, sampColors, sampOrder, what)
 }
 \arguments{
-\item{object}{A grouped \code{\link{xcmsSet}}}
+\item{object}{A grouped \code{xcmsSet}}
 
 \item{sampNames}{Override sample names (e.g. with simplified names)}
 
@@ -26,17 +26,16 @@ of measurement to detect time drift}
 }
 \value{
 List with four matrices, each of dimension features * samples:
- "mz":    median mz deviation for each sample
- "mzdev": median mz deviation for each sample
- "rt":    median RT deviation for each sample
- "rtdev": median RT deviation for each sample
+"mz":    median mz deviation for each sample
+"mzdev": median mz deviation for each sample
+"rt":    median RT deviation for each sample
+"rtdev": median RT deviation for each sample
 }
 \description{
 Use "democracy" to determine the average m/z and RT deviations
 for a grouped xcmsSet, and dependency on sample or absolute m/z
-}
-\details{
-plotQC() is a warpper to create a set of diagnostic plots.
+
+\code{plotQC()} is a warpper to create a set of diagnostic plots.
 For the m/z deviations, the median of all m/z withon one group are assumed.
 }
 \examples{
@@ -52,5 +51,5 @@ plotQC(xsg, what="rtdevsample")
 
 }
 \author{
-Michael Wenk, Michael Wenk <michael.wenk@student.uni-halle.de>
+Michael Wenk, Michael Wenk \href{mailto:michael.wenk@student.uni-halle.de}{michael.wenk@student.uni-halle.de}
 }

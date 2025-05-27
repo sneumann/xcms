@@ -219,7 +219,7 @@
         return(list(chromPeaks = pks, chromPeakData = pkd))
     idx <- order(pks[, "rtmin"])
     pks <- pks[idx, , drop = FALSE]
-    pkd <- pkd[idx, ]
+    pkd <- pkd[idx, , drop = FALSE]
     rownames(pkd) <- NULL
     pks_new <- pks
     pks_new[ , ] <- NA_real_
@@ -278,25 +278,25 @@
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
-                    pkd[current_peak, ] <- pkd[i, ] # replace peak data with new
+                    pkd[current_peak, ] <- pkd[i, , drop = FALSE]
                 }
                 rownames(pks_new)[current_peak] <- NA_character_
             } else {
                 current_peak <- current_peak + 1
                 pks_new[current_peak, ] <- pks[i, ]
                 rownames(pks_new)[current_peak] <- rownames(pks)[i]
-                pkd[current_peak, ] <- pkd[i, ]
+                pkd[current_peak, ] <- pkd[i, , drop = FALSE]
             }
         } else {
             current_peak <- current_peak + 1
             pks_new[current_peak, ] <- pks[i, ]
             rownames(pks_new)[current_peak] <- rownames(pks)[i]
-            pkd[current_peak, ] <- pkd[i, ]
+            pkd[current_peak, ] <- pkd[i, , drop = FALSE]
         }
     }
     keep <- which(!is.na(pks_new[, "rt"]))
     list(chromPeaks = pks_new[keep, , drop = FALSE],
-         chromPeakData = pkd[keep, ])
+         chromPeakData = pkd[keep, , drop = FALSE])
 }
 
 #' similar to functions-XCMSnExp.R/.merge_neigboring_peaks but works on only
@@ -317,17 +317,17 @@
 #' @noRd
 .merge_neighboring_peaks2 <- function(x, pks, pkd, rt, expandRt = 2,
                                       expandMz = 0, ppm = 10, minProp = 0.75) {
-    cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
+    cands <- xcms:::.define_merge_candidates(pks, expandMz, ppm, expandRt)
     if (!length(cands))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     cands <- cands[[2L]]
     pks_new <- pkd_new <- vector("list", length(cands))
     for (i in seq_along(cands)) {
-        res <- .merge_neighboring_peak_candidates(
+        res <- xcms:::.merge_neighboring_peak_candidates(
             x, rt = rt, pks[cands[[i]], , drop = FALSE],
             pkd[cands[[i]], , drop = FALSE], diffRt = 2 * expandRt,
             minProp = minProp, expandMz = expandMz, ppm = ppm)
-        pks_new[[i]] <- res$chromPeaks
+         pks_new[[i]] <- res$chromPeaks
         pkd_new[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, pks_new)
@@ -337,12 +337,12 @@
     keep <- !(rownames(pks) %in% setdiff(unlist(cands, use.names = FALSE),
                                          rownames(pks_new)))
     pks <- pks[keep, , drop = FALSE]
-    pkd <- pkd[keep, ]
+    pkd <- pkd[keep, , drop = FALSE]
     ## add merged peaks
     news <- is.na(rownames(pks_new))
     if (any(news)) {
         pks <- rbind(pks, pks_new[news, , drop = FALSE])
-        pkd <- rbind(pkd, pkd_new[news, ])
+        pkd <- rbind(pkd, pkd_new[news, , drop = FALSE])
     }
     list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks))
 }
@@ -362,7 +362,7 @@
     res <- bpmapply(
         .merge_neighboring_peaks2,
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
-                        f = factor()), f),
+                        f = factor(), return.type = "list"), f),
         split.data.frame(chromPeaks(x, msLevel = msLevel), f = f_peaks),
         split.data.frame(.chromPeakData(x, msLevel = msLevel), f = f_peaks),
         split(rt, f),
@@ -401,10 +401,10 @@
                                    numeric(1))
                     sum(vals >= threshold, na.rm = TRUE) >= nValues
                 }
-            }, logical(1))
+            }, NA)
         },
         split(peaksData(filterMsLevel(spectra(x), msLevel = msLevel),
-                        f = factor()), f),
+                        f = factor(), return.type = "list"), f),
         split(rt, f),
         split.data.frame(.chromPeaks(x), f = f_peaks),
         split(.chromPeakData(x)$ms_level, f = f_peaks),
@@ -414,15 +414,21 @@
     unlist(res, use.names = FALSE)
 }
 
-#' Apply any function `FUN` to chunks of an `XcmsExperiment`.
+#' Apply any function `FUN` to chunks of an `XcmsExperiment`. Subsets of
+#' `x` defined by `chunkSize` are extracted at a time and the function `FUN`
+#' is applied to them. Parameter `SUBSET_FUN` allows to define a function
+#' to (efficiently) subset `x`.
 #'
 #' @author Johannes Rainer
 #'
 #' @noRd
-.xmse_apply_chunks <- function(x, FUN, ..., keepChromPeaks = TRUE,
-                               keepAdjustedRtime = FALSE, keepFeatures = FALSE,
-                               ignoreHistory = FALSE, keepSampleIndex = FALSE,
-                               chunkSize = 1L) {
+.xmse_apply_chunks <- function(x, FUN, ..., chunkSize = 1L,
+                               SUBSET_FUN = .subset_xcms_experiment,
+                               keepChromPeaks = TRUE,
+                               keepAdjustedRtime = FALSE,
+                               keepFeatures = FALSE,
+                               ignoreHistory = FALSE,
+                               keepSampleIndex = FALSE) {
     idx <- seq_along(x)
     chunks <- split(idx, ceiling(idx / chunkSize))
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
@@ -432,11 +438,13 @@
     pb$tick(0)
     lapply(chunks, function(z, ...) {
         suppressMessages(
-            res <- FUN(.subset_xcms_experiment(
-                x, i = z, keepChromPeaks = keepChromPeaks,
-                keepAdjustedRtime = keepAdjustedRtime,
-                keepFeatures = keepFeatures, ignoreHistory = ignoreHistory,
-                keepSampleIndex = keepSampleIndex), ...)
+            res <- FUN(
+                SUBSET_FUN(x, i = z, keepChromPeaks = keepChromPeaks,
+                           keepAdjustedRtime = keepAdjustedRtime,
+                           keepFeatures = keepFeatures,
+                           ignoreHistory = ignoreHistory,
+                           keepSampleIndex = keepSampleIndex),
+                ...)
         )
         pb$tick()
         res
@@ -475,7 +483,7 @@
     else rt <- rtime(spectra(x))[keep]
     cn <- colnames(.chromPeaks(x))
     res <- bpmapply(split(peaksData(filterMsLevel(spectra(x), msLevel),
-                                    f = factor()), f),
+                                    f = factor(), return.type = "list"), f),
                     split(rt, f),
                     pal,
                     as.integer(names(pal)),
@@ -940,6 +948,7 @@
                                             msLevel, isolationWindow = NULL,
                                             chunkSize, chromPeaks,
                                             return.type, BPPARAM) {
+    message("Extracting chromatographic data")
     chrs <- as(.mse_chromatogram(
         as(object, "MsExperiment"), rt = rt, mz = mz,
         aggregationFun = aggregationFun, msLevel = msLevel,
@@ -959,23 +968,28 @@
                                            "total (:percent) in ",
                                            ":elapsed"),
                            total = nrow(chrs) + 1L, clear = FALSE)
+    mat <- chrs@.Data
+    slot(chrs, ".Data", check = FALSE) <- matrix(ncol = ncol(chrs),
+                                                 nrow = nrow(chrs))
     for (i in seq_len(nrow(chrs))) {
         idx <- .index_chrom_peaks(
             object, rt = fd[i, rtc], mz = fd[i, mzc],
-            msLevel = chrs[i, 1]@msLevel, type = chromPeaks)
+            msLevel = mat[i, 1][[1L]]@msLevel, type = chromPeaks)
         f_s <- factor(.chromPeaks(object)[idx, "sample"], levels = js)
         pkl <- split.data.frame(.chromPeaks(object)[idx, , drop = FALSE], f_s)
         cpl <- split.data.frame(cpd[idx, , drop = FALSE], f_s)
         pb$tick()
         for (j in js) {
-            tmp <- chrs@.Data[i, j][[1L]]
+            tmp <- mat[i, j][[1L]]
             slot(tmp, "chromPeaks", check = FALSE) <- pkl[[j]]
             slot(tmp, "chromPeakData", check = FALSE) <- as(cpl[[j]], "DataFrame")
-            chrs@.Data[i, j][[1L]] <- tmp
+            mat[i, j][[1L]] <- tmp
         }
     }
+    slot(chrs, ".Data", check = FALSE) <- mat
     pb$tick()
-    ## Process features - that is not perfect.
+    ## Process features - that is not perfect: features are selected based on
+    ## mz and rt, not based on the selected chrom peaks.
     if (hasFeatures(object)) {
         message("Processing features")
         pb <- progress_bar$new(format = paste0("[:bar] :current/:",
@@ -992,23 +1006,12 @@
                     fdev, .chromPeaks(object), pks_sub)
             } else data.frame()
         })
-        chrs@featureDefinitions <- DataFrame(do.call(rbind, fts))
+        slot(chrs, "featureDefinitions", check = FALSE) <-
+            DataFrame(do.call(rbind, fts))
         pb$tick()
     }
-    chrs@.processHistory <- object@processHistory
+    slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
     chrs
-}
-
-#' @rdname XcmsExperiment
-featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
-                        rtmax = max, features = character()) {
-    if (!hasFeatures(object))
-        stop("No correspondence results available. Please run ",
-             "'groupChromPeaks' first.")
-    if (!length(features))
-        features <- rownames(featureDefinitions(object))
-    .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                        rtmax = rtmax, features = features)
 }
 
 #' @title Define MS regions for features
@@ -1081,7 +1084,7 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         ## Get EICs for all chrom peaks (all MS levels)
         object <- filterRt(object, rt = range(pks[, c("rtmin", "rtmax")]))
         chrs <- .chromatograms_for_peaks(
-            peaksData(object@spectra, f = factor()),
+            peaksData(object@spectra, f = factor(), return.type = "list"),
             rt = rtime(object@spectra),
             msl = msLevel(object@spectra), file_idx = fromFile,
             tmz = isolationWindowTargetMz(object@spectra), pks = pks,
@@ -1155,15 +1158,21 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         keep <- keep &
             chromPeakData(
                 object, return.type = "data.frame")$ms_level %in% msLevel
+    which(keep & .is_chrom_peak_within_mz_rt(pks, rt, mz, ppm, type))
+}
+
+.is_chrom_peak_within_mz_rt <- function(x, rt = numeric(), mz = numeric(),
+                                         ppm = 0, type) {
     ## Select peaks within rt range.
+    keep <- rep(TRUE, nrow(x))
     if (length(rt)) {
         rt <- range(as.numeric(rt))
         if (type == "any")
-            keep <- keep & pks[, "rtmin"] <= rt[2L] & pks[, "rtmax"] >= rt[1L]
+            keep <- keep & x[, "rtmin"] <= rt[2L] & x[, "rtmax"] >= rt[1L]
         if (type == "within")
-            keep <- keep & pks[, "rtmin"] >= rt[1L] & pks[, "rtmax"] <= rt[2L]
+            keep <- keep & x[, "rtmin"] >= rt[1L] & x[, "rtmax"] <= rt[2L]
         if (type == "apex_within")
-            keep <- keep & pks[, "rt"] >= rt[1L] & pks[, "rt"] <= rt[2L]
+            keep <- keep & x[, "rt"] >= rt[1L] & x[, "rt"] <= rt[2L]
     }
     ## Select peaks within mz range, considering also ppm
     if (length(mz)) {
@@ -1173,13 +1182,13 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
         if (is.finite(mz[2L]))
             mz[2L] <- mz[2L] + mz[2L] * ppm / 1e6
         if (type == "any")
-            keep <- keep & pks[, "mzmin"] <= mz[2L] & pks[, "mzmax"] >= mz[1L]
+            keep <- keep & x[, "mzmin"] <= mz[2L] & x[, "mzmax"] >= mz[1L]
         if (type == "within")
-            keep <- keep & pks[, "mzmin"] >= mz[1L] & pks[, "mzmax"] <= mz[2L]
+            keep <- keep & x[, "mzmin"] >= mz[1L] & x[, "mzmax"] <= mz[2L]
         if (type == "apex_within")
-            keep <- keep & pks[, "mz"] >= mz[1L] & pks[, "mz"] <= mz[2L]
+            keep <- keep & x[, "mz"] >= mz[1L] & x[, "mz"] <= mz[2L]
     }
-    which(keep)
+    keep
 }
 
 #' Helper function to return the chromPeakData as-is (as a data.frame) from
@@ -1187,6 +1196,9 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
 #'
 #' @noRd
 .chromPeakData <- function(object, msLevel = integer()) {
+    if (is(object, "XcmsExperimentHdf5"))
+        return(chromPeakData(object, msLevel = msLevel,
+                             return.type = "data.frame"))
     if (length(msLevel))
         object@chromPeakData[object@chromPeakData$ms_level %in% msLevel, ]
     else object@chromPeakData
@@ -1197,8 +1209,12 @@ featureArea <- function(object, mzmin = min, mzmax = max, rtmin = min,
 #'
 #' @noRd
 .chromPeaks <- function(object) {
-    if (inherits(object, "XcmsExperiment"))
-        object@chromPeaks
+    if (inherits(object, "XcmsExperiment")) {
+        if (is(object, "XcmsExperimentHdf5"))
+            chromPeaks(object)
+        else
+            object@chromPeaks
+    }
     else chromPeaks(object@msFeatureData)
 }
 

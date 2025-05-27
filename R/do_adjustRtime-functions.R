@@ -1,5 +1,5 @@
 ## Retention time correction methods.
-#' @include DataClasses.R functions-MsFeatureData.R
+#' @include DataClasses.R functions-MsFeatureData.R AllGenerics.R
 
 #' @title Align spectrum retention times across samples using peak groups
 #' found in most samples
@@ -10,8 +10,8 @@
 #' the retention time deviation across all samples using peak groups
 #' (features) containg chromatographic peaks present in most/all samples.
 #' The retention time deviation for these features in each sample is
-#' described by fitting either a polynomial (\code{smooth = "loess"}) or
-#' a linear (\code{smooth = "linear"}) model to the data points. The
+#' described by fitting either a polynomial (`smooth = "loess"`) or
+#' a linear (`smooth = "linear"`) model to the data points. The
 #' models are subsequently used to adjust the retention time for each
 #' spectrum in each sample.
 #'
@@ -23,48 +23,50 @@
 #' The alignment bases on the presence of compounds that can be found
 #' in all/most samples of an experiment. The retention times of individual
 #' spectra are then adjusted based on the alignment of the features
-#' corresponding to these \emph{house keeping compounds}. The paraneters
-#' \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+#' corresponding to these *house keeping compounds*. The parameters
+#' `minFraction` and `extraPeaks` can be used to fine tune which
 #' features should be used for the alignment (i.e. which features
 #' most likely correspond to the above mentioned house keeping compounds).
 #'
-#' Parameter \code{subset} allows to define a subset of samples within the
+#' Parameter `subset` allows to define a subset of samples within the
 #' experiment that should be aligned. All samples not being part of the subset
 #' will be aligned based on the adjustment of the closest sample within the
 #' subset. This allows to e.g. exclude blank samples from the alignment process
 #' with their retention times being still adjusted based on the alignment
-#' results of the \emph{real} samples.
+#' results of the *real* samples.
 #'
 #' @inheritParams adjustRtime
 #'
-#' @param peaks a \code{matrix} or \code{data.frame} with the identified
+#' @param peaks a `matrix` or `data.frame` with the identified
 #'     chromatographic peaks in the samples.
 #'
-#' @param peakIndex a \code{list} of indices that provides the grouping
+#' @param peakIndex a `list` of indices that provides the grouping
 #'     information of the chromatographic peaks (across and within samples).
 #'
-#' @param rtime a \code{list} of \code{numeric} vectors with the retention
+#' @param rtime a `list` of `numeric` vectors with the retention
 #'     times per file/sample.
 #'
-#' @param peakGroupsMatrix optional \code{matrix} of (raw) retention times for
+#' @param peakGroupsMatrix optional `matrix` of (raw) retention times for
 #'     peak groups on which the alignment should be performed. Each column
 #'     represents a sample, each row a feature/peak group. If not provided,
 #'     this matrix will be determined depending on parameters
-#'     \code{minFraction} and \code{extraPeaks}. If provided,
-#'     \code{minFraction} and \code{extraPeaks} will be ignored.
+#'     `minFraction` and `extraPeaks`. If provided,
+#'     `minFraction` and `extraPeaks` will be ignored.
 #'
-#' @return A \code{list} with \code{numeric} vectors with the adjusted
+#' @return A `list` with `numeric` vectors with the adjusted
 #'     retention times grouped by sample.
 #'
 #' @family core retention time correction algorithms
 #'
 #' @author Colin Smith, Johannes Rainer
 #'
+#' @md
+#'
 #' @references
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-#' \emph{Anal. Chem.} 2006, 78:779-787.
+#' *Anal. Chem.* 2006, 78:779-787.
 do_adjustRtime_peakGroups <-
     function(peaks, peakIndex, rtime = list(), minFraction = 0.9,
              extraPeaks = 1,
@@ -170,8 +172,8 @@ do_adjustRtime_peakGroups <-
             stop("The retention times in 'peakGroupsMatrix' have to be within",
                  " the retention time range of the experiment!")
         rt <- peakGroupsMatrix
-        message("Performing retention time correction using ", nrow(rt),
-                " peak groups.")
+        message("Performing retention time alignment using ", nrow(rt),
+                " anchor peaks.")
 
         ## Calculate the deviation of each peak group in each sample from its
         ## median
@@ -592,7 +594,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @aliases LamaParama-class
 #'
 #' @description
-#' Alignment is achieved using the ['adjustRtime()'] method with a `param` of
+#'
+#' Alignment is achieved using the [adjustRtime()] method with a `param` of
 #' class `LamaParama`. This method corrects retention time by aligning
 #' chromatographic data with an external reference dataset.
 #'
@@ -642,7 +645,8 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'
 #'
 #' @param BPPARAM For `matchLamasChromPeaks()`: parallel processing setup.
-#' Defaults to `BPPARAM = bpparam()`. See [bpparam()] for more information.
+#'     Defaults to `BPPARAM = bpparam()`. See [BiocParallel::bpparam()] for
+#'     more information.
 #'
 #' @param bs For `LamaParama()`: `character(1)` defining the GAM smoothing method.
 #'     (defaults to thin plate, `bs = "tp"`)
@@ -652,7 +656,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #' @param colFit For `plot()`: color of the fitting line.
 #'
 #' @param index For `plot()`: `numeric(1)` index of the file that should be
-#'  plotted.
+#'      plotted.
 #'
 #' @param lamas For `LamaParama`: `matrix` or `data.frame` with the m/z and
 #'     retention times values of features (as first and second column) from the
@@ -671,7 +675,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
 #'     the first, initial fit, are removed from the final model fit.
 #'
 #' @param param An object of class `LamaParama` that will later be used for
-#' adjustment using the `[adjustRtime()]` function.
+#'     adjustment using the [adjustRtime()] function.
 #'
 #' @param ppm For `LamaParama`: `numeric(1)` defining the m/z-relative maximal
 #'     allowed difference in m/z between `lamas` and chromatographic peaks. Used

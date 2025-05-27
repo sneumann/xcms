@@ -1,5 +1,5 @@
 Package: xcms
-Version: 4.7.1
+Version: 4.7.2
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -60,13 +60,14 @@ Imports:
     S4Vectors,
     IRanges,
     SummarizedExperiment,
-    MsCoreUtils (>= 1.15.5),
+    MsCoreUtils (>= 1.19.2),
     MsFeatures,
     MsExperiment (>= 1.5.4),
-    Spectra (>= 1.15.7),
+    Spectra (>= 1.16.1),
     progress,
     RColorBrewer,
-    MetaboCoreUtils (>= 1.11.2)
+    MetaboCoreUtils (>= 1.11.2),
+    data.table
 Suggests:
     BiocStyle,
     caTools,
@@ -83,7 +84,8 @@ Suggests:
     multtest,
     MsBackendMgf,
     signal,
-    mgcv
+    mgcv,
+    rhdf5
 Enhances:
     Rgraphviz,
     rgl
@@ -94,6 +96,7 @@ VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 RoxygenNote: 7.3.2
 Encoding: UTF-8
+Roxygen: list(markdown=TRUE)
 Collate:
     'AllGenerics.R'
     'functions-XChromatograms.R'
@@ -106,6 +109,9 @@ Collate:
     'XcmsExperiment-functions.R'
     'XcmsExperiment-plotting.R'
     'XcmsExperiment.R'
+    'XcmsExperimentHdf5-functions.R'
+    'hidden_aliases.R'
+    'XcmsExperimentHdf5.R'
     'c.R'
     'cwTools.R'
     'databases.R'
@@ -152,7 +158,6 @@ Collate:
     'models.R'
     'mzClust.R'
     'plotQC.R'
-    'ramp.R'
     'specDist.R'
     'write.mzquantML.R'
     'writemzdata.R'

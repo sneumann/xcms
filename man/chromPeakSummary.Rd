@@ -34,8 +34,8 @@ on which the metric should be calculated.}
 \item{chunkSize}{\code{integer(1)} defining the number of samples from which data
 should be loaded and processed at a time.}
 
-\item{BPPARAM}{Parallel processing setup. See
-\code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details.}
+\item{BPPARAM}{Parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+for details.}
 }
 \value{
 A \code{matrix} or \code{data.frame} with the same number of rows as there are
@@ -64,7 +64,8 @@ of this test.
 \references{
 Kumler W, Hazelton B J and Ingalls A E (2023) "Picky with peakpicking:
 assessing chromatographic peak quality with simple metrics in metabolomics"
-\emph{BMC Bioinformatics} 24(1):404. doi: 10.1186/s12859-023-05533-4
+\emph{BMC Bioinformatics} 24(1):404.
+doi: \href{https://doi.org/10.1186/s12859-023-05533-4}{10.1186/s12859-023-05533-4}
 }
 \author{
 Pablo Vangeenderhuysen, Johannes Rainer, William Kumler

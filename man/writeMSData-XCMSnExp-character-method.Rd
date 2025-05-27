@@ -27,7 +27,7 @@ original file names etc) should be copied from the original files.}
 
 \item{software_processing}{optionally provide specific data processing steps.
 See documentation of the \code{software_processing} parameter of
-\code{\link[mzR:writeMSData]{mzR::writeMSData()}}.}
+\code{\link[MSnbase:writeMSData]{MSnbase::writeMSData()}}.}
 
 \item{...}{Additional parameters to pass down to the \code{\link[MSnbase:writeMSData]{MSnbase::writeMSData()}}
 function in the \code{MSnbase} package, such as \code{outformat} to specify the

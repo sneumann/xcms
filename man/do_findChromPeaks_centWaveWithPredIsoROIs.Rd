@@ -76,15 +76,15 @@ peak width in chromatographic space. Given as a range (min, max)
 in seconds.}
 
 \item{snthresh}{For \code{do_findChromPeaks_addPredIsoROIs}:
-numeric(1) defining the signal to noise threshold for the centWave
+\code{numeric(1)} defining the signal to noise threshold for the centWave
 algorithm. For \code{do_findChromPeaks_centWaveWithPredIsoROIs}:
-numeric(1) defining the signal to noise threshold for the initial
+\code{numeric(1)} defining the signal to noise threshold for the initial
 (first) centWave run.}
 
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least \code{k} peaks with intensity
-\code{>= I}.}
+\verb{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
 chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
@@ -113,7 +113,7 @@ peak.}
 
 \item{noise}{\code{numeric(1)} allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
-intensity \code{< noise} are omitted from ROI detection).}
+intensity \verb{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{\code{logical(1)} whether additional peak meta data
 columns should be returned.}
@@ -157,22 +157,21 @@ Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
 
 \item{extendLengthMSW}{Option to force centWave to use all scales when
-running centWave rather than truncating with the EIC length. Uses the "open"
-method to extend the EIC to a integer base-2 length prior to being passed to
-\code{convolve} rather than the default "reflect" method. See
+running centWave rather than truncating with the EIC length. Uses the
+"open" method to extend the EIC to a integer base-2 length prior to
+being passed to \code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{verboseBetaColumns}{Option to calculate two additional metrics of peak
 quality via comparison to an idealized bell curve. Adds \code{beta_cor} and
 \code{beta_snr} to the \code{chromPeaks} output, corresponding to a Pearson
-correlation coefficient to a bell curve with several degrees of skew as well
-as an estimate of signal-to-noise using the residuals from the best-fitting
-bell curve. See https://github.com/sneumann/xcms/pull/685 and
-https://doi.org/10.1186/s12859-023-05533-4 for more information.}
+correlation coefficient to a bell curve with several degrees of skew
+as well as an estimate of signal-to-noise using the residuals from the
+best-fitting bell curve. See https://github.com/sneumann/xcms/pull/685
+and https://doi.org/10.1186/s12859-023-05533-4 for more information.}
 
-\item{peaks.}{A matrix or \code{xcmsPeaks} object such as one returned by
-a call to \code{link{do_findChromPeaks_centWave}} or
-\code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
+\item{peaks.}{A matrix such as one returned by
+a call to \code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}} (with \code{verboseColumns = TRUE})
 with the peaks for which isotopes should be predicted and used for an
 additional peak detectoin using the centWave method. Required columns
 are: \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"},
@@ -180,59 +179,61 @@ are: \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"},
 }
 \value{
 A matrix, each row representing an identified chromatographic peak.
-    All non-overlapping peaks identified in both centWave runs are reported.
-    The matrix columns are:
-    \describe{
-    \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
-    \item{mzmin}{Minimum m/z of the peaks.}
-    \item{mzmax}{Maximum m/z of the peaks.}
-    \item{rt}{Retention time of the peak's midpoint.}
-    \item{rtmin}{Minimum retention time of the peak.}
-    \item{rtmax}{Maximum retention time of the peak.}
-    \item{into}{Integrated (original) intensity of the peak.}
-    \item{intb}{Per-peak baseline corrected integrated peak intensity.}
-    \item{maxo}{Maximum intensity of the peak.}
-    \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-    \code{sd} being the standard deviation of local chromatographic noise.}
-    \item{egauss}{RMSE of Gaussian fit.}
-    }
-    Additional columns for \code{verboseColumns = TRUE}:
-    \describe{
-    \item{mu}{Gaussian parameter mu.}
-    \item{sigma}{Gaussian parameter sigma.}
-    \item{h}{Gaussian parameter h.}
-    \item{f}{Region number of the m/z ROI where the peak was localized.}
-    \item{dppm}{m/z deviation of mass trace across scans in ppm.}
-    \item{scale}{Scale on which the peak was localized.}
-    \item{scpos}{Peak position found by wavelet analysis (scan number).}
-    \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-    \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-    }
-    Additional columns for \code{verboseBetaColumns = TRUE}:
-    \describe{
-    \item{beta_cor}{Correlation between an "ideal" bell curve and the raw data}
-    \item{beta_snr}{Signal-to-noise residuals calculated from the beta_cor fit}
-    }
+All non-overlapping peaks identified in both centWave runs are reported.
+The matrix columns are:
+\itemize{
+\item \code{"mz"}: Intensity weighted mean of m/z values of the peaks across scans.
+\item \code{"mzmin"}: Minimum m/z of the peaks.
+\item \code{"mzmax"}: Maximum m/z of the peaks.
+\item \code{"rt"}: Retention time of the peak's midpoint.
+\item \code{"rtmin"}: Minimum retention time of the peak.
+\item \code{"rtmax"}: Maximum retention time of the peak.
+\item \code{"into"}: Integrated (original) intensity of the peak.
+\item \code{"intb"}: Per-peak baseline corrected integrated peak intensity.
+\item \code{"maxo"}: Maximum intensity of the peak.
+\item \code{"sn"}: Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+\code{sd} being the standard deviation of local chromatographic noise.
+\item \code{"egauss"}: RMSE of Gaussian fit.
+}
+
+Additional columns for \code{verboseColumns = TRUE}:
+\itemize{
+\item \code{"mu"}: Gaussian parameter mu.
+\item \code{"sigma"}: Gaussian parameter sigma.
+\item \code{"h"}: Gaussian parameter h.
+\item \code{"f"}: Region number of the m/z ROI where the peak was localized.
+\item \code{"dppm"}: m/z deviation of mass trace across scans in ppm.
+\item \code{"scale"}: Scale on which the peak was localized.
+\item \code{"scpos"}: Peak position found by wavelet analysis (scan number).
+\item \code{"scmin"}: Left peak limit found by wavelet analysis (scan number).
+\item \code{"scmax"}: Right peak limit found by wavelet analysis (scan numer).
+}
+
+Additional columns for \code{verboseBetaColumns = TRUE}:
+\itemize{
+\item \code{"beta_cor"}: Correlation between an "ideal" bell curve and the raw data.
+\item \code{"beta_snr"}: Signal-to-noise residuals calculated from the beta_cor fit.
+}
 }
 \description{
 The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
-    two-step centWave based peak detection: chromatographic peaks are
-    identified using centWave followed by a prediction of the location of
-    the identified peaks' isotopes in the mz-retention time space. These
-    locations are fed as \emph{regions of interest} (ROIs) to a subsequent
-    centWave run. All non overlapping peaks from these two peak detection
-    runs are reported as the final list of identified peaks.
+two-step centWave based peak detection: chromatographic peaks are
+identified using centWave followed by a prediction of the location of
+the identified peaks' isotopes in the mz-retention time space. These
+locations are fed as \emph{regions of interest} (ROIs) to a subsequent
+centWave run. All non overlapping peaks from these two peak detection
+runs are reported as the final list of identified peaks.
 
 The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
-    centWave based peak detection based in regions of interest (ROIs)
-    representing predicted isotopes for the peaks submitted with argument
-    \code{peaks.}. The function returns a matrix with the identified peaks
-    consisting of all input peaks and peaks representing predicted isotopes
-    of these (if found by the centWave algorithm).
+centWave based peak detection based in regions of interest (ROIs)
+representing predicted isotopes for the peaks submitted with argument
+\code{peaks}. The function returns a matrix with the identified peaks
+consisting of all input peaks and peaks representing predicted isotopes
+of these (if found by the centWave algorithm).
 }
 \details{
 For more details on the centWave algorithm see
-    \code{\link{centWave}}.
+\code{\link[=centWave]{centWave()}}.
 }
 \seealso{
 Other core peak detection functions: 

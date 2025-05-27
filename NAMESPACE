@@ -28,13 +28,13 @@ importClassesFrom("S4Vectors", "Rle", "DataFrame", "Hits")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList", "List",
            "as.matrix")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-",
-                  "extractROWS", "findMatches")
+                  "extractROWS", "findMatches", "to")
 importFrom("SummarizedExperiment", "SummarizedExperiment")
 importFrom("SummarizedExperiment", "rowData")
 importFrom("SummarizedExperiment", "rowData<-")
 importFrom("SummarizedExperiment", "assay")
 importFrom("MsCoreUtils", "rbindFill", "closest", "i2index", "sumi", "between",
-           "maxi", "breaks_ppm", "force_sorted")
+           "maxi", "breaks_ppm", "force_sorted", "reduce")
 importFrom("RColorBrewer", "brewer.pal")
 
 importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
@@ -57,6 +57,8 @@ importFrom("utils", "flush.console", "head", "object.size",
 
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
+importFrom("data.table", "rbindlist")
+
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
                   "MChromatograms", "MSpectra")
@@ -70,6 +72,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "plot", "fData", "fData<-", "writeMSData",
                   "filterIsolationWindow", "filterIntensity",
 		  "alignRt", "compareChromatograms", "transformIntensity")
+importMethodsFrom("MSnbase", "sampleNames")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "MChromatograms", "MSpectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -230,7 +233,6 @@ export(
     "do_groupChromPeaks_nearest",
     "do_adjustRtime_peakGroups",
     "processHistoryTypes",
-    "adjustRtimePeakGroups",
     "highlightChromPeaks",
     "plotChromPeaks",
     "plotChromPeakImage",
@@ -251,12 +253,13 @@ export(
     "hasFilledChromPeaks",
     "plotAdjustedRtime",
     "groupOverlaps",
-    "featureArea",
     "loadXcmsData",
     "matchLamasChromPeaks",
     "summarizeLamaMatch",
     "matchedRtimes",
-    "XcmsExperiment"
+    "XcmsExperiment",
+    "toXcmsExperiment",
+    "toXcmsExperimentHdf5"
 )
 
 ## New analysis methods
@@ -290,156 +293,6 @@ exportClasses(
     "MergeNeighboringPeaksParam",
     "FilterIntensityParam",
     "ChromPeakAreaParam"
-)
-## Param methods
-exportMethods(
-    "ppm",
-    "ppm<-",
-    "peakwidth",
-    "peakwidth<-",
-    "snthresh",
-    "snthresh<-",
-    "prefilter",
-    "prefilter<-",
-    "mzCenterFun",
-    "mzCenterFun<-",
-    "integrate",
-    "integrate<-",
-    "mzdiff",
-    "mzdiff<-",
-    "fitgauss",
-    "fitgauss<-",
-    "noise",
-    "noise<-",
-    "verboseColumns",
-    "verboseColumns<-",
-    "roiList",
-    "roiList<-",
-    "firstBaselineCheck",
-    "firstBaselineCheck<-",
-    "roiScales",
-    "roiScales",
-    ## MatchedFilter
-    "binSize",
-    "binSize<-",
-    "impute",
-    "impute<-",
-    "baseValue",
-    "baseValue<-",
-    "distance",
-    "distance<-",
-    "fwhm",
-    "fwhm<-",
-    "sigma",
-    "sigma<-",
-    "max",
-    "max<-",
-    "steps",
-    "steps<-",
-    "index",
-    "index<-",
-    ## Massifquant
-    "criticalValue",
-    "criticalValue<-",
-    "consecMissedLimit",
-    "consecMissedLimit<-",
-    "unions",
-    "unions<-",
-    "checkBack",
-    "checkBack<-",
-    "withWave",
-    "withWave<-",
-    ## MSWParam
-    "scales",
-    "scales<-",
-    "nearbyPeak",
-    "nearbyPeak<-",
-    "peakScaleRange",
-    "peakScaleRange<-",
-    "ampTh",
-    "ampTh<-",
-    "minNoiseLevel",
-    "minNoiseLevel<-",
-    "ridgeLength",
-    "ridgeLength<-",
-    "peakThr",
-    "peakThr<-",
-    "tuneIn",
-    "tuneIn<-",
-    "addParams",
-    "addParams<-",
-    "snthreshIsoROIs",
-    "snthreshIsoROIs<-",
-    "maxCharge",
-    "maxCharge<-",
-    "maxIso",
-    "maxIso<-",
-    "mzIntervalExtension",
-    "mzIntervalExtension<-",
-    "polarity",
-    "polarity<-",
-    ## PeakDensityParam
-    "sampleGroups",
-    "sampleGroups<-",
-    "bw",
-    "bw<-",
-    "minFraction",
-    "minFraction<-",
-    "minSamples",
-    "minSamples<-",
-    "maxFeatures",
-    "maxFeatures<-",
-    ## MzClustParam
-    "absMz",
-    "absMz<-",
-    ## NearestPeaksParam
-    "absRt",
-    "absRt<-",
-    "mzVsRtBalance",
-    "mzVsRtBalance<-",
-    "kNN",
-    "kNN<-",
-    "extraPeaks",
-    "extraPeaks<-",
-    "smooth",
-    "smooth<-",
-    "span",
-    "span<-",
-    "family",
-    "family<-",
-    ## PeakGroupsParam
-    "peakGroupsMatrix",
-    "peakGroupsMatrix<-",
-    ## ObiwarpParam
-    "centerSample",
-    "centerSample<-",
-    "response",
-    "response<-",
-    "distFun",
-    "distFun<-",
-    "gapInit",
-    "gapInit<-",
-    "gapExtend",
-    "gapExtend<-",
-    "factorDiag",
-    "factorDiag<-",
-    "factorGap",
-    "factorGap<-",
-    "localAlignment",
-    "localAlignment<-",
-    "initPenalty",
-    "initPenalty<-",
-    ## FillChromPeaksParam
-    "expandMz",
-    "expandMz<-",
-    "expandRt",
-    "expandRt<-",
-    "subset",
-    "subset<-",
-    "subsetAdjust",
-    "subsetAdjust<-",
-    "dirname",
-    "dirname<-"
 )
 ## Param class functions
 export("CentWaveParam",
@@ -479,6 +332,8 @@ exportMethods("hasChromPeaks",
               "hasAdjustedRtime",
               "adjustedRtime",
               "adjustedRtime<-",
+              "adjustRtimePeakGroups",
+              "featureArea",
               "featureDefinitions",
               "featureDefinitions<-",
               "featureValues",
@@ -572,6 +427,7 @@ importMethodsFrom("Spectra", "$")
 importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "backendBpparam")
 importMethodsFrom("Spectra", "estimatePrecursorIntensity")
+importMethodsFrom("Spectra", "filterRanges")
 importFrom("Spectra", "MsBackendMemory", "filterEmptySpectra")
 
 ## MsExperiment things
@@ -586,6 +442,7 @@ importFrom("MsExperiment", "sampleData<-")
 importFrom("MsExperiment", "sampleData")
 importFrom("MsExperiment", "readMsExperiment")
 importMethodsFrom("MsExperiment", "spectra<-")
+importFrom("MsExperiment", "spectraSampleIndex")
 export("plotPrecursorIons")
 
 importFrom("progress", "progress_bar")
@@ -603,3 +460,6 @@ export("RsdFilter")
 export("DratioFilter")
 export("PercentMissingFilter")
 export("BlankFlag")
+
+## HDF5 storage mode
+exportClasses("XcmsExperimentHdf5")

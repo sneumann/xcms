@@ -37,7 +37,7 @@ defined for signals (chrom peaks) present only in blank samples.}
 
 \item{bw}{For \code{PeakDensityParam}: \code{numeric(1)} defining the bandwidth
 (standard deviation ot the smoothing kernel) to be used. This argument
-is passed to the [density() method.}
+is passed to the [stats::density() method.}
 
 \item{minFraction}{For \code{PeakDensityParam}: \code{numeric(1)} defining the minimum
 fraction of samples in at least one sample group in which the peaks
@@ -132,6 +132,7 @@ Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Anal. Chem. 2006, 78:779-787.
+doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \seealso{
 Other core peak grouping algorithms: 

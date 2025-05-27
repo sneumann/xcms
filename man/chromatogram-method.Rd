@@ -20,8 +20,8 @@
 )
 }
 \arguments{
-\item{object}{Either a \link{OnDiskMSnExp} or \link{XCMSnExp} object from which the
-chromatograms should be extracted.}
+\item{object}{Either a \link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} or \link{XCMSnExp} object from
+which the chromatograms should be extracted.}
 
 \item{rt}{\code{numeric(2)} or two-column \code{matrix} defining the lower
 and upper boundary for the retention time range(s). If not specified,
@@ -52,7 +52,7 @@ depend on the architecture. Default is
 \item{adjustedRtime}{For \verb{chromatogram,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-in the resulting \link{MChromatograms} object. Adjusted
+in the resulting \link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms} object. Adjusted
 retention times are used by default if available.}
 
 \item{filled}{\code{logical(1)} whether filled-in peaks should also be
@@ -80,8 +80,8 @@ definitions for these peaks.
 \description{
 \code{chromatogram}: extract chromatographic data (such as an extracted ion
 chromatogram, a base peak chromatogram or total ion chromatogram) from
-an \link{OnDiskMSnExp} or \link{XCMSnExp} objects. See also the help page of the
-\code{chromatogram} function in the \code{MSnbase} package.
+an \link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} or \link{XCMSnExp} objects. See also the help page of
+the \code{chromatogram} function in the \emph{MSnbase} package.
 }
 \details{
 Arguments \code{rt} and \code{mz} allow to specify the MS data slice (i.e. the m/z
@@ -145,12 +145,13 @@ plot(chrs[1, , drop = FALSE])
 }
 \seealso{
 \link{XCMSnExp} for the data object.
-\link{Chromatogram} for the object representing chromatographic data.
+\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for the object representing chromatographic
+data.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{[XChromatograms] for the object allowing to arrange
 multiple [XChromatogram] objects.
 
-[plot] to plot a [XChromatogram] or [MChromatograms] objects.
+[plot] to plot a [XChromatogram] or [MSnbase::MChromatograms] objects.
 
 `as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
 the MS data as `data.frame`.

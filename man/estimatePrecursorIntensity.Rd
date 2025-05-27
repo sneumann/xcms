@@ -37,7 +37,8 @@ respective ion on the MS1 scan.}
 should be determined (see description above for details). Defaults to
 \code{method = "previous"}.}
 
-\item{BPPARAM}{parallel processing setup. See \code{\link[=bpparam]{bpparam()}} for details.}
+\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for
+details.}
 }
 \value{
 \code{numeric} with length equal to the number of spectra in \code{x}. \code{NA} is

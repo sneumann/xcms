@@ -5,7 +5,6 @@
 \alias{mzrange}
 \alias{rtrange,xcmsEIC-method}
 \alias{rtrange}
-\alias{show,xcmsEIC-method}
 
 \title{Class xcmsEIC, a class for multi-sample extracted ion chromatograms}
 \description{

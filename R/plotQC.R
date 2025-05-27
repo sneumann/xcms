@@ -1,16 +1,18 @@
-#' Plot m/z and RT deviations for QC purposes without external reference data
+#' @title Plot m/z and RT deviations for QC purposes without external reference data
+#'
+#' @description
 #'
 #' Use "democracy" to determine the average m/z and RT deviations
 #' for a grouped xcmsSet, and dependency on sample or absolute m/z
 #'
-#' plotQC() is a warpper to create a set of diagnostic plots.
+#' `plotQC()` is a warpper to create a set of diagnostic plots.
 #' For the m/z deviations, the median of all m/z withon one group are assumed.
 #'
 #' @usage plotQC(object, sampNames, sampColors, sampOrder, what)
 #'
 #' @aliases plotQC
 #'
-#' @param object     A grouped \code{\link{xcmsSet}}
+#' @param object     A grouped `xcmsSet`
 #' @param sampNames  Override sample names (e.g. with simplified names)
 #' @param sampColors Provide a set of colors (default: monochrome ?)
 #' @param sampOrder  Override the order of samples, e.g. to bring them in order
@@ -30,6 +32,8 @@
 #'  "rt":    median RT deviation for each sample
 #'  "rtdev": median RT deviation for each sample
 #'
+#' @md
+#'
 #' @examples
 #' library(faahKO)
 #' xsg <- group(faahko)
@@ -42,7 +46,6 @@
 #' plotQC(xsg, what="rtdevsample")
 #'
 #' @author Michael Wenk, Michael Wenk <michael.wenk@@student.uni-halle.de>
-
 plotQC <- function(object,
                    sampNames = NULL,
                    sampColors = NULL,

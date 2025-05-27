@@ -21,7 +21,7 @@ plotAdjustedRtime(
 )
 }
 \arguments{
-\item{object}{A [XcmsExperiment()] or [XCMSnExp()] object with the alignment
+\item{object}{A \code{\link[=XcmsExperiment]{XcmsExperiment()}} or \code{\link[=XCMSnExp]{XCMSnExp()}} object with the alignment
 results.}
 
 \item{col}{color(s) for the individual lines. Has to be of length 1 or equal
@@ -31,9 +31,9 @@ to the number of samples.}
 
 \item{lwd}{line width for the lines of the individual samples.}
 
-\item{type}{plot *type* (see [par()] for options; defaults to `type = "l"`).}
+\item{type}{plot \emph{type} (see \code{\link[=par]{par()}} for options; defaults to \code{type = "l"}).}
 
-\item{adjustedRtime}{`logical(1)` whether adjusted or raw retention times
+\item{adjustedRtime}{\code{logical(1)} whether adjusted or raw retention times
 should be shown on the x-axis.}
 
 \item{xlab}{the label for the x-axis.}
@@ -41,28 +41,28 @@ should be shown on the x-axis.}
 \item{ylab}{the label for the y-axis.}
 
 \item{peakGroupsCol}{color to be used for the peak groups (only if
-alignment was performed using the *peak groups* method.}
+alignment was performed using the \emph{peak groups} method.}
 
-\item{peakGroupsPch}{point character (`pch`) to be used for the peak
-groups (only if alignment was performed using the *peak groups*
+\item{peakGroupsPch}{point character (\code{pch}) to be used for the peak
+groups (only if alignment was performed using the \emph{peak groups}
 method.}
 
-\item{peakGroupsLty}{line type (`lty`) to be used to connect points for
+\item{peakGroupsLty}{line type (\code{lty}) to be used to connect points for
 each peak groups (only if alignment was performed using the
-*peak groups* method.}
+\emph{peak groups} method.}
 
-\item{ylim}{optional `numeric(2)` with the upper and lower limits on
+\item{ylim}{optional \code{numeric(2)} with the upper and lower limits on
 the y-axis.b}
 
-\item{...}{Additional arguments to be passed down to the `plot`
+\item{...}{Additional arguments to be passed down to the \code{plot}
 function.}
 }
 \description{
-The `plotAdjustedRtime` function plots the difference between the adjusted
-and *raw* retention times on the y-axis against the raw retention times on
+The \code{plotAdjustedRtime} function plots the difference between the adjusted
+and \emph{raw} retention times on the y-axis against the raw retention times on
 the x-axis. Each line represents the results for one sample (file).
-If alignment was performed using the *peak groups* method (see
-[adjustRtime()] for more infromation) also the peak groups used in the
+If alignment was performed using the \emph{peak groups} method (see
+\code{\link[=adjustRtime]{adjustRtime()}} for more infromation) also the peak groups used in the
 alignment are visualized.
 }
 \examples{
