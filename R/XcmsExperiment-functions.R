@@ -86,12 +86,7 @@
         stop("Duplicated indices are not (yet) supported for ",
              "'[,XcmsExperiment'", call. = FALSE)
     drop <- character()
-    if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
-        svs <- unique(c(spectraVariables(x@spectra), "mz", "intensity"))
-        x@spectra <- selectSpectraVariables(
-            x@spectra, svs[svs != "rtime_adjusted"])
-        drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
-    }
+    x <- getMethod("[", "MsExperiment")(x, i = i)
     if (!keepFeatures && hasFeatures(x)) {
         x@featureDefinitions <- .empty_feature_definitions()
         drop <- c(drop, .PROCSTEP.PEAK.GROUPING)
@@ -99,8 +94,22 @@
     if (hasChromPeaks(x)) {
         if (keepChromPeaks) {
             x <- .filter_chrom_peaks(x, which(x@chromPeaks[, "sample"] %in% i))
-            if (!keepSampleIndex)
+            sidx <- x@chromPeaks[, "sample"]
+            if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
+                ## order of samples needs to match (between rtime and "sample")
+                ## column for .applyRtAdjToChromPeaks
                 x@chromPeaks[, "sample"] <- match(x@chromPeaks[, "sample"], i)
+                fidx <- as.factor(spectraSampleIndex(x))
+                x <- updateChromPeaksRtime(
+                    x, rtraw = split(rtime(x, adjusted = TRUE), fidx),
+                    rtadj = split(rtime(x, adjusted = FALSE), fidx))
+                if (keepSampleIndex)
+                    x@chromPeaks[, "sample"] <- sidx
+            } else {
+                if (!keepSampleIndex)
+                    x@chromPeaks[, "sample"] <- match(
+                        x@chromPeaks[, "sample"], i)
+            }
         } else {
             x@chromPeaks <- .empty_chrom_peaks()
             x@chromPeakData <- data.frame(ms_level = integer(),
@@ -109,10 +118,16 @@
                       .PROCSTEP.CALIBRATION, .PROCSTEP.PEAK.REFINEMENT)
         }
     }
+    if (!keepAdjustedRtime && hasAdjustedRtime(x)) {
+        svs <- unique(c(spectraVariables(x@spectra), "mz", "intensity"))
+        x@spectra <- selectSpectraVariables(
+            x@spectra, svs[svs != "rtime_adjusted"])
+        drop <- c(drop, .PROCSTEP.RTIME.CORRECTION)
+    }
     if (!ignoreHistory && length(drop))
         x@processHistory <- dropProcessHistoriesList(
             x@processHistory, type = drop)
-    getMethod("[", "MsExperiment")(x, i = i)
+    x
 }
 
 #' @param x `chromPeaks` `matrix`.

@@ -171,6 +171,35 @@ test_that("subsetting,XcmsExperiment works", {
     expect_true(length(res) == (length(xmse) - 1))
     ref <- xmse[c(2, 3)]
     expect_equal(chromPeaks(res), chromPeaks(ref))
+
+    ## subsetting with alignment results.
+    tmp <- adjustRtime(xmseg, PeakGroupsParam(span = 0.4))
+    a <- tmp[3, keepAdjustedRtime = TRUE]
+    b <- tmp[3, keepAdjustedRtime = FALSE]
+    expect_true(length(a@processHistory) > length(b@processHistory))
+    expect_false(all(rtime(a) == rtime(b)))
+    expect_false(all(chromPeaks(a)[, "rt"] == chromPeaks(b)[, "rt"]))
+
+    ## subset in arbitrary order
+    a <- tmp[c(3, 1), keepAdjustedRtime = TRUE]
+    a_rt <- split(rtime(a, adjusted = TRUE), spectraSampleIndex(a))
+    tmp_rt <- split(rtime(tmp, adjusted = TRUE), spectraSampleIndex(tmp))
+    expect_equal(a_rt[[1L]], tmp_rt[[3L]])
+    expect_equal(a_rt[[2L]], tmp_rt[[1L]])
+    a_pks <- split.data.frame(chromPeaks(a), chromPeaks(a)[, "sample"])
+    tmp_pks <- split.data.frame(chromPeaks(tmp), chromPeaks(tmp)[, "sample"])
+    expect_equal(a_pks[[1L]][, 1:8], tmp_pks[[3L]][, 1:8])
+    expect_equal(a_pks[[2L]][, 1:8], tmp_pks[[1L]][, 1:8])
+
+    a <- tmp[c(3, 1), keepAdjustedRtime = FALSE]
+    a_rt <- split(rtime(a), spectraSampleIndex(a))
+    tmp_rt <- split(rtime(tmp, adjusted = FALSE), spectraSampleIndex(tmp))
+    expect_equal(a_rt[[1L]], tmp_rt[[3L]])
+    expect_equal(a_rt[[2L]], tmp_rt[[1L]])
+    a_pks <- split.data.frame(chromPeaks(a), chromPeaks(a)[, "sample"])
+    tmp_pks <- split.data.frame(chromPeaks(xmse), chromPeaks(xmse)[, "sample"])
+    expect_equal(a_pks[[1L]][, 1:8], tmp_pks[[3L]][, 1:8])
+    expect_equal(a_pks[[2L]][, 1:8], tmp_pks[[1L]][, 1:8])
 })
 
 test_that("filterRt,XcmsExperiment works", {

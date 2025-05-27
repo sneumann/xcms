@@ -2624,3 +2624,12 @@ test_that("adjustRtimePeakGroups works", {
                                  param = PeakGroupsParam(subset = c(1, 3)))
     expect_equal(colnames(res), basename(fileNames(xod_xg)[c(1, 3)]))
 })
+
+test_that("subset XCMSnExp works with adjusted rtime", {
+    ## subsetting with/without keepAdjustedRtime
+    a <- filterFile(xod_xgr, 3, keepAdjustedRtime = TRUE)
+    b <- filterFile(xod_xgr, 3, keepAdjustedRtime = FALSE)
+    expect_false(all(rtime(a) == rtime(b)))
+    expect_false(all(chromPeaks(a)[, "rt"] == chromPeaks(b)[, "rt"]))
+    expect_equal(chromPeaks(b), chromPeaks(filterFile(xod_xg, 3)))
+})
