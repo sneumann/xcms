@@ -45,12 +45,12 @@
 #'
 #' - `[`: subset an `XcmsExperiment` by **sample** (parameter `i`). Subsetting
 #'   will by default drop correspondence results (as subsetting by samples will
-#'   obviously affect the feature definition) and alignment results (adjusted
-#'   retention times) while identified chromatographic peaks (for the selected
+#'   obviously affect the feature definition) while alignment results (adjusted
+#'   retention times) and identified chromatographic peaks (for the selected
 #'   samples) will be retained. Which preprocessing results should be
 #'   kept or dropped can also be configured with optional parameters
 #'   `keepChromPeaks` (by default `TRUE`), `keepAdjustedRtime` (by default
-#'   `FALSE`) and `keepFeatures` (by default `FALSE`).
+#'   `TRUE`) and `keepFeatures` (by default `FALSE`).
 #'
 #' - `c()`: multiple `XcmsExperiment` objects can be combined into one using the
 #'   `c()` function. This requires however that all the `XcmsExperiments`'

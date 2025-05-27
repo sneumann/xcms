@@ -150,7 +150,7 @@ are stored in the file specified with parameter \code{hdf5File}.
 \itemize{
 \item \code{[}: subset the \code{XcmsExperimentHdf5} object to the specified samples.
 Parameters \code{keepChromPeaks} (default \code{TRUE}), \code{keepAdjustedRtime}
-(default \code{FALSE}) and \code{keepFeatures} (default \code{FALSE}) allow to configure
+(default \code{TRUE}) and \code{keepFeatures} (default \code{FALSE}) allow to configure
 whether present chromatographic peaks, alignment or correspondence results
 should be retained. This will only change information in the object (i.e.,
 the reference to the respective entries in the HDF5 file), but will

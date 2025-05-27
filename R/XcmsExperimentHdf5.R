@@ -69,7 +69,7 @@
 #'
 #' - `[`: subset the `XcmsExperimentHdf5` object to the specified samples.
 #'   Parameters `keepChromPeaks` (default `TRUE`), `keepAdjustedRtime`
-#'   (default `FALSE`) and `keepFeatures` (default `FALSE`) allow to configure
+#'   (default `TRUE`) and `keepFeatures` (default `FALSE`) allow to configure
 #'   whether present chromatographic peaks, alignment or correspondence results
 #'   should be retained. This will only change information in the object (i.e.,
 #'   the reference to the respective entries in the HDF5 file), but will

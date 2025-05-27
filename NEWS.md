@@ -2,6 +2,8 @@
 
 ## Changes in version 4.7.2
 
+- Change default for `[,XcmsExperiment` and `[,XcmsExperimentHdf5`
+  `keepAdjustedRtime` from `FALSE` to `TRUE`.
 - Fix issue in `[,XcmsExperiment`: the subset operation did not revert the
   retention times of chromatographic peaks with parameter `keepAdjustedRtime =
   FALSE` (issue #801).

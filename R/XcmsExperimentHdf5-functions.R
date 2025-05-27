@@ -173,7 +173,7 @@ toXcmsExperiment <- function(object, ...) {
 #' @noRd
 .h5_subset_xcms_experiment <- function(x, i = integer(),
                                        keepChromPeaks = TRUE,
-                                       keepAdjustedRtime = FALSE,
+                                       keepAdjustedRtime = TRUE,
                                        keepFeatures = FALSE,
                                        ignoreHistory = FALSE,
                                        ...) {

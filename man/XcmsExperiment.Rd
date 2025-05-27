@@ -447,12 +447,12 @@ be used instead. See the respective help page for more information.
 \itemize{
 \item \code{[}: subset an \code{XcmsExperiment} by \strong{sample} (parameter \code{i}). Subsetting
 will by default drop correspondence results (as subsetting by samples will
-obviously affect the feature definition) and alignment results (adjusted
-retention times) while identified chromatographic peaks (for the selected
+obviously affect the feature definition) while alignment results (adjusted
+retention times) and identified chromatographic peaks (for the selected
 samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 \code{keepChromPeaks} (by default \code{TRUE}), \code{keepAdjustedRtime} (by default
-\code{FALSE}) and \code{keepFeatures} (by default \code{FALSE}).
+\code{TRUE}) and \code{keepFeatures} (by default \code{FALSE}).
 \item \code{c()}: multiple \code{XcmsExperiment} objects can be combined into one using the
 \code{c()} function. This requires however that all the \code{XcmsExperiments}'
 \code{Spectra} objects use the same type of \code{MsBackend} and that their
