@@ -1,5 +1,10 @@
 # xcms 4.7
 
+## Changes in version 4.7.2
+
+- Fix issue in `chromPeakSpectra` for `XcmsExperiment` with duplicated chrom
+  peak IDs (issue #796).
+
 ## Changes in version 4.7.1
 
 - Change the naming convention of chromatographic peaks to include also the MS

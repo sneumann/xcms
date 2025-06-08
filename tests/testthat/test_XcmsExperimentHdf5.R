@@ -863,6 +863,24 @@ test_that("chromPeakSpectra,XcmsExperimentHdf5 works", {
     expect_s4_class(s_all, "Spectra")
     expect_true(all(msLevel(s_all) == 2L))
     expect_false(all(rownames(cp) %in% s_all$chrom_peak_id))
+
+    ## single spectrum, selected peaks
+    s_all <- chromPeakSpectra(xmse_h5, msLevel = 1L, method = "closest_rt")
+    pids <- c("CP1S3000006", "CP1S3000003", "CP1S1000060", "CP1S3000048")
+    s_sel <- chromPeakSpectra(xmse_h5, msLevel = 1L, peaks = pids,
+                              method = "closest_rt")
+    expect_s4_class(s_sel, "Spectra")
+    expect_equal(s_sel$chrom_peak_id, pids)
+    expect_equal(rtime(s_sel), rtime(s_all[match(pids, s_all$chrom_peak_id)]))
+
+    ## Duplicated peaks
+    pids <- c("CP1S3000006", "CP1S3000003", "CP1S1000060",
+              "CP1S3000048", "CP1S3000006")
+    s_sel2 <- chromPeakSpectra(xmse_h5, msLevel = 1L, peaks = pids,
+                               method = "closest_rt")
+    expect_s4_class(s_sel2, "Spectra")
+    expect_equal(s_sel2$chrom_peak_id, pids)
+    expect_equal(s_sel2$rtime, c(s_sel$rtime, s_sel$rtime[1]))
 })
 
 test_that("featureSpectra,XcmsExperimentHdf5 works", {
