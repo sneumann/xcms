@@ -974,7 +974,7 @@ test_that(".mse_spectra_for_peaks works", {
     expect_equal(mz(res)[1], mz(res)[3])
 })
 
-test_that("chromPeakSpectra works", {
+test_that("chromPeakSpectra,XcmsExperiment works", {
     ## input errors
     expect_error(chromPeakSpectra(xmse, method = "other"), "'arg' should be")
     expect_error(chromPeakSpectra(xmse, return.type = "list"), "'arg' should")
@@ -1034,6 +1034,51 @@ test_that("chromPeakSpectra works", {
                     precursorMz(res[[1L]]) <= chromPeaks(tmp)[1, "mzmax"]))
     expect_equal(rtime(chromPeakSpectra(tmp, peaks = c("CP7", "CP1", "CP3"))),
                  rtime(chromPeakSpectra(tmp, peaks = c(7, 1, 3))))
+    ## single spectrum, selected chrom peaks
+    a <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP1", "CP2"))
+    expect_s4_class(a, "Spectra")
+    expect_equal(length(a), 2)
+    expect_equal(a$chrom_peak_id, c("CP1", "CP2"))
+    b <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP2", "CP1"))
+    expect_equal(b$chrom_peak_id, c("CP2", "CP1"))
+    expect_equal(b$rtime, a$rtime[2:1])
+    d <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP1", "CP2", "CP1"))
+    expect_equal(length(d), 3L)
+    expect_equal(d$chrom_peak_id, c("CP1", "CP2", "CP1"))
+    expect_equal(d$rtime, c(a$rtime, a$rtime[1L]))
+    ## As a List
+    a <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP1", "CP2"), return.type = "List")
+    expect_s4_class(a, "List")
+    expect_equal(length(a), 2)
+    expect_equal(vapply(a, function(z) z$chrom_peak_id, NA_character_),
+                 c(CP1 = "CP1", CP2 = "CP2"))
+    b <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP2", "CP1"), return.type = "List")
+    expect_equal(vapply(b, function(z) z$chrom_peak_id, NA_character_),
+                 c(CP2 = "CP2", CP1 = "CP1"))
+    expect_equal(vapply(b, function(z) z$rtime, NA_real_),
+                 vapply(a, function(z) z$rtime, NA_real_)[2:1])
+    d <- chromPeakSpectra(tmp, msLevel = 1L, method = "closest_rt",
+                          peaks = c("CP1", "CP2", "CP1"), return.type = "List")
+    expect_equal(length(d), 3L)
+    expect_equal(names(d), c("CP1", "CP2", "CP1"))
+    expect_equal(vapply(d, function(z) z$chrom_peak_id, NA_character_),
+                 c(CP1 = "CP1", CP2 = "CP2", CP1 = "CP1"))
+    expect_equal(vapply(d, function(z) z$rtime, NA_real_),
+                 c(CP1 = a[[1L]]$rtime, CP2 = a[[2L]]$rtime[1L],
+                   CP1 = a[[1L]]$rtime[1L]))
+
+    ## Getting all spectra.
+    a <- chromPeakSpectra(tmp, msLevel = 1L, peaks = c("CP1", "CP2"))
+    expect_true(all(a$chrom_peak_id %in% c("CP1", "CP2")))
+    b <- chromPeakSpectra(tmp, msLevel = 1L, peaks = c("CP1", "CP2", "CP1"))
+    expect_true(length(b) > length(a))
+    a_1 <- a[a$chrom_peak_id == "CP1"]
+    expect_equal(rtime(b), c(rtime(a), rtime(a_1)))
 })
 
 test_that("manualChromPeaks,XcmsExperiment works", {

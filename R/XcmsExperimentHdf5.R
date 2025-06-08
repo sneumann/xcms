@@ -1291,9 +1291,9 @@ setMethod(
                 h5f, ids[i], spectra(object[i]),
                 method = method, msLevel = msLevel, expandRt = expandRt,
                 expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
-                peaks = peaks, chromPeakColumns = chromPeakColumns)
+                peaks = unique(peaks), chromPeakColumns = chromPeakColumns)
         })
-        res <- Spectra:::.concatenate_spectra(res)
+        res <- concatenateSpectra(res)
         if (return.type == "Spectra") {
             if (length(peaks))
                 res[as.matrix(findMatches(peaks, res$chrom_peak_id))[, 2L]]
@@ -1301,7 +1301,7 @@ setMethod(
         } else {
             if (!length(peaks))
                 peaks <- unique(res$chrom_peak_id)
-            as(split(res, factor(res$chrom_peak_id, levels = peaks)), "List")
+            as(split(res, factor(res$chrom_peak_id))[peaks], "List")
         }
     })
 
@@ -1367,7 +1367,7 @@ setMethod(
                 s
             } else Spectra()
         })
-        res <- Spectra:::.concatenate_spectra(res)
+        res <- concatenateSpectra(res)
         ## add feature columns
         fd <- fd[match(res$feature_id, rownames(fd)),
                  featureColumns, drop = FALSE]

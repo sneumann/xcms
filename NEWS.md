@@ -7,6 +7,8 @@
 - Fix issue in `[,XcmsExperiment`: the subset operation did not revert the
   retention times of chromatographic peaks with parameter `keepAdjustedRtime =
   FALSE` (issue #801).
+- Fix issue in `chromPeakSpectra` for `XcmsExperiment` with duplicated chrom
+  peak IDs (issue #796).
 
 ## Changes in version 4.7.1
 
