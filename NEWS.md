@@ -1,5 +1,11 @@
 # xcms 4.6
 
+## Changes in version 4.6.2
+
+- Fix issue in `chromPeakSpectra()` for `XcmsExperiment` reporting also
+  (wrongly) the column (sample) names in the resulting `XChromatograms` object
+  for *MsExperiment* versions >= 1.10.1.
+
 ## Changes in version 4.6.1
 
 - Fix issue in `chromPeakSpectra` for `XcmsExperiment` with duplicated chrom

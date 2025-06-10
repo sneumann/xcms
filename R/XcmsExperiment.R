@@ -1657,6 +1657,7 @@ setMethod(
             object <- applyAdjustedRtime(object)
         ph <- object@processHistory
         object <- as(object, "MsExperiment")
+        rownames(sampleData(object)) <- NULL # sample names are not supported
         res <- lapply(seq_along(object), function(z) {
             idx <- which(pks[, "sample"] == z)
             if (length(idx)) {
