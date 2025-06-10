@@ -9,6 +9,9 @@
   FALSE` (issue #801).
 - Fix issue in `chromPeakSpectra` for `XcmsExperiment` with duplicated chrom
   peak IDs (issue #796).
+- Fix issue in `chromPeakSpectra()` for `XcmsExperiment` that added column
+  (sample) names to the resulting `XChromatograms` object with newer versions of
+  the *MsExperiment* package (>= 1.11.1); issue #803.
 
 ## Changes in version 4.7.1
 

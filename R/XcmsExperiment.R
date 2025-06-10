@@ -1720,6 +1720,7 @@ setMethod(
             object <- applyAdjustedRtime(object)
         ph <- object@processHistory
         object <- as(object, "MsExperiment")
+        rownames(sampleData(object)) <- NULL # don't track sample names
         res <- lapply(seq_along(object), function(z) {
             idx <- which(pks[, "sample"] == z)
             if (length(idx)) {
@@ -1752,6 +1753,7 @@ setMethod(
         })
         res <- as(do.call(c, res[lengths(res) > 0]), return.type)
         pData(res)[,] <- NA             # it's not from a single file.
+        colnames(res) <- NULL
         ## re-order the result - if needed.
         if (any(rownames(res) != rownames(pks)))
             res <- res[match(rownames(pks), rownames(res)), 1L]
