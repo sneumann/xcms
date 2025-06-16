@@ -62,7 +62,7 @@ Imports:
     SummarizedExperiment,
     MsCoreUtils (>= 1.15.5),
     MsFeatures,
-    MsExperiment (>= 1.5.4),
+    MsExperiment (>= 1.10.1),
     Spectra (>= 1.15.7),
     progress,
     RColorBrewer,
