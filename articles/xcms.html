@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2025-05-26 13:14:24.397503<br><strong>Compiled</strong>: Mon May 26 14:40:55 2025</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2025-06-18 18:22:37.784995<br><strong>Compiled</strong>: Wed Jun 18 19:46:24 2025</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -232,16 +232,16 @@ simply count the number of spectra per file.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 8 rows and 3 columns</span></span>
-<span><span class="co">##   sample_name sample_group spectraOrigin</span></span>
-<span><span class="co">##   &lt;character&gt;  &lt;character&gt;   &lt;character&gt;</span></span>
-<span><span class="co">## 1        ko15           KO /__w/_temp...</span></span>
-<span><span class="co">## 2        ko16           KO /__w/_temp...</span></span>
-<span><span class="co">## 3        ko21           KO /__w/_temp...</span></span>
-<span><span class="co">## 4        ko22           KO /__w/_temp...</span></span>
-<span><span class="co">## 5        wt15           WT /__w/_temp...</span></span>
-<span><span class="co">## 6        wt16           WT /__w/_temp...</span></span>
-<span><span class="co">## 7        wt21           WT /__w/_temp...</span></span>
-<span><span class="co">## 8        wt22           WT /__w/_temp...</span></span></code></pre>
+<span><span class="co">##          sample_name sample_group spectraOrigin</span></span>
+<span><span class="co">##          &lt;character&gt;  &lt;character&gt;   &lt;character&gt;</span></span>
+<span><span class="co">## ko15.CDF        ko15           KO /__w/_temp...</span></span>
+<span><span class="co">## ko16.CDF        ko16           KO /__w/_temp...</span></span>
+<span><span class="co">## ko21.CDF        ko21           KO /__w/_temp...</span></span>
+<span><span class="co">## ko22.CDF        ko22           KO /__w/_temp...</span></span>
+<span><span class="co">## wt15.CDF        wt15           WT /__w/_temp...</span></span>
+<span><span class="co">## wt16.CDF        wt16           WT /__w/_temp...</span></span>
+<span><span class="co">## wt21.CDF        wt21           WT /__w/_temp...</span></span>
+<span><span class="co">## wt22.CDF        wt22           WT /__w/_temp...</span></span></code></pre>
 <p>Each row in this <code>DataFrame</code> represents one sample (input
 file). Using <code>[</code> it is possible to subset a
 <code>MsExperiment</code> object <strong>by sample</strong>. Below we
@@ -271,9 +271,9 @@ spectra and sample data.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko_3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 1 row and 3 columns</span></span>
-<span><span class="co">##   sample_name sample_group spectraOrigin</span></span>
-<span><span class="co">##   &lt;character&gt;  &lt;character&gt;   &lt;character&gt;</span></span>
-<span><span class="co">## 1        ko21           KO /__w/_temp...</span></span></code></pre>
+<span><span class="co">##          sample_name sample_group spectraOrigin</span></span>
+<span><span class="co">##          &lt;character&gt;  &lt;character&gt;   &lt;character&gt;</span></span>
+<span><span class="co">## ko21.CDF        ko21           KO /__w/_temp...</span></span></code></pre>
 <p>As a first evaluation of the data we below plot the base peak
 chromatogram (BPC) for each file in our experiment. We use the
 <code><a href="../reference/chromatogram-method.html">chromatogram()</a></code> method and set the
@@ -1745,7 +1745,7 @@ available as <em>metadata</em> in the
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:29 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:46:57 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1754,7 +1754,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:35 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:47:02 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1763,7 +1763,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:47 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:47:15 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1772,7 +1772,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:47 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:47:15 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1781,7 +1781,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:52 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:47:20 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1790,7 +1790,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:57 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:47:25 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1802,7 +1802,7 @@ extract the information for the first processing step.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Mon May 26 14:41:29 2025 </span></span>
+<span><span class="co">##  date: Wed Jun 18 19:46:57 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -2270,14 +2270,14 @@ package and its functionality.</li>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] SummarizedExperiment_1.39.0 Biobase_2.69.0             </span></span>
-<span><span class="co">##  [3] GenomicRanges_1.61.0        GenomeInfoDb_1.45.3        </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.61.0        GenomeInfoDb_1.45.4        </span></span>
 <span><span class="co">##  [5] IRanges_2.43.0              S4Vectors_0.47.0           </span></span>
 <span><span class="co">##  [7] BiocGenerics_0.55.0         generics_0.1.4             </span></span>
 <span><span class="co">##  [9] MatrixGenerics_1.21.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [11] MsExperiment_1.11.0         ProtGenerics_1.41.0        </span></span>
-<span><span class="co">## [13] pheatmap_1.0.12             RColorBrewer_1.1-3         </span></span>
+<span><span class="co">## [11] MsExperiment_1.11.1         ProtGenerics_1.41.0        </span></span>
+<span><span class="co">## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         </span></span>
 <span><span class="co">## [15] pander_0.6.6                faahKO_1.49.1              </span></span>
-<span><span class="co">## [17] xcms_4.7.1                  BiocParallel_1.43.2        </span></span>
+<span><span class="co">## [17] xcms_4.7.2                  BiocParallel_1.43.4        </span></span>
 <span><span class="co">## [19] BiocStyle_2.37.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
@@ -2305,23 +2305,23 @@ package and its functionality.</li>
 <span><span class="co">## [43] abind_1.4-8                 yaml_2.3.10                </span></span>
 <span><span class="co">## [45] doParallel_1.0.17           codetools_0.2-20           </span></span>
 <span><span class="co">## [47] affy_1.87.0                 lattice_0.22-7             </span></span>
-<span><span class="co">## [49] tibble_3.2.1                plyr_1.8.9                 </span></span>
+<span><span class="co">## [49] tibble_3.3.0                plyr_1.8.9                 </span></span>
 <span><span class="co">## [51] evaluate_1.0.3              desc_1.4.3                 </span></span>
 <span><span class="co">## [53] Spectra_1.19.2              pillar_1.10.2              </span></span>
-<span><span class="co">## [55] affyio_1.79.0               BiocManager_1.30.25        </span></span>
+<span><span class="co">## [55] affyio_1.79.0               BiocManager_1.30.26        </span></span>
 <span><span class="co">## [57] foreach_1.5.2               MSnbase_2.35.0             </span></span>
 <span><span class="co">## [59] MALDIquant_1.22.3           ncdf4_1.24                 </span></span>
 <span><span class="co">## [61] hms_1.1.3                   ggplot2_3.5.2              </span></span>
 <span><span class="co">## [63] scales_1.4.0                glue_1.8.0                 </span></span>
-<span><span class="co">## [65] MsFeatures_1.17.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">## [65] MsFeatures_1.17.1           lazyeval_0.2.2             </span></span>
 <span><span class="co">## [67] tools_4.5.0                 mzID_1.47.0                </span></span>
-<span><span class="co">## [69] data.table_1.17.2           QFeatures_1.19.1           </span></span>
+<span><span class="co">## [69] data.table_1.17.4           QFeatures_1.19.2           </span></span>
 <span><span class="co">## [71] vsn_3.77.0                  mzR_2.43.0                 </span></span>
 <span><span class="co">## [73] fs_1.6.6                    XML_3.99-0.18              </span></span>
 <span><span class="co">## [75] grid_4.5.0                  impute_1.83.0              </span></span>
 <span><span class="co">## [77] tidyr_1.3.1                 MsCoreUtils_1.19.2         </span></span>
-<span><span class="co">## [79] PSMatch_1.13.0              cli_3.6.5                  </span></span>
-<span><span class="co">## [81] textshaping_1.0.1           S4Arrays_1.9.0             </span></span>
+<span><span class="co">## [79] PSMatch_1.13.1              cli_3.6.5                  </span></span>
+<span><span class="co">## [81] textshaping_1.0.1           S4Arrays_1.9.1             </span></span>
 <span><span class="co">## [83] dplyr_1.1.4                 AnnotationFilter_1.33.0    </span></span>
 <span><span class="co">## [85] pcaMethods_2.1.0            gtable_0.3.6               </span></span>
 <span><span class="co">## [87] sass_0.4.10                 digest_0.6.37              </span></span>

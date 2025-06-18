@@ -61,7 +61,7 @@ be used instead. See the respective help page for more information."><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -607,12 +607,12 @@ be retained in the returned (filtered) object.</p></dd>
 
 <ul><li><p><code>[</code>: subset an <code>XcmsExperiment</code> by <strong>sample</strong> (parameter <code>i</code>). Subsetting
 will by default drop correspondence results (as subsetting by samples will
-obviously affect the feature definition) and alignment results (adjusted
-retention times) while identified chromatographic peaks (for the selected
+obviously affect the feature definition) while alignment results (adjusted
+retention times) and identified chromatographic peaks (for the selected
 samples) will be retained. Which preprocessing results should be
 kept or dropped can also be configured with optional parameters
 <code>keepChromPeaks</code> (by default <code>TRUE</code>), <code>keepAdjustedRtime</code> (by default
-<code>FALSE</code>) and <code>keepFeatures</code> (by default <code>FALSE</code>).</p></li>
+<code>TRUE</code>) and <code>keepFeatures</code> (by default <code>FALSE</code>).</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>: multiple <code>XcmsExperiment</code> objects can be combined into one using the
 <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> function. This requires however that all the <code>XcmsExperiments</code>'
 <code>Spectra</code> objects use the same type of <code>MsBackend</code> and that their
@@ -2676,7 +2676,7 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="co">## as well.</span></span></span>
 <span class="r-in"><span><span class="va">chrs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> XChromatograms with 2 rows and 3 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    1               2               3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             ko15.CDF        ko16.CDF        ko18.CDF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;XChromatogram&gt; &lt;XChromatogram&gt; &lt;XChromatogram&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]        peaks: 1        peaks: 0        peaks: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]        peaks: 1        peaks: 0        peaks: 0</span>

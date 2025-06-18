@@ -33,7 +33,7 @@ information)."><meta property="og:image" content="https://sneumann.github.io/xcm
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -237,12 +237,15 @@ are stored in the file specified with parameter <code>hdf5File</code>.</p>
 
 <ul><li><p><code>[</code>: subset the <code>XcmsExperimentHdf5</code> object to the specified samples.
 Parameters <code>keepChromPeaks</code> (default <code>TRUE</code>), <code>keepAdjustedRtime</code>
-(default <code>FALSE</code>) and <code>keepFeatures</code> (default <code>FALSE</code>) allow to configure
+(default <code>TRUE</code>) and <code>keepFeatures</code> (default <code>FALSE</code>) allow to configure
 whether present chromatographic peaks, alignment or correspondence results
 should be retained. This will only change information in the object (i.e.,
 the reference to the respective entries in the HDF5 file), but will
-<strong>not</strong> change the content of the HDF5 file. Note that with
-<code>keepChromPeaks = FALSE</code> also <code>keepFeatures</code> is set to <code>FALSE</code>.</p></li>
+<strong>not</strong> change the content of the HDF5 file. Thus, <em>reverting</em> the
+retention times of detected chromatographic peaks is <strong>not</strong> supported and
+<code>keepChromPeaks = TRUE</code> with <code>keepAdjustedRtime = FALSE</code> will throw an
+error. Note that with <code>keepChromPeaks = FALSE</code> also <code>keepFeatures</code> is set
+to <code>FALSE</code>.</p></li>
 <li><p><code><a href="XcmsExperiment.html">filterChromPeaks()</a></code> and <code><a href="XcmsExperiment.html">filterFeatureDefinitions()</a></code> to filter the
 chromatographic peak and correspondence results, respectively. See
 documentation below for details. Subset using unsorted or duplicated
@@ -340,7 +343,7 @@ features to retain. It supports a <code>logical</code>, <code>integer</code> ind
 <span class="r-out co"><span class="r-pr">#&gt;</span>  xcms results:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - chromatographic peaks in MS level(s): 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  results storage file:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    /tmp/RtmpoSkzhK/file2c47282dfc4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    /tmp/RtmpOJ9gKF/file339b6110b20e</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract selected columnds from the chromatographic peak detection</span></span></span>
 <span class="r-in"><span><span class="co">## results</span></span></span>

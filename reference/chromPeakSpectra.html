@@ -89,7 +89,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><me
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -323,8 +323,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon May 26 14:37:18 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:18 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Wed Jun 18 19:43:02 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## spectra variable *chrom_peak_id* contain the row names of the peaks in the</span></span></span>
 <span class="r-in"><span><span class="co">## chromPeak matrix and allow thus to map chromatographic peaks to the</span></span></span>
@@ -403,9 +403,9 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-in"><span><span class="co">## and MS2 spectra is easier.</span></span></span>
 <span class="r-in"><span><span class="va">ms2_sps</span> <span class="op">&lt;-</span> <span class="fu">chromPeakSpectra</span><span class="op">(</span><span class="va">dda</span>, return.type <span class="op">=</span> <span class="st">"List"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ms2_sps</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "CP01" "CP02" "CP03" "CP04" "CP05" "CP06" "CP07" "CP08" "CP09" "CP10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "CP11" "CP12" "CP13" "CP14" "CP15" "CP16" "CP17" "CP18" "CP19" "CP20"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "CP21" "CP22" "CP23" "CP24" "CP25" "CP26" "CP27"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "CP01" "CP02" "CP03" "CP04" NA     "CP06" "CP07" "CP08" "CP09" "CP10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "CP11" "CP12" "CP13" "CP14" "CP15" NA     "CP17" "CP18" "CP19" "CP20"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "CP21" "CP22" "CP23" NA     "CP25" NA     "CP27"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">dda</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "CP01" "CP02" "CP03" "CP04" "CP05" "CP06" "CP07" "CP08" "CP09" "CP10"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] "CP11" "CP12" "CP13" "CP14" "CP15" "CP16" "CP17" "CP18" "CP19" "CP20"</span>
@@ -423,8 +423,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon May 26 14:37:18 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:18 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Wed Jun 18 19:43:02 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter `msLevel` allows to define from which MS level spectra should</span></span></span>
 <span class="r-in"><span><span class="co">## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all</span></span></span>
@@ -457,8 +457,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon May 26 14:37:18 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:19 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Wed Jun 18 19:43:02 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter peaks would allow to extract spectra for specific peaks only.</span></span></span>
 <span class="r-in"><span><span class="co">## Peaks can be defined with parameter `peaks` which can be either an</span></span></span>
@@ -475,8 +475,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon May 26 14:37:19 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon May 26 14:37:19 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Wed Jun 18 19:43:02 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2025-05-26 13:14:24.397503<br><strong>Compiled</strong>: Mon May 26 14:40:19 2025</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Johannes Rainer, Michael Witting<br><strong>Modified</strong>: 2025-06-18 18:22:37.784995<br><strong>Compiled</strong>: Wed Jun 18 19:45:48 2025</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -245,9 +245,9 @@ chromatographic peak are returned.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Mon May 26 14:40:32 2025]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Mon May 26 14:40:39 2025]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Mon May 26 14:40:40 2025]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Wed Jun 18 19:46:00 2025]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Wed Jun 18 19:46:08 2025]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Wed Jun 18 19:46:08 2025]</span></span></code></pre>
 <p>By default <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> returns all spectra
 associated with a MS1 chromatographic peak, but parameter
 <code>method</code> allows to choose and return only one spectrum per
@@ -346,9 +346,9 @@ peak in the present data set.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Mon May 26 14:40:32 2025]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Mon May 26 14:40:39 2025]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Mon May 26 14:40:40 2025]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Wed Jun 18 19:46:00 2025]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Wed Jun 18 19:46:08 2025]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Wed Jun 18 19:46:08 2025]</span></span></code></pre>
 <p>There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
 single MS2 spectrum using the <code><a href="https://rdrr.io/pkg/Spectra/man/combineSpectra.html" class="external-link">combineSpectra()</a></code> method
@@ -374,9 +374,9 @@ approach or suggested for all types of data.</p>
 <span><span class="co">## 1         2   418.926      3505</span></span>
 <span><span class="co">##  ... 37 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Mon May 26 14:40:32 2025]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Mon May 26 14:40:39 2025]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Mon May 26 14:40:40 2025]</span></span>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Wed Jun 18 19:46:00 2025]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Wed Jun 18 19:46:08 2025]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Wed Jun 18 19:46:08 2025]</span></span>
 <span><span class="co">##  ...1 more processings. Use 'processingLog' to list all.</span></span></code></pre>
 <p>Mass peaks from all input spectra with a difference in m/z smaller 20
 ppm (parameter <code>ppm</code>) were combined into one peak and the
@@ -852,7 +852,7 @@ chromatographic peak.</p>
 <span><span class="co">## CP62         2   574.942        NA</span></span>
 <span><span class="co">##  ... 20 more variables/columns.</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Mon May 26 14:40:48 2025]</span></span></code></pre>
+<span><span class="co">##  Merge 1 Spectra into one [Wed Jun 18 19:46:16 2025]</span></span></code></pre>
 <p>As a result we got a <code>Spectra</code> object of length equal to
 the number of MS1 peaks in our data. The length of a spectrum represents
 the number of peaks it contains. Thus, a length of 0 indicates that no
@@ -1015,9 +1015,9 @@ peak.</p>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## PestMix1_DDA.mzML</span></span>
 <span><span class="co">## Processing:</span></span>
-<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Mon May 26 14:40:32 2025]</span></span>
-<span><span class="co">##  Filter: select MS level(s) 2 [Mon May 26 14:40:39 2025]</span></span>
-<span><span class="co">##  Merge 1 Spectra into one [Mon May 26 14:40:40 2025]</span></span></code></pre>
+<span><span class="co">##  Filter: select retention time [230..610] on MS level(s)  [Wed Jun 18 19:46:00 2025]</span></span>
+<span><span class="co">##  Filter: select MS level(s) 2 [Wed Jun 18 19:46:08 2025]</span></span>
+<span><span class="co">##  Merge 1 Spectra into one [Wed Jun 18 19:46:08 2025]</span></span></code></pre>
 <p>In total 5 spectra were measured, some with a relatively high number
 of peaks. Next we combine them into a consensus spectrum.</p>
 <div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
@@ -1179,10 +1179,10 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] MetaboCoreUtils_1.17.1 MsBackendMgf_1.17.0    MsExperiment_1.11.0   </span></span>
+<span><span class="co">##  [1] MetaboCoreUtils_1.17.1 MsBackendMgf_1.17.0    MsExperiment_1.11.1   </span></span>
 <span><span class="co">##  [4] ProtGenerics_1.41.0    pander_0.6.6           Spectra_1.19.2        </span></span>
 <span><span class="co">##  [7] S4Vectors_0.47.0       BiocGenerics_0.55.0    generics_0.1.4        </span></span>
-<span><span class="co">## [10] xcms_4.7.1             BiocParallel_1.43.2    BiocStyle_2.37.0      </span></span>
+<span><span class="co">## [10] xcms_4.7.2             BiocParallel_1.43.4    BiocStyle_2.37.0      </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] DBI_1.2.3                   rlang_1.1.6                </span></span>
@@ -1196,7 +1196,7 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">##  [17] UCSC.utils_1.5.0            preprocessCore_1.71.0      </span></span>
 <span><span class="co">##  [19] ragg_1.4.0                  purrr_1.0.4                </span></span>
 <span><span class="co">##  [21] xfun_0.52                   MultiAssayExperiment_1.35.3</span></span>
-<span><span class="co">##  [23] cachem_1.1.0                GenomeInfoDb_1.45.3        </span></span>
+<span><span class="co">##  [23] cachem_1.1.0                GenomeInfoDb_1.45.4        </span></span>
 <span><span class="co">##  [25] jsonlite_2.0.0              progress_1.2.3             </span></span>
 <span><span class="co">##  [27] DelayedArray_0.35.1         prettyunits_1.2.0          </span></span>
 <span><span class="co">##  [29] parallel_4.5.0              cluster_2.1.8.1            </span></span>
@@ -1211,24 +1211,24 @@ also correlation with intensity values across several samples.</p>
 <span><span class="co">##  [47] tidyselect_1.2.1            abind_1.4-8                </span></span>
 <span><span class="co">##  [49] yaml_2.3.10                 doParallel_1.0.17          </span></span>
 <span><span class="co">##  [51] codetools_0.2-20            affy_1.87.0                </span></span>
-<span><span class="co">##  [53] lattice_0.22-7              tibble_3.2.1               </span></span>
+<span><span class="co">##  [53] lattice_0.22-7              tibble_3.3.0               </span></span>
 <span><span class="co">##  [55] plyr_1.8.9                  Biobase_2.69.0             </span></span>
 <span><span class="co">##  [57] evaluate_1.0.3              desc_1.4.3                 </span></span>
 <span><span class="co">##  [59] pillar_1.10.2               affyio_1.79.0              </span></span>
-<span><span class="co">##  [61] BiocManager_1.30.25         MatrixGenerics_1.21.0      </span></span>
+<span><span class="co">##  [61] BiocManager_1.30.26         MatrixGenerics_1.21.0      </span></span>
 <span><span class="co">##  [63] foreach_1.5.2               MSnbase_2.35.0             </span></span>
 <span><span class="co">##  [65] MALDIquant_1.22.3           ncdf4_1.24                 </span></span>
 <span><span class="co">##  [67] hms_1.1.3                   ggplot2_3.5.2              </span></span>
 <span><span class="co">##  [69] scales_1.4.0                glue_1.8.0                 </span></span>
-<span><span class="co">##  [71] MsFeatures_1.17.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">##  [71] MsFeatures_1.17.1           lazyeval_0.2.2             </span></span>
 <span><span class="co">##  [73] tools_4.5.0                 mzID_1.47.0                </span></span>
-<span><span class="co">##  [75] data.table_1.17.2           QFeatures_1.19.1           </span></span>
+<span><span class="co">##  [75] data.table_1.17.4           QFeatures_1.19.2           </span></span>
 <span><span class="co">##  [77] vsn_3.77.0                  mzR_2.43.0                 </span></span>
 <span><span class="co">##  [79] fs_1.6.6                    XML_3.99-0.18              </span></span>
 <span><span class="co">##  [81] grid_4.5.0                  impute_1.83.0              </span></span>
 <span><span class="co">##  [83] tidyr_1.3.1                 MsCoreUtils_1.19.2         </span></span>
-<span><span class="co">##  [85] PSMatch_1.13.0              cli_3.6.5                  </span></span>
-<span><span class="co">##  [87] textshaping_1.0.1           S4Arrays_1.9.0             </span></span>
+<span><span class="co">##  [85] PSMatch_1.13.1              cli_3.6.5                  </span></span>
+<span><span class="co">##  [87] textshaping_1.0.1           S4Arrays_1.9.1             </span></span>
 <span><span class="co">##  [89] dplyr_1.1.4                 AnnotationFilter_1.33.0    </span></span>
 <span><span class="co">##  [91] pcaMethods_2.1.0            gtable_0.3.6               </span></span>
 <span><span class="co">##  [93] sass_0.4.10                 digest_0.6.37              </span></span>
