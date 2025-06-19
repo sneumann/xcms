@@ -159,6 +159,7 @@ jobs:
           BiocManager::install("mzR")
           BiocManager::install("MsExperiment")
           BiocManager::install("MSnbase")
+          BiocManager::install("faahKO")
 
           BiocManager::install(c("rmarkdown", "BiocStyle"), type = "source")
         continue-on-error: true
