@@ -1,5 +1,9 @@
 # xcms 4.6
 
+## Changes in version 4.6.3
+
+- Fix compiler error for massifquant on macOS (issue #804).
+
 ## Changes in version 4.6.2
 
 - Fix issue in `chromPeakSpectra()` for `XcmsExperiment` reporting also
