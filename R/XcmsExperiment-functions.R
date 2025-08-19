@@ -1299,7 +1299,7 @@ XcmsExperiment <- function() {
                             files = fileNames(from),
                             smoothed = NA)
     n@phenoData <- AnnotatedDataFrame(as.data.frame(sampleData(from)))
-    fd <- as.data.frame(from@spectra@backend@spectraData)
+    fd <- as.data.frame(spectraData(from@spectra))
     fnames <- unique(fd$dataStorage)
     fd$fileIdx <- match(fd$dataStorage, fnames)
     fd <- fd[, !colnames(fd) %in% c("dataStorage", "dataOrigin")]

@@ -1,5 +1,9 @@
 # xcms 4.6
 
+## Changes in version 4.6.4
+
+- Fix conversion from `XcmsExperiment` to `XCMSnExp` (issue #807).
+
 ## Changes in version 4.6.3
 
 - Fix compiler error for massifquant on macOS (issue #804).
