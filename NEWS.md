@@ -1,5 +1,9 @@
 # xcms 4.7
 
+## Changes in version 4.7.3
+
+- Fix conversion from `XcmsExperiment` objects to `XCMSnExp` (issue #807).
+
 ## Changes in version 4.7.2
 
 - Change default for `[,XcmsExperiment` and `[,XcmsExperimentHdf5`
