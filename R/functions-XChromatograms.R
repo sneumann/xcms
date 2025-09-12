@@ -304,13 +304,15 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                       dens$y[feat_range[1]:feat_range[2]] <- 0
                       feat_idx <- which(pks[, "rt"] >= dens$x[feat_range[1]] &
                                         pks[, "rt"] <= dens$x[feat_range[2]])
-                      tt <- table(sample_groups[pks[feat_idx, smpl_col]])
+                      tt <- table(
+                          sample_groups[unique(pks[feat_idx, smpl_col])])
                       if (!any(tt / sample_groups_table[names(tt)] >=
                                minFraction(param) & tt >= minSamples(param)))
                           next
                       rect(xleft = min(pks[feat_idx, "rt"]), ybottom = yl[1],
                            xright = max(pks[feat_idx, "rt"]), ytop = yl[2],
                            border = "#00000040", col = "#00000020")
+                      snum <- snum + 1L
                   }
         } else {
             if (!missing(fts) && nrow(fts)) {
