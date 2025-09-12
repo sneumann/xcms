@@ -462,7 +462,8 @@ setGeneric("chromPeakData<-", function(object, value)
 #'     parameter overrides `skipFilled`.
 #'
 #' @param skipFilled `logical(1)` whether spectra for filled-in peaks should
-#'     be reported or not.
+#'     be reported or not. Defaults to `skipFilled = FALSE` thus also spectra
+#'     for gap-filled chromatographic peaks are returned.
 #'
 #' @param return.type `character(1)` defining the type of result object that
 #'     should be returned.
@@ -871,7 +872,13 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' in which no peak was identified (or even filled-in) no spectra are
 #' returned. For `msLevel = 2L` all MS2 spectra with a retention time within
 #' the retention time range and their precursor m/z within the m/z range of
-#' any chromatographic peak of a feature are returned.
+#' any chromatographic peak of a feature are returned. Thus, only MS2 spectra
+#' for chromatographic peaks associated with the feature and also measured in
+#' the sample in which the chromatographic was identified are reported.
+#'
+#' Note that with the default for parameter `skipFilled` (`skipFilled = FALSE`)
+#' also gap-filled chromatographic peaks are considered. Use
+#' `skipFilled = TRUE` to report only MS2 spectra for detected peaks.
 #'
 #' See also [chromPeakSpectra()] (used internally to extract spectra for
 #' each chromatographic peak of a feature) for additional information,
@@ -908,8 +915,8 @@ setGeneric("featureDefinitions<-", function(object, value)
 #'     subset of features in `featureDefinitions` for which spectra should
 #'     be returned (providing either their ID, a logical vector same length
 #'     than `nrow(featureDefinitions(x))` or their index in
-#'     `featureDefinitions(x)`). This parameter overrides `skipFilled` and is
-#'     only supported for `return.type` being either `"Spectra"` or `"List"`.
+#'     `featureDefinitions(x)`). This parameter is only supported for
+#'     `return.type` being either `"Spectra"` or `"List"`.
 #'
 #' @param featureColumns `character` vector with the names of the columns
 #'     from `featureDefinitions` that should be added to the returned spectra

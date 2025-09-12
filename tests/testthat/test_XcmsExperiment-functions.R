@@ -195,6 +195,14 @@ test_that(".chromPeakData works", {
     expect_equal(res, xmse@chromPeakData)
     res <- .chromPeakData(xmse, msLevel = 2L)
     expect_equal(res, xmse@chromPeakData[integer(), ])
+
+    expect_error(.chromPeakData(xmse, columns = c("a", "ms_level")),
+                 "valid column names")
+    res <- .chromPeakData(xmse, columns = c("is_filled"))
+    expect_equal(colnames(res), "is_filled")
+    res <- .chromPeakData(xmse, columns = c("is_filled"), msLevel = 2L)
+    expect_equal(colnames(res), "is_filled")
+    expect_true(nrow(res) == 0)
 })
 
 test_that(".features_ms_region works", {

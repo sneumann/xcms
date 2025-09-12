@@ -417,6 +417,41 @@ test_that(".xmse_group_cpeaks works", {
     expect_true(is.list(res$peakidx))
 })
 
+test_that("groupChromPeaks,XcmsExperiment,PeakDensityParam minFraction works", {
+    a <- as(loadXcmsData(), "MsExperiment")[c(1, 2, 7, 8)]
+    a <- findChromPeaks(
+        a, param = CentWaveParam(ppm = 5, peakwidth = c(5, 20),
+                                 prefilter = c(3, 1000), mzdiff = 0.001))
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 4), bw = 8, binSize = 0.015,
+                            minFraction = 0.4, maxFeatures = 100)
+    b <- groupChromPeaks(a, pdp)
+    mzr <- c(278.9, 279.1)
+    idx <- which(MsCoreUtils::between(featureDefinitions(b)$mzmed, mzr))
+    tmp <- featureValues(b)[idx, ]
+    expect_true(nrow(tmp) == 2)
+    expect_true(sum(is.na(tmp[1, ])) <= 2)
+    expect_true(sum(is.na(tmp[1, ])) <= 2)
+
+    chr_b <- chromatogram(b, mz = mzr)
+    ## these two plots have to be the same
+    plotChromPeakDensity(chr_b, simulate = FALSE)
+    plotChromPeakDensity(chr_b, simulate = TRUE, param = pdp)
+
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 4), bw = 8, binSize = 0.015,
+                            minFraction = 0.6, maxFeatures = 100)
+    b <- groupChromPeaks(a, pdp)
+    idx <- which(MsCoreUtils::between(featureDefinitions(b)$mzmed, mzr))
+    tmp <- featureValues(b)[idx, , drop = FALSE]
+    expect_true(nrow(tmp) == 1)
+    expect_true(sum(is.na(tmp[1, ])) <= 3)
+
+    chr_b <- chromatogram(b, mz = mzr)
+    ## these two plots have to be the same
+    plotChromPeakDensity(chr_b, simulate = FALSE)
+    plotChromPeakDensity(chr_b, simulate = TRUE, param = pdp)
+
+})
+
 test_that("groupChromPeaks,XcmsExperiment and related things work", {
     ## PeakDensityParam
     expect_false(hasFeatures(xmse))

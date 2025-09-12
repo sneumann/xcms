@@ -1210,13 +1210,22 @@
 #' a `XcmsExperiment` object.
 #'
 #' @noRd
-.chromPeakData <- function(object, msLevel = integer()) {
+.chromPeakData <- function(object, msLevel = integer(), columns = character()) {
     if (is(object, "XcmsExperimentHdf5"))
         return(chromPeakData(object, msLevel = msLevel,
                              return.type = "data.frame"))
-    if (length(msLevel))
-        object@chromPeakData[object@chromPeakData$ms_level %in% msLevel, ]
-    else object@chromPeakData
+    if (length(columns)) {
+        if (!all(columns %in% colnames(object@chromPeakData)))
+            stop("'columns' have to be valid column names of 'chromPeakData'")
+        if (length(msLevel))
+            object@chromPeakData[object@chromPeakData$ms_level %in% msLevel,
+                                 columns, drop = FALSE]
+        else object@chromPeakData[, columns, drop = FALSE]
+    } else {
+        if (length(msLevel))
+            object@chromPeakData[object@chromPeakData$ms_level %in% msLevel, ]
+        else object@chromPeakData
+    }
 }
 
 #' Helper function to return the **full**  chromPeaks matrix without any

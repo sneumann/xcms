@@ -446,13 +446,51 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' @description
 #'
 #' `.rect_overlap` identifies rectangles overlapping in a two dimensional
-#' space.
+#' space. The comparison is done exhaustive, i.e., in a first loop pairs
+#' of overlapping rectangles are identified and these are then re-evaluated
+#' whether they are part of any other matching pair. If so, they are combined.
+#'
+#' @note
+#'
+#' Not all pairs of rectangles in each returned have to be overlapping, but
+#' as a group, all of them are overlapping (e.g., the first might be
+#' overlapping with the second, but not necessarily with the third rectangle,
+#' if the second is overlapping with the third).
 #'
 #' @return `list` with indices of overlapping elements.
 #'
 #' @noRd
 #'
 #' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' ## two pairs of overlapping rectangles.
+#' a <- cbind(
+#'     xleft = c(1.2, 1.1, 1.3, 3),
+#'     xright = c(1.5, 1.6, 2.4, 3.4),
+#'     ybottom = c(2.3, 2.35, 2.2, 5),
+#'     ytop = c(2.4, 2.45, 2.34, 5.1)
+#' )
+#' plot(0, 0, xlim = range(a[, c("xleft", "xright")]),
+#'      ylim = range(a[, c("ybottom", "ytop")]))
+#' rect(xleft = a[, "xleft"], xright = a[, "xright"],
+#'      ybottom = a[, "ybottom"], ytop = a[, "ytop"])
+#'
+#' xcms:::.rect_overlap(a[, 1], a[, 2], a[, 3], a[, 4])
+#'
+#' ## all 3 overlapping
+#' a <- cbind(
+#'     xleft = c(1.2, 1.1, 1.3, 3),
+#'     xright = c(1.5, 1.6, 2.4, 3.4),
+#'     ybottom = c(2.3, 2.25, 2.2, 5),
+#'     ytop = c(2.4, 2.45, 2.34, 5.1)
+#' )
+#' plot(0, 0, xlim = range(a[, c("xleft", "xright")]),
+#'      ylim = range(a[, c("ybottom", "ytop")]))
+#' rect(xleft = a[, "xleft"], xright = a[, "xright"],
+#'      ybottom = a[, "ybottom"], ytop = a[, "ytop"])
+#' xcms:::.rect_overlap(a[, 1], a[, 2], a[, 3], a[, 4])
 .rect_overlap <- function(xleft, xright, ybottom, ytop) {
     if (missing(xleft) | missing(xright) | missing(ybottom) | missing(ytop))
         stop("'xleft', 'xright', 'ybottom' and 'ytop' are required parameters")

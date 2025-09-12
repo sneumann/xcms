@@ -1074,12 +1074,13 @@ setReplaceMethod("chromPeakData", "XcmsExperiment", function(object, value) {
 #' @rdname XcmsExperiment
 setMethod(
     "chromPeakData", "XcmsExperiment",
-    function(object, msLevel = integer(),
+    function(object, msLevel = integer(), columns = character(),
              return.type = c("DataFrame", "data.frame")) {
         return.type <- match.arg(return.type)
         if (return.type == "DataFrame")
-            as(.chromPeakData(object, msLevel = msLevel), "DataFrame")
-        else .chromPeakData(object, msLevel = msLevel)
+            as(.chromPeakData(object, msLevel = msLevel, columns = columns),
+               "DataFrame")
+        else .chromPeakData(object, msLevel = msLevel, columns = LLLL)
     })
 
 #' @rdname refineChromPeaks
@@ -1900,6 +1901,7 @@ setMethod(
         ufeatures <- features_all[findex]
         pindex <- unlist(featureDefinitions(object)$peakidx[findex],
                          use.names = FALSE)
+        ## Need to consider skipFilled.LLLLLL
         sps <- .mse_spectra_for_peaks(
             object, msLevel = msLevel, expandRt = expandRt,
             expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
@@ -2165,3 +2167,21 @@ setMethod(
     pb$tick()
     res
   })
+
+## TODO:
+## A method to identify and merge overlapping features.
+##
+## try to figure out if we have overlapping features.
+## fa <- featureArea(ftms)
+## fd <- featureDefinitions(ftms)
+## b <- xcms:::.rect_overlap(fa[, "rtmin"], fa[, "rtmax"],
+##                           fa[, "mzmin"], fa[, "mzmax"])
+## a <- lapply(b, function(z) {
+##     c(mzdiff = diff(range(fd$mzmed[z])),
+##       rtdiff = diff(range(fd$rtmed[z])))
+## }) |> do.call(what = rbind)
+##
+## Thoughts on how to combine overlapping features:
+## 1) check if we have features with chrom peaks that are overlapping
+## 2) then evaluate if their difference in mzmed and rtmed.
+## 3) only merge them if their difference is smaller XXX
