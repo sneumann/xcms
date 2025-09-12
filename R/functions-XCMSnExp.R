@@ -1596,8 +1596,7 @@ ms2_mspectrum_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
         z <- peak_sp[idx[[i]]]
         if (any(lengths(z))) {
             z <- Spectra::concatenateSpectra(z)
-            z@backend@spectraData <- cbind(z@backend@spectraData,
-                                           DataFrame(feature_id = fids[i]))
+            z$feature_id <- fids[i]
             z@processing <- character()
             z
         }
