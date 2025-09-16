@@ -99,7 +99,9 @@
 #'   should be provided with the `peaks` parameter. This can reduce the memory
 #'   requirement for cases in which only data of some selected chromatographic
 #'   peaks needs to be extracted. Also, `chromPeakData()` supports the
-#'   `bySample` parameter described for `chromPeaks()` above.
+#'   `bySample` parameter described for `chromPeaks()` above. All other
+#'   parameters present also for `chromPeakData()` of `XcmsExperiment` objects,
+#'   such as `columns` are supported.
 #'
 #' - `filterChromPeaks()` allows to filter the chromatographic peaks specifying
 #'   which should be retainend using the `keep` parameter. This can be either
@@ -138,6 +140,11 @@
 #' @param bySample For `chromPeaks()` and `chromPeakData()`: `logical(1)`
 #'    whether the data should be returned *by sample*, i.e. as a `list` of
 #'    `matrix` or `data.frame` objects, one for each sample.
+#'
+#' @param columns For `chromPeakData()~: optional `character` allowing to
+#'    define a subset of columns that should be included in the returned
+#'    data frame. By default (`columns = character()`) the full data is
+#'    returned.
 #'
 #' @param features For `filterFeatureDefinitions()`: defining the features to
 #'    keep: either a `logical` with the same length than the number of features,

@@ -1191,7 +1191,33 @@ test_that("manualFeatures,XcmsExperimentHdf5 works", {
 })
 
 test_that("chromPeakData,XcmsExperimentHdf5 works with columns", {
-    ## LLLL TODO: check with and without specifying columns.
+    ref <- chromPeakData(xmse_full_h5)
+
+    expect_error(chromPeakData(xmse_full_h5, columns = c("aa")), "undefined")
+    res <- chromPeakData(xmse_full_h5, columns = c("ms_level"))
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), "ms_level")
+    expect_equal(res$ms_level, ref$ms_level)
+
+    res <- chromPeakData(xmse_full_h5, columns = c("is_filled", "ms_level"))
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 2L)
+    expect_equal(colnames(res), c("is_filled", "ms_level"))
+    expect_equal(res$ms_level, ref$ms_level)
+    expect_equal(res$is_filled, ref$is_filled)
+
+    res <- chromPeakData(xmse_full_h5, columns = "merged")
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), c("merged"))
+    expect_equal(res$merged, ref$merged)
+
+    res <- chromPeakData(xmse_full_h5, columns = "is_filled")
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), c("is_filled"))
+    expect_equal(res$is_filled, ref$is_filled)
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

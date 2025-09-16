@@ -57,6 +57,9 @@ chromatographic peaks (row name in \code{chromPeaks()}) for which the data
 should be returned. By default (\code{peaks = character()}) the data for all
 chromatographic peaks is returned.}
 
+\item{columns}{For \verb{chromPeakData()~: optional }character\verb{ allowing to define a subset of columns that should be included in the returned data frame. By default (}columns = character()`) the full data is
+returned.}
+
 \item{return.type}{For \code{chromPeakData()}: \code{character(1)} specifying the type
 of object that should be returned. Can be either
 \code{return.type = "DataFrame"} (the default) to return a \code{DataFrame}, or
@@ -182,7 +185,9 @@ For these chromatographic peaks the ID (row name in \code{chromPeaks()})
 should be provided with the \code{peaks} parameter. This can reduce the memory
 requirement for cases in which only data of some selected chromatographic
 peaks needs to be extracted. Also, \code{chromPeakData()} supports the
-\code{bySample} parameter described for \code{chromPeaks()} above.
+\code{bySample} parameter described for \code{chromPeaks()} above. All other
+parameters present also for \code{chromPeakData()} of \code{XcmsExperiment} objects,
+such as \code{columns} are supported.
 \item \code{filterChromPeaks()} allows to filter the chromatographic peaks specifying
 which should be retainend using the \code{keep} parameter. This can be either
 a \code{logical}, \code{character} or \code{integer} vector. Duplicated or unsorted

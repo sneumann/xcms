@@ -25,7 +25,7 @@
 #' `.mse_sample_apply` that does **only** split the `Spectra` and no other data
 #' the `MsExperiment`.
 #'
-#' This function splits the spectra by x@sampleDataLinks [, 1] which is ALWAYS
+#' This function splits the spectra by `x@sampleDataLinks[, 1]` which is ALWAYS
 #' ordered from 1 to number of samples. The result will thus be a `list` in the
 #' same order (sample 1:length(x)).
 #'
