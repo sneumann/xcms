@@ -20,6 +20,7 @@ toXcmsExperiment(object, ...)
   object,
   msLevel = integer(),
   peaks = character(),
+  columns = character(),
   return.type = c("DataFrame", "data.frame"),
   bySample = FALSE
 )

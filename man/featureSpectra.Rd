@@ -53,7 +53,8 @@ constant value on each side.}
 by a value dependent on the peak's m/z.}
 
 \item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
-be reported or not.}
+be reported or not. Defaults to \code{skipFilled = FALSE} thus also spectra
+for gap-filled chromatographic peaks are returned.}
 
 \item{return.type}{\code{character(1)} defining the type of result object that
 should be returned.}
@@ -62,8 +63,8 @@ should be returned.}
 subset of features in \code{featureDefinitions} for which spectra should
 be returned (providing either their ID, a logical vector same length
 than \code{nrow(featureDefinitions(x))} or their index in
-\code{featureDefinitions(x)}). This parameter overrides \code{skipFilled} and is
-only supported for \code{return.type} being either \code{"Spectra"} or \code{"List"}.}
+\code{featureDefinitions(x)}). This parameter is only supported for
+\code{return.type} being either \code{"Spectra"} or \code{"List"}.}
 
 \item{featureColumns}{\code{character} vector with the names of the columns
 from \code{featureDefinitions} that should be added to the returned spectra
@@ -94,7 +95,13 @@ data file) associated with a feature are returned. Note that for samples
 in which no peak was identified (or even filled-in) no spectra are
 returned. For \code{msLevel = 2L} all MS2 spectra with a retention time within
 the retention time range and their precursor m/z within the m/z range of
-any chromatographic peak of a feature are returned.
+any chromatographic peak of a feature are returned. Thus, only MS2 spectra
+for chromatographic peaks associated with the feature and also measured in
+the sample in which the chromatographic was identified are reported.
+
+Note that with the default for parameter \code{skipFilled} (\code{skipFilled = FALSE})
+also gap-filled chromatographic peaks are considered. Use
+\code{skipFilled = TRUE} to report only MS2 spectra for detected peaks.
 
 See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} (used internally to extract spectra for
 each chromatographic peak of a feature) for additional information,

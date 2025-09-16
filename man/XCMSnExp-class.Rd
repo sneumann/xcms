@@ -152,7 +152,7 @@ processHistoryTypes()
 
 \method{c}{XCMSnExp}(...)
 
-\S4method{chromPeakData}{XCMSnExp}(object, ...)
+\S4method{chromPeakData}{XCMSnExp}(object, columns = character(), ...)
 
 \S4method{chromPeakData}{XCMSnExp}(object) <- value
 
@@ -268,6 +268,10 @@ peak detection results will be removed.}
 
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
+
+\item{columns}{For \code{chromPeakData()}: optional \code{character} with the names
+of the columns to include in the returned data frame. By default
+(\code{columns = character()}) all columns are reported.}
 
 \item{x}{For \code{plot()}: \code{XCMSnExp} object.}
 
@@ -448,7 +452,9 @@ any existing \code{chromPeakData}.
 \code{chromPeakData()} and \verb{chromPeakData<-} allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
 \code{DataFrame}. Note that the number of rows and the rownames of the
-\code{DataFrame} have to match those of \code{chromPeaks}.
+\code{DataFrame} have to match those of \code{chromPeaks}. Parameter \code{columns} allows
+to extract only selected columns from the \code{chromPeakData}. By default
+(\code{columns = character()}) all columns are returned.
 
 \code{rtime()}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped

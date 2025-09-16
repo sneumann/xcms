@@ -125,6 +125,7 @@ filterFeatureDefinitions(object, ...)
 \S4method{chromPeakData}{XcmsExperiment}(
   object,
   msLevel = integer(),
+  columns = character(),
   return.type = c("DataFrame", "data.frame")
 )
 
@@ -325,9 +326,10 @@ types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all
 information whether a peak was detected or \emph{only} filled-in. Note that
 this information is also provided in the \code{chromPeakData} data frame.}
 
-\item{columns}{For \code{chromPeaks()}: optional \code{character} to specify the
-names of the columns that should be returned. By default (with
-\code{columns = character()} all columns are returned.}
+\item{columns}{For \code{chromPeaks()} and \code{chromPeakData()}: optional
+\code{character} to specify the names of the columns that should be
+returned. By default (with \code{columns = character()} all columns are
+returned.}
 
 \item{keep}{For \code{filterChromPeaks()}: \code{logical}, \code{integer} or \code{character}
 specifying which chromatographic peaks to keep. If \code{logical} the
@@ -573,7 +575,11 @@ below for details.
 \code{chromPeaks()} matrix. The default \emph{annotations} are \code{"ms_level"} (the MS
 level in which the peak was identified) and \code{"is_filled"} (whether the
 chromatographic peak was \emph{detected} (by \code{\link[=findChromPeaks]{findChromPeaks()}}) or
-\emph{filled-in} (by \code{\link[=fillChromPeaks]{fillChromPeaks()}}).
+\emph{filled-in} (by \code{\link[=fillChromPeaks]{fillChromPeaks()}}). Parameter \code{columns} can be used to
+restrict the returned data frame to selected columns. Parameter
+\code{return.type} can be used to specify the type of returned objects, either
+a \code{DataFrame} (the default, \code{return.type = "DataFrame"}) or a \code{data.frame}
+(\verb{return.type = "data.frame")}.
 \item \code{chromPeakSpectra()}: extract MS spectra for identified chromatographic
 peaks. This can be either all (full scan) MS1 spectra with retention
 times between the retention time range of a chromatographic peak, all

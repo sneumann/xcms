@@ -131,8 +131,9 @@ setMethod("dropChromPeaks", "MsFeatureData", function(object) {
 })
 
 #' @rdname hidden_aliases
-setMethod("chromPeakData", "MsFeatureData", function(object) {
-    .chrom_peak_data(object)
+setMethod("chromPeakData", "MsFeatureData", function(object,
+                                                     columns = character()) {
+    .chrom_peak_data(object, columns = columns)
 })
 #' @rdname hidden_aliases
 setReplaceMethod("chromPeakData", "MsFeatureData", function(object, value) {

@@ -305,9 +305,15 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' `chromPeakData()` and `chromPeakData<-` allow to get or set arbitrary
 #' chromatographic peak annotations. These are returned or ar returned as a
 #' `DataFrame`. Note that the number of rows and the rownames of the
-#' `DataFrame` have to match those of `chromPeaks`.
+#' `DataFrame` have to match those of `chromPeaks`. Parameter `columns` allows
+#' to extract only selected columns from the `chromPeakData`. By default
+#' (`columns = character()`) all columns are returned.
 #'
 #' @md
+#'
+#' @param columns For `chromPeakData()`: optional `character` with the names
+#'     of the columns to include in the returned data frame. By default
+#'     (`columns = character()`) all columns are reported.
 #'
 #' @param rt optional `numeric(2)` defining the retention time range for
 #'     which chromatographic peaks should be returned.
@@ -3309,8 +3315,9 @@ setMethod("updateObject", "XCMSnExp", function(object) {
 })
 
 #' @rdname XCMSnExp-class
-setMethod("chromPeakData", "XCMSnExp", function(object, ...) {
-    chromPeakData(object@msFeatureData)
+setMethod("chromPeakData", "XCMSnExp", function(object, columns = character(),
+                                                ...) {
+    chromPeakData(object@msFeatureData, columns = columns)
 })
 #' @rdname XCMSnExp-class
 setReplaceMethod("chromPeakData", "XCMSnExp", function(object, value) {

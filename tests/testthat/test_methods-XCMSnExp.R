@@ -2633,3 +2633,14 @@ test_that("subset XCMSnExp works with adjusted rtime", {
     expect_false(all(chromPeaks(a)[, "rt"] == chromPeaks(b)[, "rt"]))
     expect_equal(chromPeaks(b), chromPeaks(filterFile(xod_xg, 3)))
 })
+
+test_that("chromPeakData,XCMSnExp works with columns", {
+    ref <- chromPeakData(xod_x)
+    res <- chromPeakData(xod_x, columns = "is_filled")
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), "is_filled")
+    expect_equal(res$is_filled, ref$is_filled)
+
+    expect_error(chromPeakData(xod_x, columns = "a"), "valid column names")
+})

@@ -1190,6 +1190,10 @@ test_that("manualFeatures,XcmsExperimentHdf5 works", {
     file.remove(tf)
 })
 
+test_that("chromPeakData,XcmsExperimentHdf5 works with columns", {
+    ## LLLL TODO: check with and without specifying columns.
+})
+
 ## test_that(".h5_feature_chrom_peaks_sample works", {
 ##     cn <- .h5_chrom_peaks_colnames(xmseg_full_h5, 1L)
 ##     res <- .h5_feature_chrom_peaks_sample("S3", xmseg_full_h5@hdf5_file,

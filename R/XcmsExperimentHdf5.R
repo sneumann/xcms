@@ -501,7 +501,8 @@ setReplaceMethod(
 setMethod(
     "chromPeakData", "XcmsExperimentHdf5",
     function(object, msLevel = integer(), peaks = character(),
-             return.type = c("DataFrame", "data.frame"), bySample = FALSE) {
+             columns = character(), return.type = c("DataFrame", "data.frame"),
+             bySample = FALSE) {
         return.type <- match.arg(return.type)
         .h5_require_rhdf5()
         if (!length(object))
@@ -512,10 +513,12 @@ setMethod(
         if (!hasChromPeaks(object, msLevel = msLevel))
             return(as(object@chromPeakData, return.type))
         if (return.type == "DataFrame")
-            as(.h5_chrom_peak_data(object, msLevel, peaks = peaks,
-                                   by_sample = FALSE), "DataFrame")
-        else .h5_chrom_peak_data(object, msLevel, peaks = peaks,
-                                 by_sample = bySample)
+            as(.h5_chrom_peak_data(
+                object, msLevel, peaks = peaks, by_sample = FALSE,
+                columns = columns), "DataFrame")
+        else .h5_chrom_peak_data(
+                 object, msLevel, peaks = peaks, by_sample = bySample,
+                 columns = columns)
     })
 
 #' @rdname hidden_aliases

@@ -3,6 +3,8 @@
 ## Changes in version 4.7.3
 
 - Fix conversion from `XcmsExperiment` objects to `XCMSnExp` (issue #807).
+- Add parameter `columns` to `chromPeakData()` to allow extraction of selected
+  columns.
 
 ## Changes in version 4.7.2
 

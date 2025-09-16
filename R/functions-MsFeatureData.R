@@ -207,6 +207,10 @@ validateMsFeatureData <- function(x) {
     !is.null(x$chromPeakData)
 }
 
-.chrom_peak_data <- function(x) {
-    x$chromPeakData
+.chrom_peak_data <- function(x, columns = character()) {
+    if (length(columns)) {
+        if (!all(columns %in% colnames(x$chromPeakData)))
+            stop("'columns' have to be valid column names of 'chromPeakData'")
+        x$chromPeakData[, columns, drop = FALSE]
+    } else x$chromPeakData
 }

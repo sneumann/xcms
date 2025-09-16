@@ -491,7 +491,7 @@ fixedMz(object)
 
 \S4method{dropChromPeaks}{MsFeatureData}(object)
 
-\S4method{chromPeakData}{MsFeatureData}(object)
+\S4method{chromPeakData}{MsFeatureData}(object, columns = character())
 
 \S4method{chromPeakData}{MsFeatureData}(object) <- value
 

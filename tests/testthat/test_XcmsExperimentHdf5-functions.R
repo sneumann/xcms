@@ -59,6 +59,8 @@ test_that(".h5_chrom_peak_data works", {
     expect_equal(nrow(cp), nrow(res))
     expect_equal(colnames(res), c("is_filled", "ms_level"))
 
+    ref <- res
+
     res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = TRUE,
                                peaks = rownames(cp)[c(4, 10, 100, 200)])
     expect_true(is.list(res))
@@ -69,6 +71,23 @@ test_that(".h5_chrom_peak_data works", {
     res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = FALSE,
                                peaks = rownames(cp)[c(4, 10, 100, 200)])
     expect_equal(rownames(res), rownames(cp)[c(4, 10, 100, 200)])
+
+    ## Selected column(s)
+    res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = FALSE,
+                               columns = "is_filled")
+    expect_true(is.data.frame(res))
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), c("is_filled"))
+    expect_equal(res$is_filled, ref$is_filled)
+
+    ## ms_level columns - which is not stored in the HDF5 but created on
+    ## the fly
+    res <- .h5_chrom_peak_data(xmse_h5, msLevel = 1L, by_sample = FALSE,
+                               columns = "ms_level")
+    expect_true(is.data.frame(res))
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), c("ms_level"))
+    expect_equal(res$ms_level, ref$ms_level)
 })
 
 test_that(".h5_chrom_peak_data_colnames works", {
@@ -449,7 +468,7 @@ test_that(".h5_read_chrom_peaks_matrix works", {
     expect_true(all(res[, "sample"] == 5))
 })
 
-test_that(".h5_read_data_frame works", {
+test_that(".h5_read_data_frame, .h5_read_chrom_peak_data works", {
     h5f <- tempfile()
     .h5_initialize_file(h5f)
 
@@ -478,6 +497,16 @@ test_that(".h5_read_data_frame works", {
     expect_equal(colnames(res), c("is_filled", "other_col"))
     expect_equal(rownames(res), c("1", "2"))
     expect_equal(res, a)
+
+    ## Selected columns
+    res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,
+                                    read_rownames = FALSE,
+                                    columns = "is_filled")
+    expect_true(is.data.frame(res))
+    expect_true(ncol(res) == 1L)
+    expect_equal(rownames(res), c("1", "2"))
+    expect_equal(colnames(res), "is_filled")
+    expect_equal(res$is_filled, a$is_filled)
 
     ## Read selected rows
     res <- .h5_read_chrom_peak_data("/1/ms_2/chrom_peak_data", h5,

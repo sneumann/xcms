@@ -535,7 +535,8 @@ toXcmsExperiment <- function(object, ...) {
 #'
 #' @param x `XcmsExperimentHdf5`
 #'
-#' @param columns optional `character()` to define the columns to extract.
+#' @param columns optional `character()` to define specific column(s) to
+#'     extract.
 #'
 #' @param peaks optional `character()` to define selected chromatographic peaks
 #'     for which the data should be returned. If not specified data for all
@@ -554,7 +555,7 @@ toXcmsExperiment <- function(object, ...) {
     names(msl) <- paste0("/", ids, "/ms_", msl, "/chrom_peak_data")
     res <- .h5_read_data(x@hdf5_file, id = ids, name = "chrom_peak_data",
                          ms_level = msl, read_rownames = TRUE, peaks = peaks,
-                         ms_levels = msl)
+                         ms_levels = msl, columns = columns)
     if (by_sample) {
         names(res) <- ids
         res
@@ -1292,8 +1293,9 @@ toXcmsExperiment <- function(object, ...) {
 #'
 #' @param index `list` with integer indices passed to rhdf5::h5read to read
 #'     only a subset of the data. Since `rhdf5::h5read()` seems to not support
-#'     parameter `index` for data sets the subsetting is done in R - but only
-#'     for `index[[1L]]`, i.e. rows. `index[[2L]]` is currently IGNORED.
+#'     parameter `index` for data sets the subsetting is done in R, with
+#'     `index[[1L]]` subsetting rows and `index[[2L]]` columns (supporting both
+#'     `integer` as well as `character` to select the columns.
 #'
 #' @param read_rownames `logical(1)` whether rownames should be read and set.
 #'
@@ -1315,19 +1317,30 @@ toXcmsExperiment <- function(object, ...) {
     else d[index[[1L]], , drop = FALSE]
 }
 
-#' Function to read the chromPeakData `data.frame` for one sample.
+#' Function to read the chromPeakData `data.frame` for one sample. A
+#' `data.frame` is stored in the HDF5 as a data set with each column being
+#' a separate (one column) array. Thus, it is not possible to use parameter
+#' `index` to select more than one column. Therefore, to extract only
+#' specific columns from the stored `data.frame` the parameter `columns`
+#' has to be used. With this, the subset is created in R, after first
+#' importing the full data from the HDF5 file.
 #'
 #' @param peaks optional `character` with the chrom peak IDs for which the
 #'     data should be extracted.
 #'
+#' @param columns optional `character` with the columns to subset the data
+#'     frame to.
+#'
 #' @param ms_levels optional **named** `integer` with the MS levels of all
 #'     imported data sets. At least one of the `names(ms_levels)` should match
-#'     param `name`. If provided, a column `$ms_level` is added to the result.
+#'     param `name`. If provided, a column `$ms_level` is added to the result
+#'     if parameter `columns` is empty or, if specified, contains `"ms_level"`.
 #'
 #' @noRd
 .h5_read_chrom_peak_data <- function(name, h5, index = list(NULL, NULL),
                                      read_rownames = FALSE, peaks = character(),
-                                     ms_levels = integer(), ...) {
+                                     ms_levels = integer(),
+                                     columns = character(), ...) {
     cd <- .h5_read_data_frame(
         name, h5, read_rownames = read_rownames || length(peaks) > 0,
         index = index, rownames = sub("_data", "s_rownames", name))
@@ -1339,7 +1352,9 @@ toXcmsExperiment <- function(object, ...) {
     }
     if (length(ms_levels))
         cd$ms_level <- rep(unname(ms_levels[name]), nrow(cd))
-    cd
+    if (length(columns))
+        cd[, columns, drop = FALSE]
+    else cd
 }
 
 #' Reads the names of the data sets of a group. This can for example be used

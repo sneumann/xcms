@@ -449,7 +449,6 @@ test_that("groupChromPeaks,XcmsExperiment,PeakDensityParam minFraction works", {
     ## these two plots have to be the same
     plotChromPeakDensity(chr_b, simulate = FALSE)
     plotChromPeakDensity(chr_b, simulate = TRUE, param = pdp)
-
 })
 
 test_that("groupChromPeaks,XcmsExperiment and related things work", {
@@ -1645,4 +1644,24 @@ test_that("adjustRtime,XcmsExperiment,LamaParama works", {
     expect_equal(res_rt[[2]], rt[[2]])
     expect_true(all(res_rt[[1]] != rt[[1]]))
     expect_true(all(res_rt[[3]] != rt[[3]]))
+})
+
+test_that("chromPeakData,XcmsExperiment works with parameter columns", {
+    ref <- chromPeakData(xmse)
+    res <- chromPeakData(xmse, columns = "is_filled")
+    expect_s4_class(res, "DataFrame")
+    expect_true(ncol(res) == 1L)
+    expect_equal(colnames(res), "is_filled")
+    expect_equal(res$is_filled, ref$is_filled)
+
+    ref <- chromPeakData(xmse, msLevel = 2L)
+    expect_s4_class(ref, "DataFrame")
+    expect_equal(colnames(ref), c("ms_level", "is_filled"))
+    expect_true(nrow(ref) == 0L)
+    res <- chromPeakData(xmse, msLevel = 2L, columns = "is_filled")
+    expect_s4_class(res, "DataFrame")
+    expect_equal(colnames(res), "is_filled")
+    expect_true(nrow(res) == 0L)
+
+    expect_error(chromPeakData(xmse, columns = "a"), "valid column")
 })

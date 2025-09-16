@@ -178,7 +178,11 @@
 #'   `chromPeaks()` matrix. The default *annotations* are `"ms_level"` (the MS
 #'   level in which the peak was identified) and `"is_filled"` (whether the
 #'   chromatographic peak was *detected* (by [findChromPeaks()]) or
-#'   *filled-in* (by [fillChromPeaks()]).
+#'   *filled-in* (by [fillChromPeaks()]). Parameter `columns` can be used to
+#'   restrict the returned data frame to selected columns. Parameter
+#'   `return.type` can be used to specify the type of returned objects, either
+#'   a `DataFrame` (the default, `return.type = "DataFrame"`) or a `data.frame`
+#'   (`return.type = "data.frame")`.
 #'
 #' - `chromPeakSpectra()`: extract MS spectra for identified chromatographic
 #'   peaks. This can be either all (full scan) MS1 spectra with retention
@@ -436,9 +440,10 @@
 #'     files from which the data should be loaded at a time into memory.
 #'     Defaults to `chunkSize = 2L`.
 #'
-#' @param columns For `chromPeaks()`: optional `character` to specify the
-#'     names of the columns that should be returned. By default (with
-#'     `columns = character()` all columns are returned.
+#' @param columns For `chromPeaks()` and `chromPeakData()`: optional
+#'     `character` to specify the names of the columns that should be
+#'     returned. By default (with `columns = character()` all columns are
+#'     returned.
 #'
 #' @param drop For `[`: ignored.
 #'
@@ -1080,7 +1085,7 @@ setMethod(
         if (return.type == "DataFrame")
             as(.chromPeakData(object, msLevel = msLevel, columns = columns),
                "DataFrame")
-        else .chromPeakData(object, msLevel = msLevel, columns = LLLL)
+        else .chromPeakData(object, msLevel = msLevel, columns = columns)
     })
 
 #' @rdname refineChromPeaks
