@@ -1242,6 +1242,53 @@ test_that("featureSpectra works", {
     expect_true(length(res[[2L]]) < length(res_2[[2L]]))
     expect_true(all(res[[2L]]$chrom_peak_id %in% res_2[[2L]]$chrom_peak_id))
     expect_equal(unique(res[[2L]]$feature_id), unique(res_2[[2L]]$feature_id))
+
+    ## featureSpectra with and without `skipFilled`.
+    res <- featureSpectra(xmseg, msLevel = 1L)
+    res_2 <- featureSpectra(xmseg, msLevel = 1L, skipFilled = TRUE)
+    expect_equal(rtime(res), rtime(res_2))
+
+    a <- loadXcmsData("xmse")
+    fts <- rownames(featureDefinitions(a))[1:20]
+    fvals <- featureValues(a, filled = FALSE)[1:20, ]
+    ref <- featureSpectra(a, msLevel = 1L, skipFilled = FALSE,
+                          features = fts, method = "closest_rt")
+    res <- featureSpectra(a, msLevel = 1L, skipFilled = TRUE,
+                          features = fts, method = "closest_rt")
+    expect_true(length(res) < length(ref))
+    ## Feature 7: 3 detected, 5 gap-filled peaks.
+    ## Number of spectra per feature matches the non-NA feature values?
+    f7 <- res[res$feature_id == fts[7L]]
+    expect_equal(length(f7), sum(!is.na(fvals[7, ])))
+    pks_7 <- chromPeaks(a)[featureDefinitions(a)$peakidx[[7L]], ]
+    expect_equal(f7$chrom_peak_id, rownames(pks_7)[!is.na(pks_7[, "intb"])])
+    expect_equal(basename(dataOrigin(f7)), colnames(fvals)[!is.na(fvals[7, ])])
+
+    ## Are the spectra reported by skipFilled = TRUE the same as without?
+    f7_ref <- ref[ref$feature_id == fts[7L]]
+    expect_equal(length(f7_ref), ncol(fvals))
+    expect_true(all(paste0(f7$dataOrigin, f7$acquisitionNum) %in%
+                    paste0(f7_ref$dataOrigin, f7_ref$acquisitionNum)))
+
+    ## Feature 2: 8 detected peaks.
+    f2 <- res[res$feature_id == fts[2L]]
+    f2_ref <- ref[ref$feature_id == fts[2L]]
+    expect_equal(length(f2), length(f2_ref))
+    expect_equal(paste0(f2$dataOrigin, f2$acquisitionNum),
+                 paste0(f2_ref$dataOrigin, f2_ref$acquisitionNum))
+
+    ## Feature 3: 7 detected, one gap-filled
+    f3 <- res[res$feature_id == fts[3L]]
+    expect_equal(length(f3), sum(!is.na(fvals[3, ])))
+    pks_3 <- chromPeaks(a)[featureDefinitions(a)$peakidx[[3L]], ]
+    expect_equal(f3$chrom_peak_id, rownames(pks_3)[!is.na(pks_3[, "intb"])])
+    expect_equal(basename(dataOrigin(f3)), colnames(fvals)[!is.na(fvals[3, ])])
+
+    ## Are the spectra reported by skipFilled = TRUE the same as without?
+    f3_ref <- ref[ref$feature_id == fts[3L]]
+    expect_equal(length(f3_ref), ncol(fvals))
+    expect_true(all(paste0(f3$dataOrigin, f3$acquisitionNum) %in%
+                    paste0(f3_ref$dataOrigin, f3_ref$acquisitionNum)))
 })
 
 test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {

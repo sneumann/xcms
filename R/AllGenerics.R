@@ -458,12 +458,16 @@ setGeneric("chromPeakData<-", function(object, value)
 #' @param peaks `character`, `logical` or `integer` allowing to specify a
 #'     subset of chromatographic peaks in `chromPeaks` for which spectra should
 #'     be returned (providing either their ID, a logical vector same length
-#'     than `nrow(chromPeaks(x))` or their index in `chromPeaks(x)`). This
-#'     parameter overrides `skipFilled`.
+#'     than `nrow(chromPeaks(x))` or their index in `chromPeaks(x)`). Be aware
+#'     that when `peaks` are provided, parameter `skipFilled` is ignored.
+#'     Spectra are returned for any chromatographic peak, detected or
+#'     gap-filled, that are defined with `peaks`.
 #'
 #' @param skipFilled `logical(1)` whether spectra for filled-in peaks should
 #'     be reported or not. Defaults to `skipFilled = FALSE` thus also spectra
-#'     for gap-filled chromatographic peaks are returned.
+#'     for gap-filled chromatographic peaks are returned. Set to
+#'     `skipFilled = TRUE` to get only spectra for detected chromatographic
+#'     peaks.
 #'
 #' @param return.type `character(1)` defining the type of result object that
 #'     should be returned.
@@ -878,7 +882,7 @@ setGeneric("featureDefinitions<-", function(object, value)
 #'
 #' Note that with the default for parameter `skipFilled` (`skipFilled = FALSE`)
 #' also gap-filled chromatographic peaks are considered. Use
-#' `skipFilled = TRUE` to report only MS2 spectra for detected peaks.
+#' `skipFilled = TRUE` to report only spectra for **detected** peaks.
 #'
 #' See also [chromPeakSpectra()] (used internally to extract spectra for
 #' each chromatographic peak of a feature) for additional information,
@@ -891,11 +895,11 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' The information from `featureDefinitions` for each feature can be included
 #' in the returned [Spectra::Spectra()] object using the `featureColumns`
 #' parameter.
-#' This is useful for keeping details such as the median retention time (`rtmed`)
-#' or median m/z (`mzmed`). The columns will retain their names as specified
-#' in the `featureDefinitions` object, prefixed by `"feature_"`
+#' This is useful for keeping details such as the median retention time
+#' (`rtmed`) or median m/z (`mzmed`). The columns will retain their names
+#' as specified in the `featureDefinitions` data, prefixed by `"feature_"`
 #' (e.g., `"feature_mzmed"`). Additionally, the *feature ID* (i.e., the row
-#' name of the feature in the `featureDefinitions` data.frame) is always added
+#' name of the feature in the `featureDefinitions` data frame) is always added
 #' as a metadata column named `"feature_id"`.
 #'
 #' See also [chromPeakSpectra()], as it supports a similar parameter for

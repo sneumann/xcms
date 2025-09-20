@@ -59,13 +59,17 @@ by a value dependent on the peak's m/z.}
 
 \item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
 be reported or not. Defaults to \code{skipFilled = FALSE} thus also spectra
-for gap-filled chromatographic peaks are returned.}
+for gap-filled chromatographic peaks are returned. Set to
+\code{skipFilled = TRUE} to get only spectra for detected chromatographic
+peaks.}
 
 \item{peaks}{\code{character}, \code{logical} or \code{integer} allowing to specify a
 subset of chromatographic peaks in \code{chromPeaks} for which spectra should
 be returned (providing either their ID, a logical vector same length
-than \code{nrow(chromPeaks(x))} or their index in \code{chromPeaks(x)}). This
-parameter overrides \code{skipFilled}.}
+than \code{nrow(chromPeaks(x))} or their index in \code{chromPeaks(x)}). Be aware
+that when \code{peaks} are provided, parameter \code{skipFilled} is ignored.
+Spectra are returned for any chromatographic peak, detected or
+gap-filled, that are defined with \code{peaks}.}
 
 \item{chromPeakColumns}{\code{character} vector with the names of the columns
 from \code{chromPeaks} that should be added to the returned spectra object.

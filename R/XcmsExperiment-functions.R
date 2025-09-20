@@ -850,6 +850,11 @@
 #' @param peaks `integer` with the indices of the chromatographic peaks or
 #'     `integer()` for all peaks.
 #'
+#' @note
+#'
+#' Be aware that `skipFilled` **is only evaluated** when `peaks` is **not**
+#' provided. Hence, `peaks` and `skipfilled` are mutually exclusive.
+#'
 #' @noRd
 .mse_spectra_for_peaks <- function(x, method = c("all", "closest_rt",
                                                  "closest_mz", "largest_tic",

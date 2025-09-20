@@ -54,7 +54,9 @@ by a value dependent on the peak's m/z.}
 
 \item{skipFilled}{\code{logical(1)} whether spectra for filled-in peaks should
 be reported or not. Defaults to \code{skipFilled = FALSE} thus also spectra
-for gap-filled chromatographic peaks are returned.}
+for gap-filled chromatographic peaks are returned. Set to
+\code{skipFilled = TRUE} to get only spectra for detected chromatographic
+peaks.}
 
 \item{return.type}{\code{character(1)} defining the type of result object that
 should be returned.}
@@ -101,7 +103,7 @@ the sample in which the chromatographic was identified are reported.
 
 Note that with the default for parameter \code{skipFilled} (\code{skipFilled = FALSE})
 also gap-filled chromatographic peaks are considered. Use
-\code{skipFilled = TRUE} to report only MS2 spectra for detected peaks.
+\code{skipFilled = TRUE} to report only spectra for \strong{detected} peaks.
 
 See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} (used internally to extract spectra for
 each chromatographic peak of a feature) for additional information,
@@ -114,11 +116,11 @@ spectra per feature).
 The information from \code{featureDefinitions} for each feature can be included
 in the returned \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object using the \code{featureColumns}
 parameter.
-This is useful for keeping details such as the median retention time (\code{rtmed})
-or median m/z (\code{mzmed}). The columns will retain their names as specified
-in the \code{featureDefinitions} object, prefixed by \code{"feature_"}
+This is useful for keeping details such as the median retention time
+(\code{rtmed}) or median m/z (\code{mzmed}). The columns will retain their names
+as specified in the \code{featureDefinitions} data, prefixed by \code{"feature_"}
 (e.g., \code{"feature_mzmed"}). Additionally, the \emph{feature ID} (i.e., the row
-name of the feature in the \code{featureDefinitions} data.frame) is always added
+name of the feature in the \code{featureDefinitions} data frame) is always added
 as a metadata column named \code{"feature_id"}.
 
 See also \code{\link[=chromPeakSpectra]{chromPeakSpectra()}}, as it supports a similar parameter for

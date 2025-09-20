@@ -1904,19 +1904,24 @@ setMethod(
         features <- features_all[findex]
         findex <- unique(findex)
         ufeatures <- features_all[findex]
-        pindex <- unlist(featureDefinitions(object)$peakidx[findex],
-                         use.names = FALSE)
-        ## Need to consider skipFilled.LLLLLL
+        ## peak index list - clean eventually for gap filled peaks
+        pidx_list <- featureDefinitions(object)$peakidx[findex]
+        if (skipFilled) {
+            fld <- !chromPeakData(object, columns = "is_filled")$is_filled
+            pidx_list <- lapply(pidx_list, function(z) z[fld[z]])
+            rm(fld)
+        }
+        pindex <- unlist(pidx_list, use.names = FALSE)
         sps <- .mse_spectra_for_peaks(
             object, msLevel = msLevel, expandRt = expandRt,
-            expandMz = expandMz, ppm = ppm, skipFilled = skipFilled,
-            peaks = unique(pindex), ...)
+            expandMz = expandMz, ppm = ppm, peaks = unique(pindex), ...)
+
         mtch <- as.matrix(
             findMatches(sps$chrom_peak_id,
-                        rownames(.chromPeaks(object))[pindex]))
+                        rownames(xcms:::.chromPeaks(object))[pindex]))
         sps <- sps[mtch[, 1L]]
-        fid <- rep(
-            ufeatures, lengths(featureDefinitions(object)$peakidx[findex]))
+
+        fid <- rep(ufeatures, lengths(pidx_list))
         f_data <- featureDefinitions(object)[fid[mtch[, 2L]], featureColumns]
         f_data$id <- fid[mtch[, 2L]]
         colnames(f_data) <- paste0("feature_", colnames(f_data))
