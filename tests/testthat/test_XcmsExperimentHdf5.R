@@ -580,7 +580,7 @@ test_that("featureArea,XcmsExperimentHdf5 works", {
     expect_equal(unname(res), unname(ref))
 })
 
-test_that("fillChromPeaks,XcmsExperimentHdf5,PeakAreaParam", {
+test_that("fillChromPeaks,XcmsExperimentHdf5,ChromPeakAreaParam", {
     tf <- tempfile()
     file.copy(xmseg_full_h5@hdf5_file, tf)
     x <- xmseg_full_h5
@@ -908,6 +908,7 @@ test_that("featureSpectra,XcmsExperimentHdf5 works", {
     ref <- featureSpectra(xmseg_full_ref, msLevel = 1L, method = "closest_rt",
                           features = fts_ref)
     expect_equal(res$rtime, ref$rtime)
+    res_no_filled <- res
 
     ## different order
     idx <- c(8, 14, 3, 12, 14)
@@ -928,7 +929,39 @@ test_that("featureSpectra,XcmsExperimentHdf5 works", {
     expect_equal(res[[2L]], res[[5L]])
     expect_equal(names(res), fts)
 
-    ## TODO LLLL with and without skipFilled.
+    ## With and without gap-filled values
+    ## Gap filling:
+    tf <- tempfile()
+    file.copy(xmseg_full_h5@hdf5_file, tf)
+    x <- xmseg_full_h5
+    x@hdf5_file <- tf
+    x <- fillChromPeaks(x, param = ChromPeakAreaParam())
+
+    idx <- c(4, 8, 14)
+    fts <- rownames(fd)[idx]
+    ## with skipFilled = FALSE
+    res <- featureSpectra(x, msLevel = 1L, method = "closest_rt",
+                          features = fts, skipFilled = FALSE)
+    expect_s4_class(res, "Spectra")
+    expect_true(all(res$feature_id %in% fts))
+    expect_true(length(res) > length(res_no_filled))
+    expect_true(all(res_no_filled$chrom_peak_id %in% res$chrom_peak_id))
+    fv <- featureValues(x, filled = FALSE)[fts, ]
+    expect_equal(sum(!is.na(fv[fts[1L], ])),
+                 sum(res_no_filled$feature_id == fts[1L]))
+    expect_equal(ncol(fv), sum(res$feature_id == fts[1L]))
+    res_f1 <- res[res$feature_id == fts[1L]]
+    expect_equal(basename(res_f1$dataOrigin), colnames(fv))
+    ## with skipFilled = TRUE
+    res <- featureSpectra(x, msLevel = 1L, method = "closest_rt",
+                          features = fts, skipFilled = TRUE)
+    expect_s4_class(res, "Spectra")
+    expect_true(all(res$feature_id %in% fts))
+    expect_equal(sum(!is.na(fv[fts[1L], ])), sum(res$feature_id == fts[1L]))
+    res_f1 <- res[res$feature_id == fts[1L]]
+    expect_equal(basename(res_f1$dataOrigin), colnames(fv)[!is.na(fv[1L, ])])
+    expect_equal(length(res), length(res_no_filled))
+    expect_equal(res$rtime, res_no_filled$rtime)
 })
 
 test_that("chromPeakChromatograms,XcmsExperimentHdf5 works", {

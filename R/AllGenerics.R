@@ -868,29 +868,26 @@ setGeneric("featureDefinitions<-", function(object, value)
 #' This function returns spectra associated with the identified features in
 #' the input object. By default, spectra are returned for all features (from
 #' all MS levels), but parameter `features` allows to specify/select features
-#' for which the result should be returned.
+#' for which spectra should be returned.
 #' Parameter `msLevel` allows to define whether MS level 1 or 2 spectra
-#' should be returned. For `msLevel = 1L` all MS1 spectra within the
+#' should be returned. For `msLevel = 1L` MS1 spectra within the
 #' retention time range of each chromatographic peak (in that respective
-#' data file) associated with a feature are returned. Note that for samples
-#' in which no peak was identified (or even filled-in) no spectra are
-#' returned. For `msLevel = 2L` all MS2 spectra with a retention time within
-#' the retention time range and their precursor m/z within the m/z range of
-#' any chromatographic peak of a feature are returned. Thus, only MS2 spectra
-#' for chromatographic peaks associated with the feature and also measured in
-#' the sample in which the chromatographic was identified are reported.
+#' data file) associated with a feature are returned. For `msLevel = 2L`
+#' MS2 spectra with a retention time within the retention time range and their
+#' precursor m/z within the m/z range of any chromatographic peak of a feature
+#' are returned. Thus, only MS2 spectra for chromatographic peaks associated
+#' with the feature and also measured in the sample in which the
+#' chromatographic was identified are reported. By default, all spectra
+#' fulfilling the above described condition are reported. This can be adapted
+#' with parameter `method`. See the description of `method` in the
+#' [chromPeakSpectra()] documentation for more information. Internally,
+#' `featureSpectra()` uses `chromPeakSpectra()` to extract the feature's
+#' chromatographic peaks' spectra, thus any other parameter for this function
+#' can be passed through `...`.
 #'
 #' Note that with the default for parameter `skipFilled` (`skipFilled = FALSE`)
 #' also gap-filled chromatographic peaks are considered. Use
 #' `skipFilled = TRUE` to report only spectra for **detected** peaks.
-#'
-#' See also [chromPeakSpectra()] (used internally to extract spectra for
-#' each chromatographic peak of a feature) for additional information,
-#' specifically also on parameter `method`. By default (`method = "all"`)
-#' all spectra associated with any of the chromatographic peaks of a
-#' feature are returned. With any other option for `method`, a single
-#' spectrum **per chromatographic peak** will be returned (hence multiple
-#' spectra per feature).
 #'
 #' The information from `featureDefinitions` for each feature can be included
 #' in the returned [Spectra::Spectra()] object using the `featureColumns`

@@ -673,8 +673,8 @@ feature definitions that should be returned with the parameter \code{type}
 defining how these parameters should be used to subset the returned
 \code{data.frame}. See parameter descriptions for details.
 \item \code{featureSpectra()}: returns a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} or \code{List} of \code{Spectra}
-with (MS1 or MS2) spectra associated to each feature. See
-\code{\link[=featureSpectra]{featureSpectra()}} for more details and available parameters.
+with (MS1 or MS2) spectra associated to each feature's chromatographic
+peaks. See \code{\link[=featureSpectra]{featureSpectra()}} for more details and available parameters.
 \item \code{featuresSummary()}: calculate a simple summary on features. See
 \code{\link[=featureSummary]{featureSummary()}} for details.
 \item \code{groupChromPeaks()}: performs the correspondence analysis (i.e., grouping

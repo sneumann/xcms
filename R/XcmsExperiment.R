@@ -292,8 +292,8 @@
 #'   `data.frame`. See parameter descriptions for details.
 #'
 #' - `featureSpectra()`: returns a [Spectra::Spectra()] or `List` of `Spectra`
-#'   with (MS1 or MS2) spectra associated to each feature. See
-#'   [featureSpectra()] for more details and available parameters.
+#'   with (MS1 or MS2) spectra associated to each feature's chromatographic
+#'   peaks. See [featureSpectra()] for more details and available parameters.
 #'
 #' - `featuresSummary()`: calculate a simple summary on features. See
 #'   [featureSummary()] for details.

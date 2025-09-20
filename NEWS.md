@@ -5,6 +5,9 @@
 - Fix conversion from `XcmsExperiment` objects to `XCMSnExp` (issue #807).
 - Add parameter `columns` to `chromPeakData()` to allow extraction of selected
   columns.
+- Add support for parameter `skipFilled` to `featureSpectra()` for
+  `XcmsExperiment` and `XcmsExperimentHdf5` to avoid extraction of spectra for
+  gap-filled chromatographic peaks.
 
 ## Changes in version 4.7.2
 
