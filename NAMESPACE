@@ -428,6 +428,7 @@ importMethodsFrom("Spectra", "uniqueMsLevels")
 importMethodsFrom("Spectra", "backendBpparam")
 importMethodsFrom("Spectra", "estimatePrecursorIntensity")
 importMethodsFrom("Spectra", "filterRanges")
+importMethodsFrom("Spectra", "spectraData")
 importFrom("Spectra", "MsBackendMemory", "filterEmptySpectra",
            "concatenateSpectra")
 

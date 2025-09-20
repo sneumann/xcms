@@ -8,6 +8,7 @@
 - Add support for parameter `skipFilled` to `featureSpectra()` for
   `XcmsExperiment` and `XcmsExperimentHdf5` to avoid extraction of spectra for
   gap-filled chromatographic peaks.
+- Fix: add missing import of the `spectraData()` method from *Spectra*.
 
 ## Changes in version 4.7.2
 
