@@ -996,7 +996,7 @@ toXcmsExperiment <- function(object, ...) {
 #'
 #' @noRd
 .h5_features_ms_region <- function(x, mzmin, mzmax, rtmin, rtmax, features,
-                                   ms_level = 1L) {
+                                   ms_level = 1L, minMzWidthPpm = 0.0) {
     pb <- progress_bar$new(format = paste0("[:bar] :current/:",
                                            "total (:percent) in ",
                                            ":elapsed"),
@@ -1048,6 +1048,15 @@ toXcmsExperiment <- function(object, ...) {
                  rtmin = apply(rtmin_mat, 1L, rtmin, na.rm = TRUE),
                  rtmax = apply(rtmax_mat, 1L, rtmax, na.rm = TRUE))
     rownames(res) <- fids[feature_idx]
+    if (minMzWidthPpm > 0) {
+        fd <- .h5_read_data(x@hdf5_file, rep("features", length(ms_level)),
+                            name = "feature_definitions", ms_level = ms_level,
+                            read_rownames = TRUE)[[1L]]
+        mzm <- fd[rownames(res), "mzmed"]
+        mzd <- MsCoreUtils::ppm(mzm, ppm = minMzWidthPpm / 2)
+        res[, "mzmin"] <- pmin(res[, "mzmin"], mzm - mzd)
+        res[, "mzmax"] <- pmax(res[, "mzmax"], mzm + mzd)
+    }
     res[features, , drop = FALSE]
 }
 

@@ -2640,6 +2640,7 @@ setMethod("fillChromPeaks",
               fts_region <- .features_ms_region(
                   object, mzmin = param@mzmin, mzmax = param@mzmax,
                   rtmin = param@rtmin, rtmax = param@rtmax,
+                  minMzWidthPpm = param@minMzWidthPpm,
                   features = feature_ids)
               fts_region <- cbind(group_idx = seq_len(nrow(fts_region)),
                                   fts_region,

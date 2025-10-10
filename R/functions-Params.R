@@ -406,9 +406,10 @@ ChromPeakAreaParam <-
              rtmin = function(z, na.rm = TRUE)
                  quantile(z, probs = 0.25, names = FALSE, na.rm = na.rm),
              rtmax = function(z, na.rm = TRUE)
-                 quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm)) {
+                 quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm),
+             minMzWidthPpm = 0.0) {
         new("ChromPeakAreaParam", mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-            rtmax = rtmax)
+            rtmax = rtmax, minMzWidthPpm = minMzWidthPpm)
 }
 
 #' @rdname refineChromPeaks

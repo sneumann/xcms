@@ -1065,9 +1065,13 @@ is defined as the lower quartile (25% quantile) of the `"mzmin"` values of all
 peaks of the feature, the upper m/z value as the upper quartile (75% quantile)
 of the `"mzmax"` values, the lower rt value as the lower quartile (25% quantile)
 of the `"rtmin"` and the upper rt value as the upper quartile (75% quantile) of
-the `"rtmax"` values. Below we perform this gap filling on our test data and
-extract the feature values for the first 6 features after gap filling. An `NA`
-is reported if no signal is measured at all for a specific sample.
+the `"rtmax"` values. An additional parameter `minMzWidthPpm` allows to define
+a minimal *guaranteed* m/z width (expressed in ppm of the features' m/z value)
+of the area to integrate signal from.
+
+Below we perform this gap filling on our test data and extract the feature
+values for the first 6 features after gap filling. An `NA` is reported if no
+signal is measured at all for a specific sample.
 
 ```{r fill-chrom-peaks, message = FALSE }
 faahko <- fillChromPeaks(faahko, param = ChromPeakAreaParam())

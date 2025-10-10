@@ -276,7 +276,14 @@
 #'   feature (row) in `object`. By default these represent the minimal m/z
 #'   and retention times as well as maximal m/z and retention times for
 #'   all chromatographic peaks assigned to that feature. Parameter
-#'   `features` allows to extract these values for selected features only.
+#'   `minMzWidthPpm` (default `minMzWidthPpm = 0.01) can be used to define a
+#'   minimal required (total) m/z width expressed in ppm of the features' m/z.
+#'   With a `minMzWidthPpm` larger than 0 the reported `"mzmin"` is the minimum
+#'   of the determined minimal m/z for a feature (based on parameter `mzmin`)
+#'   and the m/z of the feature minus `minMzWidthPpm / 2` ppm of the feature's
+#'   m/z value. The reported `"mzmax"` is calculated in the same way.
+#'   Parameter `features` allows to extract these values for selected features
+#'   only.
 #'   Parameters `mzmin`, `mzmax`, `rtmin` and `rtmax` allow to define
 #'   the function to calculate the reported `"mzmin"`, `"mzmax"`, `"rtmin"`
 #'   and `"rtmax"` values.
@@ -511,6 +518,11 @@
 #'     `method = "sum"`: sum the value for all chromatographic peaks in a
 #'     sample assigned to the same feature. The default is `method = "medret"`.
 #'     For `filterChromPeaks()`: currently only `method = "keep"` is supported.
+#'
+#' @param minMzWidthPpm For `featureArea()`: `numeric(1)` defining the minimal
+#'     guaranteed m/z width (expressed in ppm of the feature's m/z) of the
+#'     reported feature areas. Defaults to `minMzWidthPpm = 0.0`. See
+#'     documentation of the `featureArea()` for more information.
 #'
 #' @param missing For `featureValues()`: default value for missing values.
 #'     Allows to define the value that should be reported for a missing peak
@@ -1610,14 +1622,15 @@ setMethod(
 setMethod(
     "featureArea", "XcmsResult",
     function(object, mzmin = min, mzmax = max, rtmin = min,
-             rtmax = max, features = character()) {
+             rtmax = max, features = character(), minMzWidthPpm = 0.0) {
         if (!hasFeatures(object))
             stop("No correspondence results available. Please run ",
                  "'groupChromPeaks' first.")
         if (!length(features))
             features <- rownames(featureDefinitions(object))
         .features_ms_region(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                            rtmax = rtmax, features = features)
+                            rtmax = rtmax, features = features,
+                            minMzWidthPpm = minMzWidthPpm)
     })
 
 #' @rdname XcmsExperiment
@@ -1955,7 +1968,9 @@ setMethod(
         feature_ids <- rownames(featureDefinitions(object, msLevel = msLevel))
         fr <- .features_ms_region(object, mzmin = param@mzmin,
                                   mzmax = param@mzmax, rtmin = param@rtmin,
-                                  rtmax = param@rtmax, features = feature_ids)
+                                  rtmax = param@rtmax,
+                                  minMzWidthPpm = param@minMzWidthPpm,
+                                  features = feature_ids)
         fr <- cbind(
             fr, mzmed = featureDefinitions(object, msLevel = msLevel)$mzmed)
         fvals <- featureValues(object, value = "index", msLevel = msLevel)

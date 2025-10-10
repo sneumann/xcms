@@ -937,6 +937,27 @@ test_that(".h5_features_ms_region works", {
         xmseg_full_h5, mzmin = min, mzmax = max, rtmin = min, rtmax = max,
         features = c(rownames(res)[c(10, 12, 10, 4)], "a"), ms_level = 1L),
         "not found")
+
+    ## minMzWidthPpm
+    fts_all <- rownames(featureDefinitions(xmseg_full_h5))
+    ref <- .h5_features_ms_region(xmseg_full_h5, mzmin = min, mzmax = max,
+                                  rtmin = min, rtmax = max, features = fts_all,
+                                  ms_level = 1L)
+    res <- .h5_features_ms_region(xmseg_full_h5, mzmin = min, mzmax = max,
+                                  rtmin = min, rtmax = max, features = fts_all,
+                                  ms_level = 1L, minMzWidthPpm = 50)
+    expect_equal(rownames(ref), rownames(res))
+    expect_equal(ref[, "rtmin"], res[, "rtmin"])
+    expect_equal(ref[, "rtmax"], res[, "rtmax"])
+    expect_true(sum(res[, "mzmin"] < ref[, "mzmin"]) > 100)
+    expect_true(sum(res[, "mzmax"] > ref[, "mzmax"]) > 100)
+
+    ## arbitrary order of features
+    res_2 <- .h5_features_ms_region(xmseg_full_h5, mzmin = min, mzmax = max,
+                                    rtmin = min, rtmax = max,
+                                    features = fts_all[c(10, 4, 13, 5, 13)],
+                                    ms_level = 1L, minMzWidthPpm = 50)
+    expect_equal(res[c(10, 4, 13, 5, 13), ], res_2)
 })
 
 test_that(".h5_xmse_integrate_chrom_peaks works", {

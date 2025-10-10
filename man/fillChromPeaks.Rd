@@ -37,7 +37,8 @@ ChromPeakAreaParam(
   rtmin = function(z, na.rm = TRUE) quantile(z, probs = 0.25, names = FALSE, na.rm =
     na.rm),
   rtmax = function(z, na.rm = TRUE) quantile(z, probs = 0.75, names = FALSE, na.rm =
-    na.rm)
+    na.rm),
+  minMzWidthPpm = 0
 )
 
 \S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param, msLevel = 1L, BPPARAM = bpparam())
@@ -131,6 +132,12 @@ of all chromatographic peaks of a feature to define the upper rt
 value of the area from which signal for the feature should be
 integrated. Defaults to \code{rtmax = function(z) quantile(z, probs = 0.75)}
 hence using the 75\% quantile of all values.}
+
+\item{minMzWidthPpm}{For \code{ChromPeakAreaParam()}: \code{numeric(1)} defining the
+minimal guaranteed m/z width (expressed in ppm of the feature's m/z)
+that will be used to integrate signal from (default
+\code{minMzWidthPpm = 0.0}). See documentation of \code{ChromPeakAreaParam()}
+for more information.}
 }
 \value{
 An \link{XcmsExperiment} or  \code{XCMSnExp} object with previously missing
@@ -160,12 +167,20 @@ details below for more information and settings for this method.
 feature is integrated is defined based on the feature's chromatographic
 peak areas. The m/z range is by default defined as the the lower quartile
 of chromatographic peaks' \code{"mzmin"} value to the upper quartile of the
-chromatographic peaks' \code{"mzmax"} values. The retention time range for the
-area is defined analogously. Alternatively, by setting \code{mzmin = median},
+chromatographic peaks' \code{"mzmax"} values.
+The retention time range for the area is defined analogously.
+Alternatively, by setting \code{mzmin = median},
 \code{mzmax = median}, \code{rtmin = median} and \code{rtmax = median} in
 \code{ChromPeakAreaParam}, the median \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
 \code{"rtmax"} values from all detected chromatographic peaks of a feature
 would be used instead.
+Parameter \code{minMzWidthPpm} allows in addition to define a minimal
+guaranteed m/z width expressed in ppm of the features' m/z and centered
+around it. The default is \code{minMzWidthPpm = 0.0}. With a
+\code{minMzWidthPpm} > 0, the lower m/z boundary for a feature is defined as
+the smaller value from the m/z derived from its chromatographic peaks'
+\code{"mzmin"}, and the feature's m/z \emph{minus} \code{minMzWidthPpm / 2} ppm of its
+m/z. The upper m/z boundary is determined in the same way.
 In contrast to the  \code{FillChromPeaksParam} approach this method uses (all)
 identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.
@@ -229,6 +244,10 @@ sum(is.na(featureValues(res)))
 ## Filling missing peak data using the peak area from identified
 ## chromatographic peaks.
 res <- fillChromPeaks(res, param = ChromPeakAreaParam())
+
+## Alternatively, force a minimal guaranteed m/z width for the regions
+## to integrate signal from.
+res <- fillChromPeaks(res, param = ChromPeakAreaParam(minMzWidthPpm = 10))
 
 ## How many missing values do we have after peak filling?
 sum(is.na(featureValues(res)))

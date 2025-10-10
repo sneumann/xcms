@@ -1042,6 +1042,9 @@
 #'     (rtmin, ...) of the chrom peaks. Defaults to `median` but would also
 #'     work with `mean` etc.
 #'
+#' @param minMzWidthPpm `numeric(1)` defining the minimum guaranteed m/z width
+#'     in ppm of the feauture's mzmed.
+#'
 #' @param features `character` with the IDs of the features. Mandatory!
 #'
 #' @return `matrix` with columns `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"`
@@ -1052,6 +1055,7 @@
 #' @noRd
 .features_ms_region <- function(x, mzmin = median, mzmax = median,
                                 rtmin = median, rtmax = median,
+                                minMzWidthPpm = 0.0,
                                 features = character()) {
     features <- .i2index(features, ids = rownames(featureDefinitions(x)),
                          "features")
@@ -1067,6 +1071,12 @@
                       }))
     rownames(res) <- rownames(featureDefinitions(x))[features]
     colnames(res) <- c("mzmin", "mzmax", "rtmin", "rtmax")
+    if (minMzWidthPpm > 0) {
+        mzm <- featureDefinitions(x)$mzmed[features]
+        mzd <- MsCoreUtils::ppm(mzm, ppm = minMzWidthPpm / 2)
+        res[, "mzmin"] <- pmin(res[, "mzmin"], mzm - mzd)
+        res[, "mzmax"] <- pmax(res[, "mzmax"], mzm + mzd)
+    }
     res
 }
 

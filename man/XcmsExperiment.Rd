@@ -152,7 +152,8 @@ filterFeatureDefinitions(object, ...)
   mzmax = max,
   rtmin = min,
   rtmax = max,
-  features = character()
+  features = character(),
+  minMzWidthPpm = 0
 )
 
 \S4method{featureDefinitions}{XcmsExperiment}(object) <- value
@@ -378,6 +379,11 @@ chromatographic peaks assigned to that feature. Defaults to
 \code{logical}, \code{integer} or \code{character} defining the features to keep or
 from which to extract the feature area, respectively. See function
 description for more information.}
+
+\item{minMzWidthPpm}{For \code{featureArea()}: \code{numeric(1)} defining the minimal
+guaranteed m/z width (expressed in ppm of the feature's m/z) of the
+reported feature areas. Defaults to \code{minMzWidthPpm = 0.0}. See
+documentation of the \code{featureArea()} for more information.}
 
 \item{intensity}{For \code{featureValues()}: \code{character(1)} specifying the name
 of the column in the \code{chromPeaks(objects)} matrix containing the
@@ -660,10 +666,7 @@ analysis. This can be overruled with \code{keepAdjustedRtime = TRUE}.
 feature (row) in \code{object}. By default these represent the minimal m/z
 and retention times as well as maximal m/z and retention times for
 all chromatographic peaks assigned to that feature. Parameter
-\code{features} allows to extract these values for selected features only.
-Parameters \code{mzmin}, \code{mzmax}, \code{rtmin} and \code{rtmax} allow to define
-the function to calculate the reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}
-and \code{"rtmax"} values.
+\code{minMzWidthPpm} (default \verb{minMzWidthPpm = 0.01) can be used to define a minimal required (total) m/z width expressed in ppm of the features' m/z. With a }minMzWidthPpm\verb{larger than 0 the reported}"mzmin"\verb{is the minimum of the determined minimal m/z for a feature (based on parameter}mzmin\verb{) and the m/z of the feature minus }minMzWidthPpm / 2\verb{ppm of the feature's m/z value. The reported}"mzmax"\verb{is calculated in the same way. Parameter}features\verb{allows to extract these values for selected features only. Parameters}mzmin\verb{, }mzmax\verb{, }rtmin\code{and}rtmax\verb{allow to define the function to calculate the reported}"mzmin"\verb{, }"mzmax"\verb{, }"rtmin"\code{and}"rtmax"` values.
 \item \code{featureChromatograms()}: extract ion chromatograms (EICs) for each
 feature in \code{object}. See \code{\link[=featureChromatograms]{featureChromatograms()}} for more details.
 \item \code{featureDefinitions()}: returns a \code{data.frame} with feature definitions or

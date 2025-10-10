@@ -578,6 +578,13 @@ test_that("featureArea,XcmsExperimentHdf5 works", {
     res <- featureArea(xmseg_full_h5, features = rownames(res)[c(5, 12, 20)])
     ref <- featureArea(xmseg_full_ref, features = rownames(ref)[c(5, 12, 20)])
     expect_equal(unname(res), unname(ref))
+
+    res <- featureArea(xmseg_full_h5, minMzWidthPpm = 40)
+    ref <- featureArea(xmseg_full_ref, minMzWidthPpm = 40)
+    expect_equal(unname(res[, "rtmin"]), unname(ref[, "rtmin"]))
+    expect_equal(unname(res[, "rtmax"]), unname(ref[, "rtmax"]))
+    expect_equal(unname(res[, "mzmin"]), unname(ref[, "mzmin"]))
+    expect_equal(unname(res[, "mzmax"]), unname(ref[, "mzmax"]))
 })
 
 test_that("fillChromPeaks,XcmsExperimentHdf5,ChromPeakAreaParam", {

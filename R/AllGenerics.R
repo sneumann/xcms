@@ -981,12 +981,20 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #'   feature is integrated is defined based on the feature's chromatographic
 #'   peak areas. The m/z range is by default defined as the the lower quartile
 #'   of chromatographic peaks' `"mzmin"` value to the upper quartile of the
-#'   chromatographic peaks' `"mzmax"` values. The retention time range for the
-#'   area is defined analogously. Alternatively, by setting `mzmin = median`,
+#'   chromatographic peaks' `"mzmax"` values.
+#'   The retention time range for the area is defined analogously.
+#'   Alternatively, by setting `mzmin = median`,
 #'   `mzmax = median`, `rtmin = median` and `rtmax = median` in
 #'   `ChromPeakAreaParam`, the median `"mzmin"`, `"mzmax"`, `"rtmin"` and
 #'   `"rtmax"` values from all detected chromatographic peaks of a feature
 #'   would be used instead.
+#'   Parameter `minMzWidthPpm` allows in addition to define a minimal
+#'   guaranteed m/z width expressed in ppm of the features' m/z and centered
+#'   around it. The default is `minMzWidthPpm = 0.0`. With a
+#'   `minMzWidthPpm` > 0, the lower m/z boundary for a feature is defined as
+#'   the smaller value from the m/z derived from its chromatographic peaks'
+#'   `"mzmin"`, and the feature's m/z *minus* `minMzWidthPpm / 2` ppm of its
+#'   m/z. The upper m/z boundary is determined in the same way.
 #'   In contrast to the  `FillChromPeaksParam` approach this method uses (all)
 #'   identified chromatographic peaks of a feature to define the area
 #'   from which the signal should be integrated.
@@ -1067,6 +1075,12 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #'     expanded. The rt width is expanded on both sides by `fixedRt` (i.e.
 #'     `fixedRt` is subtracted from the lower rt and added to the upper rt).
 #'     This expansion is applied *after* `expandRt`.
+#'
+#' @param minMzWidthPpm For `ChromPeakAreaParam()`: `numeric(1)` defining the
+#'     minimal guaranteed m/z width (expressed in ppm of the feature's m/z)
+#'     that will be used to integrate signal from (default
+#'     `minMzWidthPpm = 0.0`). See documentation of `ChromPeakAreaParam()`
+#'     for more information.
 #'
 #' @param msLevel `integer(1)` defining the MS level on which peak filling
 #'     should be performed (defaults to `msLevel = 1L`). Only peak filling
@@ -1154,6 +1168,10 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 #' ## Filling missing peak data using the peak area from identified
 #' ## chromatographic peaks.
 #' res <- fillChromPeaks(res, param = ChromPeakAreaParam())
+#'
+#' ## Alternatively, force a minimal guaranteed m/z width for the regions
+#' ## to integrate signal from.
+#' res <- fillChromPeaks(res, param = ChromPeakAreaParam(minMzWidthPpm = 10))
 #'
 #' ## How many missing values do we have after peak filling?
 #' sum(is.na(featureValues(res)))

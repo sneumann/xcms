@@ -219,6 +219,16 @@ test_that(".features_ms_region works", {
     res <- .features_ms_region(
         xmseg, features = rownames(featureDefinitions(xmseg)))
     expect_equal(rownames(res), rownames(featureDefinitions(xmseg)))
+
+    ## with minMzWidthPpm.
+    res_2 <- .features_ms_region(
+        xmseg, features = rownames(featureDefinitions(xmseg)),
+        minMzWidthPpm = 50)
+    expect_equal(rownames(res), rownames(res_2))
+    expect_equal(res[, "rtmin"], res_2[, "rtmin"])
+    expect_equal(res[, "rtmax"], res_2[, "rtmax"])
+    expect_true(all(res_2[, "mzmin"] < res[, "mzmin"]))
+    expect_true(all(res_2[, "mzmax"] > res[, "mzmax"]))
 })
 
 test_that(".xcms_experiment_to_xcms_n_exp works", {

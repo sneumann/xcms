@@ -709,7 +709,8 @@ setMethod(
             fr <- .h5_features_ms_region(
                 object, mzmin = param@mzmin, mzmax = param@mzmax,
                 rtmin = param@rtmin, rtmax = param@rtmax,
-                features = rownames(fvals), ms_level = msLevel)
+                features = rownames(fvals), ms_level = msLevel,
+                minMzWidthPpm = param@minMzWidthPpm)
             ## define the features to integrate signal for each sample
             frl <- lapply(seq_len(ncol(fvals)), function(i) {
                 fr[which(fvals[, i]), , drop = FALSE]
@@ -1055,7 +1056,8 @@ setMethod(
 setMethod(
     "featureArea", "XcmsExperimentHdf5",
     function(object, mzmin = min, mzmax = max, rtmin = min,
-             rtmax = max, features = character(), msLevel = 1L) {
+             rtmax = max, features = character(), msLevel = 1L,
+             minMzWidthPpm = 0.0) {
         if (!hasFeatures(object, msLevel))
             stop("No correspondence results available. Please run ",
                  "'groupChromPeaks' first.", call. = FALSE)
@@ -1063,7 +1065,8 @@ setMethod(
             features <- .h5_feature_definitions_rownames(object, msLevel)[[1L]]
         .h5_features_ms_region(
             object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-            rtmax = rtmax, features, ms_level = msLevel)
+            rtmax = rtmax, features, ms_level = msLevel,
+            minMzWidthPpm = minMzWidthPpm)
     })
 
 #' @rdname hidden_aliases

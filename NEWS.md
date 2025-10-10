@@ -9,6 +9,9 @@
   `XcmsExperiment` and `XcmsExperimentHdf5` to avoid extraction of spectra for
   gap-filled chromatographic peaks.
 - Fix: add missing import of the `spectraData()` method from *Spectra*.
+- Add parameter `minMzWidthPpm` to `featureArea()` and `ChromPeakAreaParam()`
+  allowing to define a minima *guaranteed* m/z width of the feature areas
+  respectively regions to integrate data from for gap-filling (issue #756).
 
 ## Changes in version 4.7.2
 

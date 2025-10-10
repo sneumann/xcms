@@ -375,7 +375,8 @@
   rtmin = min,
   rtmax = max,
   features = character(),
-  msLevel = 1L
+  msLevel = 1L,
+  minMzWidthPpm = 0
 )
 
 \S4method{featureDefinitions}{XcmsExperimentHdf5}(object) <- value

@@ -1544,9 +1544,16 @@ setClass("ChromPeakAreaParam",
          slots = c(rtmin = "function",
                    rtmax = "function",
                    mzmin = "function",
-                   mzmax = "function"),
-         contains = "Param"
-         )
+                   mzmax = "function",
+                   minMzWidthPpm = "numeric"),
+         contains = "Param",,
+         prototype = prototype(
+             rtmin = min,
+             rtmax = max,
+             mzmin = min,
+             mzmax = max,
+             minMzWidthPpm = 0.0
+         ))
 
 #' @aliases MsFeatureData
 #'
