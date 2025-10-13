@@ -83,7 +83,9 @@ any existing chromPeakData.
 chromPeakData() and chromPeakData&amp;lt;- allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
 DataFrame. Note that the number of rows and the rownames of the
-DataFrame have to match those of chromPeaks.
+DataFrame have to match those of chromPeaks. Parameter columns allows
+to extract only selected columns from the chromPeakData. By default
+(columns = character()) all columns are returned.
 rtime(): extracts the retention time for each
 scan. The bySample parameter allows to return the values grouped
 by sample/file and adjusted whether adjusted or raw retention
@@ -249,7 +251,9 @@ any existing chromPeakData.
 chromPeakData() and chromPeakData&amp;lt;- allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
 DataFrame. Note that the number of rows and the rownames of the
-DataFrame have to match those of chromPeaks.
+DataFrame have to match those of chromPeaks. Parameter columns allows
+to extract only selected columns from the chromPeakData. By default
+(columns = character()) all columns are returned.
 rtime(): extracts the retention time for each
 scan. The bySample parameter allows to return the values grouped
 by sample/file and adjusted whether adjusted or raw retention
@@ -339,7 +343,7 @@ as rectangles with border color peakCol."><meta property="og:image" content="htt
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -456,7 +460,9 @@ any existing <code>chromPeakData</code>.</p>
 <p><code>chromPeakData()</code> and <code>chromPeakData&lt;-</code> allow to get or set arbitrary
 chromatographic peak annotations. These are returned or ar returned as a
 <code>DataFrame</code>. Note that the number of rows and the rownames of the
-<code>DataFrame</code> have to match those of <code>chromPeaks</code>.</p>
+<code>DataFrame</code> have to match those of <code>chromPeaks</code>. Parameter <code>columns</code> allows
+to extract only selected columns from the <code>chromPeakData</code>. By default
+(<code>columns = character()</code>) all columns are returned.</p>
 <p><code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime()</a></code>: extracts the retention time for each
 scan. The <code>bySample</code> parameter allows to return the values grouped
 by sample/file and <code>adjusted</code> whether adjusted or raw retention
@@ -667,7 +673,7 @@ as rectangles with border color <code>peakCol</code>.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
-<span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span>, columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp'</span></span>
 <span><span class="fu">chromPeakData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
@@ -834,6 +840,12 @@ peak detection results will be removed.</p></dd>
 <dt id="arg-fun">FUN<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
 <dd><p>For <code>spectrapply</code>: a function that should be applied to each
 spectrum in the object.</p></dd>
+
+
+<dt id="arg-columns">columns<a class="anchor" aria-label="anchor" href="#arg-columns"></a></dt>
+<dd><p>For <code>chromPeakData()</code>: optional <code>character</code> with the names
+of the columns to include in the returned data frame. By default
+(<code>columns = character()</code>) all columns are reported.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -1076,7 +1088,7 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     I, expand.grid, unname</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.35.0 </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is MSnbase version 2.35.2 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Visit https://lgatto.github.io/MSnbase/ to get started.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  Consider switching to the 'R for Mass Spectrometry'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  packages - see https://RforMassSpectrometry.org for details.</span>
@@ -1220,7 +1232,7 @@ missing chromatographic peaks for a feature in some samples.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSn retention times: 41:41 - 74:60 minutes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Processing information - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Data loaded [Wed Mar 12 08:36:21 2025] </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Wed Jun 18 19:42:36 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Filter: select file(s) 2. [Mon Oct 13 16:20:39 2025] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  MSnbase version: 2.33.3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> - - - Meta data  - - -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> phenoData</span>

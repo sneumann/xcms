@@ -33,7 +33,7 @@ information)."><meta property="og:image" content="https://sneumann.github.io/xcm
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,6 +93,7 @@ information).</p>
 <span>  <span class="va">object</span>,</span>
 <span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  peaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DataFrame"</span>, <span class="st">"data.frame"</span><span class="op">)</span>,</span>
 <span>  bySample <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
@@ -144,6 +145,11 @@ chromatographic peaks should be refined.</p></dd>
 chromatographic peaks (row name in <code><a href="XCMSnExp-class.html">chromPeaks()</a></code>) for which the data
 should be returned. By default (<code>peaks = character()</code>) the data for all
 chromatographic peaks is returned.</p></dd>
+
+
+<dt id="arg-columns">columns<a class="anchor" aria-label="anchor" href="#arg-columns"></a></dt>
+<dd><p>For <code>chromPeakData()~: optional </code>character<code> allowing to define a subset of columns that should be included in the returned data frame. By default (</code>columns = character()`) the full data is
+returned.</p></dd>
 
 
 <dt id="arg-return-type">return.type<a class="anchor" aria-label="anchor" href="#arg-return-type"></a></dt>
@@ -267,7 +273,9 @@ For these chromatographic peaks the ID (row name in <code><a href="XCMSnExp-clas
 should be provided with the <code>peaks</code> parameter. This can reduce the memory
 requirement for cases in which only data of some selected chromatographic
 peaks needs to be extracted. Also, <code><a href="XCMSnExp-class.html">chromPeakData()</a></code> supports the
-<code>bySample</code> parameter described for <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> above.</p></li>
+<code>bySample</code> parameter described for <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> above. All other
+parameters present also for <code><a href="XCMSnExp-class.html">chromPeakData()</a></code> of <code>XcmsExperiment</code> objects,
+such as <code>columns</code> are supported.</p></li>
 <li><p><code><a href="XcmsExperiment.html">filterChromPeaks()</a></code> allows to filter the chromatographic peaks specifying
 which should be retainend using the <code>keep</code> parameter. This can be either
 a <code>logical</code>, <code>character</code> or <code>integer</code> vector. Duplicated or unsorted
@@ -343,7 +351,7 @@ features to retain. It supports a <code>logical</code>, <code>integer</code> ind
 <span class="r-out co"><span class="r-pr">#&gt;</span>  xcms results:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - chromatographic peaks in MS level(s): 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  results storage file:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    /tmp/RtmpOJ9gKF/file339b6110b20e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    /tmp/Rtmp2DqkaB/file363b4de0cb68</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extract selected columnds from the chromatographic peak detection</span></span></span>
 <span class="r-in"><span><span class="co">## results</span></span></span>

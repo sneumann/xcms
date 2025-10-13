@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,14 +41,22 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.7" id="xcms-47">xcms 4.7<a class="anchor" aria-label="anchor" href="#xcms-47"></a></h2>
 <div class="section level3">
-<h3 id="changes-in-version-4-7">Changes in version 4.7.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7"></a></h3>
+<h3 id="changes-in-version-4-7">Changes in version 4.7.3<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7"></a></h3>
+<ul><li>Fix conversion from <code>XcmsExperiment</code> objects to <code>XCMSnExp</code> (issue <a href="https://github.com/sneumann/xcms/issues/807" class="external-link">#807</a>).</li>
+<li>Add parameter <code>columns</code> to <code><a href="../reference/XCMSnExp-class.html">chromPeakData()</a></code> to allow extraction of selected columns.</li>
+<li>Add support for parameter <code>skipFilled</code> to <code><a href="../reference/featureSpectra.html">featureSpectra()</a></code> for <code>XcmsExperiment</code> and <code>XcmsExperimentHdf5</code> to avoid extraction of spectra for gap-filled chromatographic peaks.</li>
+<li>Fix: add missing import of the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">spectraData()</a></code> method from <em>Spectra</em>.</li>
+<li>Add parameter <code>minMzWidthPpm</code> to <code><a href="../reference/XcmsExperiment.html">featureArea()</a></code> and <code><a href="../reference/fillChromPeaks.html">ChromPeakAreaParam()</a></code> allowing to define a minima <em>guaranteed</em> m/z width of the feature areas respectively regions to integrate data from for gap-filling (issue <a href="https://github.com/sneumann/xcms/issues/756" class="external-link">#756</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-in-version-4-7-1">Changes in version 4.7.2<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7-1"></a></h3>
 <ul><li>Change default for <code>[,XcmsExperiment</code> and <code>[,XcmsExperimentHdf5</code> <code>keepAdjustedRtime</code> from <code>FALSE</code> to <code>TRUE</code>.</li>
 <li>Fix issue in <code>[,XcmsExperiment</code>: the subset operation did not revert the retention times of chromatographic peaks with parameter <code>keepAdjustedRtime = FALSE</code> (issue <a href="https://github.com/sneumann/xcms/issues/801" class="external-link">#801</a>).</li>
 <li>Fix issue in <code>chromPeakSpectra</code> for <code>XcmsExperiment</code> with duplicated chrom peak IDs (issue <a href="https://github.com/sneumann/xcms/issues/796" class="external-link">#796</a>).</li>
 <li>Fix issue in <code><a href="../reference/chromPeakSpectra.html">chromPeakSpectra()</a></code> for <code>XcmsExperiment</code> that added column (sample) names to the resulting <code>XChromatograms</code> object with newer versions of the <em>MsExperiment</em> package (&gt;= 1.11.1); issue <a href="https://github.com/sneumann/xcms/issues/803" class="external-link">#803</a>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-in-version-4-7-1">Changes in version 4.7.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7-1"></a></h3>
+<h3 id="changes-in-version-4-7-2">Changes in version 4.7.1<a class="anchor" aria-label="anchor" href="#changes-in-version-4-7-2"></a></h3>
 <ul><li>Change the naming convention of chromatographic peaks to include also the MS level after <code>"CP"</code>: <code>"CP1001"</code> instead of <code>"CP001"</code> for a chromatographic peak in MS level 1 or <code>"CP2001"</code> instead of <code>"CP001"</code> for a chromatographic peak in MS level 2.</li>
 <li>Massively reduce main memory demand of <em>xcms</em> with the new on-disk storage mode of the preprocessing results: the new <code>XcmsExperimentHdf5</code> result object stores all preprocessing results in an HDF5 file.</li>
 <li>Optimization and performance improvements for extraction of chromatographic data. This includes using <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/reduce.html" class="external-link">MsCoreUtils::reduce()</a></code>.</li>

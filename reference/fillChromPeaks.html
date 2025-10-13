@@ -17,12 +17,20 @@ param = ChromPeakAreaParam(): the area from which the signal for a
 feature is integrated is defined based on the feature's chromatographic
 peak areas. The m/z range is by default defined as the the lower quartile
 of chromatographic peaks' &quot;mzmin&quot; value to the upper quartile of the
-chromatographic peaks' &quot;mzmax&quot; values. The retention time range for the
-area is defined analogously. Alternatively, by setting mzmin = median,
+chromatographic peaks' &quot;mzmax&quot; values.
+The retention time range for the area is defined analogously.
+Alternatively, by setting mzmin = median,
 mzmax = median, rtmin = median and rtmax = median in
 ChromPeakAreaParam, the median &quot;mzmin&quot;, &quot;mzmax&quot;, &quot;rtmin&quot; and
 &quot;rtmax&quot; values from all detected chromatographic peaks of a feature
 would be used instead.
+Parameter minMzWidthPpm allows in addition to define a minimal
+guaranteed m/z width expressed in ppm of the features' m/z and centered
+around it. The default is minMzWidthPpm = 0.0. With a
+minMzWidthPpm &amp;gt; 0, the lower m/z boundary for a feature is defined as
+the smaller value from the m/z derived from its chromatographic peaks'
+&quot;mzmin&quot;, and the feature's m/z minus minMzWidthPpm / 2 ppm of its
+m/z. The upper m/z boundary is determined in the same way.
 In contrast to the  FillChromPeaksParam approach this method uses (all)
 identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.
@@ -45,12 +53,20 @@ param = ChromPeakAreaParam(): the area from which the signal for a
 feature is integrated is defined based on the feature's chromatographic
 peak areas. The m/z range is by default defined as the the lower quartile
 of chromatographic peaks' &quot;mzmin&quot; value to the upper quartile of the
-chromatographic peaks' &quot;mzmax&quot; values. The retention time range for the
-area is defined analogously. Alternatively, by setting mzmin = median,
+chromatographic peaks' &quot;mzmax&quot; values.
+The retention time range for the area is defined analogously.
+Alternatively, by setting mzmin = median,
 mzmax = median, rtmin = median and rtmax = median in
 ChromPeakAreaParam, the median &quot;mzmin&quot;, &quot;mzmax&quot;, &quot;rtmin&quot; and
 &quot;rtmax&quot; values from all detected chromatographic peaks of a feature
 would be used instead.
+Parameter minMzWidthPpm allows in addition to define a minimal
+guaranteed m/z width expressed in ppm of the features' m/z and centered
+around it. The default is minMzWidthPpm = 0.0. With a
+minMzWidthPpm &amp;gt; 0, the lower m/z boundary for a feature is defined as
+the smaller value from the m/z derived from its chromatographic peaks'
+&quot;mzmin&quot;, and the feature's m/z minus minMzWidthPpm / 2 ppm of its
+m/z. The upper m/z boundary is determined in the same way.
 In contrast to the  FillChromPeaksParam approach this method uses (all)
 identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.
@@ -63,7 +79,7 @@ from which the signal should be integrated.
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -113,12 +129,20 @@ details below for more information and settings for this method.</p></li>
 feature is integrated is defined based on the feature's chromatographic
 peak areas. The m/z range is by default defined as the the lower quartile
 of chromatographic peaks' <code>"mzmin"</code> value to the upper quartile of the
-chromatographic peaks' <code>"mzmax"</code> values. The retention time range for the
-area is defined analogously. Alternatively, by setting <code>mzmin = median</code>,
+chromatographic peaks' <code>"mzmax"</code> values.
+The retention time range for the area is defined analogously.
+Alternatively, by setting <code>mzmin = median</code>,
 <code>mzmax = median</code>, <code>rtmin = median</code> and <code>rtmax = median</code> in
 <code>ChromPeakAreaParam</code>, the median <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"rtmin"</code> and
 <code>"rtmax"</code> values from all detected chromatographic peaks of a feature
 would be used instead.
+Parameter <code>minMzWidthPpm</code> allows in addition to define a minimal
+guaranteed m/z width expressed in ppm of the features' m/z and centered
+around it. The default is <code>minMzWidthPpm = 0.0</code>. With a
+<code>minMzWidthPpm</code> &gt; 0, the lower m/z boundary for a feature is defined as
+the smaller value from the m/z derived from its chromatographic peaks'
+<code>"mzmin"</code>, and the feature's m/z <em>minus</em> <code>minMzWidthPpm / 2</code> ppm of its
+m/z. The upper m/z boundary is determined in the same way.
 In contrast to the  <code>FillChromPeaksParam</code> approach this method uses (all)
 identified chromatographic peaks of a feature to define the area
 from which the signal should be integrated.</p></li>
@@ -153,7 +177,8 @@ from which the signal should be integrated.</p></li>
 <span>  rtmin <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.25</span>, names <span class="op">=</span> <span class="cn">FALSE</span>, na.rm <span class="op">=</span></span>
 <span>    <span class="va">na.rm</span><span class="op">)</span>,</span>
 <span>  rtmax <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">z</span>, probs <span class="op">=</span> <span class="fl">0.75</span>, names <span class="op">=</span> <span class="cn">FALSE</span>, na.rm <span class="op">=</span></span>
-<span>    <span class="va">na.rm</span><span class="op">)</span></span>
+<span>    <span class="va">na.rm</span><span class="op">)</span>,</span>
+<span>  minMzWidthPpm <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XCMSnExp,FillChromPeaksParam'</span></span>
@@ -284,6 +309,14 @@ value of the area from which signal for the feature should be
 integrated. Defaults to <code>rtmax = function(z) quantile(z, probs = 0.75)</code>
 hence using the 75% quantile of all values.</p></dd>
 
+
+<dt id="arg-minmzwidthppm">minMzWidthPpm<a class="anchor" aria-label="anchor" href="#arg-minmzwidthppm"></a></dt>
+<dd><p>For <code>ChromPeakAreaParam()</code>: <code>numeric(1)</code> defining the
+minimal guaranteed m/z width (expressed in ppm of the feature's m/z)
+that will be used to integrate signal from (default
+<code>minMzWidthPpm = 0.0</code>). See documentation of <code>ChromPeakAreaParam()</code>
+for more information.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -363,6 +396,10 @@ region for each feature.</p></div>
 <span class="r-in"><span><span class="co">## chromatographic peaks.</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">res</span>, param <span class="op">=</span> <span class="fu">ChromPeakAreaParam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Alternatively, force a minimal guaranteed m/z width for the regions</span></span></span>
+<span class="r-in"><span><span class="co">## to integrate signal from.</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">fillChromPeaks</span><span class="op">(</span><span class="va">res</span>, param <span class="op">=</span> <span class="fu">ChromPeakAreaParam</span><span class="op">(</span>minMzWidthPpm <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## How many missing values do we have after peak filling?</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu"><a href="XCMSnExp-peak-grouping-results.html">featureValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
@@ -391,7 +428,7 @@ region for each feature.</p></div>
 <span class="r-in"><span><span class="va">ph</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Object of class "XProcessHistory"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  type: Missing peak filling </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Wed Jun 18 19:43:14 2025 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  date: Mon Oct 13 16:21:16 2025 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  info:  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  fileIndex: 1,2,3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameter class: ChromPeakAreaParam </span>
@@ -403,16 +440,17 @@ region for each feature.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmin: function (z, na.rm = TRUE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25, names = FALSE, na.rm = na.rm)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55fe43d90820&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646247f7d18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - rtmax: function (z, na.rm = TRUE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55fe43d90820&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646247f7d18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmin: function (z, na.rm = TRUE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.25, names = FALSE, na.rm = na.rm)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55fe43d90820&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646247f7d18&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - mzmax: function (z, na.rm = TRUE) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quantile(z, probs = 0.75, names = FALSE, na.rm = na.rm)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55fe43d90820&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5646247f7d18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - minMzWidthPpm: [1] 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## It is also possible to remove filled-in peaks:</span></span></span>
 <span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="XCMSnExp-class.html">dropFilledChromPeaks</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>

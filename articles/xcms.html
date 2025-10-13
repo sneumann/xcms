@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2025-06-18 18:22:37.784995<br><strong>Compiled</strong>: Wed Jun 18 19:46:24 2025</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2025-10-13 14:55:14.389602<br><strong>Compiled</strong>: Mon Oct 13 16:24:32 2025</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -211,7 +211,7 @@ container for MS experiments. The <em>raw</em> MS data is stored as a
 <span><span class="co">## 10222         1   4496.69      1276</span></span>
 <span><span class="co">## 10223         1   4498.26      1277</span></span>
 <span><span class="co">## 10224         1   4499.82      1278</span></span>
-<span><span class="co">##  ... 33 more variables/columns.</span></span>
+<span><span class="co">##  ... 34 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## ko15.CDF</span></span>
@@ -264,7 +264,7 @@ spectra and sample data.</p>
 <span><span class="co">## 1276         1   4496.69      1276</span></span>
 <span><span class="co">## 1277         1   4498.26      1277</span></span>
 <span><span class="co">## 1278         1   4499.82      1278</span></span>
-<span><span class="co">##  ... 33 more variables/columns.</span></span>
+<span><span class="co">##  ... 34 more variables/columns.</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## file(s):</span></span>
 <span><span class="co">## ko21.CDF</span></span></code></pre>
@@ -1505,10 +1505,14 @@ quantile) of the <code>"mzmin"</code> values of all peaks of the
 feature, the upper m/z value as the upper quartile (75% quantile) of the
 <code>"mzmax"</code> values, the lower rt value as the lower quartile
 (25% quantile) of the <code>"rtmin"</code> and the upper rt value as the
-upper quartile (75% quantile) of the <code>"rtmax"</code> values. Below
-we perform this gap filling on our test data and extract the feature
-values for the first 6 features after gap filling. An <code>NA</code> is
-reported if no signal is measured at all for a specific sample.</p>
+upper quartile (75% quantile) of the <code>"rtmax"</code> values. An
+additional parameter <code>minMzWidthPpm</code> allows to define a
+minimal <em>guaranteed</em> m/z width (expressed in ppm of the features’
+m/z value) of the area to integrate signal from.</p>
+<p>Below we perform this gap filling on our test data and extract the
+feature values for the first 6 features after gap filling. An
+<code>NA</code> is reported if no signal is measured at all for a
+specific sample.</p>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fillChromPeaks.html">fillChromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, param <span class="op">=</span> <span class="fu"><a href="../reference/fillChromPeaks.html">ChromPeakAreaParam</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1606,7 +1610,7 @@ overlapping peaks in each sample).</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##     expand.grid, I, unname</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: IRanges</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: GenomeInfoDb</span></span></code></pre>
+<pre><code><span><span class="co">## Loading required package: Seqinfo</span></span></code></pre>
 <pre><code><span><span class="co">## Loading required package: Biobase</span></span></code></pre>
 <pre><code><span><span class="co">## Welcome to Bioconductor</span></span>
 <span><span class="co">## </span></span>
@@ -1745,7 +1749,7 @@ available as <em>metadata</em> in the
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:46:57 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:07 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1754,7 +1758,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:47:02 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:12 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1763,7 +1767,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:47:15 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:24 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1772,7 +1776,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:47:15 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:24 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1781,7 +1785,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:47:20 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:29 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1790,7 +1794,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:47:25 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:34 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1802,7 +1806,7 @@ extract the information for the first processing step.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Wed Jun 18 19:46:57 2025 </span></span>
+<span><span class="co">##  date: Mon Oct 13 16:25:07 2025 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -2245,9 +2249,9 @@ package and its functionality.</li>
 <p>R packages used for this document are listed below.</p>
 <div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.0 (2025-04-11)</span></span>
+<pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -2269,67 +2273,66 @@ package and its functionality.</li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SummarizedExperiment_1.39.0 Biobase_2.69.0             </span></span>
-<span><span class="co">##  [3] GenomicRanges_1.61.0        GenomeInfoDb_1.45.4        </span></span>
-<span><span class="co">##  [5] IRanges_2.43.0              S4Vectors_0.47.0           </span></span>
-<span><span class="co">##  [7] BiocGenerics_0.55.0         generics_0.1.4             </span></span>
+<span><span class="co">##  [1] SummarizedExperiment_1.39.2 Biobase_2.69.1             </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.61.5        Seqinfo_0.99.2             </span></span>
+<span><span class="co">##  [5] IRanges_2.43.5              S4Vectors_0.47.4           </span></span>
+<span><span class="co">##  [7] BiocGenerics_0.55.3         generics_0.1.4             </span></span>
 <span><span class="co">##  [9] MatrixGenerics_1.21.0       matrixStats_1.5.0          </span></span>
 <span><span class="co">## [11] MsExperiment_1.11.1         ProtGenerics_1.41.0        </span></span>
 <span><span class="co">## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         </span></span>
 <span><span class="co">## [15] pander_0.6.6                faahKO_1.49.1              </span></span>
-<span><span class="co">## [17] xcms_4.7.2                  BiocParallel_1.43.4        </span></span>
-<span><span class="co">## [19] BiocStyle_2.37.0           </span></span>
+<span><span class="co">## [17] xcms_4.7.3                  BiocParallel_1.43.4        </span></span>
+<span><span class="co">## [19] BiocStyle_2.37.1           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] DBI_1.2.3                   rlang_1.1.6                </span></span>
-<span><span class="co">##  [3] magrittr_2.0.3              clue_0.3-66                </span></span>
-<span><span class="co">##  [5] MassSpecWavelet_1.75.1      compiler_4.5.0             </span></span>
-<span><span class="co">##  [7] systemfonts_1.2.3           vctrs_0.6.5                </span></span>
-<span><span class="co">##  [9] reshape2_1.4.4              stringr_1.5.1              </span></span>
+<span><span class="co">##  [3] magrittr_2.0.4              clue_0.3-66                </span></span>
+<span><span class="co">##  [5] MassSpecWavelet_1.75.1      compiler_4.5.1             </span></span>
+<span><span class="co">##  [7] systemfonts_1.3.1           vctrs_0.6.5                </span></span>
+<span><span class="co">##  [9] reshape2_1.4.4              stringr_1.5.2              </span></span>
 <span><span class="co">## [11] pkgconfig_2.0.3             MetaboCoreUtils_1.17.1     </span></span>
 <span><span class="co">## [13] crayon_1.5.3                fastmap_1.2.0              </span></span>
-<span><span class="co">## [15] XVector_0.49.0              rmarkdown_2.29             </span></span>
-<span><span class="co">## [17] UCSC.utils_1.5.0            preprocessCore_1.71.0      </span></span>
-<span><span class="co">## [19] ragg_1.4.0                  purrr_1.0.4                </span></span>
-<span><span class="co">## [21] xfun_0.52                   MultiAssayExperiment_1.35.3</span></span>
-<span><span class="co">## [23] cachem_1.1.0                jsonlite_2.0.0             </span></span>
-<span><span class="co">## [25] progress_1.2.3              DelayedArray_0.35.1        </span></span>
-<span><span class="co">## [27] prettyunits_1.2.0           parallel_4.5.0             </span></span>
-<span><span class="co">## [29] cluster_2.1.8.1             R6_2.6.1                   </span></span>
-<span><span class="co">## [31] bslib_0.9.0                 stringi_1.8.7              </span></span>
-<span><span class="co">## [33] limma_3.65.1                jquerylib_0.1.4            </span></span>
-<span><span class="co">## [35] iterators_1.0.14            Rcpp_1.0.14                </span></span>
-<span><span class="co">## [37] bookdown_0.43               knitr_1.50                 </span></span>
-<span><span class="co">## [39] BiocBaseUtils_1.11.0        Matrix_1.7-3               </span></span>
-<span><span class="co">## [41] igraph_2.1.4                tidyselect_1.2.1           </span></span>
-<span><span class="co">## [43] abind_1.4-8                 yaml_2.3.10                </span></span>
-<span><span class="co">## [45] doParallel_1.0.17           codetools_0.2-20           </span></span>
-<span><span class="co">## [47] affy_1.87.0                 lattice_0.22-7             </span></span>
-<span><span class="co">## [49] tibble_3.3.0                plyr_1.8.9                 </span></span>
-<span><span class="co">## [51] evaluate_1.0.3              desc_1.4.3                 </span></span>
-<span><span class="co">## [53] Spectra_1.19.2              pillar_1.10.2              </span></span>
+<span><span class="co">## [15] XVector_0.49.1              rmarkdown_2.30             </span></span>
+<span><span class="co">## [17] preprocessCore_1.71.2       ragg_1.5.0                 </span></span>
+<span><span class="co">## [19] purrr_1.1.0                 xfun_0.53                  </span></span>
+<span><span class="co">## [21] MultiAssayExperiment_1.35.9 cachem_1.1.0               </span></span>
+<span><span class="co">## [23] jsonlite_2.0.0              progress_1.2.3             </span></span>
+<span><span class="co">## [25] DelayedArray_0.35.3         prettyunits_1.2.0          </span></span>
+<span><span class="co">## [27] parallel_4.5.1              cluster_2.1.8.1            </span></span>
+<span><span class="co">## [29] R6_2.6.1                    bslib_0.9.0                </span></span>
+<span><span class="co">## [31] stringi_1.8.7               limma_3.65.5               </span></span>
+<span><span class="co">## [33] jquerylib_0.1.4             iterators_1.0.14           </span></span>
+<span><span class="co">## [35] Rcpp_1.1.0                  bookdown_0.45              </span></span>
+<span><span class="co">## [37] knitr_1.50                  BiocBaseUtils_1.11.2       </span></span>
+<span><span class="co">## [39] Matrix_1.7-4                igraph_2.1.4               </span></span>
+<span><span class="co">## [41] tidyselect_1.2.1            abind_1.4-8                </span></span>
+<span><span class="co">## [43] yaml_2.3.10                 doParallel_1.0.17          </span></span>
+<span><span class="co">## [45] codetools_0.2-20            affy_1.87.0                </span></span>
+<span><span class="co">## [47] lattice_0.22-7              tibble_3.3.0               </span></span>
+<span><span class="co">## [49] plyr_1.8.9                  S7_0.2.0                   </span></span>
+<span><span class="co">## [51] evaluate_1.0.5              desc_1.4.3                 </span></span>
+<span><span class="co">## [53] Spectra_1.19.9              pillar_1.11.1              </span></span>
 <span><span class="co">## [55] affyio_1.79.0               BiocManager_1.30.26        </span></span>
-<span><span class="co">## [57] foreach_1.5.2               MSnbase_2.35.0             </span></span>
+<span><span class="co">## [57] foreach_1.5.2               MSnbase_2.35.2             </span></span>
 <span><span class="co">## [59] MALDIquant_1.22.3           ncdf4_1.24                 </span></span>
-<span><span class="co">## [61] hms_1.1.3                   ggplot2_3.5.2              </span></span>
+<span><span class="co">## [61] hms_1.1.3                   ggplot2_4.0.0              </span></span>
 <span><span class="co">## [63] scales_1.4.0                glue_1.8.0                 </span></span>
 <span><span class="co">## [65] MsFeatures_1.17.1           lazyeval_0.2.2             </span></span>
-<span><span class="co">## [67] tools_4.5.0                 mzID_1.47.0                </span></span>
-<span><span class="co">## [69] data.table_1.17.4           QFeatures_1.19.2           </span></span>
-<span><span class="co">## [71] vsn_3.77.0                  mzR_2.43.0                 </span></span>
-<span><span class="co">## [73] fs_1.6.6                    XML_3.99-0.18              </span></span>
-<span><span class="co">## [75] grid_4.5.0                  impute_1.83.0              </span></span>
+<span><span class="co">## [67] tools_4.5.1                 mzID_1.47.0                </span></span>
+<span><span class="co">## [69] data.table_1.17.8           QFeatures_1.19.2           </span></span>
+<span><span class="co">## [71] vsn_3.77.0                  mzR_2.43.3                 </span></span>
+<span><span class="co">## [73] fs_1.6.6                    XML_3.99-0.19              </span></span>
+<span><span class="co">## [75] grid_4.5.1                  impute_1.83.0              </span></span>
 <span><span class="co">## [77] tidyr_1.3.1                 MsCoreUtils_1.19.2         </span></span>
-<span><span class="co">## [79] PSMatch_1.13.1              cli_3.6.5                  </span></span>
-<span><span class="co">## [81] textshaping_1.0.1           S4Arrays_1.9.1             </span></span>
+<span><span class="co">## [79] PSMatch_1.13.2              cli_3.6.5                  </span></span>
+<span><span class="co">## [81] textshaping_1.0.4           S4Arrays_1.9.1             </span></span>
 <span><span class="co">## [83] dplyr_1.1.4                 AnnotationFilter_1.33.0    </span></span>
 <span><span class="co">## [85] pcaMethods_2.1.0            gtable_0.3.6               </span></span>
 <span><span class="co">## [87] sass_0.4.10                 digest_0.6.37              </span></span>
-<span><span class="co">## [89] SparseArray_1.9.0           htmlwidgets_1.6.4          </span></span>
+<span><span class="co">## [89] SparseArray_1.9.1           htmlwidgets_1.6.4          </span></span>
 <span><span class="co">## [91] farver_2.1.2                htmltools_0.5.8.1          </span></span>
 <span><span class="co">## [93] pkgdown_2.1.3.9000          lifecycle_1.0.4            </span></span>
-<span><span class="co">## [95] httr_1.4.7                  statmod_1.5.0              </span></span>
-<span><span class="co">## [97] MASS_7.3-65</span></span></code></pre>
+<span><span class="co">## [95] statmod_1.5.1               MASS_7.3-65</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

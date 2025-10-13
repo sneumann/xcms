@@ -61,7 +61,7 @@ be used instead. See the respective help page for more information."><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -220,6 +220,7 @@ be used instead. See the respective help page for more information.</p>
 <span><span class="fu"><a href="XCMSnExp-class.html">chromPeakData</a></span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  msLevel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  return.type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DataFrame"</span>, <span class="st">"data.frame"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -253,7 +254,8 @@ be used instead. See the respective help page for more information.</p>
 <span>  mzmax <span class="op">=</span> <span class="va">max</span>,</span>
 <span>  rtmin <span class="op">=</span> <span class="va">min</span>,</span>
 <span>  rtmax <span class="op">=</span> <span class="va">max</span>,</span>
-<span>  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  minMzWidthPpm <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XcmsExperiment'</span></span>
@@ -489,9 +491,10 @@ this information is also provided in the <code>chromPeakData</code> data frame.<
 
 
 <dt id="arg-columns">columns<a class="anchor" aria-label="anchor" href="#arg-columns"></a></dt>
-<dd><p>For <code><a href="XCMSnExp-class.html">chromPeaks()</a></code>: optional <code>character</code> to specify the
-names of the columns that should be returned. By default (with
-<code>columns = character()</code> all columns are returned.</p></dd>
+<dd><p>For <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> and <code><a href="XCMSnExp-class.html">chromPeakData()</a></code>: optional
+<code>character</code> to specify the names of the columns that should be
+returned. By default (with <code>columns = character()</code> all columns are
+returned.</p></dd>
 
 
 <dt id="arg-keep">keep<a class="anchor" aria-label="anchor" href="#arg-keep"></a></dt>
@@ -556,6 +559,13 @@ chromatographic peaks assigned to that feature. Defaults to
 <code>logical</code>, <code>integer</code> or <code>character</code> defining the features to keep or
 from which to extract the feature area, respectively. See function
 description for more information.</p></dd>
+
+
+<dt id="arg-minmzwidthppm">minMzWidthPpm<a class="anchor" aria-label="anchor" href="#arg-minmzwidthppm"></a></dt>
+<dd><p>For <code>featureArea()</code>: <code>numeric(1)</code> defining the minimal
+guaranteed m/z width (expressed in ppm of the feature's m/z) of the
+reported feature areas. Defaults to <code>minMzWidthPpm = 0.0</code>. See
+documentation of the <code>featureArea()</code> for more information.</p></dd>
 
 
 <dt id="arg-intensity">intensity<a class="anchor" aria-label="anchor" href="#arg-intensity"></a></dt>
@@ -732,7 +742,11 @@ below for details.</p></li>
 <code><a href="XCMSnExp-class.html">chromPeaks()</a></code> matrix. The default <em>annotations</em> are <code>"ms_level"</code> (the MS
 level in which the peak was identified) and <code>"is_filled"</code> (whether the
 chromatographic peak was <em>detected</em> (by <code><a href="findChromPeaks.html">findChromPeaks()</a></code>) or
-<em>filled-in</em> (by <code><a href="fillChromPeaks.html">fillChromPeaks()</a></code>).</p></li>
+<em>filled-in</em> (by <code><a href="fillChromPeaks.html">fillChromPeaks()</a></code>). Parameter <code>columns</code> can be used to
+restrict the returned data frame to selected columns. Parameter
+<code>return.type</code> can be used to specify the type of returned objects, either
+a <code>DataFrame</code> (the default, <code>return.type = "DataFrame"</code>) or a <code>data.frame</code>
+(<code>return.type = "data.frame")</code>.</p></li>
 <li><p><code><a href="chromPeakSpectra.html">chromPeakSpectra()</a></code>: extract MS spectra for identified chromatographic
 peaks. This can be either all (full scan) MS1 spectra with retention
 times between the retention time range of a chromatographic peak, all
@@ -811,10 +825,7 @@ analysis. This can be overruled with <code>keepAdjustedRtime = TRUE</code>.</p><
 feature (row) in <code>object</code>. By default these represent the minimal m/z
 and retention times as well as maximal m/z and retention times for
 all chromatographic peaks assigned to that feature. Parameter
-<code>features</code> allows to extract these values for selected features only.
-Parameters <code>mzmin</code>, <code>mzmax</code>, <code>rtmin</code> and <code>rtmax</code> allow to define
-the function to calculate the reported <code>"mzmin"</code>, <code>"mzmax"</code>, <code>"rtmin"</code>
-and <code>"rtmax"</code> values.</p></li>
+<code>minMzWidthPpm</code> (default <code>minMzWidthPpm = 0.01) can be used to define a minimal required (total) m/z width expressed in ppm of the features' m/z. With a </code>minMzWidthPpm<code>larger than 0 the reported</code>"mzmin"<code>is the minimum of the determined minimal m/z for a feature (based on parameter</code>mzmin<code>) and the m/z of the feature minus </code>minMzWidthPpm / 2<code>ppm of the feature's m/z value. The reported</code>"mzmax"<code>is calculated in the same way. Parameter</code>features<code>allows to extract these values for selected features only. Parameters</code>mzmin<code>, </code>mzmax<code>, </code>rtmin<code>and</code>rtmax<code>allow to define the function to calculate the reported</code>"mzmin"<code>, </code>"mzmax"<code>, </code>"rtmin"<code>and</code>"rtmax"` values.</p></li>
 <li><p><code><a href="featureChromatograms.html">featureChromatograms()</a></code>: extract ion chromatograms (EICs) for each
 feature in <code>object</code>. See <code><a href="featureChromatograms.html">featureChromatograms()</a></code> for more details.</p></li>
 <li><p><code><a href="XCMSnExp-class.html">featureDefinitions()</a></code>: returns a <code>data.frame</code> with feature definitions or
@@ -824,8 +835,8 @@ feature definitions that should be returned with the parameter <code>type</code>
 defining how these parameters should be used to subset the returned
 <code>data.frame</code>. See parameter descriptions for details.</p></li>
 <li><p><code><a href="featureSpectra.html">featureSpectra()</a></code>: returns a <code><a href="https://rdrr.io/pkg/Spectra/man/Spectra.html" class="external-link">Spectra::Spectra()</a></code> or <code>List</code> of <code>Spectra</code>
-with (MS1 or MS2) spectra associated to each feature. See
-<code><a href="featureSpectra.html">featureSpectra()</a></code> for more details and available parameters.</p></li>
+with (MS1 or MS2) spectra associated to each feature's chromatographic
+peaks. See <code><a href="featureSpectra.html">featureSpectra()</a></code> for more details and available parameters.</p></li>
 <li><p><code>featuresSummary()</code>: calculate a simple summary on features. See
 <code><a href="featureSummary.html">featureSummary()</a></code> for details.</p></li>
 <li><p><code><a href="groupChromPeaks.html">groupChromPeaks()</a></code>: performs the correspondence analysis (i.e., grouping

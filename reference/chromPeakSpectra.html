@@ -89,7 +89,7 @@ See also the LC-MS/MS data analysis vignette for more details and examples."><me
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -237,15 +237,20 @@ by a value dependent on the peak's m/z.</p></dd>
 
 <dt id="arg-skipfilled">skipFilled<a class="anchor" aria-label="anchor" href="#arg-skipfilled"></a></dt>
 <dd><p><code>logical(1)</code> whether spectra for filled-in peaks should
-be reported or not.</p></dd>
+be reported or not. Defaults to <code>skipFilled = FALSE</code> thus also spectra
+for gap-filled chromatographic peaks are returned. Set to
+<code>skipFilled = TRUE</code> to get only spectra for detected chromatographic
+peaks.</p></dd>
 
 
 <dt id="arg-peaks">peaks<a class="anchor" aria-label="anchor" href="#arg-peaks"></a></dt>
 <dd><p><code>character</code>, <code>logical</code> or <code>integer</code> allowing to specify a
 subset of chromatographic peaks in <code>chromPeaks</code> for which spectra should
 be returned (providing either their ID, a logical vector same length
-than <code>nrow(chromPeaks(x))</code> or their index in <code>chromPeaks(x)</code>). This
-parameter overrides <code>skipFilled</code>.</p></dd>
+than <code>nrow(chromPeaks(x))</code> or their index in <code>chromPeaks(x)</code>). Be aware
+that when <code>peaks</code> are provided, parameter <code>skipFilled</code> is ignored.
+Spectra are returned for any chromatographic peak, detected or
+gap-filled, that are defined with <code>peaks</code>.</p></dd>
 
 
 <dt id="arg-chrompeakcolumns">chromPeakColumns<a class="anchor" aria-label="anchor" href="#arg-chrompeakcolumns"></a></dt>
@@ -323,8 +328,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Wed Jun 18 19:43:02 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon Oct 13 16:21:04 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Oct 13 16:21:04 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## spectra variable *chrom_peak_id* contain the row names of the peaks in the</span></span></span>
 <span class="r-in"><span><span class="co">## chromPeak matrix and allow thus to map chromatographic peaks to the</span></span></span>
@@ -423,8 +428,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Wed Jun 18 19:43:02 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 2 [Mon Oct 13 16:21:04 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Oct 13 16:21:04 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter `msLevel` allows to define from which MS level spectra should</span></span></span>
 <span class="r-in"><span><span class="co">## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all</span></span></span>
@@ -457,8 +462,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Wed Jun 18 19:43:02 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon Oct 13 16:21:04 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Oct 13 16:21:04 2025] </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Parameter peaks would allow to extract spectra for specific peaks only.</span></span></span>
 <span class="r-in"><span><span class="co">## Peaks can be defined with parameter `peaks` which can be either an</span></span></span>
@@ -475,8 +480,8 @@ length of the list matches the number of peaks.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> file(s):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PestMix1_DDA.mzML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Wed Jun 18 19:43:02 2025]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Wed Jun 18 19:43:02 2025] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Filter: select MS level(s) 1 [Mon Oct 13 16:21:04 2025]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Merge 1 Spectra into one [Mon Oct 13 16:21:04 2025] </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
