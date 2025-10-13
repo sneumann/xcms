@@ -1546,7 +1546,7 @@ setClass("ChromPeakAreaParam",
                    mzmin = "function",
                    mzmax = "function",
                    minMzWidthPpm = "numeric"),
-         contains = "Param",,
+         contains = "Param",
          prototype = prototype(
              rtmin = min,
              rtmax = max,

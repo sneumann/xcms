@@ -1931,7 +1931,7 @@ setMethod(
 
         mtch <- as.matrix(
             findMatches(sps$chrom_peak_id,
-                        rownames(xcms:::.chromPeaks(object))[pindex]))
+                        rownames(.chromPeaks(object))[pindex]))
         sps <- sps[mtch[, 1L]]
 
         fid <- rep(ufeatures, lengths(pidx_list))

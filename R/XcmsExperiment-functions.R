@@ -332,13 +332,13 @@
 #' @noRd
 .merge_neighboring_peaks2 <- function(x, pks, pkd, rt, expandRt = 2,
                                       expandMz = 0, ppm = 10, minProp = 0.75) {
-    cands <- xcms:::.define_merge_candidates(pks, expandMz, ppm, expandRt)
+    cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
     if (!length(cands))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     cands <- cands[[2L]]
     pks_new <- pkd_new <- vector("list", length(cands))
     for (i in seq_along(cands)) {
-        res <- xcms:::.merge_neighboring_peak_candidates(
+        res <- .merge_neighboring_peak_candidates(
             x, rt = rt, pks[cands[[i]], , drop = FALSE],
             pkd[cands[[i]], , drop = FALSE], diffRt = 2 * expandRt,
             minProp = minProp, expandMz = expandMz, ppm = ppm)
