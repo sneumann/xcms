@@ -13,10 +13,11 @@ The *xcms* R package provides functionality to efficiently preprocess LC-MS (as
 well as GC-MS and LC-MS/MS) data. Please see the [package
 documentation](https://sneumann.github.io/xcms/) for more information and
 examples and [news](inst/NEWS) for the latest changes. An example preprocessing
-workflow is shown in the [main package vignette](). See also the excellent
-[Metabonaut] resource for a more detailed and complete *end-to-end* data
+workflow is shown in the [main package vignette](https://sneumann.github.io/xcms/articles/xcms.html). See also the excellent
+[Metabonaut](https://rformassspectrometry.github.io/Metabonaut/) resource for a more detailed and complete *end-to-end* data
 analysis workflow for LC-MS data.
 
+If you use *xcms* in your research, please cite the new 2025 manuscript *"xcms in Peak Form: Now Anchoring a Complete Metabolomics Data Preprocessing and Analysis Software Ecosystem"* [[10.1021/acs.analchem.5c04338](https://doi.org/10.1021/acs.analchem.5c04338)].
 
 ## Installation
 
