@@ -1783,7 +1783,8 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
 
     ## Check error if no features were found. issue #273
     pdp <- PeakDensityParam(sampleGroups = rep(1, 3), minSamples = 30)
-    expect_warning(groupChromPeaks(faahko_xod, param = pdp), "Unable to group any chromatographic peaks.")
+    expect_warning(groupChromPeaks(faahko_xod, param = pdp),
+                   "Unable to group any chromatographic peaks.")
 
     fdp <- PeakDensityParam(sampleGroups = rep(1, 3))
     res <- groupChromPeaks(faahko_xod, param = fdp)
@@ -1817,8 +1818,19 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
                  featureDefinitions(res_2)$mzmed[(nr + 1):(2 * nr)])
     expect_equal(featureDefinitions(res)$peakidx,
                  featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
+    ## rtCenterFun
+    res_2 <- groupChromPeaks(
+        faahko_xod, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                             rtCenterFun = "wMean"))
+    a <- featureDefinitions(res)
+    b <- featureDefinitions(res_2)
+    expect_equal(a$rtmin, b$rtmin)
+    expect_equal(a$rtmax, b$rtmax)
+    expect_equal(a$mzmed, b$mzmed)
+    expect_true(sum(a$rtmed != b$rtmed) > 20)
 
-    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 2),
+                 "MS level 2")
     expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 1:4),
                  "one MS level at a time")
 })

@@ -1584,8 +1584,10 @@ setMethod(
                  "using the 'findChromPeaks' method.", call. = FALSE)
         if (hasFeatures(object) && !add)
             object <- dropFeatureDefinitions(object)
-        cps <- chromPeaks(object, msLevel = msLevel,
-                          columns = c("mz", "rt", "sample"))
+        pk_cols <- c("mz", "rt", "sample")
+        if (.rtCenterFun(param) == "wMean")
+            pk_cols <- c(pk_cols, "into")
+        cps <- chromPeaks(object, msLevel = msLevel, columns = pk_cols)
         res <- .xmse_group_cpeaks(
             cps, param = param,
             index = match(rownames(cps), rownames(.chromPeaks(object))))

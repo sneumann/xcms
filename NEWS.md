@@ -3,6 +3,8 @@
 ## Changes in version 4.9.1
 
 - Fix title of `plotPrecursorIons()` plot.
+- Add parameter `rtCenterFun` to `PeakDensityParam()` to support specifying the
+  function to calculate the reported retention time of a feature (`"rtmed"`).
 
 # xcms 4.7
 

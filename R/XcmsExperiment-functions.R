@@ -149,7 +149,7 @@
                 minFraction = minFraction(param),
                 minSamples = minSamples(param), binSize = binSize(param),
                 maxFeatures = maxFeatures(param), ppm = ppm(param),
-                index = index)
+                index = index, rtCenterFun = .rtCenterFun(param))
         },
         MzClustParam = {
             tmp <- do_groupPeaks_mzClust(

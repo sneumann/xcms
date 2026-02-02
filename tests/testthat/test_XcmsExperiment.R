@@ -460,6 +460,16 @@ test_that("groupChromPeaks,XcmsExperiment and related things work", {
     expect_true(hasFeatures(res))
     expect_false(hasFeatures(res, msLevel = 2L))
     expect_equal(DataFrame(res@featureDefinitions), featureDefinitions(xod_xg))
+    ## rtCenterFun
+    res2 <- groupChromPeaks(
+        xmse, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                       rtCenterFun = "wMean"))
+    a <- featureDefinitions(res)
+    b <- featureDefinitions(res2)
+    expect_equal(a$rtmin, b$rtmin)
+    expect_equal(a$rtmax, b$rtmax)
+    expect_equal(a$mzmed, b$mzmed)
+    expect_true(sum(a$rtmed != b$rtmed) > 20)
     ## add FALSE
     res2 <- groupChromPeaks(res, param = pdp, add = FALSE)
     ## add TRUE
