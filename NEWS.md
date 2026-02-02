@@ -1,9 +1,10 @@
-# xcms 4.7
+# xcms 4.9
 
-## Changes in version
+## Changes in version 4.9.1
 
 - Fix title of `plotPrecursorIons()` plot.
 
+# xcms 4.7
 
 ## Changes in version 4.7.3
 
