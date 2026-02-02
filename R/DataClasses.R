@@ -1239,7 +1239,8 @@ setClass("PeakDensityParam",
                    minSamples = "numeric",
                    binSize = "numeric",
                    maxFeatures = "numeric",
-                   ppm = "numeric"),
+                   ppm = "numeric",
+                   rtCenterFun = "character"),
          contains = "Param",
          prototype = prototype(
              sampleGroups = numeric(),
@@ -1248,7 +1249,8 @@ setClass("PeakDensityParam",
              minSamples = 1,
              binSize = 0.25,
              ppm = 0,
-             maxFeatures = 50),
+             maxFeatures = 50,
+             rtCenterFun = "median"),
          validity = function(object) {
              msg <- character()
              if (length(object@bw) > 1 | any(object@bw < 0))

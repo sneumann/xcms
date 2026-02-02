@@ -54,11 +54,11 @@ setGeneric("addProcessHistory", function(object, ...)
 #'   manually define a `numeric` matrix with retention times of markers in each
 #'   samples that should be used for alignment. Such a `matrix` can be passed
 #'   to the alignment function using the `peakGroupsMatrix` parameter of the
-#'   `PeakGroupsParam` parameter object. By default the `adjustRtimePeakGroups`
-#'   function is used to define this `matrix`. This function identifies peak
-#'   groups (features) for alignment in `object` based on the parameters defined
-#'   in `param`. See also [do_adjustRtime_peakGroups()] for the core API
-#'   function.
+#'   `PeakGroupsParam` parameter object. By default the
+#'   `adjustRtimePeakGroups()` function is used to define this `matrix`. This
+#'   function identifies peak groups (features) for alignment in `object`
+#'   based on the parameters defined in `param`. See also
+#'   [do_adjustRtime_peakGroups()] for the core API function.
 #'
 #' - `LamaParama`: This function performs retention time correction by aligning
 #'   chromatographic data to an external reference dataset (concept and initial
@@ -1460,7 +1460,7 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'   representing the m/z dependent measurement error of some MS instruments).
 #'   All peaks (from the same or from different samples) with their apex
 #'   position being close on the retention time axis are grouped into a LC-MS
-#'   feature. Only samples with non-missing sample group assignment (i.e. for
+#'   feature. Only samples with non-missing sample group assignment (i.e., for
 #'   which the value provided with parameter `sampleGroups` is different than
 #'   `NA`) are considered and counted for the feature definition. This allows
 #'   to exclude certain samples or groups (e.g. blanks) from the feature
@@ -1545,6 +1545,15 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 #'     all peaks in the data set.
 #'
 #' @param param The parameter object selecting and configuring the algorithm.
+#'
+#' @param rtCenterFun For `PeakDensityParam`: character(1)` specifying the
+#'     function to calculate the reported retention time of a feature
+#'     (i.e., its `"rtmed"`). Defaults to `rtCenterFun = "median"` (the median
+#'     retention time of all chrom peaks per feature is reported) but supports
+#'     also `rtCenterFun = "mean"` or `rtCenterFun = "wMean"` to allow
+#'     reporting the mean or intensity-weighted mean retention time instead (the
+#'     integrated peak intensity `"into"` is used for the intensity-weighted
+#'     mean calculation).
 #'
 #' @param sampleGroups For `PeakDensityParam`: A vector of the same length than
 #'     samples defining the sample group assignments (i.e. which samples
