@@ -60,6 +60,8 @@ test_that("plotPrecursorIons works", {
     a <- readMsExperiment(fl)
     plotPrecursorIons(a, main = "SWATH")
 
+    plotPrecursorIons(a, main = c("a", "b"))
+    plotPrecursorIons(a)
     fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
                       package = "msdata")
     a <- readMsExperiment(fl)

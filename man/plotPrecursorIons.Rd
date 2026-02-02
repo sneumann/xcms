@@ -31,8 +31,8 @@ color if \code{pch = 21}.}
 
 \item{ylab}{\code{character(1)} defining the y-axis label.}
 
-\item{main}{Optional \code{character(1)} with the title for \strong{every} plot. If
-not provided (the default) the base file name will be used for each
+\item{main}{Optional \code{character} with the title for each plot. If
+not provided (the default), the row names of \code{sampleData(x)} are used.
 sample.}
 
 \item{...}{additional parameters to be passed to the \code{plot} calls.}

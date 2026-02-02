@@ -429,8 +429,8 @@ setMethod(
 #'
 #' @param ylab `character(1)` defining the y-axis label.
 #'
-#' @param main Optional `character(1)` with the title for **every** plot. If
-#'     not provided (the default) the base file name will be used for each
+#' @param main Optional `character` with the title for each plot. If
+#'     not provided (the default), the row names of `sampleData(x)` are used.
 #'     sample.
 #'
 #' @param ... additional parameters to be passed to the `plot` calls.
@@ -465,6 +465,11 @@ plotPrecursorIons <- function(x, pch = 21, col = "#00000080",
     if (!inherits(x, "MsExperiment"))
         stop("'x' should be a 'MsExperiment' object or an object of a ",
              "class extending it.")
+    if (length(main)) {
+        if (length(main) != length(x))
+            main <- rep(main[1L], length(x))
+    } else
+        main <- basename(rownames(as.data.frame(sampleData(x))))
     par(mfrow = n2mfrow(length(x)))
     for (i in seq_along(x)) {
         x_sub <- x[i]
