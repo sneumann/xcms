@@ -232,7 +232,7 @@
                                                 diffRt = 0) {
     if (!length(pks) || nrow(pks) < 2)
         return(list(chromPeaks = pks, chromPeakData = pkd))
-    idx <- order(pks[, "rtmin"])
+    idx <- order(pks[, "rtmin"], -pks[, "rtmax"])
     pks <- pks[idx, , drop = FALSE]
     pkd <- pkd[idx, , drop = FALSE]
     rownames(pkd) <- NULL

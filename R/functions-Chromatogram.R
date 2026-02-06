@@ -77,7 +77,7 @@
     if (nrow(pks) < 2 || all(is.na(intensity(x))))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     ## x <- clean(x, all = TRUE)
-    idx <- order(pks[, "rtmin"])
+    idx <- order(pks[, "rtmin"], -pks[, "rtmax"])
     pks <- pks[idx, , drop = FALSE]
     pkd <- extractROWS(pkd, idx)
     cns <- colnames(pks)
