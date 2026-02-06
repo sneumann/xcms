@@ -227,9 +227,10 @@
 #' the m/z range of all candidates that should be evaluated for merging.
 #'
 #' @noRd
+#'
 .merge_neighboring_peak_candidates <- function(x, rt, pks, pkd, minProp = 0.75,
-                                                expandMz = 0, ppm = 10,
-                                                diffRt = 0) {
+                                               expandMz = 0, ppm = 10,
+                                               diffRt = 0) {
     if (!length(pks) || nrow(pks) < 2)
         return(list(chromPeaks = pks, chromPeakData = pkd))
     idx <- order(pks[, "rtmin"])
@@ -249,7 +250,7 @@
     ## full set of peaks based on the m/z min and max of **all** candidate peaks
     ## Adjusting the m/z range for each tested candidate peak individually would
     ## eventually result in wrong intensity estimation. The current approach
-    ## is more greedy, but, using *reasonable* settings it is supposed ot be
+    ## is more greedy, but, using *reasonable* settings it is supposed to be
     ## correct.
     ## The reported m/z range for merged candidates represents the full m/z
     ## range of all intensities considered in the calculation of the "into".
