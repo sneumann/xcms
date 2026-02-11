@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-02-11 12:16:34.218236\
-**Compiled**: Wed Feb 11 13:17:32 2026
+**Modified**: 2026-02-11 12:32:01.259816\
+**Compiled**: Wed Feb 11 13:37:11 2026
 
 ## Introduction
 
@@ -1991,7 +1991,7 @@ metadata(res)
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Feb 11 13:18:04 2026 
+    ##  date: Wed Feb 11 13:37:46 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2000,7 +2000,7 @@ metadata(res)
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Wed Feb 11 13:18:08 2026 
+    ##  date: Wed Feb 11 13:37:52 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -2009,7 +2009,7 @@ metadata(res)
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Feb 11 13:18:20 2026 
+    ##  date: Wed Feb 11 13:38:04 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2018,7 +2018,7 @@ metadata(res)
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Wed Feb 11 13:18:20 2026 
+    ##  date: Wed Feb 11 13:38:04 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -2027,7 +2027,7 @@ metadata(res)
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Feb 11 13:18:24 2026 
+    ##  date: Wed Feb 11 13:38:10 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2036,7 +2036,7 @@ metadata(res)
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Wed Feb 11 13:18:28 2026 
+    ##  date: Wed Feb 11 13:38:14 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -2055,7 +2055,7 @@ processHistory(faahko)[[1]]
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Feb 11 13:18:04 2026 
+    ##  date: Wed Feb 11 13:37:46 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2625,7 +2625,7 @@ sessionInfo()
     ## [11] MsExperiment_1.13.1         ProtGenerics_1.43.0        
     ## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         
     ## [15] pander_0.6.6                faahKO_1.51.0              
-    ## [17] xcms_4.7.3                  BiocParallel_1.45.0        
+    ## [17] xcms_4.9.1                  BiocParallel_1.45.0        
     ## [19] BiocStyle_2.39.0           
     ## 
     ## loaded via a namespace (and not attached):

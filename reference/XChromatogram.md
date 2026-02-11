@@ -771,7 +771,7 @@ processHistory(xchrs)
 #> [[1]]
 #> Object of class "XProcessHistory"
 #>  type: Peak detection 
-#>  date: Wed Feb 11 13:13:54 2026 
+#>  date: Wed Feb 11 13:33:20 2026 
 #>  info:  
 #>  fileIndex: 1,2 
 #>  Parameter class: CentWaveParam 

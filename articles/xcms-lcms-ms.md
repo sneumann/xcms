@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer, Michael Witting\
-**Modified**: 2026-02-11 12:16:34.218236\
-**Compiled**: Wed Feb 11 13:16:58 2026
+**Modified**: 2026-02-11 12:32:01.258816\
+**Compiled**: Wed Feb 11 13:36:35 2026
 
 ## Introduction
 
@@ -222,9 +222,9 @@ dda_spectra
     ## file(s):
     ## PestMix1_DDA.mzML
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:17:10 2026]
-    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:17:17 2026]
-    ##  Merge 1 Spectra into one [Wed Feb 11 13:17:18 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:36:48 2026]
+    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:36:56 2026]
+    ##  Merge 1 Spectra into one [Wed Feb 11 13:36:56 2026]
 
 By default
 [`chromPeakSpectra()`](https://sneumann.github.io/xcms/reference/chromPeakSpectra.md)
@@ -345,9 +345,9 @@ ex_spectra
     ## file(s):
     ## PestMix1_DDA.mzML
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:17:10 2026]
-    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:17:17 2026]
-    ##  Merge 1 Spectra into one [Wed Feb 11 13:17:18 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:36:48 2026]
+    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:36:56 2026]
+    ##  Merge 1 Spectra into one [Wed Feb 11 13:36:56 2026]
 
 There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
@@ -385,9 +385,9 @@ ex_spectrum
     ## 1         2   418.926      3505
     ##  ... 37 more variables/columns.
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:17:10 2026]
-    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:17:17 2026]
-    ##  Merge 1 Spectra into one [Wed Feb 11 13:17:18 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:36:48 2026]
+    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:36:56 2026]
+    ##  Merge 1 Spectra into one [Wed Feb 11 13:36:56 2026]
     ##  ...1 more processings. Use 'processingLog' to list all.
 
 Mass peaks from all input spectra with a difference in m/z smaller 20
@@ -1016,7 +1016,7 @@ swath_spectra
     ## CP62         2   574.942        NA
     ##  ... 20 more variables/columns.
     ## Processing:
-    ##  Merge 1 Spectra into one [Wed Feb 11 13:17:25 2026]
+    ##  Merge 1 Spectra into one [Wed Feb 11 13:37:04 2026]
 
 As a result we got a `Spectra` object of length equal to the number of
 MS1 peaks in our data. The length of a spectrum represents the number of
@@ -1239,9 +1239,9 @@ prochloraz_dda_spectra
     ## file(s):
     ## PestMix1_DDA.mzML
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:17:10 2026]
-    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:17:17 2026]
-    ##  Merge 1 Spectra into one [Wed Feb 11 13:17:18 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Feb 11 13:36:48 2026]
+    ##  Filter: select MS level(s) 2 [Wed Feb 11 13:36:56 2026]
+    ##  Merge 1 Spectra into one [Wed Feb 11 13:36:56 2026]
 
 In total 5 spectra were measured, some with a relatively high number of
 peaks. Next we combine them into a consensus spectrum.
@@ -1445,7 +1445,7 @@ sessionInfo()
     ##  [1] MetaboCoreUtils_1.19.1 MsBackendMgf_1.19.0    MsExperiment_1.13.1   
     ##  [4] ProtGenerics_1.43.0    pander_0.6.6           Spectra_1.21.1        
     ##  [7] S4Vectors_0.49.0       BiocGenerics_0.57.0    generics_0.1.4        
-    ## [10] xcms_4.7.3             BiocParallel_1.45.0    BiocStyle_2.39.0      
+    ## [10] xcms_4.9.1             BiocParallel_1.45.0    BiocStyle_2.39.0      
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] DBI_1.2.3                   rlang_1.1.7                

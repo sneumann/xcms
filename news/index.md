@@ -1,11 +1,13 @@
 # Changelog
 
+## xcms 4.9
+
+### Changes in version 4.9.1
+
+- Add the citation and reference for the new 2025 xcms paper
+
 ## xcms 4.7
 
-### Changes in version 4.7.3
-
-- Fix conversion from `XcmsExperiment` objects to `XCMSnExp` (issue
-  [\#807](https://github.com/sneumann/xcms/issues/807)).
 - Add parameter `columns` to
   [`chromPeakData()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
   to allow extraction of selected columns.

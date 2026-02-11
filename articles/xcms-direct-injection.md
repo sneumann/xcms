@@ -183,7 +183,7 @@ ham_prep
     ##  Number of spectra: 4 
     ##  MSn retention times: -1:59 - -1:59 minutes
     ## - - - Processing information - - -
-    ## Data loaded [Wed Feb 11 13:16:50 2026] 
+    ## Data loaded [Wed Feb 11 13:36:26 2026] 
     ##  MSnbase version: 2.37.0 
     ## - - - Meta data  - - -
     ## phenoData
@@ -406,7 +406,7 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MassSpecWavelet_1.77.0 xcms_4.7.3             BiocParallel_1.45.0   
+    ##  [1] MassSpecWavelet_1.77.0 xcms_4.9.1             BiocParallel_1.45.0   
     ##  [4] MSnbase_2.37.0         ProtGenerics_1.43.0    S4Vectors_0.49.0      
     ##  [7] mzR_2.45.0             Rcpp_1.1.1             Biobase_2.71.0        
     ## [10] BiocGenerics_0.57.0    generics_0.1.4         BiocStyle_2.39.0      

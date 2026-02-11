@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-02-11 12:16:34.217236\
-**Compiled**: Wed Feb 11 13:16:01 2026
+**Modified**: 2026-02-11 12:32:01.258816\
+**Compiled**: Wed Feb 11 13:35:33 2026
 
 ## Introduction
 
@@ -845,7 +845,7 @@ sessionInfo()
     ##  [1] pheatmap_1.0.13     faahKO_1.51.0       MSnbase_2.37.0     
     ##  [4] ProtGenerics_1.43.0 S4Vectors_0.49.0    mzR_2.45.0         
     ##  [7] Rcpp_1.1.1          Biobase_2.71.0      BiocGenerics_0.57.0
-    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.7.3         
+    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.9.1         
     ## [13] BiocParallel_1.45.0 BiocStyle_2.39.0   
     ## 
     ## loaded via a namespace (and not attached):
