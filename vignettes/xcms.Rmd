@@ -50,21 +50,22 @@ and has since been updated and modernized in several rounds to better integrate
 it with other R-based packages for the analysis of untargeted metabolomics
 data. This includes version 3 of *xcms* that used the `r Biocpkg("MSnbase")`
 package for MS data representation [@gattoMSnbaseEfficientElegant2020a]. The
-most recent update (*xcms* version 4) enables in addition preprocessing of MS
-data represented by the modern `r Biocpkg("MsExperiment")` and
-`r Biocpkg("Spectra")` packages which provides an even better integration with
-the [RforMassSpectrometry](https://rformassspectrometry.org) R package ecosystem
-simplifying e.g. also compound annotation [@rainer_modular_2022].
+most recent update (*xcms* version 4) [@louail_xcms_2025] enables in addition
+preprocessing of MS data represented by the modern `r Biocpkg("MsExperiment")`
+and `r Biocpkg("Spectra")` packages which provides an even better integration
+with the [RforMassSpectrometry](https://rformassspectrometry.org) R package
+ecosystem simplifying e.g. also compound annotation [@rainer_modular_2022].
 
 This document describes data import, exploration and preprocessing of a simple
-test LC-MS data set with the *xcms* package version >= 4. The same functions can
-be applied to the older *MSnbase*-based workflows (xcms version 3). Additional
-documents and tutorials covering also other topics of untargeted metabolomics
-analysis are listed at the end of this document. An extensive collection of
-metabolomics data analysis tutorials, also including a complete end-to-end data
-analysis workflow as well as an example analysis of a very large-scale
-experiment using the new *on-disk* *xcms* result object is available at the
-[Metabonaut website](https://rformassspectrometry.github.io/Metabonaut/).
+test LC-MS data set with the *xcms* package version >= 4
+[@louail_xcms_2025]. The same functions can be applied to the older
+*MSnbase*-based workflows (xcms version 3). Additional documents and tutorials
+covering also other topics of untargeted metabolomics analysis are listed at the
+end of this document. An extensive collection of metabolomics data analysis
+tutorials, also including a complete end-to-end data analysis workflow as well
+as an example analysis of a very large-scale experiment using the new *on-disk*
+*xcms* result object is available at the [Metabonaut
+website](https://rformassspectrometry.github.io/Metabonaut/).
 
 
 # Preprocessing of LC-MS data

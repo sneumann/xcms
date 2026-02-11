@@ -1,6 +1,28 @@
 citHeader("To cite the XCMS package in publications use:")
 
 citEntry(entry="article",
+         author=personList(
+             as.person("Philippine Louail"),
+             as.person("Carl Brunius"),
+             as.person("Mar Garcia-Aloy"),
+             as.person("William Kumler"),
+             as.person("Norman Storz"),
+             as.person("Jan Stanstrup"),
+             as.person("Hendrik Treutler"),
+             as.person("Pablo Vangeenderhuysen"),
+             as.person("Michael Witting"),
+             as.person("Steffen Neumann"),
+             as.person("Johannes Rainer")),
+   title="xcms in Peak Form: Now Anchoring a Complete Metabolomics Data Preprocessing and Analysis Software Ecosystem",
+   journal="Analytical Chemistry",
+   year="2025",
+   doi = "10.1021/acs.analchem.5c04338",
+   URL = "https://doi.org/10.1021/acs.analchem.5c04338",
+   textVersion = paste("Philippine Louail, Carl Brunius, Mar Garcia-Aloy, William Kumler, Norman Storz, Jan Stanstrup, Hendrik Treutler, Pablo Vangeenderhuysen, Michael Witting, Steffen Neumann, and Johannes Rainer:",
+                       "xcms in Peak Form: Now Anchoring a Complete Metabolomics Data Preprocessing and Analysis Software Ecosystem",
+		       "Analytical Chemistry, (2025), DOI:10.1021/acs.analchem.5c04338"))
+
+citEntry(entry="article",
    author="Smith, C.A. and Want, E.J. and O'Maille, G. and Abagyan,R. and Siuzdak, G.",
    title="XCMS: Processing mass spectrometry data for metabolite profiling using nonlinear peak alignment, matching and identification",
    journal="Analytical Chemistry",
