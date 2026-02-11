@@ -1,16 +1,19 @@
 # xcms 4.9
 
-## Changes in version 4.9.1
+## Changes in version 4.9.2
 
 - Fix title of `plotPrecursorIons()` plot.
 - Add parameter `rtCenterFun` to `PeakDensityParam()` to support specifying the
   function to calculate the reported retention time of a feature (`"rtmed"`).
 
+## Changes in version 4.9.1
+
+- Add the citation and reference for the new 2025 xcms paper
+
 # xcms 4.7
 
 ## Changes in version 4.7.3
 
-- Fix conversion from `XcmsExperiment` objects to `XCMSnExp` (issue #807).
 - Add parameter `columns` to `chromPeakData()` to allow extraction of selected
   columns.
 - Add support for parameter `skipFilled` to `featureSpectra()` for
