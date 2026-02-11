@@ -1,0 +1,1016 @@
+# Welcome to the home of *xcms*!
+
+The *xcms* R package provides functionality to efficiently preprocess
+LC-MS (as well as GC-MS and LC-MS/MS) data. Please see the [package
+documentation](https://sneumann.github.io/xcms/) for more information
+and examples and [news](https://sneumann.github.io/xcms/inst/NEWS) for
+the latest changes. An example preprocessing workflow is shown in the
+[main package
+vignette](https://sneumann.github.io/xcms/articles/xcms.html). See also
+the excellent
+[Metabonaut](https://rformassspectrometry.github.io/Metabonaut/)
+resource for a more detailed and complete *end-to-end* data analysis
+workflow for LC-MS/MS data.
+
+If you use *xcms* in your research, please cite the new 2025 manuscript
+*“xcms in Peak Form: Now Anchoring a Complete Metabolomics Data
+Preprocessing and Analysis Software Ecosystem”*
+\[[10.1021/acs.analchem.5c04338](https://doi.org/10.1021/acs.analchem.5c04338)\].
+
+## Installation
+
+*xcms* is part of [Bioconductor](https://bioconductor.org) and relies
+and integrates with various Bioconductor packages. The preferred way to
+install *xcms* is using the *BiocManager* package, that will install the
+latest **stable** version of *xcms* and ensures all required packages
+from the **same** Bioconductor release are installed and available as
+well:
+
+``` r
+
+install.packages()
+```
+
+## Version 4
+
+Version 4 adds native support for the
+[Spectra](https://github.com/RforMassSpectrometry/Spectra) package to
+`xcms` and allows to perform the pre-processing on `MsExperiment`
+objects (from the
+[MsExperiment](https://github.com/RforMassSpectrometry/MsExperiment).
+The new supported data containers (`Spectra`, `MsExperiment` and
+`XcmsExperiment`) allow more flexible analyses and seamless future
+extensions to additional types of data (such as ion mobility data).
+Ultimately, these changes will also allow easier integration of `xcms`
+with other R packages such as
+[MsFeatures](https://github.com/RforMassSpectrometry/MsFeatures) or
+[MetaboAnnotation](https://github.com/RforMassSpectrometry/MetaboAnnotation).
+
+While it is suggested that users switch to the newer data and result
+objects, all functionality from version 3 and before remain fully
+supported.
+
+## Version 3
+
+Version \>= 3 of the `xcms` package are updated and partially re-written
+versions of the original `xcms` package. The version number *3* was
+selected to avoid confusions with the `xcms2`
+(<http://pubs.acs.org/doi/abs/10.1021/ac800795f>) software. While
+providing all of the original software’s functionality, `xcms` version
+\>= 3 aims at:
+
+1.  Better integration into the Bioconductor framework:
+
+- Make use and extend classes defined in the `MSnbase` package.
+- Implement class versioning (Biobase’s `Versioned` class).
+- Use `BiocParallel` for parallel processing.
+
+2.  Implementation of validation methods for all classes to ensure data
+    integrity.
+3.  Easier and faster access to raw spectra data.
+4.  Cleanup of the source code:
+
+- Remove obsolete and redundant functionality (`getEIC`, `rawEIC` etc).
+- Unify interfaces, i.e. implement a layer of base functions accessing
+  all analysis methods (which are implemented in C, C++ or R).
+
+5.  Using a more consistent naming scheme of methods that follows
+    established naming conventions (e.g. `correspondence` instead of
+    `grouping`).
+6.  Update, improve and extend the documentation.
+7.  Establishing a layer of base R-functions that interface all analysis
+    methods. These should take M/Z, retention time (or scan index) and
+    intensity values as input along with optional arguments for the
+    downstream functions (implemented in C, C++ or R). The input
+    arguments should be basic R objects (numeric vectors) thus enabling
+    easy integration of analysis methods in other R packages.
+8.  The user interface’s analysis methods should take the (raw) data
+    object and a parameter class, that is used for dispatching to the
+    corresponding analysis algorithm.
+9.  Add unit tests.
+
+Discussions and suggestions are welcome:
+<https://github.com/sneumann/xcms/issues>
+
+## Contribution
+
+Contributions to the *xcms* package are more than welcome, whether under
+the form of ideas, documentation, code, packages, … For a contribution
+guideline please see the [guideline for the RforMassSpectrometry
+initiative](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#contributions).
+For a seamless integration, contributors are expected to adhere to the
+[RforMassSpectrometry coding
+syle](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style).
+
+## Code of Conduct
+
+As contributors and maintainers of the package, we pledge to respect all
+people who contribute through reporting issues, posting feature
+requests, updating documentation, submitting pull requests or patches,
+and other activities. See the [RforMassSpectrometry Code of
+Conduct](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#code-of-conduct)
+for more information.
+
+# Package index
+
+## All functions
+
+- [`AutoLockMass`](https://sneumann.github.io/xcms/reference/AutoLockMass-methods.md)
+  [`AutoLockMass-methods`](https://sneumann.github.io/xcms/reference/AutoLockMass-methods.md)
+  [`AutoLockMass,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/AutoLockMass-methods.md)
+  :
+
+  Automatic parameter for Lock mass fixing `AutoLockMass` \~~
+
+- [`BlankFlag()`](https://sneumann.github.io/xcms/reference/BlankFlag.md)
+  [`filterFeatures(`*`<XcmsResult>`*`,`*`<BlankFlag>`*`)`](https://sneumann.github.io/xcms/reference/BlankFlag.md)
+  [`filterFeatures(`*`<SummarizedExperiment>`*`,`*`<BlankFlag>`*`)`](https://sneumann.github.io/xcms/reference/BlankFlag.md)
+  : Flag features based on the intensity in blank samples
+
+- [`DratioFilter()`](https://sneumann.github.io/xcms/reference/DratioFilter.md)
+  [`filterFeatures(`*`<XcmsResult>`*`,`*`<DratioFilter>`*`)`](https://sneumann.github.io/xcms/reference/DratioFilter.md)
+  [`filterFeatures(`*`<SummarizedExperiment>`*`,`*`<DratioFilter>`*`)`](https://sneumann.github.io/xcms/reference/DratioFilter.md)
+  : Filter features based on the dispersion ratio
+
+- [`GenericParam()`](https://sneumann.github.io/xcms/reference/GenericParam.md)
+  : Generic parameter class
+
+- [`adjustRtime(`*`<XcmsExperiment>`*`,`*`<LamaParama>`*`)`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  [`matchLamasChromPeaks()`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  [`summarizeLamaMatch()`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  [`matchedRtimes()`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  [`LamaParama()`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  [`plot(`*`<LamaParama>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/LamaParama.md)
+  : Landmark-based alignment: aligning a dataset against an external
+  reference
+
+- [`PercentMissingFilter()`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)
+  [`filterFeatures(`*`<XcmsResult>`*`,`*`<PercentMissingFilter>`*`)`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)
+  [`filterFeatures(`*`<SummarizedExperiment>`*`,`*`<PercentMissingFilter>`*`)`](https://sneumann.github.io/xcms/reference/PercentMissingFilter.md)
+  : Filter features based on the percentage of missing data
+
+- [`processParam(`*`<XProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  [`msLevel(`*`<XProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  [`processType(`*`<ProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  [`processDate(`*`<ProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  [`processInfo(`*`<ProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  [`fileIndex(`*`<ProcessHistory>`*`)`](https://sneumann.github.io/xcms/reference/ProcessHistory-class.md)
+  : Tracking data processing
+
+- [`RsdFilter()`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+  [`filterFeatures(`*`<XcmsResult>`*`,`*`<RsdFilter>`*`)`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+  [`filterFeatures(`*`<SummarizedExperiment>`*`,`*`<RsdFilter>`*`)`](https://sneumann.github.io/xcms/reference/RsdFilter.md)
+  : Filter features based on their coefficient of variation
+
+- [`SSgauss()`](https://sneumann.github.io/xcms/reference/SSgauss.md) :
+  Gaussian Model
+
+- [`processHistoryTypes()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`hasFilledChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`profMat(`*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`hasAdjustedRtime(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`hasFeatures(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`hasChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`adjustedRtime(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`` `adjustedRtime<-`( ``*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`featureDefinitions(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`` `featureDefinitions<-`( ``*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`chromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`` `chromPeaks<-`( ``*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`rtime(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`mz(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`intensity(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`spectra(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`processHistory(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`dropChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`dropFeatureDefinitions(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`dropAdjustedRtime(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`profMat(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`findChromPeaks(`*`<XCMSnExp>`*`,`*`<Param>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`dropFilledChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`spectrapply(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`c(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`chromPeakData(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`` `chromPeakData<-`( ``*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  [`plot(`*`<XCMSnExp>`*`,`*`<missing>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)
+  : Data container storing xcms preprocessing results
+
+- [`` `[`( ``*`<XCMSnExp>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`` `[[`( ``*`<XCMSnExp>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterMsLevel(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterFile(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterMz(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterRt(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`split(`*`<XCMSnExp>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterChromPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  [`filterFeatureDefinitions(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-filter-methods.md)
+  : XCMSnExp filtering and subsetting
+
+- [`bin(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`clean(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`filterAcquisitionNum(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`normalize(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`pickPeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`removePeaks(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  [`smooth(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-inherited-methods.md)
+  : XCMSnExp data manipulation methods inherited from MSnbase
+
+- [`quantify(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)
+  [`featureValues(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/XCMSnExp-peak-grouping-results.md)
+  : Accessing mz-rt feature data values
+
+- [`XChromatograms()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`XChromatogram()`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`chromPeaks(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`` `chromPeaks<-`( ``*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`plot(`*`<XChromatogram>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterMz(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterRt(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`hasChromPeaks(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`dropFilledChromPeaks(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`chromPeakData(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`` `chromPeakData<-`( ``*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`refineChromPeaks(`*`<XChromatogram>`*`,`*`<MergeNeighboringPeaksParam>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterChromPeaks(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`transformIntensity(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`hasChromPeaks(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`hasFilledChromPeaks(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`chromPeaks(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`chromPeakData(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterMz(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterRt(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`plot(`*`<XChromatograms>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`processHistory(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`hasFeatures(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`dropFeatureDefinitions(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`groupChromPeaks(`*`<XChromatograms>`*`,`*`<PeakDensityParam>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`featureDefinitions(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`` `[`( ``*`<XChromatograms>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`featureValues(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`plotChromPeakDensity(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`dropFilledChromPeaks(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`refineChromPeaks(`*`<XChromatograms>`*`,`*`<MergeNeighboringPeaksParam>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`filterChromPeaks(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  [`transformIntensity(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/XChromatogram.md)
+  : Containers for chromatographic and peak detection data
+
+- [`filterFeatureDefinitions()`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterRt(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterMzRange(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterMz(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterMsLevel(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`uniqueMsLevels(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterFile(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`rtime(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`fromFile(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`fileNames(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`polarity(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterIsolationWindow(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`chromatogram(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`plot(`*`<MsExperiment>`*`,`*`<missing>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`c(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`` `[`( ``*`<XcmsExperiment>`*`,`*`<ANY>`*`,`*`<ANY>`*`,`*`<ANY>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterIsolationWindow(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterRt(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterMzRange(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterMsLevel(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`hasChromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`dropChromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`` `chromPeaks<-`( ``*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`chromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`` `chromPeakData<-`( ``*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`chromPeakData(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterChromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`dropAdjustedRtime(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`hasAdjustedRtime(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`rtime(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`adjustedRtime(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`hasFeatures(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`featureArea(`*`<XcmsResult>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`` `featureDefinitions<-`( ``*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`featureDefinitions(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`dropFeatureDefinitions(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`hasFilledChromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`dropFilledChromPeaks(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`quantify(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`featureValues(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`chromatogram(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`processHistory(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  [`filterFile(`*`<XcmsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperiment.md)
+  :
+
+  Next Generation `xcms` Result Object
+
+- [`toXcmsExperimentHdf5()`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`toXcmsExperiment()`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`chromPeakData(`*`<XcmsExperimentHdf5>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`filterChromPeaks(`*`<XcmsExperimentHdf5>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`adjustRtimePeakGroups(`*`<XcmsExperimentHdf5>`*`,`*`<PeakGroupsParam>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  [`filterFeatureDefinitions(`*`<XcmsExperimentHdf5>`*`)`](https://sneumann.github.io/xcms/reference/XcmsExperimentHdf5.md)
+  : xcms result object for very large data sets
+
+- [`absent`](https://sneumann.github.io/xcms/reference/absent-methods.md)
+  [`absent,xcmsSet-method`](https://sneumann.github.io/xcms/reference/absent-methods.md)
+  [`present`](https://sneumann.github.io/xcms/reference/absent-methods.md)
+  [`present,xcmsSet-method`](https://sneumann.github.io/xcms/reference/absent-methods.md)
+  : Determine which peaks are absent / present in a sample class
+
+- [`adjustRtime()`](https://sneumann.github.io/xcms/reference/adjustRtime.md)
+  [`adjustRtimePeakGroups()`](https://sneumann.github.io/xcms/reference/adjustRtime.md)
+  [`PeakGroupsParam()`](https://sneumann.github.io/xcms/reference/adjustRtime.md)
+  [`ObiwarpParam()`](https://sneumann.github.io/xcms/reference/adjustRtime.md)
+  [`` `binSize<-`( ``*`<ObiwarpParam>`*`)`](https://sneumann.github.io/xcms/reference/adjustRtime.md)
+  : Alignment: Retention time correction methods.
+
+- [`applyAdjustedRtime()`](https://sneumann.github.io/xcms/reference/applyAdjustedRtime.md)
+  : Replace raw with adjusted retention times
+
+- [`binYonX()`](https://sneumann.github.io/xcms/reference/binYonX.md) :
+  Aggregate values in y for bins defined on x
+
+- [`breaks_on_binSize()`](https://sneumann.github.io/xcms/reference/breaks_on_binSize.md)
+  : Generate breaks for binning using a defined bin size.
+
+- [`breaks_on_nBins()`](https://sneumann.github.io/xcms/reference/breaks_on_nBins.md)
+  : Generate breaks for binning
+
+- [`c.xcmsSet`](https://sneumann.github.io/xcms/reference/c.xcmsSet.md)
+  [`c, c-methods`](https://sneumann.github.io/xcms/reference/c.xcmsSet.md)
+  : Combine xcmsSet objects
+
+- [`CalibrantMassParam()`](https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.md)
+  [`isCalibrated()`](https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.md)
+  [`calibrate(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/calibrate-calibrant-mass.md)
+  : Calibrant mass based calibration of chromatgraphic peaks
+
+- [`calibrate`](https://sneumann.github.io/xcms/reference/calibrate.md)
+  [`calibrate,xcmsSet-method`](https://sneumann.github.io/xcms/reference/calibrate.md)
+  : Calibrate peaks for correcting unprecise m/z values
+
+- [`chromPeakChromatograms()`](https://sneumann.github.io/xcms/reference/chromPeakChromatograms.md)
+  : Extract an ion chromatogram for each chromatographic peak
+
+- [`chromPeakSpectra()`](https://sneumann.github.io/xcms/reference/chromPeakSpectra.md)
+  : Extract spectra associated with chromatographic peaks
+
+- [`chromPeakSummary()`](https://sneumann.github.io/xcms/reference/chromPeakSummary.md)
+  [`BetaDistributionParam()`](https://sneumann.github.io/xcms/reference/chromPeakSummary.md)
+  : Chromatographic peak summaries
+
+- [`chromatogram(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/chromatogram-method.md)
+  : Extracting chromatograms
+
+- [`collect-methods`](https://sneumann.github.io/xcms/reference/collect-methods.md)
+  [`collect`](https://sneumann.github.io/xcms/reference/collect-methods.md)
+  [`collect,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/collect-methods.md)
+  [`collect,xcmsFragments-method`](https://sneumann.github.io/xcms/reference/collect-methods.md)
+  : Collect MS^n peaks into xcmsFragments
+
+- [`correlate(`*`<Chromatogram>`*`,`*`<Chromatogram>`*`)`](https://sneumann.github.io/xcms/reference/correlate-Chromatogram.md)
+  [`correlate(`*`<MChromatograms>`*`,`*`<missing>`*`)`](https://sneumann.github.io/xcms/reference/correlate-Chromatogram.md)
+  [`correlate(`*`<MChromatograms>`*`,`*`<MChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/correlate-Chromatogram.md)
+  : Correlate chromatograms
+
+- [`diffreport`](https://sneumann.github.io/xcms/reference/diffreport-methods.md)
+  [`diffreport,xcmsSet-method`](https://sneumann.github.io/xcms/reference/diffreport-methods.md)
+  : Create report of analyte differences
+
+- [`dirname(`*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/dirname.md)
+  [`` `dirname<-`( ``*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/dirname.md)
+  :
+
+  Change the file path of an `OnDiskMSnExp` object
+
+- [`do_adjustRtime_peakGroups()`](https://sneumann.github.io/xcms/reference/do_adjustRtime_peakGroups.md)
+  : Align spectrum retention times across samples using peak groups
+  found in most samples
+
+- [`do_findChromPeaks_centWave()`](https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWave.md)
+  : Core API function for centWave peak detection
+
+- [`do_findChromPeaks_centWaveWithPredIsoROIs()`](https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWaveWithPredIsoROIs.md)
+  [`do_findChromPeaks_addPredIsoROIs()`](https://sneumann.github.io/xcms/reference/do_findChromPeaks_centWaveWithPredIsoROIs.md)
+  : Core API function for two-step centWave peak detection with isotopes
+
+- [`do_findChromPeaks_massifquant()`](https://sneumann.github.io/xcms/reference/do_findChromPeaks_massifquant.md)
+  : Core API function for massifquant peak detection
+
+- [`do_findChromPeaks_matchedFilter()`](https://sneumann.github.io/xcms/reference/do_findChromPeaks_matchedFilter.md)
+  : Core API function for matchedFilter peak detection
+
+- [`do_findPeaks_MSW()`](https://sneumann.github.io/xcms/reference/do_findPeaks_MSW.md)
+  : Core API function for single-spectrum non-chromatography MS data
+  peak detection
+
+- [`do_groupChromPeaks_density()`](https://sneumann.github.io/xcms/reference/do_groupChromPeaks_density.md)
+  : Core API function for peak density based chromatographic peak
+  grouping
+
+- [`do_groupChromPeaks_nearest()`](https://sneumann.github.io/xcms/reference/do_groupChromPeaks_nearest.md)
+  : Core API function for chromatic peak grouping using a nearest
+  neighbor approach
+
+- [`do_groupPeaks_mzClust()`](https://sneumann.github.io/xcms/reference/do_groupPeaks_mzClust.md)
+  : Core API function for peak grouping using mzClust
+
+- [`estimatePrecursorIntensity(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/estimatePrecursorIntensity.md)
+  [`estimatePrecursorIntensity(`*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/estimatePrecursorIntensity.md)
+  : Estimate precursor intensity for MS level 2 spectra
+
+- [`etg()`](https://sneumann.github.io/xcms/reference/etg.md) :
+  Empirically Transformed Gaussian function
+
+- [`exportMetaboAnalyst()`](https://sneumann.github.io/xcms/reference/exportMetaboAnalyst.md)
+  : Export data for use in MetaboAnalyst
+
+- [`extractMsData(`*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/extractMsData-method.md)
+  [`extractMsData(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/extractMsData-method.md)
+  :
+
+  DEPRECATED: Extract a `data.frame` containing MS data
+
+- [`featureGroups(`*`<XcmsResult>`*`)`](https://sneumann.github.io/xcms/reference/feature-grouping.md)
+  [`` `featureGroups<-`( ``*`<XcmsResult>`*`)`](https://sneumann.github.io/xcms/reference/feature-grouping.md)
+  : Compounding of LC-MS features
+
+- [`featureChromatograms()`](https://sneumann.github.io/xcms/reference/featureChromatograms.md)
+  : Extract ion chromatograms for each feature
+
+- [`featureSpectra()`](https://sneumann.github.io/xcms/reference/featureSpectra.md)
+  : Extract spectra associated with features
+
+- [`featureSummary()`](https://sneumann.github.io/xcms/reference/featureSummary.md)
+  : Simple feature summaries
+
+- [`fillChromPeaks()`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)
+  [`FillChromPeaksParam()`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)
+  [`ChromPeakAreaParam()`](https://sneumann.github.io/xcms/reference/fillChromPeaks.md)
+  : Gap Filling
+
+- [`fillPeaks`](https://sneumann.github.io/xcms/reference/fillPeaks-methods.md)
+  [`fillPeaks,xcmsSet-method`](https://sneumann.github.io/xcms/reference/fillPeaks-methods.md)
+  : Integrate areas of missing peaks
+
+- [`fillPeaks.MSW`](https://sneumann.github.io/xcms/reference/fillPeaks.MSW-methods.md)
+  [`fillPeaks.MSW,xcmsSet-method`](https://sneumann.github.io/xcms/reference/fillPeaks.MSW-methods.md)
+  : Integrate areas of missing peaks in FTICR-MS data
+
+- [`fillPeaks.chrom`](https://sneumann.github.io/xcms/reference/fillPeaks.chrom-methods.md)
+  [`fillPeaks.chrom,xcmsSet-method`](https://sneumann.github.io/xcms/reference/fillPeaks.chrom-methods.md)
+  : Integrate areas of missing peaks
+
+- [`filterColumnsIntensityAbove(`*`<MChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/filter-MChromatograms.md)
+  [`filterColumnsKeepTop(`*`<MChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/filter-MChromatograms.md)
+  [`filterColumnsIntensityAbove(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/filter-MChromatograms.md)
+  [`filterColumnsKeepTop(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/filter-MChromatograms.md)
+  : Filtering sets of chromatographic data
+
+- [`filterFeatures`](https://sneumann.github.io/xcms/reference/filterFeatures.md)
+  : Filtering of features based on conventional quality assessment
+
+- [`findChromPeaks(`*`<Chromatogram>`*`,`*`<CentWaveParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-CentWaveParam.md)
+  [`findChromPeaks(`*`<MChromatograms>`*`,`*`<CentWaveParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-CentWaveParam.md)
+  [`findChromPeaks(`*`<MChromatograms>`*`,`*`<MatchedFilterParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-CentWaveParam.md)
+  : centWave-based peak detection in purely chromatographic data
+
+- [`findChromPeaks(`*`<Chromatogram>`*`,`*`<MatchedFilterParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-Chromatogram-MatchedFilter.md)
+  : matchedFilter-based peak detection in purely chromatographic data
+
+- [`CentWaveParam()`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.md)
+  [`findChromPeaks(`*`<OnDiskMSnExp>`*`,`*`<CentWaveParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.md)
+  [`as.list(`*`<CentWaveParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWave.md)
+  : Chromatographic peak detection using the centWave method
+
+- [`CentWavePredIsoParam()`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWaveWithPredIsoROIs.md)
+  [`findChromPeaks(`*`<OnDiskMSnExp>`*`,`*`<CentWavePredIsoParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-centWaveWithPredIsoROIs.md)
+  : Two-step centWave peak detection considering also isotopes
+
+- [`MassifquantParam()`](https://sneumann.github.io/xcms/reference/findChromPeaks-massifquant.md)
+  [`findChromPeaks(`*`<OnDiskMSnExp>`*`,`*`<MassifquantParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-massifquant.md)
+  : Chromatographic peak detection using the massifquant method
+
+- [`MatchedFilterParam()`](https://sneumann.github.io/xcms/reference/findChromPeaks-matchedFilter.md)
+  [`findChromPeaks(`*`<OnDiskMSnExp>`*`,`*`<MatchedFilterParam>`*`)`](https://sneumann.github.io/xcms/reference/findChromPeaks-matchedFilter.md)
+  : Peak detection in the chromatographic time domain
+
+- [`findChromPeaks()`](https://sneumann.github.io/xcms/reference/findChromPeaks.md)
+  : Chromatographic Peak Detection
+
+- [`findChromPeaksIsolationWindow()`](https://sneumann.github.io/xcms/reference/findChromPeaksIsolationWindow.md)
+  : Data independent acquisition (DIA): peak detection in isolation
+  windows
+
+- [`findMZ()`](https://sneumann.github.io/xcms/reference/findMZ.md) :
+  Find fragment ions in xcmsFragment objects
+
+- [`MSWParam()`](https://sneumann.github.io/xcms/reference/findPeaks-MSW.md)
+  [`findChromPeaks(`*`<OnDiskMSnExp>`*`,`*`<MSWParam>`*`)`](https://sneumann.github.io/xcms/reference/findPeaks-MSW.md)
+  : Single-spectrum non-chromatography MS data peak detection
+
+- [`findPeaks-methods`](https://sneumann.github.io/xcms/reference/findPeaks-methods.md)
+  [`findPeaks`](https://sneumann.github.io/xcms/reference/findPeaks-methods.md)
+  [`findPeaks,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks-methods.md)
+  : Feature detection for GC/MS and LC/MS Data - methods
+
+- [`findPeaks.MS1`](https://sneumann.github.io/xcms/reference/findPeaks.MS1-methods.md)
+  [`findPeaks.MS1,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks.MS1-methods.md)
+  : Collecting MS1 precursor peaks
+
+- [`findPeaks.MSW(`*`<xcmsRaw>`*`)`](https://sneumann.github.io/xcms/reference/findPeaks.MSW-xcmsRaw-method.md)
+  : Peak detection for single-spectrum non-chromatography MS data
+
+- [`findPeaks.addPredictedIsotopeFeatures`](https://sneumann.github.io/xcms/reference/findPeaks.addPredictedIsotopeFeatures-methods.md)
+  [`findPeaks.addPredictedIsotopeFeatures,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks.addPredictedIsotopeFeatures-methods.md)
+  : Feature detection based on predicted isotope features for high
+  resolution LC/MS data
+
+- [`findPeaks.centWave`](https://sneumann.github.io/xcms/reference/findPeaks.centWave-methods.md)
+  [`findPeaks.centWave,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks.centWave-methods.md)
+  : Feature detection for high resolution LC/MS data
+
+- [`findPeaks.centWaveWithPredictedIsotopeROIs`](https://sneumann.github.io/xcms/reference/findPeaks.centWaveWithPredictedIsotopeROIs-methods.md)
+  [`findPeaks.centWaveWithPredictedIsotopeROIs,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks.centWaveWithPredictedIsotopeROIs-methods.md)
+  : Feature detection with centWave and additional isotope features
+
+- [`findPeaks.massifquant`](https://sneumann.github.io/xcms/reference/findPeaks.massifquant-methods.md)
+  [`findPeaks.massifquant,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/findPeaks.massifquant-methods.md)
+  : Feature detection for XC-MS data.
+
+- [`findPeaks.matchedFilter(`*`<xcmsRaw>`*`)`](https://sneumann.github.io/xcms/reference/findPeaks.matchedFilter-xcmsRaw-method.md)
+  : Peak detection in the chromatographic time domain
+
+- [`findneutral()`](https://sneumann.github.io/xcms/reference/findneutral.md)
+  : Find neutral losses in xcmsFragment objects
+
+- [`getEIC`](https://sneumann.github.io/xcms/reference/getEIC-methods.md)
+  [`getEIC,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/getEIC-methods.md)
+  [`getEIC,xcmsSet-method`](https://sneumann.github.io/xcms/reference/getEIC-methods.md)
+  : Get extracted ion chromatograms for specified m/z ranges
+
+- [`getPeaks`](https://sneumann.github.io/xcms/reference/getPeaks-methods.md)
+  [`getPeaks,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/getPeaks-methods.md)
+  : Get peak intensities for specified regions
+
+- [`getScan`](https://sneumann.github.io/xcms/reference/getScan-methods.md)
+  [`getScan,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/getScan-methods.md)
+  [`getMsnScan`](https://sneumann.github.io/xcms/reference/getScan-methods.md)
+  [`getMsnScan,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/getScan-methods.md)
+  : Get m/z and intensity values for a single mass scan
+
+- [`getSpec`](https://sneumann.github.io/xcms/reference/getSpec-methods.md)
+  [`getSpec,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/getSpec-methods.md)
+  : Get average m/z and intensity values for multiple mass scans
+
+- [`getXcmsRaw`](https://sneumann.github.io/xcms/reference/getXcmsRaw-methods.md)
+  [`getXcmsRaw,xcmsSet-method`](https://sneumann.github.io/xcms/reference/getXcmsRaw-methods.md)
+  : Load the raw data for one or more files in the xcmsSet
+
+- [`group-methods`](https://sneumann.github.io/xcms/reference/group-methods.md)
+  [`group`](https://sneumann.github.io/xcms/reference/group-methods.md)
+  [`group,xcmsSet-method`](https://sneumann.github.io/xcms/reference/group-methods.md)
+  : Group peaks from different samples together
+
+- [`group.density`](https://sneumann.github.io/xcms/reference/group.density.md)
+  [`group.density,xcmsSet-method`](https://sneumann.github.io/xcms/reference/group.density.md)
+  : Group peaks from different samples together
+
+- [`group.mzClust`](https://sneumann.github.io/xcms/reference/group.mzClust.md)
+  [`group.mzClust,xcmsSet-method`](https://sneumann.github.io/xcms/reference/group.mzClust.md)
+  : Group Peaks via High Resolution Alignment
+
+- [`group.nearest`](https://sneumann.github.io/xcms/reference/group.nearest.md)
+  [`group.nearest,xcmsSet-method`](https://sneumann.github.io/xcms/reference/group.nearest.md)
+  : Group peaks from different samples together
+
+- [`groupChromPeaks()`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  [`PeakDensityParam()`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  [`MzClustParam()`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  [`NearestPeaksParam()`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  [`as.list(`*`<PeakDensityParam>`*`)`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  : Correspondence: group chromatographic peaks across samples
+
+- [`groupFeatures(`*`<XcmsResult>`*`,`*`<AbundanceSimilarityParam>`*`)`](https://sneumann.github.io/xcms/reference/groupFeatures-abundance-correlation.md)
+  : Compounding/feature grouping based on similarity of abundances
+  across samples
+
+- [`EicSimilarityParam()`](https://sneumann.github.io/xcms/reference/groupFeatures-eic-similarity.md)
+  [`groupFeatures(`*`<XcmsResult>`*`,`*`<EicSimilarityParam>`*`)`](https://sneumann.github.io/xcms/reference/groupFeatures-eic-similarity.md)
+  : Compounding/feature grouping based on similarity of extracted ion
+  chromatograms
+
+- [`groupFeatures(`*`<XcmsResult>`*`,`*`<SimilarRtimeParam>`*`)`](https://sneumann.github.io/xcms/reference/groupFeatures-similar-rtime.md)
+  : Compounding/feature grouping based on similar retention times
+
+- [`groupOverlaps()`](https://sneumann.github.io/xcms/reference/groupOverlaps.md)
+  : Group overlapping ranges
+
+- [`groupnames(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/groupnames-XCMSnExp.md)
+  : Generate unique group (feature) names based on mass and retention
+  time
+
+- [`groupnames`](https://sneumann.github.io/xcms/reference/groupnames-methods.md)
+  [`groupnames,xcmsEIC-method`](https://sneumann.github.io/xcms/reference/groupnames-methods.md)
+  [`groupnames,xcmsSet-method`](https://sneumann.github.io/xcms/reference/groupnames-methods.md)
+  : Generate unque names for peak groups
+
+- [`groupval`](https://sneumann.github.io/xcms/reference/groupval-methods.md)
+  [`groupval,xcmsSet-method`](https://sneumann.github.io/xcms/reference/groupval-methods.md)
+  : Extract a matrix of peak values for each group
+
+- [`highlightChromPeaks()`](https://sneumann.github.io/xcms/reference/highlightChromPeaks.md)
+  : Add definition of chromatographic peaks to an extracted chromatogram
+  plot
+
+- [`image,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/image.xcmsRaw.md)
+  : Plot log intensity image of a xcmsRaw object
+
+- [`imputeLinInterpol()`](https://sneumann.github.io/xcms/reference/imputeLinInterpol.md)
+  : Impute values for empty elements in a vector using linear
+  interpolation
+
+- [`imputeRowMin()`](https://sneumann.github.io/xcms/reference/imputeRowMin.md)
+  : Replace missing values with a proportion of the row minimum
+
+- [`imputeRowMinRand()`](https://sneumann.github.io/xcms/reference/imputeRowMinRand.md)
+  : Impute missing values with random numbers based on the row minimum
+
+- [`isolationWindowTargetMz(`*`<OnDiskMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/isolationWindowTargetMz-OnDiskMSnExp-method.md)
+  : Extract isolation window target m/z definition
+
+- [`levelplot,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/levelplot.xcmsRaw.md)
+  [`levelplot,xcmsSet-method`](https://sneumann.github.io/xcms/reference/levelplot.xcmsRaw.md)
+  : Plot log intensity image of a xcmsRaw object
+
+- [`loadRaw`](https://sneumann.github.io/xcms/reference/loadRaw-methods.md)
+  [`loadRaw-methods`](https://sneumann.github.io/xcms/reference/loadRaw-methods.md)
+  [`loadRaw,xcmsSource-method`](https://sneumann.github.io/xcms/reference/loadRaw-methods.md)
+  [`loadRaw,xcmsFileSource-method`](https://sneumann.github.io/xcms/reference/loadRaw-methods.md)
+  : Read binary data from a source
+
+- [`loadXcmsData()`](https://sneumann.github.io/xcms/reference/loadXcmsData.md)
+  : LC-MS preprocessing result test data sets
+
+- [`manualChromPeaks()`](https://sneumann.github.io/xcms/reference/manualChromPeaks.md)
+  [`manualFeatures()`](https://sneumann.github.io/xcms/reference/manualChromPeaks.md)
+  : Manual peak integration and feature definition
+
+- [`medianFilter()`](https://sneumann.github.io/xcms/reference/medianFilter.md)
+  : Apply a median filter to a matrix
+
+- [`msn2xcmsRaw()`](https://sneumann.github.io/xcms/reference/msn2xcmsRaw.md)
+  : Copy MSn data in an xcmsRaw to the MS slots
+
+- [`overlappingFeatures()`](https://sneumann.github.io/xcms/reference/overlappingFeatures.md)
+  : Identify overlapping features
+
+- [`peakPlots-methods`](https://sneumann.github.io/xcms/reference/peakPlots-methods.md)
+  [`peakPlots,xcmsSet-method`](https://sneumann.github.io/xcms/reference/peakPlots-methods.md)
+  : Plot a grid of a large number of peaks
+
+- [`peakTable`](https://sneumann.github.io/xcms/reference/peakTable-methods.md)
+  [`peakTable,xcmsSet-method`](https://sneumann.github.io/xcms/reference/peakTable-methods.md)
+  : Create report of aligned peak intensities
+
+- [`peaksWithCentWave()`](https://sneumann.github.io/xcms/reference/peaksWithCentWave.md)
+  : Identify peaks in chromatographic data using centWave
+
+- [`peaksWithMatchedFilter()`](https://sneumann.github.io/xcms/reference/peaksWithMatchedFilter.md)
+  : Identify peaks in chromatographic data using matchedFilter
+
+- [`phenoDataFromPaths()`](https://sneumann.github.io/xcms/reference/phenoDataFromPaths.md)
+  : Derive experimental design from file paths
+
+- [`plot.xcmsEIC`](https://sneumann.github.io/xcms/reference/plot.xcmsEIC.md)
+  [`plot, plot-methods`](https://sneumann.github.io/xcms/reference/plot.xcmsEIC.md)
+  : Plot extracted ion chromatograms from multiple files
+
+- [`plotAdjustedRtime()`](https://sneumann.github.io/xcms/reference/plotAdjustedRtime.md)
+  : Visualization of Alignment Results
+
+- [`plotChrom`](https://sneumann.github.io/xcms/reference/plotChrom-methods.md)
+  [`plotChrom,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotChrom-methods.md)
+  : Plot extracted ion chromatograms from the profile matrix
+
+- [`plotChromPeakDensity(`*`<XCMSnExp>`*`)`](https://sneumann.github.io/xcms/reference/plotChromPeakDensity.md)
+  : Plot chromatographic peak density along the retention time axis
+
+- [`plotChromPeaks()`](https://sneumann.github.io/xcms/reference/plotChromPeaks.md)
+  [`plotChromPeakImage()`](https://sneumann.github.io/xcms/reference/plotChromPeaks.md)
+  : General visualizations of peak detection results
+
+- [`plotChromatogramsOverlay(`*`<MChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)
+  [`plotChromatogramsOverlay(`*`<XChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/plotChromatogramsOverlay.md)
+  : Plot multiple chromatograms into the same plot
+
+- [`plotEIC`](https://sneumann.github.io/xcms/reference/plotEIC-methods.md)
+  [`plotEIC,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotEIC-methods.md)
+  : Plot extracted ion chromatograms for specified m/z range
+
+- [`plotFeatureGroups()`](https://sneumann.github.io/xcms/reference/plotFeatureGroups.md)
+  : Plot feature groups in the m/z-retention time space
+
+- [`plotMsData()`](https://sneumann.github.io/xcms/reference/plotMsData.md)
+  : DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot
+  for one sample
+
+- [`plotPeaks`](https://sneumann.github.io/xcms/reference/plotPeaks-methods.md)
+  [`plotPeaks,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotPeaks-methods.md)
+  : Plot a grid of a large number of peaks
+
+- [`plotPrecursorIons()`](https://sneumann.github.io/xcms/reference/plotPrecursorIons.md)
+  : General visualization of precursor ions of LC-MS/MS data
+
+- [`plotQC()`](https://sneumann.github.io/xcms/reference/plotQC.md) :
+  Plot m/z and RT deviations for QC purposes without external reference
+  data
+
+- [`plotRaw`](https://sneumann.github.io/xcms/reference/plotRaw-methods.md)
+  [`plotRaw,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotRaw-methods.md)
+  : Scatterplot of raw data points
+
+- [`plotScan`](https://sneumann.github.io/xcms/reference/plotScan-methods.md)
+  [`plotScan,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotScan-methods.md)
+  : Plot a single mass scan
+
+- [`plotSpec`](https://sneumann.github.io/xcms/reference/plotSpec-methods.md)
+  [`plotSpec,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotSpec-methods.md)
+  : Plot mass spectra from the profile matrix
+
+- [`plotSurf`](https://sneumann.github.io/xcms/reference/plotSurf-methods.md)
+  [`plotSurf,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotSurf-methods.md)
+  : Plot profile matrix 3D surface using OpenGL
+
+- [`plotTIC`](https://sneumann.github.io/xcms/reference/plotTIC-methods.md)
+  [`plotTIC,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/plotTIC-methods.md)
+  : Plot total ion count
+
+- [`plotrt`](https://sneumann.github.io/xcms/reference/plotrt-methods.md)
+  [`plotrt,xcmsSet-method`](https://sneumann.github.io/xcms/reference/plotrt-methods.md)
+  : Plot retention time deviation profiles
+
+- [`profMat(`*`<MsExperiment>`*`)`](https://sneumann.github.io/xcms/reference/profMat-xcmsSet.md)
+  [`profMat(`*`<xcmsRaw>`*`)`](https://sneumann.github.io/xcms/reference/profMat-xcmsSet.md)
+  : The profile matrix
+
+- [`profMedFilt`](https://sneumann.github.io/xcms/reference/profMedFilt-methods.md)
+  [`profMedFilt,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profMedFilt-methods.md)
+  : Median filtering of the profile matrix
+
+- [`profMethod`](https://sneumann.github.io/xcms/reference/profMethod-methods.md)
+  [`profMethod<-`](https://sneumann.github.io/xcms/reference/profMethod-methods.md)
+  [`profMethod,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profMethod-methods.md)
+  [`profMethod<-,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profMethod-methods.md)
+  : Get and set method for generating profile data
+
+- [`profRange`](https://sneumann.github.io/xcms/reference/profRange-methods.md)
+  [`profRange,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profRange-methods.md)
+  : Specify a subset of profile mode data
+
+- [`profStep`](https://sneumann.github.io/xcms/reference/profStep-methods.md)
+  [`profStep<-`](https://sneumann.github.io/xcms/reference/profStep-methods.md)
+  [`profStep,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profStep-methods.md)
+  [`profStep<-,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/profStep-methods.md)
+  : Get and set m/z step for generating profile data
+
+- [`rawEIC`](https://sneumann.github.io/xcms/reference/rawEIC-methods.md)
+  [`rawEIC,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/rawEIC-methods.md)
+  : Get extracted ion chromatograms for specified m/z range
+
+- [`rawMat`](https://sneumann.github.io/xcms/reference/rawMat-methods.md)
+  [`rawMat-methods`](https://sneumann.github.io/xcms/reference/rawMat-methods.md)
+  [`rawMat,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/rawMat-methods.md)
+  : Get a raw data matrix
+
+- [`reconstructChromPeakSpectra()`](https://sneumann.github.io/xcms/reference/reconstructChromPeakSpectra.md)
+  : Data independent acquisition (DIA): reconstruct MS2 spectra
+
+- [`refineChromPeaks()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
+  [`CleanPeaksParam()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
+  [`MergeNeighboringPeaksParam()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
+  [`FilterIntensityParam()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
+  : Refine Identified Chromatographic Peaks
+
+- [`removeIntensity(`*`<Chromatogram>`*`)`](https://sneumann.github.io/xcms/reference/removeIntensity-Chromatogram.md)
+  [`removeIntensity(`*`<MChromatograms>`*`)`](https://sneumann.github.io/xcms/reference/removeIntensity-Chromatogram.md)
+  [`removeIntensity(`*`<XChromatogram>`*`)`](https://sneumann.github.io/xcms/reference/removeIntensity-Chromatogram.md)
+  : Remove intensities from chromatographic data
+
+- [`retcor-methods`](https://sneumann.github.io/xcms/reference/retcor-methods.md)
+  [`retcor`](https://sneumann.github.io/xcms/reference/retcor-methods.md)
+  [`retcor,xcmsSet-method`](https://sneumann.github.io/xcms/reference/retcor-methods.md)
+  : Correct retention time from different samples
+
+- [`retcor.obiwarp`](https://sneumann.github.io/xcms/reference/retcor.obiwarp-methods.md)
+  [`retcor.obiwarp,xcmsSet-method`](https://sneumann.github.io/xcms/reference/retcor.obiwarp-methods.md)
+  : Align retention times across samples with Obiwarp
+
+- [`retcor.peakgroups`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  [`retcor.peakgroups,xcmsSet-method`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  [`retcor.loess`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  [`retcor.loess,xcmsSet-method`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  [`retcor.linear`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  [`retcor.linear,xcmsSet-method`](https://sneumann.github.io/xcms/reference/retcor.peakgroups-methods.md)
+  : Align retention times across samples
+
+- [`retexp()`](https://sneumann.github.io/xcms/reference/retexp.md) :
+  Set retention time window to a specified width
+
+- [`rla()`](https://sneumann.github.io/xcms/reference/rla.md)
+  [`rowRla()`](https://sneumann.github.io/xcms/reference/rla.md) :
+  Calculate relative log abundances
+
+- [`sampnames`](https://sneumann.github.io/xcms/reference/sampnames-methods.md)
+  [`sampnames,xcmsEIC-method`](https://sneumann.github.io/xcms/reference/sampnames-methods.md)
+  [`sampnames,xcmsSet-method`](https://sneumann.github.io/xcms/reference/sampnames-methods.md)
+  : Get sample names
+
+- [`showError(`*`<xcmsSet>`*`)`](https://sneumann.github.io/xcms/reference/showError-xcmsSet-method.md)
+  : Extract processing errors
+
+- [`specDist-methods`](https://sneumann.github.io/xcms/reference/specDist-methods.md)
+  [`specDist`](https://sneumann.github.io/xcms/reference/specDist-methods.md)
+  [`specDist,xcmsSet-method`](https://sneumann.github.io/xcms/reference/specDist-methods.md)
+  : Distance methods for xcmsSet, xcmsRaw and xsAnnotate
+
+- [`specDist.cosine()`](https://sneumann.github.io/xcms/reference/specDist.cosine-methods.md)
+  : a Distance function based on matching peaks
+
+- [`specDist.meanMZmatch()`](https://sneumann.github.io/xcms/reference/specDist.meanMZmatch-methods.md)
+  : a Distance function based on matching peaks
+
+- [`specDist.peakCount()`](https://sneumann.github.io/xcms/reference/specDist.peakCount-methods.md)
+  : a Distance function based on matching peaks
+
+- [`specNoise()`](https://sneumann.github.io/xcms/reference/specNoise.md)
+  : Calculate noise for a sparse continuum mass spectrum
+
+- [`specPeaks()`](https://sneumann.github.io/xcms/reference/specPeaks.md)
+  : Identify peaks in a sparse continuum mode spectrum
+
+- [`split.xcmsRaw`](https://sneumann.github.io/xcms/reference/split.xcmsRaw.md)
+  : Divide an xcmsRaw object
+
+- [`split.xcmsSet`](https://sneumann.github.io/xcms/reference/split.xcmsSet.md)
+  [`split, split-methods`](https://sneumann.github.io/xcms/reference/split.xcmsSet.md)
+  : Divide an xcmsSet object
+
+- [`stitch`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`stitch-methods`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`stitch,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`stitch.netCDF`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`stitch.xml`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`makeacqNum`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  [`makeacqNum, xcmsRaw-method`](https://sneumann.github.io/xcms/reference/stitch-methods.md)
+  : Correct gaps in data
+
+- [`` `[`( ``*`<xcmsRaw>`*`,`*`<logicalOrNumeric>`*`,`*`<missing>`*`,`*`<missing>`*`)`](https://sneumann.github.io/xcms/reference/sub-xcmsRaw-logicalOrNumeric-missing-missing-method.md)
+  : Subset an xcmsRaw object by scans
+
+- [`updateObject(`*`<xcmsSet>`*`)`](https://sneumann.github.io/xcms/reference/updateObject-xcmsSet-method.md)
+  :
+
+  Update an `xcmsSet` object
+
+- [`useOriginalCode()`](https://sneumann.github.io/xcms/reference/useOriginalCode.md)
+  : Enable usage of old xcms code
+
+- [`verify.mzQuantML()`](https://sneumann.github.io/xcms/reference/verify.mzQuantML.md)
+  : Verify an mzQuantML file
+
+- [`write.cdf`](https://sneumann.github.io/xcms/reference/write.cdf-methods.md)
+  [`write.cdf,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/write.cdf-methods.md)
+  : Save an xcmsRaw object to file
+
+- [`write.mzQuantML`](https://sneumann.github.io/xcms/reference/write.mzQuantML.md)
+  [`write.mzQuantML,xcmsSet-method`](https://sneumann.github.io/xcms/reference/write.mzQuantML.md)
+  : Save an xcmsSet object to an PSI mzQuantML file
+
+- [`write.mzdata`](https://sneumann.github.io/xcms/reference/write.mzdata-methods.md)
+  [`write.mzdata,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/write.mzdata-methods.md)
+  : Save an xcmsRaw object to a file
+
+- [`writeMSData(`*`<XCMSnExp>`*`,`*`<character>`*`)`](https://sneumann.github.io/xcms/reference/writeMSData-XCMSnExp-character-method.md)
+  : Export MS data to mzML/mzXML files
+
+- [`writeMzTab`](https://sneumann.github.io/xcms/reference/writeMzTab.md)
+  : Save a grouped xcmsSet object in mzTab-1.1 format file
+
+- [`xcms-deprecated`](https://sneumann.github.io/xcms/reference/xcms-deprecated.md)
+  : Deprecated functions in package ‘xcms’
+
+- [`xcmsEIC-class`](https://sneumann.github.io/xcms/reference/xcmsEIC-class.md)
+  [`mzrange,xcmsEIC-method`](https://sneumann.github.io/xcms/reference/xcmsEIC-class.md)
+  [`mzrange`](https://sneumann.github.io/xcms/reference/xcmsEIC-class.md)
+  [`rtrange,xcmsEIC-method`](https://sneumann.github.io/xcms/reference/xcmsEIC-class.md)
+  [`rtrange`](https://sneumann.github.io/xcms/reference/xcmsEIC-class.md)
+  : Class xcmsEIC, a class for multi-sample extracted ion chromatograms
+
+- [`xcmsFileSource-class`](https://sneumann.github.io/xcms/reference/xcmsFileSource-class.md)
+  [`xcmsSource,character-method`](https://sneumann.github.io/xcms/reference/xcmsFileSource-class.md)
+  : Base class for loading raw data from a file
+
+- [`xcmsFragments-class`](https://sneumann.github.io/xcms/reference/xcmsFragments-class.md)
+  [`plotTree`](https://sneumann.github.io/xcms/reference/xcmsFragments-class.md)
+  [`plotTree,xcmsFragments-method`](https://sneumann.github.io/xcms/reference/xcmsFragments-class.md)
+  : Class xcmsFragments, a class for handling Tandem MS and MS\$^n\$
+  data
+
+- [`xcmsFragments()`](https://sneumann.github.io/xcms/reference/xcmsFragments.md)
+  : Constructor for xcmsFragments objects which holds Tandem MS peaks
+
+- [`xcmsPeaks-class`](https://sneumann.github.io/xcms/reference/xcmsPeaks-class.md)
+  : A matrix of peaks
+
+- [`xcmsRaw-class`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`mslevel,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`profinfo,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`profMz,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`profMz`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`revMz,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`revMz`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`scanrange,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`sortMz,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`sortMz`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`levelplot`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`findmzROI`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  [`findmzROI,xcmsRaw-method`](https://sneumann.github.io/xcms/reference/xcmsRaw-class.md)
+  : Class xcmsRaw, a class for handling raw data
+
+- [`xcmsRaw()`](https://sneumann.github.io/xcms/reference/xcmsRaw.md)
+  [`deepCopy()`](https://sneumann.github.io/xcms/reference/xcmsRaw.md) :
+  Constructor for xcmsRaw objects which reads NetCDF/mzXML files
+
+- [`xcmsSet-class`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`[,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`[,xcmsSet,ANY,ANY,ANY-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`$<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`$,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`filepaths<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`filepaths<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`filepaths,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`filepaths`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groupidx<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groupidx<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groupidx,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groupidx`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groups<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groups<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groups,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`groups`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`mslevel,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`mslevel`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`peaks<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`peaks<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`peaks,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`peaks`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`phenoData`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`phenoData,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`phenoData<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`phenoData<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`phenoData<-,xcmsSet,ANY-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profinfo<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profinfo<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profinfo,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profinfo`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profMethod,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`profStep,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`progressCallback`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`progressCallback,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`progressCallback<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`progressCallback<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampclass<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampclass<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampclass,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampclass`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampnames<-,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`sampnames<-`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`scanrange,xcmsSet-method`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  [`scanrange`](https://sneumann.github.io/xcms/reference/xcmsSet-class.md)
+  : Class xcmsSet, a class for preprocessing peak data
+
+- [`xcmsSet()`](https://sneumann.github.io/xcms/reference/xcmsSet.md) :
+  Constructor for xcmsSet objects which finds peaks in NetCDF/mzXML
+  files
+
+- [`xcmsSource-class`](https://sneumann.github.io/xcms/reference/xcmsSource-class.md)
+  : Virtual class for raw data sources
+
+- [`xcmsSource`](https://sneumann.github.io/xcms/reference/xcmsSource-methods.md)
+  [`xcmsSource-methods`](https://sneumann.github.io/xcms/reference/xcmsSource-methods.md)
+  [`xcmsSource,xcmsSource-method`](https://sneumann.github.io/xcms/reference/xcmsSource-methods.md)
+  :
+
+  Create an `xcmsSource` object in a flexible way
+
+# Articles
+
+### All vignettes
+
+- [Compounding (grouping) of LC-MS
+  features](https://sneumann.github.io/xcms/articles/LC-MS-feature-grouping.md):
+- [Grouping FTICR-MS data with
+  xcms](https://sneumann.github.io/xcms/articles/xcms-direct-injection.md):
+- [LC-MS/MS data analysis with
+  xcms](https://sneumann.github.io/xcms/articles/xcms-lcms-ms.md):
+- [LC-MS data preprocessing and analysis with
+  xcms](https://sneumann.github.io/xcms/articles/xcms.md):

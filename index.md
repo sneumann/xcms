@@ -1,0 +1,112 @@
+# Welcome to the home of *xcms*!
+
+The *xcms* R package provides functionality to efficiently preprocess
+LC-MS (as well as GC-MS and LC-MS/MS) data. Please see the [package
+documentation](https://sneumann.github.io/xcms/) for more information
+and examples and [news](https://sneumann.github.io/xcms/inst/NEWS) for
+the latest changes. An example preprocessing workflow is shown in the
+[main package
+vignette](https://sneumann.github.io/xcms/articles/xcms.html). See also
+the excellent
+[Metabonaut](https://rformassspectrometry.github.io/Metabonaut/)
+resource for a more detailed and complete *end-to-end* data analysis
+workflow for LC-MS/MS data.
+
+If you use *xcms* in your research, please cite the new 2025 manuscript
+*“xcms in Peak Form: Now Anchoring a Complete Metabolomics Data
+Preprocessing and Analysis Software Ecosystem”*
+\[[10.1021/acs.analchem.5c04338](https://doi.org/10.1021/acs.analchem.5c04338)\].
+
+## Installation
+
+*xcms* is part of [Bioconductor](https://bioconductor.org) and relies
+and integrates with various Bioconductor packages. The preferred way to
+install *xcms* is using the *BiocManager* package, that will install the
+latest **stable** version of *xcms* and ensures all required packages
+from the **same** Bioconductor release are installed and available as
+well:
+
+``` r
+
+install.packages()
+```
+
+## Version 4
+
+Version 4 adds native support for the
+[Spectra](https://github.com/RforMassSpectrometry/Spectra) package to
+`xcms` and allows to perform the pre-processing on `MsExperiment`
+objects (from the
+[MsExperiment](https://github.com/RforMassSpectrometry/MsExperiment).
+The new supported data containers (`Spectra`, `MsExperiment` and
+`XcmsExperiment`) allow more flexible analyses and seamless future
+extensions to additional types of data (such as ion mobility data).
+Ultimately, these changes will also allow easier integration of `xcms`
+with other R packages such as
+[MsFeatures](https://github.com/RforMassSpectrometry/MsFeatures) or
+[MetaboAnnotation](https://github.com/RforMassSpectrometry/MetaboAnnotation).
+
+While it is suggested that users switch to the newer data and result
+objects, all functionality from version 3 and before remain fully
+supported.
+
+## Version 3
+
+Version \>= 3 of the `xcms` package are updated and partially re-written
+versions of the original `xcms` package. The version number *3* was
+selected to avoid confusions with the `xcms2`
+(<http://pubs.acs.org/doi/abs/10.1021/ac800795f>) software. While
+providing all of the original software’s functionality, `xcms` version
+\>= 3 aims at:
+
+1.  Better integration into the Bioconductor framework:
+
+- Make use and extend classes defined in the `MSnbase` package.
+- Implement class versioning (Biobase’s `Versioned` class).
+- Use `BiocParallel` for parallel processing.
+
+2.  Implementation of validation methods for all classes to ensure data
+    integrity.
+3.  Easier and faster access to raw spectra data.
+4.  Cleanup of the source code:
+
+- Remove obsolete and redundant functionality (`getEIC`, `rawEIC` etc).
+- Unify interfaces, i.e. implement a layer of base functions accessing
+  all analysis methods (which are implemented in C, C++ or R).
+
+5.  Using a more consistent naming scheme of methods that follows
+    established naming conventions (e.g. `correspondence` instead of
+    `grouping`).
+6.  Update, improve and extend the documentation.
+7.  Establishing a layer of base R-functions that interface all analysis
+    methods. These should take M/Z, retention time (or scan index) and
+    intensity values as input along with optional arguments for the
+    downstream functions (implemented in C, C++ or R). The input
+    arguments should be basic R objects (numeric vectors) thus enabling
+    easy integration of analysis methods in other R packages.
+8.  The user interface’s analysis methods should take the (raw) data
+    object and a parameter class, that is used for dispatching to the
+    corresponding analysis algorithm.
+9.  Add unit tests.
+
+Discussions and suggestions are welcome:
+<https://github.com/sneumann/xcms/issues>
+
+## Contribution
+
+Contributions to the *xcms* package are more than welcome, whether under
+the form of ideas, documentation, code, packages, … For a contribution
+guideline please see the [guideline for the RforMassSpectrometry
+initiative](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#contributions).
+For a seamless integration, contributors are expected to adhere to the
+[RforMassSpectrometry coding
+syle](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style).
+
+## Code of Conduct
+
+As contributors and maintainers of the package, we pledge to respect all
+people who contribute through reporting issues, posting feature
+requests, updating documentation, submitting pull requests or patches,
+and other activities. See the [RforMassSpectrometry Code of
+Conduct](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#code-of-conduct)
+for more information.

@@ -78,11 +78,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2025-10-13 14:55:14.389602<br><strong>Compiled</strong>: Mon Oct 13 16:24:32 2025</p>
+</script><p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em><br><strong>Authors</strong>: Philippine Louail, Johannes Rainer<br><strong>Modified</strong>: 2026-02-11 12:16:34.218236<br><strong>Compiled</strong>: Wed Feb 11 13:17:32 2026</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The <em><a href="https://bioconductor.org/packages/3.22/xcms" class="external-link">xcms</a></em> package
+<p>The <em><a href="https://bioconductor.org/packages/3.23/xcms" class="external-link">xcms</a></em> package
 provides the functionality to perform the preprocessing of LC-MS, GC-MS
 or LC-MS/MS data in which raw signals from mzML, mzXML or CDF files are
 processed into <em>feature</em> abundances. This preprocessing includes
@@ -91,23 +91,23 @@ analysis.</p>
 <p>The first version of the package was already published in 2006 <span class="citation">[1]</span> and has since been updated and modernized in
 several rounds to better integrate it with other R-based packages for
 the analysis of untargeted metabolomics data. This includes version 3 of
-<em>xcms</em> that used the <em><a href="https://bioconductor.org/packages/3.22/MSnbase" class="external-link">MSnbase</a></em>
+<em>xcms</em> that used the <em><a href="https://bioconductor.org/packages/3.23/MSnbase" class="external-link">MSnbase</a></em>
 package for MS data representation <span class="citation">[2]</span>.
-The most recent update (<em>xcms</em> version 4) enables in addition
-preprocessing of MS data represented by the modern <em><a href="https://bioconductor.org/packages/3.22/MsExperiment" class="external-link">MsExperiment</a></em>
-and <em><a href="https://bioconductor.org/packages/3.22/Spectra" class="external-link">Spectra</a></em>
+The most recent update (<em>xcms</em> version 4) <span class="citation">[3]</span> enables in addition preprocessing of MS data
+represented by the modern <em><a href="https://bioconductor.org/packages/3.23/MsExperiment" class="external-link">MsExperiment</a></em>
+and <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
 packages which provides an even better integration with the <a href="https://rformassspectrometry.org" class="external-link">RforMassSpectrometry</a> R
-package ecosystem simplifying e.g. also compound annotation <span class="citation">[3]</span>.</p>
+package ecosystem simplifying e.g. also compound annotation <span class="citation">[4]</span>.</p>
 <p>This document describes data import, exploration and preprocessing of
 a simple test LC-MS data set with the <em>xcms</em> package version
-&gt;= 4. The same functions can be applied to the older
-<em>MSnbase</em>-based workflows (xcms version 3). Additional documents
-and tutorials covering also other topics of untargeted metabolomics
-analysis are listed at the end of this document. An extensive collection
-of metabolomics data analysis tutorials, also including a complete
-end-to-end data analysis workflow as well as an example analysis of a
-very large-scale experiment using the new <em>on-disk</em> <em>xcms</em>
-result object is available at the <a href="https://rformassspectrometry.github.io/Metabonaut/" class="external-link">Metabonaut
+&gt;= 4 <span class="citation">[3]</span>. The same functions can be
+applied to the older <em>MSnbase</em>-based workflows (xcms version 3).
+Additional documents and tutorials covering also other topics of
+untargeted metabolomics analysis are listed at the end of this document.
+An extensive collection of metabolomics data analysis tutorials, also
+including a complete end-to-end data analysis workflow as well as an
+example analysis of a very large-scale experiment using the new
+<em>on-disk</em> <em>xcms</em> result object is available at the <a href="https://rformassspectrometry.github.io/Metabonaut/" class="external-link">Metabonaut
 website</a>.</p>
 </div>
 <div class="section level2">
@@ -117,16 +117,16 @@ website</a>.</p>
 <h3 id="data-import">Data import<a class="anchor" aria-label="anchor" href="#data-import"></a>
 </h3>
 <p><em>xcms</em> supports analysis of any LC-MS(/MS) data that can be
-imported with the <em><a href="https://bioconductor.org/packages/3.22/Spectra" class="external-link">Spectra</a></em>
+imported with the <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
 package. Such data will typically be provided in (AIA/ANDI) NetCDF,
 mzXML and mzML format but can, through dedicated extensions to the
 <em>Spectra</em> package, also be imported from other sources, e.g. also
 directly from raw data files in manufacturer’s formats.</p>
 <p>For demonstration purpose we will analyze in this document a small
-subset of the data from <span class="citation">[4]</span> in which the
+subset of the data from <span class="citation">[5]</span> in which the
 metabolic consequences of the knock-out of the fatty acid amide
 hydrolase (FAAH) gene in mice was investigated. The raw data files (in
-NetCDF format) are provided through the <em><a href="https://bioconductor.org/packages/3.22/faahKO" class="external-link">faahKO</a></em>
+NetCDF format) are provided through the <em><a href="https://bioconductor.org/packages/3.23/faahKO" class="external-link">faahKO</a></em>
 data package. The data set consists of samples from the spinal cords of
 6 knock-out and 6 wild-type mice. Each file contains data in centroid
 mode acquired in positive ion polarity from 200-600 m/z and 2500-4500
@@ -158,7 +158,7 @@ if it is in Excel file format.</p>
 <span>                 sample_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"KO"</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"WT"</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                 stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>We next load our data using the <code>readMsExperiment</code>
-function from the <em><a href="https://bioconductor.org/packages/3.22/MsExperiment" class="external-link">MsExperiment</a></em>
+function from the <em><a href="https://bioconductor.org/packages/3.23/MsExperiment" class="external-link">MsExperiment</a></em>
 package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">faahko</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html" class="external-link">readMsExperiment</a></span><span class="op">(</span>spectraFiles <span class="op">=</span> <span class="va">cdfs</span>, sampleData <span class="op">=</span> <span class="va">pd</span><span class="op">)</span></span>
@@ -172,7 +172,7 @@ package.</p>
 <code>Spectra</code> object within <code>faahko</code>. Note that this
 <code>MsExperiment</code> container could in addition to spectra data
 also contain other types of data or also references to other files. See
-the vignette from the <em><a href="https://bioconductor.org/packages/3.22/MsExperiment" class="external-link">MsExperiment</a></em>
+the vignette from the <em><a href="https://bioconductor.org/packages/3.23/MsExperiment" class="external-link">MsExperiment</a></em>
 for more details. Also, when loading data from mzML, mzXML or CDF files,
 by default only general spectra data is loaded into memory while the
 actual <em>peaks data</em>, i.e. the m/z and intensity values are only
@@ -183,7 +183,7 @@ high performance computing environments. Note that also different
 alternative <em>backends</em> (and hence data representations) could be
 used for the <code>Spectra</code> object within <code>faahko</code> with
 eventually even lower memory footprint, or higher performance. See the
-package vignette from the <em><a href="https://bioconductor.org/packages/3.22/Spectra" class="external-link">Spectra</a></em>
+package vignette from the <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
 package or the <a href="https://jorainer.github.io/SpectraTutorials" class="external-link">SpectraTutorials</a>
 tutorial for more details on <code>Spectra</code> backends and how to
 change between them.</p>
@@ -291,7 +291,7 @@ data. To create a total ion chromatogram we could set
 <span><span class="co">## Plot all chromatograms.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bpis</span>, col <span class="op">=</span> <span class="va">group_colors</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/data-inspection-bpc-1.png" alt="Base peak chromatogram." width="1152"><p class="caption">
+<img src="xcms_files/figure-html/data-inspection-bpc-1.png" class="r-plt" alt="Base peak chromatogram." width="1152"><p class="caption">
 Base peak chromatogram.
 </p>
 </div>
@@ -333,7 +333,7 @@ potentially problematic MS runs. To extract this information, we use the
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">tc</span>, col <span class="op">=</span> <span class="va">group_colors</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/MsExperiment.html" class="external-link">sampleData</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span>,</span>
 <span>        ylab <span class="op">=</span> <span class="st">"intensity"</span>, main <span class="op">=</span> <span class="st">"Total ion current"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/data-inspection-tic-boxplot-1.png" alt="Distribution of total ion currents per file." width="768"><p class="caption">
+<img src="xcms_files/figure-html/data-inspection-tic-boxplot-1.png" class="r-plt" alt="Distribution of total ion currents per file." width="768"><p class="caption">
 Distribution of total ion currents per file.
 </p>
 </div>
@@ -362,7 +362,7 @@ peak chromatograms.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html" class="external-link">pheatmap</a></span><span class="op">(</span><span class="va">cormat</span>, annotation <span class="op">=</span> <span class="va">ann</span>,</span>
 <span>         annotation_color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">group_colors</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/data-inspection-bpc-heatmap-1.png" alt="Grouping of samples based on similarity of their base peak chromatogram." width="672"><p class="caption">
+<img src="xcms_files/figure-html/data-inspection-bpc-heatmap-1.png" class="r-plt" alt="Grouping of samples based on similarity of their base peak chromatogram." width="672"><p class="caption">
 Grouping of samples based on similarity of their base peak chromatogram.
 </p>
 </div>
@@ -395,7 +395,7 @@ compound.</p>
 <span><span class="va">chr_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chromatogram-method.html">chromatogram</a></span><span class="op">(</span><span class="va">faahko</span>, mz <span class="op">=</span> <span class="va">mzr</span>, rt <span class="op">=</span> <span class="va">rtr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_raw</span>, col <span class="op">=</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">chr_raw</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-plot-eic-1.png" alt="Extracted ion chromatogram for one peak." width="768"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-plot-eic-1.png" class="r-plt" alt="Extracted ion chromatogram for one peak." width="768"><p class="caption">
 Extracted ion chromatogram for one peak.
 </p>
 </div>
@@ -406,7 +406,7 @@ signal was measured in the respective m/z range. This is reflected by
 the lines not being drawn as continuous lines in the plot above.</p>
 <p>The peak above has thus a width of about 50 seconds. We can use this
 information to define the <code>peakwidth</code> parameter of the
-<em>centWave</em> peak detection method <span class="citation">[5]</span> that we will use for chromatographic peak
+<em>centWave</em> peak detection method <span class="citation">[6]</span> that we will use for chromatographic peak
 detection on our data. The <code>peakwidth</code> parameter allows to
 define the expected lower and upper width (in retention time dimension)
 of chromatographic peaks. For our data we set it thus to
@@ -427,7 +427,7 @@ operator to better illustrate the corresponding workflow.</p>
 <span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterMz</a></span><span class="op">(</span>mz <span class="op">=</span> <span class="va">mzr</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"XIC"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="xcms_files/figure-html/peak-detection-plot-ms-data-1.png" alt="Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." width="1344"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-plot-ms-data-1.png" class="r-plt" alt="Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." width="1344"><p class="caption">
 Visualization of the raw MS data for one peak. For each plot: upper
 panel: chromatogram plotting the intensity values against the retention
 time, lower panel m/z against retention time plot. The individual data
@@ -539,7 +539,7 @@ matrix specifies the sample in which the peak was identified).</p>
 <span><span class="co">## chromatographic peak.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">xchr</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakBg <span class="op">=</span> <span class="va">bg</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-eic-plot-1.png" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. Peak area of identified chromatographic peaks are highlighted in the sample group color." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-eic-plot-1.png" class="r-plt" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. Peak area of identified chromatographic peaks are highlighted in the sample group color." width="960"><p class="caption">
 Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. Peak area of identified chromatographic
 peaks are highlighted in the sample group color.
@@ -620,7 +620,7 @@ don’t necessarily need to be numeric).</p>
 <div class="section level4">
 <h4 id="chromatographic-peak-quality">Chromatographic peak quality<a class="anchor" aria-label="anchor" href="#chromatographic-peak-quality"></a>
 </h4>
-<p>Based on the publication by Kumler et al. published in 2023 <span class="citation">[6]</span>, new quality metrics (<em>beta_cor</em> and
+<p>Based on the publication by Kumler et al. published in 2023 <span class="citation">[7]</span>, new quality metrics (<em>beta_cor</em> and
 <em>beta_snr</em>) were added to <em>xcms</em>. <em>beta_cor</em>
 indicates how bell-shaped the chromatographic peak is and
 <em>beta_snr</em> is estimating the signal-to-noise ratio using the
@@ -653,7 +653,7 @@ distribution of these metrics in the data.</p>
 <span><span class="co">##  Mean   : 0.7904   Mean   :5.662  </span></span>
 <span><span class="co">##  3rd Qu.: 0.9771   3rd Qu.:6.097  </span></span>
 <span><span class="co">##  Max.   : 0.9990   Max.   :7.983  </span></span>
-<span><span class="co">##  NA's   :6         NA's   :6</span></span></code></pre>
+<span><span class="co">##  NAs    :6         NAs    :6</span></span></code></pre>
 <p>Visual inspection gives a better idea of what these metrics represent
 in terms of peak quality in the data at hand. This information can be
 used to e.g. filter out peaks that don’t meet a chosen quality metric
@@ -676,7 +676,7 @@ low <em>beta_cor</em> score is given below.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">peak_1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">peak_2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="xcms_files/figure-html/peak-quality-metrics-1.png" alt="Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor = 0.98, right: peak CP0006 with a beta_cor = 0.13." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-quality-metrics-1.png" class="r-plt" alt="Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor = 0.98, right: peak CP0006 with a beta_cor = 0.13." width="960"><p class="caption">
 Plots of high and low quality peaks. Left: peak CP0004 with a beta_cor =
 0.98, right: peak CP0006 with a beta_cor = 0.13.
 </p>
@@ -720,7 +720,7 @@ description of the settings and the approach.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="xcms_files/figure-html/peak-postprocessing-merged-1.png" alt="Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-postprocessing-merged-1.png" class="r-plt" alt="Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one." width="960"><p class="caption">
 Result from the peak refinement step. Left: data before processing,
 right: after refinement. The splitted peak was merged into one.
 </p>
@@ -739,7 +739,7 @@ however not merged (see below).</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="xcms_files/figure-html/peak-postprocessing-not-merged-1.png" alt="Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-postprocessing-not-merged-1.png" class="r-plt" alt="Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged." width="960"><p class="caption">
 Result from the peak refinement step. Left: data before processing,
 right: after refinement. The peaks were not merged.
 </p>
@@ -763,7 +763,7 @@ eventually result in merging of isomers as shown below.</p>
 <span><span class="co">## CPM1      1   1      1</span></span></code></pre>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" width="480"></p>
+<p><img src="xcms_files/figure-html/peak-postprocessing-chr-1.png" class="r-plt" alt="" width="480"></p>
 <p>Thus, before running such a peak refinement evaluate that isomers
 present in the data set were not wrongly merged based on the chosen
 settings.</p>
@@ -911,7 +911,7 @@ for the third sample.</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotChromPeaks.html">plotChromPeaks</a></span><span class="op">(</span><span class="va">faahko</span>, file <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-chrom-peaks-plot-1.png" alt="Identified chromatographic peaks in the m/z by retention time space for one sample." width="768"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-chrom-peaks-plot-1.png" class="r-plt" alt="Identified chromatographic peaks in the m/z by retention time space for one sample." width="768"><p class="caption">
 Identified chromatographic peaks in the m/z by retention time space for
 one sample.
 </p>
@@ -925,7 +925,7 @@ is then shown color-coded in the resulting plot.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotChromPeaks.html">plotChromPeakImage</a></span><span class="op">(</span><span class="va">faahko</span>, binSize <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-chrom-peak-image-1.png" alt="Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-chrom-peak-image-1.png" class="r-plt" alt="Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." width="960"><p class="caption">
 Frequency of identified chromatographic peaks along the retention time
 axis. The frequency is color coded with higher frequency being
 represented by yellow-white. Each line shows the peak frequency for one
@@ -962,7 +962,7 @@ visualize all identified chromatographic peaks in that region.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_ex</span>, col <span class="op">=</span> <span class="va">group_colors</span><span class="op">[</span><span class="va">chr_raw</span><span class="op">$</span><span class="va">sample_group</span><span class="op">]</span>, lwd <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-highlight-chrom-peaks-plot-polygon-1.png" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-highlight-chrom-peaks-plot-polygon-1.png" class="r-plt" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." width="960"><p class="caption">
 Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. The signal area of identified
 chromatographic peaks are filled with a color.
@@ -981,7 +981,7 @@ identified chromatographic peak with a single point
 <span>     peakCol <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_ex</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-highlight-chrom-peaks-plot-1.png" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-highlight-chrom-peaks-plot-1.png" class="r-plt" alt="Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." width="960"><p class="caption">
 Signal for an example peak. Red and blue colors represent KO and wild
 type samples, respectively. The rectangles indicate the identified
 chromatographic peaks per sample.
@@ -998,7 +998,7 @@ signals between samples are present.</p>
 <span>        ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="va">log</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">~</span><span class="va">intensity</span><span class="op">)</span>, main <span class="op">=</span> <span class="st">"Peak intensities"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span>nx <span class="op">=</span> <span class="cn">NA</span>, ny <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/peak-detection-chrom-peak-intensity-boxplot-1.png" alt="Peak intensity distribution per sample." width="960"><p class="caption">
+<img src="xcms_files/figure-html/peak-detection-chrom-peak-intensity-boxplot-1.png" class="r-plt" alt="Peak intensity distribution per sample." width="960"><p class="caption">
 Peak intensity distribution per sample.
 </p>
 </div>
@@ -1024,12 +1024,12 @@ previous section. The alignment step, also referred to as retention time
 correction, aims to adjust these differences by shifting signals along
 the retention time axis and aligning them between different samples
 within an experiment.</p>
-<p>A plethora of alignment algorithms exist (see <span class="citation">[7]</span>), with some of them being also implemented
+<p>A plethora of alignment algorithms exist (see <span class="citation">[8]</span>), with some of them being also implemented
 in <em>xcms</em>. Alignment of LC-MS data can be performed in
 <em>xcms</em> using the <code><a href="../reference/adjustRtime.html">adjustRtime()</a></code> method and an
 algorithm-specific parameter class (see <code><a href="../reference/adjustRtime.html">?adjustRtime</a></code> for an
 overview of available methods in <em>xcms</em>).</p>
-<p>In the example below we use the <em>obiwarp</em> method <span class="citation">[8]</span> to align the samples. We use a
+<p>In the example below we use the <em>obiwarp</em> method <span class="citation">[9]</span> to align the samples. We use a
 <code>binSize = 0.6</code> which creates warping functions in m/z bins
 of 0.6. Also here it is advisable to modify and adapt the settings for
 each experiment.</p>
@@ -1073,7 +1073,7 @@ for a BPC) we use <code>chromPeaks = "none"</code> below.</p>
 <span><span class="fu"><a href="../reference/plotAdjustedRtime.html">plotAdjustedRtime</a></span><span class="op">(</span><span class="va">faahko</span>, col <span class="op">=</span> <span class="va">sample_colors</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/alignment-obiwarp-plot-1.png" alt="Obiwarp aligned data. Base peak chromatogram before (top) and after alignment (middle) and difference between adjusted and raw retention times along the retention time axis (bottom)." width="1152"><p class="caption">
+<img src="xcms_files/figure-html/alignment-obiwarp-plot-1.png" class="r-plt" alt="Obiwarp aligned data. Base peak chromatogram before (top) and after alignment (middle) and difference between adjusted and raw retention times along the retention time axis (bottom)." width="1152"><p class="caption">
 Obiwarp aligned data. Base peak chromatogram before (top) and after
 alignment (middle) and difference between adjusted and raw retention
 times along the retention time axis (bottom).
@@ -1093,7 +1093,7 @@ peak.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chr_adj</span>, col <span class="op">=</span> <span class="va">sample_colors</span>, peakType <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/alignment-peak-groups-example-peak-1.png" alt="Example extracted ion chromatogram before (top) and after alignment (bottom)." width="960"><p class="caption">
+<img src="xcms_files/figure-html/alignment-peak-groups-example-peak-1.png" class="r-plt" alt="Example extracted ion chromatogram before (top) and after alignment (bottom)." width="960"><p class="caption">
 Example extracted ion chromatogram before (top) and after alignment
 (bottom).
 </p>
@@ -1222,7 +1222,7 @@ sample (4).</p>
 <span>                  peakGroupsCol <span class="op">=</span> <span class="st">"#00ce0040"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/alignment-subset-plot-2-1.png" alt="Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are shown in green, study samples in grey." width="960"><p class="caption">
+<img src="xcms_files/figure-html/alignment-subset-plot-2-1.png" class="r-plt" alt="Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are shown in green, study samples in grey." width="960"><p class="caption">
 Subset-alignment results with option average. Difference between
 adjusted and raw retention times along the retention time axis. Samples
 on which the alignment models were estimated are shown in green, study
@@ -1273,7 +1273,7 @@ sample belongs.</p>
 <span>                     peakCol <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">chr_mzr</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                     peakPch <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/correspondence-example-slice-1.png" alt="Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." width="960"><p class="caption">
+<img src="xcms_files/figure-html/correspondence-example-slice-1.png" class="r-plt" alt="Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." width="960"><p class="caption">
 Example for peak density correspondence. Upper panel: chromatogram for
 an mz slice with multiple chromatographic peaks. lower panel: identified
 chromatographic peaks at their retention time (x-axis) and index within
@@ -1346,7 +1346,7 @@ data measured on TOF instruments.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="../reference/XCMSnExp-class.html">featureDefinitions</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">$</span><span class="va">mzmed</span>, <span class="va">mzw</span>, pch <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>     col <span class="op">=</span> <span class="st">"#ff000020"</span>, bg <span class="op">=</span> <span class="st">"#ff000010"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="xcms_files/figure-html/unnamed-chunk-9-1.png" alt="Relationship between a feature's m/z and the m/z width (max - min m/z) of the feature. Red points represent the results with the fixed m/z bin size, blue with the m/z-relative bin size." width="700"><p class="caption">
+<img src="xcms_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Relationship between a feature's m/z and the m/z width (max - min m/z) of the feature. Red points represent the results with the fixed m/z bin size, blue with the m/z-relative bin size." width="700"><p class="caption">
 Relationship between a feature’s m/z and the m/z width (max - min m/z)
 of the feature. Red points represent the results with the fixed m/z bin
 size, blue with the m/z-relative bin size.
@@ -1456,7 +1456,7 @@ color for each identified peak to fill the area.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feature_chroms</span>, col <span class="op">=</span> <span class="va">sample_colors</span>,</span>
 <span>     peakBg <span class="op">=</span> <span class="va">sample_colors</span><span class="op">[</span><span class="fu"><a href="../reference/XCMSnExp-class.html">chromPeaks</a></span><span class="op">(</span><span class="va">feature_chroms</span><span class="op">)</span><span class="op">[</span>, <span class="st">"sample"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/feature-eic-1.png" alt="Extracted ion chromatograms for features 1 to 4." width="768"><p class="caption">
+<img src="xcms_files/figure-html/feature-eic-1.png" class="r-plt" alt="Extracted ion chromatograms for features 1 to 4." width="768"><p class="caption">
 Extracted ion chromatograms for features 1 to 4.
 </p>
 </div>
@@ -1536,11 +1536,11 @@ specific sample.</p>
 <h3 id="final-result">Final result<a class="anchor" aria-label="anchor" href="#final-result"></a>
 </h3>
 <p>While we can continue using the <em>xcms</em> result set for further
-analysis (e.g. also for feature grouping with the <em><a href="https://bioconductor.org/packages/3.22/MsFeatures" class="external-link">MsFeatures</a></em>
+analysis (e.g. also for feature grouping with the <em><a href="https://bioconductor.org/packages/3.23/MsFeatures" class="external-link">MsFeatures</a></em>
 package; see the LC-MS feature grouping vignette for details) we could
 also extract all results as a <code>SummarizedExperiment</code> object.
 This is the <em>standard</em> data container for Bioconductor defined in
-the <em><a href="https://bioconductor.org/packages/3.22/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
+the <em><a href="https://bioconductor.org/packages/3.23/SummarizedExperiment" class="external-link">SummarizedExperiment</a></em>
 package and integration with other Bioconductor packages might thus be
 easier using that type of object. Below we use the
 <code><a href="../reference/XcmsExperiment.html">quantify()</a></code> function to extract the <em>xcms</em>
@@ -1749,7 +1749,7 @@ available as <em>metadata</em> in the
 <pre><code><span><span class="co">## [[1]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:07 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:04 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1758,7 +1758,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[2]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak refinement </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:12 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:08 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: MergeNeighboringPeaksParam </span></span>
@@ -1767,7 +1767,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[3]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:24 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:20 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1776,7 +1776,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[4]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Retention time correction </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:24 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:20 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakGroupsParam </span></span>
@@ -1785,7 +1785,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[5]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak grouping </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:29 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:24 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: PeakDensityParam </span></span>
@@ -1794,7 +1794,7 @@ available as <em>metadata</em> in the
 <span><span class="co">## [[6]]</span></span>
 <span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Missing peak filling </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:34 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:28 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: ChromPeakAreaParam </span></span>
@@ -1806,7 +1806,7 @@ extract the information for the first processing step.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/XCMSnExp-class.html">processHistory</a></span><span class="op">(</span><span class="va">faahko</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## Object of class "XProcessHistory"</span></span>
 <span><span class="co">##  type: Peak detection </span></span>
-<span><span class="co">##  date: Mon Oct 13 16:25:07 2025 </span></span>
+<span><span class="co">##  date: Wed Feb 11 13:18:04 2026 </span></span>
 <span><span class="co">##  info:  </span></span>
 <span><span class="co">##  fileIndex: 1,2,3,4,5,6,7,8 </span></span>
 <span><span class="co">##  Parameter class: CentWaveParam </span></span>
@@ -1857,7 +1857,7 @@ be influenced by technical biases.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="va">pc</span><span class="op">$</span><span class="va">x</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">pc</span><span class="op">$</span><span class="va">x</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, labels <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">sample_name</span>, col <span class="op">=</span> <span class="st">"darkgrey"</span>,</span>
 <span>     pos <span class="op">=</span> <span class="fl">3</span>, cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="xcms_files/figure-html/final-pca-1.png" alt="PCA for the faahKO data set, un-normalized intensities." width="768"><p class="caption">
+<img src="xcms_files/figure-html/final-pca-1.png" class="r-plt" alt="PCA for the faahKO data set, un-normalized intensities." width="768"><p class="caption">
 PCA for the faahKO data set, un-normalized intensities.
 </p>
 </div>
@@ -2066,7 +2066,7 @@ dataset (black) both before (red) and after (blue) adjustment:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">rtime</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">intensity</a></span><span class="op">(</span><span class="va">bpc_tst_adj</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>, type <span class="op">=</span> <span class="st">"l"</span>,</span>
 <span>       col <span class="op">=</span> <span class="st">"#0000ff80"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/unnamed-chunk-30-1.png" width="960"></p>
+<p><img src="xcms_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="960"></p>
 <p>It appears that certain time intervals (2500 to 3000 and 3500 to 4500
 seconds) exhibit better alignment than others. This variance can be
 elucidated by examining the distribution of matched peaks, as
@@ -2085,7 +2085,7 @@ conducted prior to any adjustments.</p>
 <span>       col <span class="op">=</span> <span class="st">"#0000ff80"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">mtch</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
+<p><img src="xcms_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="" width="700"></p>
 <p>The overlay of BPC above provides insight into the correlation
 between accurate alignment and the presence of peaks matching with
 <code>lamas</code>. For this particular sample no chromatographic peaks
@@ -2100,7 +2100,7 @@ alignment.</p>
 <span>       col <span class="op">=</span> <span class="st">"#0000ff80"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">mtch</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">obs</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
+<p><img src="xcms_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="" width="700"></p>
 <p>Furthermore, a more detailed examination of the matching and the
 model used for fitting each file is possible. Numerical information can
 be obtained using the <code><a href="../reference/LamaParama.html">summarizeLamaMatch()</a></code> function. From
@@ -2148,7 +2148,7 @@ line.</p>
 <span>     colPoint <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, lty <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/grid.html" class="external-link">grid</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="xcms_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
+<p><img src="xcms_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -2234,12 +2234,12 @@ general data handling using the <em>Spectra</em> package and LC-MS data
 preprocessing with <em>xcms</em>.</li>
 <li>
 <a href="https://jorainer.github.io/MetaboAnnotationTutorials" class="external-link">MetaboAnnotationTutorials</a>:
-examples for annotation of metabolomics data from <span class="citation">[3]</span>.</li>
+examples for annotation of metabolomics data from <span class="citation">[4]</span>.</li>
 <li>
 <span class="citation">[2]</span>: describes the concept of the
 <em>on-disk</em> data modes used also in <em>xcms</em>.</li>
 <li>
-<a href="">SpectraTutorials</a>: tutorials describing the <em><a href="https://bioconductor.org/packages/3.22/Spectra" class="external-link">Spectra</a></em>
+<a href="">SpectraTutorials</a>: tutorials describing the <em><a href="https://bioconductor.org/packages/3.23/Spectra" class="external-link">Spectra</a></em>
 package and its functionality.</li>
 </ul>
 </div>
@@ -2249,7 +2249,7 @@ package and its functionality.</li>
 <p>R packages used for this document are listed below.</p>
 <div class="sourceCode" id="cb167"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
+<pre><code><span><span class="co">## R Under development (unstable) (2026-02-08 r89382)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -2273,65 +2273,65 @@ package and its functionality.</li>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SummarizedExperiment_1.39.2 Biobase_2.69.1             </span></span>
-<span><span class="co">##  [3] GenomicRanges_1.61.5        Seqinfo_0.99.2             </span></span>
-<span><span class="co">##  [5] IRanges_2.43.5              S4Vectors_0.47.4           </span></span>
-<span><span class="co">##  [7] BiocGenerics_0.55.3         generics_0.1.4             </span></span>
-<span><span class="co">##  [9] MatrixGenerics_1.21.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [11] MsExperiment_1.11.1         ProtGenerics_1.41.0        </span></span>
+<span><span class="co">##  [1] SummarizedExperiment_1.41.1 Biobase_2.71.0             </span></span>
+<span><span class="co">##  [3] GenomicRanges_1.63.1        Seqinfo_1.1.0              </span></span>
+<span><span class="co">##  [5] IRanges_2.45.0              S4Vectors_0.49.0           </span></span>
+<span><span class="co">##  [7] BiocGenerics_0.57.0         generics_0.1.4             </span></span>
+<span><span class="co">##  [9] MatrixGenerics_1.23.0       matrixStats_1.5.0          </span></span>
+<span><span class="co">## [11] MsExperiment_1.13.1         ProtGenerics_1.43.0        </span></span>
 <span><span class="co">## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         </span></span>
-<span><span class="co">## [15] pander_0.6.6                faahKO_1.49.1              </span></span>
-<span><span class="co">## [17] xcms_4.7.3                  BiocParallel_1.43.4        </span></span>
-<span><span class="co">## [19] BiocStyle_2.37.1           </span></span>
+<span><span class="co">## [15] pander_0.6.6                faahKO_1.51.0              </span></span>
+<span><span class="co">## [17] xcms_4.7.3                  BiocParallel_1.45.0        </span></span>
+<span><span class="co">## [19] BiocStyle_2.39.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] DBI_1.2.3                   rlang_1.1.6                </span></span>
+<span><span class="co">##  [1] DBI_1.2.3                   rlang_1.1.7                </span></span>
 <span><span class="co">##  [3] magrittr_2.0.4              clue_0.3-66                </span></span>
-<span><span class="co">##  [5] MassSpecWavelet_1.75.1      compiler_4.5.1             </span></span>
-<span><span class="co">##  [7] systemfonts_1.3.1           vctrs_0.6.5                </span></span>
-<span><span class="co">##  [9] reshape2_1.4.4              stringr_1.5.2              </span></span>
-<span><span class="co">## [11] pkgconfig_2.0.3             MetaboCoreUtils_1.17.1     </span></span>
-<span><span class="co">## [13] crayon_1.5.3                fastmap_1.2.0              </span></span>
-<span><span class="co">## [15] XVector_0.49.1              rmarkdown_2.30             </span></span>
-<span><span class="co">## [17] preprocessCore_1.71.2       ragg_1.5.0                 </span></span>
-<span><span class="co">## [19] purrr_1.1.0                 xfun_0.53                  </span></span>
-<span><span class="co">## [21] MultiAssayExperiment_1.35.9 cachem_1.1.0               </span></span>
-<span><span class="co">## [23] jsonlite_2.0.0              progress_1.2.3             </span></span>
-<span><span class="co">## [25] DelayedArray_0.35.3         prettyunits_1.2.0          </span></span>
-<span><span class="co">## [27] parallel_4.5.1              cluster_2.1.8.1            </span></span>
-<span><span class="co">## [29] R6_2.6.1                    bslib_0.9.0                </span></span>
-<span><span class="co">## [31] stringi_1.8.7               limma_3.65.5               </span></span>
-<span><span class="co">## [33] jquerylib_0.1.4             iterators_1.0.14           </span></span>
-<span><span class="co">## [35] Rcpp_1.1.0                  bookdown_0.45              </span></span>
-<span><span class="co">## [37] knitr_1.50                  BiocBaseUtils_1.11.2       </span></span>
-<span><span class="co">## [39] Matrix_1.7-4                igraph_2.1.4               </span></span>
+<span><span class="co">##  [5] MassSpecWavelet_1.77.0      otel_0.2.0                 </span></span>
+<span><span class="co">##  [7] compiler_4.6.0              systemfonts_1.3.1          </span></span>
+<span><span class="co">##  [9] vctrs_0.7.1                 reshape2_1.4.5             </span></span>
+<span><span class="co">## [11] stringr_1.6.0               crayon_1.5.3               </span></span>
+<span><span class="co">## [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.1     </span></span>
+<span><span class="co">## [15] fastmap_1.2.0               XVector_0.51.0             </span></span>
+<span><span class="co">## [17] rmarkdown_2.30              preprocessCore_1.73.0      </span></span>
+<span><span class="co">## [19] ragg_1.5.0                  purrr_1.2.1                </span></span>
+<span><span class="co">## [21] xfun_0.56                   MultiAssayExperiment_1.37.2</span></span>
+<span><span class="co">## [23] cachem_1.1.0                jsonlite_2.0.0             </span></span>
+<span><span class="co">## [25] progress_1.2.3              DelayedArray_0.37.0        </span></span>
+<span><span class="co">## [27] prettyunits_1.2.0           parallel_4.6.0             </span></span>
+<span><span class="co">## [29] cluster_2.1.8.2             R6_2.6.1                   </span></span>
+<span><span class="co">## [31] bslib_0.10.0                stringi_1.8.7              </span></span>
+<span><span class="co">## [33] limma_3.67.0                jquerylib_0.1.4            </span></span>
+<span><span class="co">## [35] iterators_1.0.14            Rcpp_1.1.1                 </span></span>
+<span><span class="co">## [37] bookdown_0.46               knitr_1.51                 </span></span>
+<span><span class="co">## [39] Matrix_1.7-4                igraph_2.2.1               </span></span>
 <span><span class="co">## [41] tidyselect_1.2.1            abind_1.4-8                </span></span>
-<span><span class="co">## [43] yaml_2.3.10                 doParallel_1.0.17          </span></span>
-<span><span class="co">## [45] codetools_0.2-20            affy_1.87.0                </span></span>
-<span><span class="co">## [47] lattice_0.22-7              tibble_3.3.0               </span></span>
-<span><span class="co">## [49] plyr_1.8.9                  S7_0.2.0                   </span></span>
+<span><span class="co">## [43] yaml_2.3.12                 doParallel_1.0.17          </span></span>
+<span><span class="co">## [45] codetools_0.2-20            affy_1.89.0                </span></span>
+<span><span class="co">## [47] lattice_0.22-9              tibble_3.3.1               </span></span>
+<span><span class="co">## [49] plyr_1.8.9                  S7_0.2.1                   </span></span>
 <span><span class="co">## [51] evaluate_1.0.5              desc_1.4.3                 </span></span>
-<span><span class="co">## [53] Spectra_1.19.9              pillar_1.11.1              </span></span>
-<span><span class="co">## [55] affyio_1.79.0               BiocManager_1.30.26        </span></span>
-<span><span class="co">## [57] foreach_1.5.2               MSnbase_2.35.2             </span></span>
+<span><span class="co">## [53] Spectra_1.21.1              pillar_1.11.1              </span></span>
+<span><span class="co">## [55] affyio_1.81.0               BiocManager_1.30.27        </span></span>
+<span><span class="co">## [57] foreach_1.5.2               MSnbase_2.37.0             </span></span>
 <span><span class="co">## [59] MALDIquant_1.22.3           ncdf4_1.24                 </span></span>
-<span><span class="co">## [61] hms_1.1.3                   ggplot2_4.0.0              </span></span>
+<span><span class="co">## [61] hms_1.1.4                   ggplot2_4.0.2              </span></span>
 <span><span class="co">## [63] scales_1.4.0                glue_1.8.0                 </span></span>
-<span><span class="co">## [65] MsFeatures_1.17.1           lazyeval_0.2.2             </span></span>
-<span><span class="co">## [67] tools_4.5.1                 mzID_1.47.0                </span></span>
-<span><span class="co">## [69] data.table_1.17.8           QFeatures_1.19.2           </span></span>
-<span><span class="co">## [71] vsn_3.77.0                  mzR_2.43.3                 </span></span>
-<span><span class="co">## [73] fs_1.6.6                    XML_3.99-0.19              </span></span>
-<span><span class="co">## [75] grid_4.5.1                  impute_1.83.0              </span></span>
-<span><span class="co">## [77] tidyr_1.3.1                 MsCoreUtils_1.19.2         </span></span>
-<span><span class="co">## [79] PSMatch_1.13.2              cli_3.6.5                  </span></span>
-<span><span class="co">## [81] textshaping_1.0.4           S4Arrays_1.9.1             </span></span>
-<span><span class="co">## [83] dplyr_1.1.4                 AnnotationFilter_1.33.0    </span></span>
-<span><span class="co">## [85] pcaMethods_2.1.0            gtable_0.3.6               </span></span>
-<span><span class="co">## [87] sass_0.4.10                 digest_0.6.37              </span></span>
-<span><span class="co">## [89] SparseArray_1.9.1           htmlwidgets_1.6.4          </span></span>
-<span><span class="co">## [91] farver_2.1.2                htmltools_0.5.8.1          </span></span>
-<span><span class="co">## [93] pkgdown_2.1.3.9000          lifecycle_1.0.4            </span></span>
+<span><span class="co">## [65] MsFeatures_1.19.0           lazyeval_0.2.2             </span></span>
+<span><span class="co">## [67] tools_4.6.0                 mzID_1.49.0                </span></span>
+<span><span class="co">## [69] data.table_1.18.2.1         QFeatures_1.21.0           </span></span>
+<span><span class="co">## [71] vsn_3.79.5                  mzR_2.45.0                 </span></span>
+<span><span class="co">## [73] fs_1.6.6                    XML_3.99-0.22              </span></span>
+<span><span class="co">## [75] grid_4.6.0                  impute_1.85.0              </span></span>
+<span><span class="co">## [77] tidyr_1.3.2                 MsCoreUtils_1.23.2         </span></span>
+<span><span class="co">## [79] PSMatch_1.15.1              cli_3.6.5                  </span></span>
+<span><span class="co">## [81] textshaping_1.0.4           S4Arrays_1.11.1            </span></span>
+<span><span class="co">## [83] dplyr_1.2.0                 AnnotationFilter_1.35.0    </span></span>
+<span><span class="co">## [85] pcaMethods_2.3.0            gtable_0.3.6               </span></span>
+<span><span class="co">## [87] sass_0.4.10                 digest_0.6.39              </span></span>
+<span><span class="co">## [89] SparseArray_1.11.10         htmlwidgets_1.6.4          </span></span>
+<span><span class="co">## [91] farver_2.1.2                htmltools_0.5.9            </span></span>
+<span><span class="co">## [93] pkgdown_2.2.0.9000          lifecycle_1.0.5            </span></span>
 <span><span class="co">## [95] statmod_1.5.1               MASS_7.3-65</span></span></code></pre>
 </div>
 <div class="section level2">
@@ -2351,8 +2351,18 @@ Processing</span> and <span>Visualization</span> of <span>Raw Mass
 Spectrometry Data</span></a></strong>. <em>Journal of Proteome
 Research</em> 2020.
 </div>
+<div id="ref-louail_xcms_2025" class="csl-entry">
+3. Louail P, Brunius C, Garcia-Aloy M, Kumler W, Storz N, Stanstrup J,
+Treutler H, Vangeenderhuysen P, Witting M, Neumann S, Rainer J:
+<strong><a href="https://doi.org/10.1021/acs.analchem.5c04338" class="external-link">Xcms in
+<span>Peak</span> <span>Form</span>: <span>Now</span>
+<span>Anchoring</span> a <span>Complete</span> <span>Metabolomics</span>
+<span>Data</span> <span>Preprocessing</span> and <span>Analysis</span>
+<span>Software</span> <span>Ecosystem</span></a></strong>.
+<em>Analytical Chemistry</em> 2025.
+</div>
 <div id="ref-rainer_modular_2022" class="csl-entry">
-3. Rainer J, Vicini A, Salzer L, Stanstrup J, Badia JM, Neumann S,
+4. Rainer J, Vicini A, Salzer L, Stanstrup J, Badia JM, Neumann S,
 Stravs MA, Verri Hernandes V, Gatto L, Gibb S, Witting M: <strong><a href="https://doi.org/10.3390/metabo12020173" class="external-link">A <span>Modular</span> and
 <span>Expandable</span> <span>Ecosystem</span> for
 <span>Metabolomics</span> <span>Data</span> <span>Annotation</span> in
@@ -2360,31 +2370,31 @@ Stravs MA, Verri Hernandes V, Gatto L, Gibb S, Witting M: <strong><a href="https
 <strong>12</strong>:173.
 </div>
 <div id="ref-Saghatelian04" class="csl-entry">
-4. Saghatelian A, Trauger SA, Want EJ, Hawkins EG, Siuzdak G, Cravatt
+5. Saghatelian A, Trauger SA, Want EJ, Hawkins EG, Siuzdak G, Cravatt
 BF: <strong><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">Assignment of
 endogenous substrates to enzymes by global metabolite
 profiling</a></strong>. <em>Biochemistry</em> 2004,
 <strong>43</strong>:14332–9.
 </div>
 <div id="ref-Tautenhahn:2008fx" class="csl-entry">
-5. Tautenhahn R, Böttcher C, Neumann S: <strong><span class="nocase">Highly sensitive feature detection for high resolution
+6. Tautenhahn R, Böttcher C, Neumann S: <strong><span class="nocase">Highly sensitive feature detection for high resolution
 LC/MS.</span></strong> <em>BMC Bioinformatics</em> 2008,
 <strong>9</strong>:504.
 </div>
 <div id="ref-Kumler2023" class="csl-entry">
-6. Kumler W, Hazelton BJ, Ingalls AE: <strong>Picky with peakpicking:
+7. Kumler W, Hazelton BJ, Ingalls AE: <strong>Picky with peakpicking:
 Assessing chromatographic peak quality with simple metrics in
 metabolomics</strong>. <em>BMC Bioinformatics</em> 2023,
 <strong>24</strong>:404.
 </div>
 <div id="ref-Smith:2013gr" class="csl-entry">
-7. Smith R, Ventura D, Prince JT: <strong><span class="nocase">LC-MS
+8. Smith R, Ventura D, Prince JT: <strong><span class="nocase">LC-MS
 alignment in theory and practice: a comprehensive algorithmic
 review.</span></strong> <em>Briefings in bioinformatics</em> 2013,
 <strong>16</strong>:bbt080–117.
 </div>
 <div id="ref-Prince:2006jj" class="csl-entry">
-8. Prince JT, Marcotte EM: <strong><span class="nocase">Chromatographic
+9. Prince JT, Marcotte EM: <strong><span class="nocase">Chromatographic
 alignment of ESI-LC-MS proteomics data sets by ordered bijective
 interpolated warping.</span></strong> <em>Analytical chemistry</em>
 2006, <strong>78</strong>:6140–6152.
@@ -2402,7 +2412,7 @@ interpolated warping.</span></strong> <em>Analytical chemistry</em>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
     </footer>
