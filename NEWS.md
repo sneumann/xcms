@@ -1,3 +1,10 @@
+# xcms 4.8
+
+## Changes in version 4.8.1
+
+- Fix issue with `refineChromPeaks()` and `MergeNeighboringPeaksParam` where in
+  certain cases completely overlapping peaks were not merged (issue #825).
+
 # xcms 4.7
 
 ## Changes in version 4.7.3
