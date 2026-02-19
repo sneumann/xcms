@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-02-11 12:32:01.259816\
-**Compiled**: Wed Feb 11 13:37:11 2026
+**Modified**: 2026-02-19 12:46:13.093172\
+**Compiled**: Thu Feb 19 13:37:35 2026
 
 ## Introduction
 
@@ -904,7 +904,7 @@ pandoc.table(
 | **ko22.CDF** |    233     | 10.95 | 37.56  | 46.95  | 59.47  |  147.1  |
 | **wt15.CDF** |    403     | 10.95 | 32.86  | 42.25  | 53.21  |  161.2  |
 | **wt16.CDF** |    361     | 10.95 | 35.99  | 45.38  |  57.9  |  162.8  |
-| **wt21.CDF** |    227     | 10.95 | 35.21  | 48.51  | 64.16  |  172.1  |
+| **wt21.CDF** |    226     | 10.95 | 35.99  | 48.51  | 64.16  |  172.1  |
 | **wt22.CDF** |    328     | 10.95 | 35.99  | 45.38  |  57.9  |  228.5  |
 
 Summary statistics on identified chromatographic peaks. Shown are number
@@ -1991,7 +1991,7 @@ metadata(res)
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Feb 11 13:37:46 2026 
+    ##  date: Thu Feb 19 13:38:10 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2000,7 +2000,7 @@ metadata(res)
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Wed Feb 11 13:37:52 2026 
+    ##  date: Thu Feb 19 13:38:15 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -2009,7 +2009,7 @@ metadata(res)
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Feb 11 13:38:04 2026 
+    ##  date: Thu Feb 19 13:38:28 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2018,7 +2018,7 @@ metadata(res)
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Wed Feb 11 13:38:04 2026 
+    ##  date: Thu Feb 19 13:38:28 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -2027,7 +2027,7 @@ metadata(res)
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Feb 11 13:38:10 2026 
+    ##  date: Thu Feb 19 13:38:33 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2036,7 +2036,7 @@ metadata(res)
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Wed Feb 11 13:38:14 2026 
+    ##  date: Thu Feb 19 13:38:38 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -2055,7 +2055,7 @@ processHistory(faahko)[[1]]
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Feb 11 13:37:46 2026 
+    ##  date: Thu Feb 19 13:38:10 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2593,7 +2593,7 @@ R packages used for this document are listed below.
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-02-08 r89382)
+    ## R Under development (unstable) (2026-02-14 r89420)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.3 LTS
     ## 
@@ -2625,17 +2625,17 @@ sessionInfo()
     ## [11] MsExperiment_1.13.1         ProtGenerics_1.43.0        
     ## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         
     ## [15] pander_0.6.6                faahKO_1.51.0              
-    ## [17] xcms_4.9.1                  BiocParallel_1.45.0        
+    ## [17] xcms_4.9.2                  BiocParallel_1.45.0        
     ## [19] BiocStyle_2.39.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] DBI_1.2.3                   rlang_1.1.7                
-    ##  [3] magrittr_2.0.4              clue_0.3-66                
+    ##  [3] magrittr_2.0.4              clue_0.3-67                
     ##  [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
     ##  [7] compiler_4.6.0              systemfonts_1.3.1          
     ##  [9] vctrs_0.7.1                 reshape2_1.4.5             
     ## [11] stringr_1.6.0               crayon_1.5.3               
-    ## [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.1     
+    ## [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.2     
     ## [15] fastmap_1.2.0               XVector_0.51.0             
     ## [17] rmarkdown_2.30              preprocessCore_1.73.0      
     ## [19] ragg_1.5.0                  purrr_1.2.1                
@@ -2648,7 +2648,7 @@ sessionInfo()
     ## [33] limma_3.67.0                jquerylib_0.1.4            
     ## [35] iterators_1.0.14            Rcpp_1.1.1                 
     ## [37] bookdown_0.46               knitr_1.51                 
-    ## [39] Matrix_1.7-4                igraph_2.2.1               
+    ## [39] Matrix_1.7-4                igraph_2.2.2               
     ## [41] tidyselect_1.2.1            abind_1.4-8                
     ## [43] yaml_2.3.12                 doParallel_1.0.17          
     ## [45] codetools_0.2-20            affy_1.89.0                

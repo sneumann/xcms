@@ -2,11 +2,21 @@
 
 ## xcms 4.9
 
+### Changes in version 4.9.2
+
+- Fix issue with
+  [`refineChromPeaks()`](https://sneumann.github.io/xcms/reference/refineChromPeaks.md)
+  and `MergeNeighboringPeaksParam` where in certain cases completely
+  overlapping peaks were not merged (issue
+  [\#825](https://github.com/sneumann/xcms/issues/825)).
+
 ### Changes in version 4.9.1
 
 - Add the citation and reference for the new 2025 xcms paper
 
 ## xcms 4.7
+
+### Changes in version 4.7.3
 
 - Add parameter `columns` to
   [`chromPeakData()`](https://sneumann.github.io/xcms/reference/XCMSnExp-class.md)

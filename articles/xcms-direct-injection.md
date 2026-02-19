@@ -183,7 +183,7 @@ ham_prep
     ##  Number of spectra: 4 
     ##  MSn retention times: -1:59 - -1:59 minutes
     ## - - - Processing information - - -
-    ## Data loaded [Wed Feb 11 13:36:26 2026] 
+    ## Data loaded [Thu Feb 19 13:36:50 2026] 
     ##  MSnbase version: 2.37.0 
     ## - - - Meta data  - - -
     ## phenoData
@@ -382,7 +382,7 @@ the feature matrix using functionality from other R packages, such as
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-02-08 r89382)
+    ## R Under development (unstable) (2026-02-14 r89420)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.3 LTS
     ## 
@@ -406,19 +406,19 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MassSpecWavelet_1.77.0 xcms_4.9.1             BiocParallel_1.45.0   
+    ##  [1] MassSpecWavelet_1.77.0 xcms_4.9.2             BiocParallel_1.45.0   
     ##  [4] MSnbase_2.37.0         ProtGenerics_1.43.0    S4Vectors_0.49.0      
     ##  [7] mzR_2.45.0             Rcpp_1.1.1             Biobase_2.71.0        
     ## [10] BiocGenerics_0.57.0    generics_0.1.4         BiocStyle_2.39.0      
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] DBI_1.2.3                   rlang_1.1.7                
-    ##   [3] magrittr_2.0.4              clue_0.3-66                
+    ##   [3] magrittr_2.0.4              clue_0.3-67                
     ##   [5] otel_0.2.0                  matrixStats_1.5.0          
     ##   [7] compiler_4.6.0              systemfonts_1.3.1          
     ##   [9] vctrs_0.7.1                 reshape2_1.4.5             
     ##  [11] stringr_1.6.0               crayon_1.5.3               
-    ##  [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.1     
+    ##  [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.2     
     ##  [15] fastmap_1.2.0               XVector_0.51.0             
     ##  [17] rmarkdown_2.30              preprocessCore_1.73.0      
     ##  [19] ragg_1.5.0                  purrr_1.2.1                
@@ -433,7 +433,7 @@ sessionInfo()
     ##  [37] Seqinfo_1.1.0               bookdown_0.46              
     ##  [39] SummarizedExperiment_1.41.1 iterators_1.0.14           
     ##  [41] knitr_1.51                  IRanges_2.45.0             
-    ##  [43] Matrix_1.7-4                igraph_2.2.1               
+    ##  [43] Matrix_1.7-4                igraph_2.2.2               
     ##  [45] tidyselect_1.2.1            abind_1.4-8                
     ##  [47] yaml_2.3.12                 doParallel_1.0.17          
     ##  [49] codetools_0.2-20            affy_1.89.0                

@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-02-11 12:32:01.258816\
-**Compiled**: Wed Feb 11 13:35:33 2026
+**Modified**: 2026-02-19 12:46:13.091735\
+**Compiled**: Thu Feb 19 13:35:58 2026
 
 ## Introduction
 
@@ -818,7 +818,7 @@ table(featureGroups(xmse))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-02-08 r89382)
+    ## R Under development (unstable) (2026-02-14 r89420)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.3 LTS
     ## 
@@ -845,18 +845,18 @@ sessionInfo()
     ##  [1] pheatmap_1.0.13     faahKO_1.51.0       MSnbase_2.37.0     
     ##  [4] ProtGenerics_1.43.0 S4Vectors_0.49.0    mzR_2.45.0         
     ##  [7] Rcpp_1.1.1          Biobase_2.71.0      BiocGenerics_0.57.0
-    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.9.1         
+    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.9.2         
     ## [13] BiocParallel_1.45.0 BiocStyle_2.39.0   
     ## 
     ## loaded via a namespace (and not attached):
     ##   [1] DBI_1.2.3                   rlang_1.1.7                
-    ##   [3] magrittr_2.0.4              clue_0.3-66                
+    ##   [3] magrittr_2.0.4              clue_0.3-67                
     ##   [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
     ##   [7] matrixStats_1.5.0           compiler_4.6.0             
     ##   [9] systemfonts_1.3.1           vctrs_0.7.1                
     ##  [11] reshape2_1.4.5              stringr_1.6.0              
     ##  [13] crayon_1.5.3                pkgconfig_2.0.3            
-    ##  [15] MetaboCoreUtils_1.19.1      fastmap_1.2.0              
+    ##  [15] MetaboCoreUtils_1.19.2      fastmap_1.2.0              
     ##  [17] XVector_0.51.0              rmarkdown_2.30             
     ##  [19] preprocessCore_1.73.0       ragg_1.5.0                 
     ##  [21] purrr_1.2.1                 xfun_0.56                  
@@ -871,7 +871,7 @@ sessionInfo()
     ##  [39] Seqinfo_1.1.0               bookdown_0.46              
     ##  [41] SummarizedExperiment_1.41.1 knitr_1.51                 
     ##  [43] IRanges_2.45.0              Matrix_1.7-4               
-    ##  [45] igraph_2.2.1                tidyselect_1.2.1           
+    ##  [45] igraph_2.2.2                tidyselect_1.2.1           
     ##  [47] abind_1.4-8                 yaml_2.3.12                
     ##  [49] doParallel_1.0.17           codetools_0.2-20           
     ##  [51] affy_1.89.0                 lattice_0.22-9             
