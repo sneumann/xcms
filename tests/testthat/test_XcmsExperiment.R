@@ -672,6 +672,35 @@ test_that(".merge_neighboring_peak_candidates works", {
     res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd, diffRt = 8,
                                               ppm = 10, expandMz = 0)
     expect_equal(res$chromPeaks, pks)
+
+    ## issue #825
+    pks <- rbind(
+        c(666.0693, 666.0693, 666.0693, 31.779, 27.59, 35.968, 1, 1, 1, 1, 1),
+        c(666.0713, 666.0683, 666.0747, 31.181, 27.59, 39.559, 2, 2, 2, 2, 1),
+        c(666.0693, 666.0693, 666.0693, 31.779, 27.59, 36.968, 3, 3, 3, 3, 1))
+    colnames(pks) <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
+                       "intb", "maxo", "sn", "sample")
+    rownames(pks) <- c("A", "B", "C")
+
+    pkd <- data.frame(ms_level = rep(1L, 3), is_filled = rep(FALSE, 3))
+    x <- list(cbind(mz = c(), intensity = c()),
+              cbind(mz = c(), intensity = c()),
+              cbind(mz = c(), intensity = c()))
+    rt <- c(30.5, 31.5, 32.5)
+
+    res <- .merge_neighboring_peak_candidates(pd, rt, pks, pkd)$chromPeaks
+    expect_true(nrow(res) == 1L)
+    expect_equal(rownames(res), "B")
+
+    res <- .merge_neighboring_peak_candidates(
+        pd, rt, pks[c(2, 3, 1), ], pkd)$chromPeaks
+    expect_true(nrow(res) == 1L)
+    expect_equal(rownames(res), "B")
+
+    res <- .merge_neighboring_peak_candidates(
+        pd, rt, pks[c(3, 1, 2), ], pkd)$chromPeaks
+    expect_true(nrow(res) == 1L)
+    expect_equal(rownames(res), "B")
 })
 
 ## That's from XcmsExperiment-functions.R
@@ -680,7 +709,7 @@ test_that(".merge_neighboring_peaks2 works", {
     tmp2 <- xmse[1L]
     x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
     pks <- chromPeaks(tmp2, msLevel = 1L)
-    pkd <- chromPeaks(tmp2, msLevel = 1L)
+    pkd <- chromPeakData(tmp2, msLevel = 1L)
     rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
     prm <- MergeNeighboringPeaksParam(expandRt = 6, expandMz = 1)
 
@@ -701,7 +730,7 @@ test_that(".merge_neighboring_peaks2 works", {
     tmp2 <- xmse[2L]
     x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
     pks <- chromPeaks(tmp2, msLevel = 1L)
-    pkd <- chromPeaks(tmp2, msLevel = 1L)
+    pkd <- chromPeakData(tmp2, msLevel = 1L)
     rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
     ref <- refineChromPeaks(tmp1, prm)
     res <- .merge_neighboring_peaks2(x, pks, pkd, rt,
