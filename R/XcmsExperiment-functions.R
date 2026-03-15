@@ -334,7 +334,7 @@
                                       expandMz = 0, ppm = 10, minProp = 0.75) {
     cands <- .define_merge_candidates(pks, expandMz, ppm, expandRt)
     if (!length(cands))
-        return(list(chromPeaks = pks, chromPeakData = pkd))
+        return(list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks)))
     cands <- cands[[2L]]
     pks_new <- pkd_new <- vector("list", length(cands))
     for (i in seq_along(cands)) {
