@@ -1092,7 +1092,7 @@ setMethod(
                             name = "feature_definitions", ms_level = msLevel,
                             read_rownames = TRUE)
         msl <- rep(msLevel, vapply(fd, nrow, 1L))
-        fd <- do.call(rbind, fd)
+        fd <- rbindlistWithRownames(fd)
         fd$ms_level <- msl
         .subset_feature_definitions(fd, mz = mz, rt = rt,
                                     ppm = ppm, type = type)
@@ -1115,8 +1115,7 @@ setMethod(
             stop("if 'missing' is not 'NA' or a numeric it should",
                  " be one of: \"rowmin_half\".")
         msLevel <- intersect(msLevel, object@features_ms_level)
-        vals <- do.call(
-            rbindFill,
+        vals <- rbindFill(
             lapply(msLevel, .h5_feature_values_ms_level, x = object,
                    method = method, value = value, intensity = intensity,
                    filled = filled)

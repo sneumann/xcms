@@ -10,7 +10,7 @@ vignette: >
   %\VignetteIndexEntry{LC-MS/MS data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,BiocStyle,pander,Spectra,MsBackendMgf,MetaboCoreUtils}
+  %\VignetteDepends{xcms,MsDataHub,BiocStyle,pander,Spectra,MsBackendMgf,MetaboCoreUtils}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -83,9 +83,9 @@ its MS1 data.
 ```{r load-dda-data, message = FALSE}
 library(xcms)
 library(MsExperiment)
+library(MsDataHub)
 
-dda_file <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
-                        package = "msdata")
+dda_file <- MsDataHub::PestMix1_DDA.mzML()
 dda_data <- readMsExperiment(dda_file)
 chr <- chromatogram(dda_data, aggregationFun = "sum", msLevel = 1L)
 ```
@@ -362,13 +362,10 @@ spectra in the specified file. Similar to the previous data file, we filter the
 file to signal between 230 and 610 seconds.
 
 ```{r load-swath-data, message = FALSE}
-swath_file <- system.file("TripleTOF-SWATH",
-                          "PestMix1_SWATH.mzML",
-                          package = "msdata")
+swath_file <- MsDataHub::PestMix1_SWATH.mzML()
 
 swath_data <- readMsExperiment(swath_file)
 swath_data <- filterRt(swath_data, rt = c(230, 610))
-
 ```
 
 Below we determine the number of MS level 1 and 2 spectra in the present data

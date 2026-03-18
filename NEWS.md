@@ -1,5 +1,11 @@
 # xcms 4.9
 
+## Changes in version 4.9.4
+
+- Improve performance for some functions by using
+  `Spectra::rbindlistWithRownames()` to merge `data.frame`s.
+- Replace the *msdata* package for test data files with *MsDatahub*.
+
 ## Changes in version 4.9.3
 
 - Fix title of `plotPrecursorIons()` plot.

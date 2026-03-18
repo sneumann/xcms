@@ -1,5 +1,4 @@
-fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
-mse_dia <- readMsExperiment(fl)
+mse_dia <- readMsExperiment(pest_mix_swath_file)
 
 test_that(".empty_chrom_peaks works", {
     res <- .empty_chrom_peaks()
@@ -719,7 +718,7 @@ test_that(".merge_neighboring_peaks2 works", {
     tmp2 <- xmse[1L]
     x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
     pks <- chromPeaks(tmp2, msLevel = 1L)
-    pkd <- chromPeakData(tmp2, msLevel = 1L)
+    pkd <- as.data.frame(chromPeakData(tmp2, msLevel = 1L))
     rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
     prm <- MergeNeighboringPeaksParam(expandRt = 6, expandMz = 1)
 
@@ -740,7 +739,7 @@ test_that(".merge_neighboring_peaks2 works", {
     tmp2 <- xmse[2L]
     x <- Spectra::peaksData(filterMsLevel(spectra(tmp2), 1L))
     pks <- chromPeaks(tmp2, msLevel = 1L)
-    pkd <- chromPeakData(tmp2, msLevel = 1L)
+    pkd <- as.data.frame(chromPeakData(tmp2, msLevel = 1L))
     rt <- rtime(tmp2)[msLevel(spectra(tmp2)) == 1L]
     ref <- refineChromPeaks(tmp1, prm)
     res <- .merge_neighboring_peaks2(x, pks, pkd, rt,
@@ -1096,8 +1095,7 @@ test_that("chromPeakSpectra,XcmsExperiment works", {
     expect_equal(rtime(res2[[3L]]), rtime(res[res$chrom_peak_id == pks[3L]])[idx[3L]])
 
     ## DDA data
-    fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
-    tmp <- readMsExperiment(fl)
+    tmp <- readMsExperiment(pest_mix_dda_file)
     tmp <- filterRt(tmp, c(200, 400))
     tmp <- findChromPeaks(tmp, CentWaveParam(peakwidth = c(5, 15),
                                              prefilter = c(5, 1000)))

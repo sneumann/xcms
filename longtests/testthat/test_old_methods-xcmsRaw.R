@@ -89,10 +89,10 @@ test_that("findPeaks.addPredictedIsotopeFeatures,xcmsRaw works", {
 })
 
 test_that("findPeaks,xcmsRaw massifquant works", {
-    file <- system.file('microtofq/MM14.mzML', package = "msdata")
+    file <- faahko_3_files[1L]
     xraw <- xcmsRaw(file, profstep = 0)
     p <- findPeaks(xraw, method = "massifquant")
-    expect_equal(nrow(p), 114)
+    expect_equal(nrow(p), 1542)
 })
 
 test_that("profEIC,xcmsRaw works", {

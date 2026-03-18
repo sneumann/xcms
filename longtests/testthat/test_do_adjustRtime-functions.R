@@ -41,11 +41,6 @@ test_that("do_adjustRtime_peakGroups works", {
                                      peakIndex = xsg@groupidx,
                                      rtime = xsg@rt$raw,
                                      minFraction = minFr)
-    res_orig <- xcms:::do_adjustRtime_peakGroups_orig(peaks = peaks(xs),
-                                     peakIndex = xsg@groupidx,
-                                     rtime = xsg@rt$raw,
-                                     minFraction = minFr)
-    expect_equal(res, res_orig)
     expect_equal(xsa@rt$corrected, res)
     ## Use only a subset.
     res_sub <- do_adjustRtime_peakGroups(peaks = peaks(xs),

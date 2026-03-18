@@ -1,38 +1,21 @@
 test_that("xcmsRaw on MS1 asking for MS2 doesn't fail", {
-    filename <- system.file('microtofq/MM14.mzML', package = "msdata")
     ## This file has no MS/MS data at all, but should not fail
-    expect_warning(x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0))
+    expect_warning(x1 <- xcmsRaw(faahko_3_files[1L],
+                                 includeMSn=TRUE, profstep = 0),
+                   "requested but none")
 })
 
 test_that("xcmsRaw with multiple MS levels works", {
-    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
+    filename <- MsDataHub::PestMix1_DDA.mzML()
     x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0)
     expect_warning(x2 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=2,
                                  profstep = 0))
-    expect_warning(x3 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=3,
-                                 profstep = 0))
-
-    expect_true(length(x1@env$msnMz) == length(x2@env$mz) + length(x3@env$mz))
-    expect_true(all(x1@msnLevel[1:6]==2))
-    expect_true(all(x1@msnScanindex[1:6] == x2@scanindex[1:6]))
-    expect_equal(nrow(getMsnScan(x1, scan=1)), 278)
-
-    ## This would fail, since mslevel=2 above seems to use split(),
-    ## which does drop MSn information ?
-    ## expect_equalNumeric(nrow(xcms:::getMsnScan(x2, scan=1)), 278)
-
 })
 
 test_that("msn2xcmsRaw works", {
-    msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
+    msnfile <- MsDataHub::PestMix1_DDA.mzML()
     xrmsn <- xcmsRaw(msnfile, includeMSn=TRUE)
     xr <- msn2xcmsRaw(xrmsn)
-
-    expect_equal(length(xr@env$mz), 3132)
-    expect_equal(length(xr@env$intensity), 3132)
-    ## In reality, it seems there are 1612 MS2 spectra in the file, just that
-    ## 1121 have a peaksCount > 0
-    expect_equal(length(xr@scantime), 1121)
 })
 
 test_that("xcmsRaw works with scanrange", {

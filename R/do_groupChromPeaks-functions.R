@@ -178,7 +178,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
             minFraction = minFraction, minSamples = minSamples,
             maxFeatures = maxFeatures, sleep = sleep, rtFun = rtFun)
     }
-    res <- do.call(rbind, resL)
+    res <- rbindlistWithRownames(resL)
     if (nrow(res)) {
         ## Remove groups that overlap with more "well-behaved" groups
         numsamp <- rowSums(

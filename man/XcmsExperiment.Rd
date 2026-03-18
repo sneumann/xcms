@@ -825,8 +825,9 @@ plot(tic, main = "TIC")
 ##
 ## To show how MS2 chromatograms can be extracted we first load a DIA
 ## (SWATH) data set.
-mse_dia <- readMsExperiment(system.file("TripleTOF-SWATH",
-    "PestMix1_SWATH.mzML", package = "msdata"))
+library(MsDataHub)
+fl <- MsDataHub::PestMix1_DDA.mzML()
+mse_dia <- readMsExperiment(fl)
 
 ## Extracting MS2 chromatogram requires also to specify the isolation
 ## window from which to extract the data. Without that chromatograms

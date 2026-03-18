@@ -1,5 +1,5 @@
 test_that("xcmsSource works", {
-    mz_file <- system.file("microtofq/MM8.mzML", package = "msdata")
+    mz_file <- faahko_3_files[1L]
     src <- xcms:::xcmsSource(mz_file)
     expect_true(is(src, "xcmsFileSource"))
     tmp <- loadRaw(src)
@@ -12,12 +12,4 @@ test_that("xcmsSource works", {
     tmp <- loadRaw(src)
     expect_equal(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
                               "mz", "intensity", "polarity"))
-
-    ## MSn:
-    mzmlpath <- system.file("iontrap", package = "msdata")
-    mzmlfiles <- list.files(mzmlpath, pattern="extracted.mzML",
-                              recursive = TRUE, full.names = TRUE)
-    src <- xcms:::xcmsSource(mzmlfiles[1])
-    tmp <- loadRaw(src, includeMSn = TRUE)
-
 })

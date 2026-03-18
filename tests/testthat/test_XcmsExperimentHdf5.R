@@ -17,8 +17,7 @@ xmseg_full_ref <- groupChromPeaks(xmseg_full_ref, pdp, msLevel = 1L)
 
 ## LC-MS/MS data
 h5f_dda <- tempfile()
-fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
-tmp <- readMsExperiment(fl)
+tmp <- readMsExperiment(pest_mix_dda_file)
 h5_dda <- findChromPeaks(
     tmp, CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                        peakwidth = c(3, 20), prefilter = c(3, 1000)),

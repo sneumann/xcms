@@ -662,8 +662,9 @@
 #' ##
 #' ## To show how MS2 chromatograms can be extracted we first load a DIA
 #' ## (SWATH) data set.
-#' mse_dia <- readMsExperiment(system.file("TripleTOF-SWATH",
-#'     "PestMix1_SWATH.mzML", package = "msdata"))
+#' library(MsDataHub)
+#' fl <- MsDataHub::PestMix1_DDA.mzML()
+#' mse_dia <- readMsExperiment(fl)
 #'
 #' ## Extracting MS2 chromatogram requires also to specify the isolation
 #' ## window from which to extract the data. Without that chromatograms
@@ -994,7 +995,7 @@ setMethod(
         lns <- lengths(pks)
         if (any(lns > 0)) {
             pks <- do.call(rbind, pks[lns > 0])
-            pkd <- do.call(rbind, lapply(res[lns > 0], function(z) {
+            pkd <- rbindlistWithRownames(lapply(res[lns > 0], function(z) {
                 p <- .chromPeakData(z)
                 s <- z@spectra[1L]
                 p$isolationWindow <- s$isolationWindow
@@ -1155,8 +1156,7 @@ setMethod(
             keepAdjustedRtime = TRUE, ignoreHistory = TRUE,
             keepSampleIndex = FALSE, chunkSize = chunkSize)
         pks <- do.call(rbind, lapply(res, `[[`, 1L))
-        pkd <- do.call(rbind.data.frame, c(lapply(res, `[[`, 2L),
-                                           make.row.names = FALSE))
+        pkd <- rbindlistWithRownames(lapply(res, `[[`, 2L))
         npks <- unlist(lapply(res, `[[`, 3L), use.names = FALSE)
         pks[, "sample"] <- rep(seq_along(npks), npks)
         nas <- which(is.na(rownames(pks))) # merged peaks

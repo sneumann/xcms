@@ -1055,10 +1055,9 @@ setClass("MassifquantParam",
 #' mp
 #'
 #' ## Loading a small subset of direct injection, single spectrum files
-#' library(msdata)
-#' fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
-#'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
+#' library(MsDataHub)
+#' fl <- MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML()
+#' fticr <- readMSData(fl, msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,

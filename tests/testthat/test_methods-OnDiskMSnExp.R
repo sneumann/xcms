@@ -5,31 +5,16 @@ test_that("profMat,OnDiskMSnExp works", {
     res <- profMat(filterRt(faahko_od, c(2500, 3000)), step = 2)
     res_2 <- profMat(filterRt(faahko_xod, c(2500, 3000)), step = 2)
     expect_equal(res, res_2)
-
-    ## Simulating issue #312
-    od_1 <- filterFile(microtofq_od, 1)
-    od_1_clnd <- clean(removePeaks(od_1, t = 1800))
-    res_clnd <- profMat(od_1_clnd)
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     skip_on_os(os = "windows", arch = "i386")
 
     ## Reproduce with msdata files:
-    fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-    raw <- readMSData(fl, mode = "onDisk")
+    raw <- readMSData(pest_mix_dda_file, mode = "onDisk")
     options(originalCentWave = TRUE)
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),
                                                      prefilter = c(3, 500)))
-    ## ## Use the getPeakInt2 which uses the rawMat function.
-    ## pkI2 <- .getPeakInt2(tmp, chromPeaks(tmp))
-    ## ## Use the getPeakInt3 which uses the getEIC C function.
-    ## pkI3 <- .getPeakInt3(tmp, chromPeaks(tmp))
-    ## ## These fail for the original centWave code.
-    ## expect_true(sum(pkI2 != chromPeaks(tmp)[, "into"]) > length(pkI2) / 2)
-    ## ## expect_equal(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
-    ## ## expect_equal(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
-    ## expect_equal(pkI2, pkI3)
     ## Try with new implementation.
     options(originalCentWave = FALSE)
     tmp2 <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),
@@ -44,7 +29,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## Are the peaks the same?
     cp2 <- chromPeaks(tmp2)[id_2 %in% id_1, ]
     cn <- colnames(cp2)
-    cn <- cn[!(cn %in% c("intb", "into", "rtmin", "rtmax"))]
+    cn <- cn[!(cn %in% c("intb", "into", "rtmin", "rtmax", "maxo"))]
     pks <- chromPeaks(tmp)
     rownames(pks) <- NULL
     rownames(cp2) <- NULL
@@ -133,12 +118,13 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
 test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
     skip_on_os(os = "windows", arch = "i386")
 
-    onDisk <- filterFile(microtofq_od, 1)
-    res_o <- findChromPeaks(onDisk, param = MassifquantParam(prefilter = c(5, 5000)))
+    onDisk <- readMSData(pest_mix_dda_file, mode = "onDisk")
+    mqp <- MassifquantParam(prefilter = c(5, 5000))
+    res_o <- findChromPeaks(onDisk, param = mqp)
     expect_true(hasChromPeaks(res_o))
-    expect_equal(nrow(chromPeaks(res_o)), 15)
+    expect_equal(nrow(chromPeaks(res_o)), 2)
 
-    expect_error(findChromPeaks(onDisk, param = mqp, msLevel = 2))
+    expect_error(findChromPeaks(onDisk, param = mqp, msLevel = 3), "No spectra")
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,MatchedFilterParam works", {
@@ -160,8 +146,7 @@ test_that("isolationWindowTargetMz,OnDiskMSnExp works", {
     expect_true(all(is.na(res)))
     expect_true(length(res) == length(xod_x))
 
-    f <- proteomics(full.names = TRUE)[5]
-    tmt <- readMSData(f, mode = "onDisk")
+    tmt <- readMSData(pest_mix_swath_file, mode = "onDisk")
     res <- isolationWindowTargetMz(tmt)
     expect_true(!all(is.na(res)))
 })

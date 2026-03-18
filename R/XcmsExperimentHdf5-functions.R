@@ -262,9 +262,10 @@ toXcmsExperiment <- function(object, ...) {
             max_index <- max(
                 as.integer(sub(paste0("CP", msLevel, sid), "", rnames)))
             res[[i]] <- rbindFill(pks, res[[i]])
-            pkd <- rbindFill(.h5_read_data(
+            pkd <- as.data.frame(rbindlist(list(.h5_read_data(
                 h5_file, id = sid, name = "chrom_peak_data",
-                ms_level = msLevel, read_rownames = FALSE)[[1L]], pkd)
+                ms_level = msLevel, read_rownames = FALSE)[[1L]], pkd),
+                fill = TRUE, use.names = TRUE))
         }
         pkdl[[i]] <- pkd
         rownames(res[[i]]) <- c(
@@ -439,9 +440,10 @@ toXcmsExperiment <- function(object, ...) {
             pkd <- .h5_read_data(
                 x@hdf5_file, id = x@sample_id[i], ms_level = msLevel,
                 name = "chrom_peak_data", read_colnames = TRUE)[[1L]]
-            l <- list(rbindFill(
+            l <- list(rbindlistWithRownames(list(
                 pkd, data.frame(is_filled = rep(is_filled, nrow(res[[i]])),
-                                merged = rep(FALSE, nrow(res[[i]])))))
+                                merged = rep(FALSE, nrow(res[[i]])))),
+                fill = TRUE, use.names = TRUE))
             names(l) <- x@sample_id[i]
             mc <- .h5_write_data(
                 x@hdf5_file, l, name = "chrom_peak_data", ms_level = msLevel,
@@ -530,8 +532,6 @@ toXcmsExperiment <- function(object, ...) {
 #' Extract the `chromPeakData` data.frame. Using `peaks` allows to reduce memory
 #' demand because only data from the specified chrom peaks is returned. This
 #' assumes that `chromPeaks()` was called before to get the IDs of the peaks.
-#' We're using the data.table::rbindlist to combine the data.frames because its
-#' much faster - but unfortunately drops also the rownames.
 #'
 #' @param x `XcmsExperimentHdf5`
 #'
@@ -545,7 +545,7 @@ toXcmsExperiment <- function(object, ...) {
 #' @param by_sample `logical(1)` whether results should be `rbind` or returned
 #'     as a `list` of `data.frame`.
 #'
-#' @importFrom data.table rbindlist
+#' @importFrom Spectra rbindlistWithRownames
 #'
 #' @noRd
 .h5_chrom_peak_data <- function(x, msLevel = integer(), columns = character(),
@@ -560,10 +560,7 @@ toXcmsExperiment <- function(object, ...) {
         names(res) <- ids
         res
     } else {
-        rn <- unlist(lapply(res, rownames), use.names= FALSE, recursive = FALSE)
-        res <- base::as.data.frame(data.table::rbindlist(res))
-        attr(res, "row.names") <- rn
-        res
+        rbindlistWithRownames(res)
     }
 }
 
@@ -1311,6 +1308,8 @@ toXcmsExperiment <- function(object, ...) {
 #' @param rownames `character(1)` defining the name of the HDF5 array
 #'     containing the rownames.
 #'
+#' @return `data.frame`
+#'
 #' @noRd
 .h5_read_data_frame <- function(name, h5, index = list(NULL, NULL),
                                 read_rownames = FALSE,
@@ -1431,7 +1430,7 @@ toXcmsExperiment <- function(object, ...) {
 #'
 #' @return `list()` with the read datasets. Will be a `list` of `numeric`
 #'     matrices for `name = "chrom_peaks"` or a `list` with `data.frame`s for
-#'     `name = "chrom_peak_data"`.
+#'     `name = "chrom_peak_data"` or `name = "feature_definitions"`.
 #'
 #' @noRd
 .h5_read_data <- function(h5_file = character(),

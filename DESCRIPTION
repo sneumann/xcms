@@ -63,7 +63,7 @@ Imports:
     MsCoreUtils (>= 1.19.2),
     MsFeatures,
     MsExperiment (>= 1.5.4),
-    Spectra (>= 1.16.1),
+    Spectra (>= 1.21.5),
     progress,
     RColorBrewer,
     MetaboCoreUtils (>= 1.11.2),
@@ -73,7 +73,6 @@ Suggests:
     caTools,
     knitr (>= 1.1.0),
     faahKO,
-    msdata (>= 0.25.1),
     ncdf4,
     testthat (>= 3.1.9),
     pander,
@@ -85,7 +84,8 @@ Suggests:
     MsBackendMgf,
     signal,
     mgcv,
-    rhdf5
+    rhdf5,
+    MsDataHub
 Enhances:
     Rgraphviz,
     rgl

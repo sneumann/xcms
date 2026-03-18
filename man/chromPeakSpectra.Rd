@@ -157,7 +157,8 @@ See also the \emph{LC-MS/MS data analysis} vignette for more details and example
 
 ## Read a file with DDA LC-MS/MS data
 library(MsExperiment)
-fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+library(MsDataHub)
+fl <- MsDataHub::PestMix1_DDA.mzML()
 
 dda <- readMsExperiment(fl)
 
