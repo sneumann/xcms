@@ -1092,7 +1092,7 @@ setMethod(
                             name = "feature_definitions", ms_level = msLevel,
                             read_rownames = TRUE)
         msl <- rep(msLevel, vapply(fd, nrow, 1L))
-        fd <- rbindlistWithRownames(fd)
+        fd <- rbindlistWithRownames(fd, fill = TRUE)
         fd$ms_level <- msl
         .subset_feature_definitions(fd, mz = mz, rt = rt,
                                     ppm = ppm, type = type)

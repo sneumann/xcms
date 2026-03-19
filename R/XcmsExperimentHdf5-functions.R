@@ -560,7 +560,7 @@ toXcmsExperiment <- function(object, ...) {
         names(res) <- ids
         res
     } else {
-        rbindlistWithRownames(res)
+        rbindlistWithRownames(res, fill = TRUE)
     }
 }
 
