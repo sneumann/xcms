@@ -233,8 +233,8 @@ ms2_sps
 #> file(s):
 #> PestMix1_DDA.mzML
 #> Processing:
-#>  Filter: select MS level(s) 2 [Thu Feb 19 13:34:07 2026]
-#>  Merge 1 Spectra into one [Thu Feb 19 13:34:07 2026] 
+#>  Filter: select MS level(s) 2 [Thu Mar 19 15:02:19 2026]
+#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
 
 ## spectra variable *chrom_peak_id* contain the row names of the peaks in the
 ## chromPeak matrix and allow thus to map chromatographic peaks to the
@@ -333,8 +333,8 @@ ms2_sps[[1L]]
 #> file(s):
 #> PestMix1_DDA.mzML
 #> Processing:
-#>  Filter: select MS level(s) 2 [Thu Feb 19 13:34:07 2026]
-#>  Merge 1 Spectra into one [Thu Feb 19 13:34:07 2026] 
+#>  Filter: select MS level(s) 2 [Thu Mar 19 15:02:19 2026]
+#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
 
 ## Parameter `msLevel` allows to define from which MS level spectra should
 ## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all
@@ -367,8 +367,8 @@ ms1_sps
 #> file(s):
 #> PestMix1_DDA.mzML
 #> Processing:
-#>  Filter: select MS level(s) 1 [Thu Feb 19 13:34:07 2026]
-#>  Merge 1 Spectra into one [Thu Feb 19 13:34:07 2026] 
+#>  Filter: select MS level(s) 1 [Thu Mar 19 15:02:19 2026]
+#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
 
 ## Parameter peaks would allow to extract spectra for specific peaks only.
 ## Peaks can be defined with parameter `peaks` which can be either an
@@ -385,6 +385,6 @@ chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
 #> file(s):
 #> PestMix1_DDA.mzML
 #> Processing:
-#>  Filter: select MS level(s) 1 [Thu Feb 19 13:34:07 2026]
-#>  Merge 1 Spectra into one [Thu Feb 19 13:34:07 2026] 
+#>  Filter: select MS level(s) 1 [Thu Mar 19 15:02:19 2026]
+#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
 ```

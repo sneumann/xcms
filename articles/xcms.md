@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-02-19 12:46:13.093172\
-**Compiled**: Thu Feb 19 13:37:35 2026
+**Modified**: 2026-03-19 13:56:23.795053\
+**Compiled**: Thu Mar 19 15:05:50 2026
 
 ## Introduction
 
@@ -1991,7 +1991,7 @@ metadata(res)
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Thu Feb 19 13:38:10 2026 
+    ##  date: Thu Mar 19 15:06:26 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2000,7 +2000,7 @@ metadata(res)
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Thu Feb 19 13:38:15 2026 
+    ##  date: Thu Mar 19 15:06:31 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -2009,7 +2009,7 @@ metadata(res)
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Thu Feb 19 13:38:28 2026 
+    ##  date: Thu Mar 19 15:06:43 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2018,7 +2018,7 @@ metadata(res)
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Thu Feb 19 13:38:28 2026 
+    ##  date: Thu Mar 19 15:06:44 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -2027,7 +2027,7 @@ metadata(res)
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Thu Feb 19 13:38:33 2026 
+    ##  date: Thu Mar 19 15:06:48 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2036,7 +2036,7 @@ metadata(res)
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Thu Feb 19 13:38:38 2026 
+    ##  date: Thu Mar 19 15:06:53 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -2055,7 +2055,7 @@ processHistory(faahko)[[1]]
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Thu Feb 19 13:38:10 2026 
+    ##  date: Thu Mar 19 15:06:26 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2593,9 +2593,9 @@ R packages used for this document are listed below.
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-02-14 r89420)
+    ## R Under development (unstable) (2026-03-15 r89629)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -2629,16 +2629,16 @@ sessionInfo()
     ## [19] BiocStyle_2.39.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] DBI_1.2.3                   rlang_1.1.7                
+    ##  [1] DBI_1.3.0                   rlang_1.1.7                
     ##  [3] magrittr_2.0.4              clue_0.3-67                
     ##  [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
-    ##  [7] compiler_4.6.0              systemfonts_1.3.1          
+    ##  [7] compiler_4.6.0              systemfonts_1.3.2          
     ##  [9] vctrs_0.7.1                 reshape2_1.4.5             
     ## [11] stringr_1.6.0               crayon_1.5.3               
     ## [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.2     
     ## [15] fastmap_1.2.0               XVector_0.51.0             
     ## [17] rmarkdown_2.30              preprocessCore_1.73.0      
-    ## [19] ragg_1.5.0                  purrr_1.2.1                
+    ## [19] ragg_1.5.1                  purrr_1.2.1                
     ## [21] xfun_0.56                   MultiAssayExperiment_1.37.2
     ## [23] cachem_1.1.0                jsonlite_2.0.0             
     ## [25] progress_1.2.3              DelayedArray_0.37.0        
@@ -2655,7 +2655,7 @@ sessionInfo()
     ## [47] lattice_0.22-9              tibble_3.3.1               
     ## [49] plyr_1.8.9                  S7_0.2.1                   
     ## [51] evaluate_1.0.5              desc_1.4.3                 
-    ## [53] Spectra_1.21.1              pillar_1.11.1              
+    ## [53] Spectra_1.21.5              pillar_1.11.1              
     ## [55] affyio_1.81.0               BiocManager_1.30.27        
     ## [57] foreach_1.5.2               MSnbase_2.37.0             
     ## [59] MALDIquant_1.22.3           ncdf4_1.24                 
@@ -2665,15 +2665,15 @@ sessionInfo()
     ## [67] tools_4.6.0                 mzID_1.49.0                
     ## [69] data.table_1.18.2.1         QFeatures_1.21.0           
     ## [71] vsn_3.79.5                  mzR_2.45.0                 
-    ## [73] fs_1.6.6                    XML_3.99-0.22              
+    ## [73] fs_1.6.7                    XML_3.99-0.22              
     ## [75] grid_4.6.0                  impute_1.85.0              
-    ## [77] tidyr_1.3.2                 MsCoreUtils_1.23.2         
+    ## [77] tidyr_1.3.2                 MsCoreUtils_1.23.6         
     ## [79] PSMatch_1.15.1              cli_3.6.5                  
-    ## [81] textshaping_1.0.4           S4Arrays_1.11.1            
+    ## [81] textshaping_1.0.5           S4Arrays_1.11.1            
     ## [83] dplyr_1.2.0                 AnnotationFilter_1.35.0    
     ## [85] pcaMethods_2.3.0            gtable_0.3.6               
     ## [87] sass_0.4.10                 digest_0.6.39              
-    ## [89] SparseArray_1.11.10         htmlwidgets_1.6.4          
+    ## [89] SparseArray_1.11.11         htmlwidgets_1.6.4          
     ## [91] farver_2.1.2                htmltools_0.5.9            
     ## [93] pkgdown_2.2.0.9000          lifecycle_1.0.5            
     ## [95] statmod_1.5.1               MASS_7.3-65

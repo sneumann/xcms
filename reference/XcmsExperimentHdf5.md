@@ -321,7 +321,7 @@ xmse
 #>  xcms results:
 #>   - chromatographic peaks in MS level(s): 1 
 #>  results storage file:
-#>    /tmp/RtmpXIW9Er/file25724724d0f3
+#>    /tmp/Rtmpc2g1r1/file766213a9ca31
 
 ## Extract selected columnds from the chromatographic peak detection
 ## results

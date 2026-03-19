@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-02-19 12:46:13.091735\
-**Compiled**: Thu Feb 19 13:35:58 2026
+**Modified**: 2026-03-19 13:56:23.793995\
+**Compiled**: Thu Mar 19 15:04:13 2026
 
 ## Introduction
 
@@ -818,9 +818,9 @@ table(featureGroups(xmse))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-02-14 r89420)
+    ## R Under development (unstable) (2026-03-15 r89629)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -849,16 +849,16 @@ sessionInfo()
     ## [13] BiocParallel_1.45.0 BiocStyle_2.39.0   
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] DBI_1.2.3                   rlang_1.1.7                
+    ##   [1] DBI_1.3.0                   rlang_1.1.7                
     ##   [3] magrittr_2.0.4              clue_0.3-67                
     ##   [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
     ##   [7] matrixStats_1.5.0           compiler_4.6.0             
-    ##   [9] systemfonts_1.3.1           vctrs_0.7.1                
+    ##   [9] systemfonts_1.3.2           vctrs_0.7.1                
     ##  [11] reshape2_1.4.5              stringr_1.6.0              
     ##  [13] crayon_1.5.3                pkgconfig_2.0.3            
     ##  [15] MetaboCoreUtils_1.19.2      fastmap_1.2.0              
     ##  [17] XVector_0.51.0              rmarkdown_2.30             
-    ##  [19] preprocessCore_1.73.0       ragg_1.5.0                 
+    ##  [19] preprocessCore_1.73.0       ragg_1.5.1                 
     ##  [21] purrr_1.2.1                 xfun_0.56                  
     ##  [23] MultiAssayExperiment_1.37.2 cachem_1.1.0               
     ##  [25] jsonlite_2.0.0              progress_1.2.3             
@@ -877,7 +877,7 @@ sessionInfo()
     ##  [51] affy_1.89.0                 lattice_0.22-9             
     ##  [53] tibble_3.3.1                plyr_1.8.9                 
     ##  [55] S7_0.2.1                    evaluate_1.0.5             
-    ##  [57] desc_1.4.3                  Spectra_1.21.1             
+    ##  [57] desc_1.4.3                  Spectra_1.21.5             
     ##  [59] pillar_1.11.1               affyio_1.81.0              
     ##  [61] BiocManager_1.30.27         MatrixGenerics_1.23.0      
     ##  [63] foreach_1.5.2               MALDIquant_1.22.3          
@@ -887,15 +887,15 @@ sessionInfo()
     ##  [71] lazyeval_0.2.2              tools_4.6.0                
     ##  [73] mzID_1.49.0                 data.table_1.18.2.1        
     ##  [75] QFeatures_1.21.0            vsn_3.79.5                 
-    ##  [77] fs_1.6.6                    XML_3.99-0.22              
+    ##  [77] fs_1.6.7                    XML_3.99-0.22              
     ##  [79] grid_4.6.0                  impute_1.85.0              
-    ##  [81] tidyr_1.3.2                 MsCoreUtils_1.23.2         
+    ##  [81] tidyr_1.3.2                 MsCoreUtils_1.23.6         
     ##  [83] PSMatch_1.15.1              cli_3.6.5                  
-    ##  [85] textshaping_1.0.4           S4Arrays_1.11.1            
+    ##  [85] textshaping_1.0.5           S4Arrays_1.11.1            
     ##  [87] dplyr_1.2.0                 AnnotationFilter_1.35.0    
     ##  [89] pcaMethods_2.3.0            gtable_0.3.6               
     ##  [91] sass_0.4.10                 digest_0.6.39              
-    ##  [93] SparseArray_1.11.10         htmlwidgets_1.6.4          
+    ##  [93] SparseArray_1.11.11         htmlwidgets_1.6.4          
     ##  [95] farver_2.1.2                htmltools_0.5.9            
     ##  [97] pkgdown_2.2.0.9000          lifecycle_1.0.5            
     ##  [99] statmod_1.5.1               MASS_7.3-65
