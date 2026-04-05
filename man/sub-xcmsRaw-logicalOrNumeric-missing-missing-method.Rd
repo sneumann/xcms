@@ -35,7 +35,7 @@ Only subsetting by scan index in increasing order or by a logical
 }
 \examples{
 ## Load a test file
-file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+file <- ko15.CDF()
 xraw <- xcmsRaw(file, profstep = 0)
 ## The number of scans/spectra:
 length(xraw@scantime)

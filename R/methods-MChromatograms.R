@@ -5,10 +5,18 @@
 #' @examples
 #'
 #' ## Perform peak detection on an MChromatograms object
+<<<<<<< Updated upstream
 #' od3 <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
 #'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
 #'     mode = "onDisk")
+=======
+#'
+#' fls <- c(ko15.CDF(),
+#'          ko16.CDF(),
+#'          ko18.CDF())
+#' od3 <- readMsExperiment(fls)
+>>>>>>> Stashed changes
 #'
 #' ## Disable parallel processing for this example
 #' register(SerialParam())

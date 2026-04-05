@@ -10,7 +10,11 @@ vignette: >
   %\VignetteIndexEntry{LC-MS/MS data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+<<<<<<< Updated upstream
   %\VignetteDepends{xcms,msdata,BiocStyle,magrittr,pander,Spectra,MsBackendMgf}
+=======
+  %\VignetteDepends{xcms,MsDataHub,BiocStyle,pander,Spectra,MsBackendMgf,MetaboCoreUtils}
+>>>>>>> Stashed changes
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -74,10 +78,19 @@ Below we load the example DDA data set using the `readMSData` function from the
 
 ```{r load-dda-data, message = FALSE}
 library(xcms)
+<<<<<<< Updated upstream
 
 dda_file <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
                         package = "msdata")
 dda_data <- readMSData(dda_file, mode = "onDisk")
+=======
+library(MsExperiment)
+library(MsDataHub)
+
+dda_file <- PestMix1_DDA.mzML()
+dda_data <- readMsExperiment(dda_file)
+chr <- chromatogram(dda_data, aggregationFun = "sum", msLevel = 1L)
+>>>>>>> Stashed changes
 ```
 
 ```{r subset-dda, echo = FALSE, message = FALSE, eval = TRUE}
@@ -328,9 +341,7 @@ function. The resulting object will contain all recorded MS1 and MS2
 spectra in the specified file.
 
 ```{r load-swath-data, message = FALSE}
-swath_file <- system.file("TripleTOF-SWATH",
-                          "PestMix1_SWATH.mzML",
-                          package = "msdata")
+swath_file <- PestMix1_SWATH.mzML()
 
 swath_data <- readMSData(swath_file, mode = "onDisk")
 ```

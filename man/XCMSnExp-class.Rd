@@ -717,7 +717,11 @@ overlapping or close in the m/z - rt space (see respective help page).
 
 \item \code{\link{quantify}} extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
+<<<<<<< Updated upstream
 \code{\link{SummarizedExperiment}}. See help page for details.
+=======
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. See help page for details.
+>>>>>>> Stashed changes
 }
 }
 

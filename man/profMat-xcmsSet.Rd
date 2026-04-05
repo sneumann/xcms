@@ -82,7 +82,7 @@ From \code{xcms} version 1.51.1 on only the \code{profMat} method
     default way to access it directly \emph{via} \code{object@env$profile}.
 }
 \examples{
-file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+file <- ko15.CDF()
 ## Load the data without generating the profile matrix (profstep = 0)
 xraw <- xcmsRaw(file, profstep = 0)
 ## Extract the profile matrix

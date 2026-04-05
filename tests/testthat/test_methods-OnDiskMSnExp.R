@@ -15,8 +15,8 @@ test_that("profMat,OnDiskMSnExp works", {
 test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     skip_on_os(os = "windows", arch = "i386")
 
-    ## Reproduce with msdata files:
-    fl <- system.file("microtofq/MM14.mzML", package = "msdata")
+    ## Reproduce with raw data file:
+    fl <- MM14.mzML()
     raw <- readMSData(fl, mode = "onDisk")
     options(originalCentWave = TRUE)
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),

@@ -68,8 +68,13 @@ of the features matches the order found in the
 \code{DataFrame}. \code{NA} is reported for features without
 corresponding chromatographic peak in the respective sample(s).
 
+<<<<<<< Updated upstream
 For \code{quantify}: a \code{\link{SummarizedExperiment}} representing
 the preprocessing results.
+=======
+For \code{quantify()}: a \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}
+representing the preprocessing results.
+>>>>>>> Stashed changes
 }
 \description{
 \code{featureValues,XCMSnExp} : extract a \code{matrix} for
@@ -83,10 +88,17 @@ Parameter `msLevel` allows to choose a specific MS level for which feature
 values should be returned (given that features have been defined for that MS
 level).
 
+<<<<<<< Updated upstream
 \code{quantify,XCMSnExp}: return the preprocessing results as an
 \code{\link{SummarizedExperiment}} object containing the feature abundances
 as assay matrix, the feature definitions (returned by
 \code{\link{featureDefinitions}}) as \code{rowData} and the phenotype
+=======
+\verb{quantify,XCMSnExp()}: return the preprocessing results as an
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}} object containing the
+feature abundances as assay matrix, the feature definitions (returned by
+\code{\link[=featureDefinitions]{featureDefinitions()}}) as \code{rowData} and the phenotype
+>>>>>>> Stashed changes
 information as \code{colData}. This is an ideal container for further
 processing of the data. Internally, the \code{\link{featureValues}} method
 is used to extract the feature abundances, parameters for that method can

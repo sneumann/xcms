@@ -2159,7 +2159,7 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 #'
 #' @examples
 #' ## Load a test file
-#' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+#' file <- ko15.CDF()
 #' xraw <- xcmsRaw(file, profstep = 0)
 #' ## The number of scans/spectra:
 #' length(xraw@scantime)
@@ -2313,7 +2313,7 @@ setMethod("[", signature(x = "xcmsRaw",
 #' @author Johannes Rainer
 #'
 #' @examples
-#' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+#' file <- ko15.CDF()
 #' ## Load the data without generating the profile matrix (profstep = 0)
 #' xraw <- xcmsRaw(file, profstep = 0)
 #' ## Extract the profile matrix
