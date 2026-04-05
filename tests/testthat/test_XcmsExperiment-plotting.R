@@ -4,7 +4,7 @@ df <- data.frame(mzML_file = basename(fls),
                  dataOrigin = fls,
                  sample = c("ko15", "ko16", "ko18"))
 mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
-mse_ms2 <- readMsExperiment(msdata::proteomics(full.names=TRUE)[4])
+mse_ms2 <- readMsExperiment(TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.20141210.mzML.gz())
 p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 xmse <- findChromPeaks(mse, param = p)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
@@ -55,13 +55,11 @@ test_that("plot,XcmsExperiment and .xmse_plot_xic works", {
 
 test_that("plotPrecursorIons works", {
     expect_error(plotPrecursorIons(3), "MsExperiment")
-    fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML",
-                      package = "msdata")
+    fl <- PestMix1_SWATH.mzML()
     a <- readMsExperiment(fl)
     plotPrecursorIons(a, main = "SWATH")
 
-    fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
-                      package = "msdata")
+    fl <- PestMix1_DDA.mzML()
     a <- readMsExperiment(fl)
     plotPrecursorIons(a)
 })

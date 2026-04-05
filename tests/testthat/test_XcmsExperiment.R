@@ -1,4 +1,4 @@
-fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
+fl <- PestMix1_SWATH.mzML()
 mse_dia <- readMsExperiment(fl)
 
 test_that(".empty_chrom_peaks works", {
@@ -1086,7 +1086,7 @@ test_that("chromPeakSpectra,XcmsExperiment works", {
     expect_equal(rtime(res2[[3L]]), rtime(res[res$chrom_peak_id == pks[3L]])[idx[3L]])
 
     ## DDA data
-    fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+    fl <- PestMix1_DDA.mzML()
     tmp <- readMsExperiment(fl)
     tmp <- filterRt(tmp, c(200, 400))
     tmp <- findChromPeaks(tmp, CentWaveParam(peakwidth = c(5, 15),

@@ -83,8 +83,10 @@ test_that(".pmat_filter_mz works", {
 
 test_that(".chrom_peak_intensity_msw  works", {
     library(MsExperiment)
-    fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
-                         recursive = TRUE, full.names = TRUE)
+    ## Direct injection data:
+    fticrf <- c(HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+                HAM004_641fE_14.11.07..Exp2.extracted.mzML())
+  
     fls <- normalizePath(fticrf)[1:2]
     mp <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
                    SNR.method = "data.mean", winSize.noise = 500)

@@ -450,7 +450,7 @@ setMethod(
 #'
 #' ## Load a test data file with DDA LC-MS/MS data
 #' library(MsExperiment)
-#' fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+#' fl <- PestMix1_DDA.mzML
 #' pest_dda <- readMsExperiment(fl)
 #'
 #' plotPrecursorIons(pest_dda)

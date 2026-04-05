@@ -71,9 +71,9 @@ library(MsExperiment)
 library(xcms)
 ## Perform peak detection on an MChromatograms object
 
-fls <- c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-    system.file("cdf/KO/ko16.CDF", package = "faahKO"),
-    system.file("cdf/KO/ko18.CDF", package = "faahKO"))
+fls <- c(ko15.CDF(),
+         ko16.CDF(),
+         ko18.CDF())
 od3 <- readMsExperiment(fls)
 
 ## Disable parallel processing for this example

@@ -333,8 +333,7 @@ test_that(".mse_chromatogram works", {
     ## MS2 chromatogram with isolationWindow.
     ## Fails to extract chromatograms because DDA will not support that
     ## properly.
-    fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
-                      package = "msdata")
+    fl <- PestMix1_DDA.mzML()
     mse_dda <- readMsExperiment(fl)
     mzr <- rbind(c(100, 110),
                  c(500, 510))
@@ -371,8 +370,7 @@ test_that(".mse_chromatogram works", {
     expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
 
     ## Can extract chromatograms if providing the correct isolationWindow.
-    fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML",
-                      package = "msdata")
+    fl <- PestMix1_SWATH.mzML()
     mse_dia <- readMsExperiment(fl)
     mzr <- rbind(c(100, 110),
                  c(500, 510))

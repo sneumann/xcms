@@ -1,17 +1,16 @@
 library(testthat)
 library(xcms)
-library(faahKO)
 library(MSnbase)
-library(msdata)
+library(MsDataHub)
 library(BiocParallel)
 prm <- SerialParam()
 
 register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
-faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+faahko_3_files <- c(ko15.CDF(),
+                     ko16.CDF(),
+                     ko18.CDF())
 
 cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
@@ -30,13 +29,15 @@ xod_chr <- findChromPeaks(filterMz(filterRt(od_x, rt = c(2500, 3500)),
                                    mz = c(334.9, 344.1)),
                           param = CentWaveParam())
 
-microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-                  system.file("microtofq/MM8.mzML", package = "msdata"))
+microtofq_fs <- c(MM14.mzML(),
+                  MM8.mzML())
+
 microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
 
 ## Direct injection data:
-fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
-                     recursive = TRUE, full.names = TRUE)
+fticrf <- c(HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+            HAM004_641fE_14.11.07..Exp2.extracted.mzML())
+
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                             peakThr = 80000, ampTh = 0.005,
@@ -44,14 +45,15 @@ fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                             winSize.noise = 500))
 
 ## Pesticide data
-fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
+fl <- PestMix1_SWATH.mzML()
+
 pest_swth <- readMSData(fl, mode = "onDisk")
 cwp2 <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                       peakwidth = c(3, 20), prefilter = c(3, 1000))
 pest_swth <- findChromPeaks(pest_swth, param = cwp2)
 pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp2)
 
-fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+fl <- PestMix1_DDA.mzML()
 pest_dda <- readMSData(fl, mode = "onDisk")
 pest_dda <- findChromPeaks(pest_dda, param = cwp2)
 

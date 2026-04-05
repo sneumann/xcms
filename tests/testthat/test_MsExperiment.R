@@ -123,7 +123,7 @@ test_that("polarity,MsExperiment works", {
 })
 
 test_that("estimatePrecursorIntensity,MsExperiment works", {
-    ftmt <- msdata::proteomics(full.names = TRUE)[5]
+    ftmt <- TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz()
     library(MsExperiment)
     tmt <- readMsExperiment(ftmt)
     res <- estimatePrecursorIntensity(tmt, ppm = 10, tolerance = 0)

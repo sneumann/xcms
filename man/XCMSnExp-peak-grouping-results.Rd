@@ -68,7 +68,7 @@ of the features matches the order found in the
 \code{DataFrame}. \code{NA} is reported for features without
 corresponding chromatographic peak in the respective sample(s).
 
-For \code{quantify()}: a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}
+For \code{quantify()}: a \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}
 representing the preprocessing results.
 }
 \description{
@@ -84,7 +84,7 @@ values should be returned (given that features have been defined for that MS
 level).
 
 \verb{quantify,XCMSnExp()}: return the preprocessing results as an
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}} object containing the
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}} object containing the
 feature abundances as assay matrix, the feature definitions (returned by
 \code{\link[=featureDefinitions]{featureDefinitions()}}) as \code{rowData} and the phenotype
 information as \code{colData}. This is an ideal container for further
