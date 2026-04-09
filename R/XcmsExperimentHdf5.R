@@ -33,10 +33,10 @@
 #' `XcmsExperimentHdf5` uses a different naming scheme for chromatographic
 #' peaks: for efficiency reasons, chromatographic peak data is organized by
 #' sample and MS level. The chrom peak IDs are hence in the format
-#' *CP<MS level>S<sample id><chrom peak index>* with <MS level> being the MS
-#' level in which the chromatographic peaks were detected and <sample id>
-#' the ID of the sample (usually related to the index in the original
-#' `MsExperiment` object) and the <chrom peak index> the index of the
+#' `"CP"<MS level>"S"<sample id><chrom peak index>` with `<MS level>` being
+#' the MS level in which the chromatographic peaks were detected and
+#' `<sample id>` the ID of the sample (usually related to the index in the
+#' original `MsExperiment` object) and the `<chrom peak index>` the index of the
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
@@ -55,7 +55,7 @@
 #' `XcmsExperimentHdf5` object with the `toXcmsExperimentHdf5()` function. All
 #' present preprocessing results will be stored to the specified HDF5 file.
 #' To load all preprocessing results into memory and hence change from a
-#' `XcmsExperimentHdf5` to a `XcmsExperiment` object, the `toXcmsExperument()`
+#' `XcmsExperimentHdf5` to a `XcmsExperiment` object, the `toXcmsExperiment()`
 #' function can be used.
 #'
 #' @section Using the HDF5 file-based on-disk data storage:

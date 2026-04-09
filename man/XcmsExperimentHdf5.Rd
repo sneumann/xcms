@@ -113,10 +113,10 @@ in the object's \code{\link[Spectra:Spectra]{Spectra::Spectra()}} object), in a 
 \code{XcmsExperimentHdf5} uses a different naming scheme for chromatographic
 peaks: for efficiency reasons, chromatographic peak data is organized by
 sample and MS level. The chrom peak IDs are hence in the format
-\emph{CP\if{html}{\out{<MS level>}}S\if{html}{\out{<sample id>}}\if{html}{\out{<chrom peak index>}}} with \if{html}{\out{<MS level>}} being the MS
-level in which the chromatographic peaks were detected and \if{html}{\out{<sample id>}}
-the ID of the sample (usually related to the index in the original
-\code{MsExperiment} object) and the \if{html}{\out{<chrom peak index>}} the index of the
+\verb{"CP"<MS level>"S"<sample id><chrom peak index>} with \verb{<MS level>} being
+the MS level in which the chromatographic peaks were detected and
+\verb{<sample id>} the ID of the sample (usually related to the index in the
+original \code{MsExperiment} object) and the \verb{<chrom peak index>} the index of the
 chromatographic peak in the chrom peak matrix \strong{of that sample} and
 MS level.
 
@@ -136,7 +136,7 @@ addition it is possible to convert a \code{XcmsExperiment} object to a
 \code{XcmsExperimentHdf5} object with the \code{toXcmsExperimentHdf5()} function. All
 present preprocessing results will be stored to the specified HDF5 file.
 To load all preprocessing results into memory and hence change from a
-\code{XcmsExperimentHdf5} to a \code{XcmsExperiment} object, the \code{toXcmsExperument()}
+\code{XcmsExperimentHdf5} to a \code{XcmsExperiment} object, the \code{toXcmsExperiment()}
 function can be used.
 }
 
