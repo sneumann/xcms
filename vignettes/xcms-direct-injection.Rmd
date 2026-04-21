@@ -44,22 +44,26 @@ setup please see the *BiocParallel* vignette.
 library(MSnbase)
 library(xcms)
 library(MassSpecWavelet)
-
+library(MsDataHub)
 register(SerialParam())
 
 ```
 
 In this documentation we use an example data set from the `r
 Biocpkg("MsDataHub")` package. Assuming that `r Biocpkg("MsDataHub")` is
-installed, we locate the path of the package and load the data set. We create
-also a `data.frame` describing the experimental setup based on the file names.
+installed, it will obtain the files from https://doi.org/10.5281/zenodo.18494293
+and load the data set. We create also a `data.frame` describing the experimental
+setup based on the file names.
 
-```{r load-data, message = FALSE, results = "hide", warning = FALSE}
-## Define the input files
-mzML_files <- c(MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
-                MsDataHub::HAM004_641fE_14.11.07..Exp2.extracted.mzML(),
-                MsDataHub::HAM005_641fE_14.11.07..Exp1.extracted.mzML(),
-                MsDataHub::HAM005_641fE_14.11.07..Exp2.extracted.mzML())
+```{r load-data, message = FALSE, results = "hide"}
+## We're using 2 samples per condition
+## from https://doi.org/10.5281/zenodo.18494293
+mzML_files <- c(
+  HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+  HAM004_641fE_14.11.07..Exp2.extracted.mzML(),
+  HAM005_641fE_14.11.07..Exp1.extracted.mzML(),
+  HAM005_641fE_14.11.07..Exp2.extracted.mzML()
+)
 
 ## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.
 grp <- c("ham4", "ham4", "ham5", "ham5")

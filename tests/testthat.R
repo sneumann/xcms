@@ -1,7 +1,7 @@
 library(testthat)
 library(xcms)
-library(faahKO)
 library(MSnbase)
+library(MsDataHub)
 library(BiocParallel)
 prm <- SerialParam()
 
@@ -11,11 +11,10 @@ register(SerialParam())
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-fticrf <- c(MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
-            MsDataHub::HAM004_641fE_14.11.07..Exp2.extracted.mzML())
-pest_mix_swath_file <- MsDataHub::PestMix1_SWATH.mzML()
-pest_mix_dda_file <- MsDataHub::PestMix1_DDA.mzML()
-
+fticrf <- c(HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+            HAM004_641fE_14.11.07..Exp2.extracted.mzML())
+pest_mix_swath_file <- PestMix1_SWATH.mzML()
+pest_mix_dda_file <- PestMix1_DDA.mzML()
 
 ## Create some objects we can re-use in different tests:
 cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
@@ -35,11 +34,6 @@ xod_chr <- findChromPeaks(filterMz(filterRt(od_x, rt = c(2500, 3500)),
                                    mz = c(334.9, 344.1)),
                           param = CentWaveParam())
 
-## microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-##                   system.file("microtofq/MM8.mzML", package = "msdata"))
-## microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
-
-## Direct injection data:
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                             peakThr = 80000, ampTh = 0.005,

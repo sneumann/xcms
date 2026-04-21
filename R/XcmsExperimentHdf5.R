@@ -198,11 +198,12 @@
 #' ## Create a MsExperiment object representing the data from an LC-MS
 #' ## experiment.
 #' library(MsExperiment)
+#' library(MsDataHub)
 #'
 #' ## Define the raw data files
-#' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' fls <- c(ko15.CDF(),
+#'          ko16.CDF(),
+#'          ko18.CDF())
 #'
 #' ## Define a data frame with the sample characterization
 #' df <- data.frame(mzML_file = basename(fls),
