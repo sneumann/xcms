@@ -233,12 +233,12 @@ features to retain. It supports a \code{logical}, \code{integer} indices or
 ## Create a MsExperiment object representing the data from an LC-MS
 ## experiment.
 library(MsExperiment)
-library(MsDataHub)
+library(faahKO)
 
 ## Define the raw data files
-fls <- c(ko15.CDF(),
-         ko16.CDF(),
-         ko18.CDF())
+fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
 ## Define a data frame with the sample characterization
 df <- data.frame(mzML_file = basename(fls),

@@ -35,6 +35,8 @@ are discarded.
 }
 \examples{
 ## Load a test file
+library(xcms)
+library(MsDataHub)
 file <- ko15.CDF()
 xraw <- xcmsRaw(file, profstep = 0)
 ## The number of scans/spectra:

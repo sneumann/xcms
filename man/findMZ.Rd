@@ -38,8 +38,5 @@ findMZ(object, find, ppmE=25, print=TRUE)
 \seealso{
 \code{\link{findneutral}},
 }
-\examples{
-
-}
 \author{H. Paul Benton, \email{hpaul.beonton08@imperial.ac.uk}}
 \keyword{methods}
