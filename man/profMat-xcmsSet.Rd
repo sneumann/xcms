@@ -122,6 +122,8 @@ interpolated data from plus to minus half the step size.
 }
 }
 \examples{
+library(xcms)
+library(MsDataHub)
 file <- ko15.CDF()
 ## Load the data without generating the profile matrix (profstep = 0)
 xraw <- xcmsRaw(file, profstep = 0)

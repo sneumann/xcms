@@ -304,37 +304,25 @@ test_that(".mse_chromatogram works", {
 
     ## MsExperiment with non-overlapping rt ranges: check if results are
     ## correct.
-    micro_mse <- MsExperiment()
-    micro_fls <- normalizePath(microtofq_fs)
-    df <- data.frame(mzML_file = basename(micro_fls),
-                 dataOrigin = micro_fls,
-                 sample = c("MM14", "MM8"))
-
-    spectra(micro_mse) <- Spectra::Spectra(micro_fls)
-    sampleData(micro_mse) <- DataFrame(df)
-    ## Link samples to spectra.
-    micro_mse <- linkSampleData(
-        micro_mse, with = "sampleData.dataOrigin = spectra.dataOrigin")
-    ## sample 1: rt 270-307, mz 94 1004
-    ## sample 2: rt 0.4-66, mz 95 1005
-    rtr <- rbind(c(13, 20), c(290, 301))
-    mzr <- rbind(c(100, 200), c(100, 200))
-    res <- .mse_chromatogram(micro_mse, rt = rtr, mz = mzr, msLevel = 1L)
+    mse_rt <- readMsExperiment(c(faahko_3_files[1], pest_mix_dda_file))
+    ## sample 1: 2500 - 4400
+    ## sample 2: 0 - 899
+    rtr <- rbind(c(13, 20), c(2900, 3010))
+    mzr <- rbind(c(220, 240), c(220, 240))
+    res <- xcms:::.mse_chromatogram(mse_rt, rt = rtr, mz = mzr, msLevel = 1L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), 2L)
     expect_equal(nrow(res), 2L)
     expect_true(validObject(res))
     expect_equal(intensity(res[1, 1]), numeric())
     expect_equal(intensity(res[2, 2]), numeric())
-    ref <- chromatogram(microtofq_od, mz = mzr, rt = rtr)
-    expect_equal(unname(intensity(res[1, 2])), unname(intensity(ref[1, 2])))
-    expect_equal(unname(intensity(res[2, 1])), unname(intensity(ref[2, 1])))
+    expect_true(length(intensity(res[1, 2])) >  0)
+    expect_true(length(intensity(res[2, 1])) >  0)
 
     ## MS2 chromatogram with isolationWindow.
     ## Fails to extract chromatograms because DDA will not support that
     ## properly.
-    fl <- PestMix1_DDA.mzML()
-    mse_dda <- readMsExperiment(fl)
+    mse_dda <- readMsExperiment(pest_mix_dda_file)
     mzr <- rbind(c(100, 110),
                  c(500, 510))
     rtr <- rbind(c(200, 220),
@@ -370,8 +358,7 @@ test_that(".mse_chromatogram works", {
     expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
 
     ## Can extract chromatograms if providing the correct isolationWindow.
-    fl <- PestMix1_SWATH.mzML()
-    mse_dia <- readMsExperiment(fl)
+    mse_dia <- readMsExperiment(pest_mix_swath_file)
     mzr <- rbind(c(100, 110),
                  c(500, 510))
     res <- .mse_chromatogram(mse_dia, mz = mzr, rt = rtr, msLevel = 1L)

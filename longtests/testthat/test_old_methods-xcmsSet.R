@@ -359,7 +359,7 @@ test_that("sampclass,xcmsSet works with unused groups", {
 })
 
 test_that("updateObject,xcmsSet works", {
-    data(xs)
+    xs <- faahko_xs
 
     newXs <- updateObject(xs)
     expect_identical(xs@peaks, newXs@peaks)

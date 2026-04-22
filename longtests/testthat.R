@@ -1,7 +1,8 @@
 library(testthat)
 library(xcms)
+library(MSnbase)
 library(faahKO)
-library(msdata)
+library(MsDataHub)
 
 attr(faahko, "filepaths") <- sapply(
     as.list(basename(attr(faahko, "filepaths"))),
@@ -9,10 +10,12 @@ attr(faahko, "filepaths") <- sapply(
                             x, package = "faahKO"))
 register(SerialParam())
 
-## Create some objects we can re-use in different tests:
+## Define test files:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+fticrf <- c(MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+            MsDataHub::HAM004_641fE_14.11.07..Exp2.extracted.mzML())
 
 ## An xcmsRaw for the first file:
 faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -44,14 +47,7 @@ faahko_grouped_filled <- fillPeaks(group(faahko))
 faahko_grouped_retcor_filled <-
     fillPeaks(group(retcor(group(updateObject(faahko)))))
 
-microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-                  system.file("microtofq/MM8.mzML", package = "msdata"))
-microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
-microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
-
 ## Direct injection data:
-fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
-                     recursive = TRUE, full.names = TRUE)
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                             peakThr = 80000, ampTh = 0.005,

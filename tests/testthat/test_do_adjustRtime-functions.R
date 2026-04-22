@@ -47,7 +47,6 @@ test_that("do_adjustRtime_peakGroups works", {
 test_that("applyRtAdjustment works", {
     skip_on_os(os = "windows", arch = "i386")
 
-    xs <- faahko
     ## group em.
     ## xsg <- group(xs)
     ## ## align em.

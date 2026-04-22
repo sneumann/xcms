@@ -33,10 +33,10 @@
 #' `XcmsExperimentHdf5` uses a different naming scheme for chromatographic
 #' peaks: for efficiency reasons, chromatographic peak data is organized by
 #' sample and MS level. The chrom peak IDs are hence in the format
-#' *CP<MS level>S<sample id><chrom peak index>* with <MS level> being the MS
-#' level in which the chromatographic peaks were detected and <sample id>
-#' the ID of the sample (usually related to the index in the original
-#' `MsExperiment` object) and the <chrom peak index> the index of the
+#' `"CP"<MS level>"S"<sample id><chrom peak index>` with `<MS level>` being
+#' the MS level in which the chromatographic peaks were detected and
+#' `<sample id>` the ID of the sample (usually related to the index in the
+#' original `MsExperiment` object) and the `<chrom peak index>` the index of the
 #' chromatographic peak in the chrom peak matrix **of that sample** and
 #' MS level.
 #'
@@ -55,7 +55,7 @@
 #' `XcmsExperimentHdf5` object with the `toXcmsExperimentHdf5()` function. All
 #' present preprocessing results will be stored to the specified HDF5 file.
 #' To load all preprocessing results into memory and hence change from a
-#' `XcmsExperimentHdf5` to a `XcmsExperiment` object, the `toXcmsExperument()`
+#' `XcmsExperimentHdf5` to a `XcmsExperiment` object, the `toXcmsExperiment()`
 #' function can be used.
 #'
 #' @section Using the HDF5 file-based on-disk data storage:
@@ -198,12 +198,12 @@
 #' ## Create a MsExperiment object representing the data from an LC-MS
 #' ## experiment.
 #' library(MsExperiment)
-#' library(MsDataHub)
+#' library(faahKO)
 #'
 #' ## Define the raw data files
-#' fls <- c(ko15.CDF(),
-#'          ko16.CDF(),
-#'          ko18.CDF())
+#' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
 #' ## Define a data frame with the sample characterization
 #' df <- data.frame(mzML_file = basename(fls),
@@ -1093,7 +1093,7 @@ setMethod(
                             name = "feature_definitions", ms_level = msLevel,
                             read_rownames = TRUE)
         msl <- rep(msLevel, vapply(fd, nrow, 1L))
-        fd <- do.call(rbind, fd)
+        fd <- rbindlistWithRownames(fd, fill = TRUE)
         fd$ms_level <- msl
         .subset_feature_definitions(fd, mz = mz, rt = rt,
                                     ppm = ppm, type = type)
@@ -1116,8 +1116,7 @@ setMethod(
             stop("if 'missing' is not 'NA' or a numeric it should",
                  " be one of: \"rowmin_half\".")
         msLevel <- intersect(msLevel, object@features_ms_level)
-        vals <- do.call(
-            rbindFill,
+        vals <- rbindFill(
             lapply(msLevel, .h5_feature_values_ms_level, x = object,
                    method = method, value = value, intensity = intensity,
                    filled = filled)

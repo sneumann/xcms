@@ -1724,45 +1724,43 @@ test_that("adjustRtime,peakGroups works", {
 test_that("findChromPeaks,MSWParam works", {
     skip_on_os(os = "windows", arch = "i386")
 
-    od <- microtofq_od
+    od <- readMSData(pest_mix_dda_file, mode = "onDisk")
     ## Restrict to first spectrum
-    od1 <- od[1]
-    sp1 <- od[[1]]
+    od1 <- od[1842]
+    sp1 <- od[[1842]]
     res_1 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1))
     mp <- MSWParam()
-    expect_error(findChromPeaks(od1, param = mp, msLevel = 2))
-    res_2 <- findChromPeaks(od1, param = mp)
+    expect_error(findChromPeaks(od1, param = mp, msLevel = 3), "No MS")
+    res_2 <- findChromPeaks(od1, param = mp, msLevel = 2)
     pks <- chromPeaks(res_2)
     rownames(pks) <- NULL
     expect_equal(res_1, pks[, colnames(res_1), drop = FALSE])
     ## Changing settings.
-    snthresh(mp) <- 1
-    nearbyPeak(mp) <- FALSE
+    mp@snthresh <- 1
+    mp@nearbyPeak <- FALSE
     res_1 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1),
                               snthresh = 1, nearbyPeak = FALSE)
-    res_2 <- findChromPeaks(od1, param = mp, return.type = "list")
-    expect_equal(res_1, res_2[[1]][, colnames(res_1)])
-    peakThr(mp) <- 200
+    res_2 <- findChromPeaks(od1, param = mp, return.type = "list", msLevel = 2L)
+    cn <- c("mz", "mzmin", "mzmax", "into", "maxo", "maxf")
+    expect_equal(res_1[, cn], res_2[[1]][, cn])
+    mp@peakThr <- 200
     res_1 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1),
                               snthresh = 1, nearbyPeak = FALSE,
                               peakThr = 200)
-    res_2 <- findChromPeaks(od1, param = mp, return.type = "list")
-    expect_equal(res_1, res_2[[1]][, colnames(res_1)])
-    addParams(mp) <- list(forder = 2)
+    res_2 <- findChromPeaks(od1, param = mp, return.type = "list", msLevel = 2L)
+    expect_equal(res_1[, cn], res_2[[1]][, cn])
+    mp@addParams <- list(forder = 2)
     res_3 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1),
                               snthresh = 1, nearbyPeak = FALSE,
                               peakThr = 200, forder = 2)
-    res_4 <- findChromPeaks(od1, param = mp, return.type = "list")
-    expect_equal(res_3, res_4[[1]][, colnames(res_3)])
-    addParams(mp) <- list(forder = 2, dorder = 1)
+    res_4 <- findChromPeaks(od1, param = mp, return.type = "list", msLevel = 2L)
+    expect_equal(res_3[, cn], res_4[[1]][, cn])
+    mp@addParams <- list(forder = 2, dorder = 1)
     res_3 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1),
                               snthresh = 1, nearbyPeak = FALSE,
                               peakThr = 200, forder = 2, dorder = 1)
-    res_4 <- findChromPeaks(od1, param = mp, return.type = "list")
-    expect_equal(res_3, res_4[[1]][, colnames(res_3)])
-    ## Compare old vs new:
-    pks <- chromPeaks(fticr_xod)
-    rownames(pks) <- NULL
+    res_4 <- findChromPeaks(od1, param = mp, return.type = "list", msLevel = 2L)
+    expect_equal(res_3[, cn], res_4[[1]][, cn])
 })
 
 test_that("featureValues,XCMSnExp works as with groupval", {
@@ -1783,7 +1781,8 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
 
     ## Check error if no features were found. issue #273
     pdp <- PeakDensityParam(sampleGroups = rep(1, 3), minSamples = 30)
-    expect_warning(groupChromPeaks(faahko_xod, param = pdp), "Unable to group any chromatographic peaks.")
+    expect_warning(groupChromPeaks(faahko_xod, param = pdp),
+                   "Unable to group any chromatographic peaks.")
 
     fdp <- PeakDensityParam(sampleGroups = rep(1, 3))
     res <- groupChromPeaks(faahko_xod, param = fdp)
@@ -1817,8 +1816,19 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
                  featureDefinitions(res_2)$mzmed[(nr + 1):(2 * nr)])
     expect_equal(featureDefinitions(res)$peakidx,
                  featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
+    ## rtCenterFun
+    res_2 <- groupChromPeaks(
+        faahko_xod, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                             rtCenterFun = "wMean"))
+    a <- featureDefinitions(res)
+    b <- featureDefinitions(res_2)
+    expect_equal(a$rtmin, b$rtmin)
+    expect_equal(a$rtmax, b$rtmax)
+    expect_equal(a$mzmed, b$mzmed)
+    expect_true(sum(a$rtmed != b$rtmed) > 20)
 
-    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 2),
+                 "MS level 2")
     expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 1:4),
                  "one MS level at a time")
 })

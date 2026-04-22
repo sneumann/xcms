@@ -47,12 +47,7 @@ test_that(".getPeaks_xxx functions works", {
 })
 
 test_that("xcmsSet can handle MS2 data", {
-    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
-    expect_equal(xcmsSet(filename, snthresh = 4, mslevel = 2)@mslevel, 2)
-})
-
-test_that("xcmsSet works with MS2... again", {
-    filename <- system.file('iontrap/extracted.mzML', package = "msdata")
+    filename <- MsDataHub::PestMix1_DDA.mzML()
     expect_equal(xcmsSet(filename, snthresh = 4, mslevel = 2)@mslevel, 2)
 })
 
@@ -89,11 +84,11 @@ test_that("phenoDataFromPaths and others don't fail", {
 })
 
 test_that("showError works", {
-    data(xs)
+    xs <- faahko_xs
     errs <- .getProcessErrors(xs)
     expect_equal(length(errs), 0)
     ph <- .getProcessHistory(xs)
-    expect_equal(length(ph), 0)
+    expect_equal(length(ph), 3)
     xs <- updateObject(xs)
     expect_true(.hasSlot(xs, ".processHistory"))
 
@@ -104,7 +99,7 @@ test_that("showError works", {
     expect_equal(length(errs), 0)
 
     ph <- .getProcessHistory(xs, fileIndex = 3)
-    expect_equal(length(ph), 0)
+    expect_equal(length(ph), 1)
 })
 
 test_that("split.xcmsSet works", {
@@ -244,16 +239,6 @@ test_that("c.xcmsSet preserves ProcessHistory", {
     ph <- xs_1@.processHistory[[4]]
     ph@fileIndex <- 4L
     expect_equal(conc@.processHistory[[5]], ph)
-    ## empty
-    library(msdata)
-    suppressWarnings(
-        xs <- xcmsSet(system.file("microtofq/MM8.mzML", package="msdata"),
-                      method="centWave", ppm=25, peakwidth=c(20, 50))
-    )
-    xs2 <- xcmsSet(system.file("microtofq/MM14.mzML", package="msdata"),
-                   method="centWave", ppm=25, peakwidth=c(20, 50))
-    comb <- c(xs, xs2)
-    expect_true(nrow(peaks(comb)) == 0)
 })
 
 test_that(".getProcessHistory works", {
@@ -262,36 +247,26 @@ test_that(".getProcessHistory works", {
 })
 
 test_that("xcmsSet centWave works", {
-    file <- system.file('microtofq/MM14.mzML', package = "msdata")
+    file <- faahko_3_files[1L]
     xset1 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
                       profparam = list(step = 0))
     xset2 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
                       profparam = list(step = 0), scanrange=c(1,112))
     xset3 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
                       profparam = list(step = 0), scanrange=c(1,80))
-    expect_true(nrow((peaks(xset1)@.Data)) == nrow((peaks(xset2)@.Data)))
-    expect_true(nrow((peaks(xset1)@.Data))  > nrow((peaks(xset3)@.Data)))
+    expect_true(nrow((peaks(xset1)@.Data)) > nrow((peaks(xset2)@.Data)))
+    expect_true(nrow((peaks(xset1)@.Data)) > nrow((peaks(xset3)@.Data)))
 })
 
 test_that("xcmsSet matchedFilter works", {
-    file <- system.file('microtofq/MM14.mzML', package = "msdata")
+    file <- faahko_3_files[1L]
     xset1 <- xcmsSet(files=file, method="matchedFilter", fwhm=10)
     xset2 <- xcmsSet(files=file, method="matchedFilter", fwhm=10,
                      scanrange=c(1,112))
     xset3 <- xcmsSet(files=file, method="matchedFilter", fwhm=10,
                      scanrange=c(1,80))
-    expect_true(nrow((peaks(xset1)@.Data)) == nrow((peaks(xset2)@.Data)))
-    expect_true(nrow((peaks(xset1)@.Data))  > nrow((peaks(xset3)@.Data)))
-})
-
-test_that("xcmsSet parallel works", {
-    file <- system.file('microtofq/MM14.mzML', package = "msdata")
-    xset1 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
-                      scanrange=c(1,80), profparam = list(step = 0))
-    xset2 <-  xcmsSet(files=file, method="centWave", peakwidth=c(5,12),
-                      scanrange=c(1,80), profparam = list(step = 0))
-    ## parallel disabled: , nSlaves=2)
-    expect_true(nrow((peaks(xset1)@.Data)) == nrow((peaks(xset2)@.Data)))
+    expect_true(nrow((peaks(xset1)@.Data)) > nrow((peaks(xset2)@.Data)))
+    expect_true(nrow((peaks(xset1)@.Data)) > nrow((peaks(xset3)@.Data)))
 })
 
 test_that("phenoDataFromPaths works", {

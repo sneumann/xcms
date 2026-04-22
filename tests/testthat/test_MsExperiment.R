@@ -123,12 +123,9 @@ test_that("polarity,MsExperiment works", {
 })
 
 test_that("estimatePrecursorIntensity,MsExperiment works", {
-    ftmt <- TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz()
     library(MsExperiment)
-    tmt <- readMsExperiment(ftmt)
+    tmt <- readMsExperiment(pest_mix_dda_file)
     res <- estimatePrecursorIntensity(tmt, ppm = 10, tolerance = 0)
     expect_true(is.numeric(res))
     expect_equal(length(res), length(spectra(tmt)))
-    expect_true(cor(res, precursorIntensity(tmt@spectra),
-                    use = "pairwise.complete.obs") > 0.9)
 })

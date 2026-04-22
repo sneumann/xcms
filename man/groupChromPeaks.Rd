@@ -24,7 +24,8 @@ PeakDensityParam(
   minSamples = 1,
   binSize = 0.25,
   ppm = 0,
-  maxFeatures = 50
+  maxFeatures = 50,
+  rtCenterFun = c("median", "mean", "wMean")
 )
 
 MzClustParam(
@@ -107,6 +108,9 @@ all peaks in the data set.}
 \item{maxFeatures}{For \code{PeakDensityParam}: \code{numeric(1)} with the maximum
 number of peak groups to be identified in a single mz slice.}
 
+\item{rtCenterFun}{For \code{PeakDensityParam}: character(1)\verb{specifying the function to calculate the reported retention time of a feature (i.e., its}"rtmed"\verb{). Defaults to }rtCenterFun = "median"\verb{(the median retention time of all chrom peaks per feature is reported) but supports also}rtCenterFun = "mean"\code{or}rtCenterFun = "wMean"\verb{to allow reporting the mean or intensity-weighted mean retention time instead (the integrated peak intensity}"into"` is used for the intensity-weighted
+mean calculation).}
+
 \item{absMz}{For \code{NearestPeaksParam} and \code{MzClustParam}: \code{numeric(1)}
 maximum tolerated distance for m/z values.}
 
@@ -151,7 +155,7 @@ larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
-feature. Only samples with non-missing sample group assignment (i.e. for
+feature. Only samples with non-missing sample group assignment (i.e., for
 which the value provided with parameter \code{sampleGroups} is different than
 \code{NA}) are considered and counted for the feature definition. This allows
 to exclude certain samples or groups (e.g. blanks) from the feature

@@ -719,7 +719,7 @@ to define the column in \code{chromPeaks} that should be selected; defaults to
 \verb{intensity = "into"). }method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.
 \item \code{quantify()}: extract the correspondence analysis results as a
-\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
 are used as \code{assay} in the returned \code{SummarizedExperiment}, \code{rowData}
 contains the \code{featureDefinitions} (without column \code{"peakidx"}) and
 \code{colData} the \code{sampleData} of \code{object}. Additional parameters to the
@@ -799,11 +799,12 @@ default adjusted retention times are returned if available.
 ## experiment.
 library(MsExperiment)
 library(MsDataHub)
+library(faahKO)
 
 ## Define the raw data files
-fls <- c(ko15.CDF(),
-         ko16.CDF(),
-         ko18.CDF())
+fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
 ## Define a data frame with the sample characterization
 df <- data.frame(mzML_file = basename(fls),
@@ -826,6 +827,7 @@ plot(tic, main = "TIC")
 ##
 ## To show how MS2 chromatograms can be extracted we first load a DIA
 ## (SWATH) data set.
+library(MsDataHub)
 mse_dia <- readMsExperiment(PestMix1_SWATH.mzML())
 
 ## Extracting MS2 chromatogram requires also to specify the isolation

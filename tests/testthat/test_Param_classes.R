@@ -1003,8 +1003,22 @@ test_that("FilterIntensityParam works", {
     expect_error(validObject(res), "length 1")
 })
 
-
 test_that("BetaDistributionParam works", {
   res <- BetaDistributionParam()
   expect_true(is(res, "BetaDistributionParam"))
+})
+
+test_that("PeakDensityParam with rtCenterFun works", {
+    p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    expect_s4_class(p, "PeakDensityParam")
+    expect_equal(.rtCenterFun(p), "median")
+
+    p <- CentWaveParam()
+    expect_equal(.rtCenterFun(p), "median")
+
+    expect_error(PeakDensityParam(sampleGroups = c(1, 1), rtCenterFun = "sum"))
+    p <- PeakDensityParam(sampleGroups = c(1, 1), rtCenterFun = "mean")
+    expect_equal(.rtCenterFun(p), "mean")
+    p <- PeakDensityParam(sampleGroups = c(1, 1), rtCenterFun = "wMean")
+    expect_equal(.rtCenterFun(p), "wMean")
 })

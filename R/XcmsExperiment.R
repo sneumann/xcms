@@ -636,11 +636,12 @@
 #' ## experiment.
 #' library(MsExperiment)
 #' library(MsDataHub)
+#' library(faahKO)
 #'
 #' ## Define the raw data files
-#' fls <- c(ko15.CDF(),
-#'          ko16.CDF(),
-#'          ko18.CDF())
+#' fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'          system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
 #' ## Define a data frame with the sample characterization
 #' df <- data.frame(mzML_file = basename(fls),
@@ -663,6 +664,7 @@
 #' ##
 #' ## To show how MS2 chromatograms can be extracted we first load a DIA
 #' ## (SWATH) data set.
+#' library(MsDataHub)
 #' mse_dia <- readMsExperiment(PestMix1_SWATH.mzML())
 #'
 #' ## Extracting MS2 chromatogram requires also to specify the isolation
@@ -994,7 +996,7 @@ setMethod(
         lns <- lengths(pks)
         if (any(lns > 0)) {
             pks <- do.call(rbind, pks[lns > 0])
-            pkd <- do.call(rbind, lapply(res[lns > 0], function(z) {
+            pkd <- rbindlistWithRownames(lapply(res[lns > 0], function(z) {
                 p <- .chromPeakData(z)
                 s <- z@spectra[1L]
                 p$isolationWindow <- s$isolationWindow
@@ -1155,8 +1157,7 @@ setMethod(
             keepAdjustedRtime = TRUE, ignoreHistory = TRUE,
             keepSampleIndex = FALSE, chunkSize = chunkSize)
         pks <- do.call(rbind, lapply(res, `[[`, 1L))
-        pkd <- do.call(rbind.data.frame, c(lapply(res, `[[`, 2L),
-                                           make.row.names = FALSE))
+        pkd <- rbindlistWithRownames(lapply(res, `[[`, 2L))
         npks <- unlist(lapply(res, `[[`, 3L), use.names = FALSE)
         pks[, "sample"] <- rep(seq_along(npks), npks)
         nas <- which(is.na(rownames(pks))) # merged peaks
@@ -1584,8 +1585,10 @@ setMethod(
                  "using the 'findChromPeaks' method.", call. = FALSE)
         if (hasFeatures(object) && !add)
             object <- dropFeatureDefinitions(object)
-        cps <- chromPeaks(object, msLevel = msLevel,
-                          columns = c("mz", "rt", "sample"))
+        pk_cols <- c("mz", "rt", "sample")
+        if (.rtCenterFun(param) == "wMean")
+            pk_cols <- c(pk_cols, "into")
+        cps <- chromPeaks(object, msLevel = msLevel, columns = pk_cols)
         res <- .xmse_group_cpeaks(
             cps, param = param,
             index = match(rownames(cps), rownames(.chromPeaks(object))))

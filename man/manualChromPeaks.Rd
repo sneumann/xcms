@@ -113,13 +113,13 @@ object's \code{chromPeaks} matrix.
 \examples{
 
 ## Read a test dataset.
-fls <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+library(MsDataHub)
+fls <- MsDataHub::PestMix1_DDA.mzML()
 
 ## Define a data frame with some sample annotations
 ann <- data.frame(
-    injection_index = 1:2,
-    sample_id = c("MM14", "MM8"))
+    injection_index = 1,
+    sample_id = c("Pest_mix"))
 
 ## Import the data
 library(MsExperiment)

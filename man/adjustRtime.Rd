@@ -245,11 +245,11 @@ initial correspondence analysis has to be performed \strong{before} using the
 manually define a \code{numeric} matrix with retention times of markers in each
 samples that should be used for alignment. Such a \code{matrix} can be passed
 to the alignment function using the \code{peakGroupsMatrix} parameter of the
-\code{PeakGroupsParam} parameter object. By default the \code{adjustRtimePeakGroups}
-function is used to define this \code{matrix}. This function identifies peak
-groups (features) for alignment in \code{object} based on the parameters defined
-in \code{param}. See also \code{\link[=do_adjustRtime_peakGroups]{do_adjustRtime_peakGroups()}} for the core API
-function.
+\code{PeakGroupsParam} parameter object. By default the
+\code{adjustRtimePeakGroups()} function is used to define this \code{matrix}. This
+function identifies peak groups (features) for alignment in \code{object}
+based on the parameters defined in \code{param}. See also
+\code{\link[=do_adjustRtime_peakGroups]{do_adjustRtime_peakGroups()}} for the core API function.
 \item \code{LamaParama}: This function performs retention time correction by aligning
 chromatographic data to an external reference dataset (concept and initial
 implementation by Carl Brunius). The process involves identifying and

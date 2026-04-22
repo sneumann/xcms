@@ -38,18 +38,5 @@ findMZ(object, find, ppmE=25, print=TRUE)
 \seealso{
 \code{\link{findneutral}},
 }
-\examples{
-\dontrun{
-    library(msdata)
-    mzMLpath <- system.file("iontrap", package = "msdata")
-    mzMLfiles<-list.files(mzMLpath, pattern = "extracted.mzML",
-                            recursive = TRUE, full.names = TRUE)
-    xs <- xcmsSet(mzMLfiles, method = "MS1")
-    ##takes only one file from the file set
-    xfrag <- xcmsFragments(xs)
-    found<-findMZ(xfrag, 657.3433, 50)
-}
-
-}
 \author{H. Paul Benton, \email{hpaul.beonton08@imperial.ac.uk}}
 \keyword{methods}

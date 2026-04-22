@@ -8,7 +8,7 @@ vignette: >
   %\VignetteIndexEntry{LC-MS feature grouping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,MsDataHub,BiocStyle,faahKO,pheatmap,MsFeatures}
+  %\VignetteDepends{xcms,BiocStyle,faahKO,pheatmap,MsFeatures}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 ---

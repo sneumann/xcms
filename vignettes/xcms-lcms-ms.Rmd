@@ -366,7 +366,6 @@ swath_file <- PestMix1_SWATH.mzML()
 
 swath_data <- readMsExperiment(swath_file)
 swath_data <- filterRt(swath_data, rt = c(230, 610))
-
 ```
 
 Below we determine the number of MS level 1 and 2 spectra in the present data

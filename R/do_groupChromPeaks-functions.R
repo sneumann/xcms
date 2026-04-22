@@ -96,7 +96,14 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                        minSamples = 1, binSize = 0.25,
                                        maxFeatures = 50, sleep = 0,
                                        index = seq_len(nrow(peaks)),
-                                       ppm = 0) {
+                                       ppm = 0, rtCenterFun = c("median",
+                                                                "mean",
+                                                                "wMean")) {
+    rtCenterFun <- match.arg(rtCenterFun)
+    rtFun <- switch(rtCenterFun,
+                    median = .feature_rt_median,
+                    mean = .feature_rt_mean,
+                    wMean = .feature_rt_wmean)
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
@@ -107,7 +114,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
         stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
-    if (sleep > 0)
+    if (sleep > 0 | rtCenterFun == "wMean")
         .reqCols <- c(.reqCols, "into")
     if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
@@ -169,9 +176,9 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
             densFrom = densFrom, densTo = densTo, densN = densN,
             sampleGroups = sampleGroups, sampleGroupTable = sampleGroupTable,
             minFraction = minFraction, minSamples = minSamples,
-            maxFeatures = maxFeatures, sleep = sleep)
+            maxFeatures = maxFeatures, sleep = sleep, rtFun = rtFun)
     }
-    res <- do.call(rbind, resL)
+    res <- rbindlistWithRownames(resL)
     if (nrow(res)) {
         ## Remove groups that overlap with more "well-behaved" groups
         numsamp <- rowSums(
@@ -479,7 +486,8 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
 #' @noRd
 .group_peaks_density <- function(x, bw, densFrom, densTo, densN, sampleGroups,
                                  sampleGroupTable, minFraction,
-                                 minSamples, maxFeatures, sleep = 0) {
+                                 minSamples, maxFeatures, sleep = 0,
+                                 rtFun = .feature_rt_median) {
     den <- density(x[, "rt"], bw = bw, from = densFrom, to = densTo,
                    n = densN)
     maxden <- max(den$y)
@@ -495,11 +503,12 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
            maxFeatures) {
         grange <- descendMin(deny, maxy)
         deny[grange[1]:grange[2]] <- 0
-        gidx <- which(x[,"rt"] >= den$x[grange[1]] &
-                      x[,"rt"] <= den$x[grange[2]])
+        gidx <- which(x[, "rt"] >= den$x[grange[1]] &
+                      x[, "rt"] <= den$x[grange[2]])
+        x_sub <- x[gidx, , drop = FALSE]
         ## Determine the sample group of the samples in which the peaks
         ## were detected and check if they correspond to the required limits.
-        tt <- table(sampleGroups[unique(x[gidx, "sample"])])
+        tt <- table(sampleGroups[unique(x_sub[, "sample"])])
         if (!any(tt / sampleGroupTable[names(tt)] >= minFraction &
                  tt >= minSamples))
             next
@@ -507,19 +516,19 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
         names(gcount) <- sampleGroupNames
         gcount[names(tt)] <- as.numeric(tt)
         res_mat <- rbind(res_mat,
-                         c(median(x[gidx, "mz"]),
-                           range(x[gidx, "mz"]),
-                           median(x[gidx, "rt"]),
-                           range(x[gidx, "rt"]),
+                         c(median(x_sub[, "mz"]),
+                           range(x_sub[, "mz"]),
+                           rtFun(x_sub),
+                           range(x_sub[, "rt"]), # maybe report the REAL range?
                            length(gidx),
                            gcount)
                          )
-        res_idx <- c(res_idx, list(unname(sort(x[gidx, "index"]))))
+        res_idx <- c(res_idx, list(unname(sort(x_sub[, "index"]))))
     }
     if (sleep > 0) {
         ## Plot the density
-        plot(den, main = paste(round(min(x[,"mz"]), 2), "-",
-                               round(max(x[,"mz"]), 2)))
+        plot(den, main = paste(round(min(x[, "mz"]), 2), "-",
+                               round(max(x[, "mz"]), 2)))
         ## Highlight peaks per sample group.
         for (j in seq_len(nSampleGroups)) {
             ## Which peaks belong to this sample group.
@@ -567,4 +576,16 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
         }
     }
     x
+}
+
+.feature_rt_mean <- function(x) {
+    mean(x[, "rt"])
+}
+
+.feature_rt_median <- function(x) {
+    median(x[, "rt"])
+}
+
+.feature_rt_wmean <- function(x, w = "into") {
+    weighted.mean(x[, "rt"], x[, w])
 }

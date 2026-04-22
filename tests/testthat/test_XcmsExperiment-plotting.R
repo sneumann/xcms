@@ -4,7 +4,8 @@ df <- data.frame(mzML_file = basename(fls),
                  dataOrigin = fls,
                  sample = c("ko15", "ko16", "ko18"))
 mse <- readMsExperiment(spectraFiles = fls, sampleData = df)
-mse_ms2 <- readMsExperiment(TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.20141210.mzML.gz())
+
+mse_ms2 <- readMsExperiment(pest_mix_dda_file)
 p <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
 xmse <- findChromPeaks(mse, param = p)
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
@@ -55,16 +56,16 @@ test_that("plot,XcmsExperiment and .xmse_plot_xic works", {
 
 test_that("plotPrecursorIons works", {
     expect_error(plotPrecursorIons(3), "MsExperiment")
-    fl <- PestMix1_SWATH.mzML()
-    a <- readMsExperiment(fl)
+    a <- readMsExperiment(pest_mix_swath_file)
     plotPrecursorIons(a, main = "SWATH")
 
-    fl <- PestMix1_DDA.mzML()
-    a <- readMsExperiment(fl)
+    plotPrecursorIons(a, main = c("a", "b"))
+    plotPrecursorIons(a)
+    a <- readMsExperiment(pest_mix_dda_file)
     plotPrecursorIons(a)
 })
 
 test_that(".xmse_plot_xic works with ms2 data", {
-  tmp <-  filterMz(filterRt(mse_ms2, rt= c(2160, 2190)), mz = c(990,1000))
+  tmp <-  filterMz(filterRt(mse_ms2, rt= c(210, 220)), mz = c(500, 510))
   plot(tmp)
 })

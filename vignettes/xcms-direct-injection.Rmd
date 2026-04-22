@@ -49,12 +49,14 @@ register(SerialParam())
 
 ```
 
-In this documentation we use an example data set from the `r Biocpkg("MsDataHub")`
-package. Assuming that `r Biocpkg("MsDataHub")` is installed, it will obtain the files from https://doi.org/10.5281/zenodo.18494293 and load the data set. We create also a `data.frame` describing the
-experimental setup based on the file names.
+In this documentation we use an example data set from the `r
+Biocpkg("MsDataHub")` package. Assuming that `r Biocpkg("MsDataHub")` is
+installed, it will obtain the files from https://doi.org/10.5281/zenodo.18494293
+and load the data set. We create also a `data.frame` describing the experimental
+setup based on the file names.
 
 ```{r load-data, message = FALSE, results = "hide"}
-## We're using 2 samples per condition 
+## We're using 2 samples per condition
 ## from https://doi.org/10.5281/zenodo.18494293
 mzML_files <- c(
   HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
@@ -64,8 +66,7 @@ mzML_files <- c(
 )
 
 ## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.
-grp <- rep("ham4", length(mzML_files))
-grp[grep(basename(mzML_files), pattern = "^HAM005")] <- "ham5"
+grp <- c("ham4", "ham4", "ham5", "ham5")
 pd <- data.frame(filename = basename(mzML_files), sample_group = grp)
 
 ## Load the data.

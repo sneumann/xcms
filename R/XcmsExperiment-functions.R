@@ -13,7 +13,8 @@
         object@chromPeaks <- suppressWarnings(
             rbindFill(object@chromPeaks, pks))
         object@chromPeakData <- suppressWarnings(
-            rbindFill(object@chromPeakData, pkd))
+            rbindlistWithRownames(list(object@chromPeakData, pkd),
+                                  use.names = TRUE, fill = TRUE))
     } else {
         rownames(pks) <- rownames(pkd) <- .featureIDs(nrow(pks), prefix = "CP")
         object@chromPeaks <- pks
@@ -149,7 +150,7 @@
                 minFraction = minFraction(param),
                 minSamples = minSamples(param), binSize = binSize(param),
                 maxFeatures = maxFeatures(param), ppm = ppm(param),
-                index = index)
+                index = index, rtCenterFun = .rtCenterFun(param))
         },
         MzClustParam = {
             tmp <- do_groupPeaks_mzClust(
@@ -227,9 +228,10 @@
 #' the m/z range of all candidates that should be evaluated for merging.
 #'
 #' @noRd
+#'
 .merge_neighboring_peak_candidates <- function(x, rt, pks, pkd, minProp = 0.75,
-                                                expandMz = 0, ppm = 10,
-                                                diffRt = 0) {
+                                               expandMz = 0, ppm = 10,
+                                               diffRt = 0) {
     if (!length(pks) || nrow(pks) < 2)
         return(list(chromPeaks = pks, chromPeakData = pkd))
     idx <- order(pks[, "rtmin"], -pks[, "rtmax"])
@@ -249,7 +251,7 @@
     ## full set of peaks based on the m/z min and max of **all** candidate peaks
     ## Adjusting the m/z range for each tested candidate peak individually would
     ## eventually result in wrong intensity estimation. The current approach
-    ## is more greedy, but, using *reasonable* settings it is supposed ot be
+    ## is more greedy, but, using *reasonable* settings it is supposed to be
     ## correct.
     ## The reported m/z range for merged candidates represents the full m/z
     ## range of all intensities considered in the calculation of the "into".
@@ -346,7 +348,7 @@
         pkd_new[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, pks_new)
-    pkd_new <- do.call(rbind, pkd_new)
+    pkd_new <- rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE)
     ## drop peaks that were candidates, but that were not returned (i.e.
     ## were either merged or dropped)
     keep <- !(rownames(pks) %in% setdiff(unlist(cands, use.names = FALSE),
@@ -385,7 +387,8 @@
                         ppm = ppm, minProp = minProp),
         SIMPLIFY = FALSE, USE.NAMES = FALSE, BPPARAM = BPPARAM)
     list(chromPeaks = do.call(rbind, lapply(res, `[[`, 1L)),
-         chromPeakData = do.call(rbind, lapply(res, `[[`, 2L)),
+         chromPeakData = rbindlistWithRownames(
+             lapply(res, `[[`, 2L), use.names = TRUE, fill = TRUE),
          npeaks = vapply(res, `[[`, i = 3L, integer(1)))
 }
 
@@ -1027,7 +1030,7 @@
             } else data.frame()
         })
         slot(chrs, "featureDefinitions", check = FALSE) <-
-            DataFrame(do.call(rbind, fts))
+            DataFrame(rbindlistWithRownames(fts, use.names = TRUE, fill = TRUE))
         pb$tick()
     }
     slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
@@ -1060,15 +1063,15 @@
     features <- .i2index(features, ids = rownames(featureDefinitions(x)),
                          "features")
     pks <- .chromPeaks(x)[, c("mzmin", "mzmax", "rtmin", "rtmax")]
-    res <- do.call(
-        rbind, lapply(featureDefinitions(x)$peakidx[features],
-                      function(i) {
-                          ## maybe consider/drop gap-filled peaks?
-                          c(mzmin(pks[i, "mzmin"]),
-                            mzmax(pks[i, "mzmax"]),
-                            rtmin(pks[i, "rtmin"]),
-                            rtmax(pks[i, "rtmax"]))
-                      }))
+    res <- do.call(rbind,
+                   lapply(featureDefinitions(x)$peakidx[features],
+                          function(i) {
+                              ## maybe consider/drop gap-filled peaks?
+                              c(mzmin(pks[i, "mzmin"]),
+                                mzmax(pks[i, "mzmax"]),
+                                rtmin(pks[i, "rtmin"]),
+                                rtmax(pks[i, "rtmax"]))
+                          }))
     rownames(res) <- rownames(featureDefinitions(x))[features]
     colnames(res) <- c("mzmin", "mzmax", "rtmin", "rtmax")
     if (minMzWidthPpm > 0) {
@@ -1320,9 +1323,9 @@ XcmsExperiment <- function() {
         z
     }, x, nsamp, SIMPLIFY = FALSE, USE.NAMES = FALSE))
     rownames(res@chromPeaks) <- .featureIDs(nrow(res@chromPeaks), "CP")
-    res@chromPeakData <- do.call(
-        rbindFill,
-        lapply(x, chromPeakData, return.type = "data.frame"))
+    res@chromPeakData <- rbindlistWithRownames(
+        lapply(x, chromPeakData, return.type = "data.frame"),
+        use.names = TRUE, fill = TRUE)
     rownames(res@chromPeakData) <- rownames(res@chromPeaks)
     res@processHistory <- do.call(c, lapply(x, processHistory))
     res

@@ -247,12 +247,21 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 #' @rdname groupChromPeaks
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                              minFraction = 0.5, minSamples = 1,
-                             binSize = 0.25, ppm = 0, maxFeatures = 50) {
+                             binSize = 0.25, ppm = 0, maxFeatures = 50,
+                             rtCenterFun = c("median", "mean", "wMean")) {
     if (length(sampleGroups) == 0)
         stop("Argument 'sampleGroups' has to be defined.")
+    rtCenterFun <- match.arg(rtCenterFun)
     new("PeakDensityParam", sampleGroups = sampleGroups, bw = bw,
         minFraction = minFraction, minSamples = minSamples,
-        binSize = binSize, ppm = ppm, maxFeatures = maxFeatures)
+        binSize = binSize, ppm = ppm, maxFeatures = maxFeatures,
+        rtCenterFun = rtCenterFun)
+}
+
+.rtCenterFun <- function(x) {
+    if (.hasSlot(x, "rtCenterFun"))
+        x@rtCenterFun
+    else "median"
 }
 
 #' @rdname groupChromPeaks
