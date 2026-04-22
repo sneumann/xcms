@@ -203,7 +203,10 @@ Johannes Rainer
 
 ## Read a file with DDA LC-MS/MS data
 library(MsExperiment)
-fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+library(MsDataHub)
+fl <- MsDataHub::PestMix1_DDA.mzML()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 
 dda <- readMsExperiment(fl)
 
@@ -231,10 +234,10 @@ ms2_sps
 #>  ... 37 more variables/columns.
 #> 
 #> file(s):
-#> PestMix1_DDA.mzML
+#> 6d40434a657e_7861
 #> Processing:
-#>  Filter: select MS level(s) 2 [Thu Mar 19 15:02:19 2026]
-#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
+#>  Filter: select MS level(s) 2 [Wed Apr 22 11:03:03 2026]
+#>  Merge 1 Spectra into one [Wed Apr 22 11:03:03 2026] 
 
 ## spectra variable *chrom_peak_id* contain the row names of the peaks in the
 ## chromPeak matrix and allow thus to map chromatographic peaks to the
@@ -331,10 +334,10 @@ ms2_sps[[1L]]
 #>  ... 37 more variables/columns.
 #> 
 #> file(s):
-#> PestMix1_DDA.mzML
+#> 6d40434a657e_7861
 #> Processing:
-#>  Filter: select MS level(s) 2 [Thu Mar 19 15:02:19 2026]
-#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
+#>  Filter: select MS level(s) 2 [Wed Apr 22 11:03:04 2026]
+#>  Merge 1 Spectra into one [Wed Apr 22 11:03:04 2026] 
 
 ## Parameter `msLevel` allows to define from which MS level spectra should
 ## be returned. By default `msLevel = 2L` but with `msLevel = 1L` all
@@ -365,10 +368,10 @@ ms1_sps
 #>  ... 37 more variables/columns.
 #> 
 #> file(s):
-#> PestMix1_DDA.mzML
+#> 6d40434a657e_7861
 #> Processing:
-#>  Filter: select MS level(s) 1 [Thu Mar 19 15:02:19 2026]
-#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
+#>  Filter: select MS level(s) 1 [Wed Apr 22 11:03:04 2026]
+#>  Merge 1 Spectra into one [Wed Apr 22 11:03:04 2026] 
 
 ## Parameter peaks would allow to extract spectra for specific peaks only.
 ## Peaks can be defined with parameter `peaks` which can be either an
@@ -383,8 +386,8 @@ chromPeakSpectra(dda, msLevel = 1L, method = "closest_rt", peaks = c(3, 5))
 #>  ... 37 more variables/columns.
 #> 
 #> file(s):
-#> PestMix1_DDA.mzML
+#> 6d40434a657e_7861
 #> Processing:
-#>  Filter: select MS level(s) 1 [Thu Mar 19 15:02:19 2026]
-#>  Merge 1 Spectra into one [Thu Mar 19 15:02:19 2026] 
+#>  Filter: select MS level(s) 1 [Wed Apr 22 11:03:04 2026]
+#>  Merge 1 Spectra into one [Wed Apr 22 11:03:04 2026] 
 ```

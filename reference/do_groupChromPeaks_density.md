@@ -23,7 +23,8 @@ do_groupChromPeaks_density(
   maxFeatures = 50,
   sleep = 0,
   index = seq_len(nrow(peaks)),
-  ppm = 0
+  ppm = 0,
+  rtCenterFun = c("median", "mean", "wMean")
 )
 ```
 
@@ -99,6 +100,16 @@ do_groupChromPeaks_density(
   bin. The maximal bin size (used for the largest m/z values) would then
   be `binSize` plus `ppm` parts-per-million of the largest m/z value of
   all peaks in the data set.
+
+- rtCenterFun:
+
+  For `PeakDensityParam`:
+  character(1)`specifying the function to calculate the reported retention time of a feature (i.e., its`"rtmed"`). Defaults to `rtCenterFun
+  =
+  "median"`(the median retention time of all chrom peaks per feature is reported) but supports also`rtCenterFun
+  = "mean"`or`rtCenterFun =
+  "wMean"`to allow reporting the mean or intensity-weighted mean retention time instead (the integrated peak intensity`"into"\`
+  is used for the intensity-weighted mean calculation).
 
 ## Value
 

@@ -37,14 +37,12 @@ Steffen Neumann <sneumann@ipb-halle.de>
 ## Examples
 
 ``` r
- msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
+ library(MsDataHub)
+ msnfile <- MsDataHub::PestMix1_DDA.mzML()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
  xrmsn <- xcmsRaw(msnfile, includeMSn=TRUE)
 #> Create profile matrix with method 'bin' and step 1 ... 
 #> OK
  xr <- msn2xcmsRaw(xrmsn)
- p <- findPeaks(xr, method="centWave")
-#> Detecting mass traces at 25 ppm ... 
-#> OK
-#> Detecting chromatographic peaks in 10 regions of interest ...
-#>  OK: 10 found.
 ```

@@ -50,9 +50,8 @@ plotPrecursorIons(
 
 - main:
 
-  Optional `character(1)` with the title for **every** plot. If not
-  provided (the default) the base file name will be used for each
-  sample.
+  Optional `character` with the title for each plot. If not provided
+  (the default), the row names of `sampleData(x)` are used. sample.
 
 - ...:
 
@@ -68,7 +67,10 @@ Johannes Rainer
 
 ## Load a test data file with DDA LC-MS/MS data
 library(MsExperiment)
-fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+library(MsDataHub)
+fl <- MsDataHub::PestMix1_DDA.mzML()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 pest_dda <- readMsExperiment(fl)
 
 plotPrecursorIons(pest_dda)

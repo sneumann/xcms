@@ -28,7 +28,7 @@ Supported `param` objects are:
   some MS instruments). All peaks (from the same or from different
   samples) with their apex position being close on the retention time
   axis are grouped into a LC-MS feature. Only samples with non-missing
-  sample group assignment (i.e. for which the value provided with
+  sample group assignment (i.e., for which the value provided with
   parameter `sampleGroups` is different than `NA`) are considered and
   counted for the feature definition. This allows to exclude certain
   samples or groups (e.g. blanks) from the feature definition avoiding
@@ -75,7 +75,8 @@ PeakDensityParam(
   minSamples = 1,
   binSize = 0.25,
   ppm = 0,
-  maxFeatures = 50
+  maxFeatures = 50,
+  rtCenterFun = c("median", "mean", "wMean")
 )
 
 MzClustParam(
@@ -190,6 +191,16 @@ groupChromPeaks(object, param, msLevel = 1L, add = FALSE)
 
   For `PeakDensityParam`: `numeric(1)` with the maximum number of peak
   groups to be identified in a single mz slice.
+
+- rtCenterFun:
+
+  For `PeakDensityParam`:
+  character(1)`specifying the function to calculate the reported retention time of a feature (i.e., its`"rtmed"`). Defaults to `rtCenterFun
+  =
+  "median"`(the median retention time of all chrom peaks per feature is reported) but supports also`rtCenterFun
+  = "mean"`or`rtCenterFun =
+  "wMean"`to allow reporting the mean or intensity-weighted mean retention time instead (the integrated peak intensity`"into"\`
+  is used for the intensity-weighted mean calculation).
 
 - absMz:
 

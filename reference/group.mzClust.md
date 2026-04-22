@@ -52,9 +52,11 @@ Metabolomics, Vol. 2, No. 2, 75-83 (2006)
 
 ``` r
 if (FALSE) { # \dontrun{
-library(msdata)
-mzMLpath <- system.file("fticr-mzML", package = "msdata")
-mzMLfiles <- list.files(mzMLpath, recursive = TRUE, full.names = TRUE)
+library(MsDataHub)
+mzMLfiles <- c(MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+               MsDataHub::HAM004_641fE_14.11.07..Exp2.extracted.mzML(),
+               MsDataHub::HAM005_641fE_14.11.07..Exp1.extracted.mzML(),
+               MsDataHub::HAM005_641fE_14.11.07..Exp2.extracted.mzML())
 
 xs <- xcmsSet(method="MSW", files=mzMLfiles, scales=c(1,7),
               SNR.method='data.mean' , winSize.noise=500,

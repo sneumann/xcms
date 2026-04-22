@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer\
-**Modified**: 2026-03-19 13:56:23.793995\
-**Compiled**: Thu Mar 19 15:04:13 2026
+**Modified**: 2026-04-22 09:50:36.293717\
+**Compiled**: Wed Apr 22 11:05:13 2026
 
 ## Introduction
 
@@ -818,7 +818,7 @@ table(featureGroups(xmse))
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-03-15 r89629)
+    ## R Under development (unstable) (2026-04-19 r89916)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -843,61 +843,62 @@ sessionInfo()
     ## 
     ## other attached packages:
     ##  [1] pheatmap_1.0.13     faahKO_1.51.0       MSnbase_2.37.0     
-    ##  [4] ProtGenerics_1.43.0 S4Vectors_0.49.0    mzR_2.45.0         
-    ##  [7] Rcpp_1.1.1          Biobase_2.71.0      BiocGenerics_0.57.0
-    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.9.2         
+    ##  [4] ProtGenerics_1.43.0 S4Vectors_0.49.2    mzR_2.45.1         
+    ##  [7] Rcpp_1.1.1-1        Biobase_2.71.0      BiocGenerics_0.57.1
+    ## [10] generics_0.1.4      MsFeatures_1.19.0   xcms_4.9.4         
     ## [13] BiocParallel_1.45.0 BiocStyle_2.39.0   
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] DBI_1.3.0                   rlang_1.1.7                
-    ##   [3] magrittr_2.0.4              clue_0.3-67                
+    ##   [1] DBI_1.3.0                   rlang_1.2.0                
+    ##   [3] magrittr_2.0.5              clue_0.3-68                
     ##   [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
-    ##   [7] matrixStats_1.5.0           compiler_4.6.0             
-    ##   [9] systemfonts_1.3.2           vctrs_0.7.1                
-    ##  [11] reshape2_1.4.5              stringr_1.6.0              
-    ##  [13] crayon_1.5.3                pkgconfig_2.0.3            
-    ##  [15] MetaboCoreUtils_1.19.2      fastmap_1.2.0              
-    ##  [17] XVector_0.51.0              rmarkdown_2.30             
-    ##  [19] preprocessCore_1.73.0       ragg_1.5.1                 
-    ##  [21] purrr_1.2.1                 xfun_0.56                  
-    ##  [23] MultiAssayExperiment_1.37.2 cachem_1.1.0               
-    ##  [25] jsonlite_2.0.0              progress_1.2.3             
-    ##  [27] DelayedArray_0.37.0         prettyunits_1.2.0          
-    ##  [29] parallel_4.6.0              cluster_2.1.8.2            
-    ##  [31] R6_2.6.1                    bslib_0.10.0               
-    ##  [33] stringi_1.8.7               RColorBrewer_1.1-3         
-    ##  [35] limma_3.67.0                GenomicRanges_1.63.1       
-    ##  [37] jquerylib_0.1.4             iterators_1.0.14           
-    ##  [39] Seqinfo_1.1.0               bookdown_0.46              
-    ##  [41] SummarizedExperiment_1.41.1 knitr_1.51                 
-    ##  [43] IRanges_2.45.0              Matrix_1.7-4               
-    ##  [45] igraph_2.2.2                tidyselect_1.2.1           
-    ##  [47] abind_1.4-8                 yaml_2.3.12                
-    ##  [49] doParallel_1.0.17           codetools_0.2-20           
-    ##  [51] affy_1.89.0                 lattice_0.22-9             
-    ##  [53] tibble_3.3.1                plyr_1.8.9                 
-    ##  [55] S7_0.2.1                    evaluate_1.0.5             
-    ##  [57] desc_1.4.3                  Spectra_1.21.5             
-    ##  [59] pillar_1.11.1               affyio_1.81.0              
-    ##  [61] BiocManager_1.30.27         MatrixGenerics_1.23.0      
-    ##  [63] foreach_1.5.2               MALDIquant_1.22.3          
-    ##  [65] ncdf4_1.24                  hms_1.1.4                  
-    ##  [67] ggplot2_4.0.2               scales_1.4.0               
-    ##  [69] MsExperiment_1.13.1         glue_1.8.0                 
-    ##  [71] lazyeval_0.2.2              tools_4.6.0                
-    ##  [73] mzID_1.49.0                 data.table_1.18.2.1        
-    ##  [75] QFeatures_1.21.0            vsn_3.79.5                 
-    ##  [77] fs_1.6.7                    XML_3.99-0.22              
-    ##  [79] grid_4.6.0                  impute_1.85.0              
-    ##  [81] tidyr_1.3.2                 MsCoreUtils_1.23.6         
-    ##  [83] PSMatch_1.15.1              cli_3.6.5                  
-    ##  [85] textshaping_1.0.5           S4Arrays_1.11.1            
-    ##  [87] dplyr_1.2.0                 AnnotationFilter_1.35.0    
-    ##  [89] pcaMethods_2.3.0            gtable_0.3.6               
-    ##  [91] sass_0.4.10                 digest_0.6.39              
-    ##  [93] SparseArray_1.11.11         htmlwidgets_1.6.4          
-    ##  [95] farver_2.1.2                htmltools_0.5.9            
-    ##  [97] pkgdown_2.2.0.9000          lifecycle_1.0.5            
-    ##  [99] statmod_1.5.1               MASS_7.3-65
+    ##   [7] matrixStats_1.5.0           compiler_4.7.0             
+    ##   [9] PTMods_0.99.6               systemfonts_1.3.2          
+    ##  [11] vctrs_0.7.3                 reshape2_1.4.5             
+    ##  [13] stringr_1.6.0               crayon_1.5.3               
+    ##  [15] pkgconfig_2.0.3             MetaboCoreUtils_1.19.3     
+    ##  [17] fastmap_1.2.0               XVector_0.51.0             
+    ##  [19] rmarkdown_2.31              preprocessCore_1.73.0      
+    ##  [21] ragg_1.5.2                  purrr_1.2.2                
+    ##  [23] xfun_0.57                   MultiAssayExperiment_1.37.4
+    ##  [25] cachem_1.1.0                jsonlite_2.0.0             
+    ##  [27] progress_1.2.3              DelayedArray_0.37.1        
+    ##  [29] prettyunits_1.2.0           parallel_4.7.0             
+    ##  [31] cluster_2.1.8.2             R6_2.6.1                   
+    ##  [33] bslib_0.10.0                stringi_1.8.7              
+    ##  [35] RColorBrewer_1.1-3          limma_3.67.1               
+    ##  [37] GenomicRanges_1.63.2        jquerylib_0.1.4            
+    ##  [39] iterators_1.0.14            Seqinfo_1.1.0              
+    ##  [41] bookdown_0.46               SummarizedExperiment_1.41.1
+    ##  [43] knitr_1.51                  IRanges_2.45.0             
+    ##  [45] Matrix_1.7-5                igraph_2.3.0               
+    ##  [47] tidyselect_1.2.1            abind_1.4-8                
+    ##  [49] yaml_2.3.12                 doParallel_1.0.17          
+    ##  [51] codetools_0.2-20            affy_1.89.0                
+    ##  [53] lattice_0.22-9              tibble_3.3.1               
+    ##  [55] plyr_1.8.9                  S7_0.2.1-1                 
+    ##  [57] evaluate_1.0.5              desc_1.4.3                 
+    ##  [59] Spectra_1.21.7              pillar_1.11.1              
+    ##  [61] affyio_1.81.0               BiocManager_1.30.27        
+    ##  [63] MatrixGenerics_1.23.0       foreach_1.5.2              
+    ##  [65] MALDIquant_1.22.3           ncdf4_1.24                 
+    ##  [67] hms_1.1.4                   ggplot2_4.0.3              
+    ##  [69] scales_1.4.0                MsExperiment_1.13.1        
+    ##  [71] glue_1.8.1                  lazyeval_0.2.3             
+    ##  [73] tools_4.7.0                 mzID_1.49.1                
+    ##  [75] data.table_1.18.2.1         QFeatures_1.21.3           
+    ##  [77] vsn_3.79.6                  fs_2.1.0                   
+    ##  [79] XML_3.99-0.23               grid_4.7.0                 
+    ##  [81] impute_1.85.0               tidyr_1.3.2                
+    ##  [83] MsCoreUtils_1.23.10         PSMatch_1.15.3             
+    ##  [85] cli_3.6.6                   textshaping_1.0.5          
+    ##  [87] S4Arrays_1.11.1             dplyr_1.2.1                
+    ##  [89] AnnotationFilter_1.35.0     pcaMethods_2.3.0           
+    ##  [91] gtable_0.3.6                sass_0.4.10                
+    ##  [93] digest_0.6.39               SparseArray_1.11.13        
+    ##  [95] htmlwidgets_1.6.4           farver_2.1.2               
+    ##  [97] htmltools_0.5.9             pkgdown_2.2.0.9000         
+    ##  [99] lifecycle_1.0.5             statmod_1.5.1              
+    ## [101] MASS_7.3-65
 
 ## References

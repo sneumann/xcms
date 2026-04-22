@@ -144,13 +144,15 @@ Johannes Rainer
 ``` r
 
 ## Read a test dataset.
-fls <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+library(MsDataHub)
+fls <- MsDataHub::PestMix1_DDA.mzML()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 
 ## Define a data frame with some sample annotations
 ann <- data.frame(
-    injection_index = 1:2,
-    sample_id = c("MM14", "MM8"))
+    injection_index = 1,
+    sample_id = c("Pest_mix"))
 
 ## Import the data
 library(MsExperiment)
@@ -168,9 +170,8 @@ pks
 
 res <- manualChromPeaks(mse, pks)
 chromPeaks(res)
-#>           mz mzmin mzmax       rt rtmin rtmax      into sample maxo sn
-#> CP1 512.6294 512.0   513 18.66000    10    19  848.4231      2   85 NA
-#> CP2 234.8539 234.3   235 41.54298    33    50 2690.4200      2  245 NA
+#>           mz mzmin mzmax     rt rtmin rtmax      into sample      maxo sn
+#> CP1 234.9081 234.3   235 45.502    33    50 0.7627435      1 0.4139576 NA
 
 ## Peaks were only found in the second file.
 ```

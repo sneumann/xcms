@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Johannes Rainer, Michael Witting\
-**Modified**: 2026-03-19 13:56:23.795053\
-**Compiled**: Thu Mar 19 15:05:13 2026
+**Modified**: 2026-04-22 09:50:36.293717\
+**Compiled**: Wed Apr 22 11:06:24 2026
 
 ## Introduction
 
@@ -54,9 +54,9 @@ chromatogram of its MS1 data.
 
 library(xcms)
 library(MsExperiment)
+library(MsDataHub)
 
-dda_file <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML",
-                        package = "msdata")
+dda_file <- PestMix1_DDA.mzML()
 dda_data <- readMsExperiment(dda_file)
 chr <- chromatogram(dda_data, aggregationFun = "sum", msLevel = 1L)
 ```
@@ -220,11 +220,11 @@ dda_spectra
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## PestMix1_DDA.mzML
+    ## 6d40434a657e_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Mar 19 15:05:27 2026]
-    ##  Filter: select MS level(s) 2 [Thu Mar 19 15:05:34 2026]
-    ##  Merge 1 Spectra into one [Thu Mar 19 15:05:34 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Apr 22 11:06:41 2026]
+    ##  Filter: select MS level(s) 2 [Wed Apr 22 11:06:51 2026]
+    ##  Merge 1 Spectra into one [Wed Apr 22 11:06:51 2026]
 
 By default
 [`chromPeakSpectra()`](https://sneumann.github.io/xcms/reference/chromPeakSpectra.md)
@@ -343,11 +343,11 @@ ex_spectra
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## PestMix1_DDA.mzML
+    ## 6d40434a657e_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Mar 19 15:05:27 2026]
-    ##  Filter: select MS level(s) 2 [Thu Mar 19 15:05:34 2026]
-    ##  Merge 1 Spectra into one [Thu Mar 19 15:05:34 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Apr 22 11:06:41 2026]
+    ##  Filter: select MS level(s) 2 [Wed Apr 22 11:06:51 2026]
+    ##  Merge 1 Spectra into one [Wed Apr 22 11:06:51 2026]
 
 There are 5 MS2 spectra representing fragmentation of the ion(s)
 measured in our candidate chromatographic peak. We next reduce this to a
@@ -385,9 +385,9 @@ ex_spectrum
     ## 1         2   418.926      3505
     ##  ... 37 more variables/columns.
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Mar 19 15:05:27 2026]
-    ##  Filter: select MS level(s) 2 [Thu Mar 19 15:05:34 2026]
-    ##  Merge 1 Spectra into one [Thu Mar 19 15:05:34 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Apr 22 11:06:41 2026]
+    ##  Filter: select MS level(s) 2 [Wed Apr 22 11:06:51 2026]
+    ##  Merge 1 Spectra into one [Wed Apr 22 11:06:51 2026]
     ##  ...1 more processings. Use 'processingLog' to list all.
 
 Mass peaks from all input spectra with a difference in m/z smaller 20
@@ -538,9 +538,7 @@ filter the file to signal between 230 and 610 seconds.
 
 ``` r
 
-swath_file <- system.file("TripleTOF-SWATH",
-                          "PestMix1_SWATH.mzML",
-                          package = "msdata")
+swath_file <- PestMix1_SWATH.mzML()
 
 swath_data <- readMsExperiment(swath_file)
 swath_data <- filterRt(swath_data, rt = c(230, 610))
@@ -730,6 +728,14 @@ variable of the object’s spectra is used.
 cwp <- CentWaveParam(snthresh = 3, noise = 10, ppm = 10,
                      peakwidth = c(3, 30))
 swath_data <- findChromPeaksIsolationWindow(swath_data, param = cwp)
+```
+
+    ## Warning in rbindlistWithRownames(lapply(res[lns > 0], function(z) {: Dropping
+    ## rownames: duplicated rownames present or rownames not available for all
+    ## data.frames
+
+``` r
+
 swath_data
 ```
 
@@ -1016,7 +1022,7 @@ swath_spectra
     ## CP62         2   574.942        NA
     ##  ... 20 more variables/columns.
     ## Processing:
-    ##  Merge 1 Spectra into one [Thu Mar 19 15:05:43 2026]
+    ##  Merge 1 Spectra into one [Wed Apr 22 11:07:00 2026]
 
 As a result we got a `Spectra` object of length equal to the number of
 MS1 peaks in our data. The length of a spectrum represents the number of
@@ -1237,11 +1243,11 @@ prochloraz_dda_spectra
     ##  ... 37 more variables/columns.
     ## 
     ## file(s):
-    ## PestMix1_DDA.mzML
+    ## 6d40434a657e_7861
     ## Processing:
-    ##  Filter: select retention time [230..610] on MS level(s)  [Thu Mar 19 15:05:27 2026]
-    ##  Filter: select MS level(s) 2 [Thu Mar 19 15:05:34 2026]
-    ##  Merge 1 Spectra into one [Thu Mar 19 15:05:34 2026]
+    ##  Filter: select retention time [230..610] on MS level(s)  [Wed Apr 22 11:06:41 2026]
+    ##  Filter: select MS level(s) 2 [Wed Apr 22 11:06:51 2026]
+    ##  Merge 1 Spectra into one [Wed Apr 22 11:06:51 2026]
 
 In total 5 spectra were measured, some with a relatively high number of
 peaks. Next we combine them into a consensus spectrum.
@@ -1418,7 +1424,7 @@ correlation with intensity values across several samples.
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-03-15 r89629)
+    ## R Under development (unstable) (2026-04-19 r89916)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -1442,63 +1448,75 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MetaboCoreUtils_1.19.2 MsBackendMgf_1.19.1    MsExperiment_1.13.1   
-    ##  [4] ProtGenerics_1.43.0    pander_0.6.6           Spectra_1.21.5        
-    ##  [7] S4Vectors_0.49.0       BiocGenerics_0.57.0    generics_0.1.4        
-    ## [10] xcms_4.9.2             BiocParallel_1.45.0    BiocStyle_2.39.0      
+    ##  [1] MetaboCoreUtils_1.19.3 MsBackendMgf_1.19.1    MsDataHub_1.11.3      
+    ##  [4] MsExperiment_1.13.1    ProtGenerics_1.43.0    pander_0.6.6          
+    ##  [7] Spectra_1.21.7         S4Vectors_0.49.2       BiocGenerics_0.57.1   
+    ## [10] generics_0.1.4         xcms_4.9.4             BiocParallel_1.45.0   
+    ## [13] BiocStyle_2.39.0      
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] DBI_1.3.0                   rlang_1.1.7                
-    ##   [3] magrittr_2.0.4              clue_0.3-67                
-    ##   [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
-    ##   [7] matrixStats_1.5.0           compiler_4.6.0             
-    ##   [9] systemfonts_1.3.2           vctrs_0.7.1                
-    ##  [11] reshape2_1.4.5              stringr_1.6.0              
-    ##  [13] crayon_1.5.3                pkgconfig_2.0.3            
-    ##  [15] fastmap_1.2.0               XVector_0.51.0             
-    ##  [17] rmarkdown_2.30              preprocessCore_1.73.0      
-    ##  [19] ragg_1.5.1                  purrr_1.2.1                
-    ##  [21] xfun_0.56                   MultiAssayExperiment_1.37.2
-    ##  [23] cachem_1.1.0                jsonlite_2.0.0             
-    ##  [25] progress_1.2.3              DelayedArray_0.37.0        
-    ##  [27] prettyunits_1.2.0           parallel_4.6.0             
-    ##  [29] cluster_2.1.8.2             R6_2.6.1                   
-    ##  [31] bslib_0.10.0                stringi_1.8.7              
-    ##  [33] RColorBrewer_1.1-3          limma_3.67.0               
-    ##  [35] GenomicRanges_1.63.1        jquerylib_0.1.4            
-    ##  [37] iterators_1.0.14            Rcpp_1.1.1                 
-    ##  [39] Seqinfo_1.1.0               bookdown_0.46              
-    ##  [41] SummarizedExperiment_1.41.1 knitr_1.51                 
-    ##  [43] IRanges_2.45.0              Matrix_1.7-4               
-    ##  [45] igraph_2.2.2                tidyselect_1.2.1           
-    ##  [47] abind_1.4-8                 yaml_2.3.12                
-    ##  [49] doParallel_1.0.17           codetools_0.2-20           
-    ##  [51] affy_1.89.0                 lattice_0.22-9             
-    ##  [53] tibble_3.3.1                plyr_1.8.9                 
-    ##  [55] Biobase_2.71.0              S7_0.2.1                   
-    ##  [57] evaluate_1.0.5              desc_1.4.3                 
-    ##  [59] pillar_1.11.1               affyio_1.81.0              
-    ##  [61] BiocManager_1.30.27         MatrixGenerics_1.23.0      
-    ##  [63] foreach_1.5.2               MSnbase_2.37.0             
-    ##  [65] MALDIquant_1.22.3           ncdf4_1.24                 
-    ##  [67] hms_1.1.4                   ggplot2_4.0.2              
-    ##  [69] scales_1.4.0                glue_1.8.0                 
-    ##  [71] MsFeatures_1.19.0           lazyeval_0.2.2             
-    ##  [73] tools_4.6.0                 mzID_1.49.0                
-    ##  [75] data.table_1.18.2.1         QFeatures_1.21.0           
-    ##  [77] vsn_3.79.5                  mzR_2.45.0                 
-    ##  [79] fs_1.6.7                    XML_3.99-0.22              
-    ##  [81] grid_4.6.0                  impute_1.85.0              
-    ##  [83] tidyr_1.3.2                 MsCoreUtils_1.23.6         
-    ##  [85] PSMatch_1.15.1              cli_3.6.5                  
-    ##  [87] textshaping_1.0.5           S4Arrays_1.11.1            
-    ##  [89] dplyr_1.2.0                 AnnotationFilter_1.35.0    
-    ##  [91] pcaMethods_2.3.0            gtable_0.3.6               
-    ##  [93] sass_0.4.10                 digest_0.6.39              
-    ##  [95] SparseArray_1.11.11         htmlwidgets_1.6.4          
-    ##  [97] farver_2.1.2                htmltools_0.5.9            
-    ##  [99] pkgdown_2.2.0.9000          lifecycle_1.0.5            
-    ## [101] statmod_1.5.1               MASS_7.3-65
+    ##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             
+    ##   [3] MultiAssayExperiment_1.37.4 magrittr_2.0.5             
+    ##   [5] farver_2.1.2                MALDIquant_1.22.3          
+    ##   [7] rmarkdown_2.31              fs_2.1.0                   
+    ##   [9] ragg_1.5.2                  vctrs_0.7.3                
+    ##  [11] memoise_2.0.1               htmltools_0.5.9            
+    ##  [13] S4Arrays_1.11.1             progress_1.2.3             
+    ##  [15] AnnotationHub_4.1.0         curl_7.0.0                 
+    ##  [17] SparseArray_1.11.13         mzID_1.49.1                
+    ##  [19] sass_0.4.10                 bslib_0.10.0               
+    ##  [21] htmlwidgets_1.6.4           desc_1.4.3                 
+    ##  [23] plyr_1.8.9                  httr2_1.2.2                
+    ##  [25] impute_1.85.0               cachem_1.1.0               
+    ##  [27] igraph_2.3.0                lifecycle_1.0.5            
+    ##  [29] iterators_1.0.14            pkgconfig_2.0.3            
+    ##  [31] Matrix_1.7-5                R6_2.6.1                   
+    ##  [33] fastmap_1.2.0               MatrixGenerics_1.23.0      
+    ##  [35] clue_0.3-68                 digest_0.6.39              
+    ##  [37] pcaMethods_2.3.0            AnnotationDbi_1.73.1       
+    ##  [39] ExperimentHub_3.1.0         textshaping_1.0.5          
+    ##  [41] GenomicRanges_1.63.2        RSQLite_2.4.6              
+    ##  [43] filelock_1.0.3              httr_1.4.8                 
+    ##  [45] abind_1.4-8                 compiler_4.7.0             
+    ##  [47] withr_3.0.2                 bit64_4.8.0                
+    ##  [49] doParallel_1.0.17           S7_0.2.1-1                 
+    ##  [51] PTMods_0.99.6               DBI_1.3.0                  
+    ##  [53] MASS_7.3-65                 rappdirs_0.3.4             
+    ##  [55] DelayedArray_0.37.1         mzR_2.45.1                 
+    ##  [57] tools_4.7.0                 PSMatch_1.15.3             
+    ##  [59] otel_0.2.0                  glue_1.8.1                 
+    ##  [61] QFeatures_1.21.3            grid_4.7.0                 
+    ##  [63] cluster_2.1.8.2             reshape2_1.4.5             
+    ##  [65] gtable_0.3.6                preprocessCore_1.73.0      
+    ##  [67] tidyr_1.3.2                 data.table_1.18.2.1        
+    ##  [69] hms_1.1.4                   XVector_0.51.0             
+    ##  [71] BiocVersion_3.23.1          foreach_1.5.2              
+    ##  [73] pillar_1.11.1               stringr_1.6.0              
+    ##  [75] limma_3.67.1                dplyr_1.2.1                
+    ##  [77] BiocFileCache_3.1.0         lattice_0.22-9             
+    ##  [79] bit_4.6.0                   tidyselect_1.2.1           
+    ##  [81] Biostrings_2.79.5           knitr_1.51                 
+    ##  [83] bookdown_0.46               IRanges_2.45.0             
+    ##  [85] Seqinfo_1.1.0               SummarizedExperiment_1.41.1
+    ##  [87] xfun_0.57                   Biobase_2.71.0             
+    ##  [89] statmod_1.5.1               MSnbase_2.37.0             
+    ##  [91] matrixStats_1.5.0           stringi_1.8.7              
+    ##  [93] lazyeval_0.2.3              yaml_2.3.12                
+    ##  [95] evaluate_1.0.5              codetools_0.2-20           
+    ##  [97] MsCoreUtils_1.23.10         tibble_3.3.1               
+    ##  [99] BiocManager_1.30.27         cli_3.6.6                  
+    ## [101] affyio_1.81.0               systemfonts_1.3.2          
+    ## [103] jquerylib_0.1.4             Rcpp_1.1.1-1               
+    ## [105] MassSpecWavelet_1.77.0      dbplyr_2.5.2               
+    ## [107] png_0.1-9                   XML_3.99-0.23              
+    ## [109] parallel_4.7.0              pkgdown_2.2.0.9000         
+    ## [111] ggplot2_4.0.3               blob_1.3.0                 
+    ## [113] prettyunits_1.2.0           AnnotationFilter_1.35.0    
+    ## [115] MsFeatures_1.19.0           scales_1.4.0               
+    ## [117] affy_1.89.0                 ncdf4_1.24                 
+    ## [119] purrr_1.2.2                 crayon_1.5.3               
+    ## [121] rlang_1.2.0                 vsn_3.79.6                 
+    ## [123] KEGGREST_1.51.1
 
 ## References
 

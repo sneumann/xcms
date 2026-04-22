@@ -2,6 +2,23 @@
 
 ## xcms 4.9
 
+### Changes in version 4.9.4
+
+- Improve performance for some functions by using
+  [`Spectra::rbindlistWithRownames()`](https://rdrr.io/pkg/Spectra/man/rbindlistWithRownames.html)
+  to merge `data.frame`s.
+- Replace the *msdata* package for test data files with *MsDatahub*.
+
+### Changes in version 4.9.3
+
+- Fix title of
+  [`plotPrecursorIons()`](https://sneumann.github.io/xcms/reference/plotPrecursorIons.md)
+  plot.
+- Add parameter `rtCenterFun` to
+  [`PeakDensityParam()`](https://sneumann.github.io/xcms/reference/groupChromPeaks.md)
+  to support specifying the function to calculate the reported retention
+  time of a feature (`"rtmed"`).
+
 ### Changes in version 4.9.2
 
 - Fix issue with

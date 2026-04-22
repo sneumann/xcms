@@ -197,15 +197,11 @@ mp
 #>  - tuneIn: [1] FALSE
 
 ## Loading a small subset of direct injection, single spectrum files
-library(msdata)
-#> 
-#>  IMPORTANT: msdata will be deprecated and replaced by the new
-#>  MsDataHub package -- see https://bioconductor.org/packages/MsDataHub.
-#>  Please open an issue at https://github.com/rformassspectrometry/MsDataHub/issues
-#>  to inform us of any data from msdata that would need to be moved to MsDataHub.
-fticrf <- list.files(system.file("fticr-mzML", package = "msdata"),
-                    recursive = TRUE, full.names = TRUE)
-fticr <- readMSData(fticrf[1], msLevel. = 1, mode = "onDisk")
+library(MsDataHub)
+fl <- MsDataHub::HAM004_641fE_14.11.07..Exp1.extracted.mzML()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
+fticr <- readMSData(fl, msLevel. = 1, mode = "onDisk")
 
 ## Perform the MSW peak detection on these:
 p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,

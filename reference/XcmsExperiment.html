@@ -61,7 +61,7 @@ be used instead. See the respective help page for more information."><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -952,6 +952,8 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="co">## Create a MsExperiment object representing the data from an LC-MS</span></span></span>
 <span class="r-in"><span><span class="co">## experiment.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/RforMassSpectrometry/MsExperiment" class="external-link">MsExperiment</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rformassspectrometry.github.io/MsDataHub" class="external-link">MsDataHub</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://dx.doi.org/10.1021/bi0480335" class="external-link">faahKO</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Define the raw data files</span></span></span>
 <span class="r-in"><span><span class="va">fls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">'cdf/KO/ko15.CDF'</span>, package <span class="op">=</span> <span class="st">"faahKO"</span><span class="op">)</span>,</span></span>
@@ -980,8 +982,10 @@ default adjusted retention times are returned if available.</p></li>
 <span class="r-in"><span><span class="co">##</span></span></span>
 <span class="r-in"><span><span class="co">## To show how MS2 chromatograms can be extracted we first load a DIA</span></span></span>
 <span class="r-in"><span><span class="co">## (SWATH) data set.</span></span></span>
-<span class="r-in"><span><span class="va">mse_dia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html" class="external-link">readMsExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"TripleTOF-SWATH"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"PestMix1_SWATH.mzML"</span>, package <span class="op">=</span> <span class="st">"msdata"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rformassspectrometry.github.io/MsDataHub" class="external-link">MsDataHub</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mse_dia</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MsExperiment/man/readMsExperiment.html" class="external-link">readMsExperiment</a></span><span class="op">(</span><span class="fu"><a href="https://rformassspectrometry.github.io/MsDataHub/reference/TripleTOF.html" class="external-link">PestMix1_SWATH.mzML</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> see ?MsDataHub and browseVignettes('MsDataHub') for documentation</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Extracting MS2 chromatogram requires also to specify the isolation</span></span></span>
 <span class="r-in"><span><span class="co">## window from which to extract the data. Without that chromatograms</span></span></span>

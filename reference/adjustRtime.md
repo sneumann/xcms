@@ -42,9 +42,9 @@ Supported `param` objects are:
   should be used for alignment. Such a `matrix` can be passed to the
   alignment function using the `peakGroupsMatrix` parameter of the
   `PeakGroupsParam` parameter object. By default the
-  `adjustRtimePeakGroups` function is used to define this `matrix`. This
-  function identifies peak groups (features) for alignment in `object`
-  based on the parameters defined in `param`. See also
+  `adjustRtimePeakGroups()` function is used to define this `matrix`.
+  This function identifies peak groups (features) for alignment in
+  `object` based on the parameters defined in `param`. See also
   [`do_adjustRtime_peakGroups()`](https://sneumann.github.io/xcms/reference/do_adjustRtime_peakGroups.md)
   for the core API function.
 

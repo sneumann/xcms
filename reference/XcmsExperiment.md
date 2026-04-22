@@ -1060,6 +1060,8 @@ Johannes Rainer
 ## Create a MsExperiment object representing the data from an LC-MS
 ## experiment.
 library(MsExperiment)
+library(MsDataHub)
+library(faahKO)
 
 ## Define the raw data files
 fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -1088,8 +1090,10 @@ plot(tic, main = "TIC")
 ##
 ## To show how MS2 chromatograms can be extracted we first load a DIA
 ## (SWATH) data set.
-mse_dia <- readMsExperiment(system.file("TripleTOF-SWATH",
-    "PestMix1_SWATH.mzML", package = "msdata"))
+library(MsDataHub)
+mse_dia <- readMsExperiment(PestMix1_SWATH.mzML())
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 
 ## Extracting MS2 chromatogram requires also to specify the isolation
 ## window from which to extract the data. Without that chromatograms

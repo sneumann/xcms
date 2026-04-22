@@ -107,7 +107,7 @@ processHistory(xod)
 #> [[2]]
 #> Object of class "XProcessHistory"
 #>  type: Retention time correction 
-#>  date: Thu Mar 19 15:02:12 2026 
+#>  date: Wed Apr 22 11:02:55 2026 
 #>  info:  
 #>  fileIndex: 1,2,3 
 #>  Parameter class: ObiwarpParam 

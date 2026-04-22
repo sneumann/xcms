@@ -49,7 +49,11 @@ Johannes Rainer
 
 ``` r
 ## Load a test file
-file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+library(xcms)
+library(MsDataHub)
+file <- ko15.CDF()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 xraw <- xcmsRaw(file, profstep = 0)
 ## The number of scans/spectra:
 length(xraw@scantime)

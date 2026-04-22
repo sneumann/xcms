@@ -151,7 +151,11 @@ Johannes Rainer
 ## Examples
 
 ``` r
-file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+library(xcms)
+library(MsDataHub)
+file <- ko15.CDF()
+#> see ?MsDataHub and browseVignettes('MsDataHub') for documentation
+#> loading from cache
 ## Load the data without generating the profile matrix (profstep = 0)
 xraw <- xcmsRaw(file, profstep = 0)
 ## Extract the profile matrix

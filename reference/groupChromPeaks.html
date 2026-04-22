@@ -20,7 +20,7 @@ larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
-feature. Only samples with non-missing sample group assignment (i.e. for
+feature. Only samples with non-missing sample group assignment (i.e., for
 which the value provided with parameter sampleGroups is different than
 NA) are considered and counted for the feature definition. This allows
 to exclude certain samples or groups (e.g. blanks) from the feature
@@ -68,7 +68,7 @@ larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
-feature. Only samples with non-missing sample group assignment (i.e. for
+feature. Only samples with non-missing sample group assignment (i.e., for
 which the value provided with parameter sampleGroups is different than
 NA) are considered and counted for the feature definition. This allows
 to exclude certain samples or groups (e.g. blanks) from the feature
@@ -103,7 +103,7 @@ help pages of the individual parameter classes listed above."><meta property="og
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,7 +156,7 @@ larger than 0, m/z dependent bin sizes can be used instead (better
 representing the m/z dependent measurement error of some MS instruments).
 All peaks (from the same or from different samples) with their apex
 position being close on the retention time axis are grouped into a LC-MS
-feature. Only samples with non-missing sample group assignment (i.e. for
+feature. Only samples with non-missing sample group assignment (i.e., for
 which the value provided with parameter <code>sampleGroups</code> is different than
 <code>NA</code>) are considered and counted for the feature definition. This allows
 to exclude certain samples or groups (e.g. blanks) from the feature
@@ -198,7 +198,8 @@ help pages of the individual parameter classes listed above.</p>
 <span>  minSamples <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  binSize <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  ppm <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  maxFeatures <span class="op">=</span> <span class="fl">50</span></span>
+<span>  maxFeatures <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  rtCenterFun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"median"</span>, <span class="st">"mean"</span>, <span class="st">"wMean"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">MzClustParam</span><span class="op">(</span></span>
@@ -311,6 +312,11 @@ all peaks in the data set.</p></dd>
 <dt id="arg-maxfeatures">maxFeatures<a class="anchor" aria-label="anchor" href="#arg-maxfeatures"></a></dt>
 <dd><p>For <code>PeakDensityParam</code>: <code>numeric(1)</code> with the maximum
 number of peak groups to be identified in a single mz slice.</p></dd>
+
+
+<dt id="arg-rtcenterfun">rtCenterFun<a class="anchor" aria-label="anchor" href="#arg-rtcenterfun"></a></dt>
+<dd><p>For <code>PeakDensityParam</code>: character(1)<code>specifying the function to calculate the reported retention time of a feature (i.e., its</code>"rtmed"<code>). Defaults to </code>rtCenterFun = "median"<code>(the median retention time of all chrom peaks per feature is reported) but supports also</code>rtCenterFun = "mean"<code>or</code>rtCenterFun = "wMean"<code>to allow reporting the mean or intensity-weighted mean retention time instead (the integrated peak intensity</code>"into"` is used for the intensity-weighted
+mean calculation).</p></dd>
 
 
 <dt id="arg-absmz">absMz<a class="anchor" aria-label="anchor" href="#arg-absmz"></a></dt>

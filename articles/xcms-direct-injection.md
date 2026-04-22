@@ -24,28 +24,31 @@ processing setup please see the *BiocParallel* vignette.
 library(MSnbase)
 library(xcms)
 library(MassSpecWavelet)
-
+library(MsDataHub)
 register(SerialParam())
 ```
 
 In this documentation we use an example data set from the
-*[msdata](https://bioconductor.org/packages/3.23/msdata)* package.
-Assuming that *[msdata](https://bioconductor.org/packages/3.23/msdata)*
-is installed, we locate the path of the package and load the data set.
-We create also a `data.frame` describing the experimental setup based on
+`r Biocpkg("MsDataHub")` package. Assuming that
+*[MsDataHub](https://bioconductor.org/packages/3.23/MsDataHub)* is
+installed, it will obtain the files from
+<https://doi.org/10.5281/zenodo.18494293> and load the data set. We
+create also a `data.frame` describing the experimental setup based on
 the file names.
 
 ``` r
 
-mzML_path <- system.file("fticr-mzML", package = "msdata")
-mzML_files <- list.files(mzML_path, recursive = TRUE, full.names = TRUE)
-
-## We're subsetting to 2 samples per condition
-mzML_files <- mzML_files[c(1, 2, 6, 7)]
+## We're using 2 samples per condition
+## from https://doi.org/10.5281/zenodo.18494293
+mzML_files <- c(
+  HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
+  HAM004_641fE_14.11.07..Exp2.extracted.mzML(),
+  HAM005_641fE_14.11.07..Exp1.extracted.mzML(),
+  HAM005_641fE_14.11.07..Exp2.extracted.mzML()
+)
 
 ## Create a data.frame assigning samples to sample groups, i.e. ham4 and ham5.
-grp <- rep("ham4", length(mzML_files))
-grp[grep(basename(mzML_files), pattern = "^HAM005")] <- "ham5"
+grp <- c("ham4", "ham4", "ham5", "ham5")
 pd <- data.frame(filename = basename(mzML_files), sample_group = grp)
 
 ## Load the data.
@@ -53,6 +56,10 @@ ham_raw <- readMSData(files = mzML_files,
                       pdata = AnnotatedDataFrame(pd),
                       mode = "onDisk")
 ```
+
+    ## Warning in .testReadMSDataInput(environment()): Reading different file formats in.
+    ## This is untested and you are welcome to try it out.
+    ## Please report back!
 
 The data files are from *direct injection* mass spectrometry
 experiments, i.e. we have only a single spectrum available for each
@@ -183,7 +190,7 @@ ham_prep
     ##  Number of spectra: 4 
     ##  MSn retention times: -1:59 - -1:59 minutes
     ## - - - Processing information - - -
-    ## Data loaded [Thu Mar 19 15:05:05 2026] 
+    ## Data loaded [Wed Apr 22 11:06:15 2026] 
     ##  MSnbase version: 2.37.0 
     ## - - - Meta data  - - -
     ## phenoData
@@ -191,7 +198,7 @@ ham_prep
     ##   varLabels: filename sample_group
     ##   varMetadata: labelDescription
     ## Loaded from:
-    ##   [1] HAM004_641fE_14-11-07--Exp1.extracted.mzML...  [4] HAM005_641fE_14-11-07--Exp2.extracted.mzML
+    ##   [1] 6d407d2fc382_10386...  [4] 6d4051d1f99f_10392
     ##   Use 'fileNames(.)' to see all files.
     ## protocolData: none
     ## featureData
@@ -295,34 +302,20 @@ feat_vals <- featureValues(ham_prep, value = "into")
 head(feat_vals)
 ```
 
-    ##      HAM004_641fE_14-11-07--Exp1.extracted.mzML
-    ## FT01                                         NA
-    ## FT02                                    4735258
-    ## FT03                                         NA
-    ## FT04                                    4158404
-    ## FT05                                         NA
-    ## FT06                                    6099006
-    ##      HAM004_641fE_14-11-07--Exp2.extracted.mzML
-    ## FT01                                         NA
-    ## FT02                                    6202418
-    ## FT03                                         NA
-    ## FT04                                    5004546
-    ## FT05                                         NA
-    ## FT06                                    4950642
-    ##      HAM005_641fE_14-11-07--Exp1.extracted.mzML
-    ## FT01                                    4095293
-    ## FT02                                    4811391
-    ## FT03                                    2982453
-    ## FT04                                         NA
-    ## FT05                                    2872023
-    ## FT06                                         NA
-    ##      HAM005_641fE_14-11-07--Exp2.extracted.mzML
-    ## FT01                                    4804763
-    ## FT02                                    2581183
-    ## FT03                                    2268984
-    ## FT04                                         NA
-    ## FT05                                    2133219
-    ## FT06                                         NA
+    ##      6d407d2fc382_10386 6d407f0e7e90_10387 6d4049d81988_10391
+    ## FT01                 NA                 NA            4095293
+    ## FT02            4735258            6202418            4811391
+    ## FT03                 NA                 NA            2982453
+    ## FT04            4158404            5004546                 NA
+    ## FT05                 NA                 NA            2872023
+    ## FT06            6099006            4950642                 NA
+    ##      6d4051d1f99f_10392
+    ## FT01            4804763
+    ## FT02            2581183
+    ## FT03            2268984
+    ## FT04                 NA
+    ## FT05            2133219
+    ## FT06                 NA
 
 `NA` is reported for features in samples for which no peak was
 identified at the feature’s m/z value. In some instances there might
@@ -339,34 +332,20 @@ ham_prep <- fillChromPeaks(ham_prep, param = FillChromPeaksParam())
 head(featureValues(ham_prep, value = "into"))
 ```
 
-    ##      HAM004_641fE_14-11-07--Exp1.extracted.mzML
-    ## FT01                                   768754.0
-    ## FT02                                  4735257.5
-    ## FT03                                   652566.6
-    ## FT04                                  4158404.5
-    ## FT05                                   652201.1
-    ## FT06                                  6099006.3
-    ##      HAM004_641fE_14-11-07--Exp2.extracted.mzML
-    ## FT01                                  1230140.4
-    ## FT02                                  6202417.6
-    ## FT03                                   374109.9
-    ## FT04                                  5004546.3
-    ## FT05                                   403448.4
-    ## FT06                                  4950641.7
-    ##      HAM005_641fE_14-11-07--Exp1.extracted.mzML
-    ## FT01                                    4095293
-    ## FT02                                    4811391
-    ## FT03                                    2982453
-    ## FT04                                    1221031
-    ## FT05                                    2872023
-    ## FT06                                    1573988
-    ##      HAM005_641fE_14-11-07--Exp2.extracted.mzML
-    ## FT01                                  4804762.5
-    ## FT02                                  2581183.1
-    ## FT03                                  2268984.5
-    ## FT04                                  1241294.4
-    ## FT05                                  2133219.4
-    ## FT06                                   977694.5
+    ##      6d407d2fc382_10386 6d407f0e7e90_10387 6d4049d81988_10391
+    ## FT01           768754.0          1230140.4            4095293
+    ## FT02          4735257.5          6202417.6            4811391
+    ## FT03           652566.6           374109.9            2982453
+    ## FT04          4158404.5          5004546.3            1221031
+    ## FT05           652201.1           403448.4            2872023
+    ## FT06          6099006.3          4950641.7            1573988
+    ##      6d4051d1f99f_10392
+    ## FT01          4804762.5
+    ## FT02          2581183.1
+    ## FT03          2268984.5
+    ## FT04          1241294.4
+    ## FT05          2133219.4
+    ## FT06           977694.5
 
 ## Further analysis
 
@@ -382,7 +361,7 @@ the feature matrix using functionality from other R packages, such as
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-03-15 r89629)
+    ## R Under development (unstable) (2026-04-19 r89916)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -406,60 +385,71 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] MassSpecWavelet_1.77.0 xcms_4.9.2             BiocParallel_1.45.0   
-    ##  [4] MSnbase_2.37.0         ProtGenerics_1.43.0    S4Vectors_0.49.0      
-    ##  [7] mzR_2.45.0             Rcpp_1.1.1             Biobase_2.71.0        
-    ## [10] BiocGenerics_0.57.0    generics_0.1.4         BiocStyle_2.39.0      
+    ##  [1] MsDataHub_1.11.3       MassSpecWavelet_1.77.0 xcms_4.9.4            
+    ##  [4] BiocParallel_1.45.0    MSnbase_2.37.0         ProtGenerics_1.43.0   
+    ##  [7] S4Vectors_0.49.2       mzR_2.45.1             Rcpp_1.1.1-1          
+    ## [10] Biobase_2.71.0         BiocGenerics_0.57.1    generics_0.1.4        
+    ## [13] BiocStyle_2.39.0      
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] DBI_1.3.0                   rlang_1.1.7                
-    ##   [3] magrittr_2.0.4              clue_0.3-67                
-    ##   [5] otel_0.2.0                  matrixStats_1.5.0          
-    ##   [7] compiler_4.6.0              systemfonts_1.3.2          
-    ##   [9] vctrs_0.7.1                 reshape2_1.4.5             
-    ##  [11] stringr_1.6.0               crayon_1.5.3               
-    ##  [13] pkgconfig_2.0.3             MetaboCoreUtils_1.19.2     
-    ##  [15] fastmap_1.2.0               XVector_0.51.0             
-    ##  [17] rmarkdown_2.30              preprocessCore_1.73.0      
-    ##  [19] ragg_1.5.1                  purrr_1.2.1                
-    ##  [21] xfun_0.56                   MultiAssayExperiment_1.37.2
-    ##  [23] cachem_1.1.0                jsonlite_2.0.0             
-    ##  [25] progress_1.2.3              DelayedArray_0.37.0        
-    ##  [27] prettyunits_1.2.0           parallel_4.6.0             
-    ##  [29] cluster_2.1.8.2             R6_2.6.1                   
-    ##  [31] bslib_0.10.0                stringi_1.8.7              
-    ##  [33] RColorBrewer_1.1-3          limma_3.67.0               
-    ##  [35] GenomicRanges_1.63.1        jquerylib_0.1.4            
-    ##  [37] iterators_1.0.14            Seqinfo_1.1.0              
-    ##  [39] bookdown_0.46               SummarizedExperiment_1.41.1
-    ##  [41] knitr_1.51                  IRanges_2.45.0             
-    ##  [43] Matrix_1.7-4                igraph_2.2.2               
-    ##  [45] tidyselect_1.2.1            abind_1.4-8                
-    ##  [47] yaml_2.3.12                 doParallel_1.0.17          
-    ##  [49] codetools_0.2-20            affy_1.89.0                
-    ##  [51] lattice_0.22-9              tibble_3.3.1               
-    ##  [53] plyr_1.8.9                  S7_0.2.1                   
-    ##  [55] signal_1.8-1                evaluate_1.0.5             
-    ##  [57] desc_1.4.3                  Spectra_1.21.5             
-    ##  [59] pillar_1.11.1               affyio_1.81.0              
-    ##  [61] BiocManager_1.30.27         MatrixGenerics_1.23.0      
-    ##  [63] foreach_1.5.2               MALDIquant_1.22.3          
-    ##  [65] ncdf4_1.24                  hms_1.1.4                  
-    ##  [67] ggplot2_4.0.2               scales_1.4.0               
-    ##  [69] MsExperiment_1.13.1         glue_1.8.0                 
-    ##  [71] MsFeatures_1.19.0           lazyeval_0.2.2             
-    ##  [73] tools_4.6.0                 mzID_1.49.0                
-    ##  [75] data.table_1.18.2.1         QFeatures_1.21.0           
-    ##  [77] vsn_3.79.5                  fs_1.6.7                   
-    ##  [79] XML_3.99-0.22               grid_4.6.0                 
-    ##  [81] impute_1.85.0               tidyr_1.3.2                
-    ##  [83] MsCoreUtils_1.23.6          PSMatch_1.15.1             
-    ##  [85] cli_3.6.5                   textshaping_1.0.5          
-    ##  [87] S4Arrays_1.11.1             dplyr_1.2.0                
-    ##  [89] AnnotationFilter_1.35.0     pcaMethods_2.3.0           
-    ##  [91] gtable_0.3.6                sass_0.4.10                
-    ##  [93] digest_0.6.39               SparseArray_1.11.11        
-    ##  [95] htmlwidgets_1.6.4           farver_2.1.2               
-    ##  [97] htmltools_0.5.9             pkgdown_2.2.0.9000         
-    ##  [99] lifecycle_1.0.5             statmod_1.5.1              
-    ## [101] MASS_7.3-65
+    ##   [1] RColorBrewer_1.1-3          jsonlite_2.0.0             
+    ##   [3] MultiAssayExperiment_1.37.4 magrittr_2.0.5             
+    ##   [5] farver_2.1.2                MALDIquant_1.22.3          
+    ##   [7] rmarkdown_2.31              fs_2.1.0                   
+    ##   [9] ragg_1.5.2                  vctrs_0.7.3                
+    ##  [11] memoise_2.0.1               htmltools_0.5.9            
+    ##  [13] S4Arrays_1.11.1             progress_1.2.3             
+    ##  [15] AnnotationHub_4.1.0         curl_7.0.0                 
+    ##  [17] signal_1.8-1                SparseArray_1.11.13        
+    ##  [19] mzID_1.49.1                 sass_0.4.10                
+    ##  [21] bslib_0.10.0                htmlwidgets_1.6.4          
+    ##  [23] desc_1.4.3                  plyr_1.8.9                 
+    ##  [25] httr2_1.2.2                 impute_1.85.0              
+    ##  [27] cachem_1.1.0                igraph_2.3.0               
+    ##  [29] lifecycle_1.0.5             iterators_1.0.14           
+    ##  [31] pkgconfig_2.0.3             Matrix_1.7-5               
+    ##  [33] R6_2.6.1                    fastmap_1.2.0              
+    ##  [35] MatrixGenerics_1.23.0       clue_0.3-68                
+    ##  [37] digest_0.6.39               pcaMethods_2.3.0           
+    ##  [39] AnnotationDbi_1.73.1        ExperimentHub_3.1.0        
+    ##  [41] textshaping_1.0.5           GenomicRanges_1.63.2       
+    ##  [43] RSQLite_2.4.6               filelock_1.0.3             
+    ##  [45] Spectra_1.21.7              httr_1.4.8                 
+    ##  [47] abind_1.4-8                 compiler_4.7.0             
+    ##  [49] withr_3.0.2                 bit64_4.8.0                
+    ##  [51] doParallel_1.0.17           S7_0.2.1-1                 
+    ##  [53] PTMods_0.99.6               DBI_1.3.0                  
+    ##  [55] MASS_7.3-65                 MsExperiment_1.13.1        
+    ##  [57] rappdirs_0.3.4              DelayedArray_0.37.1        
+    ##  [59] tools_4.7.0                 PSMatch_1.15.3             
+    ##  [61] otel_0.2.0                  glue_1.8.1                 
+    ##  [63] QFeatures_1.21.3            grid_4.7.0                 
+    ##  [65] cluster_2.1.8.2             reshape2_1.4.5             
+    ##  [67] gtable_0.3.6                preprocessCore_1.73.0      
+    ##  [69] tidyr_1.3.2                 data.table_1.18.2.1        
+    ##  [71] hms_1.1.4                   MetaboCoreUtils_1.19.3     
+    ##  [73] XVector_0.51.0              BiocVersion_3.23.1         
+    ##  [75] foreach_1.5.2               pillar_1.11.1              
+    ##  [77] stringr_1.6.0               limma_3.67.1               
+    ##  [79] dplyr_1.2.1                 BiocFileCache_3.1.0        
+    ##  [81] lattice_0.22-9              bit_4.6.0                  
+    ##  [83] tidyselect_1.2.1            Biostrings_2.79.5          
+    ##  [85] knitr_1.51                  bookdown_0.46              
+    ##  [87] IRanges_2.45.0              Seqinfo_1.1.0              
+    ##  [89] SummarizedExperiment_1.41.1 xfun_0.57                  
+    ##  [91] statmod_1.5.1               matrixStats_1.5.0          
+    ##  [93] stringi_1.8.7               lazyeval_0.2.3             
+    ##  [95] yaml_2.3.12                 evaluate_1.0.5             
+    ##  [97] codetools_0.2-20            MsCoreUtils_1.23.10        
+    ##  [99] tibble_3.3.1                BiocManager_1.30.27        
+    ## [101] cli_3.6.6                   affyio_1.81.0              
+    ## [103] systemfonts_1.3.2           jquerylib_0.1.4            
+    ## [105] dbplyr_2.5.2                png_0.1-9                  
+    ## [107] XML_3.99-0.23               parallel_4.7.0             
+    ## [109] pkgdown_2.2.0.9000          ggplot2_4.0.3              
+    ## [111] blob_1.3.0                  prettyunits_1.2.0          
+    ## [113] AnnotationFilter_1.35.0     MsFeatures_1.19.0          
+    ## [115] scales_1.4.0                affy_1.89.0                
+    ## [117] ncdf4_1.24                  purrr_1.2.2                
+    ## [119] crayon_1.5.3                rlang_1.2.0                
+    ## [121] vsn_3.79.6                  KEGGREST_1.51.1

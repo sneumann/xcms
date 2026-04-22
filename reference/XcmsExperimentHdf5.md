@@ -157,11 +157,13 @@ object), in a file in HDF5 format.
 
 `XcmsExperimentHdf5` uses a different naming scheme for chromatographic
 peaks: for efficiency reasons, chromatographic peak data is organized by
-sample and MS level. The chrom peak IDs are hence in the format *CPS*
-with being the MS level in which the chromatographic peaks were detected
-and the ID of the sample (usually related to the index in the original
-`MsExperiment` object) and the the index of the chromatographic peak in
-the chrom peak matrix **of that sample** and MS level.
+sample and MS level. The chrom peak IDs are hence in the format
+`"CP"<MS level>"S"<sample id><chrom peak index>` with `<MS level>` being
+the MS level in which the chromatographic peaks were detected and
+`<sample id>` the ID of the sample (usually related to the index in the
+original `MsExperiment` object) and the `<chrom peak index>` the index
+of the chromatographic peak in the chrom peak matrix **of that sample**
+and MS level.
 
 HDF5 files do not support parallel processing, thus preprocessing
 results need to be stored or loaded sequentially.
@@ -180,7 +182,7 @@ file to store the results. In addition it is possible to convert a
 `toXcmsExperimentHdf5()` function. All present preprocessing results
 will be stored to the specified HDF5 file. To load all preprocessing
 results into memory and hence change from a `XcmsExperimentHdf5` to a
-`XcmsExperiment` object, the `toXcmsExperument()` function can be used.
+`XcmsExperiment` object, the `toXcmsExperiment()` function can be used.
 
 ## Using the HDF5 file-based on-disk data storage
 
@@ -293,6 +295,7 @@ Johannes Rainerr, Philippine Louail
 ## Create a MsExperiment object representing the data from an LC-MS
 ## experiment.
 library(MsExperiment)
+library(faahKO)
 
 ## Define the raw data files
 fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -321,7 +324,7 @@ xmse
 #>  xcms results:
 #>   - chromatographic peaks in MS level(s): 1 
 #>  results storage file:
-#>    /tmp/Rtmpc2g1r1/file766213a9ca31
+#>    /tmp/RtmpJElXXi/file7a3b78245254
 
 ## Extract selected columnds from the chromatographic peak detection
 ## results

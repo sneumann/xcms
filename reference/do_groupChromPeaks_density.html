@@ -21,7 +21,7 @@ measurement error/precision seen on some MS instruments."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">xcms</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,8 @@ measurement error/precision seen on some MS instruments.</p>
 <span>  maxFeatures <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  sleep <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  ppm <span class="op">=</span> <span class="fl">0</span></span>
+<span>  ppm <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  rtCenterFun <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"median"</span>, <span class="st">"mean"</span>, <span class="st">"wMean"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -153,6 +154,11 @@ increased in addition by the <code>ppm</code> of the (upper) m/z boundary of the
 bin. The maximal bin size (used for the largest m/z values) would then
 be <code>binSize</code> plus <code>ppm</code> parts-per-million of the largest m/z value of
 all peaks in the data set.</p></dd>
+
+
+<dt id="arg-rtcenterfun">rtCenterFun<a class="anchor" aria-label="anchor" href="#arg-rtcenterfun"></a></dt>
+<dd><p>For <code>PeakDensityParam</code>: character(1)<code>specifying the function to calculate the reported retention time of a feature (i.e., its</code>"rtmed"<code>). Defaults to </code>rtCenterFun = "median"<code>(the median retention time of all chrom peaks per feature is reported) but supports also</code>rtCenterFun = "mean"<code>or</code>rtCenterFun = "wMean"<code>to allow reporting the mean or intensity-weighted mean retention time instead (the integrated peak intensity</code>"into"` is used for the intensity-weighted
+mean calculation).</p></dd>
 
 </dl></div>
     <div class="section level2">
