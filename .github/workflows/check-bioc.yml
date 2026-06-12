@@ -171,7 +171,7 @@ jobs:
           ## Pass #2 at installing dependencies
           ## For running the checks
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
-          BiocManager::install("BiocCheck")
+          BiocManager::install(c("rcmdcheck", "BiocCheck"))
         shell: Rscript {0}
 
       - name: Install BiocGenerics
