@@ -1,3 +1,10 @@
+# xcms
+
+## Changes in version
+
+- `refineChromPeaks,MergeNeighboringPeakParam`: drop row names of intermediate
+  objects to avoid potentially misleading warning message.
+
 # xcms 4.9
 
 ## Changes in version 4.9.4
