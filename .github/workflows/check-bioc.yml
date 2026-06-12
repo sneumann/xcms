@@ -160,17 +160,18 @@ jobs:
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
 
-          ## Workaround for problems with cached S4objects in binary packages
-          BiocManager::install("GenomeInfoDb", force = TRUE, type = "source")
-          BiocManager::install("BiocParallel", force = TRUE, type = "source")
-          BiocManager::install("S4Vectors", force = TRUE, type = "source")
-          BiocManager::install("SummarizedExperiment", force = TRUE, type = "source")
-          ## install xcms with dependencies - to ensure dependencies are installed from source;
-          ## somehow install_local installs binary packages instead.
-          BiocManager::install("mzR", force = TRUE)
-          BiocManager::install("MSnbase", force = TRUE, type = "source")
-          BiocManager::install("xcms", force = TRUE, type = "source", dependencies = TRUE)
-          BiocManager::install("faahKO", type = "source")
+          BiocManager::install(c("mzR", "MSnbase", "Spectra", "faahKO"))
+          # ## Workaround for problems with cached S4objects in binary packages
+          # BiocManager::install("GenomeInfoDb", force = TRUE, type = "source")
+          # BiocManager::install("BiocParallel", force = TRUE, type = "source")
+          # BiocManager::install("S4Vectors", force = TRUE, type = "source")
+          # BiocManager::install("SummarizedExperiment", force = TRUE, type = "source")
+          # ## install xcms with dependencies - to ensure dependencies are installed from source;
+          # ## somehow install_local installs binary packages instead.
+          # BiocManager::install("mzR", force = TRUE)
+          # BiocManager::install("MSnbase", force = TRUE, type = "source")
+          # BiocManager::install("xcms", force = TRUE, type = "source", dependencies = TRUE)
+          # BiocManager::install("faahKO", type = "source")
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
