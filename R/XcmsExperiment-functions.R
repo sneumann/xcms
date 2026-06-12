@@ -339,17 +339,17 @@
         return(list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks)))
     cands <- cands[[2L]]
     pks_new <- pkd_new <- vector("list", length(cands))
-    rownames(pkd) <- NULL
     for (i in seq_along(cands)) {
         res <- .merge_neighboring_peak_candidates(
             x, rt = rt, pks[cands[[i]], , drop = FALSE],
             pkd[cands[[i]], , drop = FALSE], diffRt = 2 * expandRt,
             minProp = minProp, expandMz = expandMz, ppm = ppm)
-         pks_new[[i]] <- res$chromPeaks
+        pks_new[[i]] <- res$chromPeaks
         pkd_new[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, pks_new)
-    pkd_new <- rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE)
+    suppressWarnings(pkd_new <- rbindlistWithRownames(
+                         pkd_new, use.names = TRUE, fill = TRUE))
     ## drop peaks that were candidates, but that were not returned (i.e.
     ## were either merged or dropped)
     keep <- !(rownames(pks) %in% setdiff(unlist(cands, use.names = FALSE),
@@ -361,8 +361,8 @@
     if (any(news)) {
         pks <- rbind(pks, pks_new[news, , drop = FALSE])
         pkd <- rbind(pkd, pkd_new[news, , drop = FALSE])
-        rownames(pkd) <- NULL
     }
+    rownames(pkd) <- NULL
     list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks))
 }
 
