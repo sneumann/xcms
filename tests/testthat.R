@@ -12,7 +12,7 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 fticrf <- c(HAM004_641fE_14.11.07..Exp1.extracted.mzML(),
-            HAM004_641fE_14.11.07..Exp2.extracted.mzML())
+            HAM004_641fE_14.11.07..Exp2.extracted.mzML()) |> normalizePath()
 pest_mix_swath_file <- PestMix1_SWATH.mzML()
 pest_mix_dda_file <- PestMix1_DDA.mzML()
 
