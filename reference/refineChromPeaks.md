@@ -296,7 +296,6 @@ plot(chr)
 
 ## Combine the peaks
 res <- refineChromPeaks(xd, param = MergeNeighboringPeaksParam(expandRt = 4))
-#> Warning: Dropping rownames: duplicated rownames present or rownames not available for all data.frames
 #> Reduced from 87 to 70 chromatographic peaks.
 chr_res <- chromatogram(res, mz = mzr, rt = c(2700, 3700))
 #> Extracting chromatographic data

@@ -2,8 +2,8 @@
 
 **Package**: *[xcms](https://bioconductor.org/packages/3.23/xcms)*\
 **Authors**: Philippine Louail, Johannes Rainer\
-**Modified**: 2026-04-22 09:50:36.294717\
-**Compiled**: Wed Apr 22 11:07:08 2026
+**Modified**: 2026-07-05 12:02:17.561418\
+**Compiled**: Sun Jul 5 13:04:40 2026
 
 ## Introduction
 
@@ -787,39 +787,6 @@ help page for a detailed description of the settings and the approach.
 mpp <- MergeNeighboringPeaksParam(expandRt = 4)
 faahko_pp <- refineChromPeaks(faahko, mpp)
 ```
-
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-
-    ## Warning in rbindlistWithRownames(lapply(res, `[[`, 2L), use.names = TRUE, :
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-    ## Warning in rbindlistWithRownames(pkd_new, use.names = TRUE, fill = TRUE):
-    ## Dropping rownames: duplicated rownames present or rownames not available for
-    ## all data.frames
-
-    ## Warning in rbindlistWithRownames(lapply(res, `[[`, 2L)): Dropping rownames:
-    ## duplicated rownames present or rownames not available for all data.frames
 
 An example for a merged peak is given below.
 
@@ -2024,7 +1991,7 @@ metadata(res)
     ## [[1]]
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Apr 22 11:07:44 2026 
+    ##  date: Sun Jul  5 13:05:17 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2033,7 +2000,7 @@ metadata(res)
     ## [[2]]
     ## Object of class "XProcessHistory"
     ##  type: Peak refinement 
-    ##  date: Wed Apr 22 11:07:49 2026 
+    ##  date: Sun Jul  5 13:05:23 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: MergeNeighboringPeaksParam 
@@ -2042,7 +2009,7 @@ metadata(res)
     ## [[3]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Apr 22 11:08:01 2026 
+    ##  date: Sun Jul  5 13:05:34 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2051,7 +2018,7 @@ metadata(res)
     ## [[4]]
     ## Object of class "XProcessHistory"
     ##  type: Retention time correction 
-    ##  date: Wed Apr 22 11:08:02 2026 
+    ##  date: Sun Jul  5 13:05:35 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakGroupsParam 
@@ -2060,7 +2027,7 @@ metadata(res)
     ## [[5]]
     ## Object of class "XProcessHistory"
     ##  type: Peak grouping 
-    ##  date: Wed Apr 22 11:08:06 2026 
+    ##  date: Sun Jul  5 13:05:39 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: PeakDensityParam 
@@ -2069,7 +2036,7 @@ metadata(res)
     ## [[6]]
     ## Object of class "XProcessHistory"
     ##  type: Missing peak filling 
-    ##  date: Wed Apr 22 11:08:10 2026 
+    ##  date: Sun Jul  5 13:05:43 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: ChromPeakAreaParam 
@@ -2088,7 +2055,7 @@ processHistory(faahko)[[1]]
 
     ## Object of class "XProcessHistory"
     ##  type: Peak detection 
-    ##  date: Wed Apr 22 11:07:44 2026 
+    ##  date: Sun Jul  5 13:05:17 2026 
     ##  info:  
     ##  fileIndex: 1,2,3,4,5,6,7,8 
     ##  Parameter class: CentWaveParam 
@@ -2626,7 +2593,7 @@ R packages used for this document are listed below.
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-04-19 r89916)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -2650,66 +2617,66 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] SummarizedExperiment_1.41.1 Biobase_2.71.0             
-    ##  [3] GenomicRanges_1.63.2        Seqinfo_1.1.0              
-    ##  [5] IRanges_2.45.0              S4Vectors_0.49.2           
-    ##  [7] BiocGenerics_0.57.1         generics_0.1.4             
-    ##  [9] MatrixGenerics_1.23.0       matrixStats_1.5.0          
-    ## [11] MsExperiment_1.13.1         ProtGenerics_1.43.0        
+    ##  [1] SummarizedExperiment_1.42.0 Biobase_2.72.0             
+    ##  [3] GenomicRanges_1.64.0        Seqinfo_1.2.0              
+    ##  [5] IRanges_2.46.0              S4Vectors_0.50.1           
+    ##  [7] BiocGenerics_0.58.1         generics_0.1.4             
+    ##  [9] MatrixGenerics_1.24.0       matrixStats_1.5.0          
+    ## [11] MsExperiment_1.14.0         ProtGenerics_1.44.0        
     ## [13] pheatmap_1.0.13             RColorBrewer_1.1-3         
-    ## [15] pander_0.6.6                faahKO_1.51.0              
-    ## [17] xcms_4.9.4                  BiocParallel_1.45.0        
-    ## [19] BiocStyle_2.39.0           
+    ## [15] pander_0.6.6                faahKO_1.52.0              
+    ## [17] xcms_4.11.1                 BiocParallel_1.46.0        
+    ## [19] BiocStyle_2.40.0           
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] DBI_1.3.0                   rlang_1.2.0                
     ##  [3] magrittr_2.0.5              clue_0.3-68                
-    ##  [5] MassSpecWavelet_1.77.0      otel_0.2.0                 
-    ##  [7] compiler_4.7.0              PTMods_0.99.6              
+    ##  [5] MassSpecWavelet_1.78.0      otel_0.2.0                 
+    ##  [7] compiler_4.6.0              PTMods_1.0.0               
     ##  [9] systemfonts_1.3.2           vctrs_0.7.3                
     ## [11] reshape2_1.4.5              stringr_1.6.0              
     ## [13] crayon_1.5.3                pkgconfig_2.0.3            
-    ## [15] MetaboCoreUtils_1.19.3      fastmap_1.2.0              
-    ## [17] XVector_0.51.0              rmarkdown_2.31             
-    ## [19] preprocessCore_1.73.0       ragg_1.5.2                 
-    ## [21] purrr_1.2.2                 xfun_0.57                  
-    ## [23] MultiAssayExperiment_1.37.4 cachem_1.1.0               
+    ## [15] MetaboCoreUtils_1.20.1      fastmap_1.2.0              
+    ## [17] XVector_0.52.0              rmarkdown_2.31             
+    ## [19] preprocessCore_1.74.0       ragg_1.5.2                 
+    ## [21] purrr_1.2.2                 xfun_0.59                  
+    ## [23] MultiAssayExperiment_1.38.0 cachem_1.1.0               
     ## [25] jsonlite_2.0.0              progress_1.2.3             
-    ## [27] DelayedArray_0.37.1         prettyunits_1.2.0          
-    ## [29] parallel_4.7.0              cluster_2.1.8.2            
-    ## [31] R6_2.6.1                    bslib_0.10.0               
-    ## [33] stringi_1.8.7               limma_3.67.1               
+    ## [27] DelayedArray_0.38.2         prettyunits_1.2.0          
+    ## [29] parallel_4.6.0              cluster_2.1.8.2            
+    ## [31] R6_2.6.1                    bslib_0.11.0               
+    ## [33] stringi_1.8.7               limma_3.68.4               
     ## [35] jquerylib_0.1.4             iterators_1.0.14           
-    ## [37] Rcpp_1.1.1-1                bookdown_0.46              
+    ## [37] Rcpp_1.1.1-1.1              bookdown_0.47              
     ## [39] knitr_1.51                  Matrix_1.7-5               
-    ## [41] igraph_2.3.0                tidyselect_1.2.1           
+    ## [41] igraph_2.3.2                tidyselect_1.2.1           
     ## [43] abind_1.4-8                 yaml_2.3.12                
     ## [45] doParallel_1.0.17           codetools_0.2-20           
-    ## [47] affy_1.89.0                 lattice_0.22-9             
+    ## [47] affy_1.90.0                 lattice_0.22-9             
     ## [49] tibble_3.3.1                plyr_1.8.9                 
-    ## [51] S7_0.2.1-1                  evaluate_1.0.5             
-    ## [53] desc_1.4.3                  Spectra_1.21.7             
-    ## [55] pillar_1.11.1               affyio_1.81.0              
+    ## [51] S7_0.2.2                    evaluate_1.0.5             
+    ## [53] desc_1.4.3                  Spectra_1.22.2             
+    ## [55] pillar_1.11.1               affyio_1.82.0              
     ## [57] BiocManager_1.30.27         foreach_1.5.2              
     ## [59] MSnbase_2.37.0              MALDIquant_1.22.3          
     ## [61] ncdf4_1.24                  hms_1.1.4                  
     ## [63] ggplot2_4.0.3               scales_1.4.0               
-    ## [65] glue_1.8.1                  MsFeatures_1.19.0          
-    ## [67] lazyeval_0.2.3              tools_4.7.0                
-    ## [69] mzID_1.49.1                 data.table_1.18.2.1        
-    ## [71] QFeatures_1.21.3            vsn_3.79.6                 
-    ## [73] mzR_2.45.1                  fs_2.1.0                   
-    ## [75] XML_3.99-0.23               grid_4.7.0                 
-    ## [77] impute_1.85.0               tidyr_1.3.2                
-    ## [79] MsCoreUtils_1.23.10         PSMatch_1.15.3             
+    ## [65] glue_1.8.1                  MsFeatures_1.20.0          
+    ## [67] lazyeval_0.2.3              tools_4.6.0                
+    ## [69] mzID_1.50.0                 data.table_1.18.4          
+    ## [71] QFeatures_1.22.0            vsn_3.80.0                 
+    ## [73] mzR_2.46.0                  fs_2.1.0                   
+    ## [75] XML_3.99-0.23               grid_4.6.0                 
+    ## [77] impute_1.86.0               tidyr_1.3.2                
+    ## [79] MsCoreUtils_1.24.0          PSMatch_1.16.0             
     ## [81] cli_3.6.6                   textshaping_1.0.5          
-    ## [83] S4Arrays_1.11.1             dplyr_1.2.1                
-    ## [85] AnnotationFilter_1.35.0     pcaMethods_2.3.0           
+    ## [83] S4Arrays_1.12.0             dplyr_1.2.1                
+    ## [85] AnnotationFilter_1.36.0     pcaMethods_2.4.0           
     ## [87] gtable_0.3.6                sass_0.4.10                
-    ## [89] digest_0.6.39               SparseArray_1.11.13        
+    ## [89] digest_0.6.39               SparseArray_1.12.2         
     ## [91] htmlwidgets_1.6.4           farver_2.1.2               
     ## [93] htmltools_0.5.9             pkgdown_2.2.0.9000         
-    ## [95] lifecycle_1.0.5             statmod_1.5.1              
+    ## [95] lifecycle_1.0.5             statmod_1.5.2              
     ## [97] MASS_7.3-65
 
 ## References
