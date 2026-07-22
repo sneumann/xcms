@@ -37,7 +37,7 @@ respective ion on the MS1 scan.}
 should be determined (see description above for details). Defaults to
 \code{method = "previous"}.}
 
-\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for
+\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} for
 details.}
 }
 \value{

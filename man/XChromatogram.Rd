@@ -377,10 +377,10 @@ See help of the individual functions.
 The \code{XChromatogram} object allows to store chromatographic data (e.g.
 an extracted ion chromatogram) along with identified chromatographic peaks
 within that data. The object inherits all functions from the
-\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} object in the \code{MSnbase} package.
+\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} object in the \code{MSnbase} package.
 
 Multiple \code{XChromatogram} objects can be stored in a \code{XChromatograms} object.
-This class extends \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} from the \code{MSnbase} package
+This class extends \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} from the \code{MSnbase} package
 and allows thus to arrange chromatograms in a matrix-like structure, columns
 representing samples and rows m/z-retention time ranges.
 
@@ -401,7 +401,7 @@ used to extract the chromatogram was larger than the peak's m/z.
 
 Objects can be created with the contructor function \code{XChromatogram} and
 \code{XChromatograms}, respectively. Also, they can be coerced from
-\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects using
+\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} objects using
 \code{as(object, "XChromatogram")} or \code{as(object, "XChromatograms")}.
 }
 
@@ -409,7 +409,7 @@ Objects can be created with the contructor function \code{XChromatogram} and
 
 
 Besides classical subsetting with \code{[} specific filter operations on
-\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} and \code{XChromatograms} objects are available. See
+\code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} and \code{XChromatograms} objects are available. See
 \code{\link[=filterColumnsIntensityAbove]{filterColumnsIntensityAbove()}} for more details.
 
 
@@ -436,7 +436,7 @@ returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 \section{Accessing data}{
 
 
-See also help of \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} in the \emph{MSnbase} package for
+See also help of \code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} in the \emph{MSnbase} package for
 general information and data access. The methods listed here are specific for
 \code{XChromatogram} and \code{XChromatograms} objects.
 \itemize{
@@ -458,7 +458,7 @@ For \code{XChromatograms} objects the \code{matrix} contains also columns \code{
 and \code{"column"} specifying in which chromatogram of \code{object} the peak was
 identified. Chromatographic peaks are ordered by row.
 \item \code{chromPeakData}, \verb{chromPeakData<-}: extract or set the
-\code{\link[S4Vectors:DataFrame-class]{S4Vectors::DataFrame()}} with optional chromatographic peak annotations.
+\code{\link[S4Vectors:DataFrame]{S4Vectors::DataFrame()}} with optional chromatographic peak annotations.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
@@ -517,7 +517,7 @@ the individual performed processing steps. Optional parameters \code{type} and
 
 \itemize{
 \item \code{transformIntensity}: transforms the intensity values of the chromatograms
-with provided function \code{FUN}. See \code{\link[MSnbase:Chromatogram-class]{MSnbase::transformIntensity()}} in the
+with provided function \code{FUN}. See \code{\link[MSnbase:transformIntensity]{MSnbase::transformIntensity()}} in the
 \emph{MSnbase} package for details. For \code{XChromatogram} and \code{XChromatograms}
 in addition to the intensity values also columns \code{"into"} and \code{"maxo"}
 in the object's \code{chromPeaks} matrix are transformed by the same function.
@@ -739,7 +739,7 @@ plot(xchr_sub)
 }
 \seealso{
 \link[=findChromPeaks-Chromatogram-CentWaveParam]{findChromPeaks-centWave} for peak
-detection on \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} objects.
+detection on \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} objects.
 }
 \author{
 Johannes Rainer

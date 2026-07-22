@@ -2,9 +2,10 @@
 % Please edit documentation in R/DataClasses.R, R/XcmsExperiment.R,
 %   R/hidden_aliases.R, R/XcmsExperimentHdf5.R, R/functions-Params.R,
 %   R/methods-MsFeatureData.R, R/methods-OnDiskMSnExp.R, R/methods-Params.R,
-%   R/methods-ProcessHistory.R, R/methods-XCMSnExp.R, R/methods-XChromatogram.R,
-%   R/methods-XChromatograms.R, R/methods-xcmsEIC.R, R/methods-xcmsFragments.R,
-%   R/methods-xcmsPeaks.R, R/methods-xcmsRaw.R, R/methods-xcmsSet.R
+%   R/methods-ProcessHistory.R, R/methods-XCMSnExp.R,
+%   R/methods-XChromatogram.R, R/methods-XChromatograms.R, R/methods-xcmsEIC.R,
+%   R/methods-xcmsFragments.R, R/methods-xcmsPeaks.R, R/methods-xcmsRaw.R,
+%   R/methods-xcmsSet.R
 \docType{class}
 \name{CentWaveParam-class}
 \alias{CentWaveParam-class}

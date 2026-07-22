@@ -98,7 +98,7 @@ peaks of a feature will be used.}
 \item{progressbar}{\code{logical(1)} defining whether a progress bar is shown.}
 
 \item{BPPARAM}{For \code{object} being an \code{XcmsExperiment}: parallel processing
-setup. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+setup. Defaults to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}
 for more information.}
 
 \item{include}{Only for \code{object} being an \code{XCMSnExp}: \code{character(1)}
@@ -126,7 +126,7 @@ or the integrated peak area, respectively.}
 }
 \description{
 Extract ion chromatograms for features in an \link{XcmsExperiment} or
-\linkS4class{XCMSnExp} object. The function returns for each feature the
+\link[=XCMSnExp-class]{XCMSnExp} object. The function returns for each feature the
 extracted ion chromatograms (along with all associated chromatographic
 peaks) in each sample. The chromatogram is extracted from the m/z - rt
 region that includes \strong{all} chromatographic peaks of a feature. By default,

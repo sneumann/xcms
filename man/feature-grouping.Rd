@@ -25,7 +25,7 @@ originating compound.
 The \href{https://bioconductor.org/packages/MsFeatures}{MsFeatures} package
 provides a general framework and functionality to group features based on
 different properties. The \code{groupFeatures} methods for \code{\link[=XcmsExperiment]{XcmsExperiment()}} or
-\linkS4class{XCMSnExp} objects implemented in \code{xcms} extend these to enable
+\link[=XCMSnExp-class]{XCMSnExp} objects implemented in \code{xcms} extend these to enable
 the \emph{compounding} of LC-MS data considering also e.g. feature peak shaped.
 Note that these functions simply define feature groups but don't
 actually \emph{aggregate} or combine the features.
@@ -40,7 +40,7 @@ analysis with \code{\link[=groupChromPeaks]{groupChromPeaks()}}) are:
 \itemize{
 \item Grouping by similar retention times: \code{\link[=groupFeatures-similar-rtime]{groupFeatures-similar-rtime()}}.
 \item Grouping by similar feature values across samples:
-\code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}}.
+\code{\link[MsFeatures:AbundanceSimilarityParam]{MsFeatures::AbundanceSimilarityParam()}}.
 \item Grouping by similar peak shape of extracted ion chromatograms:
 \code{\link[=EicSimilarityParam]{EicSimilarityParam()}}.
 }

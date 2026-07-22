@@ -84,7 +84,7 @@ other experiment-relevant data.
 the matchedFilter algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+should be performed. It defaults to \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}.
 See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
@@ -126,8 +126,8 @@ cut-off. For more details and illustrations see \emph{Smith 2006}.
 
 The \verb{findChromPeaks,OnDiskMSnExp,MatchedFilterParam()}
 method performs peak detection using the \emph{matchedFilter} algorithm
-on all samples from an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}} object.
-\code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}} objects encapsule all experiment
+on all samples from an \code{\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp()}} object.
+\code{\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp()}} objects encapsule all experiment
 specific data and load the spectra data (mz and intensity values) on the
 fly from the original files applying also all eventual data
 manipulations.
@@ -186,8 +186,8 @@ peak detection in purely chromatographic data.
 \code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
 the chromatographic peak detection.
 
-Other peak detection methods: 
-\code{\link{findChromPeaks}()},
+Other peak detection methods:
+\code{\link[=findChromPeaks]{findChromPeaks()}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-massifquant}},

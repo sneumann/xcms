@@ -129,29 +129,33 @@
 #'   extract the data from (to e.g. for extracted ion chromatograms EICs).
 #'   Both parameters are expected to be numerical two-column matrices with
 #'   the first column defining the lower and the second the upper margin.
-#'   Each row can define a separate m/z - retention time region. Currently
-#'   the function returns a [MSnbase::MChromatograms()] object for `object`
-#'   being a `MsExperiment` or, for `object` being an `XcmsExperiment`,
-#'   either a `MChromatograms` or [XChromatograms()] depending on parameter
-#'   `return.type` (can be either `"MChromatograms"` or `"XChromatograms"`).
-#'   For the latter also chromatographic peaks detected within the provided
-#'   m/z and retention times are returned. Parameter `chromPeaks` allows
+#'   Each row can define a separate m/z - retention time region.
+#'
+#'   The chromatographic data can be returned either as an
+#'   [MSnbase::MChromatograms] object (parameter
+#'   `return.type = "MChromatograms"`, the default) or as the newer
+#'   [Chromatograms::Chromatograms()] container
+#'   (`return.type = "Chromatograms"`). If `object` is an *xcms* result object
+#'   (`XcmsExperiment`), the default is to return a [XChromatograms()] object
+#'   that contains also chromatographic peak and feature information. For
+#'   `XChromatograms` return type, the `chromPeaks` parameter allows
 #'   to specify which chromatographic peaks should be reported. See
 #'   documentation on the `chromPeaks` parameter for more information.
 #'   If the `XcmsExperiment` contains correspondence results, also the
 #'   associated feature definitions will be included in the returned
-#'   `XChromatograms`. By default the function returns chromatograms from MS1
-#'   data, but by setting parameter `msLevel = 2L` it is possible to e.g.
-#'   extract also MS2 chromatograms. By default, with parameter
-#'   `isolationWindowTargetMz = NULL` or `isolationWindowTargetMz = NA_real_`,
-#'   data from **all** MS2 spectra will be considered in the chromatogram
-#'   extraction. If MS2 data was generated within different m/z isolation
-#'   windows (such as e.g. with Scies SWATH data), the parameter
-#'   `isolationWindowTargetMz` should be used to ensure signal is only extracted
-#'   from the respective isolation window. The `isolationWindowTargetMz()`
-#'   function on the `Spectra` object can be used to inspect/list available
-#'   isolation windows of a data set. See also the xcms *LC-MS/MS vignette* for
-#'   examples and details.
+#'   `XChromatograms`.
+#'
+#'   By default the function returns chromatograms from MS level 1, but by
+#'   setting parameter `msLevel = 2L` it is possible to extract MS2
+#'   chromatograms. By default, with parameter `isolationWindowTargetMz = NULL`
+#'   or `isolationWindowTargetMz = NA_real_`, data from **all** MS2 spectra
+#'   will be considered in the chromatogram extraction. If MS2 data was
+#'   generated within different m/z isolation windows (such as e.g. with
+#'   Sciex SWATH data), the parameter `isolationWindowTargetMz` should be used
+#'   to ensure signal is only extracted from the specified isolation window.
+#'   The [Spectra::isolationWindowTargetMz()] function on the `Spectra` object
+#'   can be used to inspect/list available isolation windows of a data set.
+#'   See also the xcms *LC-MS/MS vignette* for examples and details.
 #'
 #' - `chromPeaks()`: returns a `numeric` matrix with the identified
 #'   chromatographic peaks. Each row represents a chromatographic peak
@@ -577,8 +581,12 @@
 #' @param return.type For `chromPeakData()`: `character(1)` defining the
 #'     class of the returned object. Can be either `"DataFrame"` (the default)
 #'     or `"data.frame"`. For `chromatogram()`: `character(1)` defining the
-#'     type of the returned object. Currently only
-#'     `return.type = "MChromatograms"` is supported.
+#'     type of the returned object. For `MsExperiment` objects
+#'     `return.type = "MChromatograms"` (the default) and
+#'     `return.type = "Chromatograms"` allows to return a
+#'     [MSnbase::MChromatograms] or a [Chromatograms::Chromatograms()] object,
+#'     for `XcmsExperiment` also `return.type = "XChromatogram"` is supported
+#'     which returns the chromatographic data as a [XChromatograms] object.
 #'
 #' @param rt For `chromPeaks()` and `featureDefinitions()`: `numeric(2)`
 #'     defining the retention time range for which chromatographic peaks
@@ -710,6 +718,26 @@
 #' ## Plot the EICs for the second defined region
 #' plot(chrs[2, ])
 #'
+#' ## Extract chromatographic data for the first two chromatographic peaks
+#' ## as the new `Chromatograms` object.
+#' chrs <- chromatogram(xmse,
+#'     mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+#'     rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")],
+#'     return.type = "Chromatograms")
+#' chrs
+#'
+#' ## Get the intensity values from each chromatogram
+#' intensity(chrs)
+#'
+#' ## Plot all EICs into a single plot
+#' Chromatograms::plotChromatogramsOverlay(chrs)
+#'
+#' ## Plot the first EIC on the 3 files
+#' Chromatograms::plotChromatogramsOverlay(chrs[1:3])
+#'
+#' ## Plot the second EIC on the 3 files
+#' Chromatograms::plotChromatogramsOverlay(chrs[4:6])
+#'
 #' ## Subsetting the data to the results (and data) for the second sample
 #' a <- xmse[2]
 #' nrow(chromPeaks(xmse))
@@ -818,6 +846,8 @@ setMethod("show", "XcmsExperiment", function(object) {
 })
 
 #' @rdname XcmsExperiment
+#'
+#' @export
 c.XcmsExperiment <- function(...) {
     l <- list(...)
     if (length(l) == 1L)
@@ -2108,7 +2138,8 @@ setMethod(
     function(object, rt = matrix(nrow = 0, ncol = 2),
              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
              msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
-             return.type = c("XChromatograms", "MChromatograms"),
+             return.type = c("XChromatograms", "MChromatograms",
+                             "Chromatograms"),
              include = character(),
              chromPeaks = c("apex_within", "any", "none"),
              BPPARAM = bpparam()) {
@@ -2127,12 +2158,22 @@ setMethod(
         chromPeaks <- match.arg(chromPeaks)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        .xmse_extract_chromatograms_old(
-            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
-            msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
-            chunkSize = chunkSize, chromPeaks = chromPeaks,
-            return.type = return.type, BPPARAM = BPPARAM)
-    })
+        switch(return.type,
+               MChromatograms = .mse_chromatogram(
+                   as(object, "MsExperiment"), rt = rt, mz = mz,
+                   aggregationFun = aggregationFun, msLevel = msLevel,
+                   isolationWindow = isolationWindowTargetMz,
+                   chunkSize = chunkSize, BPPARAM = BPPARAM),
+               XChromatograms = .xmse_extract_chromatograms_old(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
+                   chunkSize = chunkSize, chromPeaks = chromPeaks,
+                   return.type = return.type, BPPARAM = BPPARAM),
+               Chromatograms = .mse_extract_chromatograms(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz)
+               )
+        })
 
 #' @rdname XcmsExperiment
 setMethod("processHistory", "XcmsExperiment", function(object, type) {

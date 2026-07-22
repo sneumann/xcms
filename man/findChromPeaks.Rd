@@ -31,7 +31,7 @@ findChromPeaks(object, param, ...)
 }
 \arguments{
 \item{object}{The data object on which to perform the peak detection. Can be
-an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}}, \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}}
+an \code{\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}}, \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}}
 or \code{\link[MsExperiment:MsExperiment]{MsExperiment::MsExperiment()}} object.}
 
 \item{param}{The parameter object selecting and configuring the algorithm.}
@@ -67,7 +67,7 @@ can be forced using \code{force.overwrite = TRUE}.}
 existing result file should be overwritten.}
 
 \item{BPPARAM}{Parallel processing setup. Uses by default the system-wide
-default setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more details.}
+default setup. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} for more details.}
 
 \item{add}{\code{logical(1)} (if \code{object} contains already chromatographic peaks,
 i.e. is either an \code{XCMSnExp} or \code{XcmsExperiment}) whether chromatographic
@@ -105,7 +105,7 @@ chromatographic peaks.
 
 \code{\link[=manualChromPeaks]{manualChromPeaks()}} to manually add/define chromatographic peaks.
 
-Other peak detection methods: 
+Other peak detection methods:
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-massifquant}},

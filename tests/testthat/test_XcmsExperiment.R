@@ -1352,6 +1352,11 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
     ref <- chromatogram(xod_x, mz = mzr, rt = rtr)
     expect_equal(chromPeaks(res), chromPeaks(ref))
 
+    res2 <- chromatogram(xmse, mz = mzr, rt = rtr,
+                         return.type = "Chromatograms")
+    expect_s4_class(res2, "Chromatograms")
+    expect_equal(intensity(res2[1:3]),lapply(res[1,], intensity))
+
     ## Multiple rows.
     res <- .xmse_extract_chromatograms_old(
         xmse, mz = chromPeaks(xmse)[1:10, c("mzmin", "mzmax")],
@@ -1397,6 +1402,16 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
     expect_true(all(intensity(res2[[1L]]) > 0))
     ## have more data points without isolation windows
     expect_true(length(intensity(res[[1L]])) > length(intensity(res2[[1L]])))
+
+    b <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                      rt = c(100, 600), return.type = "Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(intensity(b), lapply(res, intensity))
+    b <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                      rt = c(100, 600), isolationWindowTargetMz = 270.85,
+                      return.type = "Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(intensity(b), lapply(res2, intensity))
 
     ## fake MS2 data with undefined isolation window.
     a <- chromatogram(xmseg, msLevel = 1L,

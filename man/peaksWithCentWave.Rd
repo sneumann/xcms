@@ -134,8 +134,8 @@ rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
 \link{centWave} for a detailed description of the peak detection
 method.
 
-Other peak detection functions for chromatographic data: 
-\code{\link{peaksWithMatchedFilter}()}
+Other peak detection functions for chromatographic data:
+\code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}}
 }
 \author{
 Johannes Rainer

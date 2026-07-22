@@ -85,7 +85,7 @@ filterFeatureDefinitions(object, ...)
   msLevel = 1L,
   isolationWindowTargetMz = NULL,
   chunkSize = 2L,
-  return.type = "MChromatograms",
+  return.type = c("MChromatograms", "Chromatograms"),
   BPPARAM = bpparam()
 )
 
@@ -195,7 +195,7 @@ filterFeatureDefinitions(object, ...)
   msLevel = 1L,
   chunkSize = 2L,
   isolationWindowTargetMz = NULL,
-  return.type = c("XChromatograms", "MChromatograms"),
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
   BPPARAM = bpparam()
@@ -274,11 +274,15 @@ Defaults to \code{chunkSize = 2L}.}
 \item{return.type}{For \code{chromPeakData()}: \code{character(1)} defining the
 class of the returned object. Can be either \code{"DataFrame"} (the default)
 or \code{"data.frame"}. For \code{chromatogram()}: \code{character(1)} defining the
-type of the returned object. Currently only
-\code{return.type = "MChromatograms"} is supported.}
+type of the returned object. For \code{MsExperiment} objects
+\code{return.type = "MChromatograms"} (the default) and
+\code{return.type = "Chromatograms"} allows to return a
+\link[MSnbase:MChromatograms]{MSnbase::MChromatograms} or a \code{\link[Chromatograms:Chromatograms]{Chromatograms::Chromatograms()}} object,
+for \code{XcmsExperiment} also \code{return.type = "XChromatogram"} is supported
+which returns the chromatographic data as a \link{XChromatograms} object.}
 
 \item{BPPARAM}{For \code{chromatogram()}: parallel processing setup. Defaults
-to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more
+to \code{BPPARAM = bpparam()}. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} for more
 information.}
 
 \item{x}{An \code{XcmsExperiment} object.}
@@ -534,29 +538,33 @@ performed on \strong{all} MS levels of the object.
 extract the data from (to e.g. for extracted ion chromatograms EICs).
 Both parameters are expected to be numerical two-column matrices with
 the first column defining the lower and the second the upper margin.
-Each row can define a separate m/z - retention time region. Currently
-the function returns a \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object for \code{object}
-being a \code{MsExperiment} or, for \code{object} being an \code{XcmsExperiment},
-either a \code{MChromatograms} or \code{\link[=XChromatograms]{XChromatograms()}} depending on parameter
-\code{return.type} (can be either \code{"MChromatograms"} or \code{"XChromatograms"}).
-For the latter also chromatographic peaks detected within the provided
-m/z and retention times are returned. Parameter \code{chromPeaks} allows
+Each row can define a separate m/z - retention time region.
+
+The chromatographic data can be returned either as an
+\link[MSnbase:MChromatograms]{MSnbase::MChromatograms} object (parameter
+\code{return.type = "MChromatograms"}, the default) or as the newer
+\code{\link[Chromatograms:Chromatograms]{Chromatograms::Chromatograms()}} container
+(\code{return.type = "Chromatograms"}). If \code{object} is an \emph{xcms} result object
+(\code{XcmsExperiment}), the default is to return a \code{\link[=XChromatograms]{XChromatograms()}} object
+that contains also chromatographic peak and feature information. For
+\code{XChromatograms} return type, the \code{chromPeaks} parameter allows
 to specify which chromatographic peaks should be reported. See
 documentation on the \code{chromPeaks} parameter for more information.
 If the \code{XcmsExperiment} contains correspondence results, also the
 associated feature definitions will be included in the returned
-\code{XChromatograms}. By default the function returns chromatograms from MS1
-data, but by setting parameter \code{msLevel = 2L} it is possible to e.g.
-extract also MS2 chromatograms. By default, with parameter
-\code{isolationWindowTargetMz = NULL} or \code{isolationWindowTargetMz = NA_real_},
-data from \strong{all} MS2 spectra will be considered in the chromatogram
-extraction. If MS2 data was generated within different m/z isolation
-windows (such as e.g. with Scies SWATH data), the parameter
-\code{isolationWindowTargetMz} should be used to ensure signal is only extracted
-from the respective isolation window. The \code{isolationWindowTargetMz()}
-function on the \code{Spectra} object can be used to inspect/list available
-isolation windows of a data set. See also the xcms \emph{LC-MS/MS vignette} for
-examples and details.
+\code{XChromatograms}.
+
+By default the function returns chromatograms from MS level 1, but by
+setting parameter \code{msLevel = 2L} it is possible to extract MS2
+chromatograms. By default, with parameter \code{isolationWindowTargetMz = NULL}
+or \code{isolationWindowTargetMz = NA_real_}, data from \strong{all} MS2 spectra
+will be considered in the chromatogram extraction. If MS2 data was
+generated within different m/z isolation windows (such as e.g. with
+Sciex SWATH data), the parameter \code{isolationWindowTargetMz} should be used
+to ensure signal is only extracted from the specified isolation window.
+The \code{\link[Spectra:isolationWindowTargetMz]{Spectra::isolationWindowTargetMz()}} function on the \code{Spectra} object
+can be used to inspect/list available isolation windows of a data set.
+See also the xcms \emph{LC-MS/MS vignette} for examples and details.
 \item \code{chromPeaks()}: returns a \code{numeric} matrix with the identified
 chromatographic peaks. Each row represents a chromatographic peak
 identified in one sample (file). The number of columns depends on the
@@ -719,7 +727,7 @@ to define the column in \code{chromPeaks} that should be selected; defaults to
 \verb{intensity = "into"). }method = "sum"`: sum the values for all
 chromatographic peaks assigned to the feature in the same sample.
 \item \code{quantify()}: extract the correspondence analysis results as a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
+\code{\link[SummarizedExperiment:SummarizedExperiment]{SummarizedExperiment::SummarizedExperiment()}}. The feature \emph{values}
 are used as \code{assay} in the returned \code{SummarizedExperiment}, \code{rowData}
 contains the \code{featureDefinitions} (without column \code{"peakidx"}) and
 \code{colData} the \code{sampleData} of \code{object}. Additional parameters to the
@@ -872,6 +880,26 @@ chrs
 
 ## Plot the EICs for the second defined region
 plot(chrs[2, ])
+
+## Extract chromatographic data for the first two chromatographic peaks
+## as the new `Chromatograms` object.
+chrs <- chromatogram(xmse,
+    mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+    rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")],
+    return.type = "Chromatograms")
+chrs
+
+## Get the intensity values from each chromatogram
+intensity(chrs)
+
+## Plot all EICs into a single plot
+Chromatograms::plotChromatogramsOverlay(chrs)
+
+## Plot the first EIC on the 3 files
+Chromatograms::plotChromatogramsOverlay(chrs[1:3])
+
+## Plot the second EIC on the 3 files
+Chromatograms::plotChromatogramsOverlay(chrs[4:6])
 
 ## Subsetting the data to the results (and data) for the second sample
 a <- xmse[2]

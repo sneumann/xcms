@@ -89,8 +89,8 @@ head(mat_imp_fromto)
 \seealso{
 \code{imputeLCMD} package for more left censored imputation functions.
 
-Other imputation functions: 
-\code{\link{imputeRowMin}()}
+Other imputation functions:
+\code{\link[=imputeRowMin]{imputeRowMin()}}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

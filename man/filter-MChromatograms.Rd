@@ -39,7 +39,7 @@
 )
 }
 \arguments{
-\item{object}{\code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} or \code{\link[=XChromatograms]{XChromatograms()}} object.}
+\item{object}{\code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} or \code{\link[=XChromatograms]{XChromatograms()}} object.}
 
 \item{threshold}{for \code{filterColumnsIntensityAbove}: \code{numeric(1)} with the
 threshold value to compare against.}
@@ -82,10 +82,10 @@ same number of rows (EICs) but eventually a lower number of columns
 (samples).
 }
 \description{
-These functions allow to filter (subset) \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} or
+These functions allow to filter (subset) \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} or
 \code{\link[=XChromatograms]{XChromatograms()}} objects, i.e. sets of chromatographic data, without
 changing the data (intensity and retention times) within the individual
-chromatograms (\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} objects).
+chromatograms (\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} objects).
 \itemize{
 \item \code{filterColumnsIntensityAbove}: subsets a \code{MChromatograms} objects keeping
 only columns (samples) for which \code{value} is larger than the provided

@@ -3066,6 +3066,8 @@ setMethod("split", "XCMSnExp", function(x, f,
 #' @md
 #'
 #' @rdname XCMSnExp-class
+#'
+#' @export
 c.XCMSnExp <- function(...) {
     .concatenate_XCMSnExp(...)
 }

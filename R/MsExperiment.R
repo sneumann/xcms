@@ -100,7 +100,9 @@ setMethod(
     function(object, rt = matrix(nrow = 0, ncol = 2),
              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
              msLevel = 1L, isolationWindowTargetMz = NULL, chunkSize = 2L,
-             return.type = "MChromatograms", BPPARAM = bpparam()) {
+             return.type = c("MChromatograms", "Chromatograms"),
+             BPPARAM = bpparam()) {
+        return.type <- match.arg(return.type)
         if (!is.matrix(rt))
             rt <- matrix(rt, ncol = 2L)
         if (!is.matrix(mz))
@@ -109,10 +111,15 @@ setMethod(
             rt <- cbind(rep(-Inf, nrow(mz)), rep(Inf, nrow(mz)))
         if (nrow(rt) && !nrow(mz))
             mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
-        .mse_chromatogram(
-            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
-            msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
-            chunkSize = chunkSize, BPPARAM = BPPARAM)
+        switch(return.type,
+               MChromatograms = .mse_chromatogram(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
+                   chunkSize = chunkSize, BPPARAM = BPPARAM),
+               Chromatograms = .mse_extract_chromatograms(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz)
+               )
     })
 
 #' @rdname estimatePrecursorIntensity

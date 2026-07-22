@@ -80,7 +80,7 @@ with a prefix \code{"chrom_peak_"}. Defaults to \code{c("mz", "rt")}.}
 should be returned.}
 
 \item{BPPARAM}{parallel processing setup. Defaults to
-\code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.}
+\code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}.}
 }
 \value{
 parameter \code{return.type} allow to specify the type of the returned object:

@@ -20,7 +20,7 @@
 }
 \arguments{
 \item{object}{an object representing chromatographic data. Can be a
-\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}}, \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}},
+\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}}, \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}},
 \code{\link[=XChromatogram]{XChromatogram()}} or \code{\link[=XChromatograms]{XChromatograms()}} object.}
 
 \item{which}{\code{character(1)} defining the condition to remove intensities.
@@ -37,7 +37,7 @@ the input object with matching intensities being replaced by \code{NA}.
 matching certain conditions (depending on parameter \code{which}). The
 intensities are actually not \emph{removed} but replaced with \code{NA_real_}. To
 actually \strong{remove} the intensities (and the associated retention times)
-use \code{\link[MSnbase:clean-methods]{MSnbase::clean()}} afterwards.
+use \code{\link[MSnbase:clean]{MSnbase::clean()}} afterwards.
 
 Parameter \code{which} allows to specify which intensities should be replaced by
 \code{NA_real_}. By default (\code{which = "below_threshod"} intensities below

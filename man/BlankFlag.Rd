@@ -73,10 +73,10 @@ means that an extra column will be created in \code{featureDefinitions} or
 feature.
 }
 \seealso{
-Other Filter features in xcms: 
-\code{\link{DratioFilter}},
-\code{\link{PercentMissingFilter}},
-\code{\link{RsdFilter}}
+Other Filter features in xcms:
+\code{\link[=DratioFilter]{DratioFilter()}},
+\code{\link[=PercentMissingFilter]{PercentMissingFilter()}},
+\code{\link[=RsdFilter]{RsdFilter()}}
 }
 \author{
 Philippine Louail

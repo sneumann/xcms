@@ -45,15 +45,15 @@ based on a pairwise similarity matrix. Defaults to
 
 \item{ALIGNFUN}{\code{function} defining the function to be used to \emph{align}
 chromatograms prior similarity calculation. Defaults to
-\code{ALIGNFUN = alignRt}. See documentation of \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} and
-\code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.}
+\code{ALIGNFUN = alignRt}. See documentation of \code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} and
+\code{\link[MSnbase:compareChromatograms]{MSnbase::compareChromatograms()}} for more information.}
 
 \item{ALIGNFUNARGS}{\strong{named} \code{list} with arguments for \code{ALIGNFUN}.
 Defaults to \code{ALIGNFUNARGS = list(tolerance = 0, method = "closest")}.}
 
 \item{FUN}{\code{function} defining the function to be used to calculate a
 similarity between (aligned) chromatograms. Defaults to \code{FUN = cor}.
-See \code{\link[=cor]{cor()}} and \code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.}
+See \code{\link[=cor]{cor()}} and \code{\link[MSnbase:compareChromatograms]{MSnbase::compareChromatograms()}} for more information.}
 
 \item{FUNARGS}{\strong{named} \code{list} with arguments for \code{FUN}. Defaults to
 \code{FUN = list(use = "pairwise.complete.obs")}.}
@@ -83,14 +83,14 @@ separately for each sample with the similarity score being aggregated across
 samples for the final generation of the similarity matrix on which the
 grouping (considering parameter \code{threshold}) will be performed.
 
-The \code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} function is used for similarity
+The \code{\link[MSnbase:compareChromatograms]{MSnbase::compareChromatograms()}} function is used for similarity
 calculation which by default calculates the Pearson's correlation
 coefficient. The
 settings for \code{compareChromatograms()} can be specified with parameters
 \code{ALIGNFUN}, \code{ALIGNFUNARGS}, \code{FUN} and \code{FUNARGS}. \code{ALIGNFUN} defaults to
 \code{alignRt} and is the function used to \emph{align} the chromatograms
 before comparison. For information and parameters of \code{alignRt()} see the
-documentation for \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}}.
+documentation for \code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}}.
 \code{ALIGNFUNARGS} allows to specify additional arguments for the
 \code{ALIGNFUN} function. It defaults to
 \code{ALIGNFUNARGS = list(tolerance = 0, method = "closest")} which ensures that
@@ -99,7 +99,7 @@ are compared between the EICs from the same sample. Parameter \code{FUN} defines
 the function to calculate the similarity score and defaults to \code{FUN = cor}
 and \code{FUNARGS} allows to pass additional arguments to this function (defaults
 to \code{FUNARGS = list(use = "pairwise.complete.obs")}. See also
-\code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} for more information.
+\code{\link[MSnbase:compareChromatograms]{MSnbase::compareChromatograms()}} for more information.
 
 The grouping of features based on the EIC similarity matrix is performed
 with the function specified with parameter \code{groupFun} which defaults to
@@ -111,7 +111,7 @@ cluster. See \code{\link[MsFeatures:groupSimilarityMatrix]{MsFeatures::groupSimi
 Additional parameters to that function can be passed with the \code{...} argument.
 
 This feature grouping should be called \strong{after} an initial feature
-grouping by retention time (see \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}}).
+grouping by retention time (see \code{\link[MsFeatures:SimilarRtimeParam]{MsFeatures::SimilarRtimeParam()}}).
 The feature groups defined in columns \code{"feature_group"} of
 \code{featureDefinitions(object)} (for
 features matching \code{msLevel}) will be used and refined by this method.
@@ -174,7 +174,7 @@ table(featureDefinitions(xodg_grp)$feature_group)
 \seealso{
 feature-grouping for a general overview.
 
-Other feature grouping methods: 
+Other feature grouping methods:
 \code{\link{groupFeatures-abundance-correlation}},
 \code{\link{groupFeatures-similar-rtime}}
 }

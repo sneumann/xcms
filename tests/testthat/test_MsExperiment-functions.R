@@ -377,6 +377,50 @@ test_that(".mse_chromatogram works", {
     expect_true(all(intensity(res[[2L]]) > 0))
 })
 
+test_that(".mse_extract_chromatograms works", {
+    rtr <- rbind(c(2600, 2630), c(3500, 3600))
+    mzr <- rbind(c(250, 252), c(400, 410))
+
+    ## TIC
+    res <- .mse_extract_chromatograms(mse)
+    expect_s4_class(res, "Chromatograms")
+    expect_equal(length(res), length(mse))
+    ref <- chromatogram(mse)
+    expect_equal(intensity(res), lapply(ref, intensity))
+    ## BPC
+    res <- .mse_extract_chromatograms(mse, aggregationFun = "max")
+    ref <- chromatogram(mse, aggregationFun = "max")
+    expect_equal(intensity(res), lapply(ref, intensity))
+
+    ## EIC
+    res <- .mse_extract_chromatograms(mse, rt = rtr, mz = mzr)
+    ref <- chromatogram(mse, rt = rtr, mz = mzr)
+    res <- split(res, dataOrigin(res))
+    expect_equal(intensity(res[[1L]]), lapply(ref[, 1L], intensity))
+    expect_equal(intensity(res[[2L]]), lapply(ref[, 2L], intensity))
+    expect_equal(intensity(res[[3L]]), lapply(ref[, 3L], intensity))
+})
+
+test_that(".chrom_data_from_ranges works", {
+    res <- .chrom_data_from_ranges(rt = matrix(ncol = 2, nrow = 0))
+    expect_equal(res, data.frame())
+
+    res <- .chrom_data_from_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
+                                   mz = cbind(c(3, 4, 5), c(6, 7, 8)),
+                                   c("a", "b", "c", "d", "e"))
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("rtMin", "rtMax", "mzMin", "mzMax",
+                                  "dataOrigin", "msLevel"))
+    expect_equal(res$rtMin, rep(1:3, each = 5))
+    expect_equal(res$dataOrigin, rep(c("a", "b", "c", "d", "e"), 3))
+
+    res <- .chrom_data_from_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
+                                   mz = cbind(c(3, 4, 5), c(6, 7, 8)),
+                                   c("a", "b", "c", "d", "e"),
+                                   isolationWindowTargetMz = c(2, 3, 4))
+    expect_equal(res$isolationWindowTargetMz, rep(c(2, 3, 4), each = 5))
+})
+
 test_that(".mse_split_spectra_variable works", {
     ## MS level - results should be the same.
     res <- .mse_split_spectra_variable(mse, msLevel(spectra(mse)))

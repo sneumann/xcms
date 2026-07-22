@@ -64,10 +64,10 @@ log scale should be first transformed to natural scale before calculating
 the RSD.
 }
 \seealso{
-Other Filter features in xcms: 
-\code{\link{BlankFlag}},
-\code{\link{DratioFilter}},
-\code{\link{PercentMissingFilter}}
+Other Filter features in xcms:
+\code{\link[=BlankFlag]{BlankFlag()}},
+\code{\link[=DratioFilter]{DratioFilter()}},
+\code{\link[=PercentMissingFilter]{PercentMissingFilter()}}
 }
 \author{
 Philippine Louail

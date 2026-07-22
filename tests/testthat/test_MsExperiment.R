@@ -75,12 +75,21 @@ test_that("chromatogram,MsExperiment works", {
     expect_equal(intensity(res[1, 2]), unname(intensity(ref[1, 2])))
     expect_equal(intensity(res[1, 3]), unname(intensity(ref[1, 3])))
 
+    ## Chromatograms
+    res2 <- chromatogram(mse, return.type = "Chromatograms")
+    expect_s4_class(res2, "Chromatograms")
+    expect_equal(intensity(res2), lapply(res, intensity))
+
     ## Subset.
     res <- chromatogram(mse, rt = c(10, 3000))
     expect_s4_class(res, "MChromatograms")
     expect_equal(length(mse), ncol(res))
     expect_equal(1L, nrow(res))
     expect_true(all(rtime(res[1, 1]) <= 3000))
+
+    res2 <- chromatogram(mse, rt = c(10, 3000), return.type = "Chromatograms")
+    expect_s4_class(res2, "Chromatograms")
+    expect_equal(intensity(res2), lapply(res, intensity))
 
     res <- chromatogram(mse, msLevel = 2L)
     expect_s4_class(res, "MChromatograms")
@@ -90,10 +99,25 @@ test_that("chromatogram,MsExperiment works", {
     expect_equal(intensity(res[1, 2]), numeric())
     expect_equal(intensity(res[1, 2]), numeric())
 
+    res2 <- chromatogram(mse, msLevel = 2L, return.type = "Chromatograms")
+    expect_s4_class(res2, "Chromatograms")
+    expect_true(length(res2) == 0)
+
     res <- chromatogram(mse, rt = rbind(c(3000, 3500), c(4000, 4500)))
     expect_equal(nrow(res), 2)
+    res2 <- chromatogram(mse, rt = rbind(c(3000, 3500), c(4000, 4500)),
+                         return.type = "Chromatograms")
+    expect_equal(length(res2), 2 * length(mse))
+    expect_equal(intensity(res2[1:3]), lapply(res[1L, ], intensity))
+    expect_equal(intensity(res2[4:6]), lapply(res[2L, ], intensity))
+
     res <- chromatogram(mse, mz = rbind(c(200, 210), c(330, 331)))
     expect_equal(nrow(res), 2)
+    res2 <- chromatogram(mse, mz = rbind(c(200, 210), c(330, 331)),
+                         return.type = "Chromatograms")
+    expect_equal(length(res2), 2 * length(mse))
+    expect_equal(intensity(res2[1:3]), lapply(res[1L, ], intensity))
+    expect_equal(intensity(res2[4:6]), lapply(res[2L, ], intensity))
 })
 
 test_that("uniqueMsLevels,MsExperiment works", {

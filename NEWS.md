@@ -1,5 +1,10 @@
 # xcms 4.11
 
+## Changes in version 4.11.2
+
+- Add support to return chromatographic data as a `Chromatograms` object with
+  the `chromatogram()` method.
+
 ## Changes in version 4.11.1
 
 - `refineChromPeaks,MergeNeighboringPeakParam`: drop row names of intermediate

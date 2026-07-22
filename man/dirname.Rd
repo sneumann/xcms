@@ -18,7 +18,7 @@ defining the new path to the files.}
 }
 \description{
 \code{dirname} allows to get and set the path to the directory containing the
-source files of the \code{OnDiskMSnExp} (or \linkS4class{XCMSnExp}) object.
+source files of the \code{OnDiskMSnExp} (or \link[=XCMSnExp-class]{XCMSnExp}) object.
 }
 \author{
 Johannes Rainer

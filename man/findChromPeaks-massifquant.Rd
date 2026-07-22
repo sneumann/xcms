@@ -138,7 +138,7 @@ other experiment-relevant data.
 the massifquant algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+should be performed. It defaults to \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}.
 See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
@@ -236,8 +236,8 @@ and \code{\link[=findPeaks.massifquant]{findPeaks.massifquant()}} for the old us
 \code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
 the peak detection.
 
-Other peak detection methods: 
-\code{\link{findChromPeaks}()},
+Other peak detection methods:
+\code{\link[=findChromPeaks]{findChromPeaks()}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
 \code{\link{findChromPeaks-matchedFilter}},

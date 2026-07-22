@@ -1713,7 +1713,8 @@ setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
 #' @param x `matrix` with columns `"mzmin"` and `"mzmax"` or `"rtmin"` and
 #'     `"rtmax"`.
 #'
-#' @param min_col
+#' @param min_col `character(1)` with the name of the column with the lower
+#'     range (e.g. `"mzmin"` or `"rtmin"`).
 #'
 #' @param max_col `character(1)` with the name of the column with the upper
 #'     range (e.g. `"mzmax"` or `"rtmax"`).

@@ -21,7 +21,7 @@
 pre-processing results.}
 
 \item{param}{\code{AbudanceSimilarityParam} object with the settings for the
-method. See \code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} for details on
+method. See \code{\link[MsFeatures:AbundanceSimilarityParam]{MsFeatures::AbundanceSimilarityParam()}} for details on
 the grouping method and its parameters.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the features
@@ -51,13 +51,13 @@ Features from the same originating compound are expected to have similar
 intensities across samples. This method thus groups features based on
 similarity of abundances (i.e. \emph{feature values}) across samples in a
 data set.
-See also \code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} for additional
+See also \code{\link[MsFeatures:AbundanceSimilarityParam]{MsFeatures::AbundanceSimilarityParam()}} for additional
 information and details.
 
 This help page lists parameters specific for \code{xcms} result objects (i.e.
 \code{\link[=XcmsExperiment]{XcmsExperiment()}} and \code{\link[=XCMSnExp]{XCMSnExp()}} objects). Documentation of the
 parameters for the similarity calculation is available in the
-\code{\link[MsFeatures:groupFeatures-similar-abundance]{MsFeatures::AbundanceSimilarityParam()}} help page in the \emph{MsFeatures}
+\code{\link[MsFeatures:AbundanceSimilarityParam]{MsFeatures::AbundanceSimilarityParam()}} help page in the \emph{MsFeatures}
 package.
 }
 \examples{
@@ -89,7 +89,7 @@ table(featureDefinitions(xodg_grp)$feature_group)
 \seealso{
 feature-grouping for a general overview.
 
-Other feature grouping methods: 
+Other feature grouping methods:
 \code{\link{groupFeatures-eic-similarity}},
 \code{\link{groupFeatures-similar-rtime}}
 }

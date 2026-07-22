@@ -519,6 +519,106 @@
     res
 }
 
+#' Return the data as a `Chromatograms` object using a `ChromBackendSpectra`.
+#' In the long run, this function should replace the `.mse_chromatogram()`
+#' function above.
+#'
+#' @param object `XcmsExperiment` object.
+#'
+#' @param rt two-column `numeric` `matrix` with the retention time boundaries.
+#'     The number of rows of `rt` and `mz` have to match.
+#'
+#' @param mz two-column `numeric` `matrix` with the m/z boundaries. The number
+#'     of rows of `rt` and `mz` have to match.
+#'
+#' @param aggregationFun `character(1)` defining the function to aggregate the
+#'     intensity values per rtime.
+#'
+#' @param msLevel `integer` with the MS level(s) on which the Chromatograms
+#'     should be generated. Should be either of length 1 or equal to the number
+#'     of rows of `rt`.
+#'
+#' @param isolationWindow optional `numeric` with the isolation window target
+#'     m/z of each (MS2) spectrum. Ignored for `msLevel = 1L` or if set to
+#'     `NULL` or `NA`. If provided, it's length needs to match the number of
+#'     chromatograms to extract. The value of `isolationWindow` is matched
+#'     to the `isolationWindowTargetMz` value of the spectra.
+#'
+#' @note
+#'
+#' `isolationWindow` currently **not** supported.
+#'
+#' @importMethodsFrom Chromatograms Chromatograms
+#'
+#' @importClassesFrom Chromatograms Chromatograms
+#'
+#' @noRd
+.mse_extract_chromatograms <- function(object, rt = matrix(ncol = 2, nrow = 0),
+                                       mz = matrix(ncol = 2, nrow = 0),
+                                       aggregationFun = c("sum", "max"),
+                                       msLevel = 1L,
+                                       isolationWindow = NULL, ...) {
+    aggregationFun <- match.arg(aggregationFun)
+    ## Subset the chromPeaks based on msLevel, rt, and mz.
+    s <- filterMsLevel(spectra(object), unique(msLevel))
+    if (nrow(rt))
+        s <- filterRt(s, rt = range(rt))
+
+    fb <- c("dataOrigin", "msLevel")
+    if (length(isolationWindow) == 1L)
+        isolationWindow <- rep(isolationWindow, nrow(rt))
+    if (length(isolationWindow) && !is.na(isolationWindow[1L])) {
+        if (length(isolationWindow) != nrow(rt))
+            stop("If provided, the length of 'isolationWindow' has to match ",
+                 "the number of chromatograms to extract.", call. = FALSE)
+        fb <- c(fb, "isolationWindowTargetMz")
+    }
+    cd <- .chrom_data_from_ranges(rt, mz, fileNames(object), msLevel,
+                                  isolationWindowTargetMz = isolationWindow)
+    Chromatograms(s, chromData = cd, factorize.by = fb,
+                  summarize.method = aggregationFun)
+}
+
+#' Helper function to compile the `chromData` for a `Chromatograms` object.
+#' The function repeats each row of `rt` and `mz` by the length of `dataOrigin`.
+#'
+#' @note
+#'
+#' No input argument checking is performed. This is expected to be done by the
+#' upstream function.
+#'
+#' @param rt two-column `numeric` `matrix` with the rt ranges.
+#'
+#' @param mz two-column `numeric` `matrix` with the mz ranges.
+#'
+#' @param dataOrigin `character` with the **unique** file names/data origin.
+#'
+#' @param isolationWindowTargetMz optional `numeric` of length equal to the
+#'     nrow of `rt`.
+#'
+#' @return `data.frame` for the `Chromatograms` call with columns `"rtMin"`,
+#'     `"rtMax"`, `"mzMin"`, `"mzMax"` and `"dataOrigin"`. If `nrow` `rt` is 0
+#'     an empty `data.frame` is returned.
+#'
+#' @noRd
+.chrom_data_from_ranges <- function(rt, mz, dataOrigin, msLevel = 1L,
+                                    isolationWindowTargetMz = NULL) {
+    if (!nrow(rt))
+        return(data.frame())
+    n <- length(dataOrigin)
+    if (length(msLevel) != n)
+        rep(msLevel[1L], n)
+    res <- data.frame(rtMin = rep(rt[, 1L], each = n),
+                      rtMax = rep(rt[, 2L], each = n),
+                      mzMin = rep(mz[, 1L], each = n),
+                      mzMax = rep(mz[, 2L], each = n),
+                      dataOrigin = dataOrigin,
+                      msLevel = msLevel)
+    if (length(isolationWindowTargetMz))
+        res$isolationWindowTargetMz <- rep(isolationWindowTargetMz, each = n)
+    res
+}
+
 #' Split an `MsExperiment` by a spectra variable keeping sample to spectra
 #' mapping.
 #'

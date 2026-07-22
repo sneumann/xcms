@@ -238,7 +238,7 @@ is included in the returned "matrix"\verb{providing the information if a peak wa
 retention times reported in the files) should be returned.}
 
 \item{BPPARAM}{Parameter class for parallel processing. See
-\code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.}
+\code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}.}
 
 \item{keepAdjustedRtime}{For \verb{dropFeatureDefinitions,XCMSnExp()}:
 \code{logical(1)} defining whether eventually present retention time
@@ -365,7 +365,7 @@ Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
 can be extracted with the \code{\link[=processHistory]{processHistory()}} function.
 \code{XCMSnExp} objects, by directly extending the
-\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object from the \emph{MSnbase} package, inherit
+\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp} object from the \emph{MSnbase} package, inherit
 all of its functionality and allows thus an easy access to the full raw
 data at any stage of an analysis.
 To support interaction with packages requiring the \emph{old} objects,
@@ -546,7 +546,7 @@ results. If no function is specified the function simply returns the
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.
 
-\code{plot()} plots the spectrum data (see \code{\link[MSnbase:plot-methods]{MSnbase::plot()}} for
+\code{plot()} plots the spectrum data (see \code{\link[MSnbase:plot]{MSnbase::plot()}} for
 \code{MSnExp} objects in the \emph{MSnbase} package for more details.
 For \code{type = "XIC"}, identified chromatographic peaks will be indicated
 as rectangles with border color \code{peakCol}.
@@ -636,7 +636,7 @@ features (see respective help page).
 in the m/z - rt space (see respective help page).
 \item \code{\link[=quantify]{quantify()}}: extract feature intensities and put them, along
 with feature definitions and phenodata information, into a
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}. See help page for details.
+\code{\link[SummarizedExperiment:SummarizedExperiment]{SummarizedExperiment::SummarizedExperiment()}}. See help page for details.
 }
 }
 
@@ -710,8 +710,8 @@ xs <- as(faahko_sub, "xcmsSet")
 head(peaks(xs))
 }
 \seealso{
-\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp},
-and \link[MSnbase:pSet-class]{MSnbase::pSet} for a complete list of inherited methods.
+\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp},
+and \link[MSnbase:pSet]{MSnbase::pSet} for a complete list of inherited methods.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{[findChromPeaks()] for available peak detection methods
 returning a `XCMSnExp` object as a result.
