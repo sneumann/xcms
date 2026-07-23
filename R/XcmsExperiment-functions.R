@@ -974,7 +974,7 @@
                                             chunkSize, chromPeaks,
                                             return.type, BPPARAM) {
     message("Extracting chromatographic data")
-    chrs <- as(.mse_chromatogram(
+    chrs <- as(.mse_mchromatograms_for_ranges(
         as(object, "MsExperiment"), rt = rt, mz = mz,
         aggregationFun = aggregationFun, msLevel = msLevel,
         isolationWindow = isolationWindow, chunkSize = chunkSize,

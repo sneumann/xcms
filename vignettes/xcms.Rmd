@@ -10,7 +10,7 @@ vignette: >
   %\VignetteIndexEntry{LC-MS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,BiocStyle,pheatmap,SummarizedExperiment}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,BiocStyle,pheatmap,SummarizedExperiment,Chromatograms,MSnbase}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -174,45 +174,38 @@ spectra(faahko_3)
 sampleData(faahko_3)
 ```
 
+### Inspecting chromatographic data
+
 As a first evaluation of the data we below plot the base peak chromatogram (BPC)
 for each file in our experiment. We use the `chromatogram()` method and set the
 `aggregationFun` to `"max"` to return for each spectrum the maximal intensity
-and hence create the BPC from the raw data. To create a total ion chromatogram
-we could set `aggregationFun` to `"sum"`.
+and hence create the BPC from the raw data (using `"sum"` instead would create a
+total ion chromatogram). Note that we also set  `return.type = "Chromatograms"`
+to switch to the newer infrastructure for chromatographic data in R, provided
+by Bioconductor's `r Biocpkg("Chromatograms")` package.
 
-```{r data-inspection-bpc, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6, fig.cap = "Base peak chromatogram."}
+```{r data-inspection-bpc, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 12, fig.height = 6, fig.cap = "Base peak chromatogram."}
 ## Get the base peak chromatograms. This reads data from the files.
-bpis <- chromatogram(faahko, aggregationFun = "max")
+bpis <- chromatogram(faahko, aggregationFun = "max",
+                     return.type = "Chromatograms")
 ## Define colors for the two groups
 group_colors <- paste0(brewer.pal(3, "Set1")[1:2], "60")
 names(group_colors) <- c("KO", "WT")
 
 ## Plot all chromatograms.
-plot(bpis, col = group_colors[sampleData(faahko)$sample_group])
-```
-
-The `chromatogram()` method returned a `MChromatograms` object that organizes
-individual `Chromatogram` objects (which in fact contain the chromatographic
-data) in a two-dimensional array: columns represent samples and rows
-(optionally) m/z and/or retention time ranges. Below we extract the chromatogram
-of the first sample and access its retention time and intensity values.
-
-```{r data-inspection-chromatogram, message = FALSE }
-bpi_1 <- bpis[1, 1]
-rtime(bpi_1) |> head()
-intensity(bpi_1) |> head()
+library(Chromatograms)
+plotChromatogramsOverlay(
+    bpis, col = group_colors[sampleData(faahko)$sample_group])
+grid()
 ```
 
 From the BPC above it seems that after around 4200 seconds no signal is measured
 anymore. Thus, we filter below the full data set to a retention time range from
 2550 to 4250 seconds using the `filterRt()` function. Note that at present this
-will only subset the spectra within the `MsExperiment`. Subsequently we
-re-create also the BPC.
+will only subset the spectra within the `MsExperiment`.
 
 ```{r, message = FALSE}
 faahko <- filterRt(faahko, rt = c(2550, 4250))
-## creating the BPC on the subsetted data
-bpis <- chromatogram(faahko, aggregationFun = "max")
 ```
 
 We next create boxplots representing the distribution of the total ion currents
@@ -229,6 +222,41 @@ boxplot(tc, col = group_colors[sampleData(faahko)$sample_group],
         ylab = "intensity", main = "Total ion current")
 ```
 
+### Inspecting chromatographic data, legacy framework
+
+While the `r Biocpkg("Chromatograms")` will become the new standard
+infrastructure to represent and handle chromatographic data, *xcms* still fully
+supports the legacy *MSnbase*-based objects. To use the legacy objects (that at
+present provide more functionality) use `return.type = "MChromatograms"` in the
+`chromatogram()` calls.
+
+```{r legacy-data-inspection-bpc, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6, fig.cap = "Base peak chromatogram."}
+## Get the base peak chromatograms. This reads data from the files.
+bpis <- chromatogram(faahko, aggregationFun = "max",
+                     return.type = "MChromatograms")
+
+## Plot all chromatograms.
+plot(bpis, col = group_colors[sampleData(faahko)$sample_group])
+grid()
+```
+
+With `return.type = "MChromatograms"`, the `chromatogram()` method returned the
+data as a legacy `MChromatograms` object.
+
+We next create boxplots representing the distribution of the total ion currents
+per data file. Such plots can be very useful to spot potentially problematic MS
+runs. To extract this information, we use the `tic()` function on the `Spectra`
+object within `faahko` and split the values by file using `fromFile()`.
+
+```{r legacy-data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
+## Get the total ion current by file
+tc <- spectra(faahko) |>
+    tic() |>
+    split(f = fromFile(faahko))
+boxplot(tc, col = group_colors[sampleData(faahko)$sample_group],
+        ylab = "intensity", main = "Total ion current")
+```
+
 In addition, we can also cluster the samples based on similarity of their base
 peak chromatograms. Samples would thus be grouped based on similarity of their
 LC runs. For that we need however to *bin* the data along the retention time
@@ -237,7 +265,7 @@ the `bin()` function on the BPC to bin intensities into 2 second wide retention
 time bins. The clustering is then performed using complete linkage hierarchical
 clustering on the pairwise correlations of the binned base peak chromatograms.
 
-```{r data-inspection-bpc-heatmap, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 6, fig.cap = "Grouping of samples based on similarity of their base peak chromatogram."}
+```{r legacy-data-inspection-bpc-heatmap, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 6, fig.cap = "Grouping of samples based on similarity of their base peak chromatogram."}
 ## Bin the BPC
 bpis_bin <- bin(bpis, binSize = 2)
 

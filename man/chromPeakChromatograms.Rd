@@ -13,7 +13,7 @@ chromPeakChromatograms(object, ...)
   expandMz = 0,
   aggregationFun = "max",
   peaks = character(),
-  return.type = c("XChromatograms", "MChromatograms"),
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   ...,
   progressbar = TRUE
 )
@@ -43,27 +43,52 @@ peaks (i.e. the row names of the peaks in \code{chromPeaks(object)}) for
 which chromatograms should be returned.}
 
 \item{return.type}{\code{character(1)} specifying the type of the returned object.
-Can be either \code{return.type = "XChromatograms"} (the default) or
-\code{return.type = "MChromatograms"} to return either a chromatographic
-object with or without the identified chromatographic peaks,
-respectively.}
+Can be either \code{return.type = "XChromatograms"} (the default),
+\code{return.type = "MChromatograms"} or \code{return.type = "Chromatograms"}.}
 
 \item{progressbar}{\code{logical(1)} whether the progress of the extraction
 process should be displayed.}
 }
 \description{
 Extract an ion chromatogram (EIC) for each chromatographic peak in an
-\code{\link[=XcmsExperiment]{XcmsExperiment()}} object. The result is returned as an \code{\link[=XChromatograms]{XChromatograms()}}
-of length equal to the number of chromatographic peaks (and one column).
+\code{\link[=XcmsExperiment]{XcmsExperiment()}} object. Parameters \code{expandRt} and \code{expandMz} allow to
+increase the retention time and/or m/z boundaries of each chromatographic
+peak. Parameter \code{return.type} allows to define the format in which the
+chromatograms are returned:
+\itemize{
+\item \code{return.type = "Chromatograms"}: return the EICs as a
+\code{\link[Chromatograms:Chromatograms]{Chromatograms::Chromatograms()}} object. The ID of the chromatographic peak
+can be accessed with \verb{$chrom_peak_id} from the returned object.
+\item \code{return.type = "MChromatograms"}: return the EICs as a (single column)
+legacy \link[MSnbase:MChromatograms]{MSnbase::MChromatograms} object.
+\item \code{return.type = "XChromatograms"}: return the EICs as a (single column)
+legacy \code{\link[=XChromatograms]{XChromatograms()}} object which contains also the information of
+all chromatographic peaks.
+}
 }
 \examples{
 
 ## Load a test data set with detected peaks
-library(MSnbase)
 library(xcms)
 library(MsExperiment)
 faahko_sub <- loadXcmsData("faahko_sub2")
 
+## Extract EICs for all chromatographic peaks
+library(Chromatograms)
+chrs <- chromPeakChromatograms(faahko_sub, return.type = "Chromatograms")
+chrs
+
+## Get the chrom peak ID of all EICs
+chrs$chrom_peak_id
+
+## Plot the first 4 EICs
+plotChromatograms(chrs[1:4])
+
+## Plot the first 4 EICs into the same plot
+plotChromatogramsOverlay(chrs[1:4])
+
+## Use the legacy EIC infrastructure (MChromatograms, XChromatograms)
+library(MSnbase)
 ## Get EICs for every detected chromatographic peak
 chrs <- chromPeakChromatograms(faahko_sub)
 chrs

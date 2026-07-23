@@ -422,9 +422,14 @@
 }
 
 #' This function extracts a chromatogram for the provided rt, m/z ranges, MS
-#' level and isolationWindow from the `MsExperiment`. Parameter
-#' `isolationWindow` ensures that, for MS2 spectra, not simply all MS2 spectra
-#' are used for the chromatogram, but only those with matching
+#' level and isolationWindow from the `MsExperiment` and returns it as a
+#' `MSnbase::MChromatograms` object.
+#'
+#' **this if for backward compatibility! use `.mse_chromatograms_for_ranges()`
+#' instead**.
+#'
+#' Parameter `isolationWindow` ensures that, for MS2 spectra, not simply all
+#' MS2 spectra are used for the chromatogram, but only those with matching
 #' `isolationWindowTargetMz` (and hence the same set of ions). Chromatograms
 #' for MS1 will not need `isolationWindow`.
 #'
@@ -449,12 +454,12 @@
 #' data will be extracted!
 #'
 #' @noRd
-.mse_chromatogram <- function(x, rt = matrix(nrow = 0, ncol = 2),
-                              mz = matrix(nrow = 0, ncol = 2),
-                              aggregationFun = "sum", msLevel = 1L,
-                              isolationWindow = NULL,
-                              chunkSize = 2L, progressbar = TRUE,
-                              BPPARAM = bpparam()) {
+.mse_mchromatograms_for_ranges <- function(x, rt = matrix(nrow = 0, ncol = 2),
+                                           mz = matrix(nrow = 0, ncol = 2),
+                                           aggregationFun = "sum", msLevel = 1L,
+                                           isolationWindow = NULL,
+                                           chunkSize = 2L, progressbar = TRUE,
+                                           BPPARAM = bpparam()) {
     if (!nrow(rt))
         rt <- matrix(c(-Inf, Inf), ncol = 2)
     if (!nrow(mz))
@@ -519,9 +524,12 @@
     res
 }
 
-#' Return the data as a `Chromatograms` object using a `ChromBackendSpectra`.
-#' In the long run, this function should replace the `.mse_chromatogram()`
-#' function above.
+#' Extract `Chromatograms` for rt and m/z ranges defined with parameters
+#' `rt` and `mz`. A chromatogram for each defined range will be extracted
+#' from **each sample**/file in `object`. If `rt` and `mz` is omitted a TIC
+#' or BPC is returned.
+#' In the long run, this function should replace the
+#' `.mse_mchromatograms_for_ranges()` function above.
 #'
 #' @param object `XcmsExperiment` object.
 #'
@@ -544,26 +552,27 @@
 #'     chromatograms to extract. The value of `isolationWindow` is matched
 #'     to the `isolationWindowTargetMz` value of the spectra.
 #'
-#' @note
-#'
-#' `isolationWindow` currently **not** supported.
+#' @return A `Chromatograms` object with a chromatogram for each rt-m/z range
+#'     (defined by each row in `rt` and `mz`) in **each** sample. The
+#'     `Chromatograms` is ordered by ranges (i.e. first all chromatograms for
+#'     the first range in all files, then the second range in all files etc).
 #'
 #' @importMethodsFrom Chromatograms Chromatograms
 #'
 #' @importClassesFrom Chromatograms Chromatograms
 #'
 #' @noRd
-.mse_extract_chromatograms <- function(object, rt = matrix(ncol = 2, nrow = 0),
-                                       mz = matrix(ncol = 2, nrow = 0),
-                                       aggregationFun = c("sum", "max"),
-                                       msLevel = 1L,
-                                       isolationWindow = NULL, ...) {
+.mse_chromatograms_for_ranges <- function(object,
+                                          rt = matrix(ncol = 2, nrow = 0),
+                                          mz = matrix(ncol = 2, nrow = 0),
+                                          aggregationFun = c("sum", "max"),
+                                          msLevel = 1L,
+                                          isolationWindow = NULL, ...) {
     aggregationFun <- match.arg(aggregationFun)
     ## Subset the chromPeaks based on msLevel, rt, and mz.
     s <- filterMsLevel(spectra(object), unique(msLevel))
     if (nrow(rt))
         s <- filterRt(s, rt = range(rt))
-
     fb <- c("dataOrigin", "msLevel")
     if (length(isolationWindow) == 1L)
         isolationWindow <- rep(isolationWindow, nrow(rt))
@@ -573,8 +582,8 @@
                  "the number of chromatograms to extract.", call. = FALSE)
         fb <- c(fb, "isolationWindowTargetMz")
     }
-    cd <- .chrom_data_from_ranges(rt, mz, fileNames(object), msLevel,
-                                  isolationWindowTargetMz = isolationWindow)
+    cd <- .chrom_data_for_ranges(rt, mz, fileNames(object), msLevel,
+                                 isolationWindowTargetMz = isolationWindow)
     Chromatograms(s, chromData = cd, factorize.by = fb,
                   summarize.method = aggregationFun)
 }
@@ -593,6 +602,9 @@
 #'
 #' @param dataOrigin `character` with the **unique** file names/data origin.
 #'
+#' @param msLevel `integer` with the MS level for the chromatograms. Has to be
+#'     of length 1 or equal to `nrow(rt)`.
+#'
 #' @param isolationWindowTargetMz optional `numeric` of length equal to the
 #'     nrow of `rt`.
 #'
@@ -601,8 +613,8 @@
 #'     an empty `data.frame` is returned.
 #'
 #' @noRd
-.chrom_data_from_ranges <- function(rt, mz, dataOrigin, msLevel = 1L,
-                                    isolationWindowTargetMz = NULL) {
+.chrom_data_for_ranges <- function(rt, mz, dataOrigin, msLevel = 1L,
+                                   isolationWindowTargetMz = NULL) {
     if (!nrow(rt))
         return(data.frame())
     n <- length(dataOrigin)
@@ -616,6 +628,114 @@
                       msLevel = msLevel)
     if (length(isolationWindowTargetMz))
         res$isolationWindowTargetMz <- rep(isolationWindowTargetMz, each = n)
+    res
+}
+
+#' Extract EICs as `Chromatograms` object based on rt/mz boundaries from
+#' chromatographic peaks. The logic of the code is similar to
+#' `.mse_chromatograms_for_ranges` but here we have specific rt and m/z ranges
+#' **for each individual sample** (while in the former the same rt/mz range
+#' is extracted from each sample).
+#'
+#' @param object `MsExperiment` or `XcmsExperiment` object.
+#'
+#' @param pks `numeric` `matrix` defining the chrom peak boundaries, i.e. the
+#'     `chromPeaks()`. Required columns are `"rtmin"`, `"rtmax"`, `"mzmin"`,
+#'     `"mzmax"` and `"sample"`.
+#'
+#' @param pkd `chromPeakData()` `data.frame` with mandatory column `"ms_level"`.
+#'     If a column `"isolationWindow"` is present it is also passed to the
+#'     `Chromatograms` call.
+#'
+#' @param aggregationFun `character(1)` defining the method to aggregate
+#'     intensities per retention time. This is passed to the `summarize.method`
+#'     parameter of `Chromatograms()`.
+#'
+#' @param expandRt `numeric(1)` with the value to expand the retention time
+#'     window on **both** sides.
+#'
+#' @param expandMz `numeric(1)` with the value to expand the m/z window on
+#'     **both** sides.
+#'
+#' @return `Chromatograms`, one for each chromatographic peak defined by each
+#'     row in `pks` (`pkd`).
+#'
+#' @noRd
+.mse_chromatograms_for_peaks <- function(object, pks, pkd,
+                                         aggregationFun = c("max", "sum"),
+                                         expandRt = 0.0, expandMz = 0.0) {
+    if (!nrow(pks))
+        return(Chromatograms())
+    aggregationFun <- match.arg(aggregationFun)
+    cd <- data.frame(rtMin = pks[, "rtmin"] - expandRt,
+                     rtMax = pks[, "rtmax"] + expandRt,
+                     mzMin = pks[, "mzmin"] - expandMz,
+                     mzMax = pks[, "mzmax"] + expandMz,
+                     msLevel = pkd$ms_level,
+                     dataOrigin = fileNames(object)[pks[, "sample"]])
+    fb <- c("dataOrigin", "msLevel")
+    if (any(!is.na(pkd$isolationWindow))) {
+        cd$isolationWindowTargetMz <- pkd$isolationWindow
+        fb <- c(fb, "isolationWindowTargetMz")
+    }
+    s <- filterRt(filterMsLevel(spectra(object), unique(cd$msLevel)),
+                  c(min(cd$rtMin), max(cd$rtMax)))
+    Chromatograms(s, chromData = cd, factorize.by = fb,
+                  summarize.method = aggregationFun)
+}
+
+#' Helper to extract EICs for each peak defined by `pks` and `pkd` and return
+#' that as a `MSnbase::MChromatograms` object. This is for backward
+#' compatibility but in future `mse_chromatograms_for_peaks()` should be used
+#' instead.
+#'
+#' @noRd
+.mse_mchromatograms_for_peaks <- function(object, pks, pkd,
+                                          aggregationFun = c("max", "sum"),
+                                          expandRt = 0.0, expandMz = 0.0) {
+    aggregationFun <- match.arg(aggregationFun)
+    pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                           "total (:percent) in ",
+                                           ":elapsed"),
+                           total = (length(object)), clear = FALSE)
+    pb$tick(0)
+    rownames(sampleData(object)) <- NULL # don't track sample names
+    res <- lapply(seq_along(object), function(z) {
+        idx <- which(pks[, "sample"] == z)
+        if (length(idx)) {
+            mzr <- pks[idx, c("mzmin", "mzmax"), drop = FALSE]
+            rtr <- pks[idx, c("rtmin", "rtmax"), drop = FALSE]
+            if (expandMz != 0) {
+                mzr[, 1] <- mzr[, 1] - expandMz
+                mzr[, 2] <- mzr[, 2] + expandMz
+            }
+            if (expandRt != 0) {
+                rtr[, 1] <- rtr[, 1] - expandRt
+                rtr[, 2] <- rtr[, 2] + expandRt
+            }
+            chrs <- .mse_mchromatograms_for_ranges(
+                object[z], rt = rtr, mz = mzr,
+                aggregationFun = aggregationFun,
+                msLevel = pkd$ms_level[idx],
+                isolationWindow = pkd$isolationWindow[idx],
+                chunkSize = 1L, progressbar = FALSE,
+                BPPARAM = SerialParam())
+            fData(chrs)$sample_index <- z # report sample index
+            pb$tick()
+            rownames(chrs) <- rownames(pks)[idx]
+            rownames(fData(chrs)) <- rownames(chrs)
+            chrs
+        } else {
+            pb$tick()
+            NULL
+        }
+    })
+    res <- as(do.call(c, res[lengths(res) > 0]), "MChromatograms")
+    pData(res)[,] <- NA             # it's not from a single file.
+    colnames(res) <- NULL
+    ## re-order the result - if needed.
+    if (any(rownames(res) != rownames(pks)))
+        res <- res[match(rownames(pks), rownames(res)), 1L]
     res
 }
 

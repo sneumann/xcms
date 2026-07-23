@@ -375,7 +375,6 @@ exportMethods("hasChromPeaks",
               "removeIntensity",
               "filterColumnsIntensityAbove",
               "filterColumnsKeepTop",
-	      "plotChromatogramsOverlay",
 	      "transformIntensity",
               "filterChromPeaks",
               "filterFeatureDefinitions",
@@ -471,3 +470,5 @@ exportClasses("XcmsExperimentHdf5")
 ## Chromatograms
 importMethodsFrom("Chromatograms", "Chromatograms")
 importClassesFrom("Chromatograms", "Chromatograms")
+importMethodsFrom("Chromatograms", "plotChromatogramsOverlay")
+exportMethods("plotChromatogramsOverlay")

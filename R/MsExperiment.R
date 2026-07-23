@@ -112,11 +112,11 @@ setMethod(
         if (nrow(rt) && !nrow(mz))
             mz <- cbind(rep(-Inf, nrow(rt)), rep(Inf, nrow(rt)))
         switch(return.type,
-               MChromatograms = .mse_chromatogram(
+               MChromatograms = .mse_mchromatograms_for_ranges(
                    object, rt = rt, mz = mz, aggregationFun = aggregationFun,
                    msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
                    chunkSize = chunkSize, BPPARAM = BPPARAM),
-               Chromatograms = .mse_extract_chromatograms(
+               Chromatograms = .mse_chromatograms_for_ranges(
                    object, rt = rt, mz = mz, aggregationFun = aggregationFun,
                    msLevel = msLevel, isolationWindow = isolationWindowTargetMz)
                )

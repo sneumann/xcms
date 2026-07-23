@@ -1104,7 +1104,7 @@ toXcmsExperiment <- function(object, ...) {
                                return.type = "XChromatograms",
                                BPPARAM = bpparam()) {
     message("Extracting chromatographic data")
-    chr <- as(.mse_chromatogram(
+    chr <- as(.mse_mchromatograms_for_ranges(
         as(x, "MsExperiment"), rt = rt, mz = mz, msLevel = ms_level,
         aggregationFun = aggregationFun, isolationWindow = isolationWindow,
         chunkSize = chunkSize, BPPARAM = BPPARAM), return.type)

@@ -159,10 +159,11 @@ jobs:
           ## https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016675.html
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
+          install.packages("remotes")
+          BiocManager::install("RforMassSpectrometry/Chromatograms")
           install.packages("pak")
           pak::local_install_dev_deps(ask = FALSE)
           pak::local_install(depdendencies = TRUE)
-          BiocManager::install(c("rmarkdown", "BiocStyle"))
         continue-on-error: true
         shell: Rscript {0}
 

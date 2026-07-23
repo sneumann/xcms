@@ -307,8 +307,19 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 #' @description
 #'
 #' Extract an ion chromatogram (EIC) for each chromatographic peak in an
-#' [XcmsExperiment()] object. The result is returned as an [XChromatograms()]
-#' of length equal to the number of chromatographic peaks (and one column).
+#' [XcmsExperiment()] object. Parameters `expandRt` and `expandMz` allow to
+#' increase the retention time and/or m/z boundaries of each chromatographic
+#' peak. Parameter `return.type` allows to define the format in which the
+#' chromatograms are returned:
+#'
+#' - `return.type = "Chromatograms"`: return the EICs as a
+#'   [Chromatograms::Chromatograms()] object. The ID of the chromatographic peak
+#'   can be accessed with `$chrom_peak_id` from the returned object.
+#' - `return.type = "MChromatograms"`: return the EICs as a (single column)
+#'   legacy [MSnbase::MChromatograms] object.
+#' - `return.type = "XChromatograms"`: return the EICs as a (single column)
+#'   legacy [XChromatograms()] object which contains also the information of
+#'   all chromatographic peaks.
 #'
 #' @param object An [XcmsExperiment()] with identified chromatographic peaks.
 #'
@@ -332,10 +343,8 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 #'     which chromatograms should be returned.
 #'
 #' @param return.type `character(1)` specifying the type of the returned object.
-#'     Can be either `return.type = "XChromatograms"` (the default) or
-#'     `return.type = "MChromatograms"` to return either a chromatographic
-#'     object with or without the identified chromatographic peaks,
-#'     respectively.
+#'     Can be either `return.type = "XChromatograms"` (the default),
+#'     `return.type = "MChromatograms"` or `return.type = "Chromatograms"`.
 #'
 #' @param ... currently ignored.
 #'
@@ -351,11 +360,26 @@ setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-")
 #' @examples
 #'
 #' ## Load a test data set with detected peaks
-#' library(MSnbase)
 #' library(xcms)
 #' library(MsExperiment)
 #' faahko_sub <- loadXcmsData("faahko_sub2")
 #'
+#' ## Extract EICs for all chromatographic peaks
+#' library(Chromatograms)
+#' chrs <- chromPeakChromatograms(faahko_sub, return.type = "Chromatograms")
+#' chrs
+#'
+#' ## Get the chrom peak ID of all EICs
+#' chrs$chrom_peak_id
+#'
+#' ## Plot the first 4 EICs
+#' plotChromatograms(chrs[1:4])
+#'
+#' ## Plot the first 4 EICs into the same plot
+#' plotChromatogramsOverlay(chrs[1:4])
+#'
+#' ## Use the legacy EIC infrastructure (MChromatograms, XChromatograms)
+#' library(MSnbase)
 #' ## Get EICs for every detected chromatographic peak
 #' chrs <- chromPeakChromatograms(faahko_sub)
 #' chrs
@@ -1800,8 +1824,6 @@ setGeneric("peakwidth<-", function(object, value) standardGeneric("peakwidth<-")
 setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 setGeneric("plotChromPeakDensity", function(object, ...)
     standardGeneric("plotChromPeakDensity"))
-setGeneric("plotChromatogramsOverlay", function(object, ...)
-    standardGeneric("plotChromatogramsOverlay"))
 setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
 setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
 setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))

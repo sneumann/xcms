@@ -4,6 +4,7 @@
 
 - Add support to return chromatographic data as a `Chromatograms` object with
   the `chromatogram()` method.
+- Add support for `Chromatograms` to `chromPeakChromatograms()` method.
 
 ## Changes in version 4.11.1
 

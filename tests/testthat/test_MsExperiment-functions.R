@@ -248,17 +248,17 @@ test_that(".mse_obiwarp_chunks works", {
     expect_error(.mse_obiwarp_chunks(mse, p, msLevel = 2), "MS level")
 })
 
-test_that(".mse_chromatogram works", {
+test_that(".mse_mchromatograms_for_ranges works", {
     rtr <- rbind(c(2600, 2630), c(3500, 3600))
     mzr <- rbind(c(250, 252), c(400, 410))
 
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(mse, rt = rtr, mz = mzr, msLevel = 1L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), length(mse))
     expect_equal(nrow(res), 2)
     expect_true(validObject(res))
 
-    expect_error(.mse_chromatogram(
+    expect_error(.mse_mchromatograms_for_ranges(
         mse, mz = mzr, rt = cbind(c(300, 310), c(123, NA))),
         "Missing values")
 
@@ -267,13 +267,13 @@ test_that(".mse_chromatogram works", {
     expect_equal(unname(intensity(ref[2, 3])), intensity(res[2, 3]))
 
     ## aggregationFun passed correctly
-    res_2 <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L,
-                               aggregationFun = "max")
+    res_2 <- .mse_mchromatograms_for_ranges(
+        mse, rt = rtr, mz = mzr, msLevel = 1L, aggregationFun = "max")
     expect_true(all(intensity(res[1, 1]) > intensity(res_2[1, 1])))
     expect_true(all(intensity(res[2, 2]) > intensity(res_2[2, 2])))
 
     ## MS Level 2
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 2L)
+    res <- .mse_mchromatograms_for_ranges(mse, rt = rtr, mz = mzr, msLevel = 2L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), length(mse))
     expect_equal(nrow(res), 2)
@@ -282,7 +282,7 @@ test_that(".mse_chromatogram works", {
 
     ## rt, mz out of range
     rtr <- rbind(c(20, 30), c(34, 45))
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(mse, rt = rtr, mz = mzr, msLevel = 1L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), length(mse))
     expect_equal(nrow(res), 2)
@@ -290,7 +290,7 @@ test_that(".mse_chromatogram works", {
     expect_equal(intensity(res[1, 2]), numeric())
 
     rtr <- rbind(c(20, 30), c(3500, 3600))
-    res <- .mse_chromatogram(mse, rt = rtr, mz = mzr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(mse, rt = rtr, mz = mzr, msLevel = 1L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), length(mse))
     expect_equal(nrow(res), 2)
@@ -309,7 +309,8 @@ test_that(".mse_chromatogram works", {
     ## sample 2: 0 - 899
     rtr <- rbind(c(13, 20), c(2900, 3010))
     mzr <- rbind(c(220, 240), c(220, 240))
-    res <- xcms:::.mse_chromatogram(mse_rt, rt = rtr, mz = mzr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(
+        mse_rt, rt = rtr, mz = mzr, msLevel = 1L)
     expect_s4_class(res, "MChromatograms")
     expect_equal(ncol(res), 2L)
     expect_equal(nrow(res), 2L)
@@ -327,11 +328,13 @@ test_that(".mse_chromatogram works", {
                  c(500, 510))
     rtr <- rbind(c(200, 220),
                  c(500, 520))
-    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(
+        mse_dda, rt = rtr, mz = mzr, msLevel = 1L)
     expect_true(validObject(res))
     expect_true(all(intensity(res[[1L]]) > 0))
     expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
-    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
+    res <- .mse_mchromatograms_for_ranges(
+        mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
     expect_true(validObject(res))
     expect_equal(msLevel(res[[1L]]), 2L)
     expect_true(length(intensity(res[[1L]])) > 0)
@@ -345,14 +348,15 @@ test_that(".mse_chromatogram works", {
                  c(81, 83))
     rtr <- rbind(c(10, 700),
                  c(10, 700))
-    res <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
-    res2 <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L,
-                                    isolationWindow = c(56, 40))
+    res <- .mse_mchromatograms_for_ranges(
+        mse_dda, rt = rtr, mz = mzr, msLevel = 2L)
+    res2 <- .mse_mchromatograms_for_ranges(
+        mse_dda, rt = rtr, mz = mzr, msLevel = 2L, isolationWindow = c(56, 40))
     expect_true(all(intensity(res2[[1L]]) > 0))
     expect_true(length(intensity(res2[[2L]])) == 0)
     expect_true(length(rtime(res[[1L]])) > length(rtime(res2[[1L]])))
-    res2 <- .mse_chromatogram(mse_dda, rt = rtr, mz = mzr, msLevel = 2L,
-                                     isolationWindow = c(56, 82))
+    res2 <- .mse_mchromatograms_for_ranges(
+        mse_dda, rt = rtr, mz = mzr, msLevel = 2L, isolationWindow = c(56, 82))
     expect_true(all(intensity(res2[[1L]]) > 0))
     expect_true(length(intensity(res[[1L]])) > length(intensity(res2[[1L]])))
     expect_true(all(intensity(res[[2L]]) > 0, na.rm = TRUE))
@@ -361,7 +365,8 @@ test_that(".mse_chromatogram works", {
     mse_dia <- readMsExperiment(pest_mix_swath_file)
     mzr <- rbind(c(100, 110),
                  c(500, 510))
-    res <- .mse_chromatogram(mse_dia, mz = mzr, rt = rtr, msLevel = 1L)
+    res <- .mse_mchromatograms_for_ranges(
+        mse_dia, mz = mzr, rt = rtr, msLevel = 1L)
     expect_equal(msLevel(res[[1L]]), 1L)
     expect_equal(msLevel(res[[2L]]), 1L)
     expect_true(length(intensity(res[[1L]])) > 0)
@@ -369,31 +374,32 @@ test_that(".mse_chromatogram works", {
 
     mzr <- rbind(c(40, 200),
                  c(40, 200))
-    res <- .mse_chromatogram(mse_dia, mz = mzr, rt = rtr, msLevel = 2L,
-                             isolationWindow = c(163.75, 367.35))
+    res <- .mse_mchromatograms_for_ranges(
+        mse_dia, mz = mzr, rt = rtr, msLevel = 2L,
+        isolationWindow = c(163.75, 367.35))
     expect_equal(msLevel(res[[1L]]), 2L)
     expect_equal(msLevel(res[[2L]]), 2L)
     expect_true(all(intensity(res[[1L]]) > 0))
     expect_true(all(intensity(res[[2L]]) > 0))
 })
 
-test_that(".mse_extract_chromatograms works", {
+test_that(".mse_chromatograms_for_ranges works", {
     rtr <- rbind(c(2600, 2630), c(3500, 3600))
     mzr <- rbind(c(250, 252), c(400, 410))
 
     ## TIC
-    res <- .mse_extract_chromatograms(mse)
+    res <- .mse_chromatograms_for_ranges(mse)
     expect_s4_class(res, "Chromatograms")
     expect_equal(length(res), length(mse))
     ref <- chromatogram(mse)
     expect_equal(intensity(res), lapply(ref, intensity))
     ## BPC
-    res <- .mse_extract_chromatograms(mse, aggregationFun = "max")
+    res <- .mse_chromatograms_for_ranges(mse, aggregationFun = "max")
     ref <- chromatogram(mse, aggregationFun = "max")
     expect_equal(intensity(res), lapply(ref, intensity))
 
     ## EIC
-    res <- .mse_extract_chromatograms(mse, rt = rtr, mz = mzr)
+    res <- .mse_chromatograms_for_ranges(mse, rt = rtr, mz = mzr)
     ref <- chromatogram(mse, rt = rtr, mz = mzr)
     res <- split(res, dataOrigin(res))
     expect_equal(intensity(res[[1L]]), lapply(ref[, 1L], intensity))
@@ -401,24 +407,59 @@ test_that(".mse_extract_chromatograms works", {
     expect_equal(intensity(res[[3L]]), lapply(ref[, 3L], intensity))
 })
 
-test_that(".chrom_data_from_ranges works", {
-    res <- .chrom_data_from_ranges(rt = matrix(ncol = 2, nrow = 0))
+test_that(".chrom_data_for_ranges works", {
+    res <- .chrom_data_for_ranges(rt = matrix(ncol = 2, nrow = 0))
     expect_equal(res, data.frame())
 
-    res <- .chrom_data_from_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
-                                   mz = cbind(c(3, 4, 5), c(6, 7, 8)),
-                                   c("a", "b", "c", "d", "e"))
+    res <- .chrom_data_for_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
+                                  mz = cbind(c(3, 4, 5), c(6, 7, 8)),
+                                  c("a", "b", "c", "d", "e"))
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("rtMin", "rtMax", "mzMin", "mzMax",
                                   "dataOrigin", "msLevel"))
     expect_equal(res$rtMin, rep(1:3, each = 5))
     expect_equal(res$dataOrigin, rep(c("a", "b", "c", "d", "e"), 3))
 
-    res <- .chrom_data_from_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
-                                   mz = cbind(c(3, 4, 5), c(6, 7, 8)),
-                                   c("a", "b", "c", "d", "e"),
-                                   isolationWindowTargetMz = c(2, 3, 4))
+    res <- .chrom_data_for_ranges(rt = cbind(c(1, 2, 3), c(2, 3, 4)),
+                                  mz = cbind(c(3, 4, 5), c(6, 7, 8)),
+                                  c("a", "b", "c", "d", "e"),
+                                  isolationWindowTargetMz = c(2, 3, 4))
     expect_equal(res$isolationWindowTargetMz, rep(c(2, 3, 4), each = 5))
+})
+
+test_that(".mse_chromatograms_for_peaks works", {
+    pks <- chromPeaks(xmse)[1:10, ]
+    pkd <- chromPeakData(xmse, return.type = "data.frame")[1:10, ]
+
+    res <- .mse_chromatograms_for_peaks(
+        mse, pks, pkd, expandRt = 10, expandMz = 1)
+    expect_s4_class(res, "Chromatograms")
+    expect_equal(length(res), nrow(pks))
+    expect_true(all(dataOrigin(res) == fileNames(mse)[1L]))
+    expect_true(all(vapply(rtime(res), min, NA_real_) >= pks[, "rtmin"] - 10))
+    expect_true(all(vapply(rtime(res), max, NA_real_) <= pks[, "rtmax"] + 10))
+
+    ## Empty matrices.
+    res <- .mse_chromatograms_for_peaks(
+        mse, pks[integer(), ], pkd[integer(), ], expandRt = 10, expandMz = 1)
+    expect_s4_class(res, "Chromatograms")
+    expect_true(length(res) == 0)
+})
+
+test_that(".mse_mchromatograms_for_peaks works", {
+    pks <- chromPeaks(xmse)[1:10, ]
+    pkd <- chromPeakData(xmse, return.type = "data.frame")[1:10, ]
+
+    res <- .mse_mchromatograms_for_peaks(
+        mse, pks, pkd, expandRt = 10, expandMz = 1)
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(nrow(res), nrow(pks))
+    expect_equal(ncol(res), 1L)
+    expect_equal(rownames(res), rownames(pks))
+    expect_true(all(vapply(res, function(z) min(rtime(z)), NA_real_) >=
+                    pks[, "rtmin"] - 10))
+    expect_true(all(vapply(res, function(z) max(rtime(z)), NA_real_) <=
+                    pks[, "rtmax"] + 10))
 })
 
 test_that(".mse_split_spectra_variable works", {

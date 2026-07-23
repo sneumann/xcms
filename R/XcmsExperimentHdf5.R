@@ -1415,7 +1415,7 @@ setMethod(
             area[, "mzmax"] <- area[, "mzmax"] + expandMz
         }
         fts <- featureDefinitions(object)[rownames(area), ]
-        chrs <- as(.mse_chromatogram(
+        chrs <- as(.mse_mchromatograms_for_ranges(
             as(object, "MsExperiment"),
             rt = area[, c("rtmin", "rtmax"), drop = FALSE],
             mz = area[, c("mzmin", "mzmax"), drop = FALSE],
