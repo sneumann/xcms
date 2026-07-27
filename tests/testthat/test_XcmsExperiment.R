@@ -1789,3 +1789,71 @@ test_that("chromPeakData,XcmsExperiment works with parameter columns", {
 
     expect_error(chromPeakData(xmse, columns = "a"), "valid column")
 })
+
+test_that("featureChromatograms,XcmsExperiment without featureArea works", {
+    ## Compare against chromPeakChromatograms
+    a <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              expandRt = 2, featureArea = FALSE)
+    ref <- chromPeakChromatograms(xmseg, return.type = "Chromatograms",
+                                  expandRt = 2)
+    cp <- rownames(chromPeaks(xmseg))[unlist(featureDefinitions(xmseg)$peakidx)]
+    expect_equal(a$chrom_peak_id, cp)
+    i <- match(a$chrom_peak_id, ref$chrom_peak_id)
+    ref <- ref[i]
+    expect_equal(intensity(ref), intensity(a))
+
+    ## Selected features.
+    a <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              features = c("FT03", "FT01", "FT03"),
+                              featureArea = FALSE)
+    cp <- rownames(chromPeaks(xmseg))[
+        unlist(featureDefinitions(xmseg)[c("FT03", "FT01", "FT03"), ]$peakidx)]
+    expect_equal(a$chrom_peak_id, cp)
+    ref <- chromPeakChromatograms(xmseg, return.type = "Chromatograms",
+                                  peaks = cp)
+    expect_equal(ref$chrom_peak_id, cp)
+    expect_equal(ref$chrom_peak_id, a$chrom_peak_id)
+    expect_equal(intensity(ref), intensity(a))
+})
+
+test_that("featureChromatograms,XcmsExperiment different return.type works", {
+    a <- featureChromatograms(xmseg, return.type = "MChromatograms")
+    expect_s4_class(a, "MChromatograms")
+    expect_equal(nrow(a), nrow(featureDefinitions(xmseg)))
+    expect_equal(ncol(a), length(xmseg))
+    expect_equal(fData(a)$feature_id, rownames(featureDefinitions(xmseg)))
+
+    b <- featureChromatograms(xmseg, return.type = "XChromatograms")
+    expect_s4_class(b, "XChromatograms")
+    expect_equal(nrow(b), nrow(featureDefinitions(xmseg)))
+    expect_equal(ncol(b), length(xmseg))
+    expect_equal(fData(b)$feature_id, rownames(featureDefinitions(xmseg)))
+    expect_equal(lapply(a[1, ], intensity), lapply(b[1, ], intensity))
+
+    c <- featureChromatograms(xmseg, return.type = "Chromatograms")
+    expect_s4_class(c, "Chromatograms")
+    expect_equal(length(c), length(xmseg) * nrow(featureDefinitions(xmseg)))
+    expect_equal(lapply(a[1, ], intensity), intensity(c[1:3]))
+    expect_equal(lapply(a[2, ], intensity), intensity(c[4:6]))
+
+    fts <- rownames(featureDefinitions(xmseg))[c(4, 1, 23, 4)]
+    a <- featureChromatograms(xmseg, return.type = "MChromatograms",
+                              features = fts, expandRt = 3)
+    expect_equal(nrow(a), 4)
+    expect_equal(fData(a)$feature_id, fts)
+    expect_equal(lapply(a[1, ], intensity), lapply(a[4, ], intensity))
+
+    b <- featureChromatograms(xmseg, return.type = "XChromatograms",
+                              features = fts, expandRt = 3)
+    expect_equal(nrow(b), 4)
+    expect_equal(fData(b)$feature_id, fts)
+    expect_equal(lapply(a[2, ], intensity), lapply(b[2, ], intensity))
+
+    c <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              features = fts, expandRt = 3)
+    expect_s4_class(c, "Chromatograms")
+    expect_equal(length(c), length(xmseg) * length(fts))
+    expect_equal(c$feature_id, rep(fts, each = 3))
+    expect_equal(lapply(a[2, ], intensity), intensity(c[4:6]))
+    expect_equal(intensity(c[1:3]), intensity(c[10:12]))
+})

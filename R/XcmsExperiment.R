@@ -1773,7 +1773,7 @@ setMethod(
                    res <- .mse_chromatograms_for_peaks(
                        object, pks, pkd, aggregationFun = aggregationFun,
                        expandRt = expandRt, expandMz = expandMz)
-                   res$chrom_peak_id <- rownames(pkd)
+                   res$chrom_peak_id <- rownames(pks)
                    res
                },
                ## MSnbase::MChromatograms
@@ -1808,81 +1808,34 @@ setMethod(
 #' @rdname featureChromatograms
 setMethod(
     "featureChromatograms", "XcmsExperiment",
-    function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
-             features = character(), return.type = "XChromatograms",
+    function(object, expandRt = 0.0, expandMz = 0.0, aggregationFun = "max",
+             features = character(),
+             return.type = c("XChromatograms","MChromatograms","Chromatograms"),
              chunkSize = 2L, mzmin = min, mzmax = max, rtmin = min,
-             rtmax = max, ..., progressbar = TRUE, BPPARAM = bpparam()) {
+             rtmax = max, featureArea = TRUE, ...,
+             progressbar = TRUE, BPPARAM = bpparam()) {
         return.type <- match.arg(return.type)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        area <- featureArea(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                            rtmax = rtmax, features = features)
-        if (expandRt != 0) {
-            area[, "rtmin"] <- area[, "rtmin"] - expandRt
-            area[, "rtmax"] <- area[, "rtmax"] + expandRt
-        }
-        if (expandMz != 0) {
-            area[, "mzmin"] <- area[, "mzmin"] - expandMz
-            area[, "mzmax"] <- area[, "mzmax"] + expandMz
-        }
-        fts <- featureDefinitions(object)[rownames(area), ]
-        chrs <- as(.mse_mchromatograms_for_ranges(
-            as(object, "MsExperiment"),
-            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
-            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
-            aggregationFun = aggregationFun, msLevel = fts$ms_level,
-            chunkSize = chunkSize, progressbar = progressbar,
-            BPPARAM = BPPARAM), "XChromatograms")
-        ## Populate with chrom peaks.
-        nf <- nrow(fts)
-        js <- seq_len(ncol(chrs))
-        pks_empty <- .chromPeaks(object)[integer(), , drop = FALSE]
-        pkd_empty <- as(.chromPeakData(object)[integer(), , drop = FALSE],
-                        "DataFrame")
-        tmp <- chrs@.Data
-        slot(chrs, ".Data") <- matrix(nrow = nrow(tmp), ncol = ncol(tmp))
-        if (progressbar) {
-            message("Processing chromatographic peaks for features")
-            pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-                                                   "total (:percent) in ",
-                                                   ":elapsed"),
-                                   total = nf + 1L, clear = FALSE)
-        }
-        for (i in seq_len(nf)) {
-            idx <- fts$peakidx[[i]]
-            smpl <- .chromPeaks(object)[idx, "sample"]
-            for (j in js) {
-                keep <- smpl == j
-                tmp_i <- tmp[i, j][[1L]]
-                if (any(keep)) {
-                    slot(tmp_i, "chromPeaks", check = FALSE) <-
-                        .chromPeaks(object)[idx[keep], , drop = FALSE]
-                    slot(tmp_i, "chromPeakData",
-                         check = FALSE) <- as(
-                        object@chromPeakData[idx[keep], , drop = FALSE],
-                        "DataFrame")
-                } else {
-                    slot(tmp_i, "chromPeaks", check = FALSE) <- pks_empty
-                    slot(tmp_i, "chromPeakData", check = FALSE) <- pkd_empty
-                }
-                tmp[i, j][[1L]] <- tmp_i
-            }
-            if (progressbar)
-                pb$tick()
-        }
-        slot(chrs, ".Data", check = FALSE) <- tmp
-        ## Each row is a SINGLE feature, thus we can use the "row" column to
-        ## match chrom peaks to features.
-        fts$row <- seq_len(nf)
-        pkrow <- unname(chromPeaks(chrs)[, c("row")])
-        fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
-        colnames(chrs) <- basename(fileNames(object))
-        rownames(chrs@phenoData) <- colnames(chrs)
-        slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
-        slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
-        if (progressbar)
-            pb$tick()
-        chrs
+        switch(return.type,
+               Chromatograms = .xmse_chromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                   rtmax = rtmax, featureArea = featureArea),
+               MChromatograms = .xmse_mchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM),
+               XChromatograms = .xmse_xchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM)
+               )
     })
 
 #' @rdname XcmsExperiment

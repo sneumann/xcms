@@ -15,12 +15,13 @@ featureChromatograms(object, ...)
   expandMz = 0,
   aggregationFun = "max",
   features = character(),
-  return.type = "XChromatograms",
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   chunkSize = 2L,
   mzmin = min,
   mzmax = max,
   rtmin = min,
   rtmax = max,
+  featureArea = TRUE,
   ...,
   progressbar = TRUE,
   BPPARAM = bpparam()
@@ -67,9 +68,9 @@ of the features in \code{featureDefinitions}, feature IDs (row names of
 \code{featureDefinitions}) or a logical vector.}
 
 \item{return.type}{\code{character(1)} defining how the result should be
-returned. At present only \code{return.type = "XChromatograms"} is
-supported and the results are thus returned as an \code{\link[=XChromatograms]{XChromatograms()}}
-object.}
+returned. Supported are \code{return.type = "XChromatograms"} (the default),
+\code{return.type = "MChromatograms"} and \code{return.type = "Chromatograms"}.
+See function descriptions for details.}
 
 \item{chunkSize}{For \code{object} being an \code{XcmsExperiment}: \code{integer(1)}
 defining the number of files from which the data should be loaded at
@@ -94,6 +95,10 @@ peaks of a feature will be used.}
 from which the EIC is integrated should be defined. Defaults to
 \code{rtmax = max} thus the largest \code{"rtmax"} value for all chromatographic
 peaks of a feature will be used.}
+
+\item{featureArea}{For \code{object} being a \code{XcmsExperiment} and
+\code{return.type = FALSE}: return EICs representing data within the
+identified chromatographic peaks.}
 
 \item{progressbar}{\code{logical(1)} defining whether a progress bar is shown.}
 
@@ -121,39 +126,66 @@ specifying the column to be used to sort the samples. Can be either
 or the integrated peak area, respectively.}
 }
 \value{
-\code{\link[=XChromatograms]{XChromatograms()}} object. In future, depending on parameter
-\code{return.type}, the data might be returned as a different object.
+Depending on parameter \code{return.type}, a \link[MSnbase:MChromatograms]{MSnbase::MChromatograms},
+\link{XChromatograms} or \code{\link[Chromatograms:Chromatograms]{Chromatograms::Chromatograms()}} object. See function
+description above for details.
 }
 \description{
-Extract ion chromatograms for features in an \link{XcmsExperiment} or
-\link[=XCMSnExp-class]{XCMSnExp} object. The function returns for each feature the
-extracted ion chromatograms (along with all associated chromatographic
-peaks) in each sample. The chromatogram is extracted from the m/z - rt
-region that includes \strong{all} chromatographic peaks of a feature. By default,
-this region is defined using the range of the chromatographic peaks' m/z
-and retention times (with \code{mzmin = min}, \code{mzmax = max}, \code{rtmin = min} and
-\code{rtmax = max}). For some features, and depending on the data, the m/z and
-rt range can thus be relatively large. The boundaries of the m/z - rt
-region can also be restricted by changing parameters \code{mzmin}, \code{mzmax},
-\code{rtmin} and \code{rtmax} to a different functions, such as \code{median}.
-
-By default only chromatographic peaks associated with a feature are
-included in the returned \link{XChromatograms} object. For \code{object} being an
-\code{XCMSnExp} object parameter \code{include} allows also to return all
-chromatographic peaks with their apex position within the selected
-region (\code{include = "apex_within"}) or any chromatographic peak overlapping
-the m/z and retention time range (\code{include = "any"}).
+\code{featureChromatograms()} extracts ion chromatograms for features in an
+\link{XcmsExperiment} or \link[=XCMSnExp-class]{XCMSnExp} object. The function returns for each
+feature the extracted ion chromatograms in each sample. Based on the setting
+for parameter \code{return.type} the results are returned as a legacy
+\link[MSnbase:MChromatograms]{MSnbase::MChromatograms} or \code{\link[=XChromatograms]{XChromatograms()}} object
+(\code{return.type = "MChromatograms"} or \code{return.type = "XChromatograms"}, the
+default) or as a new \code{\link[Chromatograms:Chromatograms]{Chromatograms::Chromatograms()}} object
+(\code{return.type = "Chromatograms"}):
+\itemize{
+\item \code{return.type = "MChromatograms"}: the chromatograms are extracted from the
+m/z - rt region that includes all chromatographic peaks for a feature. The
+\code{\link[=featureArea]{featureArea()}} function is used to define this region which is defined
+using the range of the chromatographic peaks' m/z and retention times. The
+\code{MChromatograms} organizes the EICs per feature, i.e., each row in the
+returned \code{MChromatograms} corresponds to one feature with columns
+containing EICs per sample.
+\item \code{return.type = "XChromatograms"}: chromatographic data is defined as for
+\code{return.type = "MChromatograms"}, but the returned EICs contain in addition
+also the information on the individual chromatographic peaks as well as
+the feature definitions. For \code{object} being an \code{XCMSnExp} object,
+parameter \code{include} allows also to return all chromatographic peaks with
+their apex position within the selected region (\code{include = "apex_within"})
+or any chromatographic peak overlapping the m/z and retention time range
+(\code{include = "any"}).
+\item \code{return.type = "Chromatograms"}: the EICs, defined through \code{\link[=featureArea]{featureArea()}}
+as described above, are returned as a \code{\link[Chromatograms:Chromatograms]{Chromatograms()}} object which
+organizes chromatograms sequentially in a list-like structure: first all
+chromatograms for the first feature in all samples, then those from the
+second feature and so on. See examples for details.
+The feature ID is stored in the result object's \verb{$feature_id} variable.
+By default, the returned EICs represent the chromatograms of the
+\code{featureArea()}, but with \code{featureArea = FALSE} each returned chromatogram
+represents the EIC for the actual area of the individual chromatographic
+peaks assigned to the feature (same as with \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}}).
+The IDs of the chromatographic peaks can then be accessed through
+\verb{$chrom_peak_id}.
+}
 }
 \note{
-The EIC data of a feature is extracted from every sample using the same
-m/z - rt area. The EIC in a sample does thus not exactly represent the
-signal of the actually identified chromatographic peak in that sample.
-The \code{\link[=chromPeakChromatograms]{chromPeakChromatograms()}} function would allow to extract the actual
-EIC of the chromatographic peak in a specific sample. See also examples
-below.
+Some of the functionality available for \code{XChromatograms} objects is not
+yet available for \code{Chromatograms}. Thus, while the newer
+\code{Chromatograms}-based infrastructure is more efficient and powerful, for
+some operations it is suggested to still use the legacy objects (such as
+simulating a correspondence analysis through \code{\link[=plotChromPeakDensity]{plotChromPeakDensity()}}).
+
+By default the EIC data of a feature is extracted from every sample using
+the same m/z - rt area. Unless \code{featureArea = FALSE} is used, the EIC in a
+sample does thus not exactly represent the signal of the actually identified
+chromatographic peak in that sample.
 
 Parameters \code{include}, \code{filled}, \code{n} and \code{value} are only supported
 for \code{object} being an \code{XCMSnExp}.
+
+Parameter \code{featureArea} is only supported for
+\code{return.type = "Chromatograms"}.
 
 When extracting EICs from only the top \code{n} samples it can happen that one
 or more of the features specified with \code{features} are dropped because they
@@ -177,10 +209,51 @@ xdata <- groupChromPeaks(faahko_sub,
 ## Get the feature definitions
 featureDefinitions(xdata)
 
+#############################################################################
+## Extracting the feature's EICs as an `Chromatograms` object
+
+## Define the IDs for selected features from which to extract the data
+fids <- rownames(featureDefinitions(xdata))[1:3]
+chrs <- featureChromatograms(xdata, features = fids,
+    return.type = "Chromatograms")
+chrs
+
+## The data is organized by feature and sample: first all EICs for the first
+## feature in all samples, then those from the second etc
+chrs$feature_id
+
+## The sample information is stored in the object's `$dataOrigin`
+basename(chrs$dataOrigin)
+
+## Plot the data for the first feature
+library(Chromatograms)
+
+## Separately
+plotChromatograms(chrs[chrs$feature_id == fids[1]])
+
+## In a single plot
+plotChromatogramsOverlay(chrs[chrs$feature_id == fids[1]])
+
+## Extract the EICs for the individual chromatographic peaks associated to
+## each feature:
+chrs <- featureChromatograms(xdata, features = fids,
+    return.type = "Chromatograms", featureArea = FALSE)
+chrs
+
+## In contrast to `featureArea = TRUE`, where one (and only one) EIC per
+## sample is guaranteed, for `featureArea = FALSE` there can be more than
+## one chromatogram per sample (or no chromatogram per sample), representing
+## exactly the association between identified chromatographic peaks and
+## features
+chrs$feature_id
+chrs$chrom_peak_id
+
+#############################################################################
+## Using the legacy `MChromatogtrams`/`XChromatograms`
+
 ## Extract ion chromatograms for the first 3 features. Parameter
 ## `features` can be either the feature IDs or feature indices.
-chrs <- featureChromatograms(xdata,
-    features = rownames(featureDefinitions)[1:3])
+chrs <- featureChromatograms(xdata, features = fids)
 
 ## Plot the EIC for the first feature using different colors for each file.
 plot(chrs[1, ], col = c("red", "green", "blue"))

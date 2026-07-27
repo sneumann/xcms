@@ -1252,12 +1252,16 @@
 #' filtering from either a `XcmsExperiment` or `XCMSnExp` object
 #'
 #' @noRd
-.chromPeaks <- function(object) {
+.chromPeaks <- function(object, columns = character()) {
     if (inherits(object, "XcmsExperiment")) {
-        if (is(object, "XcmsExperimentHdf5"))
-            chromPeaks(object)
-        else
-            object@chromPeaks
+        if (is(object, "XcmsExperimentHdf5")) {
+                chromPeaks(object, columns)
+        } else {
+            if (length(columns))
+                object@chromPeaks[, columns, drop = FALSE]
+            else
+                object@chromPeaks
+        }
     }
     else chromPeaks(object@msFeatureData)
 }
@@ -1401,4 +1405,174 @@ XcmsExperiment <- function() {
     n@.processHistory <- from@processHistory
     validObject(n)
     n
+}
+
+#' Extract `Chromatograms` for features.
+#'
+#' Called in `featureChromatograms,XcmsExperiment`.
+#'
+#' @param featureArea `logical(1)` whether each chromatogram should represent
+#'     the signal found in the *feature area* (`featureArea = TRUE`, the
+#'     default) or the actual EIC of the assigned chromatographic peak
+#'     (`featureArea = FALSE`).
+#'
+#' For all other parameters see `featureChromatograms,XcmsExperiment`.
+#'
+#' @return `Chromatograms` object with additional variables `"feature_id"` and
+#'     for `featureArea = FALSE` also `"chrom_peak_id"`.
+#'
+#' @noRd
+.xmse_chromatograms_for_features <- function(x, expandRt = 0.0, expandMz = 0.0,
+                                             aggregationFun = "max",
+                                             features = character(),
+                                             mzmin = min, mzmax = max,
+                                             rtmin = min, rtmax = max,
+                                             featureArea = TRUE) {
+    if (featureArea) {
+        area <- featureArea(x, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                            rtmax = rtmax, features = features)
+        if (expandRt != 0) {
+            area[, "rtmin"] <- area[, "rtmin"] - expandRt
+            area[, "rtmax"] <- area[, "rtmax"] + expandRt
+        }
+        if (expandMz != 0) {
+            area[, "mzmin"] <- area[, "mzmin"] - expandMz
+            area[, "mzmax"] <- area[, "mzmax"] + expandMz
+        }
+        fts <- featureDefinitions(x)[rownames(area), , drop = FALSE]
+        chrs <- .mse_chromatograms_for_ranges(
+            as(x, "MsExperiment"),
+            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
+            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
+            aggregationFun = aggregationFun, msLevel = fts$ms_level)
+        chrs$feature_id <- rep(rownames(area), each = length(fileNames(x)))
+    } else {
+        fts <- featureDefinitions(x)
+        if (!length(features))
+            features <- rownames(fts)
+        else if (!all(features %in% rownames(fts)))
+            stop("One or more of the provided feature IDs in 'features' can",
+                 " not be found", call. = FALSE)
+        pk_idx <- fts[features, "peakidx"]
+        ls <- lengths(pk_idx)
+        pk_idx <- unlist(pk_idx, use.names = FALSE)
+        pks <- .chromPeaks(x, c("rtmin", "rtmax", "mzmin",
+                                "mzmax", "sample"))[pk_idx, , drop = FALSE]
+        pkd <- .chromPeakData(x)[pk_idx, , drop = FALSE]
+        chrs <- .mse_chromatograms_for_peaks(
+            as(x, "MsExperiment"), pks = pks, pkd = pkd,
+            aggregationFun = aggregationFun,
+            expandRt = expandRt, expandMz = expandMz)
+        chrs$feature_id <- rep(features, ls)
+        chrs$chrom_peak_id <- rownames(pks)
+    }
+    chrs
+}
+
+#' Extract chromatograms for features returned as a `MChromatograms`.
+#'
+#' Called in `featureChromatograms,XcmsExperiment` and
+#' `.xmse_xchromatograms_for_features()`.
+#'
+#' For all parameters see `featureChromatograms,XcmsExperiment`.
+#'
+#' @noRd
+.xmse_mchromatograms_for_features <- function(x, expandRt = 0.0, expandMz = 0.0,
+                                              aggregationFun = "max",
+                                              features = character(),
+                                              mzmin = min, mzmax = max,
+                                              rtmin = min, rtmax = max,
+                                              chunkSize = 2L, ...,
+                                              progressbar = TRUE,
+                                              BPPARAM = bpparam()) {
+    area <- featureArea(x, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                        rtmax = rtmax, features = features)
+    if (expandRt != 0) {
+        area[, "rtmin"] <- area[, "rtmin"] - expandRt
+        area[, "rtmax"] <- area[, "rtmax"] + expandRt
+    }
+    if (expandMz != 0) {
+        area[, "mzmin"] <- area[, "mzmin"] - expandMz
+        area[, "mzmax"] <- area[, "mzmax"] + expandMz
+    }
+    fts <- featureDefinitions(x)[rownames(area), , drop = FALSE]
+    chrs <- .mse_mchromatograms_for_ranges(
+        as(x, "MsExperiment"), rt = area[, c("rtmin", "rtmax"), drop = FALSE],
+        mz = area[, c("mzmin", "mzmax"), drop = FALSE],
+        aggregationFun = aggregationFun, msLevel = fts$ms_level,
+        chunkSize = chunkSize, progressbar = progressbar, BPPARAM = BPPARAM)
+    chrs@featureData$feature_id <- rownames(area)
+    chrs
+}
+
+#' Extract chromatograms for features returned as a `XChromatograms`.
+#'
+#' Called in `featureChromatograms,XcmsExperiment`.
+#'
+#' For all parameters see `featureChromatograms,XcmsExperiment`.
+#'
+#' @noRd
+.xmse_xchromatograms_for_features <- function(x, expandRt = 0.0, expandMz = 0.0,
+                                              aggregationFun = "max",
+                                              features = character(),
+                                              mzmin = min, mzmax = max,
+                                              rtmin = min, rtmax = max,
+                                              chunkSize = 2L, ...,
+                                              progressbar = TRUE,
+                                              BPPARAM = bpparam()) {
+    chrs <- as(.xmse_mchromatograms_for_features(
+        x, expandRt = expandRt, expandMz = expandMz,
+        aggregationFun = aggregationFun, features = features, mzmin = mzmin,
+        mzmax = mzmax, rtmin = rtmin, rtmax = rtmax, chunkSize = chunkSize,
+        progressbar = progressbar, BPPARAM = BPPARAM), "XChromatograms")
+    ## Populate with chrom peaks.
+    fts <- featureDefinitions(x)[fData(chrs)$feature_id, , drop = FALSE]
+    nf <- nrow(fts)
+    js <- seq_len(ncol(chrs))
+    pks_empty <- .chromPeaks(x)[integer(), , drop = FALSE]
+    pkd_empty <- as(.chromPeakData(x)[integer(), , drop = FALSE], "DataFrame")
+    tmp <- chrs@.Data
+    slot(chrs, ".Data") <- matrix(nrow = nrow(tmp), ncol = ncol(tmp))
+    if (progressbar) {
+        message("Processing chromatographic peaks for features")
+        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
+                                               "total (:percent) in ",
+                                               ":elapsed"),
+                               total = nf + 1L, clear = FALSE)
+    }
+    for (i in seq_len(nf)) {
+        idx <- fts$peakidx[[i]]
+        smpl <- .chromPeaks(x)[idx, "sample"]
+        for (j in js) {
+            keep <- smpl == j
+            tmp_i <- tmp[i, j][[1L]]
+            if (any(keep)) {
+                slot(tmp_i, "chromPeaks", check = FALSE) <-
+                    .chromPeaks(x)[idx[keep], , drop = FALSE]
+                slot(tmp_i, "chromPeakData",
+                     check = FALSE) <- as(
+                    x@chromPeakData[idx[keep], , drop = FALSE],
+                    "DataFrame")
+            } else {
+                slot(tmp_i, "chromPeaks", check = FALSE) <- pks_empty
+                slot(tmp_i, "chromPeakData", check = FALSE) <- pkd_empty
+            }
+            tmp[i, j][[1L]] <- tmp_i
+        }
+        if (progressbar)
+            pb$tick()
+    }
+    slot(chrs, ".Data", check = FALSE) <- tmp
+    ## Each row is a SINGLE feature, thus we can use the "row" column to
+    ## match chrom peaks to features.
+    fts$row <- seq_len(nf)
+    pkrow <- unname(chromPeaks(chrs)[, c("row")])
+    fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
+    colnames(chrs) <- basename(fileNames(x))
+    rownames(chrs@phenoData) <- colnames(chrs)
+    slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
+    slot(chrs, ".processHistory", check = FALSE) <- x@processHistory
+    if (progressbar)
+        pb$tick()
+    chrs
 }
