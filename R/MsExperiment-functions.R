@@ -613,19 +613,22 @@
 #'     an empty `data.frame` is returned.
 #'
 #' @noRd
-.chrom_data_for_ranges <- function(rt, mz, dataOrigin, msLevel = 1L,
+.chrom_data_for_ranges <- function(rt = matrix(nrow = 0, ncol = 2),
+                                   mz = matrix(nrow = 0, ncol = 2),
+                                   dataOrigin = character(), msLevel = 1L,
                                    isolationWindowTargetMz = NULL) {
-    if (!nrow(rt))
-        return(data.frame())
+    m <- nrow(rt)
     n <- length(dataOrigin)
-    if (length(msLevel) != n)
-        rep(msLevel[1L], n)
+    if (!m)
+        return(data.frame())
+    if (length(msLevel) != m)
+        rep(msLevel[1L], m)
     res <- data.frame(rtMin = rep(rt[, 1L], each = n),
                       rtMax = rep(rt[, 2L], each = n),
                       mzMin = rep(mz[, 1L], each = n),
                       mzMax = rep(mz[, 2L], each = n),
-                      dataOrigin = dataOrigin,
-                      msLevel = msLevel)
+                      dataOrigin = rep(dataOrigin, m),
+                      msLevel = rep(msLevel, each = n))
     if (length(isolationWindowTargetMz))
         res$isolationWindowTargetMz <- rep(isolationWindowTargetMz, each = n)
     res
