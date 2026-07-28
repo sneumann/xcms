@@ -295,12 +295,19 @@
 #' - `featureChromatograms()`: extract ion chromatograms (EICs) for each
 #'   feature in `object`. See [featureChromatograms()] for more details.
 #'
+#' - `featureChromPeaks()`: get the mapping between features and chromatographic
+#'   peaks. See [featureChromPeaks()] for details.
+#'
 #' - `featureDefinitions()`: returns a `data.frame` with feature definitions or
 #'   an empty `data.frame` if no correspondence analysis results are present.
 #'   Parameters `msLevel`, `mz`, `ppm` and `rt` allow to define subsets of
 #'   feature definitions that should be returned with the parameter `type`
 #'   defining how these parameters should be used to subset the returned
 #'   `data.frame`. See parameter descriptions for details.
+#'
+#' - `featurePeakidx()`: get the indices of chromatographic peaks in the
+#'   `chromPeaks()` matrix assigned to each feature. See [featurePeakidx()] for
+#'   details.
 #'
 #' - `featureSpectra()`: returns a [Spectra::Spectra()] or `List` of `Spectra`
 #'   with (MS1 or MS2) spectra associated to each feature's chromatographic
@@ -1687,6 +1694,26 @@ setMethod(
         .subset_feature_definitions(fdef, mz = mz, rt = rt,
                                     ppm = ppm, type = type)
     })
+
+#' @rdname featureChromPeaks
+setMethod("featurePeakidx", "XcmsResult", function(object,
+                                                   msLevel = integer()) {
+    fd <- featureDefinitions(object, msLevel = msLevel)
+    res <- fd$peakidx
+    names(res) <- rownames(fd)
+    res
+})
+
+#' @rdname featureChromPeaks
+setMethod("featureChromPeaks", "XcmsResult", function(object,
+                                                      msLevel = integer()) {
+    pidx <- featurePeakidx(object, msLevel = msLevel)
+    data.frame(
+        feature_id = rep(rownames(featureDefinitions(
+            object, msLevel = msLevel)), lengths(pidx)),
+        chrom_peak_id = rownames(chromPeaks(
+            object, msLevel = msLevel))[unlist(pidx)])
+})
 
 #' @rdname XcmsExperiment
 setMethod(

@@ -411,7 +411,7 @@
   msLevel = 1L,
   chunkSize = 2L,
   isolationWindowTargetMz = NULL,
-  return.type = c("XChromatograms", "MChromatograms"),
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
   BPPARAM = bpparam()
@@ -452,12 +452,13 @@
   expandMz = 0,
   aggregationFun = "max",
   features = character(),
-  return.type = "XChromatograms",
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   chunkSize = 2L,
   mzmin = min,
   mzmax = max,
   rtmin = min,
   rtmax = max,
+  featureArea = TRUE,
   ...,
   progressbar = TRUE,
   BPPARAM = bpparam()

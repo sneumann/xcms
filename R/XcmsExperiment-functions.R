@@ -1232,7 +1232,7 @@
 #' @noRd
 .chromPeakData <- function(object, msLevel = integer(), columns = character()) {
     if (is(object, "XcmsExperimentHdf5"))
-        return(chromPeakData(object, msLevel = msLevel,
+        return(chromPeakData(object, msLevel = msLevel, columns = columns,
                              return.type = "data.frame"))
     if (length(columns)) {
         if (!all(columns %in% colnames(object@chromPeakData)))
@@ -1255,7 +1255,7 @@
 .chromPeaks <- function(object, columns = character()) {
     if (inherits(object, "XcmsExperiment")) {
         if (is(object, "XcmsExperimentHdf5")) {
-                chromPeaks(object, columns)
+                chromPeaks(object, columns = columns)
         } else {
             if (length(columns))
                 object@chromPeaks[, columns, drop = FALSE]
@@ -1447,18 +1447,19 @@ XcmsExperiment <- function() {
             aggregationFun = aggregationFun, msLevel = fts$ms_level)
         chrs$feature_id <- rep(rownames(area), each = length(fileNames(x)))
     } else {
-        fts <- featureDefinitions(x)
+        pidx <- featurePeakidx(x)
         if (!length(features))
-            features <- rownames(fts)
-        else if (!all(features %in% rownames(fts)))
+            features <- names(pidx)
+        else if (!all(features %in% names(pidx)))
             stop("One or more of the provided feature IDs in 'features' can",
                  " not be found", call. = FALSE)
-        pk_idx <- fts[features, "peakidx"]
-        ls <- lengths(pk_idx)
-        pk_idx <- unlist(pk_idx, use.names = FALSE)
-        pks <- .chromPeaks(x, c("rtmin", "rtmax", "mzmin",
-                                "mzmax", "sample"))[pk_idx, , drop = FALSE]
-        pkd <- .chromPeakData(x)[pk_idx, , drop = FALSE]
+        pidx <- pidx[features]
+        ls <- lengths(pidx)
+        pidx <- unlist(pidx, use.names = FALSE)
+        pks <- .chromPeaks(
+            x, columns = c("rtmin", "rtmax", "mzmin",
+                           "mzmax", "sample"))[pidx, , drop = FALSE]
+        pkd <- chromPeakData(x, return.type = "data.frame")[pidx, ,drop = FALSE]
         chrs <- .mse_chromatograms_for_peaks(
             as(x, "MsExperiment"), pks = pks, pkd = pkd,
             aggregationFun = aggregationFun,

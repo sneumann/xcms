@@ -3,11 +3,14 @@
 ## Changes in version 4.11.2
 
 - Add support to return chromatographic data as a `Chromatograms` object with
-  the `chromatogram()` method from `MsExperiment` and `XcmsExperiment` objects.
+  the `chromatogram()` method from `MsExperiment`, `XcmsExperiment` and
+  `XcmsExperimentHdf5` objects.
 - Add support for `Chromatograms` to the `chromPeakChromatograms()` method for
-  `XcmsExperiment` objects.
+  `XcmsExperiment` and `XcmsExperimentHdf5` objects.
 - Add support for `Chromatograms` to the `featureChromatograms()` method for
-  `XcmsExperiment` objects.
+  `XcmsExperiment` and `XcmsExperimentHdf5` objects.
+- Add new methods `featureChromPeaks()` and `featurePeakidx()` to access the
+  mapping between features and chromatographic peaks.
 
 ## Changes in version 4.11.1
 

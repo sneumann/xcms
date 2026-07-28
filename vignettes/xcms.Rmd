@@ -1009,7 +1009,9 @@ Results from the correspondence analysis can be accessed with the
 frame with general information on each of the defined features, with each row
 being one feature and columns providing information on the median m/z and
 retention time as well as the indices of the chromatographic peaks assigned to
-the feature in column `"peakidx"`. Below we show the information on the first 6
+the feature in column `"peakidx"`. This mapping between features and
+chromatographic peaks can also be extracted using the `featureChromPeaks()` and
+`featurePeakidx()` functions. Below we show the information on the first 6
 features.
 
 ```{r}

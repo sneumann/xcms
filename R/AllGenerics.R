@@ -954,10 +954,76 @@ setGeneric("featureArea", function(object, ...) standardGeneric("featureArea"))
 setGeneric("featureChromatograms", function(object, ...)
     standardGeneric("featureChromatograms"))
 
+#' @title Feature to chromatographic peak mapping
+#'
+#' @description
+#'
+#' During the correspondence step in the preprocessing, chromatographic peaks
+#' get assigned (grouped) to features. The abundances of these resulting LC-MS
+#' features are supposed to represent signal from the same ion across all
+#' analyzed samples. Depending on the correspondence analysis method used,
+#' multiple chromatographic peaks (also eventually from the **same** sample) are
+#' assigned to a feature. This mapping between features and chromatographic
+#' peaks is (for [XcmsExperiment] and [XCMSnExp] object) stored in the
+#' `"peakidx"` column of the [featureDefinitions()] data frame. Alternatively,
+#' the mapping can be extracted from an *xcms* result object using the
+#' functions:
+#'
+#' - `featureChromPeaks()`: returns a two-column `data.frame` with the IDs of
+#'   the features and the IDs of the associated chromatographic peaks. Each
+#'   row in this `data.frame` represents the mapping of one chromatographic
+#'   peak with one feature. The order of the features in the `data.frame`
+#'   matches the order of the features in [featureDefinitions()].
+#'
+#' - `featurePeakidx()`: returns a named `list` of `integer` indices of the
+#'   rows in the [chromPeaks()] matrix that are assigned to a feature. The names
+#'   of the `list` are the feature IDs.
+#'   The length and order of the `list` matches the number of rows and order of
+#'   features in [featureDefinitions()].
+#'
+#' @param object An *xcms* result object with correspondence analysis results
+#'     being present.
+#'
+#' @param msLevel Optional `integer` to restrict to features from a certain MS
+#'     level.
+#'
+#' @param ... Optional parameters. Currently ignored.
+#'
+#' @return See description above.
+#'
+#' @export
+#'
+#' @examples
+#'
+#' ## Load preprocessing results
+#' library(MsExperiment)
+#' xmse <- loadXcmsData()
+#'
+#' ## Get the mapping between features and chromatographic peaks
+#' map <- featureChromPeaks(xmse)
+#'
+#' head(map)
+#'
+#' ## Column `"feature_id"` contains the IDs for the features defined in
+#' ## `featureDefinitions()`
+#' featureDefinitions(xmse) |> head()
+#'
+#' ## Column `"chrom_peak_id"` contains the IDs of the chromatographic peaks
+#' chromPeaks(xmse) |> head()
+#'
+#' ## Alternatively, get the mapping as a `list` of `integer` indices
+#' featurePeakidx(xmse) |> head()
+setGeneric("featureChromPeaks", function(object, ...)
+    standardGeneric("featureChromPeaks"))
+
 setGeneric("featureDefinitions", function(object, ...)
     standardGeneric("featureDefinitions"))
 setGeneric("featureDefinitions<-", function(object, value)
     standardGeneric("featureDefinitions<-"))
+#' @rdname featureChromPeaks
+setGeneric("featurePeakidx", function(object, ...)
+    standardGeneric("featurePeakidx"))
+
 
 #' @title Extract spectra associated with features
 #'

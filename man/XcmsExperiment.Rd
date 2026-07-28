@@ -677,12 +677,17 @@ all chromatographic peaks assigned to that feature. Parameter
 \code{minMzWidthPpm} (default \verb{minMzWidthPpm = 0.01) can be used to define a minimal required (total) m/z width expressed in ppm of the features' m/z. With a }minMzWidthPpm\verb{larger than 0 the reported}"mzmin"\verb{is the minimum of the determined minimal m/z for a feature (based on parameter}mzmin\verb{) and the m/z of the feature minus }minMzWidthPpm / 2\verb{ppm of the feature's m/z value. The reported}"mzmax"\verb{is calculated in the same way. Parameter}features\verb{allows to extract these values for selected features only. Parameters}mzmin\verb{, }mzmax\verb{, }rtmin\code{and}rtmax\verb{allow to define the function to calculate the reported}"mzmin"\verb{, }"mzmax"\verb{, }"rtmin"\code{and}"rtmax"` values.
 \item \code{featureChromatograms()}: extract ion chromatograms (EICs) for each
 feature in \code{object}. See \code{\link[=featureChromatograms]{featureChromatograms()}} for more details.
+\item \code{featureChromPeaks()}: get the mapping between features and chromatographic
+peaks. See \code{\link[=featureChromPeaks]{featureChromPeaks()}} for details.
 \item \code{featureDefinitions()}: returns a \code{data.frame} with feature definitions or
 an empty \code{data.frame} if no correspondence analysis results are present.
 Parameters \code{msLevel}, \code{mz}, \code{ppm} and \code{rt} allow to define subsets of
 feature definitions that should be returned with the parameter \code{type}
 defining how these parameters should be used to subset the returned
 \code{data.frame}. See parameter descriptions for details.
+\item \code{featurePeakidx()}: get the indices of chromatographic peaks in the
+\code{chromPeaks()} matrix assigned to each feature. See \code{\link[=featurePeakidx]{featurePeakidx()}} for
+details.
 \item \code{featureSpectra()}: returns a \code{\link[Spectra:Spectra]{Spectra::Spectra()}} or \code{List} of \code{Spectra}
 with (MS1 or MS2) spectra associated to each feature's chromatographic
 peaks. See \code{\link[=featureSpectra]{featureSpectra()}} for more details and available parameters.

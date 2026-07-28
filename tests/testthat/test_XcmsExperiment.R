@@ -1857,3 +1857,18 @@ test_that("featureChromatograms,XcmsExperiment different return.type works", {
     expect_equal(lapply(a[2, ], intensity), intensity(c[4:6]))
     expect_equal(intensity(c[1:3]), intensity(c[10:12]))
 })
+
+test_that("featureChromPeaks works", {
+    ref <- featureDefinitions(xmseg)
+    res <- featureChromPeaks(xmseg)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("feature_id", "chrom_peak_id"))
+    expect_equal(res$feature_id, rep(rownames(ref), lengths(ref$peakidx)))
+    expect_equal(res$chrom_peak_id,
+                 rownames(chromPeaks(xmseg))[unlist(ref$peakidx)])
+})
+
+test_that("featurePeakidx works", {
+    expect_equal(unname(featurePeakidx(xmseg)),
+                 featureDefinitions(xmseg)$peakidx)
+})
