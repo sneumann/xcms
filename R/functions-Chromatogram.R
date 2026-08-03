@@ -127,7 +127,8 @@
                 idx_max <- which.min(
                     abs(rtime(x) - pks_new[current_peak, "rtmax"]))
                 peak_width <- (pks_new[current_peak, "rtmax"] -
-                               pks_new[current_peak, "rtmin"]) / (idx_max - idx_min)
+                               pks_new[current_peak, "rtmin"]) /
+                    max(1L, idx_max - idx_min)
                 ## Calculate into as done in centWave.
                 pks_new[current_peak, "into"] <-
                     sum(intensity(x)[rtime(x) >= pks_new[current_peak, "rtmin"] &

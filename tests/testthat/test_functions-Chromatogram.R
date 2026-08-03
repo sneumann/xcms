@@ -64,3 +64,16 @@ test_that(".chrom_merge_neighboring_peaks works", {
     expect_equal(unname(res$chromPeaks[1, "into"]),
                  unname(chromPeaks(xchr)[2, "into"]))
 })
+
+test_that("merging peaks spanning a single scan does not give Inf into", {
+    chr <- XChromatogram(rtime = c(10, 20, 30), intensity = c(100, 900, 100))
+    reqn <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","sample")
+    pks  <- matrix(0, nrow = 2, ncol = length(reqn), dimnames = list(NULL, reqn))
+    pks[1, ] <- c(100,100,100, 20, 18, 21, 900, 900, 10, 1)
+    pks[2, ] <- c(100,100,100, 21, 20, 22, 500, 500, 10, 1)
+    chromPeaks(chr) <- pks
+    xchr <- XChromatograms(list(chr), nrow = 1, ncol = 1)
+    ref <- refineChromPeaks(xchr, MergeNeighboringPeaksParam(expandRt = 4,
+                                                             minProp = 0.01))
+    expect_true(all(is.finite(chromPeaks(ref)[, "into"])))
+})

@@ -287,7 +287,7 @@
                 rtmin <- pks_new[current_peak, "rtmin"]
                 rtmax <- max(pks[i, "rtmax"], pks_new[current_peak, "rtmax"])
                 idx <- which(rt >= rtmin & rt <= rtmax)
-                peak_width <- (rtmax - rtmin) / (idx[length(idx)] - idx[1L])
+                peak_width <- (rtmax - rtmin) / max(1L, idx[length(idx)] - idx[1L])
                 pkm <- do.call(rbind, x[idx])
                 pks_new[current_peak, c("rtmax", "mzmin", "mzmax", "into")] <-
                     c(rtmax, range(pkm[, "mz"], na.rm = TRUE),
