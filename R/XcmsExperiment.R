@@ -1884,7 +1884,7 @@ setMethod(
 setMethod(
     "filterFeatureDefinitions", "XcmsExperiment",
     function(object, features = integer()) {
-        if (!length(features))
+        if (missing(features))
             return(object)
         if (!hasFeatures(object))
             stop("No feature definitions present! Please run ",

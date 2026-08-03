@@ -3770,7 +3770,7 @@ setMethod(
 setMethod(
     "filterFeatureDefinitions", "XCMSnExp",
     function(object, features = integer()) {
-        if (!length(features))
+        if (missing(features))
             return(object)
         if (!hasFeatures(object))
             stop("No feature definitions present! Run 'groupChromPeaks' first.")
