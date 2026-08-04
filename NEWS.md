@@ -11,6 +11,8 @@
   `XcmsExperiment` and `XcmsExperimentHdf5` objects.
 - Add new methods `featureChromPeaks()` and `featurePeakidx()` to access the
   mapping between features and chromatographic peaks.
+- `loadXcmsData()` updates parameter class definitions in the object's *process
+  history*.
 
 ## Changes in version 4.11.1
 

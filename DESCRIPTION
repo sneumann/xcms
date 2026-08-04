@@ -68,7 +68,7 @@ Imports:
     RColorBrewer,
     MetaboCoreUtils (>= 1.11.2),
     data.table,
-    Chromatograms (>= 1.3.2)
+    Chromatograms (>= 1.3.3)
 Suggests:
     BiocStyle,
     caTools,
