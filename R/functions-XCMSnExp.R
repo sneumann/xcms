@@ -285,15 +285,18 @@ dropGenericProcessHistory <- function(x, fun) {
             if (any(!is.na(mtx[, 3]))) {
                 ## Area = sum(intensities) * rt_width, where rt_width is the mean
                 ## scan spacing = (actual rt span of the scans in the window) /
-                ## (number of those scans - 1). Using the *actual* data span
-                ## (rather than the requested window rtr[2] - rtr[1]) keeps the
-                ## filled 'into' consistent with centWave detection, which
-                ## derives pwid from the peak's actual scan times, and avoids
-                ## inflating 'into' when the feature window overhangs the
-                ## sample's local scan coverage. max(1, ...) guards single-scan.
-                rt_in <- rtim[rtim >= rtr[1] & rtim <= rtr[2]]
+                ## (number of those scans - 1). Using the actual span of the
+                ## scans in the window (rather than the requested window
+                ## rtr[2] - rtr[1]) keeps the filled 'into' consistent with
+                ## centWave detection, which derives pwid from the peak's actual
+                ## scan times, and avoids inflating 'into' when the feature
+                ## window overhangs the sample's local scan coverage. Numerator
+                ## and denominator use the same scan set (all scans in the
+                ## window); max(1, ...) guards the single-scan case.
+                sel <- which(rtim >= rtr[1] & rtim <= rtr[2])
                 res[i, "into"] <- sum(mtx[, 3L], na.rm = TRUE) *
-                    (diff(range(rt_in)) / max(1, (length(rt_in) - 1)))
+                    ((rtim[sel[length(sel)]] - rtim[sel[1L]]) /
+                     max(1, (length(sel) - 1)))
                 maxi <- which.max(mtx[, 3L])
                 res[i, c("rt", "maxo")] <- mtx[maxi[1], c(1, 3)]
                 res[i, c("rtmin", "rtmax")] <- rtr

@@ -557,7 +557,8 @@
                 res[i, c("rt", "mz", "maxo", "into")] <- c(
                     rts[maxi], mmz, mat[maxi, 2L],
                     sum(mat[, 2L], na.rm = TRUE) *
-                    (diff(range(rt[keep])) / max(1L, (length(keep) - 1L)))
+                    ((rt[keep[length(keep)]] - rt[keep[1L]]) /
+                     max(1L, (length(keep) - 1L)))
                 )
                 if ("beta_cor" %in% cn) {
                     res[i, c("beta_cor", "beta_snr")] <- .get_beta_values(
