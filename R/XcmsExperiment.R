@@ -1123,7 +1123,7 @@ setMethod(
 
 #' @rdname XcmsExperiment
 setReplaceMethod("chromPeakData", "XcmsExperiment", function(object, value) {
-    object@chromPeakData <- value
+    object@chromPeakData <- as.data.frame(value)
     object
 })
 

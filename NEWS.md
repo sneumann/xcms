@@ -13,6 +13,8 @@
   mapping between features and chromatographic peaks.
 - `loadXcmsData()` updates parameter class definitions in the object's *process
   history*.
+- Fix `chromPeakData<-` for `XcmsExperiment` not supporting a `DataFrame` as
+  input (issue #839).
 
 ## Changes in version 4.11.1
 

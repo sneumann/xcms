@@ -59,6 +59,11 @@ test_that("findChromPeaks,MsExperiment et al works", {
     expect_s4_class(chromPeakData(xmse), "DataFrame")
     expect_true(nrow(chromPeakData(xmse, 2:3)) == 0)
     expect_true(is.integer(chromPeakData(res)$ms_level))
+    ## chromPeakData<-
+    expect_no_error(chromPeakData(res) <- xmse@chromPeakData)
+    expect_equal(res@chromPeakData, xmse@chromPeakData)
+    expect_no_error(chromPeakData(res) <- chromPeakData(res))
+    expect_equal(res@chromPeakData, xmse@chromPeakData)
 
     ## dropChromPeaks
     rres <- dropChromPeaks(res)
