@@ -293,7 +293,7 @@ dropGenericProcessHistory <- function(x, fun) {
                 ## window overhangs the sample's local scan coverage. Numerator
                 ## and denominator use the same scan set (all scans in the
                 ## window); max(1, ...) guards the single-scan case.
-                sel <- which(rtim >= rtr[1] & rtim <= rtr[2])
+                sel <- which(between(rtim, rtr))
                 res[i, "into"] <- sum(mtx[, 3L], na.rm = TRUE) *
                     ((rtim[sel[length(sel)]] - rtim[sel[1L]]) /
                      max(1, (length(sel) - 1)))
