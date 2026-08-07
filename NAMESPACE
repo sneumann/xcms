@@ -468,6 +468,7 @@ export("BlankFlag")
 
 ## HDF5 storage mode
 exportClasses("XcmsExperimentHdf5")
+export("XcmsExperimentHdf5")
 
 ## Chromatograms
 importMethodsFrom("Chromatograms", "Chromatograms")

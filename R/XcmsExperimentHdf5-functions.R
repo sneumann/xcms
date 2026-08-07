@@ -42,6 +42,11 @@ toXcmsExperiment <- function(object, ...) {
     .h5_to_xcms_experiment(object)
 }
 
+#' @rdname XcmsExperimentHdf5
+XcmsExperimentHdf5 <- function() {
+    new("XcmsExperimentHdf5")
+}
+
 #' Coerce from XcmsExperimentHdf5 to XcmsExperiment
 #'
 #' @noRd

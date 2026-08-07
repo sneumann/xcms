@@ -16,6 +16,8 @@ toXcmsExperimentHdf5(object, hdf5File = tempfile())
 
 toXcmsExperiment(object, ...)
 
+XcmsExperimentHdf5()
+
 \S4method{chromPeakData}{XcmsExperimentHdf5}(
   object,
   msLevel = integer(),
