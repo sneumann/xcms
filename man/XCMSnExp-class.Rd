@@ -43,6 +43,7 @@
 \alias{dropAdjustedRtime,XCMSnExp-method}
 \alias{dropAdjustedRtime}
 \alias{setAs}
+\alias{coerce,XCMSnExp,xcmsSet-method}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
@@ -125,6 +126,8 @@ processHistoryTypes()
 \S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjustedRtime = FALSE, dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
+
+\S4method{coerce}{XCMSnExp,xcmsSet}(from, to = "xcmsSet", strict = TRUE)
 
 \S4method{profMat}{XCMSnExp}(
   object,
@@ -251,6 +254,12 @@ history steps to remove. By default \code{dropLastN = -1}, dropping the
 chromatographic peaks removes all process history steps related to peak
 grouping. Setting e.g. \code{dropLastN = 1} will only remove the most
 recent peak grouping related process history step.}
+
+\item{from}{Original object.}
+
+\item{to}{\code{character(1)} defining the object to cast to.}
+
+\item{strict}{Ignored.}
 
 \item{param}{A \code{\link[=CentWaveParam]{CentWaveParam()}}, \code{\link[=MatchedFilterParam]{MatchedFilterParam()}},
 \code{\link[=MassifquantParam]{MassifquantParam()}}, \code{\link[=MSWParam]{MSWParam()}} or

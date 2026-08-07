@@ -2,6 +2,9 @@
 #'
 #' @aliases XcmsExperiment-class filterChromPeaks
 #' @aliases featureArea quantify
+#' @aliases coerce,XcmsExperiment,xcmsSet-method
+#' @aliases coerce,XcmsExperiment,XCMSnExp-method
+#' @aliases coerce,XCMSnExp,XcmsExperiment-method
 #'
 #' @description
 #'

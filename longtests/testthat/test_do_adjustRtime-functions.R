@@ -17,7 +17,7 @@ test_that("getPeakGroupsRtMatrix works", {
 
 test_that("do_adjustRtime_peakGroups works", {
     xs <- faahko
-    xsg <- group(xs)
+    xsg <- xcms::group(xs)
     misSamp <- 1
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
@@ -98,7 +98,7 @@ test_that("do_adjustRtime_peakGroups works", {
 test_that("applyRtAdjustment works", {
     xs <- faahko
     ## group em.
-    xsg <- group(xs)
+    xsg <- xcms::group(xs)
     ## align em.
     xsa <- retcor(xsg, method = "peakgroups")
     pksAdj <- .applyRtAdjToChromPeaks(peaks(xsg),

@@ -1510,12 +1510,26 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 
 #' @aliases setAs
 #'
+#' @aliases coerce,XCMSnExp,xcmsSet-method
+#'
+#' @param from Original object.
+#'
+#' @param to `character(1)` defining the object to cast to.
+#'
+#' @param strict Ignored.
+#'
 #' @rdname XCMSnExp-class
 #'
 #' @name XCMSnExp-class
 setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
 #' @rdname XcmsExperiment
+#'
+#' @param from Original object.
+#'
+#' @param to `character(1)` defining the object to cast to.
+#'
+#' @param strict Ignored.
 #'
 #' @name XcmsExperiment
 setAs(from = "XcmsExperiment", to = "xcmsSet", def = .XCMSnExp2xcmsSet)

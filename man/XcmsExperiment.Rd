@@ -21,6 +21,9 @@
 \alias{filterChromPeaks}
 \alias{featureArea}
 \alias{quantify}
+\alias{coerce,XcmsExperiment,xcmsSet-method}
+\alias{coerce,XcmsExperiment,XCMSnExp-method}
+\alias{coerce,XCMSnExp,XcmsExperiment-method}
 \alias{c.XcmsExperiment}
 \alias{[,XcmsExperiment,ANY,ANY,ANY-method}
 \alias{filterIsolationWindow,XcmsExperiment-method}
@@ -210,6 +213,12 @@ filterFeatureDefinitions(object, ...)
   keepFeatures = FALSE,
   ...
 )
+
+\S4method{coerce}{XcmsExperiment,xcmsSet}(from, to = "xcmsSet", strict = TRUE)
+
+\S4method{coerce}{XcmsExperiment,XCMSnExp}(from, to = "XCMSnExp", strict = TRUE)
+
+\S4method{coerce}{XCMSnExp,XcmsExperiment}(from, to = "XcmsExperiment", strict = TRUE)
 }
 \arguments{
 \item{object}{An \code{XcmsExperiment} object.}
@@ -419,6 +428,12 @@ also parameter \code{type} below for additional information.}
 \item{keepFeatures}{for most subsetting functions (\code{[}, \code{filterFile()}):
 \code{logical(1)}: wheter eventually present feature definitions should
 be retained in the returned (filtered) object.}
+
+\item{from}{Original object.}
+
+\item{to}{\code{character(1)} defining the object to cast to.}
+
+\item{strict}{Ignored.}
 }
 \description{
 The \code{XcmsExperiment} is a data container for \emph{xcms} preprocessing

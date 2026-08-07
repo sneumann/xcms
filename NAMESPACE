@@ -8,7 +8,7 @@ importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
     "estimatePrecursorIntensity")
 importClassesFrom("ProtGenerics", "Param")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
-    "dirname", "dirname<-")
+           "dirname", "dirname<-")
 ## import("Biobase")
 importFrom("Biobase", "AnnotatedDataFrame")
 importClassesFrom("Biobase", "AnnotatedDataFrame")

@@ -36,7 +36,7 @@
 #'
 #' @examples
 #' library(faahKO)
-#' xsg <- group(faahko)
+#' xsg <- xcms::group(faahko)
 #'
 #' plotQC(xsg, what="mzdevhist")
 #' plotQC(xsg, what="rtdevhist")

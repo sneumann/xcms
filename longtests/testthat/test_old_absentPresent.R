@@ -1,5 +1,5 @@
 test_that("present absent sum works", {
-    xsg <- group(faahko)
+    xsg <- xcms::group(faahko)
     a <- length(which(absent(xsg, class="WT", minfrac=0)))
     expect_equal(a, 407)
     p <- length(which(absent(xsg, class="KO", minfrac=0)))

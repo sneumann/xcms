@@ -167,7 +167,7 @@ if (FALSE) {
     library(faahKO)
 
     if(! exists("xs")) {
-        xs <- group(faahko)
+        xs <- xcms::group(faahko)
     }
 
     mzt <- data.frame(character(0))

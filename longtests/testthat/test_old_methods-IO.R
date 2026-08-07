@@ -9,10 +9,9 @@ test_that("write.cdf,xcmsRaw works", {
 })
 
 test_that("write.mzQuantML,xcmsSet works", {
-    xsg <- group(faahko)
+    xsg <- xcms::group(faahko)
     mzqFile <- paste(tempdir(), "faahKO.mzq.xml", sep="/")
     write.mzQuantML(xsg, mzqFile)
     v <- verify.mzQuantML(filename=mzqFile)
-    expect_true(v$status == "0")    
+    expect_true(v$status == "0")
 })
-

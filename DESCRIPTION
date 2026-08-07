@@ -53,7 +53,7 @@ Imports:
     mzR (>= 2.25.3),
     methods,
     Biobase,
-    BiocGenerics,
+    BiocGenerics (>= 0.59.11),
     ProtGenerics (>= 1.37.1),
     lattice,
     MassSpecWavelet (>= 1.66.0),
@@ -164,4 +164,4 @@ Collate:
     'writemztab.R'
     'xcmsSource.R'
     'zzz.R'
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

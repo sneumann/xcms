@@ -7,7 +7,7 @@ test_that("do_groupPeaks_mzClust works", {
                                    minFraction = 0, absMz = 2)
     expect_true(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
 
-    res_x <- group(fticr_xs, method = "mzClust")
+    res_x <- xcms::group(fticr_xs, method = "mzClust")
     expect_equal(res_x@groups, res$featureDefinitions)
     expect_equal(res_x@groupidx, res$peakIndex)
 })
@@ -24,6 +24,6 @@ test_that("do_groupChromPeaks_nearest works", {
     res <- do_groupChromPeaks_nearest(features, sampleGroups)
     res_2 <- do_groupChromPeaks_nearest(features, sampleGroups, absRt = 3)
     expect_true(nrow(res$featureDefinitions) < nrow(res_2$featureDefinitions))
-    res_x <- group(xs, method = "nearest")
+    res_x <- xcms::group(xs, method = "nearest")
     expect_equal(res_x@groups, res$featureDefinitions)
 })
