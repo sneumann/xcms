@@ -1243,10 +1243,12 @@ test_that("filterFeatureDefinitions works", {
     expect_true(hasFeatures(res))
     expect_equal(featureDefinitions(res), featureDefinitions(xmseg)[1:10, ])
 
-    ## An explicit empty selection removes ALL features - it must NOT be
-    ## treated as the no-argument no-op (which would silently keep them all).
     res0 <- filterFeatureDefinitions(xmseg, integer(0))
     expect_equal(nrow(featureDefinitions(res0)), 0L)
+    
+    res0B <- filterFeatures(xmseg, RsdFilter(threshold = -1, qcIndex = 1:2))
+    expect_equal(nrow(featureDefinitions(res0B)), 0L)
+    
 })
 
 test_that("featureSpectra works", {
