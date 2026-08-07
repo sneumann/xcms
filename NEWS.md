@@ -1,5 +1,11 @@
 # xcms 4.11
 
+## Changes in version 4.11.2
+
+- fix issue with `filterFeatureDefinitions(object, features)` where all
+  features would be kept (instead of removed) if the filter conditions were
+  false for exactly all features.
+
 ## Changes in version 4.11.1
 
 - `refineChromPeaks,MergeNeighboringPeakParam`: drop row names of intermediate
