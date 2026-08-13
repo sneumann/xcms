@@ -53,7 +53,7 @@ Imports:
     mzR (>= 2.25.3),
     methods,
     Biobase,
-    BiocGenerics (>= 0.59.11),
+    BiocGenerics (>= 0.59.12),
     ProtGenerics (>= 1.37.1),
     lattice,
     MassSpecWavelet (>= 1.66.0),

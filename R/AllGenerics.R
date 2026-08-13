@@ -1593,7 +1593,6 @@ setGeneric("getXcmsRaw", function(object, ...) standardGeneric("getXcmsRaw"))
 setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
 setGeneric("group.mzClust", function(object, ...) standardGeneric("group.mzClust"))
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
-setGeneric("group", function(object, ...) standardGeneric("group"))
 
 
 #' @aliases groupChromPeaks
