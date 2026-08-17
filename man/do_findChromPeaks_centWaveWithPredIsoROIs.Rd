@@ -236,11 +236,11 @@ For more details on the centWave algorithm see
 \code{\link[=centWave]{centWave()}}.
 }
 \seealso{
-Other core peak detection functions: 
-\code{\link{do_findChromPeaks_centWave}()},
-\code{\link{do_findChromPeaks_massifquant}()},
-\code{\link{do_findChromPeaks_matchedFilter}()},
-\code{\link{do_findPeaks_MSW}()}
+Other core peak detection functions:
+\code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}},
+\code{\link[=do_findChromPeaks_massifquant]{do_findChromPeaks_massifquant()}},
+\code{\link[=do_findChromPeaks_matchedFilter]{do_findChromPeaks_matchedFilter()}},
+\code{\link[=do_findPeaks_MSW]{do_findPeaks_MSW()}}
 }
 \author{
 Hendrik Treutler, Johannes Rainer

@@ -56,6 +56,10 @@ loadXcmsData <- function(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2")) {
                dirname(obj) <- c(
                    rep(system.file("cdf", "KO", package = "faahKO"), 4),
                    rep(system.file("cdf", "WT", package = "faahKO"), 4))
+               obj@.processHistory <- lapply(obj@.processHistory, function(z) {
+                   z@param <- updateObject(z@param)
+                   z
+               })
                obj
            },
            "xmse" = {
@@ -68,10 +72,18 @@ loadXcmsData <- function(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2")) {
                if (anyNA(idx))
                    stop("Some of the original data files not found")
                obj@spectra$dataStorage <- fls[idx]
+               obj@processHistory <- lapply(obj@processHistory, function(z) {
+                   z@param <- updateObject(z@param)
+                   z
+               })
                obj
            },
            "faahko_sub" = {
                dirname(obj) <- system.file("cdf/KO", package = "faahKO")
+               obj@.processHistory <- lapply(obj@.processHistory, function(z) {
+                   z@param <- updateObject(z@param)
+                   z
+               })
                obj
            },
            "faahko_sub2" = {
@@ -84,6 +96,10 @@ loadXcmsData <- function(x = c("xmse", "xdata", "faahko_sub", "faahko_sub2")) {
                if (anyNA(idx))
                    stop("Some of the original data files not found")
                obj@spectra$dataStorage <- fls[idx]
+               obj@processHistory <- lapply(obj@processHistory, function(z) {
+                   z@param <- updateObject(z@param)
+                   z
+               })
                obj
            })
 }

@@ -1,5 +1,5 @@
 Package: xcms
-Version: 4.11.1
+Version: 4.11.2
 Title: LC-MS and GC-MS Data Analysis
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
@@ -53,7 +53,7 @@ Imports:
     mzR (>= 2.25.3),
     methods,
     Biobase,
-    BiocGenerics,
+    BiocGenerics (>= 0.59.12),
     ProtGenerics (>= 1.37.1),
     lattice,
     MassSpecWavelet (>= 1.66.0),
@@ -67,7 +67,8 @@ Imports:
     progress,
     RColorBrewer,
     MetaboCoreUtils (>= 1.11.2),
-    data.table
+    data.table,
+    Chromatograms (>= 1.3.3)
 Suggests:
     BiocStyle,
     caTools,
@@ -94,7 +95,6 @@ URL: https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new
 VignetteBuilder: knitr
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
-RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown=TRUE)
 Collate:
@@ -164,3 +164,4 @@ Collate:
     'writemztab.R'
     'xcmsSource.R'
     'zzz.R'
+Config/roxygen2/version: 8.1.0

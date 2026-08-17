@@ -2,9 +2,10 @@
 % Please edit documentation in R/DataClasses.R, R/XcmsExperiment.R,
 %   R/hidden_aliases.R, R/XcmsExperimentHdf5.R, R/functions-Params.R,
 %   R/methods-MsFeatureData.R, R/methods-OnDiskMSnExp.R, R/methods-Params.R,
-%   R/methods-ProcessHistory.R, R/methods-XCMSnExp.R, R/methods-XChromatogram.R,
-%   R/methods-XChromatograms.R, R/methods-xcmsEIC.R, R/methods-xcmsFragments.R,
-%   R/methods-xcmsPeaks.R, R/methods-xcmsRaw.R, R/methods-xcmsSet.R
+%   R/methods-ProcessHistory.R, R/methods-XCMSnExp.R,
+%   R/methods-XChromatogram.R, R/methods-XChromatograms.R, R/methods-xcmsEIC.R,
+%   R/methods-xcmsFragments.R, R/methods-xcmsPeaks.R, R/methods-xcmsRaw.R,
+%   R/methods-xcmsSet.R
 \docType{class}
 \name{CentWaveParam-class}
 \alias{CentWaveParam-class}
@@ -410,7 +411,7 @@
   msLevel = 1L,
   chunkSize = 2L,
   isolationWindowTargetMz = NULL,
-  return.type = c("XChromatograms", "MChromatograms"),
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   include = character(),
   chromPeaks = c("apex_within", "any", "none"),
   BPPARAM = bpparam()
@@ -451,12 +452,13 @@
   expandMz = 0,
   aggregationFun = "max",
   features = character(),
-  return.type = "XChromatograms",
+  return.type = c("XChromatograms", "MChromatograms", "Chromatograms"),
   chunkSize = 2L,
   mzmin = min,
   mzmax = max,
   rtmin = min,
   rtmax = max,
+  featureArea = TRUE,
   ...,
   progressbar = TRUE,
   BPPARAM = bpparam()

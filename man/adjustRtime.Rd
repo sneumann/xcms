@@ -59,7 +59,7 @@ ObiwarpParam(
 \S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
-\item{object}{For \code{adjustRtime}: an \code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
+\item{object}{For \code{adjustRtime}: an \code{\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp()}}, \code{\link[=XCMSnExp]{XCMSnExp()}},
 \code{\link[MsExperiment:MsExperiment]{MsExperiment::MsExperiment()}} or \code{\link[=XcmsExperiment]{XcmsExperiment()}} object.}
 
 \item{param}{The parameter object defining the alignment method (and its
@@ -81,7 +81,7 @@ the total number of samples in an experiment will load the full MS data
 into memory and will thus in most settings cause an out-of-memory error.}
 
 \item{BPPARAM}{parallel processing setup. Defaults to \code{BPPARAM = bpparam()}.
-See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for details.}
+See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} for details.}
 
 \item{msLevel}{For \code{adjustRtime}: \code{integer(1)} defining the MS level on
 which the alignment should be performed.}

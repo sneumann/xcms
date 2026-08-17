@@ -24,7 +24,7 @@ library(MSnbase)
 library(faahKO)
 data("faahko")
 
-xset <- group(faahko)
+xset <- xcms::group(faahko)
 mat <- groupval(xset, value = "into")
 
 mat_imp <- imputeRowMin(mat)
@@ -38,8 +38,8 @@ head(imputeRowMin(mat, min_fraction = 1/8))
 \seealso{
 \code{imputeLCMD} package for more left censored imputation functions.
 
-Other imputation functions: 
-\code{\link{imputeRowMinRand}()}
+Other imputation functions:
+\code{\link[=imputeRowMinRand]{imputeRowMinRand()}}
 }
 \author{
 Johannes Rainer

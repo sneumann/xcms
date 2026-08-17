@@ -58,10 +58,10 @@ features for which the proportion of missing values is below (\code{<=}) the
 threshold in at least one sample group will be retained).
 }
 \seealso{
-Other Filter features in xcms: 
-\code{\link{BlankFlag}},
-\code{\link{DratioFilter}},
-\code{\link{RsdFilter}}
+Other Filter features in xcms:
+\code{\link[=BlankFlag]{BlankFlag()}},
+\code{\link[=DratioFilter]{DratioFilter()}},
+\code{\link[=RsdFilter]{RsdFilter()}}
 }
 \author{
 Philippine Louail

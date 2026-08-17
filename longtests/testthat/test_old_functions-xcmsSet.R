@@ -66,7 +66,7 @@ test_that("phenoDataFromPaths and others don't fail", {
     ## https://stat.ethz.ch/pipermail/r-devel/2008-April/049184.html
     xs <- xcms::`phenoData<-`(xs, pd)
 
-    xsg <- group(xs)
+    xsg <- xmcs::group(xs)
 
     pd <- phenoDataFromPaths(files)
     xs <- faahko
@@ -74,7 +74,7 @@ test_that("phenoDataFromPaths and others don't fail", {
     ##xcms::phenoData(xs) <- pd
     ## https://stat.ethz.ch/pipermail/r-devel/2008-April/049184.html
     xs <- xcms::`phenoData<-`(xs, pd)
-    xs <- group(xs)
+    xs <- xcms::group(xs)
     ## Setting the filepaths again; otherwise we will have problem finding these
     ## files ... obviously.
     filepaths(xs) <- files

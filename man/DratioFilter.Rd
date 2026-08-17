@@ -78,10 +78,10 @@ doi: \href{https://doi.org/10.1007/s11306-018-1367-3}{10.1007/s11306-018-1367-3}
 Epub 2018 May 18. PMID: 29805336; PMCID: PMC5960010.
 }
 \seealso{
-Other Filter features in xcms: 
-\code{\link{BlankFlag}},
-\code{\link{PercentMissingFilter}},
-\code{\link{RsdFilter}}
+Other Filter features in xcms:
+\code{\link[=BlankFlag]{BlankFlag()}},
+\code{\link[=PercentMissingFilter]{PercentMissingFilter()}},
+\code{\link[=RsdFilter]{RsdFilter()}}
 }
 \author{
 Philippine Louail

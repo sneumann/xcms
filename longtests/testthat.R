@@ -27,7 +27,7 @@ faahko_xod <- findChromPeaks(
 faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                      method = "centWave", noise = 10000, snthresh = 40,
                      prefilter = c(3, 10000))
-faahko_xsg <- group(faahko_xs)
+faahko_xsg <- xcms::group(faahko_xs)
 ## Doing also the retention time correction etc
 od_x <- faahko_od
 mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
@@ -43,9 +43,9 @@ xod_chr <- findChromPeaks(filterMz(filterRt(od_x, rt = c(2500, 3500)),
                                    mz = c(334.9, 344.1)),
                           param = CentWaveParam())
 
-faahko_grouped_filled <- fillPeaks(group(faahko))
+faahko_grouped_filled <- fillPeaks(xcms::group(faahko))
 faahko_grouped_retcor_filled <-
-    fillPeaks(group(retcor(group(updateObject(faahko)))))
+    fillPeaks(xcms::group(retcor(xcms::group(updateObject(faahko)))))
 
 ## Direct injection data:
 fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")

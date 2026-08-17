@@ -12,7 +12,7 @@
 correspondence results.}
 
 \item{param}{\code{SimilarRtimeParam} object with the settings for the method. See
-\code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}} for details and options.}
+\code{\link[MsFeatures:SimilarRtimeParam]{MsFeatures::SimilarRtimeParam()}} for details and options.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the features
 should be grouped.}
@@ -31,7 +31,7 @@ their retention time which is \code{<=} parameter \code{diffRt} of the parameter
 are grouped together. If a column \code{"feature_group"} is found in
 \code{\link[=featureDefinitions]{featureDefinitions()}} this is further sub-grouped by this method.
 
-See \code{\link[MsFeatures:groupFeatures-similar-rtime]{MsFeatures::SimilarRtimeParam()}} in \code{MsFeatures} for more details.
+See \code{\link[MsFeatures:SimilarRtimeParam]{MsFeatures::SimilarRtimeParam()}} in \code{MsFeatures} for more details.
 }
 \examples{
 
@@ -62,7 +62,7 @@ xodg_grp <- groupFeatures(xodg,
 length(unique(featureDefinitions(xodg_grp)$feature_group))
 }
 \seealso{
-Other feature grouping methods: 
+Other feature grouping methods:
 \code{\link{groupFeatures-abundance-correlation}},
 \code{\link{groupFeatures-eic-similarity}}
 }

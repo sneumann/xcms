@@ -1,5 +1,21 @@
 # xcms 4.11
 
+## Changes in version 4.11.2
+
+- Add support to return chromatographic data as a `Chromatograms` object with
+  the `chromatogram()` method from `MsExperiment`, `XcmsExperiment` and
+  `XcmsExperimentHdf5` objects.
+- Add support for `Chromatograms` to the `chromPeakChromatograms()` method for
+  `XcmsExperiment` and `XcmsExperimentHdf5` objects.
+- Add support for `Chromatograms` to the `featureChromatograms()` method for
+  `XcmsExperiment` and `XcmsExperimentHdf5` objects.
+- Add new methods `featureChromPeaks()` and `featurePeakidx()` to access the
+  mapping between features and chromatographic peaks.
+- `loadXcmsData()` updates parameter class definitions in the object's *process
+  history*.
+- Fix `chromPeakData<-` for `XcmsExperiment` not supporting a `DataFrame` as
+  input (issue #839).
+
 ## Changes in version 4.11.1
 
 - `refineChromPeaks,MergeNeighboringPeakParam`: drop row names of intermediate

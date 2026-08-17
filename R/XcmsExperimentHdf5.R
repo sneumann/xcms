@@ -119,12 +119,17 @@
 #'
 #' @section Correspondence analysis results:
 #'
+#' - `featureChromPeaks()`: get the mapping between features and
+#'   chromatographic peaks. See [featureChromPeaks()] for details.
+#'
 #' - `featureDefinitions()`: similarly to `featureDefinitions()` for
 #'   [XcmsExperiment] objects, this method returns a `data.frame` with the
 #'   characteristics for the defined LC-MS features. The function for
 #'   `XcmsExperimentHdf5` does however **not** return the `"peakidx"` column
-#'   with the indices of the chromatographic peaks per feature. Also, the
-#'   columns are returned in alphabetic order.
+#'   with the indices of the chromatographic peaks per feature. This
+#'   information can be extracted with the [featurePeakidx()] function.
+#'   Note: the columns of the data frame returned by `featureDefinitions()` are
+#'   in alphabetic order.
 #'
 #' - `featureValues()`: for parameter `value`, the option `value = "index"`
 #'   (i.e. returning the index of the chromatographic peaks within the
@@ -1099,6 +1104,41 @@ setMethod(
                                     ppm = ppm, type = type)
     })
 
+#' @rdname featureChromPeaks
+setMethod("featureChromPeaks", "XcmsExperimentHdf5",
+          function(object, msLevel = integer()) {
+              if (!length(msLevel))
+                  msLevel <- object@features_ms_level
+              if (length(m <- msLevel[!msLevel %in% object@features_ms_level]))
+                  stop("No features available for MS level(s) ",
+                       paste0(m, collapse = ", "), call. = FALSE)
+              map <- do.call(rbind, lapply(msLevel, function(m) {
+                  tmp <- .h5_read_data(object@hdf5_file, object@sample_id,
+                                       "feature_to_chrom_peak",
+                                       rep(m, length(object@sample_id)))
+                  fid <- .h5_feature_definitions_rownames(object, m)[[1L]]
+                  cid <- .h5_chrom_peaks_rownames(object, m)
+                  do.call(rbind, mapply(tmp, cid, FUN = function(a, b) {
+                      cbind(fid[a[, 1L]], b[a[, 2L]])
+                  }))
+              }))
+              colnames(map) <- c("feature_id", "chrom_peak_id")
+              fids <- unlist(.h5_feature_definitions_rownames(object, msLevel))
+              as.data.frame(
+                  map[order(match(map[, "feature_id"], fids)), , drop = FALSE])
+          })
+
+#' @rdname featureChromPeaks
+setMethod("featurePeakidx", "XcmsExperimentHdf5", function(object,
+                                                           msLevel = integer()){
+    if (!length(msLevel))
+        msLevel <- object@features_ms_level
+    map <- featureChromPeaks(object, msLevel)
+    pids <- unlist(.h5_chrom_peaks_rownames(object, msLevel), use.names = FALSE)
+    split(match(map$chrom_peak_id, pids),
+          factor(map$feature_id, levels = unique(map$feature_id)))
+})
+
 #' @rdname hidden_aliases
 setMethod(
     "featureValues", "XcmsExperimentHdf5",
@@ -1245,7 +1285,8 @@ setMethod(
     function(object, rt = matrix(nrow = 0, ncol = 2),
              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
              msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
-             return.type = c("XChromatograms", "MChromatograms"),
+             return.type = c("XChromatograms", "MChromatograms",
+                             "Chromatograms"),
              include = character(),
              chromPeaks = c("apex_within", "any", "none"),
              BPPARAM = bpparam()) {
@@ -1266,12 +1307,23 @@ setMethod(
             chromPeaks <- "none"
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        .h5_x_chromatograms(
-            object, ms_level = msLevel, chromPeaks = chromPeaks,
-            mz = mz, rt = rt, aggregationFun = aggregationFun,
-            chunkSize = chunkSize, return.type = return.type,
-            isolationWindow = isolationWindowTargetMz,
-            BPPARAM = BPPARAM)
+        switch(return.type,
+               MChromatograms = .h5_x_chromatograms(
+                   object, ms_level = msLevel, chromPeaks = chromPeaks,
+                   mz = mz, rt = rt, aggregationFun = aggregationFun,
+                   chunkSize = chunkSize, return.type = return.type,
+                   isolationWindow = isolationWindowTargetMz,
+                   BPPARAM = BPPARAM),
+               XChromatograms = .h5_x_chromatograms(
+                   object, ms_level = msLevel, chromPeaks = chromPeaks,
+                   mz = mz, rt = rt, aggregationFun = aggregationFun,
+                   chunkSize = chunkSize, return.type = return.type,
+                   isolationWindow = isolationWindowTargetMz,
+                   BPPARAM = BPPARAM),
+               Chromatograms = .mse_chromatograms_for_ranges(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz)
+               )
     })
 
 #' @rdname hidden_aliases
@@ -1398,84 +1450,33 @@ setMethod(
 setMethod(
     "featureChromatograms", "XcmsExperimentHdf5",
     function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
-             features = character(), return.type = "XChromatograms",
+             features = character(),
+             return.type = c("XChromatograms","MChromatograms","Chromatograms"),
              chunkSize = 2L, mzmin = min, mzmax = max, rtmin = min,
-             rtmax = max, ..., progressbar = TRUE, BPPARAM = bpparam()) {
+             rtmax = max, featureArea = TRUE, ...,
+             progressbar = TRUE, BPPARAM = bpparam()) {
         return.type <- match.arg(return.type)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        area <- featureArea(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                            rtmax = rtmax, features = features)
-        if (expandRt != 0) {
-            area[, "rtmin"] <- area[, "rtmin"] - expandRt
-            area[, "rtmax"] <- area[, "rtmax"] + expandRt
-        }
-        if (expandMz != 0) {
-            area[, "mzmin"] <- area[, "mzmin"] - expandMz
-            area[, "mzmax"] <- area[, "mzmax"] + expandMz
-        }
-        fts <- featureDefinitions(object)[rownames(area), ]
-        chrs <- as(.mse_chromatogram(
-            as(object, "MsExperiment"),
-            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
-            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
-            aggregationFun = aggregationFun, msLevel = fts$ms_level,
-            chunkSize = chunkSize, progressbar = progressbar,
-            BPPARAM = BPPARAM), "XChromatograms")
-        ## Populate with chrom peaks.
-        nf <- nrow(fts)
-        js <- seq_len(ncol(chrs))
-        msl <- unique(fts$ms_level)
-        chr_mat <- chrs@.Data
-        slot(chrs, ".Data", check = FALSE) <- matrix(
-            nrow = nrow(chr_mat), ncol = ncol(chr_mat)) # clean memory
-        if (progressbar) {
-            message("Processing chromatographic peaks for features")
-            pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-                                                   "total (:percent) in ",
-                                                   ":elapsed"),
-                                   total = length(js) + 1L, clear = FALSE)
-        }
-        for (j in js) {
-            for (ms in msl) {
-                fmap <- .h5_read_data(
-                    object@hdf5_file, object@sample_id[j],
-                    "feature_to_chrom_peaks", ms)[[1L]]
-                cp <- .h5_read_data(
-                    object@hdf5_file, object@sample_id[j], "chrom_peaks",
-                    ms, read_colnames = TRUE, read_rownames = TRUE)[[1L]]
-                cpd <- .h5_read_data(
-                    object@hdf5_file, object@sample_id[j], "chrom_peak_data",
-                    ms, read_colnames = TRUE, read_rownames = TRUE)[[1L]]
-                cpd$ms_level <- ms
-                cp_idx <- split(fmap[, 2L], fmap[, 1L])
-                ft_idx <- which(fts$ms_level == ms)
-                for (i in seq_along(ft_idx)) {
-                    slot(chr_mat[ft_idx[i], j][[1L]],
-                         "chromPeaks", check = FALSE) <-
-                        cp[cp_idx[[as.character(i)]], , drop = FALSE]
-                    slot(chr_mat[ft_idx[i], j][[1L]],
-                         "chromPeakData", check = FALSE) <-
-                        as(cpd[cp_idx[[as.character(i)]], , drop = FALSE],
-                           "DataFrame")
-                }
-            }
-            if (progressbar)
-                pb$tick()
-        }
-        slot(chrs, ".Data", check = FALSE) <- chr_mat
-        ## Each row is a SINGLE feature, thus we can use the "row" column to
-        ## match chrom peaks to features.
-        fts$row <- seq_len(nf)
-        pkrow <- unname(chromPeaks(chrs)[, c("row")])
-        fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
-        colnames(chrs) <- basename(fileNames(object))
-        rownames(chrs@phenoData) <- colnames(chrs)
-        slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
-        slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
-        if (progressbar)
-            pb$tick()
-        chrs
+        switch(return.type,
+               Chromatograms = .xmse_chromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                   rtmax = rtmax, featureArea = featureArea),
+               MChromatograms = .xmse_mchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM),
+               XChromatograms = .h5_xchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM)
+               )
     })
 
 #' Helper method to update the retention times of the chrom peaks matrix

@@ -61,11 +61,11 @@ This is a wrapper around the peak picker in Bioconductor's
 \emph{xcmsDirect} vignette for more information.
 }
 \seealso{
-Other core peak detection functions: 
-\code{\link{do_findChromPeaks_centWave}()},
-\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
-\code{\link{do_findChromPeaks_massifquant}()},
-\code{\link{do_findChromPeaks_matchedFilter}()}
+Other core peak detection functions:
+\code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}},
+\code{\link[=do_findChromPeaks_centWaveWithPredIsoROIs]{do_findChromPeaks_centWaveWithPredIsoROIs()}},
+\code{\link[=do_findChromPeaks_massifquant]{do_findChromPeaks_massifquant()}},
+\code{\link[=do_findChromPeaks_matchedFilter]{do_findChromPeaks_matchedFilter()}}
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

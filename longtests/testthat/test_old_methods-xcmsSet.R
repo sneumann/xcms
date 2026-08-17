@@ -1,5 +1,5 @@
 test_that("diffreport etc works", {
-    g <- group(faahko)
+    g <- xcms::group(faahko)
     f <- fillPeaks(g)
     d <- diffreport(f)
     ## Fake xcmsSet with 1 sample in class 1
@@ -24,15 +24,15 @@ test_that("findPeaks.MSW works", {
 })
 
 test_that("fillPeaks,xcmsSet and filled flag works", {
-    xsg <- group(faahko)
+    xsg <- xcms::group(faahko)
     xsgf <- fillPeaks(xsg, method = "chrom")
 
     expect_equal(nrow(peaks(xsg)) + length(xsgf@filled), nrow(peaks(xsgf)))
 })
 
 test_that("fillPeaks,xcmsSet columns works", {
-    xsg <- group(faahko)
-    xsg <- group(faahko_xs)
+    xsg <- xcms::group(faahko)
+    xsg <- xcms::group(faahko_xs)
     peaks(xsg) <- cbind(peaks(xsg), anotherColumn=4711)
 
     oldCnames <- colnames(peaks(xsg))
@@ -48,10 +48,10 @@ test_that("fillPeaks,xcmsSet columns works", {
     expect_equal(oldDims, newDims)
 
     ## Case where only some samples have NA values
-    xsg <- group(faahko_xs, minfrac=1)
+    xsg <- xcms::group(faahko_xs, minfrac=1)
     xsgf <- fillPeaks(xsg) # parallel disabled: , nSlaves=2)
     sampclass(xsgf) <- c(rep("KO", 1), rep("WT", 2))
-    xsgf <- group(xsgf, minfrac=1)
+    xsgf <- xcms::group(xsgf, minfrac=1)
     xsgf <- fillPeaks(xsgf) # parallel disabled: , nSlaves=2)
 })
 
@@ -150,7 +150,7 @@ test_that("getXcmsRaw,xcmsSet works, issue #44", {
     xsetRaw <- xsetRaw[, 1:2]
 
     ## First sample is reference, i.e. no rt adjustment performed
-    xs <- retcor(group(xsetRaw), method = "obiwarp", center = 1)
+    xs <- retcor(xcms::group(xsetRaw), method = "obiwarp", center = 1)
     ## Second is corrected, first is center:
     expect_identical(xs@rt$raw[[1]], xs@rt$corrected[[1]])
     expect_true(!all(xs@rt$raw[[2]] == xs@rt$corrected[[2]]))
@@ -171,13 +171,13 @@ test_that("group,GroupDensity doesn't fail with OnePeak", {
     xs <- faahko
     p <- peaks(xs)
     peaks(xs) <- p[1, , drop = FALSE]
-    g <- group(xs, minsamp = 1, minfrac = 0.001, method = "density")
+    g <- xcms::group(xs, minsamp = 1, minfrac = 0.001, method = "density")
 })
 
 test_that("group,xcmsSet Nearest works", {
     xs <- faahko
     p <- peaks(xs)
-    g <- group(xs, method="nearest")
+    g <- xcms::group(xs, method="nearest")
     expect_equal(range(unlist(g@groupidx))[1],  1)
 })
 
@@ -196,25 +196,25 @@ test_that("sampclass,xcmsSet works", {
     library(faahKO)
     xset <- faahko
     ## grouping the peaks
-    xset <- group(xset, method="density")
+    xset <- xcms::group(xset, method="density")
     ## reversing the order of the classes.
     xset.revorder <- xset
     sampclass(xset.revorder) <- c(rep("WT", 6), rep("KO", 6))
-    xset.revorder <- group(xset.revorder, method="density")
+    xset.revorder <- xcms::group(xset.revorder, method="density")
     ## check if we get what we want:
     expect_equal(groups(xset)[, "KO"], groups(xset.revorder)[, "WT"])
 
     ## repeat that but submitting already a factor
     xset.revorder.f <- xset
     sampclass(xset.revorder.f) <- factor(c(rep("WT", 6), rep("KO", 6)))
-    xset.revorder.f <- group(xset.revorder.f, method="density")
+    xset.revorder.f <- xcms::group(xset.revorder.f, method="density")
     expect_equal(groups(xset)[, "KO"], groups(xset.revorder.f)[, "WT"])
 
     ## next: pheno data contains a column class with a factor.
     pd <- data.frame(class=factor(c(rep("WT", 6), rep("KO", 6))))
     xset.pheno <- xset
     phenoData(xset.pheno) <- pd
-    xset.pheno <- group(xset.pheno, method="density")
+    xset.pheno <- xcms::group(xset.pheno, method="density")
     expect_equal(groups(xset)[, "KO"], groups(xset.pheno)[, "WT"])
 
     ## next checking what happens if we submit a multi-column data.frame
@@ -290,9 +290,9 @@ test_that("[,xcmsSet works", {
 
     ## performing a grouping, retention time correction and second grouping
     ##data(faahko, package="faahKO")
-    xset <- group(faahko, method="density")
+    xset <- xcms::group(faahko, method="density")
     xset <- retcor(xset, method="loess", family="symmetric")
-    xset <- group(xset)
+    xset <- xcms::group(xset)
     ##xset <- fillPeaks(xset)
     xsub <- xset[, idx]
     .compare(xset, xsub, idx)
@@ -354,7 +354,7 @@ test_that("sampclass,xcmsSet works with unused groups", {
     levels(classes) <- c(levels(classes), "Leftover")
     xs <- faahko
     sampclass(xs) <- classes
-    xsg <- group(xs)
+    xsg <- xcms::group(xs)
     expect_equal(sampclass(xs), sampclass(xsg))
 })
 

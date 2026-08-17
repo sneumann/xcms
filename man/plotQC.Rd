@@ -40,7 +40,7 @@ For the m/z deviations, the median of all m/z withon one group are assumed.
 }
 \examples{
 library(faahKO)
-xsg <- group(faahko)
+xsg <- xcms::group(faahko)
 
 plotQC(xsg, what="mzdevhist")
 plotQC(xsg, what="rtdevhist")

@@ -74,8 +74,8 @@ data. Bioinformatics 2006, 22:634-636.
 doi: \href{https://doi.org/10.1093/bioinformatics/btk039}{10.1093/bioinformatics/btk039}
 }
 \seealso{
-Other core peak grouping algorithms: 
-\code{\link{do_groupChromPeaks_density}()},
-\code{\link{do_groupPeaks_mzClust}()}
+Other core peak grouping algorithms:
+\code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}},
+\code{\link[=do_groupPeaks_mzClust]{do_groupPeaks_mzClust()}}
 }
 \concept{core peak grouping algorithms}

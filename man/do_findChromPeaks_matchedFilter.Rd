@@ -161,11 +161,11 @@ doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 \code{\link[=binYonX]{binYonX()}} for a binning function,
 \code{\link[=imputeLinInterpol]{imputeLinInterpol()}} for the interpolation of missing values.
 
-Other core peak detection functions: 
-\code{\link{do_findChromPeaks_centWave}()},
-\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
-\code{\link{do_findChromPeaks_massifquant}()},
-\code{\link{do_findPeaks_MSW}()}
+Other core peak detection functions:
+\code{\link[=do_findChromPeaks_centWave]{do_findChromPeaks_centWave()}},
+\code{\link[=do_findChromPeaks_centWaveWithPredIsoROIs]{do_findChromPeaks_centWaveWithPredIsoROIs()}},
+\code{\link[=do_findChromPeaks_massifquant]{do_findChromPeaks_massifquant()}},
+\code{\link[=do_findPeaks_MSW]{do_findPeaks_MSW()}}
 }
 \author{
 Colin A Smith, Johannes Rainer

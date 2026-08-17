@@ -19,7 +19,7 @@ test_that("XCMSnExp, XCMSnExp works", {
 test_that("featureValues,XCMSnExp works", {
     fdp <- PeakDensityParam(sampleGroups = faahko_xs$class)
     od_x <- groupChromPeaks(xod_x, param = fdp)
-    xs <- group(faahko_xs, method = "density")
+    xs <- xcms::group(faahko_xs, method = "density")
     fvs <- featureValues(od_x, value = "into")
     expect_equal(rownames(fvs), rownames(featureDefinitions(od_x)))
     rownames(fvs) <- NULL
@@ -121,7 +121,7 @@ test_that("adjustRtime,peakGroups works", {
     xod <- faahko_xod
     xs <- faahko_xs
     ## Group these
-    xsg <- group(xs)
+    xsg <- xcms::group(xs)
     xodg <- groupChromPeaks(xod,
                             param = PeakDensityParam(sampleGroups = xs$class))
     pks <- chromPeaks(xodg)
@@ -188,7 +188,7 @@ test_that("adjustRtime,peakGroups works", {
                                       type = .PROCSTEP.PEAK.GROUPING)) == 2)
     expect_true(hasAdjustedRtime(xodrg))
     expect_true(hasFeatures(xodrg))
-    xsrg <- group(xsr)
+    xsrg <- xcms::group(xsr)
     expect_equal(xsrg@groupidx, featureDefinitions(xodrg)$peakidx)
 
     ## Mod settings:
@@ -268,7 +268,7 @@ test_that("featureValues,XCMSnExp works as with groupval", {
     p <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = p)
 
-    xs <- group(xs, method = "density")
+    xs <- xcms::group(xs, method = "density")
 
     expect_equal(unname(groupval(xs, value = "into")),
                  unname(featureValues(od_x, value = "into")))
@@ -287,7 +287,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
 
     fdp <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = fdp)
-    xs <- group(xs, method = "density")
+    xs <- xcms::group(xs, method = "density")
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
@@ -302,7 +302,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     fdp2 <- PeakDensityParam(sampleGroups = xs$class, binSize = 2,
                              minFraction = 0.8)
     od_x <- groupChromPeaks(od_x, param = fdp2)
-    xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
+    xs <- xcms::group(xs, method = "density", minfrac = 0.8, mzwid = 2)
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
@@ -337,7 +337,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
 test_that("groupPeaks,XCMSnExp,MzClustParam works", {
     p <- MzClustParam(sampleGroups = sampclass(fticr_xs))
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p)
-    fticr_xs2 <- group(fticr_xs, method = "mzClust")
+    fticr_xs2 <- xcms::group(fticr_xs, method = "mzClust")
     expect_equal(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
     fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
@@ -352,7 +352,7 @@ test_that("groupPeaks,XCMSnExp,MzClustParam works", {
     p2 <- MzClustParam(sampleGroups = fticr_xs$class, absMz = 1,
                        minFraction = 0.8)
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p2)
-    fticr_xs2 <- group(fticr_xs, method = "mzClust", minfrac = 0.8, mzabs = 1)
+    fticr_xs2 <- xcms::group(fticr_xs, method = "mzClust", minfrac = 0.8, mzabs = 1)
     expect_equal(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
     fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
@@ -371,7 +371,7 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
     xs <- faahko_xs
     p <- NearestPeaksParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = p)
-    xs <- group(xs, method = "nearest")
+    xs <- xcms::group(xs, method = "nearest")
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
@@ -384,7 +384,7 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
                  .featureIDs(nrow(featureDefinitions(od_x))))
     fdp2 <- NearestPeaksParam(sampleGroups = xs$class, kNN = 3)
     od_x <- groupChromPeaks(od_x, param = fdp2)
-    xs <- group(xs, method = "nearest", kNN = 3)
+    xs <- xcms::group(xs, method = "nearest", kNN = 3)
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
@@ -422,7 +422,7 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
     expect_true(!any(is.na(featureValues(res))))
     ## 1) Compare with what I get for xcmsSet.
     tmp_x <- fticr_xs
-    tmp_x <- group(tmp_x, method = "mzClust")
+    tmp_x <- xcms::group(tmp_x, method = "mzClust")
     tmp_x <- fillPeaks(tmp_x, method = "MSW")
     ## Compare
     expect_equal(unname(groupval(tmp_x)),

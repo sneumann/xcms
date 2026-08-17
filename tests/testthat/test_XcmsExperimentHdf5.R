@@ -59,6 +59,10 @@ test_that("chromPeaks,XcmsExperiementHdf5 works", {
     expect_equal(colnames(res), c("mz", "mzmin", "mzmax", "sample"))
     expect_equal(unname(res), unname(ref[, c("mz","mzmin","mzmax","sample")]))
 
+    res2 <- chromPeaks(a, msLevel = 1, columns = c("mz", "mzmin", "mzmax",
+                                                   "sample"))
+    expect_equal(res, res2)
+
     ## providing mz and rt
     res <- chromPeaks(a, msLevel = 1, type = "apex_within", rt = c(2500, 2600))
     expect_true(all(res[, "rt"] > 2500))
@@ -99,7 +103,7 @@ test_that("findChromPeaks,XcmsExperimentHdf5 works", {
     a <- as(xmse_h5, "MsExperiment")
     a <- as(a, "XcmsExperimentHdf5")
     h5_file <- tempfile()
-    xcms:::.h5_initialize_file(h5_file)
+    .h5_initialize_file(h5_file)
     a@hdf5_file <- h5_file
     a@sample_id <- c("S1", "S2", "S3")
     p <- xmse_h5@processHistory[[1L]]@param
@@ -150,7 +154,7 @@ test_that("dropChromPeaks,XcmsExperimentHdf5 works", {
     ## With features
     tmpf <- tempfile()
     ref <- loadXcmsData("xmse")
-    x <- xcms:::.xcms_experiment_to_hdf5(ref, tmpf)
+    x <- .xcms_experiment_to_hdf5(ref, tmpf)
     expect_true(hasChromPeaks(x))
     expect_true(hasAdjustedRtime(x))
     expect_true(hasFeatures(x))
@@ -162,7 +166,7 @@ test_that("dropChromPeaks,XcmsExperimentHdf5 works", {
     file.remove(tmpf)
 
     tmpf <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(ref, tmpf)
+    x <- .xcms_experiment_to_hdf5(ref, tmpf)
     res <- dropChromPeaks(x, keepAdjustedRtime = TRUE)
     expect_false(hasChromPeaks(res))
     expect_true(hasAdjustedRtime(res))
@@ -179,14 +183,14 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,MergeNeighboringPeaksParam", {
 
     af <- tempfile()
     ref <- loadXcmsData("faahko_sub2")
-    a <- xcms:::.xcms_experiment_to_hdf5(ref, af)
+    a <- .xcms_experiment_to_hdf5(ref, af)
     res <- refineChromPeaks(a, MergeNeighboringPeaksParam())
     expect_error(validObject(a))
     expect_true(validObject(res))
     ## Compare results from both. Need chromPeaks() function first.
     ref <- refineChromPeaks(ref, MergeNeighboringPeaksParam())
     ref_pks <- chromPeaks(ref)
-    res_pks <- xcms:::.h5_read_data(res@hdf5_file, id = res@sample_id,
+    res_pks <- .h5_read_data(res@hdf5_file, id = res@sample_id,
                              ms_level = rep(1L, length(res)),
                              read_colnames = TRUE, read_rownames = TRUE)
     res_pks <- do.call(
@@ -215,7 +219,7 @@ test_that("groupChromPeaks,featureDefinitions,XcmsExperimentHdf5 works", {
     expect_true(hasFeatures(x, 1L))
     expect_false(hasFeatures(x, 2L))
     expect_false(hasFeatures(x, 1:2))
-    a <- xcms:::.h5_read_data_frame("/features/ms_1/feature_definitions",
+    a <- .h5_read_data_frame("/features/ms_1/feature_definitions",
                              x@hdf5_file, read_rownames = TRUE)
     ref <- featureDefinitions(loadXcmsData("xmse"))
     ref$peakidx <- NULL
@@ -224,7 +228,7 @@ test_that("groupChromPeaks,featureDefinitions,XcmsExperimentHdf5 works", {
     rownames(ref) <- NULL
     expect_true(all(colnames(ref) %in% colnames(a)))
     expect_equal(ref, a[, colnames(ref)])
-    pks <- xcms:::.h5_chrom_peaks(x, msLevel = 1L)
+    pks <- .h5_chrom_peaks(x, msLevel = 1L)
     for (i in seq_along(pks)) {
         b <- .h5_read_matrix(paste0("/S", i, "/ms_1/feature_to_chrom_peaks"),
                              x@hdf5_file)
@@ -254,7 +258,7 @@ test_that("hasFeatures,XcmsExperimentHdf5 works", {
 
 test_that("dropFeatureDefinitions,XcmsExperimentHdf5 works", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     expect_true(hasFeatures(x))
     expect_true(hasAdjustedRtime(x))
     expect_true(hasFilledChromPeaks(x))
@@ -292,19 +296,19 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     nf <- nrow(b)
     rtmed <- b$rtmed
     ## .h5_feature_values_sample
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S1", ms_level = 1L,
         n_features = nf, method = "sum", filled = FALSE, col_idx = 9L)
     b <- unname(featureValues(ref, method = "sum", value = "maxo",
                               filled = FALSE)[, 1L])
     expect_equal(a, b)
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "maxint", col_idx = c(7L, 9L))
     b <- unname(featureValues(ref, method = "maxint", value = "into",
                               filled = FALSE, intensity = "maxo")[, 4L])
     expect_equal(a, b)
-    a <- xcms:::.h5_feature_values_sample(
+    a <- .h5_feature_values_sample(
         xmseg_full_h5@hdf5_file, sample_id = "S4", ms_level = 1L,
         n_features = nf, filled = FALSE, method = "medret", col_idx = c(8L, 4L),
         rtmed = rtmed)
@@ -313,15 +317,15 @@ test_that("featureValues,XcmsExperimentHdf5 etc works", {
     expect_equal(a, b)
 
     ## .h5_feature_values_ms_level
-    a <- xcms:::.h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "medret",
                                      value = "into", filled = FALSE)
     b <- featureValues(ref, method = "medret", value = "into", filled = FALSE)
     expect_equal(unname(a), unname(b))
-    a <- xcms:::.h5_feature_values_ms_level(1L, xmseg_full_h5, method = "sum",
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "sum",
                                      value = "maxo", filled = FALSE)
     b <- featureValues(ref, method = "sum", value = "maxo", filled = FALSE)
     expect_equal(unname(a), unname(b))
-    a <- xcms:::.h5_feature_values_ms_level(1L, xmseg_full_h5, method = "maxint",
+    a <- .h5_feature_values_ms_level(1L, xmseg_full_h5, method = "maxint",
                                      value = "sn", intensity = "into",
                                      filled = FALSE)
     b <- featureValues(ref, method = "maxint", value = "sn", intensity = "into",
@@ -398,11 +402,11 @@ test_that("adjustRtime,XcmsExperimentHdf5 and related function work", {
         dropFeatureDefinitions() |>
         applyAdjustedRtime()
     res_h5 <- tempfile()
-    res <- xcms:::.xcms_experiment_to_hdf5(ref, res_h5)
+    res <- .xcms_experiment_to_hdf5(ref, res_h5)
     ## Create a single sample XcmsExperimentHdf5
     a <- ref[3L]
     a_h5 <- tempfile()
-    a <- xcms:::.xcms_experiment_to_hdf5(a, a_h5)
+    a <- .xcms_experiment_to_hdf5(a, a_h5)
     ## Perform retention time alignment on reference data
     ref <- ref |>
         groupChromPeaks(pdp, msLevel = 1L) |>
@@ -415,7 +419,7 @@ test_that("adjustRtime,XcmsExperimentHdf5 and related function work", {
 
     ############################################################################
     ## .h5_update_rt_chrom_peaks_sample: adjust rt of chrom peaks:
-    cnt <- xcms:::.h5_update_rt_chrom_peaks_sample(
+    cnt <- .h5_update_rt_chrom_peaks_sample(
         a@sample_id[1L], rt_raw, rt_adj, 1L, a@hdf5_file)
     expect_equal(cnt, a@hdf5_mod_count + 1L)
     a@hdf5_mod_count <- cnt
@@ -552,6 +556,30 @@ test_that("chromatogram,XcmsExperimentHdf5 works", {
     rrt <- range(lapply(res, rtime))
     expect_true(rrt[1] >= 2600)
     expect_true(rrt[2] <= 2700)
+})
+
+test_that("chromatogram,XcmsExperimentHdf5 Chromatograms works", {
+    fa <- featureArea(xmseg_full_ref)
+    n <- length(xmseg_full_ref)
+
+    ref <- chromatogram(
+        xmseg_full_ref, rt = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        mz = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        return.type = "MChromatograms")
+    res <- chromatogram(
+        xmseg_full_h5, rt = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        mz = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        return.type = "MChromatograms")
+    expect_equal(lapply(ref, intensity), lapply(res, intensity))
+    res <- chromatogram(
+        xmseg_full_h5, rt = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        mz = as.matrix(fa[1:10, c("rtmin", "rtmax")]),
+        return.type = "Chromatograms")
+    expect_s4_class(res, "Chromatograms")
+    expect_equal(lapply(ref[1, ], intensity),
+                 intensity(res[seq_len(n)]))
+    expect_equal(lapply(ref[2, ], intensity),
+                 intensity(res[seq_len(n) + n]))
 })
 
 test_that("hasFilledChromPeaks,XcmsExperimentHdf5 works", {
@@ -752,7 +780,7 @@ test_that("filterIsolationWindow,XcmsExperimentHdf5 works", {
 
 test_that("refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
 
     expect_warning(
         res <- refineChromPeaks(x, CleanPeaksParam(), msLevel = 2L),
@@ -767,7 +795,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
 
     ## With features.
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     expect_true(hasFeatures(x))
     expect_true(hasAdjustedRtime(x))
     expect_true(hasChromPeaks(x))
@@ -785,7 +813,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,CleanPeaksParam works", {
 
 test_that("refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam works", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
 
     fip <- FilterIntensityParam(threshold = 100000, nValues = 1)
     expect_warning(
@@ -800,7 +828,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam works", {
 
     ## nValues > 1
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
 
     fip <- FilterIntensityParam(threshold = 100000, nValues = 4)
     res <- refineChromPeaks(x, fip, msLevel = 1L)
@@ -812,7 +840,7 @@ test_that("refineChromPeaks,XcmsExperimentHdf5,FilterIntensityParam works", {
 
     ## With features.
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     fip <- FilterIntensityParam(threshold = 100000, nValues = 1)
     expect_true(hasFeatures(x))
     expect_true(hasAdjustedRtime(x))
@@ -1007,9 +1035,39 @@ test_that("featureChromatograms,XcmsExperimentHdf5 works", {
     expect_equal(res_fd, ref_fd[, colnames(res_fd)])
 })
 
+test_that("featureChromatogram,XcmsExperimentHdf5 Chromatograms works", {
+    n <- length(xmseg_full_ref)
+
+    ## MChromatograms
+    ref <- featureChromatograms(xmseg_full_ref, return.type = "MChromatograms")
+    res <- featureChromatograms(xmseg_full_h5, return.type = "MChromatograms")
+    expect_s4_class(res, "MChromatograms")
+    expect_equal(lapply(ref, intensity), lapply(res, intensity))
+
+    ## Chromatograms
+    res <- featureChromatograms(xmseg_full_h5, return.type = "Chromatograms")
+    expect_s4_class(res, "Chromatograms")
+    expect_equal(lapply(ref[1, ], intensity),
+                 intensity(res[seq_len(n)]))
+    expect_equal(lapply(ref[2, ], intensity),
+                 intensity(res[seq_len(n) + n]))
+    ref <- featureChromatograms(xmseg_full_ref, return.type = "Chromatograms")
+    expect_equal(intensity(res[1:100]), intensity(ref[1:100]))
+
+    ## featureArea = FALSE
+    ref <- featureChromatograms(xmseg_full_ref, return.type = "Chromatograms",
+                                featureArea = FALSE)
+    res <- featureChromatograms(xmseg_full_h5, return.type = "Chromatograms",
+                                featureArea = FALSE)
+    expect_s4_class(res, "Chromatograms")
+    expect_false(anyNA(res$chrom_peak_id))
+    expect_false(anyNA(res$feature_id))
+    expect_equal(intensity(res[1:100]), intensity(ref[1:100]))
+})
+
 test_that("filterChromPeaks,XcmsExperimentHdf5 works", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     pks <- chromPeaks(x)
     fts <- featureDefinitions(x)
     mc <- x@hdf5_mod_count
@@ -1034,7 +1092,7 @@ test_that("filterChromPeaks,XcmsExperimentHdf5 works", {
 
 test_that("filterFeatureDefinitions,XcmsExperimentHdf5 works", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("xmse"), tmp)
     fts <- featureDefinitions(x)
     fvals <- featureValues(x)
     mc <- x@hdf5_mod_count
@@ -1056,14 +1114,14 @@ test_that("filterFeatureDefinitions,XcmsExperimentHdf5 works", {
     rm(tmp)
 
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
     expect_error(filterFeatureDefinitions(x, 1:3), "No feature definitions")
     rm(tmp)
 })
 
 test_that("manualChromPeaks,XcmsExperimentHdf5", {
     tmp <- tempfile()
-    x <- xcms:::.xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
+    x <- .xcms_experiment_to_hdf5(loadXcmsData("faahko_sub2"), tmp)
     cpks <- chromPeaks(x)
 
     ## errors
@@ -1259,6 +1317,26 @@ test_that("chromPeakData,XcmsExperimentHdf5 works with columns", {
     expect_true(ncol(res) == 1L)
     expect_equal(colnames(res), c("is_filled"))
     expect_equal(res$is_filled, ref$is_filled)
+})
+
+test_that("featureChromPeaks,XcmsExperimentHdf5 works", {
+    expect_error(featureChromPeaks(xmseg_full_h5, msLevel = 3L), "for MS")
+    res <- featureChromPeaks(xmseg_full_h5)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("feature_id", "chrom_peak_id"))
+    ord <- match(res$feature_id, rownames(featureDefinitions(xmseg_full_h5)))
+    expect_false(is.unsorted(ord))
+    expect_true(all(res$chrom_peak_id %in% rownames(chromPeaks(xmseg_full_h5))))
+})
+
+test_that("featurePeakidx,XcmsExperimentHdf5 works", {
+    res <- featurePeakidx(xmseg_full_h5)
+    expect_true(is.list(res))
+    fd <- featureDefinitions(xmseg_full_h5)
+    expect_equal(length(res), nrow(fd))
+    expect_equal(names(res), rownames(fd))
+    ref <- featurePeakidx(xmseg_full_ref)
+    expect_equal(unname(res), unname(ref))
 })
 
 ## test_that(".h5_feature_chrom_peaks_sample works", {

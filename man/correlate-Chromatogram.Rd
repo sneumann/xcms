@@ -36,9 +36,9 @@
 )
 }
 \arguments{
-\item{x}{\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object.}
+\item{x}{\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} object.}
 
-\item{y}{\code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object.}
+\item{y}{\code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} or \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} object.}
 
 \item{use}{\code{character(1)} passed to the \code{cor} function. See \code{\link[=cor]{cor()}} for
 details.}
@@ -47,7 +47,7 @@ details.}
 \code{\link[stats:cor]{stats::cor()}} for details.}
 
 \item{align}{\code{character(1)} defining the alignment method to be used. See
-help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for details. The value of
+help on \code{alignRt} in \code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} for details. The value of
 this parameter is passed to the \code{method} parameter of \code{alignRt}.}
 
 \item{...}{optional parameters passed along to the \code{alignRt} method such as
@@ -61,16 +61,16 @@ represent the chromatograms in \code{x} and the columns the chromatograms in
 \code{y}.
 }
 \description{
-\strong{For \code{xcms} >= 3.15.3 please use \code{\link[MSnbase:Chromatogram-class]{MSnbase::compareChromatograms()}} instead
+\strong{For \code{xcms} >= 3.15.3 please use \code{\link[MSnbase:compareChromatograms]{MSnbase::compareChromatograms()}} instead
 of \code{correlate}}
 
 Correlate intensities of two chromatograms with each other. If the two
 \code{Chromatogram} objects have different retention times they are first
 \emph{aligned} to match data points in the first to data points in the second
-chromatogram. See help on \code{alignRt} in \code{\link[MSnbase:Chromatogram-class]{MSnbase::Chromatogram()}} for more
+chromatogram. See help on \code{alignRt} in \code{\link[MSnbase:Chromatogram]{MSnbase::Chromatogram()}} for more
 details.
 
-If \code{correlate} is called on a single \code{\link[MSnbase:MChromatograms-class]{MSnbase::MChromatograms()}} object a
+If \code{correlate} is called on a single \code{\link[MSnbase:MChromatograms]{MSnbase::MChromatograms()}} object a
 pairwise correlation of each chromatogram with each other is performed and
 a \code{matrix} with the correlation coefficients is returned.
 

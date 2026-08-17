@@ -2,6 +2,9 @@
 #'
 #' @aliases XcmsExperiment-class filterChromPeaks
 #' @aliases featureArea quantify
+#' @aliases coerce,XcmsExperiment,xcmsSet-method
+#' @aliases coerce,XcmsExperiment,XCMSnExp-method
+#' @aliases coerce,XCMSnExp,XcmsExperiment-method
 #'
 #' @description
 #'
@@ -129,29 +132,33 @@
 #'   extract the data from (to e.g. for extracted ion chromatograms EICs).
 #'   Both parameters are expected to be numerical two-column matrices with
 #'   the first column defining the lower and the second the upper margin.
-#'   Each row can define a separate m/z - retention time region. Currently
-#'   the function returns a [MSnbase::MChromatograms()] object for `object`
-#'   being a `MsExperiment` or, for `object` being an `XcmsExperiment`,
-#'   either a `MChromatograms` or [XChromatograms()] depending on parameter
-#'   `return.type` (can be either `"MChromatograms"` or `"XChromatograms"`).
-#'   For the latter also chromatographic peaks detected within the provided
-#'   m/z and retention times are returned. Parameter `chromPeaks` allows
+#'   Each row can define a separate m/z - retention time region.
+#'
+#'   The chromatographic data can be returned either as an
+#'   [MSnbase::MChromatograms] object (parameter
+#'   `return.type = "MChromatograms"`, the default) or as the newer
+#'   [Chromatograms::Chromatograms()] container
+#'   (`return.type = "Chromatograms"`). If `object` is an *xcms* result object
+#'   (`XcmsExperiment`), the default is to return a [XChromatograms()] object
+#'   that contains also chromatographic peak and feature information. For
+#'   `XChromatograms` return type, the `chromPeaks` parameter allows
 #'   to specify which chromatographic peaks should be reported. See
 #'   documentation on the `chromPeaks` parameter for more information.
 #'   If the `XcmsExperiment` contains correspondence results, also the
 #'   associated feature definitions will be included in the returned
-#'   `XChromatograms`. By default the function returns chromatograms from MS1
-#'   data, but by setting parameter `msLevel = 2L` it is possible to e.g.
-#'   extract also MS2 chromatograms. By default, with parameter
-#'   `isolationWindowTargetMz = NULL` or `isolationWindowTargetMz = NA_real_`,
-#'   data from **all** MS2 spectra will be considered in the chromatogram
-#'   extraction. If MS2 data was generated within different m/z isolation
-#'   windows (such as e.g. with Scies SWATH data), the parameter
-#'   `isolationWindowTargetMz` should be used to ensure signal is only extracted
-#'   from the respective isolation window. The `isolationWindowTargetMz()`
-#'   function on the `Spectra` object can be used to inspect/list available
-#'   isolation windows of a data set. See also the xcms *LC-MS/MS vignette* for
-#'   examples and details.
+#'   `XChromatograms`.
+#'
+#'   By default the function returns chromatograms from MS level 1, but by
+#'   setting parameter `msLevel = 2L` it is possible to extract MS2
+#'   chromatograms. By default, with parameter `isolationWindowTargetMz = NULL`
+#'   or `isolationWindowTargetMz = NA_real_`, data from **all** MS2 spectra
+#'   will be considered in the chromatogram extraction. If MS2 data was
+#'   generated within different m/z isolation windows (such as e.g. with
+#'   Sciex SWATH data), the parameter `isolationWindowTargetMz` should be used
+#'   to ensure signal is only extracted from the specified isolation window.
+#'   The [Spectra::isolationWindowTargetMz()] function on the `Spectra` object
+#'   can be used to inspect/list available isolation windows of a data set.
+#'   See also the xcms *LC-MS/MS vignette* for examples and details.
 #'
 #' - `chromPeaks()`: returns a `numeric` matrix with the identified
 #'   chromatographic peaks. Each row represents a chromatographic peak
@@ -291,12 +298,19 @@
 #' - `featureChromatograms()`: extract ion chromatograms (EICs) for each
 #'   feature in `object`. See [featureChromatograms()] for more details.
 #'
+#' - `featureChromPeaks()`: get the mapping between features and chromatographic
+#'   peaks. See [featureChromPeaks()] for details.
+#'
 #' - `featureDefinitions()`: returns a `data.frame` with feature definitions or
 #'   an empty `data.frame` if no correspondence analysis results are present.
 #'   Parameters `msLevel`, `mz`, `ppm` and `rt` allow to define subsets of
 #'   feature definitions that should be returned with the parameter `type`
 #'   defining how these parameters should be used to subset the returned
 #'   `data.frame`. See parameter descriptions for details.
+#'
+#' - `featurePeakidx()`: get the indices of chromatographic peaks in the
+#'   `chromPeaks()` matrix assigned to each feature. See [featurePeakidx()] for
+#'   details.
 #'
 #' - `featureSpectra()`: returns a [Spectra::Spectra()] or `List` of `Spectra`
 #'   with (MS1 or MS2) spectra associated to each feature's chromatographic
@@ -577,8 +591,12 @@
 #' @param return.type For `chromPeakData()`: `character(1)` defining the
 #'     class of the returned object. Can be either `"DataFrame"` (the default)
 #'     or `"data.frame"`. For `chromatogram()`: `character(1)` defining the
-#'     type of the returned object. Currently only
-#'     `return.type = "MChromatograms"` is supported.
+#'     type of the returned object. For `MsExperiment` objects
+#'     `return.type = "MChromatograms"` (the default) and
+#'     `return.type = "Chromatograms"` allows to return a
+#'     [MSnbase::MChromatograms] or a [Chromatograms::Chromatograms()] object,
+#'     for `XcmsExperiment` also `return.type = "XChromatogram"` is supported
+#'     which returns the chromatographic data as a [XChromatograms] object.
 #'
 #' @param rt For `chromPeaks()` and `featureDefinitions()`: `numeric(2)`
 #'     defining the retention time range for which chromatographic peaks
@@ -710,6 +728,26 @@
 #' ## Plot the EICs for the second defined region
 #' plot(chrs[2, ])
 #'
+#' ## Extract chromatographic data for the first two chromatographic peaks
+#' ## as the new `Chromatograms` object.
+#' chrs <- chromatogram(xmse,
+#'     mz = chromPeaks(xmse)[1:2, c("mzmin", "mzmax")],
+#'     rt = chromPeaks(xmse)[1:2, c("rtmin", "rtmax")],
+#'     return.type = "Chromatograms")
+#' chrs
+#'
+#' ## Get the intensity values from each chromatogram
+#' intensity(chrs)
+#'
+#' ## Plot all EICs into a single plot
+#' Chromatograms::plotChromatogramsOverlay(chrs)
+#'
+#' ## Plot the first EIC on the 3 files
+#' Chromatograms::plotChromatogramsOverlay(chrs[1:3])
+#'
+#' ## Plot the second EIC on the 3 files
+#' Chromatograms::plotChromatogramsOverlay(chrs[4:6])
+#'
 #' ## Subsetting the data to the results (and data) for the second sample
 #' a <- xmse[2]
 #' nrow(chromPeaks(xmse))
@@ -818,6 +856,8 @@ setMethod("show", "XcmsExperiment", function(object) {
 })
 
 #' @rdname XcmsExperiment
+#'
+#' @export
 c.XcmsExperiment <- function(...) {
     l <- list(...)
     if (length(l) == 1L)
@@ -1086,7 +1126,7 @@ setMethod(
 
 #' @rdname XcmsExperiment
 setReplaceMethod("chromPeakData", "XcmsExperiment", function(object, value) {
-    object@chromPeakData <- value
+    object@chromPeakData <- as.data.frame(value)
     object
 })
 
@@ -1658,6 +1698,26 @@ setMethod(
                                     ppm = ppm, type = type)
     })
 
+#' @rdname featureChromPeaks
+setMethod("featurePeakidx", "XcmsResult", function(object,
+                                                   msLevel = integer()) {
+    fd <- featureDefinitions(object, msLevel = msLevel)
+    res <- fd$peakidx
+    names(res) <- rownames(fd)
+    res
+})
+
+#' @rdname featureChromPeaks
+setMethod("featureChromPeaks", "XcmsResult", function(object,
+                                                      msLevel = integer()) {
+    pidx <- featurePeakidx(object, msLevel = msLevel)
+    data.frame(
+        feature_id = rep(rownames(featureDefinitions(
+            object, msLevel = msLevel)), lengths(pidx)),
+        chrom_peak_id = rownames(chromPeaks(
+            object, msLevel = msLevel))[unlist(pidx)])
+})
+
 #' @rdname XcmsExperiment
 setMethod(
     "dropFeatureDefinitions", "XcmsExperiment",
@@ -1714,7 +1774,8 @@ setMethod(
     "chromPeakChromatograms", "XcmsExperiment",
     function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
              peaks = character(),
-             return.type = c("XChromatograms", "MChromatograms"),
+             return.type = c("XChromatograms", "MChromatograms",
+                             "Chromatograms"),
              ..., progressbar = TRUE) {
         return.type <- match.arg(return.type)
         if (!hasChromPeaks(object))
@@ -1727,157 +1788,84 @@ setMethod(
                           "vector with the IDs (row names) of the ",
                           "chromatographic peaks.")
             if (!is.character(peaks))
-                stop(msg)
+                stop(msg, call. = FALSE)
             if (!all(peaks %in% rownames(pks)))
-                stop("'peaks' don't match row names of 'chromPeaks'. ", msg)
+                stop("'peaks' don't match row names of 'chromPeaks'. ", msg,
+                     call. = FALSE)
             pks <- pks[peaks, , drop = FALSE]
             pkd <- pkd[peaks, ]
         }
-        pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-                                               "total (:percent) in ",
-                                               ":elapsed"),
-                               total = (length(object) + 1), clear = FALSE)
-        pb$tick(0)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        ph <- object@processHistory
-        object <- as(object, "MsExperiment")
-        rownames(sampleData(object)) <- NULL # don't track sample names
-        res <- lapply(seq_along(object), function(z) {
-            idx <- which(pks[, "sample"] == z)
-            if (length(idx)) {
-                mzr <- pks[idx, c("mzmin", "mzmax"), drop = FALSE]
-                rtr <- pks[idx, c("rtmin", "rtmax"), drop = FALSE]
-                if (expandMz != 0) {
-                    mzr[, 1] <- mzr[, 1] - expandMz
-                    mzr[, 2] <- mzr[, 2] + expandMz
-                }
-                if (expandRt != 0) {
-                    rtr[, 1] <- rtr[, 1] - expandRt
-                    rtr[, 2] <- rtr[, 2] + expandRt
-                }
-                chrs <- .mse_chromatogram(
-                    object[z], rt = rtr, mz = mzr,
-                    aggregationFun = aggregationFun,
-                    msLevel = pkd$ms_level[idx],
-                    isolationWindow = pkd$isolationWindow[idx],
-                    chunkSize = 1L, progressbar = FALSE,
-                    BPPARAM = SerialParam())
-                fData(chrs)$sample_index <- z # report sample index
-                pb$tick()
-                rownames(chrs) <- rownames(pks)[idx]
-                rownames(fData(chrs)) <- rownames(chrs)
-                chrs
-            } else {
-                pb$tick()
-                NULL
-            }
-        })
-        res <- as(do.call(c, res[lengths(res) > 0]), return.type)
-        pData(res)[,] <- NA             # it's not from a single file.
-        colnames(res) <- NULL
-        ## re-order the result - if needed.
-        if (any(rownames(res) != rownames(pks)))
-            res <- res[match(rownames(pks), rownames(res)), 1L]
-        if (return.type == "XChromatograms") {
-            idx <- seq_along(res)
-            pks <- split.data.frame(pks, idx)
-            pkd <- split.data.frame(pkd, idx)
-            mat <- res@.Data
-            slot(res, ".Data", check = FALSE) <- matrix(ncol = ncol(res),
-                                                        nrow = nrow(res))
-            for (i in seq_along(res)) {
-                tmp <- mat[i, 1L][[1L]]
-                slot(tmp, "chromPeaks", check = FALSE) <- pks[[i]]
-                slot(tmp, "chromPeakData", check = FALSE) <-
-                    as(pkd[[i]], "DataFrame")
-                mat[i, 1L][[1L]] <- tmp
-            }
-            slot(res, ".Data", check = FALSE) <- mat
-            slot(res, ".processHistory", check = FALSE) <- ph
-        }
-        pb$tick()
-        res
+        switch(return.type,
+               ## Chromatograms
+               Chromatograms = {
+                   res <- .mse_chromatograms_for_peaks(
+                       object, pks, pkd, aggregationFun = aggregationFun,
+                       expandRt = expandRt, expandMz = expandMz)
+                   res$chrom_peak_id <- rownames(pks)
+                   res
+               },
+               ## MSnbase::MChromatograms
+               MChromatograms = .mse_mchromatograms_for_peaks(
+                   as(object, "MsExperiment"), pks, pkd, aggregationFun,
+                   expandRt = expandRt, expandMz = expandMz),
+               ## xcms::XChromatograms: MChromatograms + chrom peaks.
+               XChromatograms = {
+                   res <- .mse_mchromatograms_for_peaks(
+                       as(object, "MsExperiment"), pks, pkd, aggregationFun,
+                       expandRt = expandRt, expandMz = expandMz)
+                   res <- as(res, "XChromatograms")
+                   idx <- seq_along(res)
+                   pks <- split.data.frame(pks, idx)
+                   pkd <- split.data.frame(pkd, idx)
+                   mat <- res@.Data
+                   slot(res, ".Data", check = FALSE) <- matrix(ncol = ncol(res),
+                                                               nrow = nrow(res))
+                   for (i in seq_along(res)) {
+                       tmp <- mat[i, 1L][[1L]]
+                       slot(tmp, "chromPeaks", check = FALSE) <- pks[[i]]
+                       slot(tmp, "chromPeakData", check = FALSE) <-
+                           as(pkd[[i]], "DataFrame")
+                       mat[i, 1L][[1L]] <- tmp
+                   }
+                   slot(res, ".Data", check = FALSE) <- mat
+                   slot(res, ".processHistory") <- object@processHistory
+                   res
+               })
     })
 
 #' @rdname featureChromatograms
 setMethod(
     "featureChromatograms", "XcmsExperiment",
-    function(object, expandRt = 0, expandMz = 0, aggregationFun = "max",
-             features = character(), return.type = "XChromatograms",
+    function(object, expandRt = 0.0, expandMz = 0.0, aggregationFun = "max",
+             features = character(),
+             return.type = c("XChromatograms","MChromatograms","Chromatograms"),
              chunkSize = 2L, mzmin = min, mzmax = max, rtmin = min,
-             rtmax = max, ..., progressbar = TRUE, BPPARAM = bpparam()) {
+             rtmax = max, featureArea = TRUE, ...,
+             progressbar = TRUE, BPPARAM = bpparam()) {
         return.type <- match.arg(return.type)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        area <- featureArea(object, mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
-                            rtmax = rtmax, features = features)
-        if (expandRt != 0) {
-            area[, "rtmin"] <- area[, "rtmin"] - expandRt
-            area[, "rtmax"] <- area[, "rtmax"] + expandRt
-        }
-        if (expandMz != 0) {
-            area[, "mzmin"] <- area[, "mzmin"] - expandMz
-            area[, "mzmax"] <- area[, "mzmax"] + expandMz
-        }
-        fts <- featureDefinitions(object)[rownames(area), ]
-        chrs <- as(.mse_chromatogram(
-            as(object, "MsExperiment"),
-            rt = area[, c("rtmin", "rtmax"), drop = FALSE],
-            mz = area[, c("mzmin", "mzmax"), drop = FALSE],
-            aggregationFun = aggregationFun, msLevel = fts$ms_level,
-            chunkSize = chunkSize, progressbar = progressbar,
-            BPPARAM = BPPARAM), "XChromatograms")
-        ## Populate with chrom peaks.
-        nf <- nrow(fts)
-        js <- seq_len(ncol(chrs))
-        pks_empty <- .chromPeaks(object)[integer(), , drop = FALSE]
-        pkd_empty <- as(.chromPeakData(object)[integer(), , drop = FALSE],
-                        "DataFrame")
-        tmp <- chrs@.Data
-        slot(chrs, ".Data") <- matrix(nrow = nrow(tmp), ncol = ncol(tmp))
-        if (progressbar) {
-            message("Processing chromatographic peaks for features")
-            pb <- progress_bar$new(format = paste0("[:bar] :current/:",
-                                                   "total (:percent) in ",
-                                                   ":elapsed"),
-                                   total = nf + 1L, clear = FALSE)
-        }
-        for (i in seq_len(nf)) {
-            idx <- fts$peakidx[[i]]
-            smpl <- .chromPeaks(object)[idx, "sample"]
-            for (j in js) {
-                keep <- smpl == j
-                tmp_i <- tmp[i, j][[1L]]
-                if (any(keep)) {
-                    slot(tmp_i, "chromPeaks", check = FALSE) <-
-                        .chromPeaks(object)[idx[keep], , drop = FALSE]
-                    slot(tmp_i, "chromPeakData",
-                         check = FALSE) <- as(
-                        object@chromPeakData[idx[keep], , drop = FALSE],
-                        "DataFrame")
-                } else {
-                    slot(tmp_i, "chromPeaks", check = FALSE) <- pks_empty
-                    slot(tmp_i, "chromPeakData", check = FALSE) <- pkd_empty
-                }
-                tmp[i, j][[1L]] <- tmp_i
-            }
-            if (progressbar)
-                pb$tick()
-        }
-        slot(chrs, ".Data", check = FALSE) <- tmp
-        ## Each row is a SINGLE feature, thus we can use the "row" column to
-        ## match chrom peaks to features.
-        fts$row <- seq_len(nf)
-        pkrow <- unname(chromPeaks(chrs)[, c("row")])
-        fts$peakidx <- unname(split(seq_along(pkrow), pkrow))
-        colnames(chrs) <- basename(fileNames(object))
-        rownames(chrs@phenoData) <- colnames(chrs)
-        slot(chrs, "featureDefinitions", check = FALSE) <- DataFrame(fts)
-        slot(chrs, ".processHistory", check = FALSE) <- object@processHistory
-        if (progressbar)
-            pb$tick()
-        chrs
+        switch(return.type,
+               Chromatograms = .xmse_chromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+                   rtmax = rtmax, featureArea = featureArea),
+               MChromatograms = .xmse_mchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM),
+               XChromatograms = .xmse_xchromatograms_for_features(
+                   object, expandRt = expandRt, expandMz = expandMz,
+                   aggregationFun = aggregationFun, features = features,
+                   chunkSize = chunkSize, mzmin = mzmin, mzmax = mzmax,
+                   rtmin = rtmin, rtmax = rtmax, progressbar = progressbar,
+                   BPPARAM = BPPARAM)
+               )
     })
 
 #' @rdname XcmsExperiment
@@ -2108,7 +2096,8 @@ setMethod(
     function(object, rt = matrix(nrow = 0, ncol = 2),
              mz = matrix(nrow = 0, ncol = 2), aggregationFun = "sum",
              msLevel = 1L, chunkSize = 2L, isolationWindowTargetMz = NULL,
-             return.type = c("XChromatograms", "MChromatograms"),
+             return.type = c("XChromatograms", "MChromatograms",
+                             "Chromatograms"),
              include = character(),
              chromPeaks = c("apex_within", "any", "none"),
              BPPARAM = bpparam()) {
@@ -2127,12 +2116,22 @@ setMethod(
         chromPeaks <- match.arg(chromPeaks)
         if (hasAdjustedRtime(object))
             object <- applyAdjustedRtime(object)
-        .xmse_extract_chromatograms_old(
-            object, rt = rt, mz = mz, aggregationFun = aggregationFun,
-            msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
-            chunkSize = chunkSize, chromPeaks = chromPeaks,
-            return.type = return.type, BPPARAM = BPPARAM)
-    })
+        switch(return.type,
+               MChromatograms = .mse_mchromatograms_for_ranges(
+                   as(object, "MsExperiment"), rt = rt, mz = mz,
+                   aggregationFun = aggregationFun, msLevel = msLevel,
+                   isolationWindow = isolationWindowTargetMz,
+                   chunkSize = chunkSize, BPPARAM = BPPARAM),
+               XChromatograms = .xmse_extract_chromatograms_old(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz,
+                   chunkSize = chunkSize, chromPeaks = chromPeaks,
+                   return.type = return.type, BPPARAM = BPPARAM),
+               Chromatograms = .mse_chromatograms_for_ranges(
+                   object, rt = rt, mz = mz, aggregationFun = aggregationFun,
+                   msLevel = msLevel, isolationWindow = isolationWindowTargetMz)
+               )
+        })
 
 #' @rdname XcmsExperiment
 setMethod("processHistory", "XcmsExperiment", function(object, type) {

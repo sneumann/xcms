@@ -16,6 +16,8 @@ toXcmsExperimentHdf5(object, hdf5File = tempfile())
 
 toXcmsExperiment(object, ...)
 
+XcmsExperimentHdf5()
+
 \S4method{chromPeakData}{XcmsExperimentHdf5}(
   object,
   msLevel = integer(),
@@ -210,12 +212,16 @@ parameter.
 \section{Correspondence analysis results}{
 
 \itemize{
+\item \code{featureChromPeaks()}: get the mapping between features and
+chromatographic peaks. See \code{\link[=featureChromPeaks]{featureChromPeaks()}} for details.
 \item \code{featureDefinitions()}: similarly to \code{featureDefinitions()} for
 \link{XcmsExperiment} objects, this method returns a \code{data.frame} with the
 characteristics for the defined LC-MS features. The function for
 \code{XcmsExperimentHdf5} does however \strong{not} return the \code{"peakidx"} column
-with the indices of the chromatographic peaks per feature. Also, the
-columns are returned in alphabetic order.
+with the indices of the chromatographic peaks per feature. This
+information can be extracted with the \code{\link[=featurePeakidx]{featurePeakidx()}} function.
+Note: the columns of the data frame returned by \code{featureDefinitions()} are
+in alphabetic order.
 \item \code{featureValues()}: for parameter \code{value}, the option \code{value = "index"}
 (i.e. returning the index of the chromatographic peaks within the
 \code{chromPeaks()} matrix per feature) is \strong{not} supported.

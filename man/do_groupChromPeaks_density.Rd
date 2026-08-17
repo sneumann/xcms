@@ -139,9 +139,9 @@ Anal. Chem. 2006, 78:779-787.
 doi: \href{https://doi.org/10.1021/ac051437y}{10.1021/ac051437y}
 }
 \seealso{
-Other core peak grouping algorithms: 
-\code{\link{do_groupChromPeaks_nearest}()},
-\code{\link{do_groupPeaks_mzClust}()}
+Other core peak grouping algorithms:
+\code{\link[=do_groupChromPeaks_nearest]{do_groupChromPeaks_nearest()}},
+\code{\link[=do_groupPeaks_mzClust]{do_groupPeaks_mzClust()}}
 }
 \author{
 Colin Smith, Johannes Rainer

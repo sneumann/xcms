@@ -26,7 +26,7 @@
 #' library(faahKO)
 #' data("faahko")
 #'
-#' xset <- group(faahko)
+#' xset <- xcms::group(faahko)
 #' mat <- groupval(xset, value = "into")
 #'
 #' mat_imp <- imputeRowMin(mat)
@@ -115,7 +115,7 @@ imputeRowMin <- function(x, min_fraction = 1/2) {
 #' library(MSnbase)
 #' data("faahko")
 #'
-#' xset <- group(faahko)
+#' xset <- xcms::group(faahko)
 #' mat <- groupval(xset, value = "into")
 #'
 #' ## Estimate the relationship between row sd and mean. The standard deviation

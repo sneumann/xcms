@@ -69,7 +69,7 @@ library(faahKO)
 library(MSnbase)
 data("faahko")
 
-xset <- group(faahko)
+xset <- xcms::group(faahko)
 mat <- groupval(xset, value = "into")
 
 ## Estimate the relationship between row sd and mean. The standard deviation
@@ -89,8 +89,8 @@ head(mat_imp_fromto)
 \seealso{
 \code{imputeLCMD} package for more left censored imputation functions.
 
-Other imputation functions: 
-\code{\link{imputeRowMin}()}
+Other imputation functions:
+\code{\link[=imputeRowMin]{imputeRowMin()}}
 }
 \author{
 Johannes Rainer, Mar Garcia-Aloy

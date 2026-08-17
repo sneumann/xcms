@@ -1169,7 +1169,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = 0,
   if (FALSE) {
     library(xcms)
     library(faahKO)
-    object <- group(faahko)
+    object <- xcms::group(faahko)
     gf <- fillPeaks(object)
     pkgEnv = getNamespace("xcms")
     attach(pkgEnv)

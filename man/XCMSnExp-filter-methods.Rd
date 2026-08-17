@@ -109,7 +109,7 @@ All methods return an \link{XCMSnExp} object.
 }
 \description{
 The methods listed on this page allow to filter and subset \link{XCMSnExp}
-objects. Most of them are inherited from the \link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp} object
+objects. Most of them are inherited from the \link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp} object
 defined in the \emph{MSnbase} package and have been adapted for \code{XCMSnExp} to
 enable correct subsetting of preprocessing results.
 \itemize{

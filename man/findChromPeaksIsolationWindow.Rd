@@ -34,7 +34,7 @@ object with the DIA data.}
 \item{...}{currently not used.}
 
 \item{param}{Peak detection parameter object, such as a
-\linkS4class{CentWaveParam} object defining and configuring the chromographic
+\link[=CentWaveParam-class]{CentWaveParam} object defining and configuring the chromographic
 peak detection algorithm.
 See also \code{\link[=findChromPeaks]{findChromPeaks()}} for more details.}
 
@@ -51,7 +51,7 @@ loaded into memory and processed at a time. See \code{\link[=findChromPeaks]{fin
 more information.}
 
 \item{BPPARAM}{if \code{object} is an \code{MsExperiment} or \code{XcmsExperiment}:
-parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}} for more
+parallel processing setup. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}} for more
 information.}
 }
 \value{

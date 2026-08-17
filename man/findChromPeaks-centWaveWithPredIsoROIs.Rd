@@ -141,7 +141,7 @@ Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
 
 \item{object}{For \code{findChromPeaks()}: an
-\code{\link[MSnbase:OnDiskMSnExp-class]{MSnbase::OnDiskMSnExp()}}  object containing the MS- and all
+\code{\link[MSnbase:OnDiskMSnExp]{MSnbase::OnDiskMSnExp()}}  object containing the MS- and all
 other experiment-relevant data.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{For all other methods: a parameter object.
@@ -151,7 +151,7 @@ other experiment-relevant data.
 chromatographic peak detection algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}.
+should be performed. It defaults to \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}.
 See documentation of the \emph{BiocParallel} package for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
@@ -216,8 +216,8 @@ API function.
 \code{\link[=XCMSnExp]{XCMSnExp()}} for the object containing the results of
 the peak detection.
 
-Other peak detection methods: 
-\code{\link{findChromPeaks}()},
+Other peak detection methods:
+\code{\link[=findChromPeaks]{findChromPeaks()}},
 \code{\link{findChromPeaks-centWave}},
 \code{\link{findChromPeaks-massifquant}},
 \code{\link{findChromPeaks-matchedFilter}},

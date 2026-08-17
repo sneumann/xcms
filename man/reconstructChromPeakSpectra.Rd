@@ -58,7 +58,7 @@ be used as \code{precursorIntensity} of the resulting spectra.}
 \code{chromPeaks}) of MS1 peaks for which MS2 spectra should be reconstructed.
 By default they are reconstructed for all MS1 chromatographic peaks.}
 
-\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:register]{BiocParallel::bpparam()}}
+\item{BPPARAM}{parallel processing setup. See \code{\link[BiocParallel:bpparam]{BiocParallel::bpparam()}}
 for more information.}
 
 \item{return.type}{\code{character(1)} defining the type of the returned object.
@@ -73,8 +73,8 @@ empty spectra (i.e. without m/z and intensity values) for MS1 peaks for
 which reconstruction was not possible (either no MS2 signal was recorded
 or the correlation of the MS2 chromatographic peaks with the MS1
 chromatographic peak was below threshold \code{minCor}. Spectra variables
-\code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[IRanges:AtomicList-class]{IRanges::CharacterList()}}
-and \code{\link[IRanges:AtomicList-class]{IRanges::NumericList()}} with length equal to the number of peaks per
+\code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[IRanges:CharacterList]{IRanges::CharacterList()}}
+and \code{\link[IRanges:NumericList]{IRanges::NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic

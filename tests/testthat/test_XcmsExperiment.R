@@ -59,6 +59,11 @@ test_that("findChromPeaks,MsExperiment et al works", {
     expect_s4_class(chromPeakData(xmse), "DataFrame")
     expect_true(nrow(chromPeakData(xmse, 2:3)) == 0)
     expect_true(is.integer(chromPeakData(res)$ms_level))
+    ## chromPeakData<-
+    expect_no_error(chromPeakData(res) <- xmse@chromPeakData)
+    expect_equal(res@chromPeakData, xmse@chromPeakData)
+    expect_no_error(chromPeakData(res) <- chromPeakData(res))
+    expect_equal(res@chromPeakData, xmse@chromPeakData)
 
     ## dropChromPeaks
     rres <- dropChromPeaks(res)
@@ -1352,6 +1357,11 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
     ref <- chromatogram(xod_x, mz = mzr, rt = rtr)
     expect_equal(chromPeaks(res), chromPeaks(ref))
 
+    res2 <- chromatogram(xmse, mz = mzr, rt = rtr,
+                         return.type = "Chromatograms")
+    expect_s4_class(res2, "Chromatograms")
+    expect_equal(intensity(res2[1:3]),lapply(res[1,], intensity))
+
     ## Multiple rows.
     res <- .xmse_extract_chromatograms_old(
         xmse, mz = chromPeaks(xmse)[1:10, c("mzmin", "mzmax")],
@@ -1397,6 +1407,16 @@ test_that("chromatogram,XcmsExperiment and .xmse_extract_chromatograms_old", {
     expect_true(all(intensity(res2[[1L]]) > 0))
     ## have more data points without isolation windows
     expect_true(length(intensity(res[[1L]])) > length(intensity(res2[[1L]])))
+
+    b <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                      rt = c(100, 600), return.type = "Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(intensity(b), lapply(res, intensity))
+    b <- chromatogram(mse_dia, msLevel = 2L, mz = c(50, 300),
+                      rt = c(100, 600), isolationWindowTargetMz = 270.85,
+                      return.type = "Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(intensity(b), lapply(res2, intensity))
 
     ## fake MS2 data with undefined isolation window.
     a <- chromatogram(xmseg, msLevel = 1L,
@@ -1630,6 +1650,15 @@ test_that("chromPeaksChromatograms,XcmsExperiment works", {
     expect_error(chromPeakChromatograms(xmse, peaks = 1:3), "expected to")
 
     chrs <- chromPeakChromatograms(xmse)
+    expect_s4_class(chrs, "XChromatograms")
+    b <- chromPeakChromatograms(xmse, return.type = "MChromatograms")
+    expect_s4_class(b, "MChromatograms")
+    c <- chromPeakChromatograms(xmse, return.type = "Chromatograms")
+    expect_s4_class(c, "Chromatograms")
+    expect_equal(nrow(chrs), nrow(b))
+    expect_equal(nrow(chrs), length(c))
+    expect_equal(intensity(c), lapply(b, intensity))
+    expect_equal(c$chrom_peak_id, rownames(chromPeaks(xmse)))
 
     ## Test providing peaks. Only those from one file.
     pks <- rownames(chromPeaks(xmse)[chromPeaks(xmse)[, "sample"] == 2, ])
@@ -1640,6 +1669,12 @@ test_that("chromPeaksChromatograms,XcmsExperiment works", {
     expect_equal(fData(ref), fData(res))
     expect_equal(chromPeaks(ref), chromPeaks(res))
 
+    b <- chromPeakChromatograms(xmse, peaks = pks, return.type ="Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(pks, b$chrom_peak_id)
+    expect_equal(intensity(b), lapply(res, intensity))
+    expect_equal(unique(dataOrigin(b)), fileNames(xmse)[2L])
+
     ## Test providing peaks. different order.
     pks <- sample(rownames(chromPeaks(xmseg)), 10)
     res <- chromPeakChromatograms(xmseg, peaks = pks)
@@ -1648,16 +1683,26 @@ test_that("chromPeaksChromatograms,XcmsExperiment works", {
     expect_equal(fData(res), fData(ref))
     expect_equal(chromPeaks(res), chromPeaks(ref))
 
+    b <- chromPeakChromatograms(xmse, peaks = pks, return.type ="Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(pks, b$chrom_peak_id)
+    expect_equal(intensity(b), lapply(res, intensity))
+
     ## Test on a SWATH data set: are MS1 and MS2 chrom peaks extracted
     ## correctly?
     cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                          peakwidth = c(3, 20), prefilter = c(3, 1000))
     xmse_dia <- findChromPeaks(mse_dia, param = cwp)
-    xmse_dia <- findChromPeaksIsolationWindow(xmse_dia, param = cwp)
+    expect_warning(
+        xmse_dia <- findChromPeaksIsolationWindow(xmse_dia, param = cwp))
     res <- chromPeakChromatograms(xmse_dia)
     ## To compare against what?
     ints <- vapply(res, function(z) sum(intensity(z), na.rm = TRUE), numeric(1))
     expect_true(cor(chromPeaks(res)[, "into"], ints) >= 0.97)
+
+    b <- chromPeakChromatograms(xmse_dia, return.type = "Chromatograms")
+    expect_s4_class(b, "Chromatograms")
+    expect_equal(length(b), nrow(res))
 })
 
 test_that("setAs,XcmsExperiment,xcmsSet works", {
@@ -1748,4 +1793,87 @@ test_that("chromPeakData,XcmsExperiment works with parameter columns", {
     expect_true(nrow(res) == 0L)
 
     expect_error(chromPeakData(xmse, columns = "a"), "valid column")
+})
+
+test_that("featureChromatograms,XcmsExperiment without featureArea works", {
+    ## Compare against chromPeakChromatograms
+    a <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              expandRt = 2, featureArea = FALSE)
+    ref <- chromPeakChromatograms(xmseg, return.type = "Chromatograms",
+                                  expandRt = 2)
+    cp <- rownames(chromPeaks(xmseg))[unlist(featureDefinitions(xmseg)$peakidx)]
+    expect_equal(a$chrom_peak_id, cp)
+    i <- match(a$chrom_peak_id, ref$chrom_peak_id)
+    ref <- ref[i]
+    expect_equal(intensity(ref), intensity(a))
+
+    ## Selected features.
+    a <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              features = c("FT03", "FT01", "FT03"),
+                              featureArea = FALSE)
+    cp <- rownames(chromPeaks(xmseg))[
+        unlist(featureDefinitions(xmseg)[c("FT03", "FT01", "FT03"), ]$peakidx)]
+    expect_equal(a$chrom_peak_id, cp)
+    ref <- chromPeakChromatograms(xmseg, return.type = "Chromatograms",
+                                  peaks = cp)
+    expect_equal(ref$chrom_peak_id, cp)
+    expect_equal(ref$chrom_peak_id, a$chrom_peak_id)
+    expect_equal(intensity(ref), intensity(a))
+})
+
+test_that("featureChromatograms,XcmsExperiment different return.type works", {
+    a <- featureChromatograms(xmseg, return.type = "MChromatograms")
+    expect_s4_class(a, "MChromatograms")
+    expect_equal(nrow(a), nrow(featureDefinitions(xmseg)))
+    expect_equal(ncol(a), length(xmseg))
+    expect_equal(fData(a)$feature_id, rownames(featureDefinitions(xmseg)))
+
+    b <- featureChromatograms(xmseg, return.type = "XChromatograms")
+    expect_s4_class(b, "XChromatograms")
+    expect_equal(nrow(b), nrow(featureDefinitions(xmseg)))
+    expect_equal(ncol(b), length(xmseg))
+    expect_equal(fData(b)$feature_id, rownames(featureDefinitions(xmseg)))
+    expect_equal(lapply(a[1, ], intensity), lapply(b[1, ], intensity))
+
+    c <- featureChromatograms(xmseg, return.type = "Chromatograms")
+    expect_s4_class(c, "Chromatograms")
+    expect_equal(length(c), length(xmseg) * nrow(featureDefinitions(xmseg)))
+    expect_equal(lapply(a[1, ], intensity), intensity(c[1:3]))
+    expect_equal(lapply(a[2, ], intensity), intensity(c[4:6]))
+
+    fts <- rownames(featureDefinitions(xmseg))[c(4, 1, 23, 4)]
+    a <- featureChromatograms(xmseg, return.type = "MChromatograms",
+                              features = fts, expandRt = 3)
+    expect_equal(nrow(a), 4)
+    expect_equal(fData(a)$feature_id, fts)
+    expect_equal(lapply(a[1, ], intensity), lapply(a[4, ], intensity))
+
+    b <- featureChromatograms(xmseg, return.type = "XChromatograms",
+                              features = fts, expandRt = 3)
+    expect_equal(nrow(b), 4)
+    expect_equal(fData(b)$feature_id, fts)
+    expect_equal(lapply(a[2, ], intensity), lapply(b[2, ], intensity))
+
+    c <- featureChromatograms(xmseg, return.type = "Chromatograms",
+                              features = fts, expandRt = 3)
+    expect_s4_class(c, "Chromatograms")
+    expect_equal(length(c), length(xmseg) * length(fts))
+    expect_equal(c$feature_id, rep(fts, each = 3))
+    expect_equal(lapply(a[2, ], intensity), intensity(c[4:6]))
+    expect_equal(intensity(c[1:3]), intensity(c[10:12]))
+})
+
+test_that("featureChromPeaks works", {
+    ref <- featureDefinitions(xmseg)
+    res <- featureChromPeaks(xmseg)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("feature_id", "chrom_peak_id"))
+    expect_equal(res$feature_id, rep(rownames(ref), lengths(ref$peakidx)))
+    expect_equal(res$chrom_peak_id,
+                 rownames(chromPeaks(xmseg))[unlist(ref$peakidx)])
+})
+
+test_that("featurePeakidx works", {
+    expect_equal(unname(featurePeakidx(xmseg)),
+                 featureDefinitions(xmseg)$peakidx)
 })
