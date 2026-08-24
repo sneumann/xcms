@@ -163,7 +163,6 @@ jobs:
           BiocManager::install("RforMassSpectrometry/Chromatograms")
           install.packages("pak")
           pak::local_install_dev_deps(ask = FALSE)
-          pak::local_install(depdendencies = TRUE)
         continue-on-error: true
         shell: Rscript {0}
 
@@ -171,6 +170,7 @@ jobs:
         run: |
           ## Pass #2 at installing dependencies
           ## For running the checks
+          pak::local_install(dependencies = TRUE)
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           BiocManager::install(c("rcmdcheck", "BiocCheck"))
         shell: Rscript {0}
