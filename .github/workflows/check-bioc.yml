@@ -161,7 +161,7 @@ jobs:
           ## Ideally, all dependencies should get installed in the first pass.
           install.packages(c("remotes", "devtools"))
           BiocManager::install("RforMassSpectrometry/Chromatograms")
-          devtools::install_deps()
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories())
         continue-on-error: true
         shell: Rscript {0}
 
@@ -169,7 +169,7 @@ jobs:
         run: |
           ## Pass #2 at installing dependencies
           ## For running the checks
-          devtools::install_deps()
+          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories())
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           BiocManager::install(c("rcmdcheck", "BiocCheck"))
         shell: Rscript {0}
