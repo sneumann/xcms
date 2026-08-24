@@ -159,9 +159,12 @@ jobs:
           ## https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016675.html
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
-          install.packages(c("remotes", "devtools"))
-          BiocManager::install("RforMassSpectrometry/Chromatograms")
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories())
+          install.packages(c("remotes", "devtools", "pak"))
+          library(pak)
+          repo_add(.list = BiocManager::repositories())
+          local_install_dev_deps()
+          local_install_deps()
+          local_install()
         continue-on-error: true
         shell: Rscript {0}
 
@@ -169,7 +172,11 @@ jobs:
         run: |
           ## Pass #2 at installing dependencies
           ## For running the checks
-          remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories())
+          library(pak)
+          repo_add(.list = BiocManager::repositories())
+          local_install_dev_deps()
+          local_install_deps()
+          local_install()
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           BiocManager::install(c("rcmdcheck", "BiocCheck"))
         shell: Rscript {0}
