@@ -1315,12 +1315,20 @@ XcmsExperimentHdf5 <- function() {
                             read_rownames = FALSE,
                             rownames = paste0(name, "_rownames")) {
     d <- rhdf5::h5read(h5, name = name, index = index)
-    if (read_rownames)
-        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
-                                     index = index[1L])
-    if (read_colnames)
-        colnames(d) <- rhdf5::h5read(h5, name = paste0(name, "_colnames"),
-                                     drop = TRUE, index = index[2L])
+    if (read_rownames) {
+        rn <- rhdf5::h5read(h5, name = rownames, drop = TRUE)
+        if (length(index[[1L]]))
+            rownames(d) <- rn[index[[1L]]]
+        else rownames(d) <- rn
+    }
+    if (read_colnames) {
+        cn <- rhdf5::h5read(h5, name = paste0(name, "_colnames"), drop = TRUE)
+        if (length(index[[2L]]))
+            colnames(d) <- cn[index[[2L]]]
+        else colnames(d) <- cn
+        ## colnames(d) <- rhdf5::h5read(h5, name = paste0(name, "_colnames"),
+        ##                              drop = TRUE, index = index[2L])
+    }
     d
 }
 
@@ -1339,12 +1347,18 @@ XcmsExperimentHdf5 <- function() {
         d <- d[index[[1L]], , drop = FALSE]
     if (!is.null(index[[2L]]))
         d <- d[, index[[2L]], drop = FALSE]
-    if (read_rownames)
-        rownames(d) <- rhdf5::h5read(h5, name = rownames, drop = TRUE,
-                                     index = index[1L])
-    if (read_colnames)
-        colnames(d) <- rhdf5::h5read(h5, name = paste0(name, "_colnames"),
-                                     drop = TRUE, index = index[2L])
+    if (read_rownames) {
+        rn <- rhdf5::h5read(h5, name = rownames, drop = TRUE)
+        if (length(index[[1L]]))
+            rownames(d) <- rn[index[[1L]]]
+        else rownames(d) <- rn
+    }
+    if (read_colnames) {
+        cn <- rhdf5::h5read(h5, name = paste0(name, "_colnames"), drop = TRUE)
+        if (length(index[[2L]]))
+            colnames(d) <- cn[index[[2L]]]
+        else colnames(d) <- cn
+    }
     d
 }
 
@@ -1360,7 +1374,7 @@ XcmsExperimentHdf5 <- function() {
         name, h5, index, read_colnames, read_rownames, rownames)
     if (length(rt) | length(mz))
         d <- d[.is_chrom_peak_within_mz_rt(d, rt = rt, mz = mz,
-                                            ppm = ppm, type = type), ,
+                                           ppm = ppm, type = type), ,
                drop = FALSE]
     ## If sample_index is provided add a column "sample" with the index.
     if (length(sample_index))
@@ -1629,8 +1643,7 @@ XcmsExperimentHdf5 <- function() {
 #' @noRd
 .h5_increment_mod_count <- function(h5) {
     mc <- .h5_mod_count(h5) + 1L
-    rhdf5::h5write(mc, h5, "/header/modcount",
-                   level = .h5_compression_level())
+    rhdf5::h5write(mc, h5, "/header/modcount")
     mc
 }
 

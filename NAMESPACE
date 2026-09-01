@@ -390,8 +390,6 @@ exportMethods("hasChromPeaks",
               )
 
 ## feature grouping functions and methods.
-importFrom("MsCoreUtils",
-           "group")
 importMethodsFrom("MsFeatures",
                   "featureGroups",
 		  "featureGroups<-",

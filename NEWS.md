@@ -1,5 +1,12 @@
 # xcms 4.11
 
+## Changes in version 4.11.3
+
+- Workaround for errors reading subsets of data from HDF5 files with
+  `XcmsExperimentHdf5`: original issue reported in *rhdf5*:
+  https://github.com/Huber-group-EMBL/rhdf5/issues/240 . Code can be reverted
+  once the problem is fixed upstream in *rhdf5*.
+
 ## Changes in version 4.11.2
 
 - Add support to return chromatographic data as a `Chromatograms` object with

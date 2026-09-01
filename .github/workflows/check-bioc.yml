@@ -124,7 +124,9 @@ jobs:
       - name: Install macOS system dependencies
         if: matrix.config.os == 'macOS-latest'
         run: |
-          brew install gettext
+          source("https://mac.R-project.org/bin/install.R")
+          install.libs("gettext")
+        shell: Rscript {0}
 
       - name: Install Windows system dependencies
         if: runner.os == 'Windows'
@@ -159,11 +161,12 @@ jobs:
           ## https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016675.html
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
-          install.packages("remotes")
-          BiocManager::install("RforMassSpectrometry/Chromatograms")
-          install.packages("pak")
-          pak::local_install_dev_deps(ask = FALSE)
-          pak::local_install(depdendencies = TRUE)
+          install.packages(c("remotes", "devtools", "pak"))
+          library(pak)
+          repo_add(.list = BiocManager::repositories())
+          local_install_dev_deps()
+          local_install_deps()
+          local_install()
         continue-on-error: true
         shell: Rscript {0}
 
@@ -171,6 +174,11 @@ jobs:
         run: |
           ## Pass #2 at installing dependencies
           ## For running the checks
+          library(pak)
+          repo_add(.list = BiocManager::repositories())
+          local_install_dev_deps()
+          local_install_deps()
+          local_install()
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           BiocManager::install(c("rcmdcheck", "BiocCheck"))
         shell: Rscript {0}
