@@ -1916,7 +1916,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
         chr <- chromatogram(tmp, rt = cfp[1, c("rtmin", "rtmax")],
                             mz = cfp[1, c("mzmin", "mzmax")])[1, 1]
         into <- sum(intensity(chr), na.rm = TRUE) *
-            (cfp[1, "rtmax"] - cfp[1, "rtmin"]) / (length(chr) - 1)
+            diff(range(rtime(chr))) / max(1, (length(chr) - 1))
         expect_equal(unname(into), unname(cfp[1, "into"]))
     }
 
@@ -2034,9 +2034,9 @@ test_that("fillChromPeaks,XCMSnExp works", {
                        valsPerSpect = vps,
                        rtrange = fp[i, c("rtmin", "rtmax")],
                        mzrange = fp[i, c("mzmin", "mzmax")])
+        rt_in <- rtim[rtim >= fp[i, "rtmin"] & rtim <= fp[i, "rtmax"]]
         into <- sum(mtx[, 3], na.rm = TRUE) *
-            ((fp[i, "rtmax"] - fp[i, "rtmin"]) /
-             (sum(rtim >= fp[i, "rtmin"] & rtim <= fp[i, "rtmax"]) - 1))
+            (diff(range(rt_in)) / max(1, (length(rt_in) - 1)))
         expect_equal(unname(into), unname(fp[i, "into"]))
     }
     ## Drop them.

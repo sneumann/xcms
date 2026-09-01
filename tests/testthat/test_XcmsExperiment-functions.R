@@ -314,3 +314,20 @@ test_that(".xmse_combine works", {
 
     expect_error(.xmse_combine(list(a, 3)), "objects accepted")
 })
+
+test_that(".chrom_peak_intensity_centWave into is invariant to window padding", {
+    mkpm <- function(mz, i) cbind(mz = mz, intensity = i)
+    rt <- c(10, 20, 30, 40)
+    x  <- list(mkpm(c(100, 100.1), c(50, 60)), mkpm(c(100, 100.1), c(900, 800)),
+               mkpm(c(100, 100.1), c(40, 30)), mkpm(c(100, 100.1), c(10, 5)))
+    cn <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "maxo",
+            "sn", "sample")
+    pa <- function(rtmin, rtmax) matrix(
+        c(100, 99.9, 100.2, (rtmin + rtmax) / 2, rtmin, rtmax), nrow = 1,
+        dimnames = list("F", c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax")))
+    into <- function(peakArea) xcms:::.chrom_peak_intensity_centWave(
+        x, rt, peakArea, cn = cn, sampleIndex = 1L)[, "into"]
+    ## The same 4 scans are selected by both windows; a wider *requested*
+    ## window must NOT inflate `into` (rt_width uses the actual scan span).
+    expect_equal(unname(into(pa(10, 40))), unname(into(pa(5, 45))))
+})
